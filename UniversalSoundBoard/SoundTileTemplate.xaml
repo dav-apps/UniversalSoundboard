@@ -18,8 +18,9 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="SoundTileImage.Height" Value="112" />
-                        <Setter Target="SoundTileImage.Width" Value="101" />
+                        <Setter Target="SoundTileImage.Height" Value="150" />
+                        <Setter Target="SoundTileImage.Width" Value="140" />
+                        <Setter Target="ColDef0.MaxWidth" Value="150" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Desktop">
@@ -27,9 +28,10 @@
                         <AdaptiveTrigger MinWindowWidth="900" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="SoundTileImage.Height" Value="168" />
-                        <Setter Target="SoundTileImage.Width" Value="152" />
+                        <Setter Target="SoundTileImage.Height" Value="200" />
+                        <Setter Target="SoundTileImage.Width" Value="185" />
                         <Setter Target="SoundTileName.FontSize" Value="25" />
+                        <Setter Target="ColDef0.MaxWidth" Value="250" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
@@ -40,6 +42,10 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" MaxWidth="150" x:Name="ColDef0" />
+        </Grid.ColumnDefinitions>
 
         <Image Name="SoundTileImage" Source="{x:Bind Sound.ImageFile}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
         <TextBlock Grid.Row="1" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" />

@@ -5,12 +5,14 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
+using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Search;
+using Windows.UI.Core;
 using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -30,13 +32,15 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class MainPage : Page
     {
+       // public event EventHandler<BackRequestedEventArgs> onBackRequested;
         List<string> Suggestions;
 
         public MainPage()
         {
             this.InitializeComponent();
             Loaded += MainPage_Loaded;
-            
+            SystemNavigationManager.GetForCurrentView().BackRequested += onBackRequested;
+
             BackButton.Visibility = Visibility.Collapsed;
             Suggestions = new List<string>();
         }
@@ -45,6 +49,7 @@ namespace UniversalSoundBoard
         {
             setDataContext();
             await SoundManager.GetAllSounds();
+            HomeListBoxItem.IsSelected = true;
         }
 
         private void setDataContext()
@@ -52,26 +57,53 @@ namespace UniversalSoundBoard
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
 
-        private void HamburgerButton_Click(object sender, RoutedEventArgs e){
+        private void HamburgerButton_Click(object sender, RoutedEventArgs e)
+        {
             SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
         }
 
-        private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args){
+        private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
             if (String.IsNullOrEmpty(sender.Text)) goBack();
 
+            (App.Current as App)._itemViewHolder.title = sender.Text;
             await SoundManager.GetSoundsByName(sender.Text);
             Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(sender.Text)).Select(p => p.Name).ToList();
             SearchAutoSuggestBox.ItemsSource = Suggestions;
             BackButton.Visibility = Visibility.Visible;
         }
 
-        private async void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args){
+        private async void SearchAutoSuggestBox_TextChanged_Mobile(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (String.IsNullOrEmpty(sender.Text)) goBack();
+
+            (App.Current as App)._itemViewHolder.title = sender.Text;
             await SoundManager.GetSoundsByName(sender.Text);
-            Title.Text = sender.Text;
+            Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(sender.Text)).Select(p => p.Name).ToList();
+            SearchAutoSuggestBox.ItemsSource = Suggestions;
+            BackButton.Visibility = Visibility.Visible;
         }
 
-        private void BackButton_Click(object sender, RoutedEventArgs e){
+        private async void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            await SoundManager.GetSoundsByName(sender.Text);
+            (App.Current as App)._itemViewHolder.title = sender.Text;
+        }
+
+        private async void SearchAutoSuggestBox_QuerySubmitted_Mobile(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            await SoundManager.GetSoundsByName(sender.Text);
+            (App.Current as App)._itemViewHolder.title = sender.Text;
+        }
+
+        private void BackButton_Click(object sender, RoutedEventArgs e)
+        {
             goBack();
+        }
+
+        private void BackButton_Click_Mobile(object sender, RoutedEventArgs e)
+        {
+            goBack_Mobile();
         }
 
         private void IconsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -79,7 +111,8 @@ namespace UniversalSoundBoard
 
         }
 
-        private void SoundGridView_ItemClick(object sender, ItemClickEventArgs e){
+        private void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
+        {
             var sound = (Sound)e.ClickedItem;
             MyMediaElement.Source = new Uri(this.BaseUri, sound.AudioFile);
         }
@@ -128,23 +161,39 @@ namespace UniversalSoundBoard
             BackButton.Visibility = Visibility.Collapsed;
             SearchAutoSuggestBox.Text = "";
         }
-        /*
-        private async void GetSavedSounds()
+
+        private async void goBack_Mobile()
         {
-            StorageFolder folder = ApplicationData.Current.LocalFolder;
-            Variables.Sounds.Clear();
+            await SoundManager.GetAllSounds();
+            (App.Current as App)._itemViewHolder.title = "All Sounds";
+            HomeListBoxItem.IsSelected = true;
 
-            Variables.Sounds.Add(new Sound("splash", SoundCategory.Games));
-            Variables.Sounds.Add(new Sound("complete", SoundCategory.Games));
+            SearchAutoSuggestBox.Text = "";
+            SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
 
-            foreach (var file in await folder.GetFilesAsync())
+            BackButton.Visibility = Visibility.Collapsed;
+            AddButton.Visibility = Visibility.Visible;
+            SearchButton.Visibility = Visibility.Visible;
+        }
+
+        private void onBackRequested(object sender, BackRequestedEventArgs e)
+        {
+            e.Handled = true;
+
+            if(BackButton.Visibility == Visibility.Collapsed)
             {
-                if (file.ContentType == "audio/wav" || file.ContentType == "audio/mpeg")
-                {
-                    Variables.Sounds.Add(new Sound(file.Name, SoundCategory.Games, file.Path));
-                }
+                App.Current.Exit();
             }
-        } */
+
+            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+            {
+                goBack_Mobile();
+            }
+            else
+            {
+                goBack();
+            }
+        }
 
         private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
@@ -180,6 +229,19 @@ namespace UniversalSoundBoard
             MyMediaElement.Play();
 
             (App.Current as App)._itemViewHolder.sounds.Add(new Sound(newFile.Name, SoundCategory.Warnings, newFile.Path));
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            BackButton.Visibility = Visibility.Visible;
+            AddButton.Visibility = Visibility.Collapsed;
+            SearchButton.Visibility = Visibility.Collapsed;
+            SearchAutoSuggestBox.Visibility = Visibility.Visible;
+
+            // slightly delay setting focus
+            Task.Factory.StartNew(
+                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                    () => SearchAutoSuggestBox.Focus(FocusState.Programmatic)));
         }
     }
 }

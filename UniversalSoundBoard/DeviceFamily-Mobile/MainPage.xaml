@@ -7,6 +7,8 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:UniversalSoundBoard.Model"
     mc:Ignorable="d">
+    
+    <!-- This is for Phone -->
 
     <Page.Resources>
         <Style TargetType="TextBlock" x:Key="NavBarItemIconStyle">
@@ -32,15 +34,17 @@
                     Height="45" Width="45" FontSize="20" 
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"/>
             <Button Name="BackButton" RelativePanel.RightOf="HamburgerButton"
-                    Click="BackButton_Click" FontFamily="Segoe MDL2 Assets" Content="&#xE0A6;"
+                    Click="BackButton_Click_Mobile" FontFamily="Segoe MDL2 Assets" Content="&#xE0A6;"
                     Height="45" Width="65" FontSize="20" Background="White"/>
-            <Button RelativePanel.LeftOf="SearchAutoSuggestBox" Name="AddButton"
+            <Button Name="AddButton" 
                     RelativePanel.AlignVerticalCenterWithPanel="True" Margin="0,0,20,0"
-                    Height="45" Width="45"
+                    Height="45" Width="45" RelativePanel.LeftOf="SearchButton"
                     FontFamily="Segoe MDL2 Assets" Content="&#xE109;" Click="AddButton_Click" />
-            <AutoSuggestBox Name="SearchAutoSuggestBox" RelativePanel.AlignRightWithPanel="True"
-                            PlaceholderText="Search for sounds" Width="200" QueryIcon="Find" Margin="0,0,10,0" RelativePanel.AlignVerticalCenterWithPanel="True"
-                            TextChanged="SearchAutoSuggestBox_TextChanged" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted"/>
+            <Button Name="SearchButton" Height="45" Width="45" FontFamily="Segoe MDL2 Assets" Content="&#xE094;" Click="SearchButton_Click"
+                    Margin="0,0,20,0" RelativePanel.AlignRightWithPanel="True"/>
+            <AutoSuggestBox Name="SearchAutoSuggestBox" RelativePanel.RightOf="BackButton" RelativePanel.AlignRightWithPanel="True"
+                            PlaceholderText="Search for sounds" Width="200" QueryIcon="Find" Margin="20,0,0,0" RelativePanel.AlignVerticalCenterWithPanel="True"
+                            TextChanged="SearchAutoSuggestBox_TextChanged_Mobile" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted_Mobile" Visibility="Collapsed"/>
         </RelativePanel>
 
         <SplitView Name="SideBar" DisplayMode="CompactOverlay"
