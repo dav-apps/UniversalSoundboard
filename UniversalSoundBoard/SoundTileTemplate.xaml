@@ -48,7 +48,7 @@
             <Button.Flyout>
                 <MenuFlyout Placement="Bottom">
                     <MenuFlyoutItem Text="Change Image" Name="SoundTileOptionsSetImage" Click="SoundTileOptionsSetImage_Click" />
-                    <MenuFlyoutItem Text="Rename" Name="SoundTileOptionsSetName" Click="SoundTileOptionsSetName_Click" />
+                    <MenuFlyoutItem Text="Rename" Name="SoundTileOptionsRename" Click="SoundTileOptionsRename_Click" />
                     <MenuFlyoutItem Text="Delete" Name="SoundTileOptionsDelete" Click="SoundTileOptionsDelete_Click" />
                     <!--
                     <MenuFlyoutItem Text="Item 2" />
@@ -65,5 +65,17 @@
                 </MenuFlyout>
             </Button.Flyout>
         </Button>
+
+        <ContentDialog x:Name="RenameContentDialog"
+                        VerticalAlignment="Stretch"
+                        Title="Rename"
+                        PrimaryButtonText="OK"
+                        PrimaryButtonClick="RenameContentDialog_PrimaryButtonClick"
+                        SecondaryButtonText="Cancel"
+                        MaxWidth="200">
+            <StackPanel>
+                <TextBox Name="RenameContentDialogTextBox" Text="{x:Bind Sound.Name}" TextChanged="RenameContentDialogTextBox_TextChanged" />
+            </StackPanel>
+        </ContentDialog>
     </Grid>
 </UserControl>

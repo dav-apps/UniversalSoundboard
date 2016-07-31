@@ -10,6 +10,8 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -57,9 +59,27 @@ namespace UniversalSoundBoard
 
         }
 
-        private void SoundTileOptionsSetName_Click(object sender, RoutedEventArgs e)
+        private async void SoundTileOptionsRename_Click(object sender, RoutedEventArgs e)
         {
+            await RenameContentDialog.ShowAsync();
+        }
 
+        private void RenameContentDialogTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if(RenameContentDialogTextBox.Text.Length < 3)
+            {
+                RenameContentDialog.IsPrimaryButtonEnabled = false;
+            }
+            else
+            {
+                RenameContentDialog.IsPrimaryButtonEnabled = true;
+            }
+        }
+
+        private async void RenameContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Save new name
+            await FileManager.renameSound(this.Sound, RenameContentDialogTextBox.Text);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace UniversalSoundBoard.Model
         public string Name { get; set; }
         public SoundCategory Category { get; set; }
         public string AudioFile { get; set; }
-        public BitmapImage ImageFile { get; set; }
+        public string ImageFile { get; set; }
 
         public Sound()
         {
@@ -32,54 +32,34 @@ namespace UniversalSoundBoard.Model
             Name = name;
             Category = category;
             AudioFile = AudioFilePath;
-         //   ImageFile = StorageFile.GetFileFromApplicationUriAsync("ms-appx:///Assets/Images/default.png");
-
-            /*
-            var Image = new BitmapImage();
-            Uri uri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
-            Image.UriSource = uri;
-          //  DetailImage.Source = largeImage;
-            ImageFile = Image;
-            */
-
             // Get Image
             GetSoundImage(name);
         }
 
-        private async void GetSoundImage(string name)
+        private async Task GetSoundImage(string name)
         {
             await FileManager.CreateImagesFolderIfNotExists();
             StorageFolder folder = ApplicationData.Current.LocalFolder;
             StorageFolder imagesFolder = await folder.GetFolderAsync("images");
 
-            var Image = new BitmapImage();
-
-            StorageFile file1 = (StorageFile) await imagesFolder.TryGetItemAsync(name + ".png");
-            if(file1 != null){
-                Uri uri = new Uri(file1.Path, UriKind.Absolute);
-                Image.UriSource = uri;
-
-                ImageFile = Image;
+            StorageFile file = (StorageFile) await imagesFolder.TryGetItemAsync(name + ".png");
+            if(file != null){
+                ImageFile = file.Path;
                 return;
             }
-            file1 = (StorageFile)await imagesFolder.TryGetItemAsync(name + ".jpg");
-            if (file1 != null)
+            file = (StorageFile)await imagesFolder.TryGetItemAsync(name + ".jpg");
+            if (file != null)
             {
-                Uri uri2 = new Uri(file1.Path, UriKind.Absolute);
-                Image.UriSource = uri2;
-
-                ImageFile = Image;
+                ImageFile = file.Path;
                 return;
             }
-            Uri uri3 = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
-            Image.UriSource = uri3;
-
-            ImageFile = Image;
+            // If no file with the name exists
+            ImageFile = "ms-appx:///Assets/Images/default.png";
         }
 
         public class SoundManager{
 
-            private static async void GetSavedSounds(ObservableCollection<Sound> sounds)
+            private static async Task GetSavedSounds(ObservableCollection<Sound> sounds)
             {
                 // Create images folder if not exists
                 await FileManager.CreateImagesFolderIfNotExists();
@@ -108,10 +88,7 @@ namespace UniversalSoundBoard.Model
                     {
                         if (image.DisplayName.Equals(file.DisplayName))
                         {
-                            var Image = new BitmapImage();
-                            Uri uri = new Uri(image.Path, UriKind.Absolute);
-                            Image.UriSource = uri;
-                            sound.ImageFile = Image;
+                            sound.ImageFile = image.Path;
                         }
                     }
 
@@ -121,48 +98,27 @@ namespace UniversalSoundBoard.Model
                 // Add found Sounds to Sounds ObservableCollection
                 foreach (var sound in newSounds)
                 {
-                    sounds.Add(new Sound(sound.Name, sound.Category, sound.AudioFile));
+                    sounds.Add(sound);
                 }
             }
 
-            public static void GetAllSounds()
+            public static async Task GetAllSounds()
             {
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-                GetSavedSounds((App.Current as App)._itemViewHolder.sounds);
+                await GetSavedSounds((App.Current as App)._itemViewHolder.sounds);
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
             }
 
-            public static void GetSoundsByName(string name)
+            public static async Task GetSoundsByName(string name)
             {
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-
-                /*
-                StorageFolder folder = ApplicationData.Current.LocalFolder;
-                (App.Current as App)._itemViewHolder.sounds.Clear();
-
-                List<Sound> newSounds = new List<Sound>();
-
-                foreach (var file in await folder.GetFilesAsync())
-                {
-                    if (file.ContentType == "audio/wav" || file.ContentType == "audio/mpeg")
-                    {
-                        if (file.Name.StartsWith(name))
-                        {
-                            newSounds.Add(new Sound(file.Name, SoundCategory.Games, file.Path));
-                        }
-                    }
-                }
-                */
-
-
-
+                
                 // Get Saved Sounds
                 ObservableCollection<Sound> allSounds = new ObservableCollection<Sound>();
-                GetSavedSounds(allSounds);
+                await GetSavedSounds(allSounds);
 
                 ObservableCollection<Sound> newSounds = new ObservableCollection<Sound>();
 
-                //   newSounds = allSounds.Where(p => p.Name.StartsWith(name)).Select(p => p.Name).ToList();
                 (App.Current as App)._itemViewHolder.sounds.Clear();
                 foreach (var sound in allSounds)
                 {
@@ -171,14 +127,7 @@ namespace UniversalSoundBoard.Model
                         (App.Current as App)._itemViewHolder.sounds.Add(sound);
                     }
                 }
-                /*
-                (App.Current as App)._itemViewHolder.sounds.Clear();
-                // Add found Sounds to Sounds ObservableCollection
-                foreach (var sound in newSounds)
-                {
-                    
-                }
-                */
+
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
             }
         }

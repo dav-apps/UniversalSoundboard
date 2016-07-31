@@ -11,6 +11,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.Storage.Search;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -29,30 +30,21 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class MainPage : Page
     {
-
         List<string> Suggestions;
 
         public MainPage()
         {
             this.InitializeComponent();
             Loaded += MainPage_Loaded;
-
-            //(App.Current as App).Sounds = new ObservableCollection<Sound>();
-
+            
             BackButton.Visibility = Visibility.Collapsed;
-            // Set ProgressRing accessibility public
-
             Suggestions = new List<string>();
-
-            //SoundGridView.ItemsSource = (App.Current as App).Sounds;
-
-            SoundManager.GetAllSounds();
-           // (App.Current as App)._itemViewHolder.sounds;
         }
 
-        void MainPage_Loaded(object sender, RoutedEventArgs e)
+        async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
+            await SoundManager.GetAllSounds();
         }
 
         private void setDataContext()
@@ -60,24 +52,22 @@ namespace UniversalSoundBoard
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
 
-
-
         private void HamburgerButton_Click(object sender, RoutedEventArgs e){
             SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
         }
 
-        private void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args){
+        private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args){
             if (String.IsNullOrEmpty(sender.Text)) goBack();
 
-            //SoundManager.GetAllSounds(Sounds);
+            await SoundManager.GetSoundsByName(sender.Text);
             Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(sender.Text)).Select(p => p.Name).ToList();
             SearchAutoSuggestBox.ItemsSource = Suggestions;
+            BackButton.Visibility = Visibility.Visible;
         }
 
-        private void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args){
-            SoundManager.GetSoundsByName(sender.Text);
+        private async void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args){
+            await SoundManager.GetSoundsByName(sender.Text);
             Title.Text = sender.Text;
-            BackButton.Visibility = Visibility.Visible;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e){
@@ -130,13 +120,13 @@ namespace UniversalSoundBoard
             //e.DragUIOverride.SetContentFromBitmapImage(new BitmapImage(new Uri("ms-appx:///Assets/clippy.jpg")));
         }
 
-        private void goBack()
+        private async void goBack()
         {
-            //SoundManager.GetAllSounds(Sounds);
-            SoundManager.GetAllSounds();
+            await SoundManager.GetAllSounds();
             Title.Text = "All Sounds";
             HomeListBoxItem.IsSelected = true;
             BackButton.Visibility = Visibility.Collapsed;
+            SearchAutoSuggestBox.Text = "";
         }
         /*
         private async void GetSavedSounds()
@@ -177,11 +167,6 @@ namespace UniversalSoundBoard
                     output.Append(sound.Name + "\n");
                     addSound(sound);
                 }
-            }
-            else
-            {
-                //this.textBlock.Text = "Operation cancelled.";
-                // TODO Show alert
             }
         }
 
