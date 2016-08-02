@@ -54,9 +54,9 @@ namespace UniversalSoundBoard
             }
         }
 
-        private void SoundTileOptionsDelete_Click(object sender, RoutedEventArgs e)
+        private async void SoundTileOptionsDelete_Click(object sender, RoutedEventArgs e)
         {
-
+            await FileManager.deleteSound(this.Sound);
         }
 
         private async void SoundTileOptionsRename_Click(object sender, RoutedEventArgs e)

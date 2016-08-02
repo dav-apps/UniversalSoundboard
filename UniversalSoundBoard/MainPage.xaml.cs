@@ -229,8 +229,6 @@ namespace UniversalSoundBoard
 
             MyMediaElement.SetSource(await file.OpenAsync(FileAccessMode.Read), file.ContentType);
             MyMediaElement.Play();
-
-            (App.Current as App)._itemViewHolder.sounds.Add(new Sound(newFile.Name, SoundCategory.Warnings, newFile.Path));
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)

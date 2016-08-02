@@ -67,5 +67,16 @@ namespace UniversalSoundBoard
 
             await SoundManager.GetAllSounds();
         }
+
+        public static async Task deleteSound(Sound sound)
+        {
+            await sound.AudioFile.DeleteAsync();
+            if (sound.ImageFile != null)
+            {
+                await sound.ImageFile.DeleteAsync();
+            }
+            (App.Current as App)._itemViewHolder.sounds.Clear();
+            await SoundManager.GetAllSounds();
+        }
     }
 }
