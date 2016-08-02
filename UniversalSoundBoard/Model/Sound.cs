@@ -13,7 +13,7 @@ namespace UniversalSoundBoard.Model
         public string Name { get; set; }
         public SoundCategory Category { get; set; }
         public string AudioFile { get; set; }
-        public string ImageFile { get; set; }
+        public BitmapImage ImageFile { get; set; }
 
         public Sound()
         {
@@ -33,29 +33,80 @@ namespace UniversalSoundBoard.Model
             Category = category;
             AudioFile = AudioFilePath;
             // Get Image
-            GetSoundImage(name);
+            //GetSoundImage(name);
+            //GetImage(name);
+            SoundManager.GetAllSounds();
+        }
+        /*
+        private async void GetImage(string name)
+        {
+            // Create images folder if not exists
+            await FileManager.CreateImagesFolderIfNotExists();
+
+            StorageFolder folder = ApplicationData.Current.LocalFolder;
+            StorageFolder imagesFolder = await folder.GetFolderAsync("images");
+
+            BitmapImage DefaultImage = new BitmapImage();
+            Uri defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
+            DefaultImage.UriSource = defaultImageUri;
+
+            ImageFile = DefaultImage;
+
+            // Try to find sound file
+            StorageFile file = (StorageFile)await imagesFolder.TryGetItemAsync(name + ".png");
+            if(file == null) // File is from type jpg
+            {
+                file = (StorageFile)await imagesFolder.TryGetItemAsync(name + ".jpg");
+                if(file == null) // No file found
+                {
+                    return;
+                }
+            }
+
+            foreach (var image in await imagesFolder.GetFilesAsync())
+            {
+                if (image.DisplayName.Equals(file.DisplayName))
+                {
+                    var Image = new BitmapImage();
+                    Uri uri = new Uri(image.Path, UriKind.Absolute);
+                    Image.UriSource = uri;
+                    ImageFile = Image;
+                }
+            }
         }
 
-        private async Task GetSoundImage(string name)
+        private async void GetSoundImage(string name)
         {
             await FileManager.CreateImagesFolderIfNotExists();
             StorageFolder folder = ApplicationData.Current.LocalFolder;
             StorageFolder imagesFolder = await folder.GetFolderAsync("images");
 
-            StorageFile file = (StorageFile) await imagesFolder.TryGetItemAsync(name + ".png");
-            if(file != null){
-                ImageFile = file.Path;
-                return;
-            }
-            file = (StorageFile)await imagesFolder.TryGetItemAsync(name + ".jpg");
-            if (file != null)
+            var Image = new BitmapImage();
+
+            StorageFile file1 = (StorageFile)await imagesFolder.TryGetItemAsync(name + ".png");
+            if (file1 != null)
             {
-                ImageFile = file.Path;
+                Uri uri = new Uri(file1.Path, UriKind.Absolute);
+                Image.UriSource = uri;
+
+                ImageFile = Image;
                 return;
             }
-            // If no file with the name exists
-            ImageFile = "ms-appx:///Assets/Images/default.png";
+            file1 = (StorageFile)await imagesFolder.TryGetItemAsync(name + ".jpg");
+            if (file1 != null)
+            {
+                Uri uri2 = new Uri(file1.Path, UriKind.Absolute);
+                Image.UriSource = uri2;
+
+                ImageFile = Image;
+                return;
+            }
+            Uri uri3 = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
+            Image.UriSource = uri3;
+
+            ImageFile = Image;
         }
+        */
 
         public class SoundManager{
 
@@ -84,11 +135,20 @@ namespace UniversalSoundBoard.Model
                     }
 
                     // Get Image for Sound
+                    BitmapImage DefaultImage = new BitmapImage();
+                    Uri defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
+                    DefaultImage.UriSource = defaultImageUri;
+
+                    sound.ImageFile = DefaultImage;
+
                     foreach (var image in await imagesFolder.GetFilesAsync())
                     {
                         if (image.DisplayName.Equals(file.DisplayName))
                         {
-                            sound.ImageFile = image.Path;
+                            var Image = new BitmapImage();
+                            Uri uri = new Uri(image.Path, UriKind.Absolute);
+                            Image.UriSource = uri;
+                            sound.ImageFile = Image;
                         }
                     }
 

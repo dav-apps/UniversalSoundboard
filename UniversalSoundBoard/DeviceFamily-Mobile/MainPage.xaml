@@ -47,7 +47,7 @@
                             TextChanged="SearchAutoSuggestBox_TextChanged_Mobile" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted_Mobile" Visibility="Collapsed"/>
         </RelativePanel>
 
-        <SplitView Name="SideBar" DisplayMode="CompactOverlay"
+        <SplitView Name="SideBar" DisplayMode="Overlay"
                    CompactPaneLength="45" OpenPaneLength="200"
                    Grid.Row="1">
             <SplitView.Pane>

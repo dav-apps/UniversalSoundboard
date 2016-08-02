@@ -81,5 +81,14 @@ namespace UniversalSoundBoard
             // Save new name
             await FileManager.renameSound(this.Sound, RenameContentDialogTextBox.Text);
         }
+
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (string.IsNullOrEmpty(value as string))
+            {
+                return null;
+            }
+            else return new BitmapImage(new Uri(value as string, UriKind.Absolute));
+        }
     }
 }

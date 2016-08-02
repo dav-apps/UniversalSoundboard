@@ -58,7 +58,7 @@ namespace UniversalSoundBoard
         public static async Task renameSound(Sound sound, string newName)
         {
             StorageFile audioFile = await StorageFile.GetFileFromPathAsync(sound.AudioFile);
-            StorageFile imageFile = await StorageFile.GetFileFromPathAsync(sound.ImageFile);
+            StorageFile imageFile = await StorageFile.GetFileFromPathAsync(sound.ImageFile.UriSource.AbsolutePath);
 
             await audioFile.RenameAsync(newName + audioFile.FileType);
             await imageFile.RenameAsync(newName + imageFile.FileType);
