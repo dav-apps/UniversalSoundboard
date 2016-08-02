@@ -71,7 +71,7 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <MediaElement Name="MyMediaElement" AutoPlay="True" x:FieldModifier="public" />
+                    <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"/>
 
                     <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" FontSize="24" />
 

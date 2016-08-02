@@ -114,7 +114,8 @@ namespace UniversalSoundBoard
         private void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var sound = (Sound)e.ClickedItem;
-            MyMediaElement.Source = new Uri(this.BaseUri, sound.AudioFile);
+           // MyMediaElement.Source = new Uri(this.BaseUri, sound.AudioFile);
+            (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFilePath);
         }
 
         private async void SoundGridView_Drop(object sender, DragEventArgs e)
@@ -216,6 +217,7 @@ namespace UniversalSoundBoard
                     output.Append(sound.Name + "\n");
                     addSound(sound);
                 }
+                await SoundManager.GetAllSounds();
             }
         }
 

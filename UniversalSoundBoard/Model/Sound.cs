@@ -12,8 +12,10 @@ namespace UniversalSoundBoard.Model
     public class Sound{
         public string Name { get; set; }
         public SoundCategory Category { get; set; }
-        public string AudioFile { get; set; }
-        public BitmapImage ImageFile { get; set; }
+        public string AudioFilePath { get; set; }
+        public BitmapImage Image { get; set; }
+        public StorageFile ImageFile { get; set; }
+        public StorageFile AudioFile { get; set; }
 
         public Sound()
         {
@@ -31,11 +33,10 @@ namespace UniversalSoundBoard.Model
         {
             Name = name;
             Category = category;
-            AudioFile = AudioFilePath;
+            this.AudioFilePath = AudioFilePath;
             // Get Image
             //GetSoundImage(name);
             //GetImage(name);
-            SoundManager.GetAllSounds();
         }
         /*
         private async void GetImage(string name)
@@ -131,7 +132,8 @@ namespace UniversalSoundBoard.Model
                     {
                         sound.Name = file.DisplayName;
                         sound.Category = SoundCategory.None;
-                        sound.AudioFile = file.Path;
+                        sound.AudioFilePath = file.Path;
+                        sound.AudioFile = file;
                     }
 
                     // Get Image for Sound
@@ -139,7 +141,7 @@ namespace UniversalSoundBoard.Model
                     Uri defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
                     DefaultImage.UriSource = defaultImageUri;
 
-                    sound.ImageFile = DefaultImage;
+                    sound.Image = DefaultImage;
 
                     foreach (var image in await imagesFolder.GetFilesAsync())
                     {
@@ -148,7 +150,8 @@ namespace UniversalSoundBoard.Model
                             var Image = new BitmapImage();
                             Uri uri = new Uri(image.Path, UriKind.Absolute);
                             Image.UriSource = uri;
-                            sound.ImageFile = Image;
+                            sound.Image = Image;
+                            sound.ImageFile = image;
                         }
                     }
 
@@ -182,7 +185,7 @@ namespace UniversalSoundBoard.Model
                 (App.Current as App)._itemViewHolder.sounds.Clear();
                 foreach (var sound in allSounds)
                 {
-                    if (sound.Name.StartsWith(name))
+                    if (sound.Name.Contains(name))
                     {
                         (App.Current as App)._itemViewHolder.sounds.Add(sound);
                     }
