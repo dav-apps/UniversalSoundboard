@@ -32,8 +32,21 @@ namespace UniversalSoundBoard
         public SoundTileTemplate()
         {
             this.InitializeComponent();
+            Loaded += SoundTileTemplate_Loaded;
             this.DataContextChanged += (s, e) => Bindings.Update(); // <-- only working with x:Bind !!!
-          //  this.DataContextChanged += (s, e) => { ViewModel = DataContext as ProfilesViewModel; };
+            //  this.DataContextChanged += (s, e) => { ViewModel = DataContext as ProfilesViewModel; }
+
+            createCategoriesFlyout();
+        }
+
+        void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
+        {
+            setDataContext();
+        }
+
+        private void setDataContext()
+        {
+            ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
 
         private async void SoundTileOptionsSetImage_Click(object sender, RoutedEventArgs e)
@@ -80,6 +93,32 @@ namespace UniversalSoundBoard
         {
             // Save new name
             await FileManager.renameSound(this.Sound, RenameContentDialogTextBox.Text);
+        }
+
+        private async void createCategoriesFlyout()
+        {
+            /*
+            foreach(string category in await FileManager.GetCategoriesListAsync())
+            {
+                var item = new ToggleMenuFlyoutItem { Text = category };
+                item.Click += CategoryToggleMenuItem_Click;
+                if(this.Sound.Category != null)
+                {
+                    if(this.Sound.Category == category)
+                    {
+                        item.IsChecked = true;
+                    }
+                }
+                CategoriesFlyoutSubItem.Items.Add(item);
+            }
+            */
+        }
+
+        private void CategoryToggleMenuItem_Click(object sender, RoutedEventArgs e)
+        {
+            var sound = this.Sound;
+            var item = (ToggleMenuFlyoutItem) sender;
+            sound.Category = item.Text;
         }
     }
 }

@@ -11,29 +11,29 @@ namespace UniversalSoundBoard.Model
 {
     public class Sound{
         public string Name { get; set; }
-        public SoundCategory Category { get; set; }
-        public string AudioFilePath { get; set; }
+        public string Category { get; set; }
         public BitmapImage Image { get; set; }
         public StorageFile ImageFile { get; set; }
         public StorageFile AudioFile { get; set; }
+        public StorageFile DetailsFile { get; set; }
 
         public Sound()
         {
 
         }
 
-        public Sound(string name, SoundCategory category){
+        public Sound(string name, string category){
             Name = name;
             Category = category;
          //   AudioFile = String.Format("Assets/Audio/{0}/{1}.mp3", category, name);
          //   ImageFile = String.Format("Assets/Images/{0}/{1}.png", category, name);
         }
 
-        public Sound(string name, SoundCategory category, string AudioFilePath)
+        public Sound(string name, string category, StorageFile AudioFile)
         {
             Name = name;
             Category = category;
-            this.AudioFilePath = AudioFilePath;
+            this.AudioFile = AudioFile;
             // Get Image
             //GetSoundImage(name);
             //GetImage(name);
@@ -118,6 +118,7 @@ namespace UniversalSoundBoard.Model
 
                 StorageFolder folder = ApplicationData.Current.LocalFolder;
                 StorageFolder imagesFolder = await folder.GetFolderAsync("images");
+                StorageFolder detailsFolder = await FileManager.createDetailsFolderIfNotExistsAsync();
 
                 // Clear sounds ObservableCollection
                 sounds.Clear();
@@ -131,8 +132,8 @@ namespace UniversalSoundBoard.Model
                     if (file.ContentType == "audio/wav" || file.ContentType == "audio/mpeg")
                     {
                         sound.Name = file.DisplayName;
-                        sound.Category = SoundCategory.None;
-                        sound.AudioFilePath = file.Path;
+                        // sound.Category = null; // Get category by json file
+                        sound.AudioFile = file;
                         sound.AudioFile = file;
                     }
 
@@ -143,6 +144,7 @@ namespace UniversalSoundBoard.Model
 
                     sound.Image = DefaultImage;
 
+                    // Add image
                     foreach (var image in await imagesFolder.GetFilesAsync())
                     {
                         if (image.DisplayName.Equals(file.DisplayName))
@@ -154,6 +156,10 @@ namespace UniversalSoundBoard.Model
                             sound.ImageFile = image;
                         }
                     }
+                    
+                    // Add details file
+                    StorageFile detailsFile = await FileManager.createSoundDetailsFileIfNotExistsAsync(sound.Name);
+                    sound.DetailsFile = detailsFile;
 
                     newSounds.Add(sound);
                 }

@@ -9,7 +9,7 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
     
-    <Grid Background="White">
+    <Grid Background="White" Name="ContentRoot">
 
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
@@ -53,6 +53,9 @@
                 Name="SoundTileOptionsButton" HorizontalAlignment="Right">
             <Button.Flyout>
                 <MenuFlyout Placement="Bottom">
+                    <MenuFlyoutSubItem Text="Category" Name="CategoriesFlyoutSubItem">
+                        
+                    </MenuFlyoutSubItem>
                     <MenuFlyoutItem Text="Change Image" Name="SoundTileOptionsSetImage" Click="SoundTileOptionsSetImage_Click" />
                     <MenuFlyoutItem Text="Rename" Name="SoundTileOptionsRename" Click="SoundTileOptionsRename_Click" />
                     <MenuFlyoutItem Text="Delete" Name="SoundTileOptionsDelete" Click="SoundTileOptionsDelete_Click" />

@@ -16,6 +16,7 @@ namespace UniversalSoundBoard
         private bool _progressRingIsActive;
         private ObservableCollection<Sound> _sounds;
         private Uri _mediaElementSource;
+        private List<string> _categories;
 
         public string title
         {
@@ -58,6 +59,17 @@ namespace UniversalSoundBoard
             {
                 _mediaElementSource = value;
                 NotifyPropertyChanged("mediaElementSource");
+            }
+        }
+
+        public List<string> categories
+        {
+            get { return _categories; }
+
+            set
+            {
+                _categories = value;
+                NotifyPropertyChanged("categories");
             }
         }
 

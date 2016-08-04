@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
@@ -34,6 +35,8 @@ namespace UniversalSoundBoard
     {
        // public event EventHandler<BackRequestedEventArgs> onBackRequested;
         List<string> Suggestions;
+        TextBox NewCategoryTextBox;
+        ContentDialog NewCategoryContentDialog;
 
         public MainPage()
         {
@@ -43,6 +46,13 @@ namespace UniversalSoundBoard
 
             BackButton.Visibility = Visibility.Collapsed;
             Suggestions = new List<string>();
+
+            var localSettings = ApplicationData.Current.LocalSettings.Values;
+            if (localSettings["categories"] == null)
+            {
+                string[] categoriesArray = new string[] { "Games" };
+                localSettings["categories"] = categoriesArray;
+            }
         }
 
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -115,7 +125,7 @@ namespace UniversalSoundBoard
         {
             var sound = (Sound)e.ClickedItem;
            // MyMediaElement.Source = new Uri(this.BaseUri, sound.AudioFile);
-            (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFilePath);
+            (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFile.Path);
         }
 
         private async void SoundGridView_Drop(object sender, DragEventArgs e)
@@ -196,7 +206,30 @@ namespace UniversalSoundBoard
             }
         }
 
-        private async void AddButton_Click(object sender, RoutedEventArgs e)
+        private async void addSound(StorageFile file)
+        {
+            StorageFolder folder = ApplicationData.Current.LocalFolder;
+
+            StorageFile newFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
+
+            MyMediaElement.SetSource(await file.OpenAsync(FileAccessMode.Read), file.ContentType);
+            MyMediaElement.Play();
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            BackButton.Visibility = Visibility.Visible;
+            AddButton.Visibility = Visibility.Collapsed;
+            SearchButton.Visibility = Visibility.Collapsed;
+            SearchAutoSuggestBox.Visibility = Visibility.Visible;
+
+            // slightly delay setting focus
+            Task.Factory.StartNew(
+                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                    () => SearchAutoSuggestBox.Focus(FocusState.Programmatic)));
+        }
+
+        private async void NewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             // Open file explorer
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
@@ -221,27 +254,45 @@ namespace UniversalSoundBoard
             }
         }
 
-        private async void addSound(StorageFile file)
+        private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            StorageFolder folder = ApplicationData.Current.LocalFolder;
+            NewCategoryContentDialog = new ContentDialog
+            {
+                Title = "New Category",
+                PrimaryButtonText = "Create",
+                SecondaryButtonText = "Cancel",
+                IsPrimaryButtonEnabled = false
+            };
+            NewCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
+            NewCategoryTextBox = new TextBox { Width = 300 };
+            NewCategoryTextBox.Text = "";
 
-            StorageFile newFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
+            NewCategoryContentDialog.Content = NewCategoryTextBox;
 
-            MyMediaElement.SetSource(await file.OpenAsync(FileAccessMode.Read), file.ContentType);
-            MyMediaElement.Play();
+            NewCategoryTextBox.TextChanged += NewCategoryContentDialogTextBox_TextChanged;
+
+            await NewCategoryContentDialog.ShowAsync();
         }
 
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            BackButton.Visibility = Visibility.Visible;
-            AddButton.Visibility = Visibility.Collapsed;
-            SearchButton.Visibility = Visibility.Collapsed;
-            SearchAutoSuggestBox.Visibility = Visibility.Visible;
+            List<string> categoriesList = await FileManager.GetCategoriesListAsync();
 
-            // slightly delay setting focus
-            Task.Factory.StartNew(
-                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                    () => SearchAutoSuggestBox.Focus(FocusState.Programmatic)));
+            categoriesList.Add(NewCategoryTextBox.Text);
+
+            await FileManager.SaveCategoriesListAsync(categoriesList);
+        }
+
+        private void NewCategoryContentDialogTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (NewCategoryTextBox.Text.Length < 3)
+            {
+                NewCategoryContentDialog.IsPrimaryButtonEnabled = false;
+            }
+            else
+            {
+                NewCategoryContentDialog.IsPrimaryButtonEnabled = true;
+            }
         }
     }
 }
