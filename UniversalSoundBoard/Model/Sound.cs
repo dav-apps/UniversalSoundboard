@@ -156,10 +156,13 @@ namespace UniversalSoundBoard.Model
                             sound.ImageFile = image;
                         }
                     }
-                    
+
                     // Add details file
+                    SoundDetails details = new SoundDetails();
                     StorageFile detailsFile = await FileManager.createSoundDetailsFileIfNotExistsAsync(sound.Name);
+                    await details.ReadSoundDetailsFile(detailsFile);
                     sound.DetailsFile = detailsFile;
+                    sound.Category = details.Category;
 
                     newSounds.Add(sound);
                 }

@@ -276,11 +276,13 @@ namespace UniversalSoundBoard
 
         private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            // Get categories List and save with new value
             List<string> categoriesList = await FileManager.GetCategoriesListAsync();
-
             categoriesList.Add(NewCategoryTextBox.Text);
-
             await FileManager.SaveCategoriesListAsync(categoriesList);
+
+            // Reload page
+            this.Frame.Navigate(this.GetType());
         }
 
         private void NewCategoryContentDialogTextBox_TextChanged(object sender, TextChangedEventArgs e)

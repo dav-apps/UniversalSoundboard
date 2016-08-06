@@ -92,7 +92,7 @@
                               AllowDrop="True" Drop="SoundGridView_Drop" DragOver="SoundGridView_DragOver" ItemsSource="{Binding sounds, Mode=TwoWay}">
                         <GridView.ItemTemplate>
                             <DataTemplate x:DataType="data:Sound">
-                                <local:SoundTileTemplate HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                                <local:SoundTileTemplate HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
                             </DataTemplate>
                         </GridView.ItemTemplate>
                     </GridView>
@@ -106,18 +106,5 @@
                 </Grid>
             </SplitView.Content>
         </SplitView>
-
-        <!--
-                        <ContentDialog x:Name="NewCategoryContentDialog"
-                        Title="New Category"
-                        VerticalAlignment="Stretch"
-                        MaxWidth="200" Visibility="Collapsed"
-                        PrimaryButtonText="Create"
-                        PrimaryButtonClick="NewCategoryContentDialog_PrimaryButtonClick"
-                        SecondaryButtonText="Cancel">
-                            <StackPanel>
-                                <TextBox Name="NewCategoryContentDialogTextBox" TextChanged="NewCategoryContentDialogTextBox_TextChanged" />
-                            </StackPanel>
-                        </ContentDialog>-->
     </Grid>
 </Page>

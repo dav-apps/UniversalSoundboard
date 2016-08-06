@@ -137,7 +137,14 @@ namespace UniversalSoundBoard
             StorageFile detailsFile;
             if (await detailsFolder.TryGetItemAsync(soundName + ".json") == null)
             {
-                return detailsFile = await detailsFolder.CreateFileAsync(soundName + ".json");
+                // Create file and write empty json
+                detailsFile = await detailsFolder.CreateFileAsync(soundName + ".json");
+                SoundDetails details = new SoundDetails();
+                details.Category = "";
+
+                await WriteFile(detailsFile, details);
+
+                return detailsFile;
             }
             else
             {
@@ -180,6 +187,21 @@ namespace UniversalSoundBoard
             await FileIO.WriteTextAsync(dataFile, dataString);
 
             await GetCategoriesListAsync();
+        }
+
+        // Methods not related to project
+
+        public static async Task WriteFile(StorageFile file, Object objectToWrite)
+        {
+            DataContractJsonSerializer js = new DataContractJsonSerializer(objectToWrite.GetType());
+            MemoryStream ms = new MemoryStream();
+            js.WriteObject(ms, objectToWrite);
+
+            ms.Position = 0;
+            StreamReader sr = new StreamReader(ms);
+            string data = sr.ReadToEnd();
+
+            await FileIO.WriteTextAsync(file, data);
         }
     }
 }
