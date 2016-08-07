@@ -99,6 +99,7 @@ namespace UniversalSoundBoard
         private async void createCategoriesFlyout()
         {
             await FileManager.GetCategoriesListAsync();
+            await Task.Delay(1000);
             foreach (Category category in (App.Current as App)._itemViewHolder.categories)
             {
                 var item = new ToggleMenuFlyoutItem { Text = category.Name };

@@ -174,8 +174,8 @@ namespace UniversalSoundBoard
         {
             await SoundManager.GetAllSounds();
             Title.Text = "All Sounds";
-            //HomeListBoxItem.IsSelected = true;
             BackButton.Visibility = Visibility.Collapsed;
+            MenuItemsListView.SelectedItem = Categories.First();
             SearchAutoSuggestBox.Text = "";
         }
 
@@ -183,7 +183,7 @@ namespace UniversalSoundBoard
         {
             await SoundManager.GetAllSounds();
             (App.Current as App)._itemViewHolder.title = "All Sounds";
-            //HomeListBoxItem.IsSelected = true;
+            MenuItemsListView.SelectedItem = Categories.First();
 
             SearchAutoSuggestBox.Text = "";
             SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
@@ -212,6 +212,18 @@ namespace UniversalSoundBoard
             }
         }
 
+        public void chooseGoBack()
+        {
+            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+            {
+                goBack_Mobile();
+            }
+            else
+            {
+                goBack();
+            }
+        }
+
         private async void addSound(StorageFile file)
         {
             StorageFolder folder = ApplicationData.Current.LocalFolder;
@@ -222,7 +234,7 @@ namespace UniversalSoundBoard
             MyMediaElement.SetSource(await file.OpenAsync(FileAccessMode.Read), file.ContentType);
             MyMediaElement.Play();
 
-            await SoundManager.GetAllSounds();
+            chooseGoBack();
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -316,7 +328,16 @@ namespace UniversalSoundBoard
         {
             var category = (Category)e.ClickedItem;
             // Display all Sounds with the selected category
-            await SoundManager.GetSoundsByCategory(category);
+            if(category == Categories.First())
+            {
+                chooseGoBack();
+            }
+            else
+            {
+                await SoundManager.GetSoundsByCategory(category);
+                (App.Current as App)._itemViewHolder.title = category.Name;
+                BackButton.Visibility = Visibility.Visible;
+            }
         }
     }
 }

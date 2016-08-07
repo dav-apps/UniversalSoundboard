@@ -75,7 +75,9 @@ namespace UniversalSoundBoard
                 await imageFile.RenameAsync(newName + imageFile.FileType);
             }
 
-            await SoundManager.GetAllSounds();
+            //await SoundManager.GetAllSounds();
+            MainPage page = new MainPage();
+            page.chooseGoBack();
         }
 
         public static async Task deleteSound(Sound sound)
@@ -92,7 +94,9 @@ namespace UniversalSoundBoard
             await sound.DetailsFile.DeleteAsync();
 
             (App.Current as App)._itemViewHolder.sounds.Clear();
-            await SoundManager.GetAllSounds();
+            //await SoundManager.GetAllSounds();
+            MainPage page = new MainPage();
+            page.chooseGoBack();
         }
 
         public static async Task<StorageFile> createDataFolderAndJsonFileIfNotExistsAsync()
