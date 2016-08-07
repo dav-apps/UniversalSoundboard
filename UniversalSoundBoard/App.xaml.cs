@@ -29,7 +29,7 @@ namespace UniversalSoundBoard
             title = "All Sounds",
             progressRingIsActive = false,
             sounds = new ObservableCollection<Sound>(),
-            categories = new List<string>()
+            categories = new List<Category>()
         };
 
         /// <summary>

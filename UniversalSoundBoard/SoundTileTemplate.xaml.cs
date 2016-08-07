@@ -5,6 +5,7 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.ServiceModel.Channels;
 using System.Text;
+using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -98,16 +99,13 @@ namespace UniversalSoundBoard
         private async void createCategoriesFlyout()
         {
             await FileManager.GetCategoriesListAsync();
-            foreach (string category in (App.Current as App)._itemViewHolder.categories)
+            foreach (Category category in (App.Current as App)._itemViewHolder.categories)
             {
-                var item = new ToggleMenuFlyoutItem { Text = category };
+                var item = new ToggleMenuFlyoutItem { Text = category.Name };
                 item.Click += CategoryToggleMenuItem_Click;
-                if(this.Sound.Category != null)
+                if(this.Sound.CategoryName == category.Name)
                 {
-                    if(this.Sound.Category == category)
-                    {
-                        item.IsChecked = true;
-                    }
+                    item.IsChecked = true;
                 }
                 CategoriesFlyoutSubItem.Items.Add(item);
             }
@@ -117,8 +115,9 @@ namespace UniversalSoundBoard
         {
             var sound = this.Sound;
             var selectedItem = (ToggleMenuFlyoutItem) sender;
+            //Category category = await FileManager.GetCategoryByNameAsync(selectedItem.Text);
             string category = selectedItem.Text;
-            sound.Category = category;
+            sound.CategoryName = category;
 
             // Clear MenuItems and select selected item
             for(int i = 0; i < CategoriesFlyoutSubItem.Items.Count; i++)

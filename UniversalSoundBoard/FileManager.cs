@@ -152,7 +152,7 @@ namespace UniversalSoundBoard
             }
         }
 
-        public static async Task<List<string>> GetCategoriesListAsync()
+        public static async Task<List<Category>> GetCategoriesListAsync()
         {
             StorageFile dataFile = await FileManager.createDataFolderAndJsonFileIfNotExistsAsync();
             string data = await FileIO.ReadTextAsync(dataFile);
@@ -162,18 +162,17 @@ namespace UniversalSoundBoard
             var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
             var dataReader = (Data)serializer.ReadObject(ms);
 
-            string[] categoriesArray = dataReader.Categories;
-            List<string> categoriesList = categoriesArray.ToList();
+            List<Category> categoriesList = dataReader.Categories;
             (App.Current as App)._itemViewHolder.categories = categoriesList;
             return categoriesList;
         }
 
-        public static async Task SaveCategoriesListAsync(List<string> categories)
+        public static async Task SaveCategoriesListAsync(List<Category> categories)
         {
             StorageFile dataFile = await FileManager.createDataFolderAndJsonFileIfNotExistsAsync();
 
             Data data = new Data();
-            data.Categories = categories.ToArray();
+            data.Categories = categories;
 
 
             DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Data));
@@ -187,6 +186,15 @@ namespace UniversalSoundBoard
             await FileIO.WriteTextAsync(dataFile, dataString);
 
             await GetCategoriesListAsync();
+        }
+
+        public static async Task<Category> GetCategoryByNameAsync(string categoryName){
+            if(categoryName != "" || (await GetCategoriesListAsync()).Count >= 1)
+            {
+                List<Category> categories = await GetCategoriesListAsync();
+                return categories.Find(p => p.Name == categoryName);
+            }
+            return new Category { Icon = "Empty", Name = "Empty" };
         }
 
         // Methods not related to project

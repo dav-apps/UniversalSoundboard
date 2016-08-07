@@ -65,25 +65,22 @@
         </RelativePanel>
 
         <SplitView Name="SideBar" DisplayMode="Overlay"
-                   CompactPaneLength="45" OpenPaneLength="200"
+                   CompactPaneLength="45" OpenPaneLength="250"
                    Grid.Row="1">
             <SplitView.Pane>
 
-                <ListBox SelectionMode="Single" Name="HamburgerListBox" SelectionChanged="IconsListBox_SelectionChanged"
-                          Background="#666666" Foreground="White">
-                    <ListBoxItem Name="HomeListBoxItem">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE10F;" Style="{StaticResource NavBarItemIconStyle}" />
-                            <TextBlock Text="Home" Style="{StaticResource NavBarItemTextStyle}" />
-                        </StackPanel>
-                    </ListBoxItem>
-                    <ListBoxItem Name="FoodListBoxItem">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE1CE;" Style="{StaticResource NavBarItemIconStyle}" />
-                            <TextBlock Text="Food" Style="{StaticResource NavBarItemTextStyle}" />
-                        </StackPanel>
-                    </ListBoxItem>
-                </ListBox>
+                <ListView Name="MenuItemsListView" ItemsSource="{x:Bind Categories}"
+                    ItemClick="MenuItemsListView_ItemClick" IsItemClickEnabled="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="data:Category">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{x:Bind Icon}" Style="{StaticResource NavBarItemIconStyle}"/>
+                                <TextBlock Text="{x:Bind Name}" Style="{StaticResource NavBarItemTextStyle}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
             </SplitView.Pane>
             <SplitView.Content>
                 <Grid Margin="20,20,0,0" x:Name="ContentRoot">
@@ -115,18 +112,5 @@
                 </Grid>
             </SplitView.Content>
         </SplitView>
-
-        <!--
-                    <ContentDialog x:Name="NewCategoryContentDialog"
-                        Title="New Category"
-                        VerticalAlignment="Stretch"
-                        MaxWidth="200" Visibility="Collapsed"
-                        PrimaryButtonText="Create"
-                        PrimaryButtonClick="NewCategoryContentDialog_PrimaryButtonClick"
-                        SecondaryButtonText="Cancel">
-                        <StackPanel>
-                            <TextBox Name="NewCategoryContentDialogTextBox" TextChanged="NewCategoryContentDialogTextBox_TextChanged" />
-                        </StackPanel>
-                    </ContentDialog> -->
     </Grid>
 </Page>

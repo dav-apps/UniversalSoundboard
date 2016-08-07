@@ -20,7 +20,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="ContentRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -56,28 +56,25 @@
         </RelativePanel>
 
         <SplitView Name="SideBar" DisplayMode="CompactOverlay"
-                   CompactPaneLength="45" OpenPaneLength="200"
+                   CompactPaneLength="45" OpenPaneLength="250"
                    Grid.Row="1">
             <SplitView.Pane>
 
-                <ListBox SelectionMode="Single" Name="HamburgerListBox" SelectionChanged="IconsListBox_SelectionChanged"
-                          Background="#666666" Foreground="White">
-                    <ListBoxItem Name="HomeListBoxItem">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE10F;" Style="{StaticResource NavBarItemIconStyle}" />
-                            <TextBlock Text="Home" Style="{StaticResource NavBarItemTextStyle}" />
-                        </StackPanel>
-                    </ListBoxItem>
-                    <ListBoxItem Name="FoodListBoxItem">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="&#xE1CE;" Style="{StaticResource NavBarItemIconStyle}" />
-                            <TextBlock Text="Food" Style="{StaticResource NavBarItemTextStyle}" />
-                        </StackPanel>
-                    </ListBoxItem>
-                </ListBox>
+                <ListView Name="MenuItemsListView" ItemsSource="{x:Bind Categories}"
+                    ItemClick="MenuItemsListView_ItemClick" IsItemClickEnabled="True">
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="data:Category">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="{x:Bind Icon}" Style="{StaticResource NavBarItemIconStyle}"/>
+                                <TextBlock Text="{x:Bind Name}" Style="{StaticResource NavBarItemTextStyle}"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
             </SplitView.Pane>
             <SplitView.Content>
-                <Grid Margin="20,20,0,0" x:Name="ContentRoot">
+                <Grid Margin="20,20,0,0">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="*" />

@@ -37,6 +37,7 @@ namespace UniversalSoundBoard
         List<string> Suggestions;
         TextBox NewCategoryTextBox;
         ContentDialog NewCategoryContentDialog;
+        ObservableCollection<Category> Categories;
 
         public MainPage()
         {
@@ -46,25 +47,30 @@ namespace UniversalSoundBoard
 
             BackButton.Visibility = Visibility.Collapsed;
             Suggestions = new List<string>();
-
-            var localSettings = ApplicationData.Current.LocalSettings.Values;
-            if (localSettings["categories"] == null)
-            {
-                string[] categoriesArray = new string[] { "Games" };
-                localSettings["categories"] = categoriesArray;
-            }
+            CreateCategoriesObservableCollection();
         }
 
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
             await SoundManager.GetAllSounds();
-            HomeListBoxItem.IsSelected = true;
+            //HomeListBoxItem.IsSelected = true;
         }
 
         private void setDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+        }
+
+        private async void CreateCategoriesObservableCollection()
+        {
+            Categories = new ObservableCollection<Category>();
+            Categories.Add(new Category { Name = "Home", Icon = "\uE10F" });
+            await FileManager.GetCategoriesListAsync();
+            foreach(Category cat in (App.Current as App)._itemViewHolder.categories)
+            {
+                Categories.Add(cat);
+            }
         }
 
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
@@ -168,7 +174,7 @@ namespace UniversalSoundBoard
         {
             await SoundManager.GetAllSounds();
             Title.Text = "All Sounds";
-            HomeListBoxItem.IsSelected = true;
+            //HomeListBoxItem.IsSelected = true;
             BackButton.Visibility = Visibility.Collapsed;
             SearchAutoSuggestBox.Text = "";
         }
@@ -177,7 +183,7 @@ namespace UniversalSoundBoard
         {
             await SoundManager.GetAllSounds();
             (App.Current as App)._itemViewHolder.title = "All Sounds";
-            HomeListBoxItem.IsSelected = true;
+            //HomeListBoxItem.IsSelected = true;
 
             SearchAutoSuggestBox.Text = "";
             SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
@@ -211,9 +217,12 @@ namespace UniversalSoundBoard
             StorageFolder folder = ApplicationData.Current.LocalFolder;
 
             StorageFile newFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
+            await FileManager.createSoundDetailsFileIfNotExistsAsync(file.DisplayName);
 
             MyMediaElement.SetSource(await file.OpenAsync(FileAccessMode.Read), file.ContentType);
             MyMediaElement.Play();
+
+            await SoundManager.GetAllSounds();
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -277,8 +286,14 @@ namespace UniversalSoundBoard
         private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get categories List and save with new value
-            List<string> categoriesList = await FileManager.GetCategoriesListAsync();
-            categoriesList.Add(NewCategoryTextBox.Text);
+            List<Category> categoriesList = await FileManager.GetCategoriesListAsync();
+            Category category = new Category
+            {
+                Name = NewCategoryTextBox.Text,
+                Icon = "\uE10F"
+            };
+
+            categoriesList.Add(category);
             await FileManager.SaveCategoriesListAsync(categoriesList);
 
             // Reload page
@@ -295,6 +310,13 @@ namespace UniversalSoundBoard
             {
                 NewCategoryContentDialog.IsPrimaryButtonEnabled = true;
             }
+        }
+
+        private async void MenuItemsListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var category = (Category)e.ClickedItem;
+            // Display all Sounds with the selected category
+            await SoundManager.GetSoundsByCategory(category);
         }
     }
 }

@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace UniversalSoundBoard.Model
 {
-    public class Data
+    public class Category
     {
-        public List<Category> Categories { get; set; }
+        public string Name { get; set; }
+        public string Icon { get; set; }
     }
 }

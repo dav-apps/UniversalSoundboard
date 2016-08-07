@@ -102,6 +102,7 @@
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Model\Category.cs" />
     <Compile Include="Model\Data.cs" />
     <Compile Include="Model\Sound.cs" />
     <Compile Include="Model\SoundDetails.cs" />
@@ -118,10 +119,6 @@
     <None Include="UniversalSoundBoard_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\Audio\Games\splash.mp3" />
-    <Content Include="Assets\Audio\Games\complete.mp3" />
-    <Content Include="Assets\Images\Games\complete.png" />
-    <Content Include="Assets\Images\Games\splash.png" />
     <Content Include="Assets\Images\default.png" />
     <Content Include="Properties\Default.rd.xml" />
     <Content Include="Assets\LockScreenLogo.scale-200.png" />
