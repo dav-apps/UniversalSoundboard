@@ -271,7 +271,8 @@ namespace UniversalSoundBoard
                     output.Append(sound.Name + "\n");
                     addSound(sound);
                 }
-                await SoundManager.GetAllSounds();
+                // Reload page
+                this.Frame.Navigate(this.GetType());
             }
         }
 
@@ -302,7 +303,7 @@ namespace UniversalSoundBoard
             Category category = new Category
             {
                 Name = NewCategoryTextBox.Text,
-                Icon = "\uE10F"
+                Icon = "\uED33"
             };
 
             categoriesList.Add(category);
@@ -338,6 +339,7 @@ namespace UniversalSoundBoard
                 (App.Current as App)._itemViewHolder.title = category.Name;
                 BackButton.Visibility = Visibility.Visible;
             }
+            SideBar.IsPaneOpen = false;
         }
     }
 }
