@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
@@ -167,6 +168,11 @@ namespace UniversalSoundBoard
             var dataReader = (Data)serializer.ReadObject(ms);
 
             List<Category> categoriesList = dataReader.Categories;
+            foreach(Category category in categoriesList)
+            {
+                category.Name = WebUtility.HtmlDecode(category.Name);
+            }
+
             (App.Current as App)._itemViewHolder.categories = categoriesList;
             return categoriesList;
         }
@@ -178,6 +184,10 @@ namespace UniversalSoundBoard
             Data data = new Data();
             data.Categories = categories;
 
+            foreach (var category in data.Categories)
+            {
+                category.Name = HTMLEncodeSpecialChars(category.Name);
+            }
 
             DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Data));
             MemoryStream ms = new MemoryStream();
@@ -214,6 +224,19 @@ namespace UniversalSoundBoard
             string data = sr.ReadToEnd();
 
             await FileIO.WriteTextAsync(file, data);
+        }
+
+        public static string HTMLEncodeSpecialChars(string text)
+        {
+            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            foreach (char c in text)
+            {
+                if (c > 127) // special chars
+                    sb.Append(String.Format("&#{0};", (int)c));
+                else
+                    sb.Append(c);
+            }
+            return sb.ToString();
         }
     }
 }

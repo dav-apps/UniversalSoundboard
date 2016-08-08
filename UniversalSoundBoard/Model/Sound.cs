@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -88,7 +89,7 @@ namespace UniversalSoundBoard.Model
                     StorageFile detailsFile = await FileManager.createSoundDetailsFileIfNotExistsAsync(sound.Name);
                     await details.ReadSoundDetailsFile(detailsFile);
                     sound.DetailsFile = detailsFile;
-                    sound.CategoryName = details.Category;
+                    sound.CategoryName = WebUtility.HtmlDecode(details.Category);
                     
                     newSounds.Add(sound);
                 }

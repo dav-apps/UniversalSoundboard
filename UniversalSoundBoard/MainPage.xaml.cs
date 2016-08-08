@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -36,6 +37,7 @@ namespace UniversalSoundBoard
        // public event EventHandler<BackRequestedEventArgs> onBackRequested;
         List<string> Suggestions;
         TextBox NewCategoryTextBox;
+        ComboBox IconSelectionComboBox;
         ContentDialog NewCategoryContentDialog;
         ObservableCollection<Category> Categories;
 
@@ -286,10 +288,29 @@ namespace UniversalSoundBoard
                 IsPrimaryButtonEnabled = false
             };
             NewCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
+
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.Orientation = Orientation.Vertical;
+
             NewCategoryTextBox = new TextBox { Width = 300 };
             NewCategoryTextBox.Text = "";
 
-            NewCategoryContentDialog.Content = NewCategoryTextBox;
+            IconSelectionComboBox = new ComboBox
+            {
+                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                FontSize = 25
+            };
+            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE10F", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
+            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE767", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
+            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE768", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
+            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE899", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
+            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE8D7", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
+            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE8C9", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
+
+            stackPanel.Children.Add(NewCategoryTextBox);
+            stackPanel.Children.Add(IconSelectionComboBox);
+
+            NewCategoryContentDialog.Content = stackPanel;
 
             NewCategoryTextBox.TextChanged += NewCategoryContentDialogTextBox_TextChanged;
 
@@ -300,10 +321,15 @@ namespace UniversalSoundBoard
         {
             // Get categories List and save with new value
             List<Category> categoriesList = await FileManager.GetCategoriesListAsync();
+
+            // Get combobox value
+            ComboBoxItem typeItem = (ComboBoxItem)IconSelectionComboBox.SelectedItem;
+            string icon = typeItem.Content.ToString();
+
             Category category = new Category
             {
                 Name = NewCategoryTextBox.Text,
-                Icon = "\uED33"
+                Icon = icon
             };
 
             categoriesList.Add(category);
@@ -336,7 +362,7 @@ namespace UniversalSoundBoard
             else
             {
                 await SoundManager.GetSoundsByCategory(category);
-                (App.Current as App)._itemViewHolder.title = category.Name;
+                (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
                 BackButton.Visibility = Visibility.Visible;
             }
             SideBar.IsPaneOpen = false;
