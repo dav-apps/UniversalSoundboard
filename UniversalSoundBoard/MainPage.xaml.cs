@@ -292,20 +292,26 @@ namespace UniversalSoundBoard
             StackPanel stackPanel = new StackPanel();
             stackPanel.Orientation = Orientation.Vertical;
 
+            List<string> IconsList = createIconsList();
+
+            Random random = new Random();
+            int randomNumber = random.Next(IconsList.Count);
+
             NewCategoryTextBox = new TextBox { Width = 300 };
             NewCategoryTextBox.Text = "";
 
             IconSelectionComboBox = new ComboBox
             {
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                FontSize = 25
+                FontSize = 25,
+                Margin = new Thickness(15),
+                HorizontalAlignment = HorizontalAlignment.Center
             };
-            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE10F", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
-            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE767", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
-            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE768", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
-            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE899", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
-            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE8D7", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
-            IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = "\uE8C9", FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
+            foreach(string icon in IconsList)
+            {
+                IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = icon, FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
+            }
+            IconSelectionComboBox.SelectedIndex = randomNumber;
 
             stackPanel.Children.Add(NewCategoryTextBox);
             stackPanel.Children.Add(IconSelectionComboBox);
@@ -366,6 +372,89 @@ namespace UniversalSoundBoard
                 BackButton.Visibility = Visibility.Visible;
             }
             SideBar.IsPaneOpen = false;
+        }
+
+        private List<string> createIconsList()
+        {
+            List<string> Icons = new List<string>();
+            Icons.Add("\uE707");
+            Icons.Add("\uE70F");
+            Icons.Add("\uE710");
+            Icons.Add("\uE711");
+            Icons.Add("\uE713");
+            Icons.Add("\uE714");
+            Icons.Add("\uE715");
+            Icons.Add("\uE716");
+            Icons.Add("\uE717");
+            Icons.Add("\uE718");
+            Icons.Add("\uE719");
+            Icons.Add("\uE71B");
+            Icons.Add("\uE71C");
+            Icons.Add("\uE71E");
+            Icons.Add("\uE720");
+            Icons.Add("\uE722");
+            Icons.Add("\uE723");
+            Icons.Add("\uE72C");
+            Icons.Add("\uE72D");
+            Icons.Add("\uE730");
+            Icons.Add("\uE734");
+            Icons.Add("\uE735");
+            Icons.Add("\uE73A");
+            Icons.Add("\uE73E");
+            Icons.Add("\uE74D");
+            Icons.Add("\uE74E");
+            Icons.Add("\uE74F");
+            Icons.Add("\uE753");
+            Icons.Add("\uE765");
+            Icons.Add("\uE767");
+            Icons.Add("\uE768");
+            Icons.Add("\uE769");
+            Icons.Add("\uE76E");
+            Icons.Add("\uE774");
+            Icons.Add("\uE77A");
+            Icons.Add("\uE77B");
+            Icons.Add("\uE77F");
+            Icons.Add("\uE786");
+            Icons.Add("\uE7AD");
+            Icons.Add("\uE7C1");
+            Icons.Add("\uE7C3");
+            Icons.Add("\uE7EE");
+            Icons.Add("\uE7EF");
+            Icons.Add("\uE80F");
+            Icons.Add("\uE81D");
+            Icons.Add("\uE890");
+            Icons.Add("\uE894");
+            Icons.Add("\uE895");
+            Icons.Add("\uE896");
+            Icons.Add("\uE897");
+            Icons.Add("\uE899");
+            Icons.Add("\uE8AA");
+            Icons.Add("\uE8B1");
+            Icons.Add("\uE8B8");
+            Icons.Add("\uE8BD");
+            Icons.Add("\uE8C3");
+            Icons.Add("\uE8C6");
+            Icons.Add("\uE8C9");
+            Icons.Add("\uE8D6");
+            Icons.Add("\uE8D7");
+            Icons.Add("\uE8E1");
+            Icons.Add("\uE8E0");
+            Icons.Add("\uE8EA");
+            Icons.Add("\uE8EB");
+            Icons.Add("\uE8EC");
+            Icons.Add("\uE8EF");
+            Icons.Add("\uE8F0");
+            Icons.Add("\uE8F1");
+            Icons.Add("\uE8F3");
+            Icons.Add("\uE8FB");
+            Icons.Add("\uE909");
+            Icons.Add("\uE90A");
+            Icons.Add("\uE90B");
+            Icons.Add("\uE90F");
+            Icons.Add("\uE910");
+            Icons.Add("\uE913");
+
+            return Icons;
         }
     }
 }
