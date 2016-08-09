@@ -53,14 +53,17 @@ namespace UniversalSoundBoard
                 if ((App.Current as App)._itemViewHolder.title == "All Sounds")
                 {
                     await SoundManager.GetAllSounds();
+                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
                 }
                 else
                 {
                     await SoundManager.GetSoundsByCategory(await GetCategoryByNameAsync((App.Current as App)._itemViewHolder.title));
+                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
                 }
             }else
             {
                 await SoundManager.GetSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
+                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             }
         }
 
@@ -185,8 +188,9 @@ namespace UniversalSoundBoard
             {
                 category.Name = WebUtility.HtmlDecode(category.Name);
             }
-
+            (App.Current as App)._itemViewHolder.categories = null;
             (App.Current as App)._itemViewHolder.categories = categoriesList;
+
             return categoriesList;
         }
 
@@ -222,6 +226,20 @@ namespace UniversalSoundBoard
                 return categories.Find(p => p.Name == categoryName);
             }
             return new Category { Icon = "Empty", Name = "Empty" };
+        }
+
+        public async static Task renameCategory(string oldName, string newName)
+        {
+            foreach (var sound in (App.Current as App)._itemViewHolder.sounds)
+            {
+                if (sound.CategoryName == oldName)
+                {
+                    StorageFile file = sound.DetailsFile;
+                    SoundDetails details = new SoundDetails();
+                    details.Category = newName;
+                    await WriteFile(sound.DetailsFile, details);
+                }
+            }
         }
 
         // Methods not related to project

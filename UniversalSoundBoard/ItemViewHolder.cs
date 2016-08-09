@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
+using Windows.UI.Xaml;
 
 namespace UniversalSoundBoard
 {
@@ -18,6 +19,7 @@ namespace UniversalSoundBoard
         private Uri _mediaElementSource;
         private List<Category> _categories;
         private string _searchQuery;
+        private Visibility _editButtonVisibility;
 
         public string title
         {
@@ -82,6 +84,17 @@ namespace UniversalSoundBoard
             {
                 _searchQuery = value;
                 NotifyPropertyChanged("searchQuery");
+            }
+        }
+
+        public Visibility editButtonVisibility
+        {
+            get { return _editButtonVisibility; }
+
+            set
+            {
+                _editButtonVisibility = value;
+                NotifyPropertyChanged("editButtonVisibility");
             }
         }
 

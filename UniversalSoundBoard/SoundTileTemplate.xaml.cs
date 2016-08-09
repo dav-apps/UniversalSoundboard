@@ -37,12 +37,14 @@ namespace UniversalSoundBoard
             this.DataContextChanged += (s, e) => Bindings.Update(); // <-- only working with x:Bind !!!
             //  this.DataContextChanged += (s, e) => { ViewModel = DataContext as ProfilesViewModel; }
 
-            createCategoriesFlyout();
+            
         }
 
-        void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
+        async void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
+            await FileManager.GetCategoriesListAsync();
+            createCategoriesFlyout();
         }
 
         private void setDataContext()
@@ -110,15 +112,14 @@ namespace UniversalSoundBoard
             await FileManager.renameSound(this.Sound, RenameContentDialogTextBox.Text);
         }
 
-        private async void createCategoriesFlyout()
+        private void createCategoriesFlyout()
         {
-            await FileManager.GetCategoriesListAsync();
-            await Task.Delay(1000);
+            //await Task.Delay(1000);
             foreach (Category category in (App.Current as App)._itemViewHolder.categories)
             {
                 var item = new ToggleMenuFlyoutItem { Text = category.Name };
                 item.Click += CategoryToggleMenuItem_Click;
-                if(this.Sound.CategoryName == category.Name)
+                if (category.Name.Equals(this.Sound.CategoryName))
                 {
                     item.IsChecked = true;
                 }

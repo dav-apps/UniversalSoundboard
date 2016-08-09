@@ -82,7 +82,12 @@
 
                     <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"/>
 
-                    <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" FontSize="24" />
+                    <StackPanel Grid.Row="0" Orientation="Horizontal">
+                        <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" FontSize="24" />
+                        <SymbolIcon Name="CategoryEditButton" 
+                                    Symbol="Edit" Margin="10,0,0,0" Visibility="{Binding editButtonVisibility}"
+                                    Tapped="CategoryEditButton_Tapped" />
+                    </StackPanel>
 
                     <GridView Name="SoundGridView" Grid.Row="1" SelectionMode="None"
                               IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick"

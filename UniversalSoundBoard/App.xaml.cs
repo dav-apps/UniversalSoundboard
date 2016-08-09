@@ -30,7 +30,8 @@ namespace UniversalSoundBoard
             progressRingIsActive = false,
             sounds = new ObservableCollection<Sound>(),
             categories = new List<Category>(),
-            searchQuery = ""
+            searchQuery = "",
+            editButtonVisibility = Visibility.Collapsed
         };
 
         /// <summary>
