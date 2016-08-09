@@ -226,7 +226,7 @@ namespace UniversalSoundBoard
             }
         }
 
-        private async void addSound(StorageFile file)
+        private async Task addSound(StorageFile file)
         {
             StorageFolder folder = ApplicationData.Current.LocalFolder;
 
@@ -235,8 +235,25 @@ namespace UniversalSoundBoard
 
             MyMediaElement.SetSource(await file.OpenAsync(FileAccessMode.Read), file.ContentType);
             MyMediaElement.Play();
+        }
+
+        private async Task addSounds(List<StorageFile> files)
+        {
+            (App.Current as App)._itemViewHolder.progressRingIsActive = true;
+
+            StorageFolder folder = ApplicationData.Current.LocalFolder;
+
+            foreach(StorageFile file in files)
+            {
+                StorageFile newFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
+                await FileManager.createSoundDetailsFileIfNotExistsAsync(file.DisplayName);
+            }
+            MyMediaElement.SetSource(await files.First().OpenAsync(FileAccessMode.Read), files.First().ContentType);
+            MyMediaElement.Play();
 
             chooseGoBack();
+
+            (App.Current as App)._itemViewHolder.progressRingIsActive = false;
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -263,19 +280,20 @@ namespace UniversalSoundBoard
             picker.FileTypeFilter.Add(".wav");
 
             var files = await picker.PickMultipleFilesAsync();
+            (App.Current as App)._itemViewHolder.progressRingIsActive = true;
+
             if (files.Count > 0)
             {
-                StringBuilder output = new StringBuilder("Picked files:\n");
-
                 // Application now has read/write access to the picked file(s)
                 foreach (StorageFile sound in files)
                 {
-                    output.Append(sound.Name + "\n");
-                    addSound(sound);
+                    await addSound(sound);
                 }
                 // Reload page
                 this.Frame.Navigate(this.GetType());
             }
+
+            (App.Current as App)._itemViewHolder.progressRingIsActive = false;
         }
 
         private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
