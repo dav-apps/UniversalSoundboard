@@ -29,7 +29,8 @@ namespace UniversalSoundBoard
             title = "All Sounds",
             progressRingIsActive = false,
             sounds = new ObservableCollection<Sound>(),
-            categories = new List<Category>()
+            categories = new List<Category>(),
+            searchQuery = ""
         };
 
         /// <summary>

@@ -82,36 +82,44 @@ namespace UniversalSoundBoard
 
         private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            if (String.IsNullOrEmpty(sender.Text)) goBack();
+            string text = sender.Text;
+            if (String.IsNullOrEmpty(text)) goBack();
 
-            (App.Current as App)._itemViewHolder.title = sender.Text;
-            await SoundManager.GetSoundsByName(sender.Text);
-            Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(sender.Text)).Select(p => p.Name).ToList();
+            (App.Current as App)._itemViewHolder.title = text;
+            (App.Current as App)._itemViewHolder.searchQuery = text;
+            await SoundManager.GetSoundsByName(text);
+            Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(text)).Select(p => p.Name).ToList();
             SearchAutoSuggestBox.ItemsSource = Suggestions;
             BackButton.Visibility = Visibility.Visible;
         }
 
         private async void SearchAutoSuggestBox_TextChanged_Mobile(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            if (String.IsNullOrEmpty(sender.Text)) goBack();
+            string text = sender.Text;
+            if (String.IsNullOrEmpty(text)) goBack();
 
-            (App.Current as App)._itemViewHolder.title = sender.Text;
-            await SoundManager.GetSoundsByName(sender.Text);
-            Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(sender.Text)).Select(p => p.Name).ToList();
+            (App.Current as App)._itemViewHolder.title = text;
+            (App.Current as App)._itemViewHolder.searchQuery = text;
+            await SoundManager.GetSoundsByName(text);
+            Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(text)).Select(p => p.Name).ToList();
             SearchAutoSuggestBox.ItemsSource = Suggestions;
             BackButton.Visibility = Visibility.Visible;
         }
 
         private async void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            await SoundManager.GetSoundsByName(sender.Text);
-            (App.Current as App)._itemViewHolder.title = sender.Text;
+            string text = sender.Text;
+            await SoundManager.GetSoundsByName(text);
+            (App.Current as App)._itemViewHolder.title = text;
+            (App.Current as App)._itemViewHolder.searchQuery = text;
         }
 
         private async void SearchAutoSuggestBox_QuerySubmitted_Mobile(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            await SoundManager.GetSoundsByName(sender.Text);
-            (App.Current as App)._itemViewHolder.title = sender.Text;
+            string text = sender.Text;
+            await SoundManager.GetSoundsByName(text);
+            (App.Current as App)._itemViewHolder.title = text;
+            (App.Current as App)._itemViewHolder.searchQuery = text;
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
@@ -235,25 +243,6 @@ namespace UniversalSoundBoard
 
             MyMediaElement.SetSource(await file.OpenAsync(FileAccessMode.Read), file.ContentType);
             MyMediaElement.Play();
-        }
-
-        private async Task addSounds(List<StorageFile> files)
-        {
-            (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-
-            StorageFolder folder = ApplicationData.Current.LocalFolder;
-
-            foreach(StorageFile file in files)
-            {
-                StorageFile newFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
-                await FileManager.createSoundDetailsFileIfNotExistsAsync(file.DisplayName);
-            }
-            MyMediaElement.SetSource(await files.First().OpenAsync(FileAccessMode.Read), files.First().ContentType);
-            MyMediaElement.Play();
-
-            chooseGoBack();
-
-            (App.Current as App)._itemViewHolder.progressRingIsActive = false;
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)

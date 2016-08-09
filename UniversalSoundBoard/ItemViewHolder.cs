@@ -17,6 +17,7 @@ namespace UniversalSoundBoard
         private ObservableCollection<Sound> _sounds;
         private Uri _mediaElementSource;
         private List<Category> _categories;
+        private string _searchQuery;
 
         public string title
         {
@@ -70,6 +71,17 @@ namespace UniversalSoundBoard
             {
                 _categories = value;
                 NotifyPropertyChanged("categories");
+            }
+        }
+
+        public string searchQuery
+        {
+            get { return _searchQuery; }
+
+            set
+            {
+                _searchQuery = value;
+                NotifyPropertyChanged("searchQuery");
             }
         }
 

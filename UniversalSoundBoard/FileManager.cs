@@ -43,7 +43,25 @@ namespace UniversalSoundBoard
             }
 
             // Update GridView
-            await SoundManager.GetAllSounds();
+            await UpdateGridView();
+        }
+        
+        public static async Task UpdateGridView()
+        {
+            if((App.Current as App)._itemViewHolder.searchQuery == "")
+            {
+                if ((App.Current as App)._itemViewHolder.title == "All Sounds")
+                {
+                    await SoundManager.GetAllSounds();
+                }
+                else
+                {
+                    await SoundManager.GetSoundsByCategory(await GetCategoryByNameAsync((App.Current as App)._itemViewHolder.title));
+                }
+            }else
+            {
+                await SoundManager.GetSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
+            }
         }
 
         public static async Task CreateImagesFolderIfNotExists()
@@ -76,9 +94,7 @@ namespace UniversalSoundBoard
                 await imageFile.RenameAsync(newName + imageFile.FileType);
             }
 
-            //await SoundManager.GetAllSounds();
-            MainPage page = new MainPage();
-            page.chooseGoBack();
+            await UpdateGridView();
         }
 
         public static async Task deleteSound(Sound sound)
@@ -94,10 +110,7 @@ namespace UniversalSoundBoard
             }
             await sound.DetailsFile.DeleteAsync();
 
-            (App.Current as App)._itemViewHolder.sounds.Clear();
-            //await SoundManager.GetAllSounds();
-            MainPage page = new MainPage();
-            page.chooseGoBack();
+            await UpdateGridView();
         }
 
         public static async Task<StorageFile> createDataFolderAndJsonFileIfNotExistsAsync()

@@ -70,6 +70,20 @@ namespace UniversalSoundBoard
 
         private async void SoundTileOptionsDelete_Click(object sender, RoutedEventArgs e)
         {
+            ContentDialog DeleteContentDialog = new ContentDialog
+            {
+                Title = "Delete " + this.Sound.Name,
+                Content = "Are you sure?",
+                PrimaryButtonText = "Delete",
+                SecondaryButtonText = "Cancel"
+            };
+            DeleteContentDialog.PrimaryButtonClick += DeleteContentDialog_PrimaryButtonClick;
+
+            await DeleteContentDialog.ShowAsync();
+        }
+
+        private async void DeleteContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
             await FileManager.deleteSound(this.Sound);
         }
 
