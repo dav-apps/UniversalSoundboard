@@ -242,6 +242,15 @@ namespace UniversalSoundBoard
             }
         }
 
+        public static async Task deleteCategory(string name)
+        {
+            List<Category> categories = await GetCategoriesListAsync();
+            Category deletedCategory = categories.Find(p => p.Name == name);
+            categories.Remove(deletedCategory);
+
+            await SaveCategoriesListAsync(categories);
+        }
+
         // Methods not related to project
 
         public static async Task WriteFile(StorageFile file, Object objectToWrite)

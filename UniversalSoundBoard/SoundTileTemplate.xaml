@@ -53,7 +53,7 @@
                 Name="SoundTileOptionsButton" HorizontalAlignment="Right">
             <Button.Flyout>
                 <MenuFlyout Placement="Bottom">
-                    <MenuFlyoutSubItem Text="Category" Name="CategoriesFlyoutSubItem">
+                    <MenuFlyoutSubItem Text="Category" Name="CategoriesFlyoutSubItem" GotFocus="CategoriesFlyoutSubItem_GotFocus">
                         
                     </MenuFlyoutSubItem>
                     <MenuFlyoutItem Text="Change Image" Name="SoundTileOptionsSetImage" Click="SoundTileOptionsSetImage_Click" />

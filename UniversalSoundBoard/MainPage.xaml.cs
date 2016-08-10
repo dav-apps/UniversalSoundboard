@@ -485,7 +485,6 @@ namespace UniversalSoundBoard
                 Title = "Edit Category",
                 PrimaryButtonText = "Save",
                 SecondaryButtonText = "Cancel",
-                IsPrimaryButtonEnabled = false
             };
             EditCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
 
@@ -557,6 +556,29 @@ namespace UniversalSoundBoard
             // Reload page
             this.Frame.Navigate(this.GetType());
             (App.Current as App)._itemViewHolder.title = "All Sounds";
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+        }
+
+        private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            ContentDialog DeleteContentDialog = new ContentDialog
+            {
+                Title = "Delete category " + (App.Current as App)._itemViewHolder.title,
+                Content = "Are you sure? Sounds are not impacted.",
+                PrimaryButtonText = "Delete",
+                SecondaryButtonText = "Cancel"
+            };
+            DeleteContentDialog.PrimaryButtonClick += DeleteContentDialog_PrimaryButtonClick;
+
+            await DeleteContentDialog.ShowAsync();
+        }
+
+        private async void DeleteContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            await FileManager.deleteCategory((App.Current as App)._itemViewHolder.title);
+
+            // Reload page
+            this.Frame.Navigate(this.GetType());
         }
     }
 }

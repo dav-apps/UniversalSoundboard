@@ -114,12 +114,13 @@ namespace UniversalSoundBoard
 
         private void createCategoriesFlyout()
         {
-            //await Task.Delay(1000);
+            CategoriesFlyoutSubItem.Items.Clear();
+
             foreach (Category category in (App.Current as App)._itemViewHolder.categories)
             {
                 var item = new ToggleMenuFlyoutItem { Text = category.Name };
                 item.Click += CategoryToggleMenuItem_Click;
-                if (category.Name.Equals(this.Sound.CategoryName))
+                if (category.Name.Equals(this.Sound.CategoryName))          // Not working properly
                 {
                     item.IsChecked = true;
                 }
@@ -145,6 +146,11 @@ namespace UniversalSoundBoard
             // Create / get details json and write category into it
             SoundDetails details = new SoundDetails { Category = category };
             await FileManager.WriteFile(await FileManager.createSoundDetailsFileIfNotExistsAsync(this.Sound.Name), details);
+        }
+
+        private void CategoriesFlyoutSubItem_GotFocus(object sender, RoutedEventArgs e)
+        {
+            
         }
     }
 }
