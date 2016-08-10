@@ -120,10 +120,10 @@ namespace UniversalSoundBoard
             {
                 var item = new ToggleMenuFlyoutItem { Text = category.Name };
                 item.Click += CategoryToggleMenuItem_Click;
-                if (category.Name.Equals(this.Sound.CategoryName))          // Not working properly
+               /* if (category.Name.Equals(this.Sound.CategoryName))          // Not working properly
                 {
                     item.IsChecked = true;
-                }
+                }*/
                 CategoriesFlyoutSubItem.Items.Add(item);
             }
         }
@@ -136,11 +136,7 @@ namespace UniversalSoundBoard
             string category = selectedItem.Text;
             sound.CategoryName = category;
 
-            // Clear MenuItems and select selected item
-            for(int i = 0; i < CategoriesFlyoutSubItem.Items.Count; i++)
-            {
-                (CategoriesFlyoutSubItem.Items[i] as ToggleMenuFlyoutItem).IsChecked = false;
-            }
+            unselectAllItemsOfCategoriesFlyoutSubItem();
             selectedItem.IsChecked = true;
 
             // Create / get details json and write category into it
@@ -150,7 +146,35 @@ namespace UniversalSoundBoard
 
         private void CategoriesFlyoutSubItem_GotFocus(object sender, RoutedEventArgs e)
         {
-            
+            unselectAllItemsOfCategoriesFlyoutSubItem();
+            if((App.Current as App)._itemViewHolder.title != "All Sounds" && (App.Current as App)._itemViewHolder.searchQuery == "")
+            {
+                foreach(ToggleMenuFlyoutItem item in CategoriesFlyoutSubItem.Items)
+                {
+                    if(item.Text == (App.Current as App)._itemViewHolder.title)
+                    {
+                        item.IsChecked = true;
+                    }
+                }
+            }else
+            {
+                foreach(ToggleMenuFlyoutItem item in CategoriesFlyoutSubItem.Items)
+                {
+                    if(item.Text == this.Sound.CategoryName)
+                    {
+                        item.IsChecked = true;
+                    }
+                }
+            }
+        }
+
+        private void unselectAllItemsOfCategoriesFlyoutSubItem()
+        {
+            // Clear MenuItems and select selected item
+            for (int i = 0; i < CategoriesFlyoutSubItem.Items.Count; i++)
+            {
+                (CategoriesFlyoutSubItem.Items[i] as ToggleMenuFlyoutItem).IsChecked = false;
+            }
         }
     }
 }
