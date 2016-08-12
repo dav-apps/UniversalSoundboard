@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" IgnorableNamespaces="uap mp">
-  <Identity Name="b6b5ebf6-9dba-4b9b-865b-1e91c01386a4" Publisher="CN=David" Version="1.0.0.0" />
+  <Identity Name="49427davSoftwareDevelopme.UniversalSoundBoard" Publisher="CN=34761CCA-A79E-46B8-A1BC-D17F44039844" Version="0.1.4.0" />
   <mp:PhoneIdentity PhoneProductId="b6b5ebf6-9dba-4b9b-865b-1e91c01386a4" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>UniversalSoundBoard</DisplayName>
-    <PublisherDisplayName>dav</PublisherDisplayName>
+    <PublisherDisplayName>dav Software Development</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="UniversalSoundBoard.App">
-      <uap:VisualElements DisplayName="Universal SoundBoard" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="UniversalSoundBoard" BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="Universal SoundBoard" Square150x150Logo="Assets\Square150x150Logo.png" Square44x44Logo="Assets\Square44x44Logo.png" Description="Create your own soundboard! Add images to your sounds and sort them in categories to keep track of all your sounds." BackgroundColor="transparent">
         <uap:LockScreen Notification="badge" BadgeLogo="Assets\BadgeLogo.png" />
         <uap:DefaultTile Wide310x150Logo="Assets\Wide310x150Logo.png" ShortName="Universal SoundBoard" Square310x310Logo="Assets\Square310x310Logo.png" Square71x71Logo="Assets\Square71x71Logo.png">
           <uap:ShowNameOnTiles>

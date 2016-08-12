@@ -58,7 +58,6 @@ namespace UniversalSoundBoard
         {
             setDataContext();
             await SoundManager.GetAllSounds();
-            //HomeListBoxItem.IsSelected = true;
         }
 
         private void setDataContext()
