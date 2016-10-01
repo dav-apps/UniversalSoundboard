@@ -10,10 +10,5 @@ namespace UniversalSoundBoard.Model
     {
         public string Name { get; set; }
         public string Icon { get; set; }
-
-        public static implicit operator string(Category v)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

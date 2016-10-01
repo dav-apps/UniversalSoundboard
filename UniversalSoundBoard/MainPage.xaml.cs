@@ -155,6 +155,7 @@ namespace UniversalSoundBoard
             {
                 var items = await e.DataView.GetStorageItemsAsync();
 
+                (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 if (items.Any())
                 {
                     var storageFile = items[0] as StorageFile;
@@ -162,11 +163,20 @@ namespace UniversalSoundBoard
 
                     StorageFolder folder = ApplicationData.Current.LocalFolder;
 
-                    if (contentType == "audio/wav" || contentType == "audio/mpeg")
+                    if (items.Count > 0)
                     {
-                        await addSound(storageFile);
+                        // Application now has read/write access to the picked file(s)
+                        foreach (StorageFile sound in items)
+                        {
+                            if (contentType == "audio/wav" || contentType == "audio/mpeg")
+                            {
+                                await addSound(storageFile);
+                            }
+                        }
+                        await FileManager.UpdateGridView();
                     }
                 }
+                (App.Current as App)._itemViewHolder.progressRingIsActive = false;
             }
         }
 

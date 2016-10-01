@@ -4,7 +4,7 @@
   <mp:PhoneIdentity PhoneProductId="b6b5ebf6-9dba-4b9b-865b-1e91c01386a4" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>UniversalSoundBoard</DisplayName>
-    <PublisherDisplayName>dav Software Development</PublisherDisplayName>
+    <PublisherDisplayName>dav Apps</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>

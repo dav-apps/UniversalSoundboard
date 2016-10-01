@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <StoreAssociation xmlns="http://schemas.microsoft.com/appx/2010/storeassociation">
   <Publisher>CN=34761CCA-A79E-46B8-A1BC-D17F44039844</Publisher>
-  <PublisherDisplayName>dav Software Development</PublisherDisplayName>
+  <PublisherDisplayName>dav Apps</PublisherDisplayName>
   <GeneratePackageHash>http://www.w3.org/2001/04/xmlenc#sha256</GeneratePackageHash>
   <SupportedLocales>
     <Language Code="af" InMinimumRequirementSet="true" />
