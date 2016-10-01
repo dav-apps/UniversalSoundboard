@@ -48,8 +48,6 @@ namespace UniversalSoundBoard
             this.InitializeComponent();
             Loaded += MainPage_Loaded;
             SystemNavigationManager.GetForCurrentView().BackRequested += onBackRequested;
-
-            BackButton.Visibility = Visibility.Collapsed;
             Suggestions = new List<string>();
             CreateCategoriesObservableCollection();
         }
@@ -91,7 +89,7 @@ namespace UniversalSoundBoard
             await SoundManager.GetSoundsByName(text);
             Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(text)).Select(p => p.Name).ToList();
             SearchAutoSuggestBox.ItemsSource = Suggestions;
-            BackButton.Visibility = Visibility.Visible;
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
         }
 
@@ -102,31 +100,32 @@ namespace UniversalSoundBoard
 
             (App.Current as App)._itemViewHolder.title = text;
             (App.Current as App)._itemViewHolder.searchQuery = text;
-            await SoundManager.GetSoundsByName(text);
+            
             Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(text)).Select(p => p.Name).ToList();
             SearchAutoSuggestBox.ItemsSource = Suggestions;
-            BackButton.Visibility = Visibility.Visible;
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            await SoundManager.GetSoundsByName(text);
         }
 
         private async void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             string text = sender.Text;
-            await SoundManager.GetSoundsByName(text);
             (App.Current as App)._itemViewHolder.title = text;
             (App.Current as App)._itemViewHolder.searchQuery = text;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            await SoundManager.GetSoundsByName(text);
         }
 
         private async void SearchAutoSuggestBox_QuerySubmitted_Mobile(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             string text = sender.Text;
-            await SoundManager.GetSoundsByName(text);
             (App.Current as App)._itemViewHolder.title = text;
             (App.Current as App)._itemViewHolder.searchQuery = text;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            await SoundManager.GetSoundsByName(text);
         }
-
+        /*
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             goBack();
@@ -135,7 +134,7 @@ namespace UniversalSoundBoard
         private void BackButton_Click_Mobile(object sender, RoutedEventArgs e)
         {
             goBack_Mobile();
-        }
+        }*/
 
         private void IconsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -197,34 +196,33 @@ namespace UniversalSoundBoard
 
         private async void goBack()
         {
-            await SoundManager.GetAllSounds();
             Title.Text = "All Sounds";
-            BackButton.Visibility = Visibility.Collapsed;
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             MenuItemsListView.SelectedItem = Categories.First();
             SearchAutoSuggestBox.Text = "";
+            await SoundManager.GetAllSounds();
         }
 
         private async void goBack_Mobile()
         {
-            await SoundManager.GetAllSounds();
             (App.Current as App)._itemViewHolder.title = "All Sounds";
             MenuItemsListView.SelectedItem = Categories.First();
 
             SearchAutoSuggestBox.Text = "";
             SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
 
-            BackButton.Visibility = Visibility.Collapsed;
             AddButton.Visibility = Visibility.Visible;
             SearchButton.Visibility = Visibility.Visible;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            await SoundManager.GetAllSounds();
         }
 
         private void onBackRequested(object sender, BackRequestedEventArgs e)
         {
             e.Handled = true;
 
-            if(BackButton.Visibility == Visibility.Collapsed)
+            if(SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility == AppViewBackButtonVisibility.Collapsed)
             {
                 App.Current.Exit();
             }
@@ -264,7 +262,7 @@ namespace UniversalSoundBoard
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            BackButton.Visibility = Visibility.Visible;
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             AddButton.Visibility = Visibility.Collapsed;
             SearchButton.Visibility = Visibility.Collapsed;
             SearchAutoSuggestBox.Visibility = Visibility.Visible;
@@ -384,19 +382,20 @@ namespace UniversalSoundBoard
         private async void MenuItemsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var category = (Category)e.ClickedItem;
+            SideBar.IsPaneOpen = false;
+
             // Display all Sounds with the selected category
-            if(category == Categories.First())
+            if (category == Categories.First())
             {
                 chooseGoBack();
             }
             else
             {
-                await SoundManager.GetSoundsByCategory(category);
                 (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
-                BackButton.Visibility = Visibility.Visible;
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
+                await SoundManager.GetSoundsByCategory(category);
             }
-            SideBar.IsPaneOpen = false;
         }
 
         private List<string> createIconsList()

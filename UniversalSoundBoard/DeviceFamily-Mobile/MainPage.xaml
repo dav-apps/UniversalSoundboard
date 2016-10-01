@@ -35,12 +35,12 @@
                     FontSize="20" FontFamily="Segoe MDL2 Assets" Content="&#xE700;"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
                     Click="HamburgerButton_Click"/>
-            <Button Name="BackButton" 
+          <!--  <Button Name="BackButton" 
                     RelativePanel.RightOf="HamburgerButton"
                     Height="45" Width="65" 
                     FontSize="20" FontFamily="Segoe MDL2 Assets" Content="&#xE0A6;"
                     Background="White"
-                    Click="BackButton_Click_Mobile"/>
+                    Click="BackButton_Click_Mobile"/> -->
             <Button Name="AddButton" 
                     RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.LeftOf="SearchButton"
                     Height="45" Width="45" Margin="0,0,20,0"
@@ -58,7 +58,7 @@
                     FontFamily="Segoe MDL2 Assets" Content="&#xE094;" 
                     Click="SearchButton_Click"/>
             <AutoSuggestBox Name="SearchAutoSuggestBox" 
-                            RelativePanel.RightOf="BackButton" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True"
+                            RelativePanel.RightOf="HamburgerButton" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True"
                             Width="200" Margin="20,0,0,0" 
                             PlaceholderText="Search for sounds" QueryIcon="Find" Visibility="Collapsed"
                             TextChanged="SearchAutoSuggestBox_TextChanged_Mobile" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted_Mobile"/>

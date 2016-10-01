@@ -29,14 +29,14 @@
         <RelativePanel Grid.Row="0">
             <Button Name="HamburgerButton" 
                     RelativePanel.AlignLeftWithPanel="True" 
-                    Height="45" Width="45" 
+                    Height="48" Width="48" 
                     FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="20" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
                     Click="HamburgerButton_Click"/>
-            <Button Name="BackButton" 
+          <!--  <Button Name="BackButton" 
                     RelativePanel.RightOf="HamburgerButton"
                     Height="45" Width="65"
                     FontFamily="Segoe MDL2 Assets" Content="&#xE0A6;" FontSize="20" Background="White"
-                    Click="BackButton_Click"/>
+                    Click="BackButton_Click"/> -->
             <Button Name="AddButton" 
                     RelativePanel.LeftOf="SearchAutoSuggestBox" RelativePanel.AlignVerticalCenterWithPanel="True" 
                     Margin="0,0,20,0" Height="45" Width="45"
@@ -56,7 +56,7 @@
         </RelativePanel>
 
         <SplitView Name="SideBar" DisplayMode="CompactOverlay"
-                   CompactPaneLength="45" OpenPaneLength="250"
+                   CompactPaneLength="48" OpenPaneLength="250"
                    Grid.Row="1">
             <SplitView.Pane>
 
