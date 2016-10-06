@@ -32,11 +32,6 @@
                     Height="48" Width="48" 
                     FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="20" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
                     Click="HamburgerButton_Click"/>
-          <!--  <Button Name="BackButton" 
-                    RelativePanel.RightOf="HamburgerButton"
-                    Height="45" Width="65"
-                    FontFamily="Segoe MDL2 Assets" Content="&#xE0A6;" FontSize="20" Background="White"
-                    Click="BackButton_Click"/> -->
             <Button Name="AddButton" 
                     RelativePanel.LeftOf="SearchAutoSuggestBox" RelativePanel.AlignVerticalCenterWithPanel="True" 
                     Margin="0,0,20,0" Height="45" Width="45"
@@ -83,7 +78,7 @@
                     <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"/>
 
                     <StackPanel Grid.Row="0" Orientation="Horizontal">
-                        <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" FontSize="24" />
+                        <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" />
                         <SymbolIcon Name="CategoryEditButton" 
                                     Symbol="Edit" Margin="10,0,0,0" Visibility="{Binding editButtonVisibility}"
                                     Tapped="CategoryEditButton_Tapped" />

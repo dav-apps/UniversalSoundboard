@@ -9,6 +9,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
+using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
@@ -42,6 +43,8 @@ namespace UniversalSoundBoard
         ContentDialog NewCategoryContentDialog;
         ContentDialog EditCategoryContentDialog;
         ObservableCollection<Category> Categories;
+      //  bool taskRegistered = false;
+      //  string backgroundSoundTaskName = "BackgroundSound";
 
         public MainPage()
         {
@@ -62,6 +65,29 @@ namespace UniversalSoundBoard
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
+        /*
+        private void backgroundTask()
+        {
+            foreach (var task in BackgroundTaskRegistration.AllTasks)
+            {
+                if (task.Value.Name == backgroundSoundTaskName)
+                {
+                    taskRegistered = true;
+                    break;
+                }
+            }
+
+            if (!taskRegistered)
+            {
+                var builder = new BackgroundTaskBuilder();
+
+                builder.Name = backgroundSoundTaskName;
+                builder.TaskEntryPoint = "BackgroundSound.BackgroundSound";
+                builder.SetTrigger(new SystemTrigger(SystemTriggerType.TimeZoneChange, false));
+
+                BackgroundTaskRegistration task = builder.Register();
+            }
+        }*/
 
         private async void CreateCategoriesObservableCollection()
         {

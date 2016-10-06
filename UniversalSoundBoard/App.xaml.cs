@@ -7,8 +7,11 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using UniversalSoundBoard.Model;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -24,7 +27,8 @@ namespace UniversalSoundBoard
     /// </summary>
     sealed partial class App : Application
     {
-        //public ObservableCollection<Sound> Sounds { get; set; }
+        //bool _isInBackgroundMode = false;
+
         public ItemViewHolder _itemViewHolder = new ItemViewHolder {
             title = "All Sounds",
             progressRingIsActive = false,
@@ -45,8 +49,58 @@ namespace UniversalSoundBoard
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
             this.InitializeComponent();
             this.Suspending += OnSuspending;
+            /*
+            this.EnteredBackground += App_EnteredBackground;
+            this.LeavingBackground += App_LeavingBackground;
+            Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
+            Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
+            */
+        }
+        /*
+        private void App_EnteredBackground(object sender, EnteredBackgroundEventArgs e)
+        {
+            _isInBackgroundMode = true;
         }
 
+        private void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
+        {
+            _isInBackgroundMode = false;
+
+            // Reastore view content if it was previously unloaded.
+            if (Window.Current.Content == null)
+            {
+                CreateRootFrame(ApplicationExecutionState.Running, string.Empty);
+            }
+        }
+
+        private void MemoryManager_AppMemoryUsageLimitChanging(object sender, AppMemoryUsageLimitChangingEventArgs e)
+        {
+            if (MemoryManager.AppMemoryUsage >= e.NewLimit)
+            {
+                ReduceMemoryUsage(e.NewLimit);
+            }
+        }
+
+        private void MemoryManager_AppMemoryUsageIncreased(object sender, object e)
+        {
+            var level = MemoryManager.AppMemoryUsageLevel;
+
+            if (level == AppMemoryUsageLevel.OverLimit || level == AppMemoryUsageLevel.High)
+            {
+                ReduceMemoryUsage(MemoryManager.AppMemoryUsageLimit);
+            }
+        }
+
+        public void ReduceMemoryUsage(ulong limit)
+        {
+            if (_isInBackgroundMode && Window.Current.Content != null)
+            {
+
+                Window.Current.Content = null;
+                GC.Collect();
+            }
+        }
+        */
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.
@@ -88,6 +142,42 @@ namespace UniversalSoundBoard
             }
         }
 
+        void CreateRootFrame(ApplicationExecutionState previousExecutionState, string arguments)
+        {
+            Frame rootFrame = Window.Current.Content as Frame;
+
+            // Do not repeat app initialization when the Window already has content,
+            // just ensure that the window is active
+            if (rootFrame == null)
+            {
+                System.Diagnostics.Debug.WriteLine("CreateFrame: Initializing root frame ...");
+
+                // Create a Frame to act as the navigation context and navigate to the first page
+                rootFrame = new Frame();
+
+                // Set the default language
+                rootFrame.Language = Windows.Globalization.ApplicationLanguages.Languages[0];
+
+                rootFrame.NavigationFailed += OnNavigationFailed;
+
+                if (previousExecutionState == ApplicationExecutionState.Terminated)
+                {
+                    //TODO: Load state from previously suspended application
+                }
+
+                // Place the frame in the current Window
+                Window.Current.Content = rootFrame;
+            }
+
+            if (rootFrame.Content == null)
+            {
+                // When the navigation stack isn't restored navigate to the first page,
+                // configuring the new page by passing required information as a navigation
+                // parameter
+                rootFrame.Navigate(typeof(MainPage), arguments);
+            }
+        }
+
         /// <summary>
         /// Invoked when Navigation to a certain page fails
         /// </summary>
@@ -110,6 +200,17 @@ namespace UniversalSoundBoard
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        {
+            ShareOperation shareOperation = args.ShareOperation;
+            if (shareOperation.Data.Contains(StandardDataFormats.Text))
+            {
+                string text = await shareOperation.Data.GetTextAsync();
+
+                (App.Current as App)._itemViewHolder.title = "Text: " + text;
+            }
         }
     }
 }
