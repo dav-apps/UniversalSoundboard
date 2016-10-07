@@ -43,8 +43,6 @@ namespace UniversalSoundBoard
         ContentDialog NewCategoryContentDialog;
         ContentDialog EditCategoryContentDialog;
         ObservableCollection<Category> Categories;
-      //  bool taskRegistered = false;
-      //  string backgroundSoundTaskName = "BackgroundSound";
 
         public MainPage()
         {
@@ -65,29 +63,6 @@ namespace UniversalSoundBoard
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
-        /*
-        private void backgroundTask()
-        {
-            foreach (var task in BackgroundTaskRegistration.AllTasks)
-            {
-                if (task.Value.Name == backgroundSoundTaskName)
-                {
-                    taskRegistered = true;
-                    break;
-                }
-            }
-
-            if (!taskRegistered)
-            {
-                var builder = new BackgroundTaskBuilder();
-
-                builder.Name = backgroundSoundTaskName;
-                builder.TaskEntryPoint = "BackgroundSound.BackgroundSound";
-                builder.SetTrigger(new SystemTrigger(SystemTriggerType.TimeZoneChange, false));
-
-                BackgroundTaskRegistration task = builder.Register();
-            }
-        }*/
 
         private async void CreateCategoriesObservableCollection()
         {
@@ -151,16 +126,6 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             await SoundManager.GetSoundsByName(text);
         }
-        /*
-        private void BackButton_Click(object sender, RoutedEventArgs e)
-        {
-            goBack();
-        }
-
-        private void BackButton_Click_Mobile(object sender, RoutedEventArgs e)
-        {
-            goBack_Mobile();
-        }*/
 
         private void IconsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
@@ -170,8 +135,8 @@ namespace UniversalSoundBoard
         private void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var sound = (Sound)e.ClickedItem;
-           // MyMediaElement.Source = new Uri(this.BaseUri, sound.AudioFile);
-            (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFile.Path);
+            MyMediaElement.Source = new Uri(this.BaseUri, sound.AudioFile.Path);
+            //(App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFile.Path);
         }
 
         private async void SoundGridView_Drop(object sender, DragEventArgs e)
@@ -213,7 +178,7 @@ namespace UniversalSoundBoard
             // Drag adorner ... change what mouse / icon looks like
             // as you're dragging the file into the app:
             // http://igrali.com/2015/05/15/drag-and-drop-photos-into-windows-10-universal-apps/
-            e.DragUIOverride.Caption = "Drop to create a custom sound and tile";
+            e.DragUIOverride.Caption = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Drop");
             e.DragUIOverride.IsCaptionVisible = true;
             e.DragUIOverride.IsContentVisible = true;
             e.DragUIOverride.IsGlyphVisible = true;
@@ -222,7 +187,7 @@ namespace UniversalSoundBoard
 
         private async void goBack()
         {
-            Title.Text = "All Sounds";
+            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             MenuItemsListView.SelectedItem = Categories.First();
@@ -232,7 +197,7 @@ namespace UniversalSoundBoard
 
         private async void goBack_Mobile()
         {
-            (App.Current as App)._itemViewHolder.title = "All Sounds";
+            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             MenuItemsListView.SelectedItem = Categories.First();
 
             SearchAutoSuggestBox.Text = "";
@@ -328,11 +293,13 @@ namespace UniversalSoundBoard
 
         private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
             NewCategoryContentDialog = new ContentDialog
             {
-                Title = "New Category",
-                PrimaryButtonText = "Create",
-                SecondaryButtonText = "Cancel",
+                Title = loader.GetString("NewCategoryContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("NewCategoryContentDialog-PrimaryButton"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
                 IsPrimaryButtonEnabled = false
             };
             NewCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
@@ -514,11 +481,13 @@ namespace UniversalSoundBoard
 
         private async Task ShowEditCategoryMessageDialog()
         {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
             EditCategoryContentDialog = new ContentDialog
             {
-                Title = "Edit Category",
-                PrimaryButtonText = "Save",
-                SecondaryButtonText = "Cancel",
+                Title = loader.GetString("EditCategoryContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("EditCategoryContentDialog-PrimaryButton"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
             };
             EditCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
 
@@ -589,27 +558,32 @@ namespace UniversalSoundBoard
 
             // Reload page
             this.Frame.Navigate(this.GetType());
-            (App.Current as App)._itemViewHolder.title = "All Sounds";
+            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
         }
 
         private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            ContentDialog DeleteContentDialog = new ContentDialog
-            {
-                Title = "Delete category " + (App.Current as App)._itemViewHolder.title,
-                Content = "Are you sure? Sounds are not impacted.",
-                PrimaryButtonText = "Delete",
-                SecondaryButtonText = "Cancel"
-            };
-            DeleteContentDialog.PrimaryButtonClick += DeleteContentDialog_PrimaryButtonClick;
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 
-            await DeleteContentDialog.ShowAsync();
+            ContentDialog DeleteCategoryContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("DeleteCategoryContentDialog-Title") + (App.Current as App)._itemViewHolder.title,
+                Content = loader.GetString("DeleteCategoryContentDialog-Content"),
+                PrimaryButtonText = loader.GetString("DeleteCategoryContentDialog-PrimaryButton"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+            };
+            DeleteCategoryContentDialog.PrimaryButtonClick += DeleteContentDialog_PrimaryButtonClick;
+
+            await DeleteCategoryContentDialog.ShowAsync();
         }
 
         private async void DeleteContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.deleteCategory((App.Current as App)._itemViewHolder.title);
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
 
             // Reload page
             this.Frame.Navigate(this.GetType());

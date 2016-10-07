@@ -30,7 +30,7 @@ namespace UniversalSoundBoard
         //bool _isInBackgroundMode = false;
 
         public ItemViewHolder _itemViewHolder = new ItemViewHolder {
-            title = "All Sounds",
+            title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
             progressRingIsActive = false,
             sounds = new ObservableCollection<Sound>(),
             categories = new List<Category>(),
