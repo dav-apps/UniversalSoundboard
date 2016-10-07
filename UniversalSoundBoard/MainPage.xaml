@@ -32,6 +32,18 @@
                     Height="48" Width="48" 
                     FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="20" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
                     Click="HamburgerButton_Click"/>
+
+            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,0,0,0"
+                        RelativePanel.RightOf="HamburgerButton" RelativePanel.AlignVerticalCenterWithPanel="True">
+                <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" />
+                <SymbolIcon Name="CategoryEditButton" 
+                                    Symbol="Edit" Margin="10,0,0,0" Visibility="{Binding editButtonVisibility}"
+                                    Tapped="CategoryEditButton_Tapped" />
+                <SymbolIcon Name="CategoryDeleteButton" 
+                                    Symbol="Delete" Margin="10,0,0,0" Visibility="{Binding editButtonVisibility}"
+                                    Tapped="CategoryDeleteButton_Tapped" />
+            </StackPanel>
+
             <Button Name="AddButton" 
                     RelativePanel.LeftOf="SearchAutoSuggestBox" RelativePanel.AlignVerticalCenterWithPanel="True" 
                     Margin="0,0,20,0" Height="45" Width="45"
@@ -69,33 +81,8 @@
 
             </SplitView.Pane>
             <SplitView.Content>
-                <Grid Margin="20,20,0,0">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="Auto" />
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"/>
-
-                    <StackPanel Grid.Row="0" Orientation="Horizontal">
-                        <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" />
-                        <SymbolIcon Name="CategoryEditButton" 
-                                    Symbol="Edit" Margin="10,0,0,0" Visibility="{Binding editButtonVisibility}"
-                                    Tapped="CategoryEditButton_Tapped" />
-                        <SymbolIcon Name="CategoryDeleteButton" 
-                                    Symbol="Delete" Margin="10,0,0,0" Visibility="{Binding editButtonVisibility}"
-                                    Tapped="CategoryDeleteButton_Tapped" />
-                    </StackPanel>
-
-                    <GridView Name="SoundGridView" Grid.Row="1" SelectionMode="None"
-                              IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick"
-                              AllowDrop="True" Drop="SoundGridView_Drop" DragOver="SoundGridView_DragOver" ItemsSource="{Binding sounds, Mode=TwoWay}">
-                        <GridView.ItemTemplate>
-                            <DataTemplate x:DataType="data:Sound">
-                                <local:SoundTileTemplate HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                            </DataTemplate>
-                        </GridView.ItemTemplate>
-                    </GridView>
+                <StackPanel>
+                    <Frame Name="ContentFrame" SourcePageType="{Binding page, Mode=TwoWay}"/>
                     <ProgressRing Name="ProgressRing"                 
                       Grid.Row="8" 
                       Grid.Column="1"
@@ -103,8 +90,10 @@
                       Width="50" 
                       Height="50" 
                       IsActive="{Binding progressRingIsActive, Mode=TwoWay}" />
-                </Grid>
+                </StackPanel>
             </SplitView.Content>
         </SplitView>
+
+        <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"/>
     </Grid>
 </Page>

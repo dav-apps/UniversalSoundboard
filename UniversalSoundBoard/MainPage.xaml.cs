@@ -35,13 +35,7 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class MainPage : Page
     {
-       // public event EventHandler<BackRequestedEventArgs> onBackRequested;
         List<string> Suggestions;
-        TextBox NewCategoryTextBox;
-        TextBox EditCategoryTextBox;
-        ComboBox IconSelectionComboBox;
-        ContentDialog NewCategoryContentDialog;
-        ContentDialog EditCategoryContentDialog;
         ObservableCollection<Category> Categories;
 
         public MainPage()
@@ -56,6 +50,7 @@ namespace UniversalSoundBoard
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
+            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             await SoundManager.GetAllSounds();
         }
 
@@ -132,59 +127,6 @@ namespace UniversalSoundBoard
 
         }
 
-        private void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            var sound = (Sound)e.ClickedItem;
-            MyMediaElement.Source = new Uri(this.BaseUri, sound.AudioFile.Path);
-            //(App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFile.Path);
-        }
-
-        private async void SoundGridView_Drop(object sender, DragEventArgs e)
-        {
-            if (e.DataView.Contains(StandardDataFormats.StorageItems))
-            {
-                var items = await e.DataView.GetStorageItemsAsync();
-
-                (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-                if (items.Any())
-                {
-                    var storageFile = items[0] as StorageFile;
-                    var contentType = storageFile.ContentType;
-
-                    StorageFolder folder = ApplicationData.Current.LocalFolder;
-
-                    if (items.Count > 0)
-                    {
-                        // Application now has read/write access to the picked file(s)
-                        foreach (StorageFile sound in items)
-                        {
-                            if (contentType == "audio/wav" || contentType == "audio/mpeg")
-                            {
-                                await addSound(storageFile);
-                            }
-                        }
-                        await FileManager.UpdateGridView();
-                    }
-                }
-                (App.Current as App)._itemViewHolder.progressRingIsActive = false;
-            }
-        }
-
-        private void SoundGridView_DragOver(object sender, DragEventArgs e)
-        {
-            // using Windows.ApplicationModel.DataTransfer;
-            e.AcceptedOperation = DataPackageOperation.Copy;
-
-            // Drag adorner ... change what mouse / icon looks like
-            // as you're dragging the file into the app:
-            // http://igrali.com/2015/05/15/drag-and-drop-photos-into-windows-10-universal-apps/
-            e.DragUIOverride.Caption = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Drop");
-            e.DragUIOverride.IsCaptionVisible = true;
-            e.DragUIOverride.IsContentVisible = true;
-            e.DragUIOverride.IsGlyphVisible = true;
-            //e.DragUIOverride.SetContentFromBitmapImage(new BitmapImage(new Uri("ms-appx:///Assets/clippy.jpg")));
-        }
-
         private async void goBack()
         {
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
@@ -240,17 +182,6 @@ namespace UniversalSoundBoard
             }
         }
 
-        private async Task addSound(StorageFile file)
-        {
-            StorageFolder folder = ApplicationData.Current.LocalFolder;
-
-            StorageFile newFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
-            await FileManager.createSoundDetailsFileIfNotExistsAsync(file.DisplayName);
-
-            MyMediaElement.SetSource(await file.OpenAsync(FileAccessMode.Read), file.ContentType);
-            MyMediaElement.Play();
-        }
-
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -282,94 +213,13 @@ namespace UniversalSoundBoard
                 // Application now has read/write access to the picked file(s)
                 foreach (StorageFile sound in files)
                 {
-                    await addSound(sound);
+                    await SoundManager.addSound(sound);
                 }
                 // Reload page
                 this.Frame.Navigate(this.GetType());
             }
 
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;
-        }
-
-        private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
-            NewCategoryContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("NewCategoryContentDialog-Title"),
-                PrimaryButtonText = loader.GetString("NewCategoryContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
-                IsPrimaryButtonEnabled = false
-            };
-            NewCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
-
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Vertical;
-
-            List<string> IconsList = createIconsList();
-
-            Random random = new Random();
-            int randomNumber = random.Next(IconsList.Count);
-
-            NewCategoryTextBox = new TextBox { Width = 300 };
-            NewCategoryTextBox.Text = "";
-
-            IconSelectionComboBox = new ComboBox
-            {
-                FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                FontSize = 25,
-                Margin = new Thickness(15),
-                HorizontalAlignment = HorizontalAlignment.Center
-            };
-            foreach(string icon in IconsList)
-            {
-                IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = icon, FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
-            }
-            IconSelectionComboBox.SelectedIndex = randomNumber;
-
-            stackPanel.Children.Add(NewCategoryTextBox);
-            stackPanel.Children.Add(IconSelectionComboBox);
-
-            NewCategoryContentDialog.Content = stackPanel;
-
-            NewCategoryTextBox.TextChanged += NewCategoryContentDialogTextBox_TextChanged;
-
-            await NewCategoryContentDialog.ShowAsync();
-        }
-
-        private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            // Get categories List and save with new value
-            List<Category> categoriesList = await FileManager.GetCategoriesListAsync();
-
-            // Get combobox value
-            ComboBoxItem typeItem = (ComboBoxItem)IconSelectionComboBox.SelectedItem;
-            string icon = typeItem.Content.ToString();
-
-            Category category = new Category
-            {
-                Name = NewCategoryTextBox.Text,
-                Icon = icon
-            };
-
-            categoriesList.Add(category);
-            await FileManager.SaveCategoriesListAsync(categoriesList);
-
-            // Reload page
-            this.Frame.Navigate(this.GetType());
-        }
-
-        private void NewCategoryContentDialogTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (NewCategoryTextBox.Text.Length < 3)
-            {
-                NewCategoryContentDialog.IsPrimaryButtonEnabled = false;
-            }
-            else
-            {
-                NewCategoryContentDialog.IsPrimaryButtonEnabled = true;
-            }
         }
 
         private async void MenuItemsListView_ItemClick(object sender, ItemClickEventArgs e)
@@ -391,151 +241,61 @@ namespace UniversalSoundBoard
             }
         }
 
-        private List<string> createIconsList()
-        {
-            List<string> Icons = new List<string>();
-            Icons.Add("\uE707");
-            Icons.Add("\uE70F");
-            Icons.Add("\uE710");
-            Icons.Add("\uE711");
-            Icons.Add("\uE713");
-            Icons.Add("\uE714");
-            Icons.Add("\uE715");
-            Icons.Add("\uE716");
-            Icons.Add("\uE717");
-            Icons.Add("\uE718");
-            Icons.Add("\uE719");
-            Icons.Add("\uE71B");
-            Icons.Add("\uE71C");
-            Icons.Add("\uE71E");
-            Icons.Add("\uE720");
-            Icons.Add("\uE722");
-            Icons.Add("\uE723");
-            Icons.Add("\uE72C");
-            Icons.Add("\uE72D");
-            Icons.Add("\uE730");
-            Icons.Add("\uE734");
-            Icons.Add("\uE735");
-            Icons.Add("\uE73A");
-            Icons.Add("\uE73E");
-            Icons.Add("\uE74D");
-            Icons.Add("\uE74E");
-            Icons.Add("\uE74F");
-            Icons.Add("\uE753");
-            Icons.Add("\uE765");
-            Icons.Add("\uE767");
-            Icons.Add("\uE768");
-            Icons.Add("\uE769");
-            Icons.Add("\uE76E");
-            Icons.Add("\uE774");
-            Icons.Add("\uE77A");
-            Icons.Add("\uE77B");
-            Icons.Add("\uE77F");
-            Icons.Add("\uE786");
-            Icons.Add("\uE7AD");
-            Icons.Add("\uE7C1");
-            Icons.Add("\uE7C3");
-            Icons.Add("\uE7EE");
-            Icons.Add("\uE7EF");
-            Icons.Add("\uE80F");
-            Icons.Add("\uE81D");
-            Icons.Add("\uE890");
-            Icons.Add("\uE894");
-            Icons.Add("\uE895");
-            Icons.Add("\uE896");
-            Icons.Add("\uE897");
-            Icons.Add("\uE899");
-            Icons.Add("\uE8AA");
-            Icons.Add("\uE8B1");
-            Icons.Add("\uE8B8");
-            Icons.Add("\uE8BD");
-            Icons.Add("\uE8C3");
-            Icons.Add("\uE8C6");
-            Icons.Add("\uE8C9");
-            Icons.Add("\uE8D6");
-            Icons.Add("\uE8D7");
-            Icons.Add("\uE8E1");
-            Icons.Add("\uE8E0");
-            Icons.Add("\uE8EA");
-            Icons.Add("\uE8EB");
-            Icons.Add("\uE8EC");
-            Icons.Add("\uE8EF");
-            Icons.Add("\uE8F0");
-            Icons.Add("\uE8F1");
-            Icons.Add("\uE8F3");
-            Icons.Add("\uE8FB");
-            Icons.Add("\uE909");
-            Icons.Add("\uE90A");
-            Icons.Add("\uE90B");
-            Icons.Add("\uE90F");
-            Icons.Add("\uE910");
-            Icons.Add("\uE913");
 
-            return Icons;
+        // Content Dialog Methods
+
+        private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog();
+            newCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
+            await newCategoryContentDialog.ShowAsync();
+        }
+
+        private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Get categories List and save with new value
+            List<Category> categoriesList = await FileManager.GetCategoriesListAsync();
+
+            // Get combobox value
+            ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
+            string icon = typeItem.Content.ToString();
+
+            Category category = new Category
+            {
+                Name = ContentDialogs.NewCategoryTextBox.Text,
+                Icon = icon
+            };
+
+            categoriesList.Add(category);
+            await FileManager.SaveCategoriesListAsync(categoriesList);
+
+            // Reload page
+            this.Frame.Navigate(this.GetType());
+        }
+
+        private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var deleteCategoryContentDialog = ContentDialogs.CreateDeleteCategoryContentDialogAsync();
+            deleteCategoryContentDialog.PrimaryButtonClick += DeleteCategoryContentDialog_PrimaryButtonClick;
+            await deleteCategoryContentDialog.ShowAsync();
+        }
+
+        private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            await FileManager.deleteCategory((App.Current as App)._itemViewHolder.title);
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+
+            // Reload page
+            this.Frame.Navigate(this.GetType());
         }
 
         private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await ShowEditCategoryMessageDialog();
-        }
-
-        private async Task ShowEditCategoryMessageDialog()
-        {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
-            EditCategoryContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("EditCategoryContentDialog-Title"),
-                PrimaryButtonText = loader.GetString("EditCategoryContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
-            };
-            EditCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
-
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Vertical;
-
-            List<string> IconsList = createIconsList();
-
-            EditCategoryTextBox = new TextBox { Width = 300 };
-            EditCategoryTextBox.Text = (App.Current as App)._itemViewHolder.title;
-
-            IconSelectionComboBox = new ComboBox
-            {
-                FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                FontSize = 25,
-                Margin = new Thickness(15),
-                HorizontalAlignment = HorizontalAlignment.Center
-            };
-
-            foreach (string icon in IconsList)
-            {
-                ComboBoxItem item = new ComboBoxItem { Content = icon, FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 };
-                if (icon == (await FileManager.GetCategoryByNameAsync((App.Current as App)._itemViewHolder.title)).Icon){
-                    item.IsSelected = true;
-                }
-                IconSelectionComboBox.Items.Add(item);
-            }
-
-            stackPanel.Children.Add(EditCategoryTextBox);
-            stackPanel.Children.Add(IconSelectionComboBox);
-
-            EditCategoryContentDialog.Content = stackPanel;
-
-            EditCategoryTextBox.TextChanged += EditCategoryTextBox_TextChanged;
-
-            await EditCategoryContentDialog.ShowAsync();
-        }
-
-        private void EditCategoryTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if (EditCategoryTextBox.Text.Length < 3)
-            {
-                EditCategoryContentDialog.IsPrimaryButtonEnabled = false;
-            }
-            else
-            {
-                EditCategoryContentDialog.IsPrimaryButtonEnabled = true;
-            }
+            var editCategoryContentDialog = await ContentDialogs.CreateEditCategoryContentDialogAsync();
+            editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
+            await editCategoryContentDialog.ShowAsync();
         }
 
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -544,10 +304,10 @@ namespace UniversalSoundBoard
             List<Category> categoriesList = await FileManager.GetCategoriesListAsync();
 
             // Get combobox value
-            ComboBoxItem typeItem = (ComboBoxItem)IconSelectionComboBox.SelectedItem;
+            ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
             string icon = typeItem.Content.ToString();
 
-            string newName = EditCategoryTextBox.Text;
+            string newName = ContentDialogs.EditCategoryTextBox.Text;
             string oldName = (App.Current as App)._itemViewHolder.title;
 
             categoriesList.Find(p => p.Name == oldName).Icon = icon;
@@ -560,33 +320,6 @@ namespace UniversalSoundBoard
             this.Frame.Navigate(this.GetType());
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-        }
-
-        private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
-            ContentDialog DeleteCategoryContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("DeleteCategoryContentDialog-Title") + (App.Current as App)._itemViewHolder.title,
-                Content = loader.GetString("DeleteCategoryContentDialog-Content"),
-                PrimaryButtonText = loader.GetString("DeleteCategoryContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
-            };
-            DeleteCategoryContentDialog.PrimaryButtonClick += DeleteContentDialog_PrimaryButtonClick;
-
-            await DeleteCategoryContentDialog.ShowAsync();
-        }
-
-        private async void DeleteContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            await FileManager.deleteCategory((App.Current as App)._itemViewHolder.title);
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-
-            // Reload page
-            this.Frame.Navigate(this.GetType());
         }
     }
 }

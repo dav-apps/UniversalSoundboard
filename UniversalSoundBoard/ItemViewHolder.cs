@@ -20,6 +20,7 @@ namespace UniversalSoundBoard
         private List<Category> _categories;
         private string _searchQuery;
         private Visibility _editButtonVisibility;
+        private Type _page;
 
         public string title
         {
@@ -95,6 +96,17 @@ namespace UniversalSoundBoard
             {
                 _editButtonVisibility = value;
                 NotifyPropertyChanged("editButtonVisibility");
+            }
+        }
+
+        public Type page
+        {
+            get { return _page; }
+
+            set
+            {
+                _page = value;
+                NotifyPropertyChanged("page");
             }
         }
 

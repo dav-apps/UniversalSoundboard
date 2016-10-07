@@ -108,10 +108,14 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Model\Category.cs" />
+    <Compile Include="Model\ContentDialogs.cs" />
     <Compile Include="Model\Data.cs" />
     <Compile Include="Model\Sound.cs" />
     <Compile Include="Model\SoundDetails.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="SoundPage.xaml.cs">
+      <DependentUpon>SoundPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="SoundTileTemplate.xaml.cs">
       <DependentUpon>SoundTileTemplate.xaml</DependentUpon>
     </Compile>
@@ -174,9 +178,17 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="DeviceFamily-Mobile\SoundPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+    </Page>
+    <Page Include="SoundPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="SoundTileTemplate.xaml">
       <SubType>Designer</SubType>
