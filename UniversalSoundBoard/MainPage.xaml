@@ -81,8 +81,12 @@
 
             </SplitView.Pane>
             <SplitView.Content>
-                <StackPanel>
-                    <Frame Name="ContentFrame" SourcePageType="{Binding page, Mode=TwoWay}"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    
+                    <Frame Name="ContentFrame" SourcePageType="{Binding page, Mode=TwoWay}" Grid.Row="0"/>
                     <ProgressRing Name="ProgressRing"                 
                       Grid.Row="8" 
                       Grid.Column="1"
@@ -90,7 +94,7 @@
                       Width="50" 
                       Height="50" 
                       IsActive="{Binding progressRingIsActive, Mode=TwoWay}" />
-                </StackPanel>
+                </Grid>
             </SplitView.Content>
         </SplitView>
 

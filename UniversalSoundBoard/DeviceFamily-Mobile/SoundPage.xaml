@@ -1,5 +1,5 @@
 ﻿<Page
-    x:Class="UniversalSoundBoard.DeviceFamily_Mobile.SoundPage"
+    x:Class="UniversalSoundBoard.SoundPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="using:UniversalSoundBoard"
@@ -37,12 +37,5 @@
                 </DataTemplate>
             </GridView.ItemTemplate>
         </GridView>
-        <ProgressRing Name="ProgressRing"                 
-                      Grid.Row="8" 
-                      Grid.Column="1"
-                      HorizontalAlignment="Center" VerticalAlignment="Center"
-                      Width="50" 
-                      Height="50" 
-                      IsActive="{Binding progressRingIsActive, Mode=TwoWay}" />
     </Grid>
 </Page>

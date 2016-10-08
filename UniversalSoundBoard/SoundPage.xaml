@@ -8,13 +8,8 @@
     xmlns:data="using:UniversalSoundBoard.Model"
     mc:Ignorable="d">
 
-    <Grid Margin="20,20,0,0" Name="ContentRoot">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <GridView Name="SoundGridView" Grid.Row="1" SelectionMode="None"
+    <Grid Name="ContentRoot">
+        <GridView Name="SoundGridView" SelectionMode="None" ScrollViewer.BringIntoViewOnFocusChange="True"
                               IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick"
                               AllowDrop="True" Drop="SoundGridView_Drop" DragOver="SoundGridView_DragOver" ItemsSource="{Binding sounds, Mode=TwoWay}">
             <GridView.ItemTemplate>

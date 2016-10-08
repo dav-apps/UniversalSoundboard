@@ -22,7 +22,7 @@
         </Style>
     </Page.Resources>
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="ContentRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -35,20 +35,14 @@
                     FontSize="20" FontFamily="Segoe MDL2 Assets" Content="&#xE700;"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
                     Click="HamburgerButton_Click"/>
-          <!--  <Button Name="BackButton" 
-                    RelativePanel.RightOf="HamburgerButton"
-                    Height="45" Width="65" 
-                    FontSize="20" FontFamily="Segoe MDL2 Assets" Content="&#xE0A6;"
-                    Background="White"
-                    Click="BackButton_Click_Mobile"/> -->
             <Button Name="AddButton" 
                     RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.LeftOf="SearchButton"
                     Height="45" Width="45" Margin="0,0,20,0"
                     FontFamily="Segoe MDL2 Assets" Content="&#xE109;">
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem Name="NewSoundFlyoutItem" Text="New Sound" Click="NewSoundFlyoutItem_Click" />
-                        <MenuFlyoutItem Name="NewCategoryFlyoutItem" Text="New Category" Click="NewCategoryFlyoutItem_Click" />
+                        <MenuFlyoutItem Name="NewSoundFlyoutItem" x:Uid="AddButton-Sound" Click="NewSoundFlyoutItem_Click" />
+                        <MenuFlyoutItem Name="NewCategoryFlyoutItem" x:Uid="AddButton-Category" Click="NewCategoryFlyoutItem_Click" />
                     </MenuFlyout>
                 </Button.Flyout>
             </Button>
@@ -57,10 +51,10 @@
                     Height="45" Width="45" Margin="0,0,20,0" 
                     FontFamily="Segoe MDL2 Assets" Content="&#xE094;" 
                     Click="SearchButton_Click"/>
-            <AutoSuggestBox Name="SearchAutoSuggestBox" 
+            <AutoSuggestBox Name="SearchAutoSuggestBox" x:Uid="Search"
                             RelativePanel.RightOf="HamburgerButton" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True"
                             Width="200" Margin="20,0,0,0" 
-                            PlaceholderText="Search for sounds" QueryIcon="Find" Visibility="Collapsed"
+                            QueryIcon="Find" Visibility="Collapsed"
                             TextChanged="SearchAutoSuggestBox_TextChanged_Mobile" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted_Mobile"/>
         </RelativePanel>
 
@@ -83,8 +77,12 @@
 
             </SplitView.Pane>
             <SplitView.Content>
-                <StackPanel>
-                    <Frame Name="ContentFrame" SourcePageType="{Binding page, Mode=TwoWay}"/>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <Frame Name="ContentFrame" SourcePageType="{Binding page, Mode=TwoWay}" Grid.Row="0"/>
                     <ProgressRing Name="ProgressRing"                 
                       Grid.Row="8" 
                       Grid.Column="1"
@@ -92,7 +90,7 @@
                       Width="50" 
                       Height="50" 
                       IsActive="{Binding progressRingIsActive, Mode=TwoWay}" />
-                </StackPanel>
+                </Grid>
             </SplitView.Content>
         </SplitView>
     </Grid>
