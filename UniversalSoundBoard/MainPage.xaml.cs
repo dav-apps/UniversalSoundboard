@@ -135,6 +135,7 @@ namespace UniversalSoundBoard
 
         private async void goBack()
         {
+            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
@@ -145,6 +146,7 @@ namespace UniversalSoundBoard
 
         private async void goBack_Mobile()
         {
+            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             MenuItemsListView.SelectedItem = Categories.First();
 
@@ -226,10 +228,8 @@ namespace UniversalSoundBoard
                 {
                     await SoundManager.addSound(sound);
                 }
-                // Reload page
-                this.Frame.Navigate(this.GetType());
+                chooseGoBack();
             }
-
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;
         }
 

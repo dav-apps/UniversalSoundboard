@@ -36,8 +36,6 @@ namespace UniversalSoundBoard
             Loaded += SoundTileTemplate_Loaded;
             this.DataContextChanged += (s, e) => Bindings.Update(); // <-- only working with x:Bind !!!
             //  this.DataContextChanged += (s, e) => { ViewModel = DataContext as ProfilesViewModel; }
-
-            
         }
 
         async void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
@@ -72,19 +70,13 @@ namespace UniversalSoundBoard
 
         private async void SoundTileOptionsDelete_Click(object sender, RoutedEventArgs e)
         {
-            ContentDialog DeleteContentDialog = new ContentDialog
-            {
-                Title = "Delete " + this.Sound.Name,
-                Content = "Are you sure?",
-                PrimaryButtonText = "Delete",
-                SecondaryButtonText = "Cancel"
-            };
-            DeleteContentDialog.PrimaryButtonClick += DeleteContentDialog_PrimaryButtonClick;
+            var DeleteSoundContentDialog = ContentDialogs.CreateDeleteSoundContentDialog(this.Sound.Name);
+            DeleteSoundContentDialog.PrimaryButtonClick += DeleteSoundContentDialog_PrimaryButtonClick;
 
-            await DeleteContentDialog.ShowAsync();
+            await DeleteSoundContentDialog.ShowAsync();
         }
 
-        private async void DeleteContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.deleteSound(this.Sound);
         }

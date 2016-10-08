@@ -16,7 +16,23 @@ namespace UniversalSoundBoard.Model
         public static ComboBox IconSelectionComboBox;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
+        public static ContentDialog DeleteSoundContentDialog;
 
+        
+        public static ContentDialog CreateDeleteSoundContentDialog(string soundName)
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            DeleteSoundContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("DeleteSoundContentDialog-Title") + soundName,
+                Content = loader.GetString("DeleteSoundContentDialog-Content"),
+                PrimaryButtonText = loader.GetString("DeleteSoundContentDialog-PrimaryButton"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+            };
+
+            return DeleteSoundContentDialog;
+        }
 
         public static ContentDialog CreateNewCategoryContentDialog()
         {

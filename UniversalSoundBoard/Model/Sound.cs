@@ -160,11 +160,6 @@ namespace UniversalSoundBoard.Model
 
                 StorageFile newFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
                 await FileManager.createSoundDetailsFileIfNotExistsAsync(file.DisplayName);
-
-                //(App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFile.Path);
-                (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(file.Path);
-                //(App.Current as App)._itemViewHolder.mediaElementSource = new Uri(await file.OpenAsync(FileAccessMode.Read), file.ContentType);
-                //MyMediaElement.SetSource(await file.OpenAsync(FileAccessMode.Read), file.ContentType);
             }
         }
     }

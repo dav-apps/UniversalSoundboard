@@ -70,6 +70,8 @@
                             QueryIcon="Find" 
                             Margin="0,0,10,0" Width="200"
                             TextChanged="SearchAutoSuggestBox_TextChanged" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted"/>
+
+            <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"/>
         </RelativePanel>
 
         <SplitView Name="SideBar" DisplayMode="CompactOverlay"
@@ -114,7 +116,7 @@
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
-                    
+
                     <Frame Name="ContentFrame" SourcePageType="{Binding page, Mode=TwoWay}" Grid.Row="0"/>
                     <ProgressRing Name="ProgressRing"                 
                       Grid.Row="8" 
@@ -126,7 +128,5 @@
                 </Grid>
             </SplitView.Content>
         </SplitView>
-
-        <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"/>
     </Grid>
 </Page>

@@ -50,7 +50,7 @@ namespace UniversalSoundBoard
         {
             if((App.Current as App)._itemViewHolder.searchQuery == "")
             {
-                if ((App.Current as App)._itemViewHolder.title == "All Sounds")
+                if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds")) // <-- TODO
                 {
                     await SoundManager.GetAllSounds();
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;

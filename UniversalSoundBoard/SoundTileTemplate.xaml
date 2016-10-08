@@ -56,6 +56,7 @@
                     <MenuFlyoutSubItem x:Uid="SoundTile-Category" Name="CategoriesFlyoutSubItem" GotFocus="CategoriesFlyoutSubItem_GotFocus">
                         
                     </MenuFlyoutSubItem>
+                    <MenuFlyoutSeparator />
                     <MenuFlyoutItem x:Uid="SoundTile-ChangeImage" Name="SoundTileOptionsSetImage" Click="SoundTileOptionsSetImage_Click" />
                     <MenuFlyoutItem x:Uid="SoundTile-Rename" Name="SoundTileOptionsRename" Click="SoundTileOptionsRename_Click" />
                     <MenuFlyoutItem x:Uid="SoundTile-Delete" Name="SoundTileOptionsDelete" Click="SoundTileOptionsDelete_Click" />

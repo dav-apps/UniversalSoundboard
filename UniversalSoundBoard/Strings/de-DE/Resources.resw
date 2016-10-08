@@ -138,6 +138,15 @@
   <data name="DeleteCategoryContentDialog-Title" xml:space="preserve">
     <value>Kategorie löschen: </value>
   </data>
+  <data name="DeleteSoundContentDialog-Content" xml:space="preserve">
+    <value>Bist du dir sicher?</value>
+  </data>
+  <data name="DeleteSoundContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="DeleteSoundContentDialog-Title" xml:space="preserve">
+    <value>Sound löschen: </value>
+  </data>
   <data name="Drop" xml:space="preserve">
     <value>Fallen lassen, um einen neuen Sound hinzuzufügen</value>
   </data>
