@@ -37,6 +37,7 @@ namespace UniversalSoundBoard
     {
         List<string> Suggestions;
         ObservableCollection<Category> Categories;
+        ObservableCollection<Setting> SettingsListing;
 
         public MainPage()
         {
@@ -45,6 +46,11 @@ namespace UniversalSoundBoard
             SystemNavigationManager.GetForCurrentView().BackRequested += onBackRequested;
             Suggestions = new List<string>();
             CreateCategoriesObservableCollection();
+
+            SettingsListing = new ObservableCollection<Setting>();
+
+            //SettingsListing.Add(new Setting { Icon = "\uE2AF", Text = "Log in" });
+            SettingsListing.Add(new Setting { Icon = "\uE713", Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title"), Id = "Settings" });
         }
 
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -160,6 +166,11 @@ namespace UniversalSoundBoard
                 App.Current.Exit();
             }
 
+            if((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
+            {
+                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+            }
+
             if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
             {
                 goBack_Mobile();
@@ -226,6 +237,11 @@ namespace UniversalSoundBoard
         {
             var category = (Category)e.ClickedItem;
             SideBar.IsPaneOpen = false;
+
+            if((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
+            {
+                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+            }
 
             // Display all Sounds with the selected category
             if (category == Categories.First())
@@ -320,6 +336,27 @@ namespace UniversalSoundBoard
             this.Frame.Navigate(this.GetType());
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+        }
+
+        private void SettingsMenuListView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var setting = (Setting)e.ClickedItem;
+
+            if (setting.Id == "Settings")
+            {
+                // TODO Add Settings page
+                (App.Current as App)._itemViewHolder.page = typeof(SettingsPage);
+                (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title");
+                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            }
+           /* else if (setting.Text == "Log in")
+            {
+                // TODO Add login page
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                (App.Current as App)._itemViewHolder.page = typeof(LoginPage);
+            }
+            */
         }
     }
 }

@@ -156,6 +156,9 @@
   <data name="Search.PlaceholderText" xml:space="preserve">
     <value>Cherche des sons</value>
   </data>
+  <data name="Settings-Title" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
   <data name="SoundTile-Category.Text" xml:space="preserve">
     <value>Catégorie</value>
   </data>

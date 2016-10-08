@@ -10,4 +10,11 @@ namespace UniversalSoundBoard.Model
     {
         public List<Category> Categories { get; set; }
     }
+
+    public class Setting
+    {
+        public string Icon { get; set; }
+        public string Text { get; set; }
+        public string Id { get; set; }
+    }
 }
