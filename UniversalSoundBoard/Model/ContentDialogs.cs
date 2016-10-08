@@ -13,12 +13,52 @@ namespace UniversalSoundBoard.Model
     {
         public static TextBox NewCategoryTextBox;
         public static TextBox EditCategoryTextBox;
+        public static TextBox RenameSoundTextBox;
         public static ComboBox IconSelectionComboBox;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteSoundContentDialog;
+        public static ContentDialog RenameSoundContentDialog;
 
-        
+
+        public static ContentDialog CreateRenameSoundContentDialog(Sound sound)
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            RenameSoundContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("RenameSoundContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("RenameSoundContentDialog-PrimaryButton"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+            };
+
+            StackPanel stackPanel = new StackPanel();
+            stackPanel.Orientation = Orientation.Vertical;
+
+            RenameSoundTextBox = new TextBox { Width = 300 };
+            RenameSoundTextBox.Text = sound.Name;
+
+            stackPanel.Children.Add(RenameSoundTextBox);
+
+            RenameSoundContentDialog.Content = stackPanel;
+
+            RenameSoundTextBox.TextChanged += RenameSoundTextBox_TextChanged;
+
+            return RenameSoundContentDialog;
+        }
+
+        private static void RenameSoundTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (RenameSoundTextBox.Text.Length < 3)
+            {
+                RenameSoundContentDialog.IsPrimaryButtonEnabled = false;
+            }
+            else
+            {
+                RenameSoundContentDialog.IsPrimaryButtonEnabled = true;
+            }
+        }
+
         public static ContentDialog CreateDeleteSoundContentDialog(string soundName)
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();

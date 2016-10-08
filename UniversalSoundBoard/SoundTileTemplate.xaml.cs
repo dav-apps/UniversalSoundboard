@@ -83,25 +83,15 @@ namespace UniversalSoundBoard
 
         private async void SoundTileOptionsRename_Click(object sender, RoutedEventArgs e)
         {
-            await RenameContentDialog.ShowAsync();
+            var RenameSoundContentDialog = ContentDialogs.CreateRenameSoundContentDialog(this.Sound);
+            RenameSoundContentDialog.PrimaryButtonClick += RenameSoundContentDialog_PrimaryButtonClick;
+            await RenameSoundContentDialog.ShowAsync();
         }
 
-        private void RenameContentDialogTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            if(RenameContentDialogTextBox.Text.Length < 3)
-            {
-                RenameContentDialog.IsPrimaryButtonEnabled = false;
-            }
-            else
-            {
-                RenameContentDialog.IsPrimaryButtonEnabled = true;
-            }
-        }
-
-        private async void RenameContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void RenameSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Save new name
-            await FileManager.renameSound(this.Sound, RenameContentDialogTextBox.Text);
+            await FileManager.renameSound(this.Sound, ContentDialogs.RenameSoundTextBox.Text);
         }
 
         private void createCategoriesFlyout()

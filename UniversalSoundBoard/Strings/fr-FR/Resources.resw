@@ -162,6 +162,12 @@
   <data name="NewCategoryContentDialog-Title" xml:space="preserve">
     <value>Nouvelle catégorie</value>
   </data>
+  <data name="RenameSoundContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="RenameSoundContentDialog-Title" xml:space="preserve">
+    <value>Rebaptiser</value>
+  </data>
   <data name="Search.PlaceholderText" xml:space="preserve">
     <value>Cherche des sons</value>
   </data>
