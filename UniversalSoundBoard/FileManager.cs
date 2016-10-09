@@ -1,4 +1,6 @@
-﻿using System;
+﻿using NotificationsExtensions;
+using NotificationsExtensions.Tiles;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -8,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
 using Windows.Storage;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 using static UniversalSoundBoard.Model.Sound;
@@ -249,6 +252,76 @@ namespace UniversalSoundBoard
             categories.Remove(deletedCategory);
 
             await SaveCategoriesListAsync(categories);
+        }
+
+        public static void UpdateLiveTile()
+        {
+            if ((App.Current as App)._itemViewHolder.sounds.Count <= 0)
+            {
+                return;
+            }
+            List<Sound> sounds = new List<Sound>();
+            var sound = (App.Current as App)._itemViewHolder.sounds.First();
+
+            // Get sound with image
+            foreach (var s in (App.Current as App)._itemViewHolder.sounds)
+            {
+                if (s.ImageFile != null)
+                {
+                    sounds.Add(s);
+                }
+            }
+
+
+            if (sounds.Count <= 0)
+            {
+                return;
+            }
+            else
+            {
+                Random random = new Random();
+                sound = sounds.ElementAt(random.Next(sounds.Count));
+            }
+
+
+            TileBinding binding = new TileBinding()
+            {
+                Branding = TileBranding.NameAndLogo,
+
+                Content = new TileBindingContentAdaptive()
+                {
+                    PeekImage = new TilePeekImage()
+                    {
+                        //Source = "C:/Users/dav20/Anno.jpg"
+                        //Source = (App.Current as App)._itemViewHolder.sounds.First().ImageFile.Path
+                        Source = sound.ImageFile.Path
+                    },
+                    Children =
+                    {
+                        new AdaptiveText()
+                        {
+                            Text = sound.Name
+                        }
+                    },
+                    TextStacking = TileTextStacking.Center
+                }
+            };
+
+            TileContent content = new TileContent()
+            {
+                Visual = new TileVisual()
+                {
+                    TileMedium = binding,
+                    TileWide = binding,
+                    TileLarge = binding
+                }
+            };
+
+            // Create the tile notification
+            var notification = new TileNotification(content.GetXml());
+
+            // And send the notification
+            TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
         }
 
         // Methods not related to project

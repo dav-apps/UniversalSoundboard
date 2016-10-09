@@ -65,6 +65,7 @@ namespace UniversalSoundBoard
             {
                 // Application now has read/write access to the picked file
                 FileManager.addImage(file, this.Sound);
+                FileManager.UpdateLiveTile();
             }
         }
 

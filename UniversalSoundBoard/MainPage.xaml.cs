@@ -25,6 +25,9 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 using static UniversalSoundBoard.Model.Sound;
+using Windows.UI.Notifications;
+using NotificationsExtensions.Tiles; // NotificationsExtensions.Win10
+using NotificationsExtensions;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -58,6 +61,8 @@ namespace UniversalSoundBoard
             setDataContext();
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             await SoundManager.GetAllSounds();
+
+            FileManager.UpdateLiveTile();
         }
 
         private void setDataContext()
