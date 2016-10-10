@@ -196,6 +196,6 @@
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>0.1.8</value>
+    <value>0.2</value>
   </data>
 </root>

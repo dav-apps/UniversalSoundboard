@@ -89,48 +89,82 @@ namespace UniversalSoundBoard
         private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             string text = sender.Text;
-            if (String.IsNullOrEmpty(text)) goBack();
 
-            (App.Current as App)._itemViewHolder.title = text;
-            (App.Current as App)._itemViewHolder.searchQuery = text;
-            await SoundManager.GetSoundsByName(text);
-            Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(text)).Select(p => p.Name).ToList();
-            SearchAutoSuggestBox.ItemsSource = Suggestions;
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            if ((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
+            {
+                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+            }
+
+            if (String.IsNullOrEmpty(text))
+            {
+                await SoundManager.GetAllSounds();
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                MenuItemsListView.SelectedItem = Categories.First();
+                (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+            }else
+            {
+                (App.Current as App)._itemViewHolder.title = text;
+                (App.Current as App)._itemViewHolder.searchQuery = text;
+                SoundManager.GetSoundsByName(text);
+                Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(text)).Select(p => p.Name).ToList();
+                SearchAutoSuggestBox.ItemsSource = Suggestions;
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            }
         }
 
         private async void SearchAutoSuggestBox_TextChanged_Mobile(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             string text = sender.Text;
-            if (String.IsNullOrEmpty(text)) goBack();
 
-            (App.Current as App)._itemViewHolder.title = text;
-            (App.Current as App)._itemViewHolder.searchQuery = text;
-            
-            Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(text)).Select(p => p.Name).ToList();
-            SearchAutoSuggestBox.ItemsSource = Suggestions;
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-            await SoundManager.GetSoundsByName(text);
+            if((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+            {
+                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+            }
+
+            if (String.IsNullOrEmpty(text))
+            {
+                (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+                MenuItemsListView.SelectedItem = Categories.First();
+                await SoundManager.GetAllSounds();
+            }else
+            {
+                (App.Current as App)._itemViewHolder.title = text;
+                (App.Current as App)._itemViewHolder.searchQuery = text;
+
+                Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(text)).Select(p => p.Name).ToList();
+                SearchAutoSuggestBox.ItemsSource = Suggestions;
+                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                SoundManager.GetSoundsByName(text);
+            }
         }
 
-        private async void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        private void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
+            if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+            {
+                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+            }
+
             string text = sender.Text;
             (App.Current as App)._itemViewHolder.title = text;
             (App.Current as App)._itemViewHolder.searchQuery = text;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-            await SoundManager.GetSoundsByName(text);
+            SoundManager.GetSoundsByName(text);
         }
 
-        private async void SearchAutoSuggestBox_QuerySubmitted_Mobile(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        private void SearchAutoSuggestBox_QuerySubmitted_Mobile(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
+            if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+            {
+                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+            }
+
             string text = sender.Text;
             (App.Current as App)._itemViewHolder.title = text;
             (App.Current as App)._itemViewHolder.searchQuery = text;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-            await SoundManager.GetSoundsByName(text);
+            SoundManager.GetSoundsByName(text);
         }
 
         private void IconsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -140,40 +174,33 @@ namespace UniversalSoundBoard
 
         private async void goBack()
         {
-            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+            SearchAutoSuggestBox.Text = "";
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             MenuItemsListView.SelectedItem = Categories.First();
-            SearchAutoSuggestBox.Text = "";
             await SoundManager.GetAllSounds();
         }
 
         private async void goBack_Mobile()
         {
-            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-            MenuItemsListView.SelectedItem = Categories.First();
+            resetSearchAreaMobile();
 
-            SearchAutoSuggestBox.Text = "";
-            SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
-
-            AddButton.Visibility = Visibility.Visible;
-            SearchButton.Visibility = Visibility.Visible;
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-            await SoundManager.GetAllSounds();
+            if ((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
+            {
+                (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+                await SoundManager.GetAllSounds();
+            }
         }
 
         private void onBackRequested(object sender, BackRequestedEventArgs e)
         {
-            e.Handled = true;
-
             if(SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility == AppViewBackButtonVisibility.Collapsed)
             {
                 App.Current.Exit();
             }
 
-            if((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
+            if((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
             {
                 (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             }
@@ -186,6 +213,8 @@ namespace UniversalSoundBoard
             {
                 goBack();
             }
+
+            e.Handled = true;
         }
 
         public void chooseGoBack()
@@ -198,6 +227,16 @@ namespace UniversalSoundBoard
             {
                 goBack();
             }
+        }
+
+        private void resetSearchAreaMobile()
+        {
+            MenuItemsListView.SelectedItem = Categories.First();
+            //SearchAutoSuggestBox.Text = "";
+            SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
+            AddButton.Visibility = Visibility.Visible;
+            SearchButton.Visibility = Visibility.Visible;
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -255,6 +294,8 @@ namespace UniversalSoundBoard
             }
             else
             {
+                resetSearchAreaMobile();
+
                 (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
@@ -349,19 +390,27 @@ namespace UniversalSoundBoard
 
             if (setting.Id == "Settings")
             {
-                // TODO Add Settings page
                 (App.Current as App)._itemViewHolder.page = typeof(SettingsPage);
                 (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title");
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             }
-           /* else if (setting.Text == "Log in")
+            /* else if (setting.Text == "Log in")
+             {
+                 // TODO Add login page
+                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                 (App.Current as App)._itemViewHolder.page = typeof(LoginPage);
+             }
+             */
+
+            SideBar.IsPaneOpen = false;
+
+            if(Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
             {
-                // TODO Add login page
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                (App.Current as App)._itemViewHolder.page = typeof(LoginPage);
+                SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
+                SearchButton.Visibility = Visibility.Visible;
+                AddButton.Visibility = Visibility.Visible;
             }
-            */
         }
     }
 }

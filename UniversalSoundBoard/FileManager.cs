@@ -65,7 +65,7 @@ namespace UniversalSoundBoard
                 }
             }else
             {
-                await SoundManager.GetSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
+                SoundManager.GetSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             }
         }

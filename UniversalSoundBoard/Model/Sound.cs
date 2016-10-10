@@ -38,8 +38,11 @@ namespace UniversalSoundBoard.Model
 
         public class SoundManager{
 
+            static ObservableCollection<Sound> allSounds = new ObservableCollection<Sound>();
+
             private static async Task GetSavedSounds(ObservableCollection<Sound> sounds)
             {
+                allSounds.Clear();
                 // Create images folder if not exists
                 await FileManager.CreateImagesFolderIfNotExists();
 
@@ -98,6 +101,7 @@ namespace UniversalSoundBoard.Model
                 foreach (var sound in newSounds)
                 {
                     sounds.Add(sound);
+                    allSounds.Add(sound);
                 }
             }
 
@@ -108,14 +112,15 @@ namespace UniversalSoundBoard.Model
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
             }
 
-            public static async Task GetSoundsByName(string name)
+            public static void GetSoundsByName(string name)
             {
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 (App.Current as App)._itemViewHolder.sounds.Clear();
 
                 // Get Saved Sounds
                 ObservableCollection<Sound> allSounds = new ObservableCollection<Sound>();
-                await GetSavedSounds(allSounds);
+                //await GetSavedSounds(allSounds);
+                allSounds = SoundManager.allSounds;
 
                 ObservableCollection<Sound> newSounds = new ObservableCollection<Sound>();
 
