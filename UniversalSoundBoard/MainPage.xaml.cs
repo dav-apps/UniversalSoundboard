@@ -205,14 +205,7 @@ namespace UniversalSoundBoard
                 (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             }
 
-            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
-            {
-                goBack_Mobile();
-            }
-            else
-            {
-                goBack();
-            }
+            chooseGoBack();
 
             e.Handled = true;
         }
@@ -231,12 +224,15 @@ namespace UniversalSoundBoard
 
         private void resetSearchAreaMobile()
         {
-            MenuItemsListView.SelectedItem = Categories.First();
-            //SearchAutoSuggestBox.Text = "";
-            SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
-            AddButton.Visibility = Visibility.Visible;
-            SearchButton.Visibility = Visibility.Visible;
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+            {
+                MenuItemsListView.SelectedItem = Categories.First();
+                //SearchAutoSuggestBox.Text = "";
+                SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
+                AddButton.Visibility = Visibility.Visible;
+                SearchButton.Visibility = Visibility.Visible;
+                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            }
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
