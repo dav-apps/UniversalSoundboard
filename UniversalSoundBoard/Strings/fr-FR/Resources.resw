@@ -130,16 +130,16 @@
     <value>Annuler</value>
   </data>
   <data name="DeleteCategoryContentDialog-Content" xml:space="preserve">
-    <value>Tu es sure? Vos sons ne sont pas affectés.</value>
+    <value>Es-tu sûr? Tes sons ne sont pas affectés.</value>
   </data>
   <data name="DeleteCategoryContentDialog-PrimaryButton" xml:space="preserve">
-    <value>Annuler</value>
+    <value>Effacer</value>
   </data>
   <data name="DeleteCategoryContentDialog-Title" xml:space="preserve">
-    <value>Annuler la catégorie </value>
+    <value>Efface la catégorie </value>
   </data>
   <data name="DeleteSoundContentDialog-Content" xml:space="preserve">
-    <value>Tu es sure?</value>
+    <value>Es-tu sûr?</value>
   </data>
   <data name="DeleteSoundContentDialog-PrimaryButton" xml:space="preserve">
     <value>Annuler</value>
