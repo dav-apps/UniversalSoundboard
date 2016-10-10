@@ -10,9 +10,14 @@
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <StackPanel Grid.Row="0" Orientation="Horizontal"
+        <StackPanel Grid.Row="0" Margin="20">
+            <ToggleSwitch Name="LiveTileToggle" Header="Live Tile" Toggled="LiveTileToggle_Toggled"/>
+        </StackPanel>
+
+        <StackPanel Grid.Row="1" Orientation="Horizontal"
                     Margin="20">
             <TextBlock Text="Version" IsTextSelectionEnabled="True" Margin="0,0,4,0"/>
             <TextBlock x:Uid="Version" IsTextSelectionEnabled="True"/>

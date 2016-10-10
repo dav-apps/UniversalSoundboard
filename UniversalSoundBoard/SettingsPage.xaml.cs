@@ -5,6 +5,8 @@ using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Storage;
+using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -25,6 +27,40 @@ namespace UniversalSoundBoard
         public SettingsPage()
         {
             this.InitializeComponent();
+
+            setLiveTileToggle();
+        }
+
+        private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+
+            // Create a simple setting
+            localSettings.Values["liveTile"] = LiveTileToggle.IsOn;
+            if (!LiveTileToggle.IsOn)
+            {
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+            }else
+            {
+                FileManager.UpdateLiveTile();
+            }
+        }
+
+        private void setLiveTileToggle()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            var value = localSettings.Values["liveTile"];
+
+            if (value != null)
+            {
+                LiveTileToggle.IsOn = (bool)localSettings.Values["liveTile"];
+            }
+            else
+            {
+                LiveTileToggle.IsOn = false;
+                localSettings.Values["liveTile"] = false;
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+            }
         }
     }
 }

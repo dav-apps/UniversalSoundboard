@@ -256,8 +256,22 @@ namespace UniversalSoundBoard
 
         public static void UpdateLiveTile()
         {
-            if ((App.Current as App)._itemViewHolder.sounds.Count <= 0)
+            var localSettings = ApplicationData.Current.LocalSettings;
+            var value = localSettings.Values["liveTile"];
+            bool isLiveTileOn = false;
+
+            if (value != null)
             {
+                isLiveTileOn = (bool)localSettings.Values["liveTile"];
+            }else
+            {
+                localSettings.Values["liveTile"] = false;
+                isLiveTileOn = false;
+            }
+
+            if ((App.Current as App)._itemViewHolder.sounds.Count <= 0 || !isLiveTileOn)
+            {
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
                 return;
             }
             List<Sound> sounds = new List<Sound>();
@@ -292,8 +306,6 @@ namespace UniversalSoundBoard
                 {
                     PeekImage = new TilePeekImage()
                     {
-                        //Source = "C:/Users/dav20/Anno.jpg"
-                        //Source = (App.Current as App)._itemViewHolder.sounds.First().ImageFile.Path
                         Source = sound.ImageFile.Path
                     },
                     Children =
