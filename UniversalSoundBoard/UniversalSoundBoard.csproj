@@ -21,6 +21,7 @@
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
     <PackageCertificateThumbprint>B768B80EBA1FCABA2C76C1187ED2EF2A7FD3F05D</PackageCertificateThumbprint>
+    <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -130,7 +131,6 @@
     </AppxManifest>
     <PRIResource Include="Strings\en-US\Resources.resw" />
     <PRIResource Include="Strings\de-DE\Resources.resw" />
-    <PRIResource Include="Strings\fr-FR\Resources.resw" />
     <None Include="UniversalSoundBoard_StoreKey.pfx" />
     <None Include="UniversalSoundBoard_TemporaryKey.pfx" />
   </ItemGroup>

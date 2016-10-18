@@ -190,6 +190,10 @@ namespace UniversalSoundBoard
             {
                 (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
                 await SoundManager.GetAllSounds();
+            }else
+            {
+                MenuItemsListView.SelectedItem = Categories.First();
+                await SoundManager.GetAllSounds();
             }
         }
 
