@@ -130,7 +130,7 @@ namespace UniversalSoundBoard
         private void CategoriesFlyoutSubItem_GotFocus(object sender, RoutedEventArgs e)
         {
             unselectAllItemsOfCategoriesFlyoutSubItem();
-            if((App.Current as App)._itemViewHolder.title != "All Sounds" && (App.Current as App)._itemViewHolder.searchQuery == "")
+            if((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds") && (App.Current as App)._itemViewHolder.searchQuery == "")
             {
                 foreach(ToggleMenuFlyoutItem item in CategoriesFlyoutSubItem.Items)
                 {
