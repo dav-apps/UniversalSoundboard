@@ -54,6 +54,17 @@
                                     Tapped="CategoryDeleteButton_Tapped" />
             </StackPanel>
 
+            <Button Name="VolumeButton"
+                    RelativePanel.LeftOf="AddButton" 
+                    Margin="0,0,20,0" Height="45" Width="45" 
+                    FontFamily="Segoe MDL2 Assets" Content="&#xE767;">
+                <Button.Flyout>
+                    <Flyout Opened="VolumeFlyout_Opening">
+                        <Slider Name="VolumeSlider" ValueChanged="VolumeSlider_ValueChanged"
+                                Maximum="100" Minimum="0" Width="150" />
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
             <Button Name="AddButton" 
                     RelativePanel.LeftOf="SearchAutoSuggestBox" RelativePanel.AlignVerticalCenterWithPanel="True" 
                     Margin="0,0,20,0" Height="45" Width="45"

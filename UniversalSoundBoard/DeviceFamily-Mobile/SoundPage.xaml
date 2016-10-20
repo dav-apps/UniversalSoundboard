@@ -16,8 +16,6 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"/>
-
         <StackPanel Grid.Row="0" Orientation="Horizontal">
             <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" FontSize="24" />
             <SymbolIcon Name="CategoryEditButton" 

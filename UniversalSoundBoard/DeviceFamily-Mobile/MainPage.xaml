@@ -45,6 +45,17 @@
                     FontSize="20" FontFamily="Segoe MDL2 Assets" Content="&#xE700;"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
                     Click="HamburgerButton_Click"/>
+            <Button Name="VolumeButton"
+                    RelativePanel.LeftOf="AddButton" 
+                    Margin="0,0,20,0" Height="45" Width="45" 
+                    FontFamily="Segoe MDL2 Assets" Content="&#xE767;">
+                <Button.Flyout>
+                    <Flyout Opened="VolumeFlyout_Opening">
+                        <Slider Name="VolumeSlider" ValueChanged="VolumeSlider_ValueChanged"
+                                Maximum="100" Minimum="0" Width="150" />
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
             <Button Name="AddButton" 
                     RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.LeftOf="SearchButton"
                     Height="45" Width="45" Margin="0,0,20,0"
@@ -66,6 +77,7 @@
                             Width="200" Margin="20,0,0,0" 
                             QueryIcon="Find" Visibility="Collapsed"
                             TextChanged="SearchAutoSuggestBox_TextChanged_Mobile" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted_Mobile"/>
+            <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"/>
         </RelativePanel>
 
         <SplitView Name="SideBar" DisplayMode="Overlay"
