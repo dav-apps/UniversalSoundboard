@@ -209,14 +209,11 @@ namespace UniversalSoundBoard
 
         private void onBackRequested(object sender, BackRequestedEventArgs e)
         {
-            if(SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility == AppViewBackButtonVisibility.Collapsed)
+            if(Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && 
+                SearchAutoSuggestBox.Visibility == Visibility.Collapsed && 
+                (App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
             {
                 App.Current.Exit();
-            }
-
-            if((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-            {
-                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             }
 
             chooseGoBack();
@@ -228,10 +225,25 @@ namespace UniversalSoundBoard
         {
             if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
             {
-                goBack_Mobile();
+                if (SearchAutoSuggestBox.Visibility == Visibility.Visible)
+                {
+                    resetSearchAreaMobile();
+                }
+                else
+                {
+                    if((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+                    {
+                        (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+                    }
+                    goBack_Mobile();
+                }
             }
             else
             {
+                if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+                {
+                    (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+                }
                 goBack();
             }
         }
@@ -244,6 +256,7 @@ namespace UniversalSoundBoard
                 //SearchAutoSuggestBox.Text = "";
                 SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
                 AddButton.Visibility = Visibility.Visible;
+                VolumeButton.Visibility = Visibility.Visible;
                 SearchButton.Visibility = Visibility.Visible;
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             }
@@ -253,6 +266,7 @@ namespace UniversalSoundBoard
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             AddButton.Visibility = Visibility.Collapsed;
+            VolumeButton.Visibility = Visibility.Collapsed;
             SearchButton.Visibility = Visibility.Collapsed;
             SearchAutoSuggestBox.Visibility = Visibility.Visible;
 
@@ -313,7 +327,7 @@ namespace UniversalSoundBoard
             }
         }
 
-                private void SettingsMenuListView_ItemClick(object sender, ItemClickEventArgs e)
+        private void SettingsMenuListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var setting = (Setting)e.ClickedItem;
 
@@ -333,13 +347,7 @@ namespace UniversalSoundBoard
              */
 
             SideBar.IsPaneOpen = false;
-
-            if(Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
-            {
-                SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
-                SearchButton.Visibility = Visibility.Visible;
-                AddButton.Visibility = Visibility.Visible;
-            }
+            resetSearchAreaMobile();
         }
 
         private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)

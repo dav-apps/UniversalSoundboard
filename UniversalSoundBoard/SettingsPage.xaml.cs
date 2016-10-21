@@ -31,6 +31,16 @@ namespace UniversalSoundBoard
             setLiveTileToggle();
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            setDataContext();
+        }
+
+        private void setDataContext()
+        {
+            ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+        }
+
         private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
