@@ -23,10 +23,14 @@
             <ToggleSwitch Name="LiveTileToggle" Header="Live Tile" Toggled="LiveTileToggle_Toggled"/>
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Orientation="Horizontal"
+        <StackPanel Grid.Row="2"
                     Margin="20">
-            <TextBlock Text="Version" IsTextSelectionEnabled="True" Margin="0,0,4,0"/>
-            <TextBlock x:Uid="Version" IsTextSelectionEnabled="True"/>
+            <HyperlinkButton Content="Privacy Policy" NavigateUri="http://dav-software.com/privacy.html"/>
+
+            <StackPanel  Orientation="Horizontal">
+                <TextBlock Text="Version" IsTextSelectionEnabled="True" Margin="0,0,4,0"/>
+                <TextBlock x:Uid="Version" IsTextSelectionEnabled="True"/>
+            </StackPanel>
         </StackPanel>
     </Grid>
 </Page>

@@ -46,7 +46,7 @@
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
                     Click="HamburgerButton_Click"/>
             <Button Name="VolumeButton"
-                    RelativePanel.LeftOf="AddButton" 
+                    RelativePanel.LeftOf="AddButton" RelativePanel.AlignVerticalCenterWithPanel="True"
                     Margin="0,0,20,0" Height="45" Width="45" 
                     FontFamily="Segoe MDL2 Assets" Content="&#xE767;">
                 <Button.Flyout>
