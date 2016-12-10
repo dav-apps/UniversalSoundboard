@@ -366,6 +366,13 @@ namespace UniversalSoundBoard
             VolumeSlider.Value = (double)localSettings.Values["volume"] * 100;
         }
 
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.None;
+            (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Visible;
+            (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
+        }
+
 
         // Content Dialog Methods
 

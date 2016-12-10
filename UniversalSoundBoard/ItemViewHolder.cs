@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace UniversalSoundBoard
 {
@@ -20,7 +21,10 @@ namespace UniversalSoundBoard
         private List<Category> _categories;
         private string _searchQuery;
         private Visibility _editButtonVisibility;
+        private Visibility _normalOptionsVisibility;
+        private Visibility _multiSelectOptionsVisibility;
         private Type _page;
+        private ListViewSelectionMode _selectionMode;
 
         public string title
         {
@@ -99,6 +103,28 @@ namespace UniversalSoundBoard
             }
         }
 
+        public Visibility normalOptionsVisibility
+        {
+            get { return _normalOptionsVisibility; }
+
+            set
+            {
+                _normalOptionsVisibility = value;
+                NotifyPropertyChanged("normalOptionsVisibility");
+            }
+        }
+
+        public Visibility multiSelectOptionsVisibility
+        {
+            get { return _multiSelectOptionsVisibility; }
+
+            set
+            {
+                _multiSelectOptionsVisibility = value;
+                NotifyPropertyChanged("multiSelectOptionsVisibility");
+            }
+        }
+
         public Type page
         {
             get { return _page; }
@@ -109,6 +135,18 @@ namespace UniversalSoundBoard
                 NotifyPropertyChanged("page");
             }
         }
+
+        public ListViewSelectionMode selectionMode
+        {
+            get { return _selectionMode; }
+
+            set
+            {
+                _selectionMode = value;
+                NotifyPropertyChanged("selectionMode");
+            }
+        }
+
 
 
         public event PropertyChangedEventHandler PropertyChanged;

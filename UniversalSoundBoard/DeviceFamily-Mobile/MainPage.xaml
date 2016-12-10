@@ -8,7 +8,7 @@
     xmlns:data="using:UniversalSoundBoard.Model"
     mc:Ignorable="d">
     
-    <!-- This is for Phone -->
+    <!-- This is for Phone! -->
 
     <Page.Resources>
         <Style TargetType="TextBlock" x:Key="NavBarItemIconStyle">
@@ -45,38 +45,63 @@
                     FontSize="20" FontFamily="Segoe MDL2 Assets" Content="&#xE700;"
                     Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
                     Click="HamburgerButton_Click"/>
-            <Button Name="VolumeButton"
+
+            <StackPanel Name="NormalOptions" Orientation="Horizontal" Visibility="{Binding normalOptionsVisibility}"
+                        RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+                <Button Name="VolumeButton"
                     RelativePanel.LeftOf="AddButton" RelativePanel.AlignVerticalCenterWithPanel="True"
                     Margin="0,0,20,0" Height="45" Width="45" 
                     FontFamily="Segoe MDL2 Assets" Content="&#xE767;">
-                <Button.Flyout>
-                    <Flyout Opened="VolumeFlyout_Opening">
-                        <Slider Name="VolumeSlider" ValueChanged="VolumeSlider_ValueChanged"
+                    <Button.Flyout>
+                        <Flyout Opened="VolumeFlyout_Opening">
+                            <Slider Name="VolumeSlider" ValueChanged="VolumeSlider_ValueChanged"
                                 Maximum="100" Minimum="0" Width="150" />
-                    </Flyout>
-                </Button.Flyout>
-            </Button>
-            <Button Name="AddButton" 
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+
+                <Button Name="AddButton" 
                     RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.LeftOf="SearchButton"
                     Height="45" Width="45" Margin="0,0,20,0"
                     FontFamily="Segoe MDL2 Assets" Content="&#xE109;">
-                <Button.Flyout>
-                    <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem Name="NewSoundFlyoutItem" x:Uid="AddButton-Sound" Click="NewSoundFlyoutItem_Click" />
-                        <MenuFlyoutItem Name="NewCategoryFlyoutItem" x:Uid="AddButton-Category" Click="NewCategoryFlyoutItem_Click" />
-                    </MenuFlyout>
-                </Button.Flyout>
-            </Button>
-            <Button Name="SearchButton" 
+                    <Button.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Name="NewSoundFlyoutItem" x:Uid="AddButton-Sound" Click="NewSoundFlyoutItem_Click" />
+                            <MenuFlyoutItem Name="NewCategoryFlyoutItem" x:Uid="AddButton-Category" Click="NewCategoryFlyoutItem_Click" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+                <Button Name="SearchButton" 
                     RelativePanel.AlignRightWithPanel="True"
                     Height="45" Width="45" Margin="0,0,20,0" 
                     FontFamily="Segoe MDL2 Assets" Content="&#xE094;" 
                     Click="SearchButton_Click"/>
-            <AutoSuggestBox Name="SearchAutoSuggestBox" x:Uid="Search"
+                <AutoSuggestBox Name="SearchAutoSuggestBox" x:Uid="Search"
                             RelativePanel.RightOf="HamburgerButton" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True"
                             Width="200" Margin="20,0,0,0" 
                             QueryIcon="Find" Visibility="Collapsed"
                             TextChanged="SearchAutoSuggestBox_TextChanged_Mobile" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted_Mobile"/>
+            </StackPanel>
+            
+            <StackPanel Name="MultiSelectOptions" Orientation="Horizontal" Visibility="{Binding multiSelectOptionsVisibility}"
+                        RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+
+                <Button Name="PlayAllButton" 
+                    RelativePanel.AlignVerticalCenterWithPanel="True"
+                    Height="45" Width="45" Margin="0,0,20,0"
+                    FontFamily="Segoe MDL2 Assets" Content="&#xE768;" />
+                <Button Name="DeleteAllButton" 
+                    RelativePanel.AlignVerticalCenterWithPanel="True"
+                    Height="45" Width="45" Margin="0,0,20,0"
+                    FontFamily="Segoe MDL2 Assets" Content="&#xE74D;" />
+                <Button Name="CancelButton" 
+                    RelativePanel.AlignVerticalCenterWithPanel="True"
+                    Height="45" Margin="0,0,20,0"
+                    Content="Cancel"
+                    Click="CancelButton_Click"/>
+
+            </StackPanel>
+            
             <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"/>
         </RelativePanel>
 

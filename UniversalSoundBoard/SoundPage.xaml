@@ -9,8 +9,8 @@
     mc:Ignorable="d">
 
     <Grid Name="ContentRoot">
-        <GridView Name="SoundGridView" SelectionMode="None" ScrollViewer.BringIntoViewOnFocusChange="True"
-                              IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick"
+        <GridView Name="SoundGridView" SelectionMode="{Binding selectionMode}" ScrollViewer.BringIntoViewOnFocusChange="True"
+                              IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick" RightTapped="SoundGridView_RightTapped"
                               AllowDrop="True" Drop="SoundGridView_Drop" DragOver="SoundGridView_DragOver" ItemsSource="{Binding sounds, Mode=TwoWay}">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="data:Sound">

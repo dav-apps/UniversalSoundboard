@@ -35,7 +35,10 @@ namespace UniversalSoundBoard
             sounds = new ObservableCollection<Sound>(),
             categories = new List<Category>(),
             searchQuery = "",
-            editButtonVisibility = Visibility.Collapsed
+            editButtonVisibility = Visibility.Collapsed,
+            selectionMode = ListViewSelectionMode.None,
+            normalOptionsVisibility = Visibility.Visible,
+            multiSelectOptionsVisibility = Visibility.Collapsed
         };
 
         /// <summary>

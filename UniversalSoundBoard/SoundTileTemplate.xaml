@@ -47,7 +47,10 @@
             <ColumnDefinition Width="*" MaxWidth="150" x:Name="ColDef0" />
         </Grid.ColumnDefinitions>
 
-        <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" /> <!-- Use Binding instead of x:Bind -->
+        <RelativePanel Grid.Row="0">
+        <!--    <CheckBox Name="SelectionCheckBox" Visibility="Collapsed" Tapped="SelectionCheckBox_Tapped" /> -->
+            <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+        </RelativePanel>
         <TextBlock Grid.Row="1" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" />
         <Button Grid.Row="2" Content="&#xE10C;" FontFamily="Segoe MDL2 Assets" Background="White"
                 Name="SoundTileOptionsButton" HorizontalAlignment="Right">
