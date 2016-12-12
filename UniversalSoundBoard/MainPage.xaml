@@ -91,7 +91,14 @@
                 <Button Name="PlaySoundsButton" IsEnabled="{Binding multiSelectOptionsEnabled}"
                     RelativePanel.AlignVerticalCenterWithPanel="True"
                     Height="45" Width="45" Margin="0,0,20,0"
-                    FontFamily="Segoe MDL2 Assets" Content="&#xE768;" Click="PlaySoundsButton_Click" />
+                    FontFamily="Segoe MDL2 Assets" Content="&#xE768;" Click="PlaySoundsButton_Click">
+                    <Button.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Name="PlaySoundsSimultaneously" x:Uid="PlaySoundsSimultaneously" Click="PlaySoundsSimultaneously_Click" />
+                            <MenuFlyoutItem Name="PlaySoundsSuccessively" x:Uid="PlaySoundsSuccessively" Click="PlaySoundsSuccessively_Click" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
                 <Button Name="DeleteSoundsButton" IsEnabled="{Binding multiSelectOptionsEnabled}"
                     RelativePanel.AlignVerticalCenterWithPanel="True"
                     Height="45" Width="45" Margin="0,0,20,0"
@@ -104,7 +111,8 @@
 
             </StackPanel>
 
-            <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"/>
+            <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"
+                          MediaEnded="MyMediaElement_MediaEnded"/>
         </RelativePanel>
 
         <SplitView Name="SideBar" DisplayMode="CompactOverlay"

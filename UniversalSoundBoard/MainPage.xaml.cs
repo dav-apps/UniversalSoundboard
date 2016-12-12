@@ -41,6 +41,8 @@ namespace UniversalSoundBoard
         List<string> Suggestions;
         ObservableCollection<Category> Categories;
         ObservableCollection<Setting> SettingsListing;
+        int playedSound = 0;
+        bool playSoundsSuccessively = false;
 
         public MainPage()
         {
@@ -157,7 +159,15 @@ namespace UniversalSoundBoard
             }
 
             string text = sender.Text;
-            (App.Current as App)._itemViewHolder.title = text;
+            if(String.IsNullOrEmpty(text))
+            {
+                (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.title = text;
+            }
+            
             (App.Current as App)._itemViewHolder.searchQuery = text;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             SoundManager.GetSoundsByName(text);
@@ -223,6 +233,7 @@ namespace UniversalSoundBoard
 
         public void chooseGoBack()
         {
+            (App.Current as App)._itemViewHolder.selectedSounds.Clear();
             if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
             {
                 if (SearchAutoSuggestBox.Visibility == Visibility.Visible)
@@ -303,6 +314,7 @@ namespace UniversalSoundBoard
 
         private async void MenuItemsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            (App.Current as App)._itemViewHolder.selectedSounds.Clear();
             var category = (Category)e.ClickedItem;
             SideBar.IsPaneOpen = false;
 
@@ -337,6 +349,9 @@ namespace UniversalSoundBoard
                 (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title");
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+
+                // Reset multi select options and selected Sounds list
+                FileManager.resetMultiSelectArea();
             }
             /* else if (setting.Text == "Log in")
              {
@@ -368,9 +383,9 @@ namespace UniversalSoundBoard
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.None;
-            (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Visible;
-            (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
+            FileManager.resetMultiSelectArea();
+            playedSound = 0;
+            playSoundsSuccessively = false;
         }
 
         private void PlaySoundsButton_Click(object sender, RoutedEventArgs e)
@@ -397,6 +412,31 @@ namespace UniversalSoundBoard
             var editCategoryContentDialog = await ContentDialogs.CreateEditCategoryContentDialogAsync();
             editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
             await editCategoryContentDialog.ShowAsync();
+        }
+
+        private void PlaySoundsSimultaneously_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void PlaySoundsSuccessively_Click(object sender, RoutedEventArgs e)
+        {
+            playedSound = 0;
+            playSoundsSuccessively = true;
+            (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, (App.Current as App)._itemViewHolder.selectedSounds[0].AudioFile.Path);
+        }
+
+        private void MyMediaElement_MediaEnded(object sender, RoutedEventArgs e)
+        {
+            playedSound++;
+            // Play next sound
+            if(playedSound < (App.Current as App)._itemViewHolder.selectedSounds.Count && playSoundsSuccessively)
+            {
+                (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, (App.Current as App)._itemViewHolder.selectedSounds[playedSound].AudioFile.Path);
+            }else
+            {
+                playSoundsSuccessively = false;
+            }
         }
 
 

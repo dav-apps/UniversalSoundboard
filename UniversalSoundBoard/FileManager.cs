@@ -12,6 +12,7 @@ using UniversalSoundBoard.Model;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
 using static UniversalSoundBoard.Model.Sound;
 
@@ -335,6 +336,15 @@ namespace UniversalSoundBoard
             // And send the notification
             TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
         }
+
+        public static void resetMultiSelectArea()
+        {
+            (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.None;
+            (App.Current as App)._itemViewHolder.selectedSounds.Clear();
+            (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Visible;
+        }
+        
 
         // Methods not related to project
 
