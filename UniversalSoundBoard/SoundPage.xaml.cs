@@ -99,6 +99,64 @@ namespace UniversalSoundBoard
             //e.DragUIOverride.SetContentFromBitmapImage(new BitmapImage(new Uri("ms-appx:///Assets/clippy.jpg")));
         }
 
+        private void SoundGridView_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            //Sound item = (sender as GridView).DataContext as Sound;
+            //GridViewItem item = (sender as GridView).DataContext as GridViewItem;
+            switchSelectionMode();
+        }
+
+        private void SoundGridView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            //GridViewItem item = (sender as GridView).DataContext as GridViewItem;
+            switchSelectionMode();
+        }
+
+        private void SoundGridView_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            //GridViewItem item = (sender as GridView).DataContext as GridViewItem;
+            switchSelectionMode();
+        }
+
+        private void switchSelectionMode()
+        {
+            if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.Multiple)
+            {
+                // TODO: Select tapped item programmatically
+                //item.IsSelected = true;
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.Multiple;
+                (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Collapsed;
+                (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Visible;
+
+                //SoundGridView.SelectedItems.Add(item);
+            }
+        }
+
+        private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // If no items are selected, disable multi select buttons
+            if (SoundGridView.SelectedItems.Count > 0)
+            {
+                (App.Current as App)._itemViewHolder.multiSelectOptionsEnabled = true;
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.multiSelectOptionsEnabled = false;
+            }
+
+            // Add new item to selectedSounds list
+            if(e.AddedItems.Count == 1)
+            {
+                (App.Current as App)._itemViewHolder.selectedSounds.Add((Sound)e.AddedItems.First());
+            }else
+            {
+                (App.Current as App)._itemViewHolder.selectedSounds.Remove((Sound)e.RemovedItems.First());
+            }
+        } 
+
 
         // Content Dialog Methods
         private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -148,42 +206,6 @@ namespace UniversalSoundBoard
             this.Frame.Navigate(this.GetType());
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-        }
-
-        private void SoundGridView_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            //Sound item = (sender as GridView).DataContext as Sound;
-            //GridViewItem item = (sender as GridView).DataContext as GridViewItem;
-            switchSelectionMode();
-        }
-
-        private void SoundGridView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            //GridViewItem item = (sender as GridView).DataContext as GridViewItem;
-            switchSelectionMode();
-        }
-
-        private void SoundGridView_Holding(object sender, HoldingRoutedEventArgs e)
-        {
-            //GridViewItem item = (sender as GridView).DataContext as GridViewItem;
-            switchSelectionMode();
-        }
-
-        private void switchSelectionMode()
-        {
-            if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.Multiple)
-            {
-                // TODO: Select tapped item programmatically
-                //item.IsSelected = true;
-            }
-            else
-            {
-                (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.Multiple;
-                (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Collapsed;
-                (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Visible;
-
-                //SoundGridView.SelectedItems.Add(item);
-            }
         }
     }
 }

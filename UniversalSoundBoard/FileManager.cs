@@ -116,7 +116,7 @@ namespace UniversalSoundBoard
             }
             await sound.DetailsFile.DeleteAsync();
 
-            await UpdateGridView();
+            //await UpdateGridView();
         }
 
         public static async Task<StorageFile> createDataFolderAndJsonFileIfNotExistsAsync()

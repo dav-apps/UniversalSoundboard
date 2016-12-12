@@ -16,6 +16,7 @@ namespace UniversalSoundBoard
     {
         private string _title;
         private bool _progressRingIsActive;
+        private bool _multiSelectOptionsEnabled;
         private ObservableCollection<Sound> _sounds;
         private Uri _mediaElementSource;
         private List<Category> _categories;
@@ -25,6 +26,7 @@ namespace UniversalSoundBoard
         private Visibility _multiSelectOptionsVisibility;
         private Type _page;
         private ListViewSelectionMode _selectionMode;
+        private List<Sound> _selectedSounds;
 
         public string title
         {
@@ -45,6 +47,17 @@ namespace UniversalSoundBoard
             {
                 _progressRingIsActive = value;
                 NotifyPropertyChanged("progressRingIsActive");
+            }
+        }
+
+        public bool multiSelectOptionsEnabled
+        {
+            get { return _multiSelectOptionsEnabled; }
+
+            set
+            {
+                _multiSelectOptionsEnabled = value;
+                NotifyPropertyChanged("multiSelectOptionsEnabled");
             }
         }
 
@@ -144,6 +157,17 @@ namespace UniversalSoundBoard
             {
                 _selectionMode = value;
                 NotifyPropertyChanged("selectionMode");
+            }
+        }
+
+        public List<Sound> selectedSounds
+        {
+            get { return _selectedSounds; }
+
+            set
+            {
+                _selectedSounds = value;
+                NotifyPropertyChanged("selectedSounds");
             }
         }
 

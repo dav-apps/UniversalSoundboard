@@ -88,14 +88,14 @@
             <StackPanel Name="MultiSelectOptions" Orientation="Horizontal" Visibility="{Binding multiSelectOptionsVisibility}"
                         RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignRightWithPanel="True">
 
-                <Button Name="PlayAllButton" 
+                <Button Name="PlaySoundsButton" IsEnabled="{Binding multiSelectOptionsEnabled}"
                     RelativePanel.AlignVerticalCenterWithPanel="True"
                     Height="45" Width="45" Margin="0,0,20,0"
-                    FontFamily="Segoe MDL2 Assets" Content="&#xE768;" />
-                <Button Name="DeleteAllButton" 
+                    FontFamily="Segoe MDL2 Assets" Content="&#xE768;" Click="PlaySoundsButton_Click" />
+                <Button Name="DeleteSoundsButton" IsEnabled="{Binding multiSelectOptionsEnabled}"
                     RelativePanel.AlignVerticalCenterWithPanel="True"
                     Height="45" Width="45" Margin="0,0,20,0"
-                    FontFamily="Segoe MDL2 Assets" Content="&#xE74D;" />
+                    FontFamily="Segoe MDL2 Assets" Content="&#xE74D;" Click="DeleteSoundsButton_Click" />
                 <Button Name="CancelButton" 
                     RelativePanel.AlignVerticalCenterWithPanel="True"
                     Height="45" Margin="0,0,20,0"

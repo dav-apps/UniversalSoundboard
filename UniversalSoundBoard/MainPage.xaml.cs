@@ -373,8 +373,46 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
         }
 
+        private void PlaySoundsButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private async void DeleteSoundsButton_Click(object sender, RoutedEventArgs e)
+        {
+            var deleteSoundsContentDialog = ContentDialogs.CreateDeleteSoundsContentDialogAsync();
+            deleteSoundsContentDialog.PrimaryButtonClick += deleteSoundsContentDialog_PrimaryButtonClick;
+            await deleteSoundsContentDialog.ShowAsync();
+        }
+
+        private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var deleteCategoryContentDialog = ContentDialogs.CreateDeleteCategoryContentDialogAsync();
+            deleteCategoryContentDialog.PrimaryButtonClick += DeleteCategoryContentDialog_PrimaryButtonClick;
+            await deleteCategoryContentDialog.ShowAsync();
+        }
+
+        private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            var editCategoryContentDialog = await ContentDialogs.CreateEditCategoryContentDialogAsync();
+            editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
+            await editCategoryContentDialog.ShowAsync();
+        }
+
 
         // Content Dialog Methods
+
+        private async void deleteSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Delete Sounds
+            for (int i = 0; i < (App.Current as App)._itemViewHolder.selectedSounds.Count; i++)
+            {
+                await FileManager.deleteSound((App.Current as App)._itemViewHolder.selectedSounds.ElementAt(i));
+            }
+            // Clear selected sounds list
+            (App.Current as App)._itemViewHolder.selectedSounds.Clear();
+            await FileManager.UpdateGridView();
+        }
 
         private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
@@ -405,13 +443,6 @@ namespace UniversalSoundBoard
             this.Frame.Navigate(this.GetType());
         }
 
-        private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            var deleteCategoryContentDialog = ContentDialogs.CreateDeleteCategoryContentDialogAsync();
-            deleteCategoryContentDialog.PrimaryButtonClick += DeleteCategoryContentDialog_PrimaryButtonClick;
-            await deleteCategoryContentDialog.ShowAsync();
-        }
-
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.deleteCategory((App.Current as App)._itemViewHolder.title);
@@ -421,13 +452,6 @@ namespace UniversalSoundBoard
 
             // Reload page
             this.Frame.Navigate(this.GetType());
-        }
-
-        private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            var editCategoryContentDialog = await ContentDialogs.CreateEditCategoryContentDialogAsync();
-            editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
-            await editCategoryContentDialog.ShowAsync();
         }
 
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

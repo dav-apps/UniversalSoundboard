@@ -80,6 +80,7 @@ namespace UniversalSoundBoard
         private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.deleteSound(this.Sound);
+            await FileManager.UpdateGridView();
         }
 
         private async void SoundTileOptionsRename_Click(object sender, RoutedEventArgs e)

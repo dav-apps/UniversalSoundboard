@@ -38,7 +38,9 @@ namespace UniversalSoundBoard
             editButtonVisibility = Visibility.Collapsed,
             selectionMode = ListViewSelectionMode.None,
             normalOptionsVisibility = Visibility.Visible,
-            multiSelectOptionsVisibility = Visibility.Collapsed
+            multiSelectOptionsVisibility = Visibility.Collapsed,
+            multiSelectOptionsEnabled = false,
+            selectedSounds = new List<Sound>()
         };
 
         /// <summary>

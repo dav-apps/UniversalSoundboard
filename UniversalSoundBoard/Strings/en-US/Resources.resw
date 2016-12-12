@@ -150,6 +150,16 @@
   <data name="DeleteSoundContentDialog-Title" xml:space="preserve">
     <value>Delete </value>
   </data>
+  <data name="DeleteSoundsContentDialog-Content" xml:space="preserve">
+    <value>Are you sure?</value>
+  </data>
+  <data name="DeleteSoundsContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="DeleteSoundsContentDialog-Title" xml:space="preserve">
+    <value>Delete Sounds</value>
+    <comment>Löschen von mehreren Sounds</comment>
+  </data>
   <data name="Drop" xml:space="preserve">
     <value>Drop to create a custom sound and tile</value>
     <comment>Wenn man Sounddatei ins Fenster zieht</comment>

@@ -19,7 +19,23 @@ namespace UniversalSoundBoard.Model
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteSoundContentDialog;
         public static ContentDialog RenameSoundContentDialog;
+        public static ContentDialog DeleteSoundsContentDialog;
 
+
+        public static ContentDialog CreateDeleteSoundsContentDialogAsync()
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            ContentDialog DeleteSoundsContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("DeleteSoundsContentDialog-Title"),
+                Content = loader.GetString("DeleteSoundsContentDialog-Content"),
+                PrimaryButtonText = loader.GetString("DeleteSoundsContentDialog-PrimaryButton"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+            };
+
+            return DeleteSoundsContentDialog;
+        }
 
         public static ContentDialog CreateRenameSoundContentDialog(Sound sound)
         {
