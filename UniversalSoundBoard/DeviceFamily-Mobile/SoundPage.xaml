@@ -26,9 +26,9 @@
                                     Tapped="CategoryDeleteButton_Tapped" />
         </StackPanel>
 
-        <GridView Name="SoundGridView" Grid.Row="1" SelectionMode="{Binding selectionMode}" Holding="SoundGridView_Holding" 
+        <GridView Name="SoundGridView" Grid.Row="1" SelectionMode="{Binding selectionMode}" 
                               SelectionChanged="SoundGridView_SelectionChanged"
-                              IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick" DoubleTapped="SoundGridView_DoubleTapped"
+                              IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick" DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" RightTapped="SoundGridView_RightTapped"
                               ItemsSource="{Binding sounds, Mode=TwoWay}">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="data:Sound">

@@ -224,9 +224,15 @@ namespace UniversalSoundBoard
                 (App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
             {
                 App.Current.Exit();
+            }else if((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds")
+                && (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility == Visibility.Visible
+                && Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
+            {
+                FileManager.resetMultiSelectArea();
+            }else
+            {
+                chooseGoBack();
             }
-
-            chooseGoBack();
 
             e.Handled = true;
         }
@@ -416,7 +422,16 @@ namespace UniversalSoundBoard
 
         private void PlaySoundsSimultaneously_Click(object sender, RoutedEventArgs e)
         {
-
+            // Create a mediaElement for each sound
+            foreach(Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
+            {
+                MediaElement media = new MediaElement();
+                media.AutoPlay = true;
+                media.Source = new Uri(this.BaseUri, sound.AudioFile.Path);
+                var localSettings = ApplicationData.Current.LocalSettings;
+                media.Volume = (double)localSettings.Values["volume"];
+                MediaElementStackPanel.Children.Add(media);
+            }
         }
 
         private void PlaySoundsSuccessively_Click(object sender, RoutedEventArgs e)

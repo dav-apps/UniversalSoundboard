@@ -111,8 +111,11 @@
 
             </StackPanel>
 
-            <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"
+            <StackPanel Name="MediaElementStackPanel">
+                <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"
                           MediaEnded="MyMediaElement_MediaEnded"/>
+            </StackPanel>
+            
         </RelativePanel>
 
         <SplitView Name="SideBar" DisplayMode="CompactOverlay"

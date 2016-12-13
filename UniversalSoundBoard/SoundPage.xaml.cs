@@ -101,37 +101,26 @@ namespace UniversalSoundBoard
 
         private void SoundGridView_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            //Sound item = (sender as GridView).DataContext as Sound;
-            //GridViewItem item = (sender as GridView).DataContext as GridViewItem;
             switchSelectionMode();
         }
 
         private void SoundGridView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            //GridViewItem item = (sender as GridView).DataContext as GridViewItem;
             switchSelectionMode();
         }
 
         private void SoundGridView_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            //GridViewItem item = (sender as GridView).DataContext as GridViewItem;
             switchSelectionMode();
         }
 
         private void switchSelectionMode()
         {
-            if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.Multiple)
-            {
-                // TODO: Select tapped item programmatically
-                //item.IsSelected = true;
-            }
-            else
+            if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
             {
                 (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.Multiple;
                 (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Collapsed;
                 (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Visible;
-
-                //SoundGridView.SelectedItems.Add(item);
             }
         }
 
