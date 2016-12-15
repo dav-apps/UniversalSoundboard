@@ -43,7 +43,7 @@
                     FontFamily="Segoe MDL2 Assets" Content="&#xE700;" FontSize="20" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
                     Click="HamburgerButton_Click"/>
 
-            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="20,0,0,0"
+            <StackPanel Name="EditCategoryStackPanel" Grid.Row="0" Orientation="Horizontal" Margin="20,0,0,0"
                         RelativePanel.RightOf="HamburgerButton" RelativePanel.AlignVerticalCenterWithPanel="True">
                 <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" />
                 <SymbolIcon Name="CategoryEditButton" 
@@ -54,67 +54,79 @@
                                     Tapped="CategoryDeleteButton_Tapped" />
             </StackPanel>
 
-            <StackPanel Name="NormalOptions" Orientation="Horizontal" Visibility="{Binding normalOptionsVisibility}"
-                        RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignRightWithPanel="True">
-                <Button Name="VolumeButton"
-                    RelativePanel.LeftOf="AddButton" RelativePanel.AlignVerticalCenterWithPanel="True"
+            <Button Name="VolumeButton"
+                    RelativePanel.LeftOf="SelectionOptions" RelativePanel.AlignVerticalCenterWithPanel="True"
                     Margin="0,0,20,0" Height="45" Width="45" 
                     FontFamily="Segoe MDL2 Assets" Content="&#xE767;">
-                    <Button.Flyout>
-                        <Flyout Opened="VolumeFlyout_Opening">
-                            <Slider Name="VolumeSlider" ValueChanged="VolumeSlider_ValueChanged"
+                <Button.Flyout>
+                    <Flyout Opened="VolumeFlyout_Opening">
+                        <Slider Name="VolumeSlider" ValueChanged="VolumeSlider_ValueChanged"
                                 Maximum="100" Minimum="0" Width="150" />
-                        </Flyout>
-                    </Button.Flyout>
-                </Button>
-                <Button Name="AddButton" 
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+
+            <StackPanel Name="SelectionOptions" Orientation="Horizontal" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True">
+                <StackPanel Name="NormalOptions" Orientation="Horizontal" Visibility="{Binding normalOptionsVisibility}">
+
+                    <Button Name="AddButton" 
                     RelativePanel.LeftOf="SearchAutoSuggestBox" RelativePanel.AlignVerticalCenterWithPanel="True" 
                     Margin="0,0,20,0" Height="45" Width="45"
                     FontFamily="Segoe MDL2 Assets" Content="&#xE109;">
-                    <Button.Flyout>
-                        <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem Name="NewSoundFlyoutItem" x:Uid="AddButton-Sound" Click="NewSoundFlyoutItem_Click" />
-                            <MenuFlyoutItem Name="NewCategoryFlyoutItem" x:Uid="AddButton-Category" Click="NewCategoryFlyoutItem_Click" />
-                        </MenuFlyout>
-                    </Button.Flyout>
-                </Button>
-                <AutoSuggestBox Name="SearchAutoSuggestBox" x:Uid="Search"
-                            RelativePanel.AlignRightWithPanel="True" VerticalAlignment="Center"
+                        <Button.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem Name="NewSoundFlyoutItem" x:Uid="AddButton-Sound" Click="NewSoundFlyoutItem_Click" />
+                                <MenuFlyoutItem Name="NewCategoryFlyoutItem" x:Uid="AddButton-Category" Click="NewCategoryFlyoutItem_Click" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+                    <AutoSuggestBox Name="SearchAutoSuggestBox" x:Uid="Search"
+                            VerticalAlignment="Center"
                             QueryIcon="Find" 
                             Margin="0,0,10,0" Width="200"
                             TextChanged="SearchAutoSuggestBox_TextChanged" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted"/>
-            </StackPanel>
+                </StackPanel>
 
-            <StackPanel Name="MultiSelectOptions" Orientation="Horizontal" Visibility="{Binding multiSelectOptionsVisibility}"
-                        RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignRightWithPanel="True">
+                <StackPanel Name="MultiSelectOptions" Orientation="Horizontal" Visibility="{Binding multiSelectOptionsVisibility}"
+                        RelativePanel.AlignVerticalCenterWithPanel="True">
 
-                <Button Name="PlaySoundsButton" IsEnabled="{Binding multiSelectOptionsEnabled}"
-                    RelativePanel.AlignVerticalCenterWithPanel="True"
-                    Height="45" Width="45" Margin="0,0,20,0"
-                    FontFamily="Segoe MDL2 Assets" Content="&#xE768;" Click="PlaySoundsButton_Click">
-                    <Button.Flyout>
-                        <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem Name="PlaySoundsSimultaneously" x:Uid="PlaySoundsSimultaneously" Click="PlaySoundsSimultaneously_Click" />
-                            <MenuFlyoutItem Name="PlaySoundsSuccessively" x:Uid="PlaySoundsSuccessively" Click="PlaySoundsSuccessively_Click" />
-                        </MenuFlyout>
-                    </Button.Flyout>
-                </Button>
-                <Button Name="DeleteSoundsButton" IsEnabled="{Binding multiSelectOptionsEnabled}"
-                    RelativePanel.AlignVerticalCenterWithPanel="True"
-                    Height="45" Width="45" Margin="0,0,20,0"
-                    FontFamily="Segoe MDL2 Assets" Content="&#xE74D;" Click="DeleteSoundsButton_Click" />
-                <Button Name="CancelButton" 
-                    RelativePanel.AlignVerticalCenterWithPanel="True"
-                    Height="45" Margin="0,0,20,0"
-                    Content="Cancel" 
-                    Click="CancelButton_Click" />
+                    <Button Name="PlaySoundsButton" IsEnabled="{Binding multiSelectOptionsEnabled}"
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        Height="45" Width="45" Margin="0,0,20,0"
+                        FontFamily="Segoe MDL2 Assets" Content="&#xE768;">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem Name="PlaySoundsSimultaneously" x:Uid="PlaySoundsSimultaneously" Click="PlaySoundsSimultaneously_Click" />
+                                <MenuFlyoutItem Name="PlaySoundsSuccessively" x:Uid="PlaySoundsSuccessively" Click="PlaySoundsSuccessively_Click" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Button Name="MultiSelectOptionsButton_More" IsEnabled="{Binding multiSelectOptionsEnabled}"
+                        Height="45" Width="45" Margin="0,0,20,0"
+                        FontFamily="Segoe MDL2 Assets" Content="&#xE10C;">
+                        <Button.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutSubItem Name="MultiSelectOptionsButton_ChangeCategory" x:Uid="MultiSelectOptionsButton-ChangeCategory" 
+                                                   GotFocus="MultiSelectOptionsButton_ChangeCategory_GotFocus">
 
+                                </MenuFlyoutSubItem>
+                                <MenuFlyoutItem Name="MultiSelectOptionsButton_Delete" x:Uid="MultiSelectOptionsButton-Delete" Click="MultiSelectOptionsButton_Delete_Click"/>
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+                    <Button Name="CancelButton" 
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        Height="45" Margin="0,0,20,0"
+                        x:Uid="MultiSelectionCancelButton"
+                        Click="CancelButton_Click" />
+
+                </StackPanel>
             </StackPanel>
 
             <StackPanel Name="MediaElementStackPanel">
-                <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"
-                          MediaEnded="MyMediaElement_MediaEnded"/>
             </StackPanel>
+            <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"
+                          MediaEnded="MyMediaElement_MediaEnded"/>
             
         </RelativePanel>
 

@@ -116,38 +116,21 @@ namespace UniversalSoundBoard
         {
             var sound = this.Sound;
             var selectedItem = (ToggleMenuFlyoutItem) sender;
-            //Category category = await FileManager.GetCategoryByNameAsync(selectedItem.Text);
             string category = selectedItem.Text;
-            sound.CategoryName = category;
-
+            await sound.setCategory(category);
+            
             unselectAllItemsOfCategoriesFlyoutSubItem();
             selectedItem.IsChecked = true;
-
-            // Create / get details json and write category into it
-            SoundDetails details = new SoundDetails { Category = category };
-            await FileManager.WriteFile(await FileManager.createSoundDetailsFileIfNotExistsAsync(this.Sound.Name), details);
         }
 
         private void CategoriesFlyoutSubItem_GotFocus(object sender, RoutedEventArgs e)
         {
             unselectAllItemsOfCategoriesFlyoutSubItem();
-            if((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds") && (App.Current as App)._itemViewHolder.searchQuery == "")
+            foreach (ToggleMenuFlyoutItem item in CategoriesFlyoutSubItem.Items)
             {
-                foreach(ToggleMenuFlyoutItem item in CategoriesFlyoutSubItem.Items)
+                if (item.Text == this.Sound.CategoryName)
                 {
-                    if(item.Text == (App.Current as App)._itemViewHolder.title)
-                    {
-                        item.IsChecked = true;
-                    }
-                }
-            }else
-            {
-                foreach(ToggleMenuFlyoutItem item in CategoriesFlyoutSubItem.Items)
-                {
-                    if(item.Text == this.Sound.CategoryName)
-                    {
-                        item.IsChecked = true;
-                    }
+                    item.IsChecked = true;
                 }
             }
         }

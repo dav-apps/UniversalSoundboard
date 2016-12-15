@@ -375,6 +375,10 @@ namespace UniversalSoundBoard
         {
             // Change Volume of mediaElement
             MyMediaElement.Volume = (double)VolumeSlider.Value / 100;
+            foreach(MediaElement media in MediaElementStackPanel.Children)
+            {
+                media.Volume = (double)VolumeSlider.Value / 100;
+            }
 
             // Save new Volume
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -385,25 +389,6 @@ namespace UniversalSoundBoard
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             VolumeSlider.Value = (double)localSettings.Values["volume"] * 100;
-        }
-
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            FileManager.resetMultiSelectArea();
-            playedSound = 0;
-            playSoundsSuccessively = false;
-        }
-
-        private void PlaySoundsButton_Click(object sender, RoutedEventArgs e)
-        {
-
-        }
-
-        private async void DeleteSoundsButton_Click(object sender, RoutedEventArgs e)
-        {
-            var deleteSoundsContentDialog = ContentDialogs.CreateDeleteSoundsContentDialogAsync();
-            deleteSoundsContentDialog.PrimaryButtonClick += deleteSoundsContentDialog_PrimaryButtonClick;
-            await deleteSoundsContentDialog.ShowAsync();
         }
 
         private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -418,6 +403,25 @@ namespace UniversalSoundBoard
             var editCategoryContentDialog = await ContentDialogs.CreateEditCategoryContentDialogAsync();
             editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
             await editCategoryContentDialog.ShowAsync();
+        }
+
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            FileManager.resetMultiSelectArea();
+            playedSound = 0;
+            playSoundsSuccessively = false;
+        }
+
+        private async void MultiSelectOptionsButton_Delete_Click(object sender, RoutedEventArgs e)
+        {
+            var deleteSoundsContentDialog = ContentDialogs.CreateDeleteSoundsContentDialogAsync();
+            deleteSoundsContentDialog.PrimaryButtonClick += deleteSoundsContentDialog_PrimaryButtonClick;
+            await deleteSoundsContentDialog.ShowAsync();
+        }
+
+        private void MultiSelectOptionsButton_ChangeCategory_GotFocus(object sender, RoutedEventArgs e)
+        {
+            createCategoriesFlyout();
         }
 
         private void PlaySoundsSimultaneously_Click(object sender, RoutedEventArgs e)
@@ -451,6 +455,29 @@ namespace UniversalSoundBoard
             }else
             {
                 playSoundsSuccessively = false;
+            }
+        }
+
+        private void createCategoriesFlyout()
+        {
+            MultiSelectOptionsButton_ChangeCategory.Items.Clear();
+
+            foreach (Category category in (App.Current as App)._itemViewHolder.categories)
+            {
+                var item = new MenuFlyoutItem { Text = category.Name };
+                item.Click += MultiSelectOptionsButton_ChangeCategory_Item_Click;
+
+                MultiSelectOptionsButton_ChangeCategory.Items.Add(item);
+            }
+        }
+
+        private async void MultiSelectOptionsButton_ChangeCategory_Item_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedItem = (MenuFlyoutItem)sender;
+            string category = selectedItem.Text;
+            foreach (Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
+            {
+                await sound.setCategory(category);
             }
         }
 

@@ -35,6 +35,15 @@ namespace UniversalSoundBoard.Model
             this.AudioFile = AudioFile;
         }
 
+        public async Task setCategory(string category)
+        {
+            CategoryName = category;
+
+            // Create / get details json and write category into it
+            SoundDetails details = new SoundDetails { Category = category };
+            await FileManager.WriteFile(await FileManager.createSoundDetailsFileIfNotExistsAsync(Name), details);
+        }
+
 
         public class SoundManager{
 
