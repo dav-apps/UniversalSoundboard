@@ -47,9 +47,7 @@
             <ColumnDefinition Width="*" MaxWidth="150" x:Name="ColDef0" />
         </Grid.ColumnDefinitions>
 
-        <RelativePanel Grid.Row="0">
-            <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
-        </RelativePanel>
+        <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <TextBlock Grid.Row="1" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" />
         <Button Grid.Row="2" Content="&#xE10C;" FontFamily="Segoe MDL2 Assets" Background="White"
                 Name="SoundTileOptionsButton" HorizontalAlignment="Right">

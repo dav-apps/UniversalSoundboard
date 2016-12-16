@@ -305,6 +305,7 @@ namespace UniversalSoundBoard
 
             var files = await picker.PickMultipleFilesAsync();
             (App.Current as App)._itemViewHolder.progressRingIsActive = true;
+            AddButton.IsEnabled = false;
 
             if (files.Count > 0)
             {
@@ -315,6 +316,7 @@ namespace UniversalSoundBoard
                 }
                 chooseGoBack();
             }
+            AddButton.IsEnabled = true;
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;
         }
 

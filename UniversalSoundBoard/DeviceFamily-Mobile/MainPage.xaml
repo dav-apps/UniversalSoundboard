@@ -48,7 +48,7 @@
 
             <Button Name="VolumeButton"
                     RelativePanel.LeftOf="SelectionOptions" RelativePanel.AlignVerticalCenterWithPanel="True"
-                    Margin="0,0,20,0" Height="45" Width="45" 
+                    Margin="0,0,15,0" Height="45" Width="45" 
                     FontFamily="Segoe MDL2 Assets" Content="&#xE767;">
                 <Button.Flyout>
                     <Flyout Opened="VolumeFlyout_Opening">
@@ -64,7 +64,7 @@
 
                     <Button Name="AddButton" 
                     RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.LeftOf="SearchButton"
-                    Height="45" Width="45" Margin="0,0,20,0"
+                    Height="45" Width="45" Margin="0,0,15,0"
                     FontFamily="Segoe MDL2 Assets" Content="&#xE109;">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
@@ -75,7 +75,7 @@
                     </Button>
                     <Button Name="SearchButton" 
                     RelativePanel.AlignRightWithPanel="True"
-                    Height="45" Width="45" Margin="0,0,20,0" 
+                    Height="45" Width="45" Margin="0,0,15,0" 
                     FontFamily="Segoe MDL2 Assets" Content="&#xE094;" 
                     Click="SearchButton_Click"/>
                     <AutoSuggestBox Name="SearchAutoSuggestBox" x:Uid="Search"
@@ -89,9 +89,9 @@
                         RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignRightWithPanel="True">
 
                     <Button Name="PlaySoundsButton" IsEnabled="{Binding multiSelectOptionsEnabled}"
-                    RelativePanel.AlignVerticalCenterWithPanel="True"
-                    Height="45" Width="45" Margin="0,0,20,0"
-                    FontFamily="Segoe MDL2 Assets" Content="&#xE768;">
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        Height="45" Width="45" Margin="0,0,15,0"
+                        FontFamily="Segoe MDL2 Assets" Content="&#xE768;">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <MenuFlyoutItem Name="PlaySoundsSimultaneously" x:Uid="PlaySoundsSimultaneously" Click="PlaySoundsSimultaneously_Click" />
@@ -101,7 +101,7 @@
                     </Button>
                     <Button Name="MultiSelectOptionsButton_More" IsEnabled="{Binding multiSelectOptionsEnabled}"
                         RelativePanel.AlignVerticalCenterWithPanel="True"
-                        Height="45" Width="45" Margin="0,0,20,0"
+                        Height="45" Width="45" Margin="0,0,15,0"
                         FontFamily="Segoe MDL2 Assets" Content="&#xE10C;">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
@@ -114,10 +114,10 @@
                         </Button.Flyout>
                     </Button>
                     <Button Name="CancelButton" 
-                    RelativePanel.AlignVerticalCenterWithPanel="True"
-                    Height="45" Margin="0,0,20,0"
-                    x:Uid="MultiSelectionCancelButton"
-                    Click="CancelButton_Click"/>
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        Height="45" Margin="0,0,15,0"
+                        x:Uid="MultiSelectionCancelButton"
+                        Click="CancelButton_Click"/>
 
                 </StackPanel>
             </StackPanel>
