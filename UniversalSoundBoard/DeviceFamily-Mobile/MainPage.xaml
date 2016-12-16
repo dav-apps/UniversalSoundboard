@@ -74,10 +74,10 @@
                         </Button.Flyout>
                     </Button>
                     <Button Name="SearchButton" 
-                    RelativePanel.AlignRightWithPanel="True"
-                    Height="45" Width="45" Margin="0,0,15,0" 
-                    FontFamily="Segoe MDL2 Assets" Content="&#xE094;" 
-                    Click="SearchButton_Click"/>
+                        RelativePanel.AlignRightWithPanel="True"
+                        Height="45" Width="45" Margin="0,0,15,0" 
+                        FontFamily="Segoe MDL2 Assets" Content="&#xE094;" 
+                        Click="SearchButton_Click"/>
                     <AutoSuggestBox Name="SearchAutoSuggestBox" x:Uid="Search"
                             RelativePanel.RightOf="HamburgerButton" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True"
                             Width="200" Margin="20,0,0,0" 
@@ -95,7 +95,13 @@
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <MenuFlyoutItem Name="PlaySoundsSimultaneously" x:Uid="PlaySoundsSimultaneously" Click="PlaySoundsSimultaneously_Click" />
-                                <MenuFlyoutItem Name="PlaySoundsSuccessively" x:Uid="PlaySoundsSuccessively" Click="PlaySoundsSuccessively_Click" />
+                                <MenuFlyoutSubItem Name="PlaySoundsSuccessively" x:Uid="PlaySoundsSuccessively">
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_1x" Text="1x" Click="PlaySoundsSuccessively_1x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_2x" Text="2x" Click="PlaySoundsSuccessively_2x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_5x" Text="5x" Click="PlaySoundsSuccessively_5x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_10x" Text="10x" Click="PlaySoundsSuccessively_10x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_endless" Text="∞" Click="PlaySoundsSuccessively_endless_Click" />
+                                </MenuFlyoutSubItem>
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>

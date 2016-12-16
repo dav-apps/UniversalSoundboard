@@ -96,8 +96,14 @@
                         FontFamily="Segoe MDL2 Assets" Content="&#xE768;">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
-                                <MenuFlyoutItem Name="PlaySoundsSimultaneously" x:Uid="PlaySoundsSimultaneously" Click="PlaySoundsSimultaneously_Click" />
-                                <MenuFlyoutItem Name="PlaySoundsSuccessively" x:Uid="PlaySoundsSuccessively" Click="PlaySoundsSuccessively_Click" />
+                                <MenuFlyoutItem Name="PlaySoundsSimultaneously" x:Uid="PlaySoundsSimultaneously" Click="PlaySoundsSimultaneously_Click"/>
+                                <MenuFlyoutSubItem Name="PlaySoundsSuccessively" x:Uid="PlaySoundsSuccessively">
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_1x" Text="1x" Click="PlaySoundsSuccessively_1x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_2x" Text="2x" Click="PlaySoundsSuccessively_2x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_5x" Text="5x" Click="PlaySoundsSuccessively_5x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_10x" Text="10x" Click="PlaySoundsSuccessively_10x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_endless" Text="∞" Click="PlaySoundsSuccessively_endless_Click" />
+                                </MenuFlyoutSubItem>
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>

@@ -41,8 +41,11 @@ namespace UniversalSoundBoard
         List<string> Suggestions;
         ObservableCollection<Category> Categories;
         ObservableCollection<Setting> SettingsListing;
+        List<Sound> SoundList;
         int playedSound = 0;
         bool playSoundsSuccessively = false;
+        int playSoundsSuccessivelyRounds = 0;
+        int playedRounds = 0;
 
         public MainPage()
         {
@@ -53,6 +56,7 @@ namespace UniversalSoundBoard
             CreateCategoriesObservableCollection();
 
             SettingsListing = new ObservableCollection<Setting>();
+            SoundList = new List<Sound>();
 
             //SettingsListing.Add(new Setting { Icon = "\uE2AF", Text = "Log in" });
             SettingsListing.Add(new Setting { Icon = "\uE713", Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title"), Id = "Settings" });
@@ -410,8 +414,6 @@ namespace UniversalSoundBoard
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             FileManager.resetMultiSelectArea();
-            playedSound = 0;
-            playSoundsSuccessively = false;
         }
 
         private async void MultiSelectOptionsButton_Delete_Click(object sender, RoutedEventArgs e)
@@ -428,6 +430,7 @@ namespace UniversalSoundBoard
 
         private void PlaySoundsSimultaneously_Click(object sender, RoutedEventArgs e)
         {
+            playSoundsSuccessively = false;
             // Create a mediaElement for each sound
             foreach(Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
             {
@@ -440,24 +443,82 @@ namespace UniversalSoundBoard
             }
         }
 
-        private void PlaySoundsSuccessively_Click(object sender, RoutedEventArgs e)
+        private void StartPlaySoundsSuccessively(int rounds)
         {
+            playSoundsSuccessivelyRounds = rounds;
+            playedRounds = 0;
             playedSound = 0;
             playSoundsSuccessively = true;
-            (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, (App.Current as App)._itemViewHolder.selectedSounds[0].AudioFile.Path);
+            SoundList.Clear();
+            foreach (Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
+            {
+                SoundList.Add(sound);
+            }
+            (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, SoundList[0].AudioFile.Path);
         }
 
         private void MyMediaElement_MediaEnded(object sender, RoutedEventArgs e)
         {
             playedSound++;
             // Play next sound
-            if(playedSound < (App.Current as App)._itemViewHolder.selectedSounds.Count && playSoundsSuccessively)
+            if(playSoundsSuccessively)
             {
-                (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, (App.Current as App)._itemViewHolder.selectedSounds[playedSound].AudioFile.Path);
-            }else
-            {
-                playSoundsSuccessively = false;
+                if (playSoundsSuccessivelyRounds == -1)
+                {
+                    // Play endless
+                    if (playedSound < SoundList.Count)
+                    {
+                        (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, SoundList[playedSound].AudioFile.Path);
+                    }
+                    else
+                    {
+                        playedSound = 0;
+                        (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, SoundList[playedSound].AudioFile.Path);
+                    }
+                }else if (playedSound < SoundList.Count)
+                {
+                    (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, SoundList[playedSound].AudioFile.Path);
+                }else
+                {
+                    playedRounds++;
+                    playedSound = 0;
+                    
+                    if (playedRounds < playSoundsSuccessivelyRounds)
+                    {
+                        (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, SoundList[playedSound].AudioFile.Path);
+                    }else
+                    {
+                        playSoundsSuccessively = false;
+                        playSoundsSuccessivelyRounds = 0;
+                        playedRounds = 0;
+                    }
+                }
             }
+        }
+
+        private void PlaySoundsSuccessively_1x_Click(object sender, RoutedEventArgs e)
+        {
+            StartPlaySoundsSuccessively(1);
+        }
+
+        private void PlaySoundsSuccessively_2x_Click(object sender, RoutedEventArgs e)
+        {
+            StartPlaySoundsSuccessively(2);
+        }
+
+        private void PlaySoundsSuccessively_5x_Click(object sender, RoutedEventArgs e)
+        {
+            StartPlaySoundsSuccessively(5);
+        }
+
+        private void PlaySoundsSuccessively_10x_Click(object sender, RoutedEventArgs e)
+        {
+            StartPlaySoundsSuccessively(10);
+        }
+
+        private void PlaySoundsSuccessively_endless_Click(object sender, RoutedEventArgs e)
+        {
+            StartPlaySoundsSuccessively(-1);
         }
 
         private void createCategoriesFlyout()
