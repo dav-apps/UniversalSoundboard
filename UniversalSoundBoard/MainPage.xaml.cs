@@ -28,6 +28,7 @@ using static UniversalSoundBoard.Model.Sound;
 using Windows.UI.Notifications;
 using NotificationsExtensions.Tiles; // NotificationsExtensions.Win10
 using NotificationsExtensions;
+using Windows.Media.Playback;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -381,7 +382,7 @@ namespace UniversalSoundBoard
         {
             // Change Volume of mediaElement
             MyMediaElement.Volume = (double)VolumeSlider.Value / 100;
-            foreach(MediaElement media in MediaElementStackPanel.Children)
+            foreach (MediaElement media in MediaElementStackPanel.Children)
             {
                 media.Volume = (double)VolumeSlider.Value / 100;
             }

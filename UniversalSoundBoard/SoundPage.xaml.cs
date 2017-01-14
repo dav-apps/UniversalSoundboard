@@ -7,6 +7,8 @@ using UniversalSoundBoard.Model;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -27,6 +29,7 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class SoundPage : Page
     {
+        MediaPlayer mainMediaPlayer;
    
         public SoundPage()
         {
@@ -37,6 +40,7 @@ namespace UniversalSoundBoard
         void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
+            mainMediaPlayer = new MediaPlayer();
         }
 
         private void setDataContext()
@@ -51,6 +55,9 @@ namespace UniversalSoundBoard
             if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
             {
                 (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFile.Path);
+                
+                //mainMediaPlayer.Source = MediaSource.CreateFromUri(new Uri(this.BaseUri, sound.AudioFile.Path));
+                //mainMediaPlayer.Play();
             }
         }
 
@@ -144,7 +151,50 @@ namespace UniversalSoundBoard
             {
                 (App.Current as App)._itemViewHolder.selectedSounds.Remove((Sound)e.RemovedItems.First());
             }
-        } 
+        }
+
+        private void HandleGrid_OnManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
+        {
+            var themeBrush = Application.Current.Resources["AppBarToggleButtonBackgroundCheckedPointerOver"] as SolidColorBrush;
+
+            if (themeBrush != null) HandleGrid.Background = themeBrush;
+        }
+
+        private void HandleGrid_OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            DrawerContentGrid.Height = DrawerContentGrid.ActualHeight + -e.Delta.Translation.Y;
+            if(DrawerContentGrid.Height > this.ActualHeight)
+            {
+                DrawerContentGrid.Height = this.ActualHeight;
+            }
+        }
+
+        private void HandleGrid_OnManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            var themeBrush = Application.Current.Resources["AppBarBorderThemeBrush"] as SolidColorBrush;
+
+            if (themeBrush != null) HandleGrid.Background = themeBrush;
+        }
+
+        private void HandleGrid_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            if (DrawerContentGrid.Height == this.ActualHeight)
+            {
+                DrawerContentGrid.Height = HandleGrid.ActualHeight;
+            }
+            else if (DrawerContentGrid.Height > this.ActualHeight/2)
+            {
+                DrawerContentGrid.Height = this.ActualHeight;
+            }else if (DrawerContentGrid.Height <= HandleGrid.ActualHeight)
+            {
+                DrawerContentGrid.Height = this.ActualHeight;
+            }
+            else
+            {
+                DrawerContentGrid.Height = HandleGrid.ActualHeight;
+            }
+        }
+
 
 
         // Content Dialog Methods

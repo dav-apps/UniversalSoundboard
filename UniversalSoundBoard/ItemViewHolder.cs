@@ -17,16 +17,17 @@ namespace UniversalSoundBoard
         private string _title;
         private bool _progressRingIsActive;
         private bool _multiSelectOptionsEnabled;
-        private ObservableCollection<Sound> _sounds;
         private Uri _mediaElementSource;
-        private List<Category> _categories;
         private string _searchQuery;
         private Visibility _editButtonVisibility;
         private Visibility _normalOptionsVisibility;
         private Visibility _multiSelectOptionsVisibility;
         private Type _page;
         private ListViewSelectionMode _selectionMode;
+        private List<Category> _categories;
+        private ObservableCollection<Sound> _sounds;
         private List<Sound> _selectedSounds;
+        private ObservableCollection<Sound> _playingSounds;
 
         public string title
         {
@@ -168,6 +169,17 @@ namespace UniversalSoundBoard
             {
                 _selectedSounds = value;
                 NotifyPropertyChanged("selectedSounds");
+            }
+        }
+
+        public ObservableCollection<Sound> playingSounds
+        {
+            get { return _playingSounds; }
+
+            set
+            {
+                _playingSounds = value;
+                NotifyPropertyChanged("playingSounds");
             }
         }
 

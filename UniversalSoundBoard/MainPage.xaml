@@ -131,9 +131,12 @@
 
             <StackPanel Name="MediaElementStackPanel">
             </StackPanel>
-            <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"
-                          MediaEnded="MyMediaElement_MediaEnded"/>
-            
+           <!-- <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"
+                          MediaEnded="MyMediaElement_MediaEnded"/>  -->
+
+            <MediaPlayerElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}" />
+    <!--        MediaEnded="MyMediaElement_MediaEnded"/>    -->
+
         </RelativePanel>
 
         <SplitView Name="SideBar" DisplayMode="CompactOverlay"
@@ -181,12 +184,12 @@
 
                     <Frame Name="ContentFrame" SourcePageType="{Binding page, Mode=TwoWay}" Grid.Row="0"/>
                     <ProgressRing Name="ProgressRing"                 
-                      Grid.Row="8" 
-                      Grid.Column="1"
-                      HorizontalAlignment="Center" VerticalAlignment="Center"
-                      Width="50" 
-                      Height="50" 
-                      IsActive="{Binding progressRingIsActive, Mode=TwoWay}" />
+                        Grid.Row="8" 
+                        Grid.Column="1"
+                        HorizontalAlignment="Center" VerticalAlignment="Center"
+                        Width="50" 
+                        Height="50" 
+                        IsActive="{Binding progressRingIsActive, Mode=TwoWay}" />
                 </Grid>
             </SplitView.Content>
         </SplitView>
