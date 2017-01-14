@@ -7,6 +7,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
+using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -27,6 +28,7 @@ namespace UniversalSoundBoard
         private List<Category> _categories;
         private ObservableCollection<Sound> _sounds;
         private List<Sound> _selectedSounds;
+        private ObservableCollection<MediaPlayer> _activeMediaPlayers;
         private ObservableCollection<Sound> _playingSounds;
 
         public string title
@@ -180,6 +182,17 @@ namespace UniversalSoundBoard
             {
                 _playingSounds = value;
                 NotifyPropertyChanged("playingSounds");
+            }
+        }
+
+        public ObservableCollection<MediaPlayer> activeMediaPlayers
+        {
+            get { return _activeMediaPlayers; }
+
+            set
+            {
+                _activeMediaPlayers = value;
+                NotifyPropertyChanged("activeMediaPlayers");
             }
         }
 

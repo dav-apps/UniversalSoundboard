@@ -28,17 +28,19 @@
                 <RowDefinition />
             </Grid.RowDefinitions>
 
-            <Grid x:Name="HandleGrid" ManipulationStarted="HandleGrid_OnManipulationStarted" ManipulationDelta="HandleGrid_OnManipulationDelta" ManipulationCompleted="HandleGrid_OnManipulationCompleted" ManipulationMode="TranslateY" Tapped="HandleGrid_Tapped" Height="15" Background="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="0,1,0,1" BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}">
+            <Grid x:Name="HandleGrid" 
+                  Height="15" Background="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="0,1,0,1" BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
+                  ManipulationStarted="HandleGrid_OnManipulationStarted" ManipulationDelta="HandleGrid_OnManipulationDelta" 
+                  ManipulationCompleted="HandleGrid_OnManipulationCompleted" ManipulationMode="TranslateY" 
+                  Tapped="HandleGrid_Tapped">
                 <SymbolIcon Symbol="More" />
             </Grid>
 
             <Grid x:Name="DrawerContent" Grid.Row="1">
-                <ListView x:Name="RouteSteps" ItemsSource="{Binding sounds}">
+                <ListView x:Name="PlayingSoundsListView" ItemsSource="{Binding activeMediaPlayers, Mode=TwoWay}">
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="{Binding Name}" />
-                            </StackPanel>
+                            <local:PlayingSoundTemplate HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

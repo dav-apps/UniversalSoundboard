@@ -11,6 +11,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media.Playback;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -40,7 +41,9 @@ namespace UniversalSoundBoard
             normalOptionsVisibility = Visibility.Visible,
             multiSelectOptionsVisibility = Visibility.Collapsed,
             multiSelectOptionsEnabled = false,
-            selectedSounds = new List<Sound>()
+            selectedSounds = new List<Sound>(),
+            activeMediaPlayers = new ObservableCollection<MediaPlayer>(),
+            playingSounds = new ObservableCollection<Sound>()
         };
 
         /// <summary>

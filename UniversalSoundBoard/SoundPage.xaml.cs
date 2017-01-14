@@ -29,8 +29,6 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class SoundPage : Page
     {
-        MediaPlayer mainMediaPlayer;
-   
         public SoundPage()
         {
             this.InitializeComponent();
@@ -40,7 +38,6 @@ namespace UniversalSoundBoard
         void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
-            mainMediaPlayer = new MediaPlayer();
         }
 
         private void setDataContext()
@@ -54,8 +51,8 @@ namespace UniversalSoundBoard
             //MyMediaElement.Source = new Uri(this.BaseUri, sound.AudioFile.Path);
             if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
             {
-                (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFile.Path);
-                
+                //(App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFile.Path);
+                FileManager.playSound(sound);
                 //mainMediaPlayer.Source = MediaSource.CreateFromUri(new Uri(this.BaseUri, sound.AudioFile.Path));
                 //mainMediaPlayer.Play();
             }

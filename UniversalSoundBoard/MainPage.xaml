@@ -84,7 +84,7 @@
                             VerticalAlignment="Center"
                             QueryIcon="Find" 
                             Margin="0,0,10,0" Width="200"
-                            TextChanged="SearchAutoSuggestBox_TextChanged" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted"/>
+                            TextChanged="SearchAutoSuggestBox_TextChanged" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted" />
                 </StackPanel>
 
                 <StackPanel Name="MultiSelectOptions" Orientation="Horizontal" Visibility="{Binding multiSelectOptionsVisibility}"
@@ -128,14 +128,6 @@
 
                 </StackPanel>
             </StackPanel>
-
-            <StackPanel Name="MediaElementStackPanel">
-            </StackPanel>
-           <!-- <MediaElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}"
-                          MediaEnded="MyMediaElement_MediaEnded"/>  -->
-
-            <MediaPlayerElement Name="MyMediaElement" AutoPlay="True" Source="{Binding mediaElementSource, Mode=TwoWay}" />
-    <!--        MediaEnded="MyMediaElement_MediaEnded"/>    -->
 
         </RelativePanel>
 
