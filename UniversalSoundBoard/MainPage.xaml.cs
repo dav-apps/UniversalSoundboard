@@ -66,10 +66,12 @@ namespace UniversalSoundBoard
             if (localSettings.Values["volume"] != null)
             {
                 //MyMediaElement.Volume = (double)localSettings.Values["volume"];
+                /*
                 foreach(MediaPlayer player in (App.Current as App)._itemViewHolder.activeMediaPlayers)
                 {
                     player.Volume = (double)localSettings.Values["volume"];
                 }
+                */
             }
             else
             {
@@ -105,7 +107,6 @@ namespace UniversalSoundBoard
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
         {
             SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
-            (App.Current as App)._itemViewHolder.title = (App.Current as App)._itemViewHolder.playingSounds.Count.ToString() + " " + (App.Current as App)._itemViewHolder.activeMediaPlayers.Count.ToString();
         }
 
         private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -387,10 +388,12 @@ namespace UniversalSoundBoard
         {
             // Change Volume of mediaElement
             //MyMediaElement.Volume = (double)VolumeSlider.Value / 100;
+            /*
             foreach (MediaPlayer player in (App.Current as App)._itemViewHolder.activeMediaPlayers)
             {
                 player.Volume = (double)VolumeSlider.Value / 100;
             }
+            */
 
             // Save new Volume
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -440,15 +443,7 @@ namespace UniversalSoundBoard
             // Create a mediaElement for each sound
             foreach(Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
             {
-                /*
-                MediaElement media = new MediaElement();
-                media.AutoPlay = true;
-                media.Source = new Uri(this.BaseUri, sound.AudioFile.Path);
-                var localSettings = ApplicationData.Current.LocalSettings;
-                media.Volume = (double)localSettings.Values["volume"];
-                MediaElementStackPanel.Children.Add(media);
-                */
-                FileManager.playSound(sound);
+                //SoundPage.playSound(sound);
             }
         }
 
@@ -463,7 +458,7 @@ namespace UniversalSoundBoard
             {
                 SoundList.Add(sound);
             }
-            (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, SoundList[0].AudioFile.Path);
+            //SoundPage.playSoundsSuccessively(SoundList, rounds);
         }
 
         private void MyMediaElement_MediaEnded(object sender, RoutedEventArgs e)

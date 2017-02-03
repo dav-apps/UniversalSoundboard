@@ -12,6 +12,7 @@ using UniversalSoundBoard.Model;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -22,7 +23,6 @@ namespace UniversalSoundBoard
 {
     public class FileManager
     {
-
         public static async void addImage(StorageFile file, Sound sound)
         {
             StorageFolder folder = ApplicationData.Current.LocalFolder;
@@ -345,36 +345,6 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
             (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Visible;
-        }
-
-        public static void playSound(Sound sound)
-        {
-            MediaPlayer mediaPlayer = new MediaPlayer();
-            mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(sound.AudioFile.Path));
-
-            // Set volume
-            var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["volume"] != null)
-            {
-                mediaPlayer.Volume = (double)localSettings.Values["volume"];
-            }
-            else
-            {
-                localSettings.Values["volume"] = 1.0;
-                mediaPlayer.Volume = 1.0;
-            }
-            mediaPlayer.Play();
-            mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
-            (App.Current as App)._itemViewHolder.activeMediaPlayers.Add(mediaPlayer);
-            (App.Current as App)._itemViewHolder.playingSounds.Add(sound);
-            (App.Current as App)._itemViewHolder.title = (App.Current as App)._itemViewHolder.playingSounds.Count.ToString() + " " + (App.Current as App)._itemViewHolder.activeMediaPlayers.Count.ToString();
-        }
-
-        private static void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
-        {
-            (App.Current as App)._itemViewHolder.playingSounds.RemoveAt((App.Current as App)._itemViewHolder.activeMediaPlayers.IndexOf(sender));
-            (App.Current as App)._itemViewHolder.activeMediaPlayers.Remove(sender);
-            (App.Current as App)._itemViewHolder.title = (App.Current as App)._itemViewHolder.playingSounds.Count.ToString() + " " + (App.Current as App)._itemViewHolder.activeMediaPlayers.Count.ToString();
         }
 
 

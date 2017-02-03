@@ -42,8 +42,7 @@ namespace UniversalSoundBoard
             multiSelectOptionsVisibility = Visibility.Collapsed,
             multiSelectOptionsEnabled = false,
             selectedSounds = new List<Sound>(),
-            activeMediaPlayers = new ObservableCollection<MediaPlayer>(),
-            playingSounds = new ObservableCollection<Sound>()
+            playingSounds = new ObservableCollection<PlayingSound>()
         };
 
         /// <summary>

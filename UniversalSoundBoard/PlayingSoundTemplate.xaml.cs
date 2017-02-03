@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
+using UniversalSoundBoard.Model;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
@@ -20,18 +21,27 @@ namespace UniversalSoundBoard
 {
     public sealed partial class PlayingSoundTemplate : UserControl
     {
-        public MediaPlayer MediaPlayer { get { return this.DataContext as MediaPlayer; } }
+        public PlayingSound PlayingSound { get { return this.DataContext as PlayingSound; } }
 
         public PlayingSoundTemplate()
         {
             this.InitializeComponent();
-            Loaded += SoundTileTemplate_Loaded;
-            //this.DataContextChanged += (s, e) => Bindings.Update();
+            Loaded += PlayingSoundTemplate_Loaded;
+            this.DataContextChanged += (s, e) => Bindings.Update();
         }
 
-        private void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
+        private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
+
+            MediaPlayerElement.SetMediaPlayer(this.PlayingSound.Player);
+            MediaPlayerElement.AreTransportControlsEnabled = true;
+            MediaPlayerElement.TransportControls = new MediaTransportControls()
+            {
+                IsCompact = true,
+                IsFullWindowButtonVisible = false,
+                IsZoomButtonVisible = false
+            };
         }
 
         private void setDataContext()

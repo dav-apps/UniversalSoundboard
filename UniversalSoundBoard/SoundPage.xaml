@@ -8,11 +8,12 @@
     xmlns:data="using:UniversalSoundBoard.Model"
     mc:Ignorable="d">
 
-    <Grid Name="ContentRoot">
+    <Grid Name="ContentRoot" 
+          AllowDrop="True" Drop="SoundGridView_Drop" DragOver="SoundGridView_DragOver">
         <GridView Name="SoundGridView" SelectionMode="{Binding selectionMode}" ScrollViewer.BringIntoViewOnFocusChange="True"
                             IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick"
                             SelectionChanged="SoundGridView_SelectionChanged"
-                            AllowDrop="True" Drop="SoundGridView_Drop" DragOver="SoundGridView_DragOver" ItemsSource="{Binding sounds, Mode=TwoWay}"
+                            ItemsSource="{Binding sounds, Mode=TwoWay}"
                             DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" RightTapped="SoundGridView_RightTapped">
             <GridView.ItemTemplate>
                 <DataTemplate x:DataType="data:Sound">
@@ -25,10 +26,10 @@
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition />
+                <RowDefinition Height="*" />
             </Grid.RowDefinitions>
 
-            <Grid x:Name="HandleGrid" 
+            <Grid Name="HandleGrid" 
                   Height="15" Background="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="0,1,0,1" BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
                   ManipulationStarted="HandleGrid_OnManipulationStarted" ManipulationDelta="HandleGrid_OnManipulationDelta" 
                   ManipulationCompleted="HandleGrid_OnManipulationCompleted" ManipulationMode="TranslateY" 
@@ -36,11 +37,17 @@
                 <SymbolIcon Symbol="More" />
             </Grid>
 
-            <Grid x:Name="DrawerContent" Grid.Row="1">
-                <ListView x:Name="PlayingSoundsListView" ItemsSource="{Binding activeMediaPlayers, Mode=TwoWay}">
+            <Grid Name="DrawerContent" Grid.Row="1">
+                <ListView Name="PlayingSoundsListView" ItemsSource="{Binding playingSounds}" IsItemClickEnabled="False">
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
                     <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <local:PlayingSoundTemplate HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                        <DataTemplate x:DataType="data:PlayingSound">
+                            <local:PlayingSoundTemplate VerticalAlignment="Center" />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

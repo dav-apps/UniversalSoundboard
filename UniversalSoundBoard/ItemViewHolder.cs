@@ -28,8 +28,7 @@ namespace UniversalSoundBoard
         private List<Category> _categories;
         private ObservableCollection<Sound> _sounds;
         private List<Sound> _selectedSounds;
-        private ObservableCollection<MediaPlayer> _activeMediaPlayers;
-        private ObservableCollection<Sound> _playingSounds;
+        private ObservableCollection<PlayingSound> _playingSounds;
 
         public string title
         {
@@ -174,7 +173,7 @@ namespace UniversalSoundBoard
             }
         }
 
-        public ObservableCollection<Sound> playingSounds
+        public ObservableCollection<PlayingSound> playingSounds
         {
             get { return _playingSounds; }
 
@@ -182,17 +181,6 @@ namespace UniversalSoundBoard
             {
                 _playingSounds = value;
                 NotifyPropertyChanged("playingSounds");
-            }
-        }
-
-        public ObservableCollection<MediaPlayer> activeMediaPlayers
-        {
-            get { return _activeMediaPlayers; }
-
-            set
-            {
-                _activeMediaPlayers = value;
-                NotifyPropertyChanged("activeMediaPlayers");
             }
         }
 

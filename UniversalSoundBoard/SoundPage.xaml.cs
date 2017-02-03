@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -29,10 +30,13 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class SoundPage : Page
     {
+        CoreDispatcher dispatcher;
+
         public SoundPage()
         {
             this.InitializeComponent();
             Loaded += SoundPage_Loaded;
+            dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
         }
 
         void SoundPage_Loaded(object sender, RoutedEventArgs e)
@@ -52,7 +56,7 @@ namespace UniversalSoundBoard
             if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
             {
                 //(App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFile.Path);
-                FileManager.playSound(sound);
+                playSound(sound);
                 //mainMediaPlayer.Source = MediaSource.CreateFromUri(new Uri(this.BaseUri, sound.AudioFile.Path));
                 //mainMediaPlayer.Play();
             }
@@ -73,7 +77,6 @@ namespace UniversalSoundBoard
 
                     if (items.Count > 0)
                     {
-                        // Application now has read/write access to the picked file(s)
                         foreach (StorageFile sound in items)
                         {
                             if (contentType == "audio/wav" || contentType == "audio/mpeg")
@@ -90,7 +93,6 @@ namespace UniversalSoundBoard
 
         private void SoundGridView_DragOver(object sender, DragEventArgs e)
         {
-            // using Windows.ApplicationModel.DataTransfer;
             e.AcceptedOperation = DataPackageOperation.Copy;
 
             // Drag adorner ... change what mouse / icon looks like
@@ -100,7 +102,6 @@ namespace UniversalSoundBoard
             e.DragUIOverride.IsCaptionVisible = true;
             e.DragUIOverride.IsContentVisible = true;
             e.DragUIOverride.IsGlyphVisible = true;
-            //e.DragUIOverride.SetContentFromBitmapImage(new BitmapImage(new Uri("ms-appx:///Assets/clippy.jpg")));
         }
 
         private void SoundGridView_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -190,6 +191,40 @@ namespace UniversalSoundBoard
             {
                 DrawerContentGrid.Height = HandleGrid.ActualHeight;
             }
+        }
+
+        public void playSound(Sound sound)
+        {
+            MediaPlayer player = new MediaPlayer();
+            player.MediaEnded += Player_MediaEnded;
+
+            player.Source = MediaSource.CreateFromStorageFile(sound.AudioFile);
+            
+
+            // Set volume
+            var localSettings = ApplicationData.Current.LocalSettings;
+            if (localSettings.Values["volume"] != null)
+            {
+                player.Volume = (double)localSettings.Values["volume"];
+            }
+            else
+            {
+                localSettings.Values["volume"] = 1.0;
+                player.Volume = 1.0;
+            }
+
+            PlayingSound playingSound = new PlayingSound(sound, player);
+            (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
+            player.Play();
+            //(App.Current as App)._itemViewHolder.title = PlayingSounds.Count.ToString();
+        }
+
+        private async void Player_MediaEnded(MediaPlayer sender, object args)
+        {
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                (App.Current as App)._itemViewHolder.playingSounds.Remove(PlayingSound.GetPlayingSoundByMediaPlayer(sender));
+            });
         }
 
 

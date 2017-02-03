@@ -9,7 +9,11 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Name="ContentRoot">
-        <TextBlock Text="Hello World" />
-    </Grid>
+    <StackPanel Name="ContentRoot" Background="White">
+
+        <TextBlock Text="{x:Bind PlayingSound.Sound.Name}" 
+                   VerticalAlignment="Center" Margin="10,0,0,0" />
+
+        <MediaPlayerElement Name="MediaPlayerElement" />
+    </StackPanel>
 </UserControl>
