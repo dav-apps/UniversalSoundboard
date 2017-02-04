@@ -63,20 +63,11 @@ namespace UniversalSoundBoard
             SettingsListing.Add(new Setting { Icon = "\uE713", Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title"), Id = "Settings" });
 
             var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["volume"] != null)
-            {
-                //MyMediaElement.Volume = (double)localSettings.Values["volume"];
-                /*
-                foreach(MediaPlayer player in (App.Current as App)._itemViewHolder.activeMediaPlayers)
-                {
-                    player.Volume = (double)localSettings.Values["volume"];
-                }
-                */
-            }
-            else
+            if (localSettings.Values["volume"] == null)
             {
                 localSettings.Values["volume"] = 1.0;
             }
+            VolumeSlider.Value = (double)localSettings.Values["volume"] * 100;
         }
 
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -386,14 +377,19 @@ namespace UniversalSoundBoard
 
         private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            // Change Volume of mediaElement
-            //MyMediaElement.Volume = (double)VolumeSlider.Value / 100;
-            /*
-            foreach (MediaPlayer player in (App.Current as App)._itemViewHolder.activeMediaPlayers)
+            // Change Volume of MediaPlayers
+            double addedValue = e.NewValue - e.OldValue;
+
+            foreach(PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
             {
-                player.Volume = (double)VolumeSlider.Value / 100;
+                if((playingSound.Player.Volume + addedValue / 100) > 1)
+                {
+                    playingSound.Player.Volume = 1;
+                }else
+                {
+                    playingSound.Player.Volume += addedValue / 100;
+                }
             }
-            */
 
             // Save new Volume
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -402,8 +398,7 @@ namespace UniversalSoundBoard
 
         private void VolumeFlyout_Opening(object sender, object e)
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            VolumeSlider.Value = (double)localSettings.Values["volume"] * 100;
+            
         }
 
         private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
