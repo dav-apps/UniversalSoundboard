@@ -9,11 +9,37 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <StackPanel Name="ContentRoot" Background="White">
+    <Grid Name="ContentRoot" Background="White">
 
-        <TextBlock Text="{x:Bind PlayingSound.Sound.Name}" 
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+
+        <TextBlock Name="PlayingSoundName" Text="{x:Bind PlayingSound.Sound.Name}" Grid.Row="0"
                    VerticalAlignment="Center" Margin="10,0,0,0" />
 
-        <MediaPlayerElement Name="MediaPlayerElement" />
-    </StackPanel>
+        <Grid Grid.Row="1">
+
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <MediaPlayerElement Name="MediaPlayerElement"
+                                AreTransportControlsEnabled="True" />
+            <Button Name="StopSoundButton" Grid.Column="1" 
+                    FontFamily="Segoe MDL2 Assets" Content="&#xE10A;"
+                    Height="48" Width="48" Background="White"
+                    Click="StopSoundButton_Click" />
+        </Grid>
+    </Grid>
 </UserControl>

@@ -385,7 +385,11 @@ namespace UniversalSoundBoard
                 if((playingSound.Player.Volume + addedValue / 100) > 1)
                 {
                     playingSound.Player.Volume = 1;
-                }else
+                }else if ((playingSound.Player.Volume + addedValue / 100) < 0)
+                {
+                    playingSound.Player.Volume = 0;
+                }
+                else
                 {
                     playingSound.Player.Volume += addedValue / 100;
                 }
@@ -394,11 +398,6 @@ namespace UniversalSoundBoard
             // Save new Volume
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values["volume"] = (double)VolumeSlider.Value / 100;
-        }
-
-        private void VolumeFlyout_Opening(object sender, object e)
-        {
-            
         }
 
         private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)

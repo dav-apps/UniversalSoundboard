@@ -30,13 +30,10 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class SoundPage : Page
     {
-        CoreDispatcher dispatcher;
-
         public SoundPage()
         {
             this.InitializeComponent();
             Loaded += SoundPage_Loaded;
-            dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
         }
 
         void SoundPage_Loaded(object sender, RoutedEventArgs e)
@@ -70,8 +67,6 @@ namespace UniversalSoundBoard
 
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 if (items.Any()){
-                    var storageFile = items[0] as StorageFile;
-                    var contentType = storageFile.ContentType;
 
                     StorageFolder folder = ApplicationData.Current.LocalFolder;
 
@@ -79,9 +74,9 @@ namespace UniversalSoundBoard
                     {
                         foreach (StorageFile sound in items)
                         {
-                            if (contentType == "audio/wav" || contentType == "audio/mpeg")
+                            if (sound.ContentType == "audio/wav" || sound.ContentType == "audio/mpeg")
                             {
-                                await SoundManager.addSound(storageFile);
+                                await SoundManager.addSound(sound);
                             }
                         }
                         await FileManager.UpdateGridView();
@@ -196,7 +191,6 @@ namespace UniversalSoundBoard
         public void playSound(Sound sound)
         {
             MediaPlayer player = new MediaPlayer();
-            player.MediaEnded += Player_MediaEnded;
 
             player.Source = MediaSource.CreateFromStorageFile(sound.AudioFile);
             
@@ -215,16 +209,11 @@ namespace UniversalSoundBoard
 
             PlayingSound playingSound = new PlayingSound(sound, player);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
-            player.Play();
-            //(App.Current as App)._itemViewHolder.title = PlayingSounds.Count.ToString();
         }
 
-        private async void Player_MediaEnded(MediaPlayer sender, object args)
+        public static void RemovePlayingSound(PlayingSound playingSound)
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                (App.Current as App)._itemViewHolder.playingSounds.Remove(PlayingSound.GetPlayingSoundByMediaPlayer(sender));
-            });
+            (App.Current as App)._itemViewHolder.playingSounds.Remove(playingSound);
         }
 
 

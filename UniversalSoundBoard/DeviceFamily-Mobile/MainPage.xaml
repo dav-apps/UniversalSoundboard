@@ -51,7 +51,7 @@
                     Margin="0,0,15,0" Height="45" Width="45" 
                     FontFamily="Segoe MDL2 Assets" Content="&#xE767;">
                 <Button.Flyout>
-                    <Flyout Opened="VolumeFlyout_Opening">
+                    <Flyout>
                         <Slider Name="VolumeSlider" ValueChanged="VolumeSlider_ValueChanged"
                                 Maximum="100" Minimum="0" Width="150" />
                     </Flyout>
