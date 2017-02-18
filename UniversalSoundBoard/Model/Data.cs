@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Windows.Media;
 using Windows.Media.Playback;
 
 namespace UniversalSoundBoard.Model
@@ -19,24 +20,24 @@ namespace UniversalSoundBoard.Model
     public class PlayingSound
     {
         public Sound Sound { get; set; }
-        public MediaPlayer Player { get; set; }
+        public MediaPlayer MediaPlayer { get; set; }
 
         public PlayingSound()
         {
-
+            
         }
 
         public PlayingSound(Sound sound, MediaPlayer player)
         {
             this.Sound = sound;
-            this.Player = player;
+            this.MediaPlayer = player;
         }
 
         public static PlayingSound GetPlayingSoundByMediaPlayer(MediaPlayer player)
         {
             foreach(PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
             {
-                if(playingSound.Player == player)
+                if(playingSound.MediaPlayer == player)
                 {
                     return playingSound;
                 }

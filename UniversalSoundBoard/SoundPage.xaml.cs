@@ -8,9 +8,11 @@ using UniversalSoundBoard.Model;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -191,9 +193,25 @@ namespace UniversalSoundBoard
         public void playSound(Sound sound)
         {
             MediaPlayer player = new MediaPlayer();
+            MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
 
-            player.Source = MediaSource.CreateFromStorageFile(sound.AudioFile);
-            
+            MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(sound.AudioFile));
+
+            MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
+            props.Type = MediaPlaybackType.Music;
+            props.MusicProperties.Title = sound.Name;
+            props.MusicProperties.Artist = sound.CategoryName;
+            if(sound.ImageFile != null)
+            {
+                props.Thumbnail = RandomAccessStreamReference.CreateFromFile(sound.ImageFile);
+            }
+
+            mediaPlaybackItem.ApplyDisplayProperties(props);
+
+
+            mediaPlaybackList.Items.Add(mediaPlaybackItem);
+            player.Source = mediaPlaybackList;
+
 
             // Set volume
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -213,6 +231,8 @@ namespace UniversalSoundBoard
 
         public static void RemovePlayingSound(PlayingSound playingSound)
         {
+            playingSound.MediaPlayer.Pause();
+            playingSound.MediaPlayer.Source = null;
             (App.Current as App)._itemViewHolder.playingSounds.Remove(playingSound);
         }
 

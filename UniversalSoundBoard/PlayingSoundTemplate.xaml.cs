@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using UniversalSoundBoard.Model;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.Media;
 using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -41,7 +43,7 @@ namespace UniversalSoundBoard
 
             if(this.PlayingSound != null)
             {
-                MediaPlayerElement.SetMediaPlayer(this.PlayingSound.Player);
+                MediaPlayerElement.SetMediaPlayer(this.PlayingSound.MediaPlayer);
 
                 MediaPlayerElement.TransportControls = new MediaTransportControls()
                 {
@@ -50,9 +52,10 @@ namespace UniversalSoundBoard
                     IsZoomButtonVisible = false
                 };
 
-                this.PlayingSound.Player.MediaEnded += Player_MediaEnded;
-                this.PlayingSound.Player.Play();
-            }else
+                this.PlayingSound.MediaPlayer.MediaEnded += Player_MediaEnded;
+                this.PlayingSound.MediaPlayer.Play();
+            }
+            else
             {
                 PlayingSoundName.Text = "There was an error...";
             }
@@ -65,9 +68,7 @@ namespace UniversalSoundBoard
 
         private void StopSoundButton_Click(object sender, RoutedEventArgs e)
         {
-            this.PlayingSound.Player.Pause();
             MediaPlayerElement.SetMediaPlayer(null);
-            //(App.Current as App)._itemViewHolder.playingSounds.Remove(this.PlayingSound);
             SoundPage.RemovePlayingSound(this.PlayingSound);
         }
 
@@ -75,7 +76,6 @@ namespace UniversalSoundBoard
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                //(App.Current as App)._itemViewHolder.playingSounds.Remove(PlayingSound.GetPlayingSoundByMediaPlayer(sender));
                 SoundPage.RemovePlayingSound(this.PlayingSound);
             });
         }

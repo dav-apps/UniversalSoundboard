@@ -10,7 +10,14 @@
 
     <Grid Name="ContentRoot" 
           AllowDrop="True" Drop="SoundGridView_Drop" DragOver="SoundGridView_DragOver">
-        <GridView Name="SoundGridView" SelectionMode="{Binding selectionMode}" ScrollViewer.BringIntoViewOnFocusChange="True"
+
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        
+        <GridView Name="SoundGridView" Grid.Column="0"
+                  SelectionMode="{Binding selectionMode}" ScrollViewer.BringIntoViewOnFocusChange="True"
                             IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick"
                             SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding sounds, Mode=TwoWay}"
@@ -22,6 +29,22 @@
             </GridView.ItemTemplate>
         </GridView>
 
+        <Grid Name="DrawerContent" Grid.Column="1">
+            <ListView Name="PlayingSoundsListView" ItemsSource="{Binding playingSounds}" IsItemClickEnabled="False">
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="data:PlayingSound">
+                        <local:PlayingSoundTemplate />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </Grid>
+        <!--
         <Grid x:Name="DrawerContentGrid" VerticalAlignment="Bottom" Background="{ThemeResource AppBarBackgroundThemeBrush}" RenderTransformOrigin="0.5,0.5">
 
             <Grid.RowDefinitions>
@@ -53,5 +76,6 @@
                 </ListView>
             </Grid>
         </Grid>
+        -->
     </Grid>
 </Page>

@@ -382,16 +382,16 @@ namespace UniversalSoundBoard
 
             foreach(PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
             {
-                if((playingSound.Player.Volume + addedValue / 100) > 1)
+                if((playingSound.MediaPlayer.Volume + addedValue / 100) > 1)
                 {
-                    playingSound.Player.Volume = 1;
-                }else if ((playingSound.Player.Volume + addedValue / 100) < 0)
+                    playingSound.MediaPlayer.Volume = 1;
+                }else if ((playingSound.MediaPlayer.Volume + addedValue / 100) < 0)
                 {
-                    playingSound.Player.Volume = 0;
+                    playingSound.MediaPlayer.Volume = 0;
                 }
                 else
                 {
-                    playingSound.Player.Volume += addedValue / 100;
+                    playingSound.MediaPlayer.Volume += addedValue / 100;
                 }
             }
 
