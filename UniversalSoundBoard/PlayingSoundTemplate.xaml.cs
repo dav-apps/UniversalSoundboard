@@ -44,13 +44,7 @@ namespace UniversalSoundBoard
             if(this.PlayingSound != null)
             {
                 MediaPlayerElement.SetMediaPlayer(this.PlayingSound.MediaPlayer);
-
-                MediaPlayerElement.TransportControls = new MediaTransportControls()
-                {
-                    IsCompact = true,
-                    IsFullWindowButtonVisible = false,
-                    IsZoomButtonVisible = false
-                };
+                //MediaPlayerElement.TransportControls.Resources = 
 
                 this.PlayingSound.MediaPlayer.MediaEnded += Player_MediaEnded;
                 this.PlayingSound.MediaPlayer.Play();
@@ -59,11 +53,24 @@ namespace UniversalSoundBoard
             {
                 PlayingSoundName.Text = "There was an error...";
             }
+            setMediaPlayerElementIsCompact();
         }
 
         private void setDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+        }
+
+        private void setMediaPlayerElementIsCompact()
+        {
+            Debug.WriteLine(Window.Current.Bounds.Width);
+            if(Window.Current.Bounds.Width < 1000 && Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
+            {
+                MediaPlayerElement.TransportControls.IsCompact = false;
+            }else
+            {
+                MediaPlayerElement.TransportControls.IsCompact = true;
+            }
         }
 
         private void StopSoundButton_Click(object sender, RoutedEventArgs e)
@@ -78,6 +85,16 @@ namespace UniversalSoundBoard
             {
                 SoundPage.RemovePlayingSound(this.PlayingSound);
             });
+        }
+
+        private void CustomMediaTransportControls_Removed(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Removed");
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            setMediaPlayerElementIsCompact();
         }
     }
 }

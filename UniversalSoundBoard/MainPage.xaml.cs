@@ -29,6 +29,7 @@ using Windows.UI.Notifications;
 using NotificationsExtensions.Tiles; // NotificationsExtensions.Win10
 using NotificationsExtensions;
 using Windows.Media.Playback;
+using Windows.Media.Core;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 

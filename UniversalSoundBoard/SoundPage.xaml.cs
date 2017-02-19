@@ -51,13 +51,9 @@ namespace UniversalSoundBoard
         private void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var sound = (Sound)e.ClickedItem;
-            //MyMediaElement.Source = new Uri(this.BaseUri, sound.AudioFile.Path);
             if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
             {
-                //(App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, sound.AudioFile.Path);
                 playSound(sound);
-                //mainMediaPlayer.Source = MediaSource.CreateFromUri(new Uri(this.BaseUri, sound.AudioFile.Path));
-                //mainMediaPlayer.Play();
             }
         }
 
