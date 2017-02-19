@@ -96,5 +96,30 @@ namespace UniversalSoundBoard
         {
             setMediaPlayerElementIsCompact();
         }
+
+        private void CustomMediaTransportControls_Repeat_1x_Clicked(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Repeat 1x clicked");
+        }
+
+        private void CustomMediaTransportControls_Repeat_2x_Clicked(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Repeat 2x clicked");
+        }
+
+        private void CustomMediaTransportControls_Repeat_5x_Clicked(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Repeat 5x clicked");
+        }
+
+        private void CustomMediaTransportControls_Repeat_10x_Clicked(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Repeat 10x clicked");
+        }
+
+        private void CustomMediaTransportControls_Repeat_endless_Clicked(object sender, EventArgs e)
+        {
+            Debug.WriteLine("Repeat endless clicked");
+        }
     }
 }

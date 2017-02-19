@@ -22,14 +22,20 @@
         </Grid.ColumnDefinitions>
 
         <TextBlock Name="PlayingSoundName" Text="{x:Bind PlayingSound.Sound.Name}" Grid.Row="0"
-                   VerticalAlignment="Center" Margin="10,0,0,0" />
+                   VerticalAlignment="Center" Margin="10,0,0,0" TextWrapping="WrapWholeWords" />
 
         <MediaPlayerElement Name="MediaPlayerElement" Grid.Row="1"
                                 AreTransportControlsEnabled="True">
             <MediaPlayerElement.TransportControls>
                 <local:CustomMediaTransportControls IsCompact="True"
                                         IsFullWindowButtonVisible="False"
-                                        IsZoomButtonVisible="False">
+                                        IsZoomButtonVisible="False"
+                                        Removed="CustomMediaTransportControls_Removed"
+                                        Repeat_1x_Clicked="CustomMediaTransportControls_Repeat_1x_Clicked"
+                                        Repeat_2x_Clicked="CustomMediaTransportControls_Repeat_2x_Clicked"
+                                        Repeat_5x_Clicked="CustomMediaTransportControls_Repeat_5x_Clicked"
+                                        Repeat_10x_Clicked="CustomMediaTransportControls_Repeat_10x_Clicked"
+                                        Repeat_endless_Clicked="CustomMediaTransportControls_Repeat_endless_Clicked">
                 </local:CustomMediaTransportControls>
             </MediaPlayerElement.TransportControls>
         </MediaPlayerElement>
