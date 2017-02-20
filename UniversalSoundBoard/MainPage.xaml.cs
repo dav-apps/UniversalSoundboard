@@ -121,7 +121,7 @@ namespace UniversalSoundBoard
                 (App.Current as App)._itemViewHolder.title = text;
                 (App.Current as App)._itemViewHolder.searchQuery = text;
                 SoundManager.GetSoundsByName(text);
-                Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(text)).Select(p => p.Name).ToList();
+                Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.ToLower().StartsWith(text.ToLower())).Select(p => p.Name).ToList();
                 SearchAutoSuggestBox.ItemsSource = Suggestions;
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;

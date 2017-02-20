@@ -136,7 +136,7 @@ namespace UniversalSoundBoard.Model
                 (App.Current as App)._itemViewHolder.sounds.Clear();
                 foreach (var sound in allSounds)
                 {
-                    if (sound.Name.Contains(name))
+                    if (sound.Name.ToLower().Contains(name.ToLower()))
                     {
                         (App.Current as App)._itemViewHolder.sounds.Add(sound);
                     }
