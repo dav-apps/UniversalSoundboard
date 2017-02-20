@@ -210,4 +210,10 @@
   <data name="SoundTile-Rename.Text" xml:space="preserve">
     <value>Umbenennen</value>
   </data>
+  <data name="PlayingSound_CastButton.Label" xml:space="preserve">
+    <value>Wiedergabe auf Gerät</value>
+  </data>
+  <data name="PlayingSound_RepeatButton.Label" xml:space="preserve">
+    <value>Wiederholen</value>
+  </data>
 </root>

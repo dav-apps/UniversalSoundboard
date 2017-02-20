@@ -223,4 +223,10 @@
   <data name="Version.Text" xml:space="preserve">
     <value>0.4</value>
   </data>
+  <data name="PlayingSound_CastButton.Label" xml:space="preserve">
+    <value>Cast to Device</value>
+  </data>
+  <data name="PlayingSound_RepeatButton.Label" xml:space="preserve">
+    <value>Repeat</value>
+  </data>
 </root>

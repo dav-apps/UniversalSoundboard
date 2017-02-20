@@ -792,9 +792,9 @@
                                         </CommandBar.PrimaryCommands>
 
                                         <CommandBar.SecondaryCommands>
-                                            <AppBarButton x:Name='CastButton' Label="Cast to device">
+                                            <AppBarButton x:Uid="PlayingSound_CastButton" x:Name='CastButton' Label="Cast to device">
                                             </AppBarButton>
-                                            <AppBarButton x:Name="RepeatButton" Label="Repeat">
+                                            <AppBarButton x:Uid="PlayingSound_RepeatButton" x:Name="RepeatButton" Label="Repeat">
                                                 <AppBarButton.Flyout>
                                                     <MenuFlyout>
                                                         <MenuFlyoutItem Text="1x" x:Name="Repeat_1x" />

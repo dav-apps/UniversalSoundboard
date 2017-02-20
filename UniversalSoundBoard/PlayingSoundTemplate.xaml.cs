@@ -27,6 +27,7 @@ namespace UniversalSoundBoard
         public PlayingSound PlayingSound { get { return this.DataContext as PlayingSound; } }
 
         CoreDispatcher dispatcher;
+        int repetitions = 0;
 
         public PlayingSoundTemplate()
         {
@@ -63,13 +64,24 @@ namespace UniversalSoundBoard
 
         private void setMediaPlayerElementIsCompact()
         {
-            Debug.WriteLine(Window.Current.Bounds.Width);
             if(Window.Current.Bounds.Width < 1000 && Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
             {
                 MediaPlayerElement.TransportControls.IsCompact = false;
             }else
             {
                 MediaPlayerElement.TransportControls.IsCompact = true;
+            }
+        }
+
+        private void repeatSound(int repetitions)
+        {
+            if(repetitions == -1)
+            {
+                this.PlayingSound.MediaPlayer.IsLoopingEnabled = true;
+            }else
+            {
+                this.PlayingSound.MediaPlayer.IsLoopingEnabled = false;
+                this.repetitions = repetitions;
             }
         }
 
@@ -81,15 +93,24 @@ namespace UniversalSoundBoard
 
         private async void Player_MediaEnded(MediaPlayer sender, object args)
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            if(repetitions-- == 0)
             {
-                SoundPage.RemovePlayingSound(this.PlayingSound);
-            });
+                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    SoundPage.RemovePlayingSound(this.PlayingSound);
+                });
+            }else
+            {
+                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    this.PlayingSound.MediaPlayer.Play();
+                });
+            }
         }
 
         private void CustomMediaTransportControls_Removed(object sender, EventArgs e)
         {
-            Debug.WriteLine("Removed");
+            SoundPage.RemovePlayingSound(this.PlayingSound);
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -99,27 +120,27 @@ namespace UniversalSoundBoard
 
         private void CustomMediaTransportControls_Repeat_1x_Clicked(object sender, EventArgs e)
         {
-            Debug.WriteLine("Repeat 1x clicked");
+            repeatSound(1);
         }
 
         private void CustomMediaTransportControls_Repeat_2x_Clicked(object sender, EventArgs e)
         {
-            Debug.WriteLine("Repeat 2x clicked");
+            repeatSound(2);
         }
 
         private void CustomMediaTransportControls_Repeat_5x_Clicked(object sender, EventArgs e)
         {
-            Debug.WriteLine("Repeat 5x clicked");
+            repeatSound(5);
         }
 
         private void CustomMediaTransportControls_Repeat_10x_Clicked(object sender, EventArgs e)
         {
-            Debug.WriteLine("Repeat 10x clicked");
+            repeatSound(10);
         }
 
         private void CustomMediaTransportControls_Repeat_endless_Clicked(object sender, EventArgs e)
         {
-            Debug.WriteLine("Repeat endless clicked");
+            repeatSound(-1);
         }
     }
 }
