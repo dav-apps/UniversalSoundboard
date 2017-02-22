@@ -41,18 +41,18 @@ namespace UniversalSoundBoard
         private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
+            repetitions = 0;
 
-            if(this.PlayingSound != null)
+            if (this.PlayingSound != null)
             {
                 MediaPlayerElement.SetMediaPlayer(this.PlayingSound.MediaPlayer);
-                //MediaPlayerElement.TransportControls.Resources = 
 
                 this.PlayingSound.MediaPlayer.MediaEnded += Player_MediaEnded;
-                this.PlayingSound.MediaPlayer.Play();
             }
             else
             {
                 PlayingSoundName.Text = "There was an error...";
+                InitializeComponent();
             }
             setMediaPlayerElementIsCompact();
         }

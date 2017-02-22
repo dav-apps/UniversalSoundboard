@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -27,8 +28,6 @@ namespace UniversalSoundBoard
         public SettingsPage()
         {
             this.InitializeComponent();
-
-            setLiveTileToggle();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -39,6 +38,12 @@ namespace UniversalSoundBoard
         private void setDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            setPlayingSoundsListVisibilityToggle();
+            setLiveTileToggle();
         }
 
         private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
@@ -56,6 +61,13 @@ namespace UniversalSoundBoard
             }
         }
 
+        private void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["playingSoundsListVisible"] = PlayingSoundsListToggle.IsOn;
+            (App.Current as App)._itemViewHolder.playingSoundsListVisibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         private void setLiveTileToggle()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -71,6 +83,12 @@ namespace UniversalSoundBoard
                 localSettings.Values["liveTile"] = false;
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();
             }
+        }
+
+        private void setPlayingSoundsListVisibilityToggle()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            PlayingSoundsListToggle.IsOn = (bool)localSettings.Values["playingSoundsListVisible"];
         }
     }
 }

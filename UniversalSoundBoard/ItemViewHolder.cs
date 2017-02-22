@@ -29,6 +29,7 @@ namespace UniversalSoundBoard
         private ObservableCollection<Sound> _sounds;
         private List<Sound> _selectedSounds;
         private ObservableCollection<PlayingSound> _playingSounds;
+        private Visibility _playingSoundsListVisibility;
 
         public string title
         {
@@ -181,6 +182,17 @@ namespace UniversalSoundBoard
             {
                 _playingSounds = value;
                 NotifyPropertyChanged("playingSounds");
+            }
+        }
+
+        public Visibility playingSoundsListVisibility
+        {
+            get { return _playingSoundsListVisibility; }
+
+            set
+            {
+                _playingSoundsListVisibility = value;
+                NotifyPropertyChanged("playingSoundsListVisibility");
             }
         }
 

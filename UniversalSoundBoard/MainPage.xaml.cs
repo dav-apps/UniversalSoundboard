@@ -69,6 +69,17 @@ namespace UniversalSoundBoard
                 localSettings.Values["volume"] = 1.0;
             }
             VolumeSlider.Value = (double)localSettings.Values["volume"] * 100;
+
+            
+            if (localSettings.Values["playingSoundsListVisible"] == null)
+            {
+                localSettings.Values["playingSoundsListVisible"] = true;
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility = Visibility.Visible;
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility = (bool)localSettings.Values["playingSoundsListVisible"] ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         async void MainPage_Loaded(object sender, RoutedEventArgs e)

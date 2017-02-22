@@ -13,7 +13,7 @@
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="*" x:Name="SecondColDef"  />
         </Grid.ColumnDefinitions>
         
         <GridView Name="SoundGridView" Grid.Column="0"
@@ -29,7 +29,7 @@
             </GridView.ItemTemplate>
         </GridView>
 
-        <Grid Name="DrawerContent" Grid.Column="1">
+        <Grid Name="DrawerContent" Grid.Column="1" Visibility="{Binding playingSoundsListVisibility}">
             <ListView Name="PlayingSoundsListView" ItemsSource="{Binding playingSounds}" IsItemClickEnabled="False">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
@@ -44,38 +44,5 @@
                 </ListView.ItemTemplate>
             </ListView>
         </Grid>
-        <!--
-        <Grid x:Name="DrawerContentGrid" VerticalAlignment="Bottom" Background="{ThemeResource AppBarBackgroundThemeBrush}" RenderTransformOrigin="0.5,0.5">
-
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
-            </Grid.RowDefinitions>
-
-            <Grid Name="HandleGrid" 
-                  Height="15" Background="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="0,1,0,1" BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
-                  ManipulationStarted="HandleGrid_OnManipulationStarted" ManipulationDelta="HandleGrid_OnManipulationDelta" 
-                  ManipulationCompleted="HandleGrid_OnManipulationCompleted" ManipulationMode="TranslateY" 
-                  Tapped="HandleGrid_Tapped">
-                <SymbolIcon Symbol="More" />
-            </Grid>
-
-            <Grid Name="DrawerContent" Grid.Row="1">
-                <ListView Name="PlayingSoundsListView" ItemsSource="{Binding playingSounds}" IsItemClickEnabled="False">
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="data:PlayingSound">
-                            <local:PlayingSoundTemplate VerticalAlignment="Center" />
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </Grid>
-        </Grid>
-        -->
     </Grid>
 </Page>

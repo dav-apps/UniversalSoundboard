@@ -10,26 +10,31 @@
     
     <!-- This is Mobile -->
 
-    <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="ContentRoot">
+    <Grid Name="ContentRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="15,15,0,0">
         <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" Margin="20,10,10,10" />
+        <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" Margin="15,5,10,10" />
 
-        <StackPanel Grid.Row="1" Margin="20">
-            <ToggleSwitch Name="LiveTileToggle" Header="Live Tile" Toggled="LiveTileToggle_Toggled"/>
+        <StackPanel Grid.Row="1" Margin="5">
+            <ToggleSwitch Name="LiveTileToggle" Header="Live Tile" Toggled="LiveTileToggle_Toggled" />
         </StackPanel>
 
-        <StackPanel Grid.Row="2"
-                    Margin="20">
-            <HyperlinkButton Content="Privacy Policy" NavigateUri="http://dav-software.com/privacy.html"/>
+        <StackPanel Grid.Row="2" Margin="5">
+            <ToggleSwitch Name="PlayingSoundsListToggle" Header="Show list of playing sounds" Toggled="PlayingSoundsListToggle_Toggled" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="3"
+                    Margin="5">
+            <HyperlinkButton Content="Privacy Policy" NavigateUri="http://dav-software.com/privacy.html" />
 
             <StackPanel  Orientation="Horizontal">
-                <TextBlock Text="Version" IsTextSelectionEnabled="True" Margin="0,0,4,0"/>
-                <TextBlock x:Uid="Version" IsTextSelectionEnabled="True"/>
+                <TextBlock Text="Version" IsTextSelectionEnabled="True" Margin="0,0,4,0" />
+                <TextBlock x:Uid="Version" IsTextSelectionEnabled="True" />
             </StackPanel>
         </StackPanel>
     </Grid>

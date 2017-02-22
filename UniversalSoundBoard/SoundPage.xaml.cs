@@ -36,6 +36,11 @@ namespace UniversalSoundBoard
         {
             this.InitializeComponent();
             Loaded += SoundPage_Loaded;
+
+            if((App.Current as App)._itemViewHolder.playingSoundsListVisibility != Visibility.Visible && Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
+            {
+                SecondColDef.Width = new GridLength(0);
+            }
         }
 
         void SoundPage_Loaded(object sender, RoutedEventArgs e)
@@ -220,6 +225,7 @@ namespace UniversalSoundBoard
                 localSettings.Values["volume"] = 1.0;
                 player.Volume = 1.0;
             }
+            player.Play();
 
             PlayingSound playingSound = new PlayingSound(sound, player);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);

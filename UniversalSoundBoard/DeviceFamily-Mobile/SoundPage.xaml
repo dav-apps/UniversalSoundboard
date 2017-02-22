@@ -38,7 +38,7 @@
             </GridView.ItemTemplate>
         </GridView>
 
-        <Grid x:Name="DrawerContentGrid" Grid.Row="2"
+        <Grid x:Name="DrawerContentGrid" Grid.Row="2" Visibility="{Binding playingSoundsListVisibility}"
               VerticalAlignment="Bottom" Background="{ThemeResource AppBarBackgroundThemeBrush}" RenderTransformOrigin="0.5,0.5">
 
             <Grid.RowDefinitions>
@@ -55,7 +55,7 @@
             </Grid>
 
             <Grid Name="DrawerContent" Grid.Row="1">
-                <ListView Name="PlayingSoundsListView" ItemsSource="{Binding playingSounds, Mode=TwoWay}">
+                <ListView Name="PlayingSoundsListView" ItemsSource="{Binding playingSounds}" IsItemClickEnabled="False">
                     <ListView.ItemContainerStyle>
                         <Style TargetType="ListViewItem">
                             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -64,7 +64,7 @@
                     
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="data:PlayingSound">
-                            <local:PlayingSoundTemplate HorizontalAlignment="Stretch" VerticalAlignment="Stretch" />
+                            <local:PlayingSoundTemplate />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

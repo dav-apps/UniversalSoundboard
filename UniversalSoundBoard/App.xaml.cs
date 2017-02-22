@@ -12,6 +12,7 @@ using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media.Playback;
+using Windows.Storage;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -30,6 +31,7 @@ namespace UniversalSoundBoard
     {
         //bool _isInBackgroundMode = false;
 
+
         public ItemViewHolder _itemViewHolder = new ItemViewHolder {
             title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
             progressRingIsActive = false,
@@ -42,8 +44,9 @@ namespace UniversalSoundBoard
             multiSelectOptionsVisibility = Visibility.Collapsed,
             multiSelectOptionsEnabled = false,
             selectedSounds = new List<Sound>(),
-            playingSounds = new ObservableCollection<PlayingSound>()
-        };
+            playingSounds = new ObservableCollection<PlayingSound>(),
+            playingSoundsListVisibility = Visibility.Visible
+    };
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
