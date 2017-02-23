@@ -71,8 +71,6 @@ namespace UniversalSoundBoard
             setDataContext();
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             await SoundManager.GetAllSounds();
-
-            FileManager.UpdateLiveTile();
         }
 
         private void setDataContext()
@@ -96,15 +94,15 @@ namespace UniversalSoundBoard
             var localSettings = ApplicationData.Current.LocalSettings;
             if (localSettings.Values["volume"] == null)
             {
-                localSettings.Values["volume"] = 1.0;
+                localSettings.Values["volume"] = FileManager.volume;
             }
             VolumeSlider.Value = (double)localSettings.Values["volume"] * 100;
 
 
             if (localSettings.Values["playingSoundsListVisible"] == null)
             {
-                localSettings.Values["playingSoundsListVisible"] = true;
-                (App.Current as App)._itemViewHolder.playingSoundsListVisibility = Visibility.Visible;
+                localSettings.Values["playingSoundsListVisible"] = FileManager.playingSoundsListVisible;
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility = FileManager.playingSoundsListVisible ? Visibility.Visible : Visibility.Collapsed;
             }
             else
             {
@@ -113,12 +111,20 @@ namespace UniversalSoundBoard
 
             if (localSettings.Values["playOneSoundAtOnce"] == null)
             {
-                localSettings.Values["playOneSoundAtOnce"] = false;
-                (App.Current as App)._itemViewHolder.playOneSoundAtOnce = false;
+                localSettings.Values["playOneSoundAtOnce"] = FileManager.playOneSoundAtOnce;
+                (App.Current as App)._itemViewHolder.playOneSoundAtOnce = FileManager.playOneSoundAtOnce;
             }
             else
             {
                 (App.Current as App)._itemViewHolder.playOneSoundAtOnce = (bool)localSettings.Values["playOneSoundAtOnce"];
+            }
+
+            if (localSettings.Values["liveTile"] == null)
+            {
+                localSettings.Values["liveTile"] = FileManager.liveTile;
+            }else
+            {
+                FileManager.UpdateLiveTile();
             }
         }
 

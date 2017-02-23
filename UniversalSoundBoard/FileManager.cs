@@ -23,6 +23,11 @@ namespace UniversalSoundBoard
 {
     public class FileManager
     {
+        public const double volume = 1.0;
+        public const bool liveTile = true;
+        public const bool playingSoundsListVisible = false;
+        public const bool playOneSoundAtOnce = true;
+
         public static async void addImage(StorageFile file, Sound sound)
         {
             StorageFolder folder = ApplicationData.Current.LocalFolder;
@@ -260,16 +265,15 @@ namespace UniversalSoundBoard
         public static void UpdateLiveTile()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
-            var value = localSettings.Values["liveTile"];
             bool isLiveTileOn = false;
 
-            if (value != null)
+            if (localSettings.Values["liveTile"] == null)
             {
-                isLiveTileOn = (bool)localSettings.Values["liveTile"];
+                localSettings.Values["liveTile"] = liveTile;
+                isLiveTileOn = liveTile;
             }else
             {
-                localSettings.Values["liveTile"] = false;
-                isLiveTileOn = false;
+                isLiveTileOn = (bool)localSettings.Values["liveTile"];
             }
 
             if ((App.Current as App)._itemViewHolder.sounds.Count <= 0 || !isLiveTileOn)

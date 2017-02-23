@@ -50,18 +50,7 @@ namespace UniversalSoundBoard
         private void setLiveTileToggle()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
-            var value = localSettings.Values["liveTile"];
-
-            if (value != null)
-            {
-                LiveTileToggle.IsOn = (bool)localSettings.Values["liveTile"];
-            }
-            else
-            {
-                LiveTileToggle.IsOn = false;
-                localSettings.Values["liveTile"] = false;
-                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-            }
+            LiveTileToggle.IsOn = (bool)localSettings.Values["liveTile"];
         }
 
         private void setPlayingSoundsListVisibilityToggle()
