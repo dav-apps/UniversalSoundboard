@@ -30,6 +30,7 @@ namespace UniversalSoundBoard
         private List<Sound> _selectedSounds;
         private ObservableCollection<PlayingSound> _playingSounds;
         private Visibility _playingSoundsListVisibility;
+        private bool _playOneSoundAtOnce;
 
         public string title
         {
@@ -193,6 +194,17 @@ namespace UniversalSoundBoard
             {
                 _playingSoundsListVisibility = value;
                 NotifyPropertyChanged("playingSoundsListVisibility");
+            }
+        }
+
+        public bool playOneSoundAtOnce
+        {
+            get { return _playOneSoundAtOnce; }
+
+            set
+            {
+                _playOneSoundAtOnce = value;
+                NotifyPropertyChanged("playOneSoundAtOnce");
             }
         }
 

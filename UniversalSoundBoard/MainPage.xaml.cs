@@ -63,23 +63,7 @@ namespace UniversalSoundBoard
             //SettingsListing.Add(new Setting { Icon = "\uE2AF", Text = "Log in" });
             SettingsListing.Add(new Setting { Icon = "\uE713", Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title"), Id = "Settings" });
 
-            var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["volume"] == null)
-            {
-                localSettings.Values["volume"] = 1.0;
-            }
-            VolumeSlider.Value = (double)localSettings.Values["volume"] * 100;
-
-            
-            if (localSettings.Values["playingSoundsListVisible"] == null)
-            {
-                localSettings.Values["playingSoundsListVisible"] = true;
-                (App.Current as App)._itemViewHolder.playingSoundsListVisibility = Visibility.Visible;
-            }
-            else
-            {
-                (App.Current as App)._itemViewHolder.playingSoundsListVisibility = (bool)localSettings.Values["playingSoundsListVisible"] ? Visibility.Visible : Visibility.Collapsed;
-            }
+            initializeLocalSettings();
         }
 
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -104,6 +88,37 @@ namespace UniversalSoundBoard
             foreach(Category cat in (App.Current as App)._itemViewHolder.categories)
             {
                 Categories.Add(cat);
+            }
+        }
+
+        private void initializeLocalSettings()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            if (localSettings.Values["volume"] == null)
+            {
+                localSettings.Values["volume"] = 1.0;
+            }
+            VolumeSlider.Value = (double)localSettings.Values["volume"] * 100;
+
+
+            if (localSettings.Values["playingSoundsListVisible"] == null)
+            {
+                localSettings.Values["playingSoundsListVisible"] = true;
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility = Visibility.Visible;
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility = (bool)localSettings.Values["playingSoundsListVisible"] ? Visibility.Visible : Visibility.Collapsed;
+            }
+
+            if (localSettings.Values["playOneSoundAtOnce"] == null)
+            {
+                localSettings.Values["playOneSoundAtOnce"] = false;
+                (App.Current as App)._itemViewHolder.playOneSoundAtOnce = false;
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.playOneSoundAtOnce = (bool)localSettings.Values["playOneSoundAtOnce"];
             }
         }
 

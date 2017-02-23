@@ -42,30 +42,9 @@ namespace UniversalSoundBoard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            setPlayingSoundsListVisibilityToggle();
             setLiveTileToggle();
-        }
-
-        private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            var localSettings = ApplicationData.Current.LocalSettings;
-
-            // Create a simple setting
-            localSettings.Values["liveTile"] = LiveTileToggle.IsOn;
-            if (!LiveTileToggle.IsOn)
-            {
-                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-            }else
-            {
-                FileManager.UpdateLiveTile();
-            }
-        }
-
-        private void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values["playingSoundsListVisible"] = PlayingSoundsListToggle.IsOn;
-            (App.Current as App)._itemViewHolder.playingSoundsListVisibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+            setPlayingSoundsListVisibilityToggle();
+            setPlayOneSoundAtOnceToggle();
         }
 
         private void setLiveTileToggle()
@@ -89,6 +68,41 @@ namespace UniversalSoundBoard
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             PlayingSoundsListToggle.IsOn = (bool)localSettings.Values["playingSoundsListVisible"];
+        }
+
+        private void setPlayOneSoundAtOnceToggle()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            PlayOneSoundAtOnceToggle.IsOn = (bool)localSettings.Values["playOneSoundAtOnce"];
+        }
+
+        private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+
+            // Create a simple setting
+            localSettings.Values["liveTile"] = LiveTileToggle.IsOn;
+            if (!LiveTileToggle.IsOn)
+            {
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+            }
+            else
+            {
+                FileManager.UpdateLiveTile();
+            }
+        }
+
+        private void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["playingSoundsListVisible"] = PlayingSoundsListToggle.IsOn;
+            (App.Current as App)._itemViewHolder.playingSoundsListVisibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void PlayOneSoundAtOnceToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["playOneSoundAtOnce"] = PlayOneSoundAtOnceToggle.IsOn;
         }
     }
 }

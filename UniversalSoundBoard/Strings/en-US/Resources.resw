@@ -229,4 +229,10 @@
   <data name="PlayingSound_RepeatButton.Label" xml:space="preserve">
     <value>Repeat</value>
   </data>
+  <data name="PlayingSoundsListToggle.Header" xml:space="preserve">
+    <value>Show list of playing sounds</value>
+  </data>
+  <data name="PlayOneSoundAtOnceToggle.Header" xml:space="preserve">
+    <value>Play only one sound at once</value>
+  </data>
 </root>

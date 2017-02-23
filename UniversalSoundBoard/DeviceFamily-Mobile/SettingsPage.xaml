@@ -16,6 +16,7 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" Margin="15,5,10,10" />
@@ -25,10 +26,14 @@
         </StackPanel>
 
         <StackPanel Grid.Row="2" Margin="5">
-            <ToggleSwitch Name="PlayingSoundsListToggle" Header="Show list of playing sounds" Toggled="PlayingSoundsListToggle_Toggled" />
+            <ToggleSwitch Name="PlayingSoundsListToggle" x:Uid="PlayingSoundsListToggle" Header="Show list of playing sounds" Toggled="PlayingSoundsListToggle_Toggled" />
         </StackPanel>
 
-        <StackPanel Grid.Row="3"
+        <StackPanel Grid.Row="3" Margin="5">
+            <ToggleSwitch Name="PlayOneSoundAtOnceToggle" x:Uid="PlayOneSoundAtOnceToggle" Header="Play one sound at once" Toggled="PlayOneSoundAtOnceToggle_Toggled" />
+        </StackPanel>
+
+        <StackPanel Grid.Row="4"
                     Margin="5">
             <HyperlinkButton Content="Privacy Policy" NavigateUri="http://dav-software.com/privacy.html" />
 

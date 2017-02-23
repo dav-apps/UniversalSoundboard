@@ -216,4 +216,10 @@
   <data name="PlayingSound_RepeatButton.Label" xml:space="preserve">
     <value>Wiederholen</value>
   </data>
+  <data name="PlayingSoundsListToggle.Header" xml:space="preserve">
+    <value>Liste spielender Sounds anzeigen</value>
+  </data>
+  <data name="PlayOneSoundAtOnceToggle.Header" xml:space="preserve">
+    <value>Nur einen Sound auf einmal abspielen</value>
+  </data>
 </root>

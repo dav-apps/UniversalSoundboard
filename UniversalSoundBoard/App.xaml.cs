@@ -45,7 +45,8 @@ namespace UniversalSoundBoard
             multiSelectOptionsEnabled = false,
             selectedSounds = new List<Sound>(),
             playingSounds = new ObservableCollection<PlayingSound>(),
-            playingSoundsListVisibility = Visibility.Visible
+            playingSoundsListVisibility = Visibility.Visible,
+            playOneSoundAtOnce = false
     };
 
         /// <summary>
