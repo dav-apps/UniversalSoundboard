@@ -29,7 +29,7 @@
             </GridView.ItemTemplate>
         </GridView>
 
-        <Grid Name="DrawerContent" Grid.Column="1" Visibility="{Binding playingSoundsListVisibility}">
+        <Grid Name="DrawerContent" Grid.Column="1">
             <ListView Name="PlayingSoundsListView" ItemsSource="{Binding playingSounds}" IsItemClickEnabled="False">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">

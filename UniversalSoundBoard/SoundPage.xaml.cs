@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -37,9 +38,28 @@ namespace UniversalSoundBoard
             this.InitializeComponent();
             Loaded += SoundPage_Loaded;
 
-            if((App.Current as App)._itemViewHolder.playingSoundsListVisibility != Visibility.Visible && Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
+            if((App.Current as App)._itemViewHolder.playingSoundsListVisibility != Visibility.Visible)
             {
-                SecondColDef.Width = new GridLength(0);
+                if(Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
+                {
+                    SecondColDef.Width = new GridLength(0);
+                }
+            }else
+            {
+                List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
+                foreach(PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
+                {
+                    if(playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                    {
+                        Debug.WriteLine(playingSound.Sound.Name + " is not playing");
+                        removedPlayingSounds.Add(playingSound);
+                    }
+                }
+
+                for (int i = 0; i < removedPlayingSounds.Count; i++)
+                {
+                    RemovePlayingSound(removedPlayingSounds[i]);
+                }
             }
         }
 
@@ -236,6 +256,7 @@ namespace UniversalSoundBoard
             playingSound.MediaPlayer.Pause();
             playingSound.MediaPlayer.Source = null;
             (App.Current as App)._itemViewHolder.playingSounds.Remove(playingSound);
+            Debug.WriteLine(playingSound.Sound.Name + " was removed!");
         }
 
 
