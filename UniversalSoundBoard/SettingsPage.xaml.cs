@@ -103,6 +103,7 @@ namespace UniversalSoundBoard
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values["playOneSoundAtOnce"] = PlayOneSoundAtOnceToggle.IsOn;
+            (App.Current as App)._itemViewHolder.playOneSoundAtOnce = PlayOneSoundAtOnceToggle.IsOn;
         }
     }
 }

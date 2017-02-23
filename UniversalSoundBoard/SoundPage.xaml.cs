@@ -51,15 +51,11 @@ namespace UniversalSoundBoard
                 {
                     if(playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
                     {
-                        Debug.WriteLine(playingSound.Sound.Name + " is not playing");
                         removedPlayingSounds.Add(playingSound);
                     }
                 }
 
-                for (int i = 0; i < removedPlayingSounds.Count; i++)
-                {
-                    RemovePlayingSound(removedPlayingSounds[i]);
-                }
+                RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
             }
         }
 
@@ -245,6 +241,19 @@ namespace UniversalSoundBoard
                 localSettings.Values["volume"] = 1.0;
                 player.Volume = 1.0;
             }
+
+            // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
+            if((App.Current as App)._itemViewHolder.playOneSoundAtOnce)
+            {
+                List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
+                foreach (PlayingSound pSound in (App.Current as App)._itemViewHolder.playingSounds)
+                {
+                    removedPlayingSounds.Add(pSound);
+                }
+
+                RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
+            }
+
             player.Play();
 
             PlayingSound playingSound = new PlayingSound(sound, player);
@@ -256,7 +265,14 @@ namespace UniversalSoundBoard
             playingSound.MediaPlayer.Pause();
             playingSound.MediaPlayer.Source = null;
             (App.Current as App)._itemViewHolder.playingSounds.Remove(playingSound);
-            Debug.WriteLine(playingSound.Sound.Name + " was removed!");
+        }
+
+        private static void RemoveSoundsFromPlayingSoundsList(List<PlayingSound> removedPlayingSounds)
+        {
+            for (int i = 0; i < removedPlayingSounds.Count; i++)
+            {
+                RemovePlayingSound(removedPlayingSounds[i]);
+            }
         }
 
 
