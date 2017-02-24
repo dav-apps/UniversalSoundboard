@@ -27,7 +27,6 @@ namespace UniversalSoundBoard
         public PlayingSound PlayingSound { get { return this.DataContext as PlayingSound; } }
 
         CoreDispatcher dispatcher;
-        int repetitions = 0;
 
         public PlayingSoundTemplate()
         {
@@ -41,7 +40,6 @@ namespace UniversalSoundBoard
         private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
-            repetitions = 0;
 
             if (this.PlayingSound != null)
             {
@@ -81,7 +79,7 @@ namespace UniversalSoundBoard
             }else
             {
                 this.PlayingSound.MediaPlayer.IsLoopingEnabled = false;
-                this.repetitions = repetitions;
+                this.PlayingSound.repetitions = repetitions;
             }
         }
 
@@ -93,19 +91,26 @@ namespace UniversalSoundBoard
 
         private async void Player_MediaEnded(MediaPlayer sender, object args)
         {
-            if(repetitions-- == 0)
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                if (this.PlayingSound.repetitions-- == 0)
                 {
                     SoundPage.RemovePlayingSound(this.PlayingSound);
-                });
-            }else
-            {
-                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                }
+                else
                 {
-                    this.PlayingSound.MediaPlayer.Play();
-                });
-            }
+                    if(((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).Items.Count > 1)
+                    {
+                        // Multiple Sounds in the list
+                        ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).MoveTo(0);
+                        this.PlayingSound.MediaPlayer.Play();
+                    }else
+                    {
+                        // One sound in the list
+                        this.PlayingSound.MediaPlayer.Play();
+                    }
+                }
+            });
         }
 
         private void CustomMediaTransportControls_Removed(object sender, EventArgs e)

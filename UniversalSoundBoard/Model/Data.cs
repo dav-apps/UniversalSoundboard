@@ -21,16 +21,25 @@ namespace UniversalSoundBoard.Model
     {
         public Sound Sound { get; set; }
         public MediaPlayer MediaPlayer { get; set; }
+        public int repetitions { get; set; }
 
         public PlayingSound()
         {
-            
+            repetitions = 0;
         }
 
         public PlayingSound(Sound sound, MediaPlayer player)
         {
             this.Sound = sound;
             this.MediaPlayer = player;
+            repetitions = 0;
+        }
+
+        public PlayingSound(Sound sound, MediaPlayer player, int repetitions)
+        {
+            this.Sound = sound;
+            this.MediaPlayer = player;
+            this.repetitions = repetitions;
         }
 
         public static PlayingSound GetPlayingSoundByMediaPlayer(MediaPlayer player)

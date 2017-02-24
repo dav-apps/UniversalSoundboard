@@ -207,7 +207,7 @@ namespace UniversalSoundBoard
             }
         }
 
-        public void playSound(Sound sound)
+        public static void playSound(Sound sound)
         {
             MediaPlayer player = new MediaPlayer();
             MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
@@ -257,6 +257,62 @@ namespace UniversalSoundBoard
             player.Play();
 
             PlayingSound playingSound = new PlayingSound(sound, player);
+            (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
+        }
+
+        public static void playSounds(List<Sound> sounds, int repetitions)
+        {
+            MediaPlayer player = new MediaPlayer();
+            MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
+
+            foreach(Sound sound in sounds)
+            {
+                MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(sound.AudioFile));
+
+                MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
+                props.Type = MediaPlaybackType.Music;
+                props.MusicProperties.Title = sound.Name;
+                props.MusicProperties.Artist = sound.CategoryName;
+                if (sound.ImageFile != null)
+                {
+                    props.Thumbnail = RandomAccessStreamReference.CreateFromFile(sound.ImageFile);
+                }
+
+                mediaPlaybackItem.ApplyDisplayProperties(props);
+
+                mediaPlaybackList.Items.Add(mediaPlaybackItem);
+            }
+            
+            player.Source = mediaPlaybackList;
+
+
+            // Set volume
+            var localSettings = ApplicationData.Current.LocalSettings;
+            if (localSettings.Values["volume"] != null)
+            {
+                player.Volume = (double)localSettings.Values["volume"];
+            }
+            else
+            {
+                localSettings.Values["volume"] = 1.0;
+                player.Volume = 1.0;
+            }
+
+            // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
+            if ((App.Current as App)._itemViewHolder.playOneSoundAtOnce)
+            {
+                List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
+                foreach (PlayingSound pSound in (App.Current as App)._itemViewHolder.playingSounds)
+                {
+                    removedPlayingSounds.Add(pSound);
+                }
+
+                RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
+            }
+
+            player.Play();
+
+            PlayingSound playingSound = new PlayingSound(sounds.First(), player, repetitions);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
 

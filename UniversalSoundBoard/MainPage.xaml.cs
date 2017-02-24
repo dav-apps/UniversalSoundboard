@@ -475,16 +475,19 @@ namespace UniversalSoundBoard
 
         private void PlaySoundsSimultaneously_Click(object sender, RoutedEventArgs e)
         {
-            playSoundsSuccessively = false;
-            // Create a mediaElement for each sound
+            //playSoundsSuccessively = false;
+            bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.playOneSoundAtOnce;
+            (App.Current as App)._itemViewHolder.playOneSoundAtOnce = false;
             foreach(Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
             {
-                //SoundPage.playSound(sound);
+                SoundPage.playSound(sound);
             }
+            (App.Current as App)._itemViewHolder.playOneSoundAtOnce = oldPlayOneSoundAtOnce;
         }
 
         private void StartPlaySoundsSuccessively(int rounds)
         {
+            /*
             playSoundsSuccessivelyRounds = rounds;
             playedRounds = 0;
             playedSound = 0;
@@ -495,6 +498,8 @@ namespace UniversalSoundBoard
                 SoundList.Add(sound);
             }
             //SoundPage.playSoundsSuccessively(SoundList, rounds);
+            */
+            SoundPage.playSounds((App.Current as App)._itemViewHolder.selectedSounds, --rounds);
         }
 
         private void MyMediaElement_MediaEnded(object sender, RoutedEventArgs e)
