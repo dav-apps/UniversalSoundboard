@@ -216,11 +216,16 @@ namespace UniversalSoundBoard
         protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
             ShareOperation shareOperation = args.ShareOperation;
-            if (shareOperation.Data.Contains(StandardDataFormats.Text))
+            if (shareOperation.Data.Contains(StandardDataFormats.StorageItems))
             {
-                string text = await shareOperation.Data.GetTextAsync();
-
-                (App.Current as App)._itemViewHolder.title = "Text: " + text;
+                foreach(IStorageItem storageItem in await shareOperation.Data.GetStorageItemsAsync())
+                {
+                    if(((StorageFile)storageItem).ContentType == "audio/wav" || ((StorageFile)storageItem).ContentType == "audio/mpeg")
+                    {
+                        await Sound.SoundManager.addSound(((StorageFile)storageItem));
+                    }
+                }
+                shareOperation.ReportDataRetrieved();
             }
         }
     }
