@@ -30,6 +30,7 @@ using NotificationsExtensions.Tiles; // NotificationsExtensions.Win10
 using NotificationsExtensions;
 using Windows.Media.Playback;
 using Windows.Media.Core;
+using Microsoft.Services.Store.Engagement;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -63,6 +64,7 @@ namespace UniversalSoundBoard
             //SettingsListing.Add(new Setting { Icon = "\uE2AF", Text = "Log in" });
             SettingsListing.Add(new Setting { Icon = "\uE713", Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title"), Id = "Settings" });
 
+
             initializeLocalSettings();
         }
 
@@ -71,6 +73,7 @@ namespace UniversalSoundBoard
             setDataContext();
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             await SoundManager.GetAllSounds();
+            await initializePushNotificationSettings();
         }
 
         private void setDataContext()
@@ -87,6 +90,12 @@ namespace UniversalSoundBoard
             {
                 Categories.Add(cat);
             }
+        }
+
+        private async Task initializePushNotificationSettings()
+        {
+            StoreServicesEngagementManager engagementManager = StoreServicesEngagementManager.GetDefault();
+            await engagementManager.RegisterNotificationChannelAsync();
         }
 
         private void initializeLocalSettings()
