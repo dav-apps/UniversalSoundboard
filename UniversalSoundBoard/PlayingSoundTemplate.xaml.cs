@@ -46,6 +46,7 @@ namespace UniversalSoundBoard
                 MediaPlayerElement.SetMediaPlayer(this.PlayingSound.MediaPlayer);
 
                 this.PlayingSound.MediaPlayer.MediaEnded += Player_MediaEnded;
+                ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
             }
             else
             {
@@ -53,6 +54,18 @@ namespace UniversalSoundBoard
                 InitializeComponent();
             }
             setMediaPlayerElementIsCompact();
+        }
+
+        private async void PlayingSoundTemplate_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        {
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (this.PlayingSound.Sounds.Count > 1 && sender.CurrentItemIndex < this.PlayingSound.Sounds.Count)
+                {
+                    this.PlayingSound.CurrentSound = this.PlayingSound.Sounds.ElementAt((int)sender.CurrentItemIndex);
+                    PlayingSoundName.Text = this.PlayingSound.CurrentSound.Name;
+                }
+            });
         }
 
         private void setDataContext()

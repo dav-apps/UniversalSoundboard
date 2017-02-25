@@ -312,7 +312,7 @@ namespace UniversalSoundBoard
 
             player.Play();
 
-            PlayingSound playingSound = new PlayingSound(sounds.First(), player, repetitions);
+            PlayingSound playingSound = new PlayingSound(sounds, player, repetitions);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
 

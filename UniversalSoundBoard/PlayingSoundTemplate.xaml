@@ -21,7 +21,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Name="PlayingSoundName" Text="{x:Bind PlayingSound.Sound.Name}" Grid.Row="0"
+        <TextBlock Name="PlayingSoundName" Text="{x:Bind PlayingSound.CurrentSound.Name}" Grid.Row="0"
                    VerticalAlignment="Center" Margin="10,0,0,0" TextWrapping="WrapWholeWords" />
 
         <MediaPlayerElement Name="MediaPlayerElement" Grid.Row="1"
