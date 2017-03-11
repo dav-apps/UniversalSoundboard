@@ -57,9 +57,6 @@ namespace UniversalSoundBoard
 
             //SettingsListing.Add(new Setting { Icon = "\uE2AF", Text = "Log in" });
             SettingsListing.Add(new Setting { Icon = "\uE713", Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title"), Id = "Settings" });
-
-
-            initializeLocalSettings();
         }
 
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -67,6 +64,7 @@ namespace UniversalSoundBoard
             setDataContext();
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             await SoundManager.GetAllSounds();
+            initializeLocalSettings();
             await initializePushNotificationSettings();
         }
 
@@ -125,7 +123,12 @@ namespace UniversalSoundBoard
             if (localSettings.Values["liveTile"] == null)
             {
                 localSettings.Values["liveTile"] = FileManager.liveTile;
-            }else
+                if (FileManager.liveTile)
+                {
+                    FileManager.UpdateLiveTile();
+                }
+            }
+            else
             {
                 FileManager.UpdateLiveTile();
             }

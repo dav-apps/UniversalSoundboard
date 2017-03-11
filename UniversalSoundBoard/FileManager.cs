@@ -2,6 +2,7 @@
 using NotificationsExtensions.Tiles;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -61,7 +62,7 @@ namespace UniversalSoundBoard
         {
             if((App.Current as App)._itemViewHolder.searchQuery == "")
             {
-                if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds")) // <-- TODO
+                if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
                 {
                     await SoundManager.GetAllSounds();
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
@@ -282,8 +283,7 @@ namespace UniversalSoundBoard
                 return;
             }
             List<Sound> sounds = new List<Sound>();
-            var sound = (App.Current as App)._itemViewHolder.sounds.First();
-
+            Sound sound = (App.Current as App)._itemViewHolder.sounds.Last();
             // Get sound with image
             foreach (var s in (App.Current as App)._itemViewHolder.sounds)
             {
@@ -292,7 +292,6 @@ namespace UniversalSoundBoard
                     sounds.Add(s);
                 }
             }
-
 
             if (sounds.Count <= 0)
             {
@@ -303,7 +302,6 @@ namespace UniversalSoundBoard
                 Random random = new Random();
                 sound = sounds.ElementAt(random.Next(sounds.Count));
             }
-
 
             TileBinding binding = new TileBinding()
             {
@@ -338,7 +336,6 @@ namespace UniversalSoundBoard
 
             // Create the tile notification
             var notification = new TileNotification(content.GetXml());
-
             // And send the notification
             TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
         }
