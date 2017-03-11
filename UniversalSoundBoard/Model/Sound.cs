@@ -66,44 +66,43 @@ namespace UniversalSoundBoard.Model
 
                 foreach (var file in await folder.GetFilesAsync())
                 {
-                    Sound sound = new Sound();
-                    
                     if (file.ContentType == "audio/wav" || file.ContentType == "audio/mpeg")
                     {
+                        Sound sound = new Sound();
+
                         sound.Name = file.DisplayName;
-                        // sound.Category = null; // Get category by json file
                         sound.AudioFile = file;
-                        sound.AudioFile = file;
-                    }
 
-                    // Get Image for Sound
-                    BitmapImage DefaultImage = new BitmapImage();
-                    Uri defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
-                    DefaultImage.UriSource = defaultImageUri;
 
-                    sound.Image = DefaultImage;
+                        // Get Image for Sound
+                        BitmapImage DefaultImage = new BitmapImage();
+                        Uri defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
+                        DefaultImage.UriSource = defaultImageUri;
 
-                    // Add image
-                    foreach (var image in await imagesFolder.GetFilesAsync())
-                    {
-                        if (image.DisplayName.Equals(file.DisplayName))
+                        sound.Image = DefaultImage;
+
+                        // Add image
+                        foreach (var image in await imagesFolder.GetFilesAsync())
                         {
-                            var Image = new BitmapImage();
-                            Uri uri = new Uri(image.Path, UriKind.Absolute);
-                            Image.UriSource = uri;
-                            sound.Image = Image;
-                            sound.ImageFile = image;
+                            if (image.DisplayName.Equals(file.DisplayName))
+                            {
+                                var Image = new BitmapImage();
+                                Uri uri = new Uri(image.Path, UriKind.Absolute);
+                                Image.UriSource = uri;
+                                sound.Image = Image;
+                                sound.ImageFile = image;
+                            }
                         }
+
+                        // Add details file
+                        SoundDetails details = new SoundDetails();
+                        StorageFile detailsFile = await FileManager.createSoundDetailsFileIfNotExistsAsync(sound.Name);
+                        await details.ReadSoundDetailsFile(detailsFile);
+                        sound.DetailsFile = detailsFile;
+                        sound.CategoryName = WebUtility.HtmlDecode(details.Category);
+
+                        newSounds.Add(sound);
                     }
-                    
-                    // Add details file
-                    SoundDetails details = new SoundDetails();
-                    StorageFile detailsFile = await FileManager.createSoundDetailsFileIfNotExistsAsync(sound.Name);
-                    await details.ReadSoundDetailsFile(detailsFile);
-                    sound.DetailsFile = detailsFile;
-                    sound.CategoryName = WebUtility.HtmlDecode(details.Category);
-                    
-                    newSounds.Add(sound);
                 }
 
                 // Add found Sounds to Sounds ObservableCollection

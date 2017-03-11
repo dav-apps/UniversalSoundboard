@@ -254,8 +254,6 @@ namespace UniversalSoundBoard
                 RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
             }
 
-            player.Play();
-
             PlayingSound playingSound = new PlayingSound(sound, player);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
@@ -310,16 +308,12 @@ namespace UniversalSoundBoard
                 RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
             }
 
-            player.Play();
-
             PlayingSound playingSound = new PlayingSound(sounds, player, repetitions);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
 
         public static void RemovePlayingSound(PlayingSound playingSound)
         {
-            playingSound.MediaPlayer.Pause();
-            playingSound.MediaPlayer.Source = null;
             (App.Current as App)._itemViewHolder.playingSounds.Remove(playingSound);
         }
 

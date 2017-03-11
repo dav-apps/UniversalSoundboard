@@ -44,11 +44,6 @@ namespace UniversalSoundBoard
         List<string> Suggestions;
         ObservableCollection<Category> Categories;
         ObservableCollection<Setting> SettingsListing;
-        List<Sound> SoundList;
-        int playedSound = 0;
-        bool playSoundsSuccessively = false;
-        int playSoundsSuccessivelyRounds = 0;
-        int playedRounds = 0;
 
         public MainPage()
         {
@@ -59,7 +54,6 @@ namespace UniversalSoundBoard
             CreateCategoriesObservableCollection();
 
             SettingsListing = new ObservableCollection<Setting>();
-            SoundList = new List<Sound>();
 
             //SettingsListing.Add(new Setting { Icon = "\uE2AF", Text = "Log in" });
             SettingsListing.Add(new Setting { Icon = "\uE713", Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title"), Id = "Settings" });
@@ -475,7 +469,6 @@ namespace UniversalSoundBoard
 
         private void PlaySoundsSimultaneously_Click(object sender, RoutedEventArgs e)
         {
-            //playSoundsSuccessively = false;
             bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.playOneSoundAtOnce;
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = false;
             foreach(Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
@@ -487,60 +480,9 @@ namespace UniversalSoundBoard
 
         private void StartPlaySoundsSuccessively(int rounds)
         {
-            /*
-            playSoundsSuccessivelyRounds = rounds;
-            playedRounds = 0;
-            playedSound = 0;
-            playSoundsSuccessively = true;
-            SoundList.Clear();
-            foreach (Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
-            {
-                SoundList.Add(sound);
-            }
-            //SoundPage.playSoundsSuccessively(SoundList, rounds);
-            */
-            SoundPage.playSounds((App.Current as App)._itemViewHolder.selectedSounds, --rounds);
+            SoundPage.playSounds((App.Current as App)._itemViewHolder.selectedSounds, rounds);
         }
-
-        private void MyMediaElement_MediaEnded(object sender, RoutedEventArgs e)
-        {
-            playedSound++;
-            // Play next sound
-            if(playSoundsSuccessively)
-            {
-                if (playSoundsSuccessivelyRounds == -1)
-                {
-                    // Play endless
-                    if (playedSound < SoundList.Count)
-                    {
-                        (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, SoundList[playedSound].AudioFile.Path);
-                    }
-                    else
-                    {
-                        playedSound = 0;
-                        (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, SoundList[playedSound].AudioFile.Path);
-                    }
-                }else if (playedSound < SoundList.Count)
-                {
-                    (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, SoundList[playedSound].AudioFile.Path);
-                }else
-                {
-                    playedRounds++;
-                    playedSound = 0;
-                    
-                    if (playedRounds < playSoundsSuccessivelyRounds)
-                    {
-                        (App.Current as App)._itemViewHolder.mediaElementSource = new Uri(this.BaseUri, SoundList[playedSound].AudioFile.Path);
-                    }else
-                    {
-                        playSoundsSuccessively = false;
-                        playSoundsSuccessivelyRounds = 0;
-                        playedRounds = 0;
-                    }
-                }
-            }
-        }
-
+        
         private void PlaySoundsSuccessively_1x_Click(object sender, RoutedEventArgs e)
         {
             StartPlaySoundsSuccessively(1);
@@ -563,7 +505,7 @@ namespace UniversalSoundBoard
 
         private void PlaySoundsSuccessively_endless_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(-1);
+            StartPlaySoundsSuccessively(int.MaxValue);
         }
 
         private void createCategoriesFlyout()

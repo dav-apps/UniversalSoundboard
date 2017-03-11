@@ -24,7 +24,7 @@ namespace UniversalSoundBoard
 {
     public sealed partial class PlayingSoundTemplate : UserControl
     {
-        public PlayingSound PlayingSound { get { return this.DataContext as PlayingSound; } }
+        public PlayingSound PlayingSound { get; set; }
 
         CoreDispatcher dispatcher;
 
@@ -32,40 +32,27 @@ namespace UniversalSoundBoard
         {
             this.InitializeComponent();
             Loaded += PlayingSoundTemplate_Loaded;
-            this.DataContextChanged += (s, e) => Bindings.Update();
+
+            setDataContext();
+            DataContextChanged += PlayingSoundTemplate_DataContextChanged;
 
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
         }
 
-        private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs e)
+        private void PlayingSoundTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            setDataContext();
-
-            if (this.PlayingSound != null)
+            if(this.DataContext != null)
             {
-                MediaPlayerElement.SetMediaPlayer(this.PlayingSound.MediaPlayer);
+                this.PlayingSound = this.DataContext as PlayingSound;
 
-                this.PlayingSound.MediaPlayer.MediaEnded += Player_MediaEnded;
-                ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
+                initializePlayingSound();
             }
-            else
-            {
-                PlayingSoundName.Text = "There was an error...";
-                InitializeComponent();
-            }
-            setMediaPlayerElementIsCompact();
         }
 
-        private async void PlayingSoundTemplate_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs eventArgs)
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                if (this.PlayingSound.Sounds.Count > 1 && sender.CurrentItemIndex < this.PlayingSound.Sounds.Count)
-                {
-                    this.PlayingSound.CurrentSound = this.PlayingSound.Sounds.ElementAt((int)sender.CurrentItemIndex);
-                    PlayingSoundName.Text = this.PlayingSound.CurrentSound.Name;
-                }
-            });
+            initializePlayingSound();
+            setMediaPlayerElementIsCompact();
         }
 
         private void setDataContext()
@@ -86,19 +73,39 @@ namespace UniversalSoundBoard
 
         private void repeatSound(int repetitions)
         {
-            if(repetitions == -1)
+            this.PlayingSound.repetitions = repetitions;
+        }
+
+        private void initializePlayingSound()
+        {
+            if (this.PlayingSound.MediaPlayer != null)
             {
-                this.PlayingSound.MediaPlayer.IsLoopingEnabled = true;
-            }else
-            {
-                this.PlayingSound.MediaPlayer.IsLoopingEnabled = false;
-                this.PlayingSound.repetitions = repetitions;
+                MediaPlayerElement.SetMediaPlayer(this.PlayingSound.MediaPlayer);
+                MediaPlayerElement.MediaPlayer.MediaEnded -= Player_MediaEnded;
+                MediaPlayerElement.MediaPlayer.MediaEnded += Player_MediaEnded;
+                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
+                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
+                PlayingSoundName.Text = this.PlayingSound.CurrentSound.Name;
+                if(this.PlayingSound.repetitions >= 0)
+                {
+                    MediaPlayerElement.MediaPlayer.Play();
+                }
             }
         }
 
-        private void StopSoundButton_Click(object sender, RoutedEventArgs e)
+        private void removePlayingSound()
         {
-            MediaPlayerElement.SetMediaPlayer(null);
+            if (MediaPlayerElement.MediaPlayer != null)
+            {
+                this.PlayingSound.MediaPlayer.Pause();
+                //this.PlayingSound.MediaPlayer.IsMuted = true;
+                //this.PlayingSound.MediaPlayer.PlaybackSession.Position = this.PlayingSound.MediaPlayer.PlaybackSession.NaturalDuration;
+                MediaPlayerElement.MediaPlayer.MediaEnded -= Player_MediaEnded;
+                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
+                MediaPlayerElement.SetMediaPlayer(null);
+                PlayingSoundName.Text = "";
+                this.PlayingSound.MediaPlayer = null;
+            }
             SoundPage.RemovePlayingSound(this.PlayingSound);
         }
 
@@ -106,21 +113,34 @@ namespace UniversalSoundBoard
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                if (this.PlayingSound.repetitions-- == 0)
+                this.PlayingSound.repetitions--;
+                if (this.PlayingSound.repetitions <= 0)
                 {
-                    SoundPage.RemovePlayingSound(this.PlayingSound);
+                    removePlayingSound();
                 }
-                else
+                
+                if(this.PlayingSound.repetitions >= 0 && this.PlayingSound.MediaPlayer != null)
                 {
-                    if(((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).Items.Count > 1)
+                    if (this.PlayingSound.Sounds.Count > 1)
                     {
                         // Multiple Sounds in the list
                         ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).MoveTo(0);
-                        this.PlayingSound.MediaPlayer.Play();
-                    }else
+                    }
+                    this.PlayingSound.MediaPlayer.Play();
+                }
+            });
+        }
+
+        private async void PlayingSoundTemplate_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        {
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if(this.PlayingSound.Sounds.Count > 1)
+                {
+                    if (this.PlayingSound.Sounds.Count > 1 && sender.CurrentItemIndex < this.PlayingSound.Sounds.Count)
                     {
-                        // One sound in the list
-                        this.PlayingSound.MediaPlayer.Play();
+                        this.PlayingSound.CurrentSound = this.PlayingSound.Sounds.ElementAt((int)sender.CurrentItemIndex);
+                        PlayingSoundName.Text = this.PlayingSound.CurrentSound.Name;
                     }
                 }
             });
@@ -128,7 +148,7 @@ namespace UniversalSoundBoard
 
         private void CustomMediaTransportControls_Removed(object sender, EventArgs e)
         {
-            SoundPage.RemovePlayingSound(this.PlayingSound);
+            removePlayingSound();
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -158,7 +178,7 @@ namespace UniversalSoundBoard
 
         private void CustomMediaTransportControls_Repeat_endless_Clicked(object sender, EventArgs e)
         {
-            repeatSound(-1);
+            repeatSound(int.MaxValue);
         }
     }
 }
