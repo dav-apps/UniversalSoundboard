@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:UniversalSoundBoard.Model"
+    SizeChanged="Page_SizeChanged"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -85,6 +86,11 @@
                             QueryIcon="Find" 
                             Margin="0,0,10,0" Width="200"
                             TextChanged="SearchAutoSuggestBox_TextChanged" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted" />
+                    <Button Name="SearchButton" Background="#EAEAEA"
+                        RelativePanel.AlignRightWithPanel="True"
+                        Height="45" Width="45" Margin="0,0,15,0" 
+                        FontFamily="Segoe MDL2 Assets" Content="&#xE094;" 
+                        Click="SearchButton_Click"/>
                 </StackPanel>
 
                 <StackPanel Name="MultiSelectOptions" Orientation="Horizontal" Visibility="{Binding multiSelectOptionsVisibility}"

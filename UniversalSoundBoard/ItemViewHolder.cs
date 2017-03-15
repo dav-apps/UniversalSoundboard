@@ -18,7 +18,6 @@ namespace UniversalSoundBoard
         private string _title;
         private bool _progressRingIsActive;
         private bool _multiSelectOptionsEnabled;
-        private Uri _mediaElementSource;
         private string _searchQuery;
         private Visibility _editButtonVisibility;
         private Visibility _normalOptionsVisibility;
@@ -73,17 +72,6 @@ namespace UniversalSoundBoard
             {
                 _sounds = value;
                 NotifyPropertyChanged("sounds");
-            }
-        }
-
-        public Uri mediaElementSource
-        {
-            get { return _mediaElementSource; }
-
-            set
-            {
-                _mediaElementSource = value;
-                NotifyPropertyChanged("mediaElementSource");
             }
         }
 

@@ -31,6 +31,7 @@ using NotificationsExtensions;
 using Windows.Media.Playback;
 using Windows.Media.Core;
 using Microsoft.Services.Store.Engagement;
+using System.Diagnostics;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -235,27 +236,42 @@ namespace UniversalSoundBoard
 
         private async void goBack()
         {
-            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-            SearchAutoSuggestBox.Text = "";
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-            MenuItemsListView.SelectedItem = Categories.First();
-            await SoundManager.GetAllSounds();
+            if(AddButton.Visibility == Visibility.Collapsed 
+                && SearchAutoSuggestBox.Visibility == Visibility.Visible 
+                && Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")          // Means if only SearchAutoSuggestBox is visible on Desktop
+            {
+                // Show all Buttons and hide AutoSuggestBox (because Window Width < 600)
+                SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
+                SearchButton.Visibility = Visibility.Visible;
+                AddButton.Visibility = Visibility.Visible;
+                VolumeButton.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                // Reset Category properties
+                (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+                SearchAutoSuggestBox.Text = "";
+                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                MenuItemsListView.SelectedItem = Categories.First();
+                await SoundManager.GetAllSounds();
+            }
+            if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            }
         }
 
         private async void goBack_Mobile()
         {
-            resetSearchAreaMobile();
-
             if ((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
             {
                 (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-                await SoundManager.GetAllSounds();
             }else
             {
                 MenuItemsListView.SelectedItem = Categories.First();
-                await SoundManager.GetAllSounds();
             }
+            resetSearchArea();
+            await SoundManager.GetAllSounds();
         }
 
         private void onBackRequested(object sender, BackRequestedEventArgs e)
@@ -285,7 +301,7 @@ namespace UniversalSoundBoard
             {
                 if (SearchAutoSuggestBox.Visibility == Visibility.Visible)
                 {
-                    resetSearchAreaMobile();
+                    resetSearchArea();
                 }
                 else
                 {
@@ -306,7 +322,7 @@ namespace UniversalSoundBoard
             }
         }
 
-        private void resetSearchAreaMobile()
+        private void resetSearchArea()
         {
             if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
             {
@@ -316,7 +332,10 @@ namespace UniversalSoundBoard
                 AddButton.Visibility = Visibility.Visible;
                 VolumeButton.Visibility = Visibility.Visible;
                 SearchButton.Visibility = Visibility.Visible;
-                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                if((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
+                {
+                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                }
             }
         }
 
@@ -375,11 +394,18 @@ namespace UniversalSoundBoard
             // Display all Sounds with the selected category
             if (category == Categories.First())
             {
-                chooseGoBack();
+                if(SearchAutoSuggestBox.Visibility == Visibility.Visible)
+                {
+                    goBack_Mobile();
+                }
+                else
+                {
+                    chooseGoBack();
+                }
             }
             else
             {
-                resetSearchAreaMobile();
+                resetSearchArea();
 
                 (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
@@ -411,7 +437,7 @@ namespace UniversalSoundBoard
              */
 
             SideBar.IsPaneOpen = false;
-            resetSearchAreaMobile();
+            resetSearchArea();
         }
 
         private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -531,6 +557,31 @@ namespace UniversalSoundBoard
             foreach (Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
             {
                 await sound.setCategory(category);
+            }
+        }
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (Window.Current.Bounds.Width < 600)
+            {
+                if(SearchAutoSuggestBox.Visibility == Visibility.Visible && AddButton.Visibility == Visibility.Collapsed)
+                {
+
+                }
+                else
+                {
+                    SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
+                    SearchButton.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                SearchAutoSuggestBox.Visibility = Visibility.Visible;
+                SearchButton.Visibility = Visibility.Collapsed;
+
+                // Show Other buttons
+                AddButton.Visibility = Visibility.Visible;
+                VolumeButton.Visibility = Visibility.Visible;
             }
         }
 
