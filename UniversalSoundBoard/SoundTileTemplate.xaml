@@ -60,6 +60,7 @@
                     <MenuFlyoutItem x:Uid="SoundTile-ChangeImage" Name="SoundTileOptionsSetImage" Click="SoundTileOptionsSetImage_Click" />
                     <MenuFlyoutItem x:Uid="SoundTile-Rename" Name="SoundTileOptionsRename" Click="SoundTileOptionsRename_Click" />
                     <MenuFlyoutItem x:Uid="SoundTile-Delete" Name="SoundTileOptionsDelete" Click="SoundTileOptionsDelete_Click" />
+                <!--    <MenuFlyoutItem x:Uid="SoundTile-Pin" Name="SoundTileOptionsPin" Click="SoundTileOptionsPin_Click" Text="Pin to start" />   -->
                     <!--
                     <MenuFlyoutItem Text="Item 2" />
                     <MenuFlyoutSeparator />
