@@ -321,6 +321,8 @@ namespace UniversalSoundBoard
         {
             for (int i = 0; i < removedPlayingSounds.Count; i++)
             {
+                removedPlayingSounds[i].MediaPlayer.Pause();
+                removedPlayingSounds[i].MediaPlayer = null;
                 RemovePlayingSound(removedPlayingSounds[i]);
             }
         }
