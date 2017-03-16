@@ -47,7 +47,7 @@ namespace UniversalSoundBoard
             playingSounds = new ObservableCollection<PlayingSound>(),
             playingSoundsListVisibility = Visibility.Visible,
             playOneSoundAtOnce = false
-    };
+        };
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -60,58 +60,19 @@ namespace UniversalSoundBoard
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            /*
-            this.EnteredBackground += App_EnteredBackground;
-            this.LeavingBackground += App_LeavingBackground;
-            Windows.System.MemoryManager.AppMemoryUsageLimitChanging += MemoryManager_AppMemoryUsageLimitChanging;
-            Windows.System.MemoryManager.AppMemoryUsageIncreased += MemoryManager_AppMemoryUsageIncreased;
-            */
-        }
-        /*
-        private void App_EnteredBackground(object sender, EnteredBackgroundEventArgs e)
-        {
-            _isInBackgroundMode = true;
-        }
 
-        private void App_LeavingBackground(object sender, LeavingBackgroundEventArgs e)
-        {
-            _isInBackgroundMode = false;
-
-            // Reastore view content if it was previously unloaded.
-            if (Window.Current.Content == null)
+            var localSettings = ApplicationData.Current.LocalSettings;
+            if (localSettings.Values["darkTheme"] == null)
             {
-                CreateRootFrame(ApplicationExecutionState.Running, string.Empty);
+                localSettings.Values["darkTheme"] = FileManager.darkTheme;
+                (App.Current as App).RequestedTheme = FileManager.darkTheme ? ApplicationTheme.Dark : ApplicationTheme.Light;
+            }
+            else
+            {
+                (App.Current as App).RequestedTheme = (bool)localSettings.Values["darkTheme"] ? ApplicationTheme.Dark : ApplicationTheme.Light;
             }
         }
 
-        private void MemoryManager_AppMemoryUsageLimitChanging(object sender, AppMemoryUsageLimitChangingEventArgs e)
-        {
-            if (MemoryManager.AppMemoryUsage >= e.NewLimit)
-            {
-                ReduceMemoryUsage(e.NewLimit);
-            }
-        }
-
-        private void MemoryManager_AppMemoryUsageIncreased(object sender, object e)
-        {
-            var level = MemoryManager.AppMemoryUsageLevel;
-
-            if (level == AppMemoryUsageLevel.OverLimit || level == AppMemoryUsageLevel.High)
-            {
-                ReduceMemoryUsage(MemoryManager.AppMemoryUsageLimit);
-            }
-        }
-
-        public void ReduceMemoryUsage(ulong limit)
-        {
-            if (_isInBackgroundMode && Window.Current.Content != null)
-            {
-
-                Window.Current.Content = null;
-                GC.Collect();
-            }
-        }
-        */
         /// <summary>
         /// Invoked when the application is launched normally by the end user.  Other entry points
         /// will be used such as when the application is launched to open a specific file.

@@ -6,6 +6,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundBoard.Model
@@ -76,7 +77,16 @@ namespace UniversalSoundBoard.Model
 
                         // Get Image for Sound
                         BitmapImage DefaultImage = new BitmapImage();
-                        Uri defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
+                        Uri defaultImageUri;
+                        if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
+                        {
+                            defaultImageUri = new Uri("ms-appx:///Assets/Images/default-dark.png", UriKind.Absolute);
+                        }
+                        else
+                        {
+                            defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
+                        }
+                        
                         DefaultImage.UriSource = defaultImageUri;
 
                         sound.Image = DefaultImage;

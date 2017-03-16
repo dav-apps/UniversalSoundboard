@@ -28,6 +28,7 @@ namespace UniversalSoundBoard
         public const bool liveTile = true;
         public const bool playingSoundsListVisible = false;
         public const bool playOneSoundAtOnce = true;
+        public const bool darkTheme = false;
 
         public static async void addImage(StorageFile file, Sound sound)
         {

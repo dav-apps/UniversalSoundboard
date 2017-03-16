@@ -17,23 +17,29 @@
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" Margin="15,5,10,10" />
 
         <StackPanel Grid.Row="1" Margin="5">
+            <ToggleSwitch Name="ThemeToggle" Header="Dark Theme" Toggled="ThemeToggle_Toggled" />
+            <TextBlock Name="ThemeMessageTextBlock" Text="Please restart the app to apply the new theme." Visibility="Collapsed" Margin="0,0,0,10" />
+        </StackPanel>
+        
+        <StackPanel Grid.Row="2" Margin="5">
             <ToggleSwitch Name="LiveTileToggle" Header="Live Tile" Toggled="LiveTileToggle_Toggled" />
         </StackPanel>
 
-        <StackPanel Grid.Row="2" Margin="5">
+        <StackPanel Grid.Row="3" Margin="5">
             <ToggleSwitch Name="PlayingSoundsListToggle" x:Uid="PlayingSoundsListToggle" Header="Show list of playing sounds" Toggled="PlayingSoundsListToggle_Toggled" />
         </StackPanel>
 
-        <StackPanel Grid.Row="3" Margin="5">
+        <StackPanel Grid.Row="4" Margin="5">
             <ToggleSwitch Name="PlayOneSoundAtOnceToggle" x:Uid="PlayOneSoundAtOnceToggle" Header="Play one sound at once" Toggled="PlayOneSoundAtOnceToggle_Toggled" />
         </StackPanel>
 
-        <StackPanel Grid.Row="4"
+        <StackPanel Grid.Row="5"
                     Margin="5">
             <HyperlinkButton Content="Privacy Policy" NavigateUri="http://dav-software.com/privacy.html" />
 

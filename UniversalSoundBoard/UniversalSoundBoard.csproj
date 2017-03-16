@@ -141,6 +141,7 @@
   <ItemGroup>
     <Content Include="Assets\BadgeLogo.scale-100.png" />
     <Content Include="Assets\BadgeLogo.scale-200.png" />
+    <Content Include="Assets\Images\default-dark.png" />
     <Content Include="Assets\Images\default.png" />
     <Content Include="Assets\PackageAppXManifest\1240x1240.png" />
     <Content Include="Assets\PackageAppXManifest\1240x1240.scale-400.png" />

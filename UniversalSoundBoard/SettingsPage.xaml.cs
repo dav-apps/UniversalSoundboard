@@ -25,6 +25,8 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class SettingsPage : Page
     {
+        bool darkThemeToggledAtBeginning;
+
         public SettingsPage()
         {
             this.InitializeComponent();
@@ -42,9 +44,18 @@ namespace UniversalSoundBoard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            setThemeToggle();
             setLiveTileToggle();
             setPlayingSoundsListVisibilityToggle();
             setPlayOneSoundAtOnceToggle();
+        }
+
+        private void setThemeToggle()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            ThemeToggle.IsOn = (bool)localSettings.Values["darkTheme"];
+            darkThemeToggledAtBeginning = ThemeToggle.IsOn;
+            ThemeMessageTextBlock.Visibility = Visibility.Collapsed;
         }
 
         private void setLiveTileToggle()
@@ -93,6 +104,20 @@ namespace UniversalSoundBoard
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values["playOneSoundAtOnce"] = PlayOneSoundAtOnceToggle.IsOn;
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = PlayOneSoundAtOnceToggle.IsOn;
+        }
+
+        private void ThemeToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["darkTheme"] = ThemeToggle.IsOn;
+            if(darkThemeToggledAtBeginning != ThemeToggle.IsOn)
+            {
+                ThemeMessageTextBlock.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ThemeMessageTextBlock.Visibility = Visibility.Collapsed;
+            }
         }
     }
 }
