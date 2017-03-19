@@ -9,6 +9,7 @@ using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Playback;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -33,6 +34,7 @@ namespace UniversalSoundBoard
             this.InitializeComponent();
             Loaded += PlayingSoundTemplate_Loaded;
 
+            setDarkThemeLayout();
             setDataContext();
             DataContextChanged += PlayingSoundTemplate_DataContextChanged;
 
@@ -68,6 +70,14 @@ namespace UniversalSoundBoard
             }else
             {
                 MediaPlayerElement.TransportControls.IsCompact = true;
+            }
+        }
+
+        private void setDarkThemeLayout()
+        {
+            if((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
+            {
+                ContentRoot.Background = new SolidColorBrush(Colors.Black);
             }
         }
 
