@@ -222,4 +222,7 @@
   <data name="PlayOneSoundAtOnceToggle.Header" xml:space="preserve">
     <value>Nur einen Sound auf einmal abspielen</value>
   </data>
+  <data name="ThemeChangeMessageTextBlock.Text" xml:space="preserve">
+    <value>Bitte starte die App neu, um das neue Thema anzuwenden.</value>
+  </data>
 </root>

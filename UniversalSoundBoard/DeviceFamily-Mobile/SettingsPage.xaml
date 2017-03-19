@@ -24,7 +24,7 @@
 
         <StackPanel Grid.Row="1" Margin="5">
             <ToggleSwitch Name="ThemeToggle" Header="Dark Theme" Toggled="ThemeToggle_Toggled" />
-            <TextBlock Name="ThemeMessageTextBlock" Text="Please restart the app to apply the new theme." Visibility="Collapsed" Margin="0,0,0,10" />
+            <TextBlock Name="ThemeChangeMessageTextBlock" x:Uid="ThemeChangeMessageTextBlock" Visibility="Collapsed" Margin="0,0,0,10" />
         </StackPanel>
         
         <StackPanel Grid.Row="2" Margin="5">

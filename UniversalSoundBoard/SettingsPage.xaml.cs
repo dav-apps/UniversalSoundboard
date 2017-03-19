@@ -55,7 +55,7 @@ namespace UniversalSoundBoard
             var localSettings = ApplicationData.Current.LocalSettings;
             ThemeToggle.IsOn = (bool)localSettings.Values["darkTheme"];
             darkThemeToggledAtBeginning = ThemeToggle.IsOn;
-            ThemeMessageTextBlock.Visibility = Visibility.Collapsed;
+            ThemeChangeMessageTextBlock.Visibility = Visibility.Collapsed;
         }
 
         private void setLiveTileToggle()
@@ -112,11 +112,11 @@ namespace UniversalSoundBoard
             localSettings.Values["darkTheme"] = ThemeToggle.IsOn;
             if(darkThemeToggledAtBeginning != ThemeToggle.IsOn)
             {
-                ThemeMessageTextBlock.Visibility = Visibility.Visible;
+                ThemeChangeMessageTextBlock.Visibility = Visibility.Visible;
             }
             else
             {
-                ThemeMessageTextBlock.Visibility = Visibility.Collapsed;
+                ThemeChangeMessageTextBlock.Visibility = Visibility.Collapsed;
             }
         }
     }
