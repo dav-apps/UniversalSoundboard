@@ -35,6 +35,9 @@ namespace UniversalSoundBoard
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
+
+            darkThemeToggledAtBeginning = (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? true : false;
+            setToggleMessageVisibility();
         }
 
         private void setDataContext()
@@ -54,7 +57,6 @@ namespace UniversalSoundBoard
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             ThemeToggle.IsOn = (bool)localSettings.Values["darkTheme"];
-            darkThemeToggledAtBeginning = ThemeToggle.IsOn;
             ThemeChangeMessageTextBlock.Visibility = Visibility.Collapsed;
         }
 
@@ -110,7 +112,12 @@ namespace UniversalSoundBoard
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values["darkTheme"] = ThemeToggle.IsOn;
-            if(darkThemeToggledAtBeginning != ThemeToggle.IsOn)
+            setToggleMessageVisibility();
+        }
+
+        private void setToggleMessageVisibility()
+        {
+            if (darkThemeToggledAtBeginning != ThemeToggle.IsOn)
             {
                 ThemeChangeMessageTextBlock.Visibility = Visibility.Visible;
             }
