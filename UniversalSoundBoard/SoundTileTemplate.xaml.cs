@@ -38,6 +38,7 @@ namespace UniversalSoundBoard
             Loaded += SoundTileTemplate_Loaded;
             this.DataContextChanged += (s, e) => Bindings.Update(); // <-- only working with x:Bind !!!
             //  this.DataContextChanged += (s, e) => { ViewModel = DataContext as ProfilesViewModel; }
+            setDarkThemeLayout();
         }
 
         async void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
@@ -50,6 +51,15 @@ namespace UniversalSoundBoard
         private void setDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+        }
+
+        private void setDarkThemeLayout()
+        {
+            if((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
+            {
+                ContentRoot.Background = new SolidColorBrush(Colors.Black);
+                SoundTileOptionsButton.Background = new SolidColorBrush(Colors.Black);
+            }
         }
 
         private async void SoundTileOptionsSetImage_Click(object sender, RoutedEventArgs e)

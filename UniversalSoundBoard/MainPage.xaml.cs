@@ -32,6 +32,7 @@ using Windows.Media.Playback;
 using Windows.Media.Core;
 using Microsoft.Services.Store.Engagement;
 using System.Diagnostics;
+using Windows.UI;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -52,7 +53,9 @@ namespace UniversalSoundBoard
             Loaded += MainPage_Loaded;
             SystemNavigationManager.GetForCurrentView().BackRequested += onBackRequested;
             Suggestions = new List<string>();
+
             CreateCategoriesObservableCollection();
+            setDarkThemeLayout();
 
             SettingsListing = new ObservableCollection<Setting>();
 
@@ -132,6 +135,19 @@ namespace UniversalSoundBoard
             else
             {
                 FileManager.UpdateLiveTile();
+            }
+        }
+
+        private void setDarkThemeLayout()
+        {
+            if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
+            {
+                VolumeButton.Background = new SolidColorBrush(Colors.DimGray);
+                AddButton.Background = new SolidColorBrush(Colors.DimGray);
+                SearchButton.Background = new SolidColorBrush(Colors.DimGray);
+                PlaySoundsButton.Background = new SolidColorBrush(Colors.DimGray);
+                MultiSelectOptionsButton_More.Background = new SolidColorBrush(Colors.DimGray);
+                CancelButton.Background = new SolidColorBrush(Colors.DimGray);
             }
         }
 
@@ -266,7 +282,9 @@ namespace UniversalSoundBoard
             if ((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
             {
                 (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-            }else
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            }
+            else
             {
                 MenuItemsListView.SelectedItem = Categories.First();
             }
