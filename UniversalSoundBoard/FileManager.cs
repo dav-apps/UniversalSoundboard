@@ -30,6 +30,8 @@ namespace UniversalSoundBoard
         public const bool playOneSoundAtOnce = true;
         public const bool darkTheme = false;
 
+        public const int mobileMaxWidth = 501;
+
         public static async void addImage(StorageFile file, Sound sound)
         {
             StorageFolder folder = ApplicationData.Current.LocalFolder;

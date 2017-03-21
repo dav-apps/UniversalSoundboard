@@ -51,7 +51,7 @@
                     Content="&#xE700;" FontSize="20" Background="{ThemeResource SystemControlBackgroundAccentBrush}" Foreground="White"
                     Click="HamburgerButton_Click"/>
 
-            <StackPanel Name="EditCategoryStackPanel" Grid.Row="0" Orientation="Horizontal" Margin="20,0,0,0"
+            <StackPanel Name="TitleStackPanel" Grid.Row="0" Orientation="Horizontal" Margin="20,0,0,0"
                         RelativePanel.RightOf="HamburgerButton" RelativePanel.AlignVerticalCenterWithPanel="True">
                 <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" />
                 <SymbolIcon Name="CategoryEditButton" 

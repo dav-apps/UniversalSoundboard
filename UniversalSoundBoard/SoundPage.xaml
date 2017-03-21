@@ -6,30 +6,88 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:UniversalSoundBoard.Model"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    SizeChanged="Page_SizeChanged">
 
-    <Grid Name="ContentRoot" 
+    <Grid Name="ContentRoot"
           AllowDrop="True" Drop="SoundGridView_Drop" DragOver="SoundGridView_DragOver">
+
+        <Grid.RowDefinitions>
+            <RowDefinition Height="59*" />
+            <RowDefinition Height="21*"/>
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="*" x:Name="SecondColDef"  />
         </Grid.ColumnDefinitions>
-        
-        <GridView Name="SoundGridView" Grid.Column="0"
+
+        <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <StackPanel Name="TitleStackPanel" Grid.Row="0" Orientation="Horizontal" Margin="20,5,0,5">
+                <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" />
+                <SymbolIcon Name="CategoryEditButton" 
+                                    Symbol="Edit" Margin="10,0,0,0" Visibility="{Binding editButtonVisibility}"
+                                    Tapped="CategoryEditButton_Tapped" />
+                <SymbolIcon Name="CategoryDeleteButton" 
+                                    Symbol="Delete" Margin="10,0,0,0" Visibility="{Binding editButtonVisibility}"
+                                    Tapped="CategoryDeleteButton_Tapped" />
+            </StackPanel>
+
+            <GridView Name="SoundGridView" Grid.Row="1"
                   SelectionMode="{Binding selectionMode}" ScrollViewer.BringIntoViewOnFocusChange="True"
                             IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick"
                             SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding sounds, Mode=TwoWay}"
                             DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" RightTapped="SoundGridView_RightTapped">
-            <GridView.ItemTemplate>
-                <DataTemplate x:DataType="data:Sound">
-                    <local:SoundTileTemplate HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                </DataTemplate>
-            </GridView.ItemTemplate>
-        </GridView>
+                <GridView.ItemTemplate>
+                    <DataTemplate x:DataType="data:Sound">
+                        <local:SoundTileTemplate HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                    </DataTemplate>
+                </GridView.ItemTemplate>
+            </GridView>
 
-        <Grid Name="DrawerContent" Grid.Column="1">
+            <Grid x:Name="DrawerContentGrid" Grid.Row="2"
+              VerticalAlignment="Bottom" Background="{ThemeResource AppBarBackgroundThemeBrush}" RenderTransformOrigin="0.5,0.5">
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+
+                <Grid Name="HandleGrid" 
+                  Background="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="0,1,0,1" BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
+                  ManipulationStarted="HandleGrid_OnManipulationStarted" ManipulationDelta="HandleGrid_OnManipulationDelta" 
+                  ManipulationCompleted="HandleGrid_OnManipulationCompleted" ManipulationMode="TranslateY" 
+                  Tapped="HandleGrid_Tapped" Height="15">
+                    <SymbolIcon Symbol="More" />
+                </Grid>
+
+                <Grid Name="DrawerContent2" Grid.Row="1">
+                    <ListView Name="PlayingSoundsListView2" ItemsSource="{Binding playingSounds}" IsItemClickEnabled="False">
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                            </Style>
+                        </ListView.ItemContainerStyle>
+
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="data:PlayingSound">
+                                <local:PlayingSoundTemplate />
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <Grid Name="DrawerContent" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
             <ListView Name="PlayingSoundsListView" ItemsSource="{Binding playingSounds}" IsItemClickEnabled="False">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">

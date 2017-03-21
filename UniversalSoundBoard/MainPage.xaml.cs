@@ -55,12 +55,7 @@ namespace UniversalSoundBoard
             Suggestions = new List<string>();
 
             CreateCategoriesObservableCollection();
-            setDarkThemeLayout();
-
-            SettingsListing = new ObservableCollection<Setting>();
-
-            //SettingsListing.Add(new Setting { Icon = "\uE2AF", Text = "Log in" });
-            SettingsListing.Add(new Setting { Icon = "\uE713", Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title"), Id = "Settings" });
+            AdjustLayout();
         }
 
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -86,6 +81,11 @@ namespace UniversalSoundBoard
             {
                 Categories.Add(cat);
             }
+
+            // Create Settings List
+            SettingsListing = new ObservableCollection<Setting>();
+            //SettingsListing.Add(new Setting { Icon = "\uE2AF", Text = "Log in" });
+            SettingsListing.Add(new Setting { Icon = "\uE713", Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title"), Id = "Settings" });
         }
 
         private async Task initializePushNotificationSettings()
@@ -148,6 +148,25 @@ namespace UniversalSoundBoard
                 PlaySoundsButton.Background = new SolidColorBrush(Colors.DimGray);
                 MultiSelectOptionsButton_More.Background = new SolidColorBrush(Colors.DimGray);
                 CancelButton.Background = new SolidColorBrush(Colors.DimGray);
+            }
+        }
+
+        private void AdjustLayout()
+        {
+            setDarkThemeLayout();
+
+            if(Window.Current.Bounds.Width < FileManager.mobileMaxWidth)        // If user is on mobile
+            {
+                // Hide title and show in SoundPage
+                TitleStackPanel.Visibility = Visibility.Collapsed;
+
+                SideBar.DisplayMode = SplitViewDisplayMode.Overlay;
+            }
+            else
+            {
+                TitleStackPanel.Visibility = Visibility.Visible;
+
+                SideBar.DisplayMode = SplitViewDisplayMode.CompactOverlay;
             }
         }
 
@@ -580,7 +599,9 @@ namespace UniversalSoundBoard
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            if (Window.Current.Bounds.Width < 600)
+            AdjustLayout();
+
+            if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth + 100)
             {
                 if(SearchAutoSuggestBox.Visibility == Visibility.Visible && AddButton.Visibility == Visibility.Collapsed)
                 {
@@ -588,8 +609,11 @@ namespace UniversalSoundBoard
                 }
                 else
                 {
-                    SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
-                    SearchButton.Visibility = Visibility.Visible;
+                    if (String.IsNullOrEmpty(SearchAutoSuggestBox.Text))
+                    {
+                        SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
+                        SearchButton.Visibility = Visibility.Visible;
+                    }
                 }
             }
             else

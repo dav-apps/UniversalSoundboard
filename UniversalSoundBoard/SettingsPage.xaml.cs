@@ -30,6 +30,7 @@ namespace UniversalSoundBoard
         public SettingsPage()
         {
             this.InitializeComponent();
+            AdjustLayout();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -51,6 +52,23 @@ namespace UniversalSoundBoard
             setLiveTileToggle();
             setPlayingSoundsListVisibilityToggle();
             setPlayOneSoundAtOnceToggle();
+        }
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            AdjustLayout();
+        }
+
+        private void AdjustLayout()
+        {
+            if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)       // If user in on mobile
+            {
+                TitleRow.Height = GridLength.Auto;
+            }
+            else
+            {
+                TitleRow.Height = new GridLength(0);
+            }
         }
 
         private void setThemeToggle()

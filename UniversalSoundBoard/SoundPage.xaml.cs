@@ -38,25 +38,7 @@ namespace UniversalSoundBoard
             this.InitializeComponent();
             Loaded += SoundPage_Loaded;
 
-            if((App.Current as App)._itemViewHolder.playingSoundsListVisibility != Visibility.Visible)
-            {
-                if(Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
-                {
-                    SecondColDef.Width = new GridLength(0);
-                }
-            }else
-            {
-                List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
-                foreach(PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
-                {
-                    if(playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
-                    {
-                        removedPlayingSounds.Add(playingSound);
-                    }
-                }
-
-                RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
-            }
+            AdjustLayout();
         }
 
         void SoundPage_Loaded(object sender, RoutedEventArgs e)
@@ -68,7 +50,52 @@ namespace UniversalSoundBoard
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
-        
+
+        private void AdjustLayout()
+        {
+            if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)       // If user is on mobile
+            {
+                // Hide title and show in SoundPage
+                TitleStackPanel.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                TitleStackPanel.Visibility = Visibility.Collapsed;
+            }
+            // Show PlayingSounds list
+            ShowPlayingSoundsList();
+        }
+
+        private void ShowPlayingSoundsList()
+        {
+            if ((App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
+            {
+                // Remove unused PlayingSounds
+                RemoveUnusedSounds();
+
+                if (Window.Current.Bounds.Width >= FileManager.mobileMaxWidth)      // If user is on Desktop
+                {
+                    SecondColDef.Width = new GridLength(1, GridUnitType.Star);
+                    DrawerContentGrid.Visibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    SecondColDef.Width = new GridLength(0);     // Set size of right PlayingSoundsList to 0
+                    DrawerContentGrid.Visibility = Visibility.Visible;
+                }
+            }
+            else
+            {
+                SecondColDef.Width = new GridLength(0);
+                DrawerContentGrid.Visibility = Visibility.Collapsed;
+            }
+        }
+
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            AdjustLayout();
+        }
+
         private void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var sound = (Sound)e.ClickedItem;
@@ -315,6 +342,20 @@ namespace UniversalSoundBoard
         public static void RemovePlayingSound(PlayingSound playingSound)
         {
             (App.Current as App)._itemViewHolder.playingSounds.Remove(playingSound);
+        }
+
+        private static void RemoveUnusedSounds()
+        {
+            List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
+            foreach (PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
+            {
+                if (playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                {
+                    removedPlayingSounds.Add(playingSound);
+                }
+            }
+
+            RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
         }
 
         private static void RemoveSoundsFromPlayingSoundsList(List<PlayingSound> removedPlayingSounds)

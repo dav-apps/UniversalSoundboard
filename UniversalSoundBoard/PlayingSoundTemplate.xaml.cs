@@ -64,12 +64,12 @@ namespace UniversalSoundBoard
 
         private void setMediaPlayerElementIsCompact()
         {
-            if(Window.Current.Bounds.Width < 1000 && Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily != "Windows.Mobile")
-            {
-                MediaPlayerElement.TransportControls.IsCompact = false;
-            }else
+            if(Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
             {
                 MediaPlayerElement.TransportControls.IsCompact = true;
+            }else
+            {
+                MediaPlayerElement.TransportControls.IsCompact = false;
             }
         }
 
@@ -105,7 +105,7 @@ namespace UniversalSoundBoard
 
         private void removePlayingSound()
         {
-            if (MediaPlayerElement.MediaPlayer != null)
+            if (this.PlayingSound.MediaPlayer != null)
             {
                 this.PlayingSound.MediaPlayer.Pause();
                 //this.PlayingSound.MediaPlayer.IsMuted = true;
