@@ -170,6 +170,80 @@ namespace UniversalSoundBoard
             }
         }
 
+        private async Task GoBack()
+        {
+            if ((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
+            {
+                if (AreTopButtonsNormal())
+                {
+                    ResetTopButtons();
+                }
+                else
+                {
+                    // Go to All sounds page
+                    (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+                    (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                }
+            }else if((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
+            {          // If SoundPage and AllSounds
+                ResetTopButtons();
+            }
+            else    // If SoundPage shows Category or search results
+            {
+                if(!AreTopButtonsNormal())
+                {       // If top buttons are not normal
+                    ResetTopButtons();
+                }else if((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
+                {       // Top Buttons are normal, but page shows Category or search results
+                    await ShowAllSounds();
+                }
+            }
+
+            if (AreTopButtonsNormal() &&
+                (App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
+            {       // Anything is normal, SoundPage shows All Sounds
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            }
+        }
+
+        private bool AreTopButtonsNormal()
+        {
+            if ((App.Current as App)._itemViewHolder.multiSelectOptionsVisibility == Visibility.Visible ||
+                    (Window.Current.Bounds.Width < FileManager.tabletMaxWidth && SearchAutoSuggestBox.Visibility == Visibility.Visible))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        private void ResetTopButtons()
+        {
+            (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Visible;
+            (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.None;
+
+            if (Window.Current.Bounds.Width < FileManager.tabletMaxWidth)
+            {
+                // Clear text and show buttons
+                SearchAutoSuggestBox.Text = "";
+                SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
+                SearchButton.Visibility = Visibility.Visible;
+                AddButton.Visibility = Visibility.Visible;
+                VolumeButton.Visibility = Visibility.Visible;
+            }
+        }
+
+        private async Task ShowAllSounds()
+        {
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            SearchAutoSuggestBox.Text = "";
+            MenuItemsListView.SelectedItem = Categories.First();
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+            await SoundManager.GetAllSounds();
+        }
+
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
         {
             SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
@@ -311,22 +385,9 @@ namespace UniversalSoundBoard
             await SoundManager.GetAllSounds();
         }
 
-        private void onBackRequested(object sender, BackRequestedEventArgs e)
+        private async void onBackRequested(object sender, BackRequestedEventArgs e)
         {
-            if(Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile" && 
-                SearchAutoSuggestBox.Visibility == Visibility.Collapsed && 
-                (App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
-            {
-                App.Current.Exit();
-            }else if((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds")
-                && (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility == Visibility.Visible
-                && Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
-            {
-                FileManager.resetMultiSelectArea();
-            }else
-            {
-                chooseGoBack();
-            }
+            await GoBack();
 
             e.Handled = true;
         }
@@ -419,6 +480,7 @@ namespace UniversalSoundBoard
 
         private async void MenuItemsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            //SearchAutoSuggestBox.Text = "";
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
             var category = (Category)e.ClickedItem;
             SideBar.IsPaneOpen = false;
