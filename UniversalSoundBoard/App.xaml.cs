@@ -29,14 +29,11 @@ namespace UniversalSoundBoard
     /// </summary>
     sealed partial class App : Application
     {
-        //bool _isInBackgroundMode = false;
-
-
         public ItemViewHolder _itemViewHolder = new ItemViewHolder {
             title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
             progressRingIsActive = false,
             sounds = new ObservableCollection<Sound>(),
-            categories = new List<Category>(),
+            categories = new ObservableCollection<Category>(),
             searchQuery = "",
             editButtonVisibility = Visibility.Collapsed,
             selectionMode = ListViewSelectionMode.None,

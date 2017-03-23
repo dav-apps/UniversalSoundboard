@@ -2,6 +2,7 @@
 using NotificationsExtensions.Tiles;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -189,7 +190,7 @@ namespace UniversalSoundBoard
             }
         }
 
-        public static async Task<List<Category>> GetCategoriesListAsync()
+        public static async Task<ObservableCollection<Category>> GetCategoriesListAsync()
         {
             StorageFile dataFile = await FileManager.createDataFolderAndJsonFileIfNotExistsAsync();
             string data = await FileIO.ReadTextAsync(dataFile);
@@ -199,18 +200,18 @@ namespace UniversalSoundBoard
             var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
             var dataReader = (Data)serializer.ReadObject(ms);
 
-            List<Category> categoriesList = dataReader.Categories;
+            ObservableCollection<Category> categoriesList = dataReader.Categories;
             foreach(Category category in categoriesList)
             {
                 category.Name = WebUtility.HtmlDecode(category.Name);
             }
-            (App.Current as App)._itemViewHolder.categories = null;
-            (App.Current as App)._itemViewHolder.categories = categoriesList;
+            //(App.Current as App)._itemViewHolder.categories = null;
+            //(App.Current as App)._itemViewHolder.categories = categoriesList;
 
             return categoriesList;
         }
 
-        public static async Task SaveCategoriesListAsync(List<Category> categories)
+        public static async Task SaveCategoriesListAsync(ObservableCollection<Category> categories)
         {
             StorageFile dataFile = await FileManager.createDataFolderAndJsonFileIfNotExistsAsync();
 
@@ -238,8 +239,14 @@ namespace UniversalSoundBoard
         public static async Task<Category> GetCategoryByNameAsync(string categoryName){
             if(categoryName != "" || (await GetCategoriesListAsync()).Count >= 1)
             {
-                List<Category> categories = await GetCategoriesListAsync();
-                return categories.Find(p => p.Name == categoryName);
+                ObservableCollection<Category> categories = await GetCategoriesListAsync();
+                foreach(Category category in categories)
+                {
+                    if(category.Name == categoryName)
+                    {
+                        return category;
+                    }
+                }
             }
             return new Category { Icon = "Empty", Name = "Empty" };
         }
@@ -260,8 +267,17 @@ namespace UniversalSoundBoard
 
         public static async Task deleteCategory(string name)
         {
-            List<Category> categories = await GetCategoriesListAsync();
-            Category deletedCategory = categories.Find(p => p.Name == name);
+            ObservableCollection<Category> categories = await GetCategoriesListAsync();
+
+            Category deletedCategory = new Category();
+            foreach(Category category in categories)
+            {
+                if (category.Name == name)
+                {
+                    deletedCategory = category;
+                }
+            }
+
             categories.Remove(deletedCategory);
 
             await SaveCategoriesListAsync(categories);

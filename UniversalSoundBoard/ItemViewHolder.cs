@@ -24,7 +24,7 @@ namespace UniversalSoundBoard
         private Visibility _multiSelectOptionsVisibility;
         private Type _page;
         private ListViewSelectionMode _selectionMode;
-        private List<Category> _categories;
+        private ObservableCollection<Category> _categories;
         private ObservableCollection<Sound> _sounds;
         private List<Sound> _selectedSounds;
         private ObservableCollection<PlayingSound> _playingSounds;
@@ -75,7 +75,7 @@ namespace UniversalSoundBoard
             }
         }
 
-        public List<Category> categories
+        public ObservableCollection<Category> categories
         {
             get { return _categories; }
 

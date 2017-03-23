@@ -156,7 +156,7 @@
                         <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
-                    <ListView Name="MenuItemsListView" ItemsSource="{x:Bind Categories}"
+                    <ListView Name="MenuItemsListView" ItemsSource="{Binding categories}"
                                 ItemClick="MenuItemsListView_ItemClick" IsItemClickEnabled="True">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="data:Category">

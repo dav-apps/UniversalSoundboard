@@ -8,7 +8,7 @@ namespace UniversalSoundBoard.Model
 {
     public class Data
     {
-        public List<Category> Categories { get; set; }
+        public ObservableCollection<Category> Categories { get; set; }
     }
 
     public class Setting

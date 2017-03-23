@@ -386,7 +386,8 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
 
             // Reload page
-            this.Frame.Navigate(this.GetType());
+            await MainPage.CreateCategoriesObservableCollection();
+            await SoundManager.GetAllSounds();
         }
 
         private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -399,7 +400,7 @@ namespace UniversalSoundBoard
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get categories List and save with new value
-            List<Category> categoriesList = await FileManager.GetCategoriesListAsync();
+            ObservableCollection<Category> categoriesList = await FileManager.GetCategoriesListAsync();
 
             // Get combobox value
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
@@ -408,16 +409,20 @@ namespace UniversalSoundBoard
             string newName = ContentDialogs.EditCategoryTextBox.Text;
             string oldName = (App.Current as App)._itemViewHolder.title;
 
-            categoriesList.Find(p => p.Name == oldName).Icon = icon;
-            categoriesList.Find(p => p.Name == oldName).Name = newName;
+            foreach(Category category in categoriesList)
+            {
+                if(category.Name == oldName)
+                {
+                    category.Name = newName;
+                    category.Icon = icon;
+                }
+            }
 
             await FileManager.SaveCategoriesListAsync(categoriesList);
             await FileManager.renameCategory(oldName, newName);
 
-            // Reload page
-            this.Frame.Navigate(this.GetType());
-            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.title = newName;
+            await MainPage.CreateCategoriesObservableCollection();
         }
     }
 }

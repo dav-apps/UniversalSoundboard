@@ -44,7 +44,6 @@ namespace UniversalSoundBoard
     public sealed partial class MainPage : Page
     {
         List<string> Suggestions;
-        ObservableCollection<Category> Categories;
         ObservableCollection<Setting> SettingsListing;
 
         public MainPage()
@@ -54,13 +53,16 @@ namespace UniversalSoundBoard
             SystemNavigationManager.GetForCurrentView().BackRequested += onBackRequested;
             Suggestions = new List<string>();
 
-            CreateCategoriesObservableCollection();
+            SettingsListing = new ObservableCollection<Setting>();
             AdjustLayout();
         }
 
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
+            await CreateCategoriesObservableCollection();
+            CreateSettingsListing();
+
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             await SoundManager.GetAllSounds();
             initializeLocalSettings();
@@ -72,18 +74,21 @@ namespace UniversalSoundBoard
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
 
-        private async void CreateCategoriesObservableCollection()
+        public static async Task CreateCategoriesObservableCollection()
         {
-            Categories = new ObservableCollection<Category>();
-            Categories.Add(new Category { Name = "Home", Icon = "\uE10F" });
-            await FileManager.GetCategoriesListAsync();
-            foreach(Category cat in (App.Current as App)._itemViewHolder.categories)
+            (App.Current as App)._itemViewHolder.categories.Clear();
+            (App.Current as App)._itemViewHolder.categories.Add(new Category { Name = "Home", Icon = "\uE10F" });
+            
+            foreach(Category cat in await FileManager.GetCategoriesListAsync())
             {
-                Categories.Add(cat);
+                (App.Current as App)._itemViewHolder.categories.Add(cat);
             }
+        }
 
+        private void CreateSettingsListing()
+        {
             // Create Settings List
-            SettingsListing = new ObservableCollection<Setting>();
+            SettingsListing.Clear();
             //SettingsListing.Add(new Setting { Icon = "\uE2AF", Text = "Log in" });
             SettingsListing.Add(new Setting { Icon = "\uE713", Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title"), Id = "Settings" });
         }
@@ -138,7 +143,7 @@ namespace UniversalSoundBoard
             }
         }
 
-        private void setDarkThemeLayout()
+        private void SetDarkThemeLayout()
         {
             if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
             {
@@ -153,7 +158,7 @@ namespace UniversalSoundBoard
 
         private void AdjustLayout()
         {
-            setDarkThemeLayout();
+            SetDarkThemeLayout();
 
             if(Window.Current.Bounds.Width < FileManager.mobileMaxWidth)        // If user is on mobile
             {
@@ -219,10 +224,16 @@ namespace UniversalSoundBoard
 
         private void ResetTopButtons()
         {
+            (App.Current as App)._itemViewHolder.selectedSounds.Clear();
             (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Visible;
             (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.None;
 
+            ResetSearchArea();
+        }
+
+        private void ResetSearchArea()
+        {
             if (Window.Current.Bounds.Width < FileManager.tabletMaxWidth)
             {
                 // Clear text and show buttons
@@ -238,10 +249,19 @@ namespace UniversalSoundBoard
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
             SearchAutoSuggestBox.Text = "";
-            MenuItemsListView.SelectedItem = Categories.First();
+            MenuItemsListView.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             await SoundManager.GetAllSounds();
+        }
+        
+        private async Task ShowCategory(Category category)
+        {
+            (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
+            MenuItemsListView.SelectedItem = category;
+            await SoundManager.GetSoundsByCategory(category);
         }
 
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
@@ -262,7 +282,7 @@ namespace UniversalSoundBoard
             {
                 await SoundManager.GetAllSounds();
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-                MenuItemsListView.SelectedItem = Categories.First();
+                MenuItemsListView.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
                 (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             }else
             {
@@ -288,7 +308,7 @@ namespace UniversalSoundBoard
             if (String.IsNullOrEmpty(text))
             {
                 (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-                MenuItemsListView.SelectedItem = Categories.First();
+                MenuItemsListView.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
                 await SoundManager.GetAllSounds();
             }else
             {
@@ -338,103 +358,11 @@ namespace UniversalSoundBoard
             SoundManager.GetSoundsByName(text);
         }
 
-        private void IconsListBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-
-        }
-
-        private async void goBack()
-        {
-            if(AddButton.Visibility == Visibility.Collapsed 
-                && SearchAutoSuggestBox.Visibility == Visibility.Visible 
-                && Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Desktop")          // Means if only SearchAutoSuggestBox is visible on Desktop
-            {
-                // Show all Buttons and hide AutoSuggestBox (because Window Width < 600)
-                SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
-                SearchButton.Visibility = Visibility.Visible;
-                AddButton.Visibility = Visibility.Visible;
-                VolumeButton.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                // Reset Category properties
-                (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-                SearchAutoSuggestBox.Text = "";
-                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                MenuItemsListView.SelectedItem = Categories.First();
-                await SoundManager.GetAllSounds();
-            }
-            if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            }
-        }
-
-        private async void goBack_Mobile()
-        {
-            if ((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
-            {
-                (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            }
-            else
-            {
-                MenuItemsListView.SelectedItem = Categories.First();
-            }
-            resetSearchArea();
-            await SoundManager.GetAllSounds();
-        }
-
         private async void onBackRequested(object sender, BackRequestedEventArgs e)
         {
             await GoBack();
 
             e.Handled = true;
-        }
-
-        public void chooseGoBack()
-        {
-            (App.Current as App)._itemViewHolder.selectedSounds.Clear();
-            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
-            {
-                if (SearchAutoSuggestBox.Visibility == Visibility.Visible)
-                {
-                    resetSearchArea();
-                }
-                else
-                {
-                    if((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-                    {
-                        (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-                    }
-                    goBack_Mobile();
-                }
-            }
-            else
-            {
-                if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-                {
-                    (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-                }
-                goBack();
-            }
-        }
-
-        private void resetSearchArea()
-        {
-            if (Windows.System.Profile.AnalyticsInfo.VersionInfo.DeviceFamily == "Windows.Mobile")
-            {
-                MenuItemsListView.SelectedItem = Categories.First();
-                //SearchAutoSuggestBox.Text = "";
-                SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
-                AddButton.Visibility = Visibility.Visible;
-                VolumeButton.Visibility = Visibility.Visible;
-                SearchButton.Visibility = Visibility.Visible;
-                if((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
-                {
-                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                }
-            }
         }
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
@@ -472,7 +400,7 @@ namespace UniversalSoundBoard
                 {
                     await SoundManager.addSound(sound);
                 }
-                chooseGoBack();
+                await ShowAllSounds();
             }
             AddButton.IsEnabled = true;
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;
@@ -480,36 +408,25 @@ namespace UniversalSoundBoard
 
         private async void MenuItemsListView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            //SearchAutoSuggestBox.Text = "";
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
             var category = (Category)e.ClickedItem;
             SideBar.IsPaneOpen = false;
 
-            if((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
+            ResetSearchArea();
+
+            if ((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
             {
                 (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             }
 
             // Display all Sounds with the selected category
-            if (category == Categories.First())
+            if (category == (App.Current as App)._itemViewHolder.categories.First())
             {
-                if(SearchAutoSuggestBox.Visibility == Visibility.Visible)
-                {
-                    goBack_Mobile();
-                }
-                else
-                {
-                    chooseGoBack();
-                }
+                await ShowAllSounds();
             }
             else
             {
-                resetSearchArea();
-
-                (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
-                await SoundManager.GetSoundsByCategory(category);
+                await ShowCategory(category);
             }
         }
 
@@ -525,7 +442,7 @@ namespace UniversalSoundBoard
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
 
                 // Reset multi select options and selected Sounds list
-                FileManager.resetMultiSelectArea();
+                ResetTopButtons();
             }
             /* else if (setting.Text == "Log in")
              {
@@ -536,7 +453,7 @@ namespace UniversalSoundBoard
              */
 
             SideBar.IsPaneOpen = false;
-            resetSearchArea();
+            ResetSearchArea();
         }
 
         private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -714,7 +631,7 @@ namespace UniversalSoundBoard
         private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get categories List and save with new value
-            List<Category> categoriesList = await FileManager.GetCategoriesListAsync();
+            ObservableCollection<Category> categoriesList = await FileManager.GetCategoriesListAsync();
 
             // Get combobox value
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
@@ -729,8 +646,9 @@ namespace UniversalSoundBoard
             categoriesList.Add(category);
             await FileManager.SaveCategoriesListAsync(categoriesList);
 
-            // Reload page
-            this.Frame.Navigate(this.GetType());
+            // Show new category
+            await ShowCategory(category);
+            await CreateCategoriesObservableCollection();
         }
 
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -747,7 +665,7 @@ namespace UniversalSoundBoard
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get categories List and save with new value
-            List<Category> categoriesList = await FileManager.GetCategoriesListAsync();
+            ObservableCollection<Category> categoriesList = await FileManager.GetCategoriesListAsync();
 
             // Get combobox value
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
@@ -756,16 +674,21 @@ namespace UniversalSoundBoard
             string newName = ContentDialogs.EditCategoryTextBox.Text;
             string oldName = (App.Current as App)._itemViewHolder.title;
 
-            categoriesList.Find(p => p.Name == oldName).Icon = icon;
-            categoriesList.Find(p => p.Name == oldName).Name = newName;
+            foreach (Category category in categoriesList)
+            {
+                if (category.Name == oldName)
+                {
+                    category.Name = newName;
+                    category.Icon = icon;
+                }
+            }
 
             await FileManager.SaveCategoriesListAsync(categoriesList);
             await FileManager.renameCategory(oldName, newName);
 
-            // Reload page
-            this.Frame.Navigate(this.GetType());
-            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            // Update page
+            await CreateCategoriesObservableCollection();
+            (App.Current as App)._itemViewHolder.title = newName;
         }
     }
 }
