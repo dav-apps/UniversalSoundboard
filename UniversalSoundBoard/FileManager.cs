@@ -201,7 +201,7 @@ namespace UniversalSoundBoard
             var dataReader = (Data)serializer.ReadObject(ms);
 
             ObservableCollection<Category> categoriesList = dataReader.Categories;
-            foreach(Category category in categoriesList)
+            foreach (Category category in categoriesList)
             {
                 category.Name = WebUtility.HtmlDecode(category.Name);
             }

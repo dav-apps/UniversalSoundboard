@@ -33,6 +33,7 @@ using Windows.Media.Core;
 using Microsoft.Services.Store.Engagement;
 using System.Diagnostics;
 using Windows.UI;
+using Windows.ApplicationModel.Core;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -45,6 +46,7 @@ namespace UniversalSoundBoard
     {
         List<string> Suggestions;
         ObservableCollection<Setting> SettingsListing;
+        int a = 0;
 
         public MainPage()
         {
@@ -177,30 +179,26 @@ namespace UniversalSoundBoard
 
         private async Task GoBack()
         {
-            if ((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
+            if (!AreTopButtonsNormal())
             {
-                if (AreTopButtonsNormal())
-                {
-                    ResetTopButtons();
-                }
-                else
+                ResetTopButtons();
+            }
+            else
+            {
+                if ((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
                 {
                     // Go to All sounds page
                     (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
                     (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
                 }
-            }else if((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
-            {          // If SoundPage and AllSounds
-                ResetTopButtons();
-            }
-            else    // If SoundPage shows Category or search results
-            {
-                if(!AreTopButtonsNormal())
-                {       // If top buttons are not normal
-                    ResetTopButtons();
-                }else if((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
-                {       // Top Buttons are normal, but page shows Category or search results
+                else if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
+                {   // If SoundPage shows AllSounds
+                    CoreApplication.Exit();
+                }
+                else
+                {   // If SoundPage shows Category or search results
+                    // Top Buttons are normal, but page shows Category or search results
                     await ShowAllSounds();
                 }
             }
@@ -264,6 +262,41 @@ namespace UniversalSoundBoard
             await SoundManager.GetSoundsByCategory(category);
         }
 
+        private void createCategoriesFlyout()
+        {
+            foreach(MenuFlyoutItem item in MultiSelectOptionsButton_ChangeCategory.Items)
+            {   // Make each item invisible
+                item.Visibility = Visibility.Collapsed;
+            }
+
+            for (int n = 0; n < (App.Current as App)._itemViewHolder.categories.Count; n++)
+            {
+                if (n != 0)
+                {
+                    if (a == 0)
+                    {   // Create the Flyout the first time
+                        var item = new MenuFlyoutItem();
+                        item.Click += MultiSelectOptionsButton_ChangeCategory_Item_Click;
+                        item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
+                        MultiSelectOptionsButton_ChangeCategory.Items.Add(item);
+                    }
+                    else if (MultiSelectOptionsButton_ChangeCategory.Items.ElementAt(n-1) != null)
+                    {   // If the element is already there, set the new text
+                        ((MenuFlyoutItem)MultiSelectOptionsButton_ChangeCategory.Items.ElementAt(n-1)).Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
+                        ((MenuFlyoutItem)MultiSelectOptionsButton_ChangeCategory.Items.ElementAt(n - 1)).Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        var item = new MenuFlyoutItem();
+                        item.Click += MultiSelectOptionsButton_ChangeCategory_Item_Click;
+                        item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
+                        MultiSelectOptionsButton_ChangeCategory.Items.Add(item);
+                    }
+                }
+            }
+            a++;
+        }
+
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
         {
             SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
@@ -296,32 +329,6 @@ namespace UniversalSoundBoard
             }
         }
 
-        private async void SearchAutoSuggestBox_TextChanged_Mobile(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
-        {
-            string text = sender.Text;
-
-            if((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-            {
-                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-            }
-
-            if (String.IsNullOrEmpty(text))
-            {
-                (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-                MenuItemsListView.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
-                await SoundManager.GetAllSounds();
-            }else
-            {
-                (App.Current as App)._itemViewHolder.title = text;
-                (App.Current as App)._itemViewHolder.searchQuery = text;
-
-                Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.StartsWith(text)).Select(p => p.Name).ToList();
-                SearchAutoSuggestBox.ItemsSource = Suggestions;
-                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                SoundManager.GetSoundsByName(text);
-            }
-        }
-
         private void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
@@ -337,25 +344,10 @@ namespace UniversalSoundBoard
             else
             {
                 (App.Current as App)._itemViewHolder.title = text;
+                (App.Current as App)._itemViewHolder.searchQuery = text;
+                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                SoundManager.GetSoundsByName(text);
             }
-            
-            (App.Current as App)._itemViewHolder.searchQuery = text;
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-            SoundManager.GetSoundsByName(text);
-        }
-
-        private void SearchAutoSuggestBox_QuerySubmitted_Mobile(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-            {
-                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-            }
-
-            string text = sender.Text;
-            (App.Current as App)._itemViewHolder.title = text;
-            (App.Current as App)._itemViewHolder.searchQuery = text;
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-            SoundManager.GetSoundsByName(text);
         }
 
         private async void onBackRequested(object sender, BackRequestedEventArgs e)
@@ -500,18 +492,6 @@ namespace UniversalSoundBoard
             FileManager.resetMultiSelectArea();
         }
 
-        private async void MultiSelectOptionsButton_Delete_Click(object sender, RoutedEventArgs e)
-        {
-            var deleteSoundsContentDialog = ContentDialogs.CreateDeleteSoundsContentDialogAsync();
-            deleteSoundsContentDialog.PrimaryButtonClick += deleteSoundsContentDialog_PrimaryButtonClick;
-            await deleteSoundsContentDialog.ShowAsync();
-        }
-
-        private void MultiSelectOptionsButton_ChangeCategory_GotFocus(object sender, RoutedEventArgs e)
-        {
-            createCategoriesFlyout();
-        }
-
         private void PlaySoundsSimultaneously_Click(object sender, RoutedEventArgs e)
         {
             bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.playOneSoundAtOnce;
@@ -553,17 +533,9 @@ namespace UniversalSoundBoard
             StartPlaySoundsSuccessively(int.MaxValue);
         }
 
-        private void createCategoriesFlyout()
+        private void MultiSelectOptionsButton_More_Click(object sender, RoutedEventArgs e)
         {
-            MultiSelectOptionsButton_ChangeCategory.Items.Clear();
-
-            foreach (Category category in (App.Current as App)._itemViewHolder.categories)
-            {
-                var item = new MenuFlyoutItem { Text = category.Name };
-                item.Click += MultiSelectOptionsButton_ChangeCategory_Item_Click;
-
-                MultiSelectOptionsButton_ChangeCategory.Items.Add(item);
-            }
+            createCategoriesFlyout();
         }
 
         private async void MultiSelectOptionsButton_ChangeCategory_Item_Click(object sender, RoutedEventArgs e)
@@ -574,6 +546,13 @@ namespace UniversalSoundBoard
             {
                 await sound.setCategory(category);
             }
+        }
+
+        private async void MultiSelectOptionsButton_Delete_Click(object sender, RoutedEventArgs e)
+        {
+            var deleteSoundsContentDialog = ContentDialogs.CreateDeleteSoundsContentDialogAsync();
+            deleteSoundsContentDialog.PrimaryButtonClick += deleteSoundsContentDialog_PrimaryButtonClick;
+            await deleteSoundsContentDialog.ShowAsync();
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -659,7 +638,8 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
 
             // Reload page
-            this.Frame.Navigate(this.GetType());
+            await CreateCategoriesObservableCollection();
+            await ShowAllSounds();
         }
 
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -687,8 +667,8 @@ namespace UniversalSoundBoard
             await FileManager.renameCategory(oldName, newName);
 
             // Update page
-            await CreateCategoriesObservableCollection();
             (App.Current as App)._itemViewHolder.title = newName;
+            await CreateCategoriesObservableCollection();
         }
     }
 }

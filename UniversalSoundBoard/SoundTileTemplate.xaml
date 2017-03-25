@@ -50,7 +50,8 @@
         <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
         <TextBlock Grid.Row="1" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" />
         <Button Name="SoundTileOptionsButton" Grid.Row="2" Content="&#xE10C;" FontFamily="Segoe MDL2 Assets" Background="White"
-                HorizontalAlignment="Right">
+                HorizontalAlignment="Right"
+                Click="SoundTileOptionsButton_Click">
             <Button.Flyout>
                 <MenuFlyout Placement="Bottom">
                     <MenuFlyoutSubItem x:Uid="SoundTile-Category" Name="CategoriesFlyoutSubItem" GotFocus="CategoriesFlyoutSubItem_GotFocus">

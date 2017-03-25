@@ -45,7 +45,7 @@ namespace UniversalSoundBoard
         {
             setDataContext();
             await FileManager.GetCategoriesListAsync();
-            createCategoriesFlyout();
+            await createCategoriesFlyout();
         }
 
         private void setDataContext()
@@ -181,19 +181,16 @@ namespace UniversalSoundBoard
             await secondaryTile.RequestCreateAsync();
         }
 
-        private void createCategoriesFlyout()
+        private async Task createCategoriesFlyout()
         {
             CategoriesFlyoutSubItem.Items.Clear();
-
-            foreach (Category category in (App.Current as App)._itemViewHolder.categories)
+            int n = 0;
+            foreach (Category category in await FileManager.GetCategoriesListAsync())
             {
                 var item = new ToggleMenuFlyoutItem { Text = category.Name };
                 item.Click += CategoryToggleMenuItem_Click;
-               /* if (category.Name.Equals(this.Sound.CategoryName))          // Not working properly
-                {
-                    item.IsChecked = true;
-                }*/
                 CategoriesFlyoutSubItem.Items.Add(item);
+                n++;
             }
         }
 
@@ -209,6 +206,17 @@ namespace UniversalSoundBoard
         }
 
         private void CategoriesFlyoutSubItem_GotFocus(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private async void SoundTileOptionsButton_Click(object sender, RoutedEventArgs e)
+        {
+            await createCategoriesFlyout();
+            SelectRightCategory();
+        }
+
+        private void SelectRightCategory()
         {
             unselectAllItemsOfCategoriesFlyoutSubItem();
             foreach (ToggleMenuFlyoutItem item in CategoriesFlyoutSubItem.Items)

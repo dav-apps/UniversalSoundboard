@@ -122,11 +122,11 @@
                     </Button>
                     <Button Name="MultiSelectOptionsButton_More" IsEnabled="{Binding multiSelectOptionsEnabled}" Style="{StaticResource TopButtonStyle}"
                         Margin="0,0,20,0"
-                        Content="&#xE10C;">
+                        Content="&#xE10C;"
+                            Click="MultiSelectOptionsButton_More_Click">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
-                                <MenuFlyoutSubItem Name="MultiSelectOptionsButton_ChangeCategory" x:Uid="MultiSelectOptionsButton-ChangeCategory" 
-                                                   GotFocus="MultiSelectOptionsButton_ChangeCategory_GotFocus">
+                                <MenuFlyoutSubItem Name="MultiSelectOptionsButton_ChangeCategory" x:Uid="MultiSelectOptionsButton-ChangeCategory">
 
                                 </MenuFlyoutSubItem>
                                 <MenuFlyoutItem Name="MultiSelectOptionsButton_Delete" x:Uid="MultiSelectOptionsButton-Delete" Click="MultiSelectOptionsButton_Delete_Click"/>
