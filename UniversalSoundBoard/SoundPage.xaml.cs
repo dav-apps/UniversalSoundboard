@@ -422,6 +422,7 @@ namespace UniversalSoundBoard
             await FileManager.renameCategory(oldName, newName);
 
             (App.Current as App)._itemViewHolder.title = newName;
+            await FileManager.UpdateGridView();
             await MainPage.CreateCategoriesObservableCollection();
         }
     }

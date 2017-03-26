@@ -46,7 +46,7 @@ namespace UniversalSoundBoard
     {
         List<string> Suggestions;
         ObservableCollection<Setting> SettingsListing;
-        int a = 0;
+        int moreButtonClicked = 0;
 
         public MainPage()
         {
@@ -273,7 +273,7 @@ namespace UniversalSoundBoard
             {
                 if (n != 0)
                 {
-                    if (a == 0)
+                    if (moreButtonClicked == 0)
                     {   // Create the Flyout the first time
                         var item = new MenuFlyoutItem();
                         item.Click += MultiSelectOptionsButton_ChangeCategory_Item_Click;
@@ -294,7 +294,7 @@ namespace UniversalSoundBoard
                     }
                 }
             }
-            a++;
+            moreButtonClicked++;
         }
 
         private void HamburgerButton_Click(object sender, RoutedEventArgs e)
@@ -667,8 +667,8 @@ namespace UniversalSoundBoard
             await FileManager.renameCategory(oldName, newName);
 
             // Update page
-            (App.Current as App)._itemViewHolder.title = newName;
             await CreateCategoriesObservableCollection();
+            await ShowCategory(new Category() { Name = newName, Icon = icon });
         }
     }
 }

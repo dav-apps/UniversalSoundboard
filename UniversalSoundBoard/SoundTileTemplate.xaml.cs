@@ -31,6 +31,7 @@ namespace UniversalSoundBoard
     public sealed partial class SoundTileTemplate : UserControl
     {
         public Sound Sound { get { return this.DataContext as Sound; } }
+        int moreButtonClicked = 0;
 
         public SoundTileTemplate()
         {
@@ -45,7 +46,7 @@ namespace UniversalSoundBoard
         {
             setDataContext();
             await FileManager.GetCategoriesListAsync();
-            await createCategoriesFlyout();
+            createCategoriesFlyout();
         }
 
         private void setDataContext()
@@ -181,17 +182,39 @@ namespace UniversalSoundBoard
             await secondaryTile.RequestCreateAsync();
         }
 
-        private async Task createCategoriesFlyout()
+        private void createCategoriesFlyout()
         {
-            CategoriesFlyoutSubItem.Items.Clear();
-            int n = 0;
-            foreach (Category category in await FileManager.GetCategoriesListAsync())
-            {
-                var item = new ToggleMenuFlyoutItem { Text = category.Name };
-                item.Click += CategoryToggleMenuItem_Click;
-                CategoriesFlyoutSubItem.Items.Add(item);
-                n++;
+            foreach (ToggleMenuFlyoutItem item in CategoriesFlyoutSubItem.Items)
+            {   // Make each item invisible
+                item.Visibility = Visibility.Collapsed;
             }
+
+            for (int n = 0; n < (App.Current as App)._itemViewHolder.categories.Count; n++)
+            {
+                if (n != 0)
+                {
+                    if (moreButtonClicked == 0)
+                    {   // Create the Flyout the first time
+                        var item = new ToggleMenuFlyoutItem();
+                        item.Click += CategoryToggleMenuItem_Click;
+                        item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
+                        CategoriesFlyoutSubItem.Items.Add(item);
+                    }
+                    else if (CategoriesFlyoutSubItem.Items.ElementAt(n - 1) != null)
+                    {   // If the element is already there, set the new text
+                        ((ToggleMenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
+                        ((ToggleMenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Visibility = Visibility.Visible;
+                    }
+                    else
+                    {
+                        var item = new ToggleMenuFlyoutItem();
+                        item.Click += CategoryToggleMenuItem_Click;
+                        item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
+                        CategoriesFlyoutSubItem.Items.Add(item);
+                    }
+                }
+            }
+            moreButtonClicked++;
         }
 
         private async void CategoryToggleMenuItem_Click(object sender, RoutedEventArgs e)
@@ -205,14 +228,9 @@ namespace UniversalSoundBoard
             selectedItem.IsChecked = true;
         }
 
-        private void CategoriesFlyoutSubItem_GotFocus(object sender, RoutedEventArgs e)
+        private void SoundTileOptionsButton_Click(object sender, RoutedEventArgs e)
         {
-            
-        }
-
-        private async void SoundTileOptionsButton_Click(object sender, RoutedEventArgs e)
-        {
-            await createCategoriesFlyout();
+            createCategoriesFlyout();
             SelectRightCategory();
         }
 

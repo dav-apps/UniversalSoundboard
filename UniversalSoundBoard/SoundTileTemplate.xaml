@@ -54,7 +54,7 @@
                 Click="SoundTileOptionsButton_Click">
             <Button.Flyout>
                 <MenuFlyout Placement="Bottom">
-                    <MenuFlyoutSubItem x:Uid="SoundTile-Category" Name="CategoriesFlyoutSubItem" GotFocus="CategoriesFlyoutSubItem_GotFocus">
+                    <MenuFlyoutSubItem x:Uid="SoundTile-Category" Name="CategoriesFlyoutSubItem">
 
                     </MenuFlyoutSubItem>
                     <MenuFlyoutSeparator />
