@@ -68,12 +68,13 @@ namespace UniversalSoundBoard
 
         private void ShowPlayingSoundsList()
         {
+            Debug.WriteLine((App.Current as App)._itemViewHolder.playingSoundsListVisibility);
             if ((App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
             {
                 // Remove unused PlayingSounds
                 RemoveUnusedSounds();
 
-                if (Window.Current.Bounds.Width >= FileManager.mobileMaxWidth)      // If user is on Desktop
+                if (Window.Current.Bounds.Width > FileManager.mobileMaxWidth)      // If user is on Desktop
                 {
                     SecondColDef.Width = new GridLength(1, GridUnitType.Star);
                     DrawerContentGrid.Visibility = Visibility.Collapsed;

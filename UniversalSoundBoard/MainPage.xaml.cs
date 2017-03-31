@@ -162,19 +162,45 @@ namespace UniversalSoundBoard
         {
             SetDarkThemeLayout();
 
-            if(Window.Current.Bounds.Width < FileManager.mobileMaxWidth)        // If user is on mobile
+            if(Window.Current.Bounds.Width < FileManager.tabletMaxWidth)        // If user is on tablet
             {
-                // Hide title and show in SoundPage
-                TitleStackPanel.Visibility = Visibility.Collapsed;
+                if(Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
+                {   // If user is on mobile
+                    // Hide title and show in SoundPage
+                    TitleStackPanel.Visibility = Visibility.Collapsed;
+                }
+                else
+                {   // If user is on tablet
+                    TitleStackPanel.Visibility = Visibility.Visible;
+                    SideBar.DisplayMode = SplitViewDisplayMode.Overlay;
+                }
 
-                SideBar.DisplayMode = SplitViewDisplayMode.Overlay;
+                if (String.IsNullOrEmpty(SearchAutoSuggestBox.Text))
+                {   // Hide search box
+                    ResetSearchArea();
+                }
+                else
+                {   // If user is searching
+                    // Show only search box
+                    SearchAutoSuggestBox.Visibility = Visibility.Visible;
+                    SearchButton.Visibility = Visibility.Collapsed;
+                    AddButton.Visibility = Visibility.Collapsed;
+                    VolumeButton.Visibility = Visibility.Collapsed;
+                }
             }
-            else
+            else        // If User is on Desktop
             {
                 TitleStackPanel.Visibility = Visibility.Visible;
-
                 SideBar.DisplayMode = SplitViewDisplayMode.CompactOverlay;
+
+                // Show Other buttons and search box
+                SearchAutoSuggestBox.Visibility = Visibility.Visible;
+                SearchButton.Visibility = Visibility.Collapsed;
+                AddButton.Visibility = Visibility.Visible;
+                VolumeButton.Visibility = Visibility.Visible;
             }
+
+            CheckBackButtonVisibility();
         }
 
         private async Task GoBack()
@@ -203,6 +229,11 @@ namespace UniversalSoundBoard
                 }
             }
 
+            CheckBackButtonVisibility();
+        }
+
+        private void CheckBackButtonVisibility()
+        {
             if (AreTopButtonsNormal() &&
                 (App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
             {       // Anything is normal, SoundPage shows All Sounds
@@ -235,7 +266,7 @@ namespace UniversalSoundBoard
             if (Window.Current.Bounds.Width < FileManager.tabletMaxWidth)
             {
                 // Clear text and show buttons
-                SearchAutoSuggestBox.Text = "";
+                //SearchAutoSuggestBox.Text = "";
                 SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
                 SearchButton.Visibility = Visibility.Visible;
                 AddButton.Visibility = Visibility.Visible;
@@ -327,6 +358,8 @@ namespace UniversalSoundBoard
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             }
+
+            CheckBackButtonVisibility();
         }
 
         private void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
@@ -348,6 +381,8 @@ namespace UniversalSoundBoard
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
                 SoundManager.GetSoundsByName(text);
             }
+
+            CheckBackButtonVisibility();
         }
 
         private async void onBackRequested(object sender, BackRequestedEventArgs e)
@@ -425,6 +460,9 @@ namespace UniversalSoundBoard
         private void SettingsMenuListView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var setting = (Setting)e.ClickedItem;
+            
+            // Reset multi select options and selected Sounds list
+            ResetTopButtons();
 
             if (setting.Id == "Settings")
             {
@@ -432,9 +470,6 @@ namespace UniversalSoundBoard
                 (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title");
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-
-                // Reset multi select options and selected Sounds list
-                ResetTopButtons();
             }
             /* else if (setting.Text == "Log in")
              {
@@ -558,31 +593,6 @@ namespace UniversalSoundBoard
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             AdjustLayout();
-
-            if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth + 100)
-            {
-                if(SearchAutoSuggestBox.Visibility == Visibility.Visible && AddButton.Visibility == Visibility.Collapsed)
-                {
-
-                }
-                else
-                {
-                    if (String.IsNullOrEmpty(SearchAutoSuggestBox.Text))
-                    {
-                        SearchAutoSuggestBox.Visibility = Visibility.Collapsed;
-                        SearchButton.Visibility = Visibility.Visible;
-                    }
-                }
-            }
-            else
-            {
-                SearchAutoSuggestBox.Visibility = Visibility.Visible;
-                SearchButton.Visibility = Visibility.Collapsed;
-
-                // Show Other buttons
-                AddButton.Visibility = Visibility.Visible;
-                VolumeButton.Visibility = Visibility.Visible;
-            }
         }
 
 
