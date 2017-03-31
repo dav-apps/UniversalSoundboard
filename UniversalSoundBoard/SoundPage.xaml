@@ -41,7 +41,7 @@
             </StackPanel>
 
             <GridView Name="SoundGridView" Grid.Row="1"
-                  SelectionMode="{Binding selectionMode}" ScrollViewer.BringIntoViewOnFocusChange="True"
+                            SelectionMode="{Binding selectionMode}" ScrollViewer.BringIntoViewOnFocusChange="True"
                             IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick"
                             SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding sounds, Mode=TwoWay}"
@@ -54,7 +54,7 @@
             </GridView>
 
             <Grid x:Name="DrawerContentGrid" Grid.Row="2"
-              VerticalAlignment="Bottom" Background="{ThemeResource AppBarBackgroundThemeBrush}" RenderTransformOrigin="0.5,0.5">
+                    VerticalAlignment="Bottom" Background="{ThemeResource AppBarBackgroundThemeBrush}" RenderTransformOrigin="0.5,0.5">
 
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />

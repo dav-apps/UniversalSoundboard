@@ -74,7 +74,14 @@ namespace UniversalSoundBoard
         private void setThemeToggle()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
-            ThemeToggle.IsOn = (bool)localSettings.Values["darkTheme"];
+            if (localSettings.Values["darkTheme"] != null)
+            {
+                ThemeToggle.IsOn = (bool)localSettings.Values["darkTheme"];
+            }
+            else if (Application.Current.RequestedTheme == ApplicationTheme.Dark)
+            {
+                ThemeToggle.IsOn = true;
+            }
             ThemeChangeMessageTextBlock.Visibility = Visibility.Collapsed;
         }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
@@ -57,14 +58,10 @@ namespace UniversalSoundBoard
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-
+            
+            // Set dark theme
             var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["darkTheme"] == null)
-            {
-                localSettings.Values["darkTheme"] = FileManager.darkTheme;
-                (App.Current as App).RequestedTheme = FileManager.darkTheme ? ApplicationTheme.Dark : ApplicationTheme.Light;
-            }
-            else
+            if (localSettings.Values["darkTheme"] != null)
             {
                 (App.Current as App).RequestedTheme = (bool)localSettings.Values["darkTheme"] ? ApplicationTheme.Dark : ApplicationTheme.Light;
             }
