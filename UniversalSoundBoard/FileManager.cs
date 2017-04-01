@@ -31,7 +31,7 @@ namespace UniversalSoundBoard
         public const bool playOneSoundAtOnce = true;
         public const bool darkTheme = false;
 
-        public const int mobileMaxWidth = 501;
+        public const int mobileMaxWidth = 550;
         public const int tabletMaxWidth = 650;
 
         public static async void addImage(StorageFile file, Sound sound)

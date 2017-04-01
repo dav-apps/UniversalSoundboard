@@ -108,8 +108,6 @@ namespace UniversalSoundBoard
             if (this.PlayingSound.MediaPlayer != null)
             {
                 this.PlayingSound.MediaPlayer.Pause();
-                //this.PlayingSound.MediaPlayer.IsMuted = true;
-                //this.PlayingSound.MediaPlayer.PlaybackSession.Position = this.PlayingSound.MediaPlayer.PlaybackSession.NaturalDuration;
                 MediaPlayerElement.MediaPlayer.MediaEnded -= Player_MediaEnded;
                 ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
                 MediaPlayerElement.SetMediaPlayer(null);

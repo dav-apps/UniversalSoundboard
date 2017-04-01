@@ -362,7 +362,8 @@ namespace UniversalSoundBoard
             List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
             foreach (PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
             {
-                if (playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                if (playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing &&
+                    playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Paused)
                 {
                     removedPlayingSounds.Add(playingSound);
                 }
