@@ -70,6 +70,8 @@ namespace UniversalSoundBoard
 
             await SoundManager.GetAllSounds();
             await initializePushNotificationSettings();
+
+            Debug.WriteLine(Window.Current.Bounds.Width);
         }
 
         private void setDataContext()
@@ -174,8 +176,8 @@ namespace UniversalSoundBoard
                 else
                 {   // If user is on tablet
                     TitleStackPanel.Visibility = Visibility.Visible;
-                    SideBar.DisplayMode = SplitViewDisplayMode.Overlay;
                 }
+                SideBar.DisplayMode = SplitViewDisplayMode.Overlay;
 
                 if (String.IsNullOrEmpty(SearchAutoSuggestBox.Text))
                 {   // Hide search box
