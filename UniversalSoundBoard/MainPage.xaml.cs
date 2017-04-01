@@ -70,8 +70,6 @@ namespace UniversalSoundBoard
 
             await SoundManager.GetAllSounds();
             await initializePushNotificationSettings();
-
-            Debug.WriteLine(Window.Current.Bounds.Width);
         }
 
         private void setDataContext()
@@ -106,7 +104,6 @@ namespace UniversalSoundBoard
 
         private void initializeLocalSettings()
         {
-            Debug.WriteLine("MainPage 2");
             var localSettings = ApplicationData.Current.LocalSettings;
             if (localSettings.Values["volume"] == null)
             {
@@ -229,7 +226,7 @@ namespace UniversalSoundBoard
                 else
                 {   // If SoundPage shows Category or search results
                     // Top Buttons are normal, but page shows Category or search results
-                    await ShowAllSounds();
+                    ShowAllSounds();
                 }
             }
 
