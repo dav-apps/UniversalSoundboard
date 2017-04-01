@@ -4,7 +4,9 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
@@ -73,15 +75,15 @@ namespace UniversalSoundBoard
                 // Remove unused PlayingSounds
                 RemoveUnusedSounds();
 
-                if (Window.Current.Bounds.Width > FileManager.mobileMaxWidth)      // If user is on Desktop
-                {
-                    SecondColDef.Width = new GridLength(1, GridUnitType.Star);
-                    DrawerContentGrid.Visibility = Visibility.Collapsed;
-                }
-                else
+                if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)      // If user is on Mobile
                 {
                     SecondColDef.Width = new GridLength(0);     // Set size of right PlayingSoundsList to 0
                     DrawerContentGrid.Visibility = Visibility.Visible;
+                }
+                else        // If user is on Tablet or Desktop
+                {
+                    SecondColDef.Width = new GridLength(1, GridUnitType.Star);
+                    DrawerContentGrid.Visibility = Visibility.Collapsed;
                 }
             }
             else
@@ -112,20 +114,31 @@ namespace UniversalSoundBoard
                 var items = await e.DataView.GetStorageItemsAsync();
 
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-                if (items.Any()){
-
-                    StorageFolder folder = ApplicationData.Current.LocalFolder;
-
-                    if (items.Count > 0)
+                if (items.Any())
+                {
+                    Category category = new Category();
+                    // Get category if a category is selected
+                    if ((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title") &&
+                        String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery) && (App.Current as App)._itemViewHolder.editButtonVisibility == Visibility.Visible)
                     {
-                        foreach (StorageFile sound in items)
-                        {
-                            if (sound.ContentType == "audio/wav" || sound.ContentType == "audio/mpeg")
-                            {
-                                await SoundManager.addSound(sound);
-                            }
-                        }
-                        await FileManager.UpdateGridView();
+                        category.Name = (App.Current as App)._itemViewHolder.title;
+                    }
+
+                    // Application now has read/write access to the picked file(s)
+                    foreach (StorageFile soundFile in items)
+                    {
+                        Sound sound = new Sound(soundFile.DisplayName, "", soundFile);
+                        sound.CategoryName = category.Name;
+                        await SoundManager.addSound(sound);
+                    }
+
+                    if (String.IsNullOrEmpty(category.Name))
+                    {
+                        await ShowAllSounds();
+                    }
+                    else
+                    {
+                        await ShowCategory(category);
                     }
                 }
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
@@ -366,6 +379,23 @@ namespace UniversalSoundBoard
                 removedPlayingSounds[i].MediaPlayer = null;
                 RemovePlayingSound(removedPlayingSounds[i]);
             }
+        }
+
+        private async Task ShowAllSounds()
+        {
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            (App.Current as App)._itemViewHolder.searchQuery = "";
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+            await SoundManager.GetAllSounds();
+        }
+
+        private async Task ShowCategory(Category category)
+        {
+            (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
+            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
+            await SoundManager.GetSoundsByCategory(category);
         }
 
 

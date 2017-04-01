@@ -80,7 +80,7 @@ namespace UniversalSoundBoard
         public static async Task CreateCategoriesObservableCollection()
         {
             (App.Current as App)._itemViewHolder.categories.Clear();
-            (App.Current as App)._itemViewHolder.categories.Add(new Category { Name = "Home", Icon = "\uE10F" });
+            (App.Current as App)._itemViewHolder.categories.Add(new Category { Name = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), Icon = "\uE10F" });
             
             foreach(Category cat in await FileManager.GetCategoriesListAsync())
             {
@@ -422,14 +422,32 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.progressRingIsActive = true;
             AddButton.IsEnabled = false;
 
-            if (files.Count > 0)
+            if (files.Any())
             {
-                // Application now has read/write access to the picked file(s)
-                foreach (StorageFile sound in files)
+                Category category = new Category();
+                // Get category if a category is selected
+                if ((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title") &&
+                    String.IsNullOrEmpty(SearchAutoSuggestBox.Text) && (App.Current as App)._itemViewHolder.editButtonVisibility == Visibility.Visible)
                 {
+                    category.Name = (App.Current as App)._itemViewHolder.title;
+                }
+
+                // Application now has read/write access to the picked file(s)
+                foreach (StorageFile soundFile in files)
+                {
+                    Sound sound = new Sound(soundFile.DisplayName, "", soundFile);
+                    sound.CategoryName = category.Name;
                     await SoundManager.addSound(sound);
                 }
-                await ShowAllSounds();
+
+                if (String.IsNullOrEmpty(category.Name))
+                {
+                    await ShowAllSounds();
+                }
+                else
+                {
+                    await ShowCategory(category);
+                }
             }
             AddButton.IsEnabled = true;
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;

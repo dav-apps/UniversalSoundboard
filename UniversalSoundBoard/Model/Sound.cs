@@ -177,12 +177,14 @@ namespace UniversalSoundBoard.Model
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
             }
 
-            public static async Task addSound(StorageFile file)
+            public static async Task addSound(Sound sound)
             {
                 StorageFolder folder = ApplicationData.Current.LocalFolder;
 
-                StorageFile newFile = await file.CopyAsync(folder, file.Name, NameCollisionOption.GenerateUniqueName);
-                await FileManager.createSoundDetailsFileIfNotExistsAsync(file.DisplayName);
+                StorageFile newFile = await sound.AudioFile.CopyAsync(folder, sound.AudioFile.Name, NameCollisionOption.GenerateUniqueName);
+                await FileManager.createSoundDetailsFileIfNotExistsAsync(sound.Name);
+
+                await sound.setCategory(sound.CategoryName);
             }
         }
     }

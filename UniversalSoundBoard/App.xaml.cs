@@ -177,7 +177,8 @@ namespace UniversalSoundBoard
                 {
                     if(((StorageFile)storageItem).ContentType == "audio/wav" || ((StorageFile)storageItem).ContentType == "audio/mpeg")
                     {
-                        await Sound.SoundManager.addSound(((StorageFile)storageItem));
+                        Sound sound = new Sound(storageItem.Name, "", storageItem as StorageFile);
+                        await Sound.SoundManager.addSound(sound);
                     }
                 }
                 shareOperation.ReportDataRetrieved();
