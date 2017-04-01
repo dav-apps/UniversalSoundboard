@@ -68,7 +68,6 @@ namespace UniversalSoundBoard
 
         private void ShowPlayingSoundsList()
         {
-            Debug.WriteLine((App.Current as App)._itemViewHolder.playingSoundsListVisibility);
             if ((App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
             {
                 // Remove unused PlayingSounds

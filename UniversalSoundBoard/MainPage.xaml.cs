@@ -62,12 +62,13 @@ namespace UniversalSoundBoard
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
+            initializeLocalSettings();
+            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+            
             await CreateCategoriesObservableCollection();
             CreateSettingsListing();
 
-            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             await SoundManager.GetAllSounds();
-            initializeLocalSettings();
             await initializePushNotificationSettings();
         }
 
@@ -103,6 +104,7 @@ namespace UniversalSoundBoard
 
         private void initializeLocalSettings()
         {
+            Debug.WriteLine("MainPage 2");
             var localSettings = ApplicationData.Current.LocalSettings;
             if (localSettings.Values["volume"] == null)
             {
