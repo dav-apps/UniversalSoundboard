@@ -40,7 +40,7 @@
                                     Tapped="CategoryDeleteButton_Tapped" />
             </StackPanel>
 
-            <GridView Name="SoundGridView" Grid.Row="1"
+            <GridView Name="SoundGridView" Grid.Row="1" Margin="5,0,0,0"
                             SelectionMode="{Binding selectionMode}" ScrollViewer.BringIntoViewOnFocusChange="True"
                             IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick"
                             SelectionChanged="SoundGridView_SelectionChanged"
