@@ -9,44 +9,46 @@
     Loaded="Page_Loaded"
     SizeChanged="Page_SizeChanged">
 
-    <Grid Name="ContentRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="15,15,0,0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" x:Name="TitleRow" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+    <ScrollViewer>
+        <Grid Name="ContentRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Padding="15,15,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" x:Name="TitleRow" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Grid.Row="0"
+            <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Grid.Row="0"
                    Style="{StaticResource TitleTextBlockStyle}" Margin="0,0,10,15" />
 
-        <StackPanel Grid.Row="1" Margin="5">
-            <ToggleSwitch Name="ThemeToggle" Header="Dark Theme" Toggled="ThemeToggle_Toggled" />
-            <TextBlock Name="ThemeChangeMessageTextBlock" x:Uid="ThemeChangeMessageTextBlock" Visibility="Collapsed" Margin="0,0,0,10" />
-        </StackPanel>
-
-        <StackPanel Grid.Row="2" Margin="5">
-            <ToggleSwitch Name="LiveTileToggle" Header="Live Tile" Toggled="LiveTileToggle_Toggled" />
-        </StackPanel>
-
-        <StackPanel Grid.Row="3" Margin="5">
-            <ToggleSwitch Name="PlayingSoundsListToggle" x:Uid="PlayingSoundsListToggle" Header="Show list of playing sounds" Toggled="PlayingSoundsListToggle_Toggled" />
-        </StackPanel>
-
-        <StackPanel Grid.Row="4" Margin="5">
-            <ToggleSwitch Name="PlayOneSoundAtOnceToggle" x:Uid="PlayOneSoundAtOnceToggle" Header="Play one sound at once" Toggled="PlayOneSoundAtOnceToggle_Toggled" />
-        </StackPanel>
-
-        <StackPanel Grid.Row="5"
-                    Margin="5">
-            <HyperlinkButton Content="Privacy Policy" NavigateUri="http://dav-software.com/privacy.html" />
-
-            <StackPanel  Orientation="Horizontal">
-                <TextBlock Text="Version" IsTextSelectionEnabled="True" Margin="0,0,4,0" />
-                <TextBlock x:Uid="Version" IsTextSelectionEnabled="True" />
+            <StackPanel Grid.Row="1" Margin="5">
+                <ToggleSwitch Name="ThemeToggle" Header="Dark Theme" Toggled="ThemeToggle_Toggled" />
+                <TextBlock Name="ThemeChangeMessageTextBlock" x:Uid="ThemeChangeMessageTextBlock" Visibility="Collapsed" Margin="0,0,0,10" />
             </StackPanel>
-        </StackPanel>
-    </Grid>
+
+            <StackPanel Grid.Row="2" Margin="5">
+                <ToggleSwitch Name="LiveTileToggle" Header="Live Tile" Toggled="LiveTileToggle_Toggled" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="3" Margin="5">
+                <ToggleSwitch Name="PlayingSoundsListToggle" x:Uid="PlayingSoundsListToggle" Header="Show list of playing sounds" Toggled="PlayingSoundsListToggle_Toggled" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="4" Margin="5">
+                <ToggleSwitch Name="PlayOneSoundAtOnceToggle" x:Uid="PlayOneSoundAtOnceToggle" Header="Play one sound at once" Toggled="PlayOneSoundAtOnceToggle_Toggled" />
+            </StackPanel>
+
+            <StackPanel Grid.Row="5"
+                    Margin="5">
+                <HyperlinkButton Content="Privacy Policy" NavigateUri="http://dav-software.com/privacy.html" />
+
+                <StackPanel  Orientation="Horizontal">
+                    <TextBlock Text="Version" IsTextSelectionEnabled="True" Margin="0,0,4,0" />
+                    <TextBlock x:Uid="Version" IsTextSelectionEnabled="True" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
+    </ScrollViewer>
 </Page>
