@@ -257,15 +257,16 @@ namespace UniversalSoundBoard
             MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
             props.Type = MediaPlaybackType.Music;
             props.MusicProperties.Title = sound.Name;
-            props.MusicProperties.Artist = sound.CategoryName;
+            if (!String.IsNullOrEmpty(sound.CategoryName))
+            {
+                props.MusicProperties.Artist = sound.CategoryName;
+            }
             if(sound.ImageFile != null)
             {
                 props.Thumbnail = RandomAccessStreamReference.CreateFromFile(sound.ImageFile);
             }
 
             mediaPlaybackItem.ApplyDisplayProperties(props);
-
-
             mediaPlaybackList.Items.Add(mediaPlaybackItem);
             player.Source = mediaPlaybackList;
 

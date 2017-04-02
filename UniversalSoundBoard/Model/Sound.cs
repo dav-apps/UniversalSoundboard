@@ -137,7 +137,6 @@ namespace UniversalSoundBoard.Model
 
                 // Get Saved Sounds
                 ObservableCollection<Sound> allSounds = new ObservableCollection<Sound>();
-                //await GetSavedSounds(allSounds);
                 allSounds = SoundManager.allSounds;
 
                 ObservableCollection<Sound> newSounds = new ObservableCollection<Sound>();

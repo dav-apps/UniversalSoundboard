@@ -23,6 +23,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
+using static UniversalSoundBoard.Model.Sound;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -93,6 +94,7 @@ namespace UniversalSoundBoard
         private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.deleteSound(this.Sound);
+            await SoundManager.GetAllSounds();
             await FileManager.UpdateGridView();
         }
 

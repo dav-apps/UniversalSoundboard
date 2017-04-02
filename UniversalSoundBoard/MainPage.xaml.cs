@@ -284,7 +284,6 @@ namespace UniversalSoundBoard
 
         private async Task ShowAllSounds()
         {
-            
             if (AreTopButtonsNormal())
             {
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
