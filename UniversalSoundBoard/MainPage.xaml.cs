@@ -299,6 +299,7 @@ namespace UniversalSoundBoard
         
         private async Task ShowCategory(Category category)
         {
+            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
