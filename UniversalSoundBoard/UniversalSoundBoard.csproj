@@ -97,7 +97,6 @@
     <Content Include="ApplicationInsights.config">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Assets\PackageAppXManifest\Thumbs.db" />
     <None Include="project.json" />
   </ItemGroup>
   <ItemGroup>
@@ -139,42 +138,61 @@
     <None Include="UniversalSoundBoard_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Assets\BadgeLogo.scale-100.png" />
-    <Content Include="Assets\BadgeLogo.scale-200.png" />
+    <Content Include="Assets\Generierte Assets\BadgeLogo.scale-100.png" />
+    <Content Include="Assets\Generierte Assets\BadgeLogo.scale-125.png" />
+    <Content Include="Assets\Generierte Assets\BadgeLogo.scale-150.png" />
+    <Content Include="Assets\Generierte Assets\BadgeLogo.scale-200.png" />
+    <Content Include="Assets\Generierte Assets\BadgeLogo.scale-400.png" />
+    <Content Include="Assets\Generierte Assets\SplashScreen.scale-100.png" />
+    <Content Include="Assets\Generierte Assets\SplashScreen.scale-125.png" />
+    <Content Include="Assets\Generierte Assets\SplashScreen.scale-150.png" />
+    <Content Include="Assets\Generierte Assets\SplashScreen.scale-200.png" />
+    <Content Include="Assets\Generierte Assets\SplashScreen.scale-400.png" />
+    <Content Include="Assets\Generierte Assets\Square150x150Logo.scale-100.png" />
+    <Content Include="Assets\Generierte Assets\Square150x150Logo.scale-125.png" />
+    <Content Include="Assets\Generierte Assets\Square150x150Logo.scale-150.png" />
+    <Content Include="Assets\Generierte Assets\Square150x150Logo.scale-200.png" />
+    <Content Include="Assets\Generierte Assets\Square150x150Logo.scale-400.png" />
+    <Content Include="Assets\Generierte Assets\Square310x310Logo.scale-100.png" />
+    <Content Include="Assets\Generierte Assets\Square310x310Logo.scale-125.png" />
+    <Content Include="Assets\Generierte Assets\Square310x310Logo.scale-150.png" />
+    <Content Include="Assets\Generierte Assets\Square310x310Logo.scale-200.png" />
+    <Content Include="Assets\Generierte Assets\Square310x310Logo.scale-400.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.altform-unplated_targetsize-16.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.altform-unplated_targetsize-24.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.altform-unplated_targetsize-256.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.altform-unplated_targetsize-32.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.altform-unplated_targetsize-48.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.scale-100.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.scale-125.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.scale-150.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.scale-200.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.scale-400.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.targetsize-16.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.targetsize-24.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.targetsize-256.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.targetsize-32.png" />
+    <Content Include="Assets\Generierte Assets\Square44x44Logo.targetsize-48.png" />
+    <Content Include="Assets\Generierte Assets\Square71x71Logo.scale-100.png" />
+    <Content Include="Assets\Generierte Assets\Square71x71Logo.scale-125.png" />
+    <Content Include="Assets\Generierte Assets\Square71x71Logo.scale-150.png" />
+    <Content Include="Assets\Generierte Assets\Square71x71Logo.scale-200.png" />
+    <Content Include="Assets\Generierte Assets\Square71x71Logo.scale-400.png" />
+    <Content Include="Assets\Generierte Assets\StoreLogo.scale-100.png" />
+    <Content Include="Assets\Generierte Assets\StoreLogo.scale-125.png" />
+    <Content Include="Assets\Generierte Assets\StoreLogo.scale-150.png" />
+    <Content Include="Assets\Generierte Assets\StoreLogo.scale-200.png" />
+    <Content Include="Assets\Generierte Assets\StoreLogo.scale-400.png" />
+    <Content Include="Assets\Generierte Assets\Wide310x150Logo.scale-100.png" />
+    <Content Include="Assets\Generierte Assets\Wide310x150Logo.scale-125.png" />
+    <Content Include="Assets\Generierte Assets\Wide310x150Logo.scale-150.png" />
+    <Content Include="Assets\Generierte Assets\Wide310x150Logo.scale-200.png" />
+    <Content Include="Assets\Generierte Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\Images\default-dark.png" />
     <Content Include="Assets\Images\default.png" />
-    <Content Include="Assets\PackageAppXManifest\1240x1240.png" />
-    <Content Include="Assets\PackageAppXManifest\1240x1240.scale-400.png" />
-    <Content Include="Assets\PackageAppXManifest\1240x600.png" />
-    <Content Include="Assets\PackageAppXManifest\24x24-large.png" />
-    <Content Include="Assets\PackageAppXManifest\24x24-large.scale-100.png" />
-    <Content Include="Assets\PackageAppXManifest\24x24.png" />
-    <Content Include="Assets\PackageAppXManifest\300x300.png" />
-    <Content Include="Assets\PackageAppXManifest\310x310.png" />
-    <Content Include="Assets\PackageAppXManifest\310x310.scale-100.png" />
-    <Content Include="Assets\PackageAppXManifest\310x310.scale-200.png" />
-    <Content Include="Assets\PackageAppXManifest\310x310.scale-400.png" />
-    <Content Include="Assets\PackageAppXManifest\50x50-large.png" />
-    <Content Include="Assets\PackageAppXManifest\50x50.png" />
-    <Content Include="Assets\PackageAppXManifest\620x300.png" />
-    <Content Include="Assets\PackageAppXManifest\71x71-large.png" />
-    <Content Include="Assets\PackageAppXManifest\71x71.png" />
-    <Content Include="Assets\PackageAppXManifest\71x71.scale-100.png" />
-    <Content Include="Assets\PackageAppXManifest\71x71.scale-200.png" />
-    <Content Include="Assets\PackageAppXManifest\88x88-large.png" />
-    <Content Include="Assets\PackageAppXManifest\88x88.png" />
-    <Content Include="Assets\SplashScreen.scale-200.png" />
-    <Content Include="Assets\Square150x150Logo.scale-200.png" />
-    <Content Include="Assets\Square310x310Logo.scale-100.png" />
-    <Content Include="Assets\Square310x310Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.scale-200.png" />
-    <Content Include="Assets\Square44x44Logo.targetsize-24.png" />
-    <Content Include="Assets\Square71x71Logo.scale-100.png" />
-    <Content Include="Assets\Square71x71Logo.scale-200.png" />
-    <Content Include="Assets\StoreLogo.scale-100.png" />
-    <Content Include="Assets\StoreLogo.scale-200.png" />
-    <Content Include="Assets\Wide310x150Logo.scale-200.png" />
     <None Include="Package.StoreAssociation.xml" />
+    <Content Include="Assets\Quelle.png" />
+    <Content Include="Assets\Quelle2.png" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
