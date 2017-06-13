@@ -225,4 +225,10 @@
   <data name="ThemeChangeMessageTextBlock.Text" xml:space="preserve">
     <value>Bitte starte die App neu, um das neue Thema anzuwenden.</value>
   </data>
+  <data name="PlayAllSoundsSimultaneously.Text" xml:space="preserve">
+    <value>Alle gleichzeitig abspielen</value>
+  </data>
+  <data name="PlayAllSoundsSuccessively.Text" xml:space="preserve">
+    <value>Alle nacheinander abspielen</value>
+  </data>
 </root>

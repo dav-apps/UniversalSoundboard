@@ -557,6 +557,42 @@ namespace UniversalSoundBoard
             await editCategoryContentDialog.ShowAsync();
         }
 
+        private void PlayAllSoundsSimultaneously_Click(object sender, RoutedEventArgs e)
+        {
+            bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.playOneSoundAtOnce;
+            (App.Current as App)._itemViewHolder.playOneSoundAtOnce = false;
+            foreach (Sound sound in (App.Current as App)._itemViewHolder.sounds)
+            {
+                SoundPage.playSound(sound);
+            }
+            (App.Current as App)._itemViewHolder.playOneSoundAtOnce = oldPlayOneSoundAtOnce;
+        }
+
+        private void PlayAllSoundsSuccessively_1x_Click(object sender, RoutedEventArgs e)
+        {
+            StartPlaySoundsSuccessively(1, true);
+        }
+
+        private void PlayAllSoundsSuccessively_2x_Click(object sender, RoutedEventArgs e)
+        {
+            StartPlaySoundsSuccessively(2, true);
+        }
+
+        private void PlayAllSoundsSuccessively_5x_Click(object sender, RoutedEventArgs e)
+        {
+            StartPlaySoundsSuccessively(5, true);
+        }
+
+        private void PlayAllSoundsSuccessively_10x_Click(object sender, RoutedEventArgs e)
+        {
+            StartPlaySoundsSuccessively(10, true);
+        }
+
+        private void PlayAllSoundsSuccessively_endless_Click(object sender, RoutedEventArgs e)
+        {
+            StartPlaySoundsSuccessively(int.MaxValue, true);
+        }
+
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             FileManager.resetMultiSelectArea();
@@ -573,34 +609,42 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = oldPlayOneSoundAtOnce;
         }
 
-        private void StartPlaySoundsSuccessively(int rounds)
+        private void StartPlaySoundsSuccessively(int rounds, bool allSounds)
         {
-            SoundPage.playSounds((App.Current as App)._itemViewHolder.selectedSounds, rounds);
+            // If allSounds is true, play all sounds. Else, play only selected sounds
+            if (allSounds)
+            {
+                SoundPage.playSounds((App.Current as App)._itemViewHolder.sounds.ToList(), rounds);
+            }
+            else
+            {
+                SoundPage.playSounds((App.Current as App)._itemViewHolder.selectedSounds, rounds);
+            }
         }
         
         private void PlaySoundsSuccessively_1x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(1);
+            StartPlaySoundsSuccessively(1, false);
         }
 
         private void PlaySoundsSuccessively_2x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(2);
+            StartPlaySoundsSuccessively(2, false);
         }
 
         private void PlaySoundsSuccessively_5x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(5);
+            StartPlaySoundsSuccessively(5, false);
         }
 
         private void PlaySoundsSuccessively_10x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(10);
+            StartPlaySoundsSuccessively(10, false);
         }
 
         private void PlaySoundsSuccessively_endless_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(int.MaxValue);
+            StartPlaySoundsSuccessively(int.MaxValue, false);
         }
 
         private void MultiSelectOptionsButton_More_Click(object sender, RoutedEventArgs e)
