@@ -42,7 +42,7 @@
 
             <StackPanel Grid.Row="5"
                     Margin="5">
-                <HyperlinkButton Content="Privacy Policy" NavigateUri="http://dav-software.com/privacy.html" />
+                <HyperlinkButton Content="Privacy Policy" NavigateUri="http://dav-apps.tech/privacy" />
 
                 <StackPanel  Orientation="Horizontal">
                     <TextBlock Text="Version" IsTextSelectionEnabled="True" Margin="0,0,4,0" />
