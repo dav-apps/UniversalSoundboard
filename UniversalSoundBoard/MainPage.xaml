@@ -36,34 +36,6 @@
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
             <Setter Property="Background" Value="{StaticResource LightThemeButtonColor}" />
         </Style>
-
-        <Style TargetType="SymbolIcon" x:Key="TitleButtonStyle">
-            <Setter Property="Margin" Value="15,0,0,0" />
-        </Style>
-
-        <!-- The button style for the Play All Button to look like the SymbolIcons -->
-        <Style TargetType="Button" x:Key="ButtonStyle">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Grid>
-                            <ContentPresenter>
-                                <TextBlock
-                                    FontFamily="{TemplateBinding FontFamily}"
-                                    SelectionHighlightColor="{TemplateBinding Foreground}"
-                                    Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                    FontSize="{TemplateBinding FontSize}"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Height="Auto"
-                                    Width="Auto"/>
-                            </ContentPresenter>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Page.Resources>
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}" Name="ContentRoot">
@@ -83,14 +55,14 @@
                         RelativePanel.RightOf="HamburgerButton" RelativePanel.AlignVerticalCenterWithPanel="True">
                 <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" />
                 <SymbolIcon Name="CategoryEditButton" 
-                                    Symbol="Edit" Style="{StaticResource TitleButtonStyle}" Visibility="{Binding editButtonVisibility}"
+                                    Symbol="Edit" Margin="15,0,0,0" Visibility="{Binding editButtonVisibility}"
                                     Tapped="CategoryEditButton_Tapped" />
                 <SymbolIcon Name="CategoryDeleteButton" 
-                                    Symbol="Delete" Style="{StaticResource TitleButtonStyle}" Visibility="{Binding editButtonVisibility}"
+                                    Symbol="Delete" Margin="15,0,0,0" Visibility="{Binding editButtonVisibility}"
                                     Tapped="CategoryDeleteButton_Tapped" />
-                <Button Name="CategoryPlayAllButton" Background="Transparent" Height="30" Width="20"
-                            Content="&#xEDB5;" FontFamily="Segoe MDL2 Assets" FontSize="20" Style="{StaticResource ButtonStyle}"
-                            Margin="15,0,0,0" Visibility="{Binding editButtonVisibility}">
+                <Button Name="CategoryPlayAllButton" Background="Transparent" Height="25" Width="20"
+                            Content="&#xEDB5;" FontFamily="Segoe MDL2 Assets" FontSize="20" Style="{StaticResource PlayAllButtonStyle}"
+                            Margin="15,0,0,0" Visibility="{Binding playAllButtonVisibility}">
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
                             <MenuFlyoutItem Name="PlayAllSoundsSimultaneously" x:Uid="PlayAllSoundsSimultaneously" Click="PlayAllSoundsSimultaneously_Click" />

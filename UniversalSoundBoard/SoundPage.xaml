@@ -33,11 +33,27 @@
             <StackPanel Name="TitleStackPanel" Grid.Row="0" Orientation="Horizontal" Margin="20,5,0,5">
                 <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" />
                 <SymbolIcon Name="CategoryEditButton" 
-                                    Symbol="Edit" Margin="10,0,0,0" Visibility="{Binding editButtonVisibility}"
+                                    Symbol="Edit" Margin="15,0,0,0" Visibility="{Binding editButtonVisibility}"
                                     Tapped="CategoryEditButton_Tapped" />
                 <SymbolIcon Name="CategoryDeleteButton" 
-                                    Symbol="Delete" Margin="10,0,0,0" Visibility="{Binding editButtonVisibility}"
+                                    Symbol="Delete" Margin="15,0,0,0" Visibility="{Binding editButtonVisibility}"
                                     Tapped="CategoryDeleteButton_Tapped" />
+                <Button Name="CategoryPlayAllButton" Background="Transparent" Height="25" Width="20"
+                            Content="&#xEDB5;" FontFamily="Segoe MDL2 Assets" FontSize="20" Style="{StaticResource PlayAllButtonStyle}"
+                            Margin="15,0,0,0" Visibility="{Binding playAllButtonVisibility}">
+                    <Button.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Name="PlayAllSoundsSimultaneously" x:Uid="PlayAllSoundsSimultaneously" Click="PlayAllSoundsSimultaneously_Click" />
+                            <MenuFlyoutSubItem Name="PlayAllSoundsSuccessively" x:Uid="PlayAllSoundsSuccessively">
+                                <MenuFlyoutItem Name="PlayAllSoundsSuccessively_1x" Text="1x" Click="PlayAllSoundsSuccessively_1x_Click" />
+                                <MenuFlyoutItem Name="PlayAllSoundsSuccessively_2x" Text="2x" Click="PlayAllSoundsSuccessively_2x_Click" />
+                                <MenuFlyoutItem Name="PlayAllSoundsSuccessively_5x" Text="5x" Click="PlayAllSoundsSuccessively_5x_Click" />
+                                <MenuFlyoutItem Name="PlayAllSoundsSuccessively_10x" Text="10x" Click="PlayAllSoundsSuccessively_10x_Click" />
+                                <MenuFlyoutItem Name="PlayAllSoundsSuccessively_endless" Text="∞" Click="PlayAllSoundsSuccessively_endless_Click" />
+                            </MenuFlyoutSubItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
             </StackPanel>
 
             <GridView Name="SoundGridView" Grid.Row="1" Margin="5,0,0,0"

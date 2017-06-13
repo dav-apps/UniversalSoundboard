@@ -220,6 +220,7 @@ namespace UniversalSoundBoard
                     (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
                     (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                    (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Visible;
                 }
                 else if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
                 {   // If SoundPage shows AllSounds
@@ -292,6 +293,7 @@ namespace UniversalSoundBoard
             SearchAutoSuggestBox.Text = "";
             MenuItemsListView.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Visible;
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             await SoundManager.GetAllSounds();
             skipAutoSuggestBoxTextChanged = false;
@@ -303,6 +305,7 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
+            (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Visible;
             MenuItemsListView.SelectedItem = category;
             await SoundManager.GetSoundsByCategory(category);
         }
@@ -505,6 +508,7 @@ namespace UniversalSoundBoard
                 (App.Current as App)._itemViewHolder.page = typeof(SettingsPage);
                 (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title");
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             }
             /* else if (setting.Text == "Log in")
@@ -609,6 +613,7 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = oldPlayOneSoundAtOnce;
         }
 
+        // Aquivalent to method in SoundPage
         private void StartPlaySoundsSuccessively(int rounds, bool allSounds)
         {
             // If allSounds is true, play all sounds. Else, play only selected sounds

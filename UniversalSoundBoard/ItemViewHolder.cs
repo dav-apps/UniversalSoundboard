@@ -20,6 +20,7 @@ namespace UniversalSoundBoard
         private bool _multiSelectOptionsEnabled;
         private string _searchQuery;
         private Visibility _editButtonVisibility;
+        private Visibility _playAllButtonVisibility;
         private Visibility _normalOptionsVisibility;
         private Visibility _multiSelectOptionsVisibility;
         private Type _page;
@@ -105,6 +106,17 @@ namespace UniversalSoundBoard
             {
                 _editButtonVisibility = value;
                 NotifyPropertyChanged("editButtonVisibility");
+            }
+        }
+
+        public Visibility playAllButtonVisibility
+        {
+            get { return _playAllButtonVisibility; }
+
+            set
+            {
+                _playAllButtonVisibility = value;
+                NotifyPropertyChanged("playAllButtonVisibility");
             }
         }
 
