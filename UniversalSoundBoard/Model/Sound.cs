@@ -125,13 +125,16 @@ namespace UniversalSoundBoard.Model
 
             public static async Task GetAllSounds()
             {
+                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 await GetSavedSounds((App.Current as App)._itemViewHolder.sounds);
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
+                ShowPlayAllButton();
             }
 
             public static void GetSoundsByName(string name)
             {
+                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 (App.Current as App)._itemViewHolder.sounds.Clear();
 
@@ -151,10 +154,12 @@ namespace UniversalSoundBoard.Model
                 }
 
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
+                ShowPlayAllButton();
             }
 
             public static async Task GetSoundsByCategory(Category category)
             {
+                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 (App.Current as App)._itemViewHolder.sounds.Clear();
 
@@ -174,6 +179,7 @@ namespace UniversalSoundBoard.Model
                 }
 
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
+                ShowPlayAllButton();
             }
 
             public static async Task addSound(Sound sound)
@@ -184,6 +190,18 @@ namespace UniversalSoundBoard.Model
                 await FileManager.createSoundDetailsFileIfNotExistsAsync(sound.Name);
 
                 await sound.setCategory(sound.CategoryName);
+            }
+
+            private static void ShowPlayAllButton()
+            {
+                if((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+                {
+                    (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
+                }
+                else
+                {
+                    (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Visible;
+                }
             }
         }
     }

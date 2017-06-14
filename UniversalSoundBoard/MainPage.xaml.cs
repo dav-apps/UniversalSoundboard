@@ -214,13 +214,13 @@ namespace UniversalSoundBoard
             }
             else
             {
-                if ((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
+                if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
                 {   // If Settings Page is visible
                     // Go to All sounds page
                     (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
                     (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+                    ShowAllSounds();
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                    (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Visible;
                 }
                 else if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
                 {   // If SoundPage shows AllSounds
@@ -293,7 +293,6 @@ namespace UniversalSoundBoard
             SearchAutoSuggestBox.Text = "";
             MenuItemsListView.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-            (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Visible;
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             await SoundManager.GetAllSounds();
             skipAutoSuggestBoxTextChanged = false;
@@ -305,7 +304,6 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
-            (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Visible;
             MenuItemsListView.SelectedItem = category;
             await SoundManager.GetSoundsByCategory(category);
         }
