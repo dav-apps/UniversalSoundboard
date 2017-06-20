@@ -452,7 +452,7 @@ namespace UniversalSoundBoard
                 // Application now has read/write access to the picked file(s)
                 foreach (StorageFile soundFile in files)
                 {
-                    Sound sound = new Sound(soundFile.DisplayName, "", soundFile);
+                    Sound sound = new Sound(soundFile.DisplayName, "", soundFile.Path);
                     sound.CategoryName = category.Name;
                     await SoundManager.addSound(sound);
                 }
@@ -617,11 +617,11 @@ namespace UniversalSoundBoard
             // If allSounds is true, play all sounds. Else, play only selected sounds
             if (allSounds)
             {
-                SoundPage.playSounds((App.Current as App)._itemViewHolder.sounds.ToList(), rounds);
+                SoundPage.playSoundsAsync((App.Current as App)._itemViewHolder.sounds.ToList(), rounds);
             }
             else
             {
-                SoundPage.playSounds((App.Current as App)._itemViewHolder.selectedSounds, rounds);
+                SoundPage.playSoundsAsync((App.Current as App)._itemViewHolder.selectedSounds, rounds);
             }
         }
         

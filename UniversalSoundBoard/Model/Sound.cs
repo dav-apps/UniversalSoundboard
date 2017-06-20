@@ -16,7 +16,8 @@ namespace UniversalSoundBoard.Model
         public string CategoryName { get; set; }
         public BitmapImage Image { get; set; }
         public StorageFile ImageFile { get; set; }
-        public StorageFile AudioFile { get; set; }
+        //public StorageFile AudioFile { get; set; }
+        public string AudioFilePath { get; set; }
         public StorageFile DetailsFile { get; set; }
 
         public Sound()
@@ -29,11 +30,11 @@ namespace UniversalSoundBoard.Model
             CategoryName = category;
         }
 
-        public Sound(string name, string category, StorageFile AudioFile)
+        public Sound(string name, string category, string AudioFilePath)
         {
             Name = name;
             CategoryName = category;
-            this.AudioFile = AudioFile;
+            this.AudioFilePath = AudioFilePath;
         }
 
         public async Task setCategory(string category)
@@ -72,7 +73,7 @@ namespace UniversalSoundBoard.Model
                         Sound sound = new Sound();
 
                         sound.Name = file.DisplayName;
-                        sound.AudioFile = file;
+                        sound.AudioFilePath = file.Path;
 
 
                         // Get Image for Sound
@@ -185,8 +186,9 @@ namespace UniversalSoundBoard.Model
             public static async Task addSound(Sound sound)
             {
                 StorageFolder folder = ApplicationData.Current.LocalFolder;
+                StorageFile soundFile = await StorageFile.GetFileFromPathAsync(sound.AudioFilePath);
 
-                StorageFile newFile = await sound.AudioFile.CopyAsync(folder, sound.AudioFile.Name, NameCollisionOption.GenerateUniqueName);
+                StorageFile newFile2 = await soundFile.CopyAsync(folder, soundFile.Name, NameCollisionOption.GenerateUniqueName);
                 await FileManager.createSoundDetailsFileIfNotExistsAsync(sound.Name);
 
                 await sound.setCategory(sound.CategoryName);
