@@ -127,7 +127,7 @@ namespace UniversalSoundBoard
                     // Application now has read/write access to the picked file(s)
                     foreach (StorageFile soundFile in items)
                     {
-                        Sound sound = new Sound(soundFile.DisplayName, "", soundFile.Path);
+                        Sound sound = new Sound(soundFile.DisplayName, "", soundFile);
                         sound.CategoryName = category.Name;
                         await SoundManager.addSound(sound);
                     }
@@ -247,13 +247,12 @@ namespace UniversalSoundBoard
             }
         }
 
-        public static async void playSound(Sound sound)
+        public static void playSound(Sound sound)
         {
             MediaPlayer player = new MediaPlayer();
             MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
 
-            //MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(sound.AudioFile));
-            MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(await StorageFile.GetFileFromPathAsync(sound.AudioFilePath)));
+            MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(sound.AudioFile));
 
             MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
             props.Type = MediaPlaybackType.Music;
@@ -300,14 +299,14 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
 
-        public static async Task playSoundsAsync(List<Sound> sounds, int repetitions)
+        public static void playSounds(List<Sound> sounds, int repetitions)
         {
             MediaPlayer player = new MediaPlayer();
             MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
 
-            foreach (Sound sound in sounds)
+            foreach(Sound sound in sounds)
             {
-                MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(await StorageFile.GetFileFromPathAsync(sound.AudioFilePath)));
+                MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(sound.AudioFile));
 
                 MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
                 props.Type = MediaPlaybackType.Music;
@@ -316,7 +315,7 @@ namespace UniversalSoundBoard
                 {
                     props.MusicProperties.Artist = sound.CategoryName;
                 }
-
+                
                 if (sound.ImageFile != null)
                 {
                     props.Thumbnail = RandomAccessStreamReference.CreateFromFile(sound.ImageFile);
@@ -326,7 +325,7 @@ namespace UniversalSoundBoard
 
                 mediaPlaybackList.Items.Add(mediaPlaybackItem);
             }
-
+            
             player.Source = mediaPlaybackList;
 
 
@@ -410,11 +409,11 @@ namespace UniversalSoundBoard
             // If allSounds is true, play all sounds. Else, play only selected sounds
             if (allSounds)
             {
-                SoundPage.playSoundsAsync((App.Current as App)._itemViewHolder.sounds.ToList(), rounds);
+                SoundPage.playSounds((App.Current as App)._itemViewHolder.sounds.ToList(), rounds);
             }
             else
             {
-                SoundPage.playSoundsAsync((App.Current as App)._itemViewHolder.selectedSounds, rounds);
+                SoundPage.playSounds((App.Current as App)._itemViewHolder.selectedSounds, rounds);
             }
         }
 

@@ -101,7 +101,7 @@ namespace UniversalSoundBoard
 
         public static async Task renameSound(Sound sound, string newName)
         {
-            StorageFile audioFile = await StorageFile.GetFileFromPathAsync(sound.AudioFilePath);
+            StorageFile audioFile = sound.AudioFile;
             StorageFile imageFile = sound.ImageFile;
             if (sound.DetailsFile == null)
             {
@@ -119,7 +119,7 @@ namespace UniversalSoundBoard
 
         public static async Task deleteSound(Sound sound)
         {
-            File.Delete(sound.AudioFilePath);
+            await sound.AudioFile.DeleteAsync();
             if (sound.ImageFile != null)
             {
                 await sound.ImageFile.DeleteAsync();
