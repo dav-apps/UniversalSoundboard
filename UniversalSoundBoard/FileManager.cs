@@ -36,6 +36,7 @@ namespace UniversalSoundBoard
 
         public static async void addImage(StorageFile file, Sound sound)
         {
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             StorageFolder folder = ApplicationData.Current.LocalFolder;
             StorageFolder imagesFolder = await folder.GetFolderAsync("images");
 
@@ -101,6 +102,7 @@ namespace UniversalSoundBoard
 
         public static async Task renameSound(Sound sound, string newName)
         {
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             StorageFile audioFile = sound.AudioFile;
             StorageFile imageFile = sound.ImageFile;
             if (sound.DetailsFile == null)
@@ -119,6 +121,7 @@ namespace UniversalSoundBoard
 
         public static async Task deleteSound(Sound sound)
         {
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             await sound.AudioFile.DeleteAsync();
             if (sound.ImageFile != null)
             {
@@ -129,8 +132,17 @@ namespace UniversalSoundBoard
                 await createSoundDetailsFileIfNotExistsAsync(sound.Name);
             }
             await sound.DetailsFile.DeleteAsync();
+        }
 
-            //await UpdateGridView();
+        public static async Task addSound(Sound sound)
+        {
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+            StorageFolder folder = ApplicationData.Current.LocalFolder;
+
+            StorageFile newFile = await sound.AudioFile.CopyAsync(folder, sound.AudioFile.Name, NameCollisionOption.GenerateUniqueName);
+            await createSoundDetailsFileIfNotExistsAsync(sound.Name);
+
+            await sound.setCategory(sound.CategoryName);
         }
 
         public static async Task<StorageFile> createDataFolderAndJsonFileIfNotExistsAsync()
@@ -205,8 +217,6 @@ namespace UniversalSoundBoard
             {
                 category.Name = WebUtility.HtmlDecode(category.Name);
             }
-            //(App.Current as App)._itemViewHolder.categories = null;
-            //(App.Current as App)._itemViewHolder.categories = categoriesList;
 
             return categoriesList;
         }
@@ -305,7 +315,7 @@ namespace UniversalSoundBoard
             List<Sound> sounds = new List<Sound>();
             Sound sound = (App.Current as App)._itemViewHolder.sounds.Last();
             // Get sound with image
-            foreach (var s in (App.Current as App)._itemViewHolder.sounds)
+            foreach (var s in (App.Current as App)._itemViewHolder.allSounds)
             {
                 if (s.ImageFile != null)
                 {

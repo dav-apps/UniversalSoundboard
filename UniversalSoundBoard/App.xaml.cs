@@ -34,6 +34,8 @@ namespace UniversalSoundBoard
             title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
             progressRingIsActive = false,
             sounds = new ObservableCollection<Sound>(),
+            allSounds = new ObservableCollection<Sound>(),
+            allSoundsChanged = true,
             categories = new ObservableCollection<Category>(),
             searchQuery = "",
             editButtonVisibility = Visibility.Collapsed,
@@ -179,7 +181,7 @@ namespace UniversalSoundBoard
                     if(((StorageFile)storageItem).ContentType == "audio/wav" || ((StorageFile)storageItem).ContentType == "audio/mpeg")
                     {
                         Sound sound = new Sound(storageItem.Name, "", storageItem as StorageFile);
-                        await Sound.SoundManager.addSound(sound);
+                        await FileManager.addSound(sound);
                     }
                 }
                 shareOperation.ReportDataRetrieved();

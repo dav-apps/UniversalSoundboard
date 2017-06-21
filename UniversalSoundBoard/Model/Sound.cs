@@ -48,11 +48,9 @@ namespace UniversalSoundBoard.Model
 
         public class SoundManager{
 
-            static ObservableCollection<Sound> allSounds = new ObservableCollection<Sound>();
-
             private static async Task GetSavedSounds(ObservableCollection<Sound> sounds)
             {
-                allSounds.Clear();
+                (App.Current as App)._itemViewHolder.allSounds.Clear();
                 // Create images folder if not exists
                 await FileManager.CreateImagesFolderIfNotExists();
 
@@ -119,33 +117,46 @@ namespace UniversalSoundBoard.Model
                 foreach (var sound in newSounds)
                 {
                     sounds.Add(sound);
-                    allSounds.Add(sound);
+                    (App.Current as App)._itemViewHolder.allSounds.Add(sound);
                 }
+                (App.Current as App)._itemViewHolder.allSoundsChanged = false;
             }
 
             public static async Task GetAllSounds()
             {
                 (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-                await GetSavedSounds((App.Current as App)._itemViewHolder.sounds);
+                if((App.Current as App)._itemViewHolder.allSoundsChanged)
+                {
+                    await GetSavedSounds((App.Current as App)._itemViewHolder.sounds);
+                }
+                else
+                {
+                    (App.Current as App)._itemViewHolder.sounds.Clear();
+                    // Copy all Sounds into selected Sounds list
+                    foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
+                    {
+                        (App.Current as App)._itemViewHolder.sounds.Add(sound);
+                    }
+                }
+                
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
                 ShowPlayAllButton();
             }
 
-            public static void GetSoundsByName(string name)
+            public static async void GetSoundsByName(string name)
             {
                 (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 (App.Current as App)._itemViewHolder.sounds.Clear();
 
-                // Get Saved Sounds
-                ObservableCollection<Sound> allSounds = new ObservableCollection<Sound>();
-                allSounds = SoundManager.allSounds;
-
-                ObservableCollection<Sound> newSounds = new ObservableCollection<Sound>();
+                if ((App.Current as App)._itemViewHolder.allSoundsChanged)
+                {
+                    await GetSavedSounds((App.Current as App)._itemViewHolder.sounds);
+                }
 
                 (App.Current as App)._itemViewHolder.sounds.Clear();
-                foreach (var sound in allSounds)
+                foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
                 {
                     if (sound.Name.ToLower().Contains(name.ToLower()))
                     {
@@ -163,14 +174,13 @@ namespace UniversalSoundBoard.Model
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 (App.Current as App)._itemViewHolder.sounds.Clear();
 
-                // Get Saved Sounds
-                ObservableCollection<Sound> allSounds = new ObservableCollection<Sound>();
-                await GetSavedSounds(allSounds);
-
-                ObservableCollection<Sound> newSounds = new ObservableCollection<Sound>();
+                if ((App.Current as App)._itemViewHolder.allSoundsChanged)
+                {
+                    await GetSavedSounds((App.Current as App)._itemViewHolder.sounds);
+                }
 
                 (App.Current as App)._itemViewHolder.sounds.Clear();
-                foreach (var sound in allSounds)
+                foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
                 {
                     if (sound.CategoryName == category.Name)
                     {
@@ -180,16 +190,6 @@ namespace UniversalSoundBoard.Model
 
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
                 ShowPlayAllButton();
-            }
-
-            public static async Task addSound(Sound sound)
-            {
-                StorageFolder folder = ApplicationData.Current.LocalFolder;
-
-                StorageFile newFile = await sound.AudioFile.CopyAsync(folder, sound.AudioFile.Name, NameCollisionOption.GenerateUniqueName);
-                await FileManager.createSoundDetailsFileIfNotExistsAsync(sound.Name);
-
-                await sound.setCategory(sound.CategoryName);
             }
 
             private static void ShowPlayAllButton()

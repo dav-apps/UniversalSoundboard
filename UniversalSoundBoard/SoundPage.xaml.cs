@@ -129,7 +129,7 @@ namespace UniversalSoundBoard
                     {
                         Sound sound = new Sound(soundFile.DisplayName, "", soundFile);
                         sound.CategoryName = category.Name;
-                        await SoundManager.addSound(sound);
+                        await FileManager.addSound(sound);
                     }
 
                     if (String.IsNullOrEmpty(category.Name))
