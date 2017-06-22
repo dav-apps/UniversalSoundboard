@@ -50,6 +50,7 @@ namespace UniversalSoundBoard.Model
 
             private static async Task GetSavedSounds(ObservableCollection<Sound> sounds)
             {
+                (App.Current as App)._itemViewHolder.allSoundsChanged = false;
                 (App.Current as App)._itemViewHolder.allSounds.Clear();
                 // Create images folder if not exists
                 await FileManager.CreateImagesFolderIfNotExists();
@@ -119,7 +120,6 @@ namespace UniversalSoundBoard.Model
                     sounds.Add(sound);
                     (App.Current as App)._itemViewHolder.allSounds.Add(sound);
                 }
-                (App.Current as App)._itemViewHolder.allSoundsChanged = false;
             }
 
             public static async Task GetAllSounds()

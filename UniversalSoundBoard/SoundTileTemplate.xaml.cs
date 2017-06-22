@@ -94,9 +94,7 @@ namespace UniversalSoundBoard
         private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.deleteSound(this.Sound);
-            // UpdateGridView wird hier aufgerufen, 
-            // da deleteSound auch in einer Schleife beim löschen von mehreren Sounds aufgerufen wird, 
-            // um danach UpdateGridView aufzurufen
+            // UpdateGridView nicht in deleteSound, weil es auch in einer Schleife aufgerufen wird (löschen mehrerer Sounds)
             await FileManager.UpdateGridView();
         }
 
