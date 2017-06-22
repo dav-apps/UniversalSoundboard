@@ -72,6 +72,9 @@ namespace UniversalSoundBoard
                 {
                     await SoundManager.GetAllSounds();
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                }else if((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+                {
+                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
                 }
                 else
                 {
@@ -83,6 +86,7 @@ namespace UniversalSoundBoard
                 SoundManager.GetSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             }
+            SoundManager.ShowPlayAllButton();
         }
 
         public static async Task CreateImagesFolderIfNotExists()

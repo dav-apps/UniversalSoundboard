@@ -301,6 +301,10 @@ namespace UniversalSoundBoard
 
         public static void playSounds(List<Sound> sounds, int repetitions)
         {
+            if(sounds.Count < 1)
+            {
+                return;
+            }
             MediaPlayer player = new MediaPlayer();
             MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
 

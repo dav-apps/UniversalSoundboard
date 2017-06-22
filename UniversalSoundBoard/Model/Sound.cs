@@ -51,6 +51,7 @@ namespace UniversalSoundBoard.Model
             private static async Task GetSavedSounds(ObservableCollection<Sound> sounds)
             {
                 (App.Current as App)._itemViewHolder.allSoundsChanged = false;
+                (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 (App.Current as App)._itemViewHolder.allSounds.Clear();
                 // Create images folder if not exists
                 await FileManager.CreateImagesFolderIfNotExists();
@@ -120,12 +121,14 @@ namespace UniversalSoundBoard.Model
                     sounds.Add(sound);
                     (App.Current as App)._itemViewHolder.allSounds.Add(sound);
                 }
+
+                await FileManager.UpdateGridView();
+                (App.Current as App)._itemViewHolder.progressRingIsActive = false;
             }
 
             public static async Task GetAllSounds()
             {
                 (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
-                (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 if((App.Current as App)._itemViewHolder.allSoundsChanged)
                 {
                     await GetSavedSounds((App.Current as App)._itemViewHolder.sounds);
@@ -140,14 +143,12 @@ namespace UniversalSoundBoard.Model
                     }
                 }
                 
-                (App.Current as App)._itemViewHolder.progressRingIsActive = false;
                 ShowPlayAllButton();
             }
 
             public static async void GetSoundsByName(string name)
             {
                 (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
-                (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 (App.Current as App)._itemViewHolder.sounds.Clear();
 
                 if ((App.Current as App)._itemViewHolder.allSoundsChanged)
@@ -164,14 +165,12 @@ namespace UniversalSoundBoard.Model
                     }
                 }
 
-                (App.Current as App)._itemViewHolder.progressRingIsActive = false;
                 ShowPlayAllButton();
             }
 
             public static async Task GetSoundsByCategory(Category category)
             {
                 (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
-                (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 (App.Current as App)._itemViewHolder.sounds.Clear();
 
                 if ((App.Current as App)._itemViewHolder.allSoundsChanged)
@@ -188,13 +187,14 @@ namespace UniversalSoundBoard.Model
                     }
                 }
 
-                (App.Current as App)._itemViewHolder.progressRingIsActive = false;
                 ShowPlayAllButton();
             }
 
-            private static void ShowPlayAllButton()
+            public static void ShowPlayAllButton()
             {
-                if((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+                if((App.Current as App)._itemViewHolder.page != typeof(SoundPage) 
+                    || (App.Current as App)._itemViewHolder.progressRingIsActive 
+                    || (App.Current as App)._itemViewHolder.page != typeof(SoundPage))
                 {
                     (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
                 }
