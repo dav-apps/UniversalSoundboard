@@ -66,6 +66,7 @@ namespace UniversalSoundBoard
 
         private async void SoundTileOptionsSetImage_Click(object sender, RoutedEventArgs e)
         {
+            Sound sound = this.Sound;
             var picker = new Windows.Storage.Pickers.FileOpenPicker();
             picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
             picker.SuggestedStartLocation =
@@ -78,8 +79,10 @@ namespace UniversalSoundBoard
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                FileManager.addImage(file, this.Sound);
+                (App.Current as App)._itemViewHolder.progressRingIsActive = true;
+                FileManager.addImage(file, sound);
                 FileManager.UpdateLiveTile();
+                (App.Current as App)._itemViewHolder.progressRingIsActive = false;
             }
         }
 
