@@ -66,6 +66,8 @@ namespace UniversalSoundBoard
         
         public static async Task UpdateGridView()
         {
+            // Save title and check at the end if another category was selected
+            string title = (App.Current as App)._itemViewHolder.title;
             if((App.Current as App)._itemViewHolder.searchQuery == "")
             {
                 if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
@@ -85,6 +87,13 @@ namespace UniversalSoundBoard
             {
                 SoundManager.GetSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            }
+
+            // Check if another category was selected
+            if(title != (App.Current as App)._itemViewHolder.title)
+            {
+                // Update UI
+                await UpdateGridView();
             }
             SoundManager.ShowPlayAllButton();
         }

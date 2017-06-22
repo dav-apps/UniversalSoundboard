@@ -111,6 +111,7 @@ namespace UniversalSoundBoard
             if(ContentDialogs.RenameSoundTextBox.Text != this.Sound.Name)
             {
                 await FileManager.renameSound(this.Sound, ContentDialogs.RenameSoundTextBox.Text);
+                await FileManager.UpdateGridView();
             }
         }
 

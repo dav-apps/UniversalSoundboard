@@ -457,14 +457,7 @@ namespace UniversalSoundBoard
                     await FileManager.addSound(sound);
                 }
 
-                if (String.IsNullOrEmpty(category.Name))
-                {
-                    await ShowAllSounds();
-                }
-                else
-                {
-                    await ShowCategory(category);
-                }
+                await FileManager.UpdateGridView();
             }
             AddButton.IsEnabled = true;
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;
