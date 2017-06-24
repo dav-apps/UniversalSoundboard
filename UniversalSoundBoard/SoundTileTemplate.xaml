@@ -47,22 +47,27 @@
             <ColumnDefinition Width="*" MaxWidth="150" x:Name="ColDef0" />
         </Grid.ColumnDefinitions>
 
-        <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        <RelativePanel>
+            <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <SymbolIcon Symbol="OutlineStar" 
+                        Visibility="{x:Bind Sound.Favourite}" HorizontalAlignment="Left" />
+        </RelativePanel>
         <TextBlock Grid.Row="1" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" />
-        <Button Name="SoundTileOptionsButton" Grid.Row="2" Content="&#xE10C;" FontFamily="Segoe MDL2 Assets" Background="White"
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+            <Button Name="SoundTileOptionsButton" Content="&#xE10C;" FontFamily="Segoe MDL2 Assets" Background="White"
                 HorizontalAlignment="Right"
                 Click="SoundTileOptionsButton_Click">
-            <Button.Flyout>
-                <MenuFlyout Placement="Bottom">
-                    <MenuFlyoutSubItem x:Uid="SoundTile-Category" Name="CategoriesFlyoutSubItem">
+                <Button.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <MenuFlyoutSubItem x:Uid="SoundTile-Category" Name="CategoriesFlyoutSubItem">
 
-                    </MenuFlyoutSubItem>
-                    <MenuFlyoutSeparator />
-                    <MenuFlyoutItem x:Uid="SoundTile-ChangeImage" Name="SoundTileOptionsSetImage" Click="SoundTileOptionsSetImage_Click" />
-                    <MenuFlyoutItem x:Uid="SoundTile-Rename" Name="SoundTileOptionsRename" Click="SoundTileOptionsRename_Click" />
-                    <MenuFlyoutItem x:Uid="SoundTile-Delete" Name="SoundTileOptionsDelete" Click="SoundTileOptionsDelete_Click" />
-                <!--    <MenuFlyoutItem x:Uid="SoundTile-Pin" Name="SoundTileOptionsPin" Click="SoundTileOptionsPin_Click" Text="Pin to start" />   -->
-                    <!--
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutSeparator />
+                        <MenuFlyoutItem x:Uid="SoundTile-ChangeImage" Name="SoundTileOptionsSetImage" Click="SoundTileOptionsSetImage_Click" />
+                        <MenuFlyoutItem x:Uid="SoundTile-Rename" Name="SoundTileOptionsRename" Click="SoundTileOptionsRename_Click" />
+                        <MenuFlyoutItem x:Uid="SoundTile-Delete" Name="SoundTileOptionsDelete" Click="SoundTileOptionsDelete_Click" />
+                        <!--    <MenuFlyoutItem x:Uid="SoundTile-Pin" Name="SoundTileOptionsPin" Click="SoundTileOptionsPin_Click" Text="Pin to start" />   -->
+                        <!--
                     <MenuFlyoutItem Text="Item 2" />
                     <MenuFlyoutSeparator />
                     <MenuFlyoutSubItem Text="Item 3">
@@ -74,8 +79,9 @@
                     </MenuFlyoutSubItem>
                     <MenuFlyoutSeparator />
                     <ToggleMenuFlyoutItem Text="Item 8" /> -->
-                </MenuFlyout>
-            </Button.Flyout>
-        </Button>
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </StackPanel>
     </Grid>
 </UserControl>

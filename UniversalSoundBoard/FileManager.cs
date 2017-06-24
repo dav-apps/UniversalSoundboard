@@ -147,6 +147,22 @@ namespace UniversalSoundBoard
             await sound.DetailsFile.DeleteAsync();
         }
 
+        public static async Task setSoundAsFavourite(Sound sound, bool favourite)
+        {
+            // Check if details file of the sound exists
+            if (sound.DetailsFile == null)
+            {
+                sound.DetailsFile = await createSoundDetailsFileIfNotExistsAsync(sound.Name);
+            }
+
+            SoundDetails details = new SoundDetails
+            {
+                Category = sound.CategoryName,
+                Favourite = favourite
+            };
+            await WriteFile(sound.DetailsFile, details);
+        }
+
         public static async Task addSound(Sound sound)
         {
             (App.Current as App)._itemViewHolder.allSoundsChanged = true;
@@ -280,7 +296,6 @@ namespace UniversalSoundBoard
             {
                 if (sound.CategoryName == oldName)
                 {
-                    StorageFile file = sound.DetailsFile;
                     SoundDetails details = new SoundDetails();
                     details.Category = newName;
                     await WriteFile(sound.DetailsFile, details);

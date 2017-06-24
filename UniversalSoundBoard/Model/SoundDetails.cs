@@ -12,6 +12,7 @@ namespace UniversalSoundBoard.Model
     public class SoundDetails
     {
         public string Category { get; set; }
+        public bool Favourite { get; set; }
 
         public async Task ReadSoundDetailsFile(StorageFile file)
         {
@@ -24,6 +25,7 @@ namespace UniversalSoundBoard.Model
             var data = (SoundDetails)serializer.ReadObject(ms);
 
             this.Category = data.Category;
+            this.Favourite = data.Favourite;
         }
     }
 }

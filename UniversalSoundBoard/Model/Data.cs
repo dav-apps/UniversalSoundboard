@@ -8,11 +8,13 @@ namespace UniversalSoundBoard.Model
 {
     public class Data
     {
+        // For reading the categories list from the file
         public ObservableCollection<Category> Categories { get; set; }
     }
 
     public class Setting
     {
+        // Class for the List below in the Hamburger menu
         public string Icon { get; set; }
         public string Text { get; set; }
         public string Id { get; set; }

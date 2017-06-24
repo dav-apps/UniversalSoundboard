@@ -14,6 +14,7 @@ namespace UniversalSoundBoard.Model
     public class Sound{
         public string Name { get; set; }
         public string CategoryName { get; set; }
+        public bool Favourite { get; set; }
         public BitmapImage Image { get; set; }
         public StorageFile ImageFile { get; set; }
         public StorageFile AudioFile { get; set; }
@@ -27,6 +28,7 @@ namespace UniversalSoundBoard.Model
         public Sound(string name, string category){
             Name = name;
             CategoryName = category;
+            Favourite = false;
         }
 
         public Sound(string name, string category, StorageFile AudioFile)
@@ -34,6 +36,7 @@ namespace UniversalSoundBoard.Model
             Name = name;
             CategoryName = category;
             this.AudioFile = AudioFile;
+            Favourite = false;
         }
 
         public async Task setCategory(string category)
@@ -110,6 +113,7 @@ namespace UniversalSoundBoard.Model
                         await details.ReadSoundDetailsFile(detailsFile);
                         sound.DetailsFile = detailsFile;
                         sound.CategoryName = WebUtility.HtmlDecode(details.Category);
+                        sound.Favourite = details.Favourite;
 
                         newSounds.Add(sound);
                     }
