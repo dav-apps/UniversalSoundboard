@@ -155,6 +155,7 @@ namespace UniversalSoundBoard
                 sound.DetailsFile = await createSoundDetailsFileIfNotExistsAsync(sound.Name);
             }
 
+            // Create new details object and write to details file
             SoundDetails details = new SoundDetails
             {
                 Category = sound.CategoryName,

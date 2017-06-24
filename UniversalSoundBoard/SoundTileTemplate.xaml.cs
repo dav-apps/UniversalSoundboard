@@ -64,11 +64,12 @@ namespace UniversalSoundBoard
             }
         }
 
-        private void SoundTileOptionsSetFavourite_Click(object sender, RoutedEventArgs e)
+        private async void SoundTileOptionsSetFavourite_Click(object sender, RoutedEventArgs e)
         {
             FavouriteSymbol.Visibility = Sound.Favourite ? Visibility.Collapsed : Visibility.Visible;
             Sound.Favourite = !Sound.Favourite;
             SetFavouritesMenuItemText();
+            await FileManager.setSoundAsFavourite(this.Sound, Sound.Favourite);
         }
 
         private async void SoundTileOptionsSetImage_Click(object sender, RoutedEventArgs e)
