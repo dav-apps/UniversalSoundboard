@@ -231,4 +231,10 @@
   <data name="PlayAllSoundsSuccessively.Text" xml:space="preserve">
     <value>Alle nacheinander abspielen</value>
   </data>
+  <data name="SoundTile-SetFavourite" xml:space="preserve">
+    <value>Zu Favoriten hinzufügen</value>
+  </data>
+  <data name="SoundTile-UnsetFavourite" xml:space="preserve">
+    <value>Von Favoriten entfernen</value>
+  </data>
 </root>

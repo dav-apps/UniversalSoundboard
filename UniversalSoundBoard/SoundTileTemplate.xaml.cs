@@ -64,6 +64,13 @@ namespace UniversalSoundBoard
             }
         }
 
+        private void SoundTileOptionsSetFavourite_Click(object sender, RoutedEventArgs e)
+        {
+            FavouriteSymbol.Visibility = Sound.Favourite ? Visibility.Collapsed : Visibility.Visible;
+            Sound.Favourite = !Sound.Favourite;
+            SetFavouritesMenuItemText();
+        }
+
         private async void SoundTileOptionsSetImage_Click(object sender, RoutedEventArgs e)
         {
             Sound sound = this.Sound;
@@ -168,6 +175,19 @@ namespace UniversalSoundBoard
         {
             createCategoriesFlyout();
             SelectRightCategory();
+            SetFavouritesMenuItemText();
+        }
+
+        private void SetFavouritesMenuItemText()
+        {
+            if (this.Sound.Favourite)
+            {
+                SoundTileOptionsSetFavourite.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
+            }
+            else
+            {
+                SoundTileOptionsSetFavourite.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+            }
         }
 
         private void SelectRightCategory()
