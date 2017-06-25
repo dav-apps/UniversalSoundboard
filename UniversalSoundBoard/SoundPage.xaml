@@ -23,13 +23,8 @@
         </Style>
 
         <Style TargetType="GridView">
-            <Setter Property="SelectionMode" Value="{Binding selectionMode}"/>
             <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True"/>
             <Setter Property="IsItemClickEnabled" Value="True"/>
-            <Setter Property="SelectionMode" Value="{Binding selectionMode}"/>
-            <Setter Property="SelectionMode" Value="{Binding selectionMode}"/>
-            <Setter Property="SelectionMode" Value="{Binding selectionMode}"/>
-            <Setter Property="SelectionMode" Value="{Binding selectionMode}"/>
             <Setter Property="ItemTemplate" Value="{StaticResource SoundGridViewTemplate}"/>
         </Style>
     </Page.Resources>
@@ -81,20 +76,21 @@
                 </Button>
             </StackPanel>
 
-            <Pivot x:Name="SoundsPivot" Grid.Row="1" Margin="5,0,0,0">
-                <PivotItem Header="Sounds">
+            <Pivot x:Name="SoundsPivot" Grid.Row="1"
+                   Margin="5,0,0,0" 
+                   PivotItemLoaded="SoundsPivot_PivotItemLoaded">
+                <PivotItem x:Uid="SoundsPivotHeader">
                     <GridView Name="SoundGridView"
                             ItemClick="SoundGridView_ItemClick"
-                            SelectionChanged="SoundGridView_SelectionChanged"
+                            SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding sounds, Mode=TwoWay}"
                             DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" RightTapped="SoundGridView_RightTapped">
-
                     </GridView>
                 </PivotItem>
-                <PivotItem Header="Favorites">
+                <PivotItem x:Uid="FavouritesPivotHeader">
                     <GridView Name="FavouriteSoundGridView"
-                              ItemClick="SoundGridView_ItemClick"
-                            SelectionChanged="SoundGridView_SelectionChanged"
+                            ItemClick="SoundGridView_ItemClick"
+                            SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding favouriteSounds, Mode=TwoWay}"
                             DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" RightTapped="SoundGridView_RightTapped">
 

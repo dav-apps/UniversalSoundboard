@@ -457,6 +457,11 @@ namespace UniversalSoundBoard
             StartPlaySoundsSuccessively(int.MaxValue, true);
         }
 
+        private async void SoundsPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
+        {
+            await FileManager.UpdateGridView();
+        }
+
 
 
         // Content Dialog Methods

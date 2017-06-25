@@ -299,6 +299,7 @@ namespace UniversalSoundBoard
                 {
                     SoundDetails details = new SoundDetails();
                     details.Category = newName;
+                    details.Favourite = sound.Favourite;
                     await WriteFile(sound.DetailsFile, details);
                 }
             }

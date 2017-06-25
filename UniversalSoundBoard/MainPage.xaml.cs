@@ -66,7 +66,7 @@ namespace UniversalSoundBoard
             setDataContext();
             initializeLocalSettings();
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-            
+
             await CreateCategoriesObservableCollection();
             CreateSettingsListing();
 

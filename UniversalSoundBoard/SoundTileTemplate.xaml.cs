@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -66,10 +67,38 @@ namespace UniversalSoundBoard
 
         private async void SoundTileOptionsSetFavourite_Click(object sender, RoutedEventArgs e)
         {
-            FavouriteSymbol.Visibility = Sound.Favourite ? Visibility.Collapsed : Visibility.Visible;
-            Sound.Favourite = !Sound.Favourite;
+            bool oldFav = Sound.Favourite;
+            bool newFav = !Sound.Favourite;
+
+            // Update all lists containing sounds with the new favourite value
+            List<ObservableCollection<Sound>> soundLists = new List<ObservableCollection<Sound>>();
+            soundLists.Add((App.Current as App)._itemViewHolder.sounds);
+            soundLists.Add((App.Current as App)._itemViewHolder.allSounds);
+            soundLists.Add((App.Current as App)._itemViewHolder.favouriteSounds);
+            
+            foreach (ObservableCollection<Sound> soundList in soundLists)
+            {
+                var sounds = soundList.Where(s => s.Name == this.Sound.Name);
+                if (sounds.Count() > 0)
+                {
+                    sounds.First().Favourite = newFav;
+                }
+            }
+
+            if (oldFav)
+            {
+                // Remove sound from favourites
+                (App.Current as App)._itemViewHolder.favouriteSounds.Remove(Sound);
+            }
+            else
+            {
+                // Add to favourites
+                (App.Current as App)._itemViewHolder.favouriteSounds.Add(Sound);
+            }
+
+            FavouriteSymbol.Visibility = newFav ? Visibility.Visible : Visibility.Collapsed;
             SetFavouritesMenuItemText();
-            await FileManager.setSoundAsFavourite(this.Sound, Sound.Favourite);
+            await FileManager.setSoundAsFavourite(this.Sound, newFav);
         }
 
         private async void SoundTileOptionsSetImage_Click(object sender, RoutedEventArgs e)

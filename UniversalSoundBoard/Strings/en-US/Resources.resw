@@ -250,4 +250,10 @@
   <data name="SoundTile-UnsetFavourite" xml:space="preserve">
     <value>Remove from Favorites</value>
   </data>
+  <data name="FavouritesPivotHeader.Header" xml:space="preserve">
+    <value>Favorites</value>
+  </data>
+  <data name="SoundsPivotHeader.Header" xml:space="preserve">
+    <value>Sounds</value>
+  </data>
 </root>
