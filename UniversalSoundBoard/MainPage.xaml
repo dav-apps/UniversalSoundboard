@@ -65,13 +65,13 @@
                             Margin="15,0,0,0" Visibility="{Binding playAllButtonVisibility}">
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem Name="PlayAllSoundsSimultaneously" x:Uid="PlayAllSoundsSimultaneously" Click="PlayAllSoundsSimultaneously_Click" />
-                            <MenuFlyoutSubItem Name="PlayAllSoundsSuccessively" x:Uid="PlayAllSoundsSuccessively">
-                                <MenuFlyoutItem Name="PlayAllSoundsSuccessively_1x" Text="1x" Click="PlayAllSoundsSuccessively_1x_Click" />
-                                <MenuFlyoutItem Name="PlayAllSoundsSuccessively_2x" Text="2x" Click="PlayAllSoundsSuccessively_2x_Click" />
-                                <MenuFlyoutItem Name="PlayAllSoundsSuccessively_5x" Text="5x" Click="PlayAllSoundsSuccessively_5x_Click" />
-                                <MenuFlyoutItem Name="PlayAllSoundsSuccessively_10x" Text="10x" Click="PlayAllSoundsSuccessively_10x_Click" />
-                                <MenuFlyoutItem Name="PlayAllSoundsSuccessively_endless" Text="∞" Click="PlayAllSoundsSuccessively_endless_Click" />
+                            <MenuFlyoutItem Name="PlayAllSoundsSimultaneouslyFlyoutItem" x:Uid="PlayAllSoundsSimultaneously" Click="PlayAllSoundsSimultaneouslyFlyoutItem_Click" />
+                            <MenuFlyoutSubItem Name="PlayAllSoundsSuccessivelyFlyoutItem" x:Uid="PlayAllSoundsSuccessively">
+                                <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_1x" Text="1x" Click="PlayAllSoundsSuccessivelyFlyoutItem_1x_Click" />
+                                <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_2x" Text="2x" Click="PlayAllSoundsSuccessivelyFlyoutItem_2x_Click" />
+                                <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_5x" Text="5x" Click="PlayAllSoundsSuccessivelyFlyoutItem_5x_Click" />
+                                <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_10x" Text="10x" Click="PlayAllSoundsSuccessivelyFlyoutItem_10x_Click" />
+                                <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_endless" Text="∞" Click="PlayAllSoundsSuccessivelyFlyoutItem_endless_Click" />
                             </MenuFlyoutSubItem>
                         </MenuFlyout>
                     </Button.Flyout>
@@ -125,13 +125,13 @@
                         Content="&#xE768;">
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
-                                <MenuFlyoutItem Name="PlaySoundsSimultaneously" x:Uid="PlaySoundsSimultaneously" Click="PlaySoundsSimultaneously_Click"/>
-                                <MenuFlyoutSubItem Name="PlaySoundsSuccessively" x:Uid="PlaySoundsSuccessively">
-                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_1x" Text="1x" Click="PlaySoundsSuccessively_1x_Click" />
-                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_2x" Text="2x" Click="PlaySoundsSuccessively_2x_Click" />
-                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_5x" Text="5x" Click="PlaySoundsSuccessively_5x_Click" />
-                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_10x" Text="10x" Click="PlaySoundsSuccessively_10x_Click" />
-                                    <MenuFlyoutItem Name="PlaySoundsSuccessively_endless" Text="∞" Click="PlaySoundsSuccessively_endless_Click" />
+                                <MenuFlyoutItem Name="PlaySoundsSimultaneouslyFlyoutItem" x:Uid="PlaySoundsSimultaneously" Click="PlaySoundsSimultaneouslyFlyoutItem_Click"/>
+                                <MenuFlyoutSubItem Name="PlaySoundsSuccessivelyFlyoutItem" x:Uid="PlaySoundsSuccessively">
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessivelyFlyoutItem_1x" Text="1x" Click="PlaySoundsSuccessivelyFlyoutItem_1x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessivelyFlyoutItem_2x" Text="2x" Click="PlaySoundsSuccessivelyFlyoutItem_2x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessivelyFlyoutItem_5x" Text="5x" Click="PlaySoundsSuccessivelyFlyoutItem_5x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessivelyFlyoutItem_10x" Text="10x" Click="PlaySoundsSuccessivelyFlyoutItem_10x_Click" />
+                                    <MenuFlyoutItem Name="PlaySoundsSuccessivelyFlyoutItem_endless" Text="∞" Click="PlaySoundsSuccessivelyFlyoutItem_endless_Click" />
                                 </MenuFlyoutSubItem>
                             </MenuFlyout>
                         </Button.Flyout>

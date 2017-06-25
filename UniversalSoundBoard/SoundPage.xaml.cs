@@ -35,6 +35,8 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class SoundPage : Page
     {
+        static bool soundsPivotSelected = false;
+
         public SoundPage()
         {
             this.InitializeComponent();
@@ -408,51 +410,76 @@ namespace UniversalSoundBoard
             await SoundManager.GetSoundsByCategory(category);
         }
 
-        private void StartPlaySoundsSuccessively(int rounds, bool allSounds)
+        public static void StartPlaySoundsSuccessively(int rounds, bool allSounds)
         {
             // If allSounds is true, play all sounds. Else, play only selected sounds
             if (allSounds)
             {
-                SoundPage.playSounds((App.Current as App)._itemViewHolder.sounds.ToList(), rounds);
+                // If favourite sounds
+                if (soundsPivotSelected)
+                {
+                    playSounds((App.Current as App)._itemViewHolder.sounds.ToList(), rounds);
+                }
+                else
+                {
+                    playSounds((App.Current as App)._itemViewHolder.favouriteSounds.ToList(), rounds);
+                }
             }
             else
             {
-                SoundPage.playSounds((App.Current as App)._itemViewHolder.selectedSounds, rounds);
+                playSounds((App.Current as App)._itemViewHolder.selectedSounds, rounds);
             }
         }
 
-        private void PlayAllSoundsSimultaneously_Click(object sender, RoutedEventArgs e)
+        public static void PlayAllSoundsSimultaneously()
         {
             bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.playOneSoundAtOnce;
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = false;
-            foreach (Sound sound in (App.Current as App)._itemViewHolder.sounds)
+
+            // Select favourite sounds list if favourite sounds tab is selected
+            ObservableCollection<Sound> sounds = new ObservableCollection<Sound>();
+            if (soundsPivotSelected)
+            {
+                sounds = (App.Current as App)._itemViewHolder.sounds;
+            }
+            else
+            {
+                sounds = (App.Current as App)._itemViewHolder.favouriteSounds;
+            }
+
+            foreach (Sound sound in sounds)
             {
                 SoundPage.playSound(sound);
             }
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = oldPlayOneSoundAtOnce;
         }
 
-        private void PlayAllSoundsSuccessively_1x_Click(object sender, RoutedEventArgs e)
+        private void PlayAllSoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            PlayAllSoundsSimultaneously();
+        }
+
+        private void PlayAllSoundsSuccessivelyFlyoutItem_1x_Click(object sender, RoutedEventArgs e)
         {
             StartPlaySoundsSuccessively(1, true);
         }
 
-        private void PlayAllSoundsSuccessively_2x_Click(object sender, RoutedEventArgs e)
+        private void PlayAllSoundsSuccessivelyFlyoutItem_2x_Click(object sender, RoutedEventArgs e)
         {
             StartPlaySoundsSuccessively(2, true);
         }
 
-        private void PlayAllSoundsSuccessively_5x_Click(object sender, RoutedEventArgs e)
+        private void PlayAllSoundsSuccessivelyFlyoutItem_5x_Click(object sender, RoutedEventArgs e)
         {
             StartPlaySoundsSuccessively(5, true);
         }
 
-        private void PlayAllSoundsSuccessively_10x_Click(object sender, RoutedEventArgs e)
+        private void PlayAllSoundsSuccessivelyFlyoutItem_10x_Click(object sender, RoutedEventArgs e)
         {
             StartPlaySoundsSuccessively(10, true);
         }
 
-        private void PlayAllSoundsSuccessively_endless_Click(object sender, RoutedEventArgs e)
+        private void PlayAllSoundsSuccessivelyFlyoutItem_endless_Click(object sender, RoutedEventArgs e)
         {
             StartPlaySoundsSuccessively(int.MaxValue, true);
         }
@@ -460,6 +487,7 @@ namespace UniversalSoundBoard
         private async void SoundsPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
         {
             await FileManager.UpdateGridView();
+            soundsPivotSelected = !soundsPivotSelected;
         }
 
 

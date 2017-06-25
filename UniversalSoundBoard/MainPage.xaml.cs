@@ -552,40 +552,34 @@ namespace UniversalSoundBoard
             await editCategoryContentDialog.ShowAsync();
         }
 
-        private void PlayAllSoundsSimultaneously_Click(object sender, RoutedEventArgs e)
+        private void PlayAllSoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.playOneSoundAtOnce;
-            (App.Current as App)._itemViewHolder.playOneSoundAtOnce = false;
-            foreach (Sound sound in (App.Current as App)._itemViewHolder.sounds)
-            {
-                SoundPage.playSound(sound);
-            }
-            (App.Current as App)._itemViewHolder.playOneSoundAtOnce = oldPlayOneSoundAtOnce;
+            SoundPage.PlayAllSoundsSimultaneously();
         }
 
-        private void PlayAllSoundsSuccessively_1x_Click(object sender, RoutedEventArgs e)
+        private void PlayAllSoundsSuccessivelyFlyoutItem_1x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(1, true);
+            SoundPage.StartPlaySoundsSuccessively(1, true);
         }
 
-        private void PlayAllSoundsSuccessively_2x_Click(object sender, RoutedEventArgs e)
+        private void PlayAllSoundsSuccessivelyFlyoutItem_2x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(2, true);
+            SoundPage.StartPlaySoundsSuccessively(2, true);
         }
 
-        private void PlayAllSoundsSuccessively_5x_Click(object sender, RoutedEventArgs e)
+        private void PlayAllSoundsSuccessivelyFlyoutItem_5x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(5, true);
+            SoundPage.StartPlaySoundsSuccessively(5, true);
         }
 
-        private void PlayAllSoundsSuccessively_10x_Click(object sender, RoutedEventArgs e)
+        private void PlayAllSoundsSuccessivelyFlyoutItem_10x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(10, true);
+            SoundPage.StartPlaySoundsSuccessively(10, true);
         }
 
-        private void PlayAllSoundsSuccessively_endless_Click(object sender, RoutedEventArgs e)
+        private void PlayAllSoundsSuccessivelyFlyoutItem_endless_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(int.MaxValue, true);
+            SoundPage.StartPlaySoundsSuccessively(int.MaxValue, true);
         }
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
@@ -593,7 +587,7 @@ namespace UniversalSoundBoard
             FileManager.resetMultiSelectArea();
         }
 
-        private void PlaySoundsSimultaneously_Click(object sender, RoutedEventArgs e)
+        private void PlaySoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.playOneSoundAtOnce;
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = false;
@@ -603,44 +597,30 @@ namespace UniversalSoundBoard
             }
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = oldPlayOneSoundAtOnce;
         }
-
-        // Aquivalent to method in SoundPage
-        private void StartPlaySoundsSuccessively(int rounds, bool allSounds)
-        {
-            // If allSounds is true, play all sounds. Else, play only selected sounds
-            if (allSounds)
-            {
-                SoundPage.playSounds((App.Current as App)._itemViewHolder.sounds.ToList(), rounds);
-            }
-            else
-            {
-                SoundPage.playSounds((App.Current as App)._itemViewHolder.selectedSounds, rounds);
-            }
-        }
         
-        private void PlaySoundsSuccessively_1x_Click(object sender, RoutedEventArgs e)
+        private void PlaySoundsSuccessivelyFlyoutItem_1x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(1, false);
+            SoundPage.StartPlaySoundsSuccessively(1, false);
         }
 
-        private void PlaySoundsSuccessively_2x_Click(object sender, RoutedEventArgs e)
+        private void PlaySoundsSuccessivelyFlyoutItem_2x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(2, false);
+            SoundPage.StartPlaySoundsSuccessively(2, false);
         }
 
-        private void PlaySoundsSuccessively_5x_Click(object sender, RoutedEventArgs e)
+        private void PlaySoundsSuccessivelyFlyoutItem_5x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(5, false);
+            SoundPage.StartPlaySoundsSuccessively(5, false);
         }
 
-        private void PlaySoundsSuccessively_10x_Click(object sender, RoutedEventArgs e)
+        private void PlaySoundsSuccessivelyFlyoutItem_10x_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(10, false);
+            SoundPage.StartPlaySoundsSuccessively(10, false);
         }
 
-        private void PlaySoundsSuccessively_endless_Click(object sender, RoutedEventArgs e)
+        private void PlaySoundsSuccessivelyFlyoutItem_endless_Click(object sender, RoutedEventArgs e)
         {
-            StartPlaySoundsSuccessively(int.MaxValue, false);
+            SoundPage.StartPlaySoundsSuccessively(int.MaxValue, false);
         }
 
         private void MultiSelectOptionsButton_More_Click(object sender, RoutedEventArgs e)
