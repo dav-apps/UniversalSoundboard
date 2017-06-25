@@ -12,6 +12,7 @@ namespace UniversalSoundBoard
     public sealed class CustomMediaTransportControls : MediaTransportControls
     {
         public event EventHandler<EventArgs> Removed;
+        public event EventHandler<EventArgs> FavouriteFlyout_Clicked;
         public event EventHandler<EventArgs> Repeat_1x_Clicked;
         public event EventHandler<EventArgs> Repeat_2x_Clicked;
         public event EventHandler<EventArgs> Repeat_5x_Clicked;
@@ -28,6 +29,9 @@ namespace UniversalSoundBoard
             // This is where you would get your custom button and create an event handler for its click method.
             Button RemoveButton = GetTemplateChild("RemoveButton") as Button;
             RemoveButton.Click += RemoveButton_Click;
+
+            AppBarButton FavouriteFlyout = GetTemplateChild("FavouriteFlyout") as AppBarButton;
+            FavouriteFlyout.Click += FavouriteFlyout_Click;
 
             MenuFlyoutItem Repeat_1x = GetTemplateChild("Repeat_1x") as MenuFlyoutItem;
             Repeat_1x.Click += Repeat_1x_Click;
@@ -47,6 +51,11 @@ namespace UniversalSoundBoard
         {
             // Raise an event on the custom control when 'Removed' is clicked
             Removed?.Invoke(this, EventArgs.Empty);
+        }
+
+        private void FavouriteFlyout_Click(object sender, RoutedEventArgs e)
+        {
+            FavouriteFlyout_Clicked?.Invoke(this, EventArgs.Empty);
         }
 
         private void Repeat_1x_Click(object sender, RoutedEventArgs e)

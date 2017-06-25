@@ -21,7 +21,7 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Name="PlayingSoundName" Text="{x:Bind PlayingSound.CurrentSound.Name}" Grid.Row="0"
+        <TextBlock Name="PlayingSoundName" Text="{x:Bind PlayingSound.CurrentSound.Name}"
                    VerticalAlignment="Center" Margin="10,5,0,0" TextWrapping="WrapWholeWords" />
 
         <MediaPlayerElement Name="MediaPlayerElement" Grid.Row="1"
@@ -31,6 +31,7 @@
                                         IsFullWindowButtonVisible="False"
                                         IsZoomButtonVisible="False"
                                         Removed="CustomMediaTransportControls_Removed"
+                                        FavouriteFlyout_Clicked="CustomMediaTransportControls_FavouriteFlyout_Clicked"
                                         Repeat_1x_Clicked="CustomMediaTransportControls_Repeat_1x_Clicked"
                                         Repeat_2x_Clicked="CustomMediaTransportControls_Repeat_2x_Clicked"
                                         Repeat_5x_Clicked="CustomMediaTransportControls_Repeat_5x_Clicked"

@@ -805,6 +805,8 @@
                                                     </MenuFlyout>
                                                 </AppBarButton.Flyout>
                                             </AppBarButton>
+                                            <AppBarButton x:Name="FavouriteFlyout" Label="Add to Favorites">
+                                            </AppBarButton>
                                         </CommandBar.SecondaryCommands>
                                     </CommandBar>
                                 </Border>

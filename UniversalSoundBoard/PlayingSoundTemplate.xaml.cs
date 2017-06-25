@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -28,6 +29,7 @@ namespace UniversalSoundBoard
         public PlayingSound PlayingSound { get; set; }
 
         CoreDispatcher dispatcher;
+        public string FavouriteFlyoutText = "Add Favorite";
 
         public PlayingSoundTemplate()
         {
@@ -100,6 +102,18 @@ namespace UniversalSoundBoard
                 {
                     MediaPlayerElement.MediaPlayer.Play();
                 }
+
+                // Set the text of the add to Favourites Flyout
+                FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
+                AppBarButton FavouriteFlyout = (AppBarButton)transportControlsTemplateRoot.FindName("FavouriteFlyout");
+                if (this.PlayingSound.CurrentSound.Favourite)
+                {
+                    FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
+                }
+                else
+                {
+                    FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+                }
             }
         }
 
@@ -154,14 +168,56 @@ namespace UniversalSoundBoard
             });
         }
 
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            setMediaPlayerElementIsCompact();
+        }
+
         private void CustomMediaTransportControls_Removed(object sender, EventArgs e)
         {
             removePlayingSound();
         }
 
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        private async void CustomMediaTransportControls_FavouriteFlyout_Clicked(object sender, EventArgs e)
         {
-            setMediaPlayerElementIsCompact();
+            bool oldFav = this.PlayingSound.CurrentSound.Favourite;
+            bool newFav = !this.PlayingSound.CurrentSound.Favourite;
+            Sound currentSound = this.PlayingSound.CurrentSound;
+
+            // Update all lists containing sounds with the new favourite value
+            List<ObservableCollection<Sound>> soundLists = new List<ObservableCollection<Sound>>();
+            soundLists.Add((App.Current as App)._itemViewHolder.sounds);
+            soundLists.Add((App.Current as App)._itemViewHolder.allSounds);
+            soundLists.Add((App.Current as App)._itemViewHolder.favouriteSounds);
+
+            foreach (ObservableCollection<Sound> soundList in soundLists)
+            {
+                var sounds = soundList.Where(s => s.Name == currentSound.Name);
+                if (sounds.Count() > 0)
+                {
+                    sounds.First().Favourite = newFav;
+                }
+            }
+
+
+            // Set the text of the add to Favourites Flyout
+            FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
+            AppBarButton FavouriteFlyout = (AppBarButton)transportControlsTemplateRoot.FindName("FavouriteFlyout");
+
+            if (oldFav)
+            {
+                // Remove sound from favourites
+                (App.Current as App)._itemViewHolder.favouriteSounds.Remove(currentSound);
+                FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+            }
+            else
+            {
+                // Add to favourites
+                (App.Current as App)._itemViewHolder.favouriteSounds.Add(currentSound);
+                FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
+            }
+
+            await FileManager.setSoundAsFavourite(currentSound, newFav);
         }
 
         private void CustomMediaTransportControls_Repeat_1x_Clicked(object sender, EventArgs e)
