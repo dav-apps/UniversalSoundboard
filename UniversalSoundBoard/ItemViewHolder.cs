@@ -27,6 +27,7 @@ namespace UniversalSoundBoard
         private ListViewSelectionMode _selectionMode;
         private ObservableCollection<Category> _categories;
         private ObservableCollection<Sound> _sounds;
+        private ObservableCollection<Sound> _favouriteSounds;
         private ObservableCollection<Sound> _allSounds;
         private bool _allSoundsChanged;
         private List<Sound> _selectedSounds;
@@ -75,6 +76,17 @@ namespace UniversalSoundBoard
             {
                 _sounds = value;
                 NotifyPropertyChanged("sounds");
+            }
+        }
+
+        public ObservableCollection<Sound> favouriteSounds
+        {
+            get { return _favouriteSounds; }
+
+            set
+            {
+                _favouriteSounds = value;
+                NotifyPropertyChanged("favouriteSounds");
             }
         }
 

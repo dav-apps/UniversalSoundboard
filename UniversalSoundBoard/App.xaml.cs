@@ -34,6 +34,7 @@ namespace UniversalSoundBoard
             title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
             progressRingIsActive = false,
             sounds = new ObservableCollection<Sound>(),
+            favouriteSounds = new ObservableCollection<Sound>(),
             allSounds = new ObservableCollection<Sound>(),
             allSoundsChanged = true,
             categories = new ObservableCollection<Category>(),

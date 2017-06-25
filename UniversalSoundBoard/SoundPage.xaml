@@ -9,6 +9,31 @@
     mc:Ignorable="d"
     SizeChanged="Page_SizeChanged">
 
+    <Page.Resources>
+        <DataTemplate x:Key="PivotHeaderTemplate">
+            <TextBlock Text="{Binding}" FontSize="15"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SoundGridViewTemplate" x:DataType="data:Sound">
+            <local:SoundTileTemplate HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+        </DataTemplate>
+
+        <Style TargetType="Pivot">
+            <Setter Property="HeaderTemplate" Value="{StaticResource PivotHeaderTemplate}"/>
+        </Style>
+
+        <Style TargetType="GridView">
+            <Setter Property="SelectionMode" Value="{Binding selectionMode}"/>
+            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True"/>
+            <Setter Property="IsItemClickEnabled" Value="True"/>
+            <Setter Property="SelectionMode" Value="{Binding selectionMode}"/>
+            <Setter Property="SelectionMode" Value="{Binding selectionMode}"/>
+            <Setter Property="SelectionMode" Value="{Binding selectionMode}"/>
+            <Setter Property="SelectionMode" Value="{Binding selectionMode}"/>
+            <Setter Property="ItemTemplate" Value="{StaticResource SoundGridViewTemplate}"/>
+        </Style>
+    </Page.Resources>
+
     <Grid Name="ContentRoot"
           AllowDrop="True" Drop="SoundGridView_Drop" DragOver="SoundGridView_DragOver">
 
@@ -56,18 +81,26 @@
                 </Button>
             </StackPanel>
 
-            <GridView Name="SoundGridView" Grid.Row="1" Margin="5,0,0,0"
-                            SelectionMode="{Binding selectionMode}" ScrollViewer.BringIntoViewOnFocusChange="True"
-                            IsItemClickEnabled="True" ItemClick="SoundGridView_ItemClick"
+            <Pivot x:Name="SoundsPivot" Grid.Row="1" Margin="5,0,0,0">
+                <PivotItem Header="Sounds">
+                    <GridView Name="SoundGridView"
+                            ItemClick="SoundGridView_ItemClick"
                             SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding sounds, Mode=TwoWay}"
                             DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" RightTapped="SoundGridView_RightTapped">
-                <GridView.ItemTemplate>
-                    <DataTemplate x:DataType="data:Sound">
-                        <local:SoundTileTemplate HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-                    </DataTemplate>
-                </GridView.ItemTemplate>
-            </GridView>
+
+                    </GridView>
+                </PivotItem>
+                <PivotItem Header="Favorites">
+                    <GridView Name="FavouriteSoundGridView"
+                              ItemClick="SoundGridView_ItemClick"
+                            SelectionChanged="SoundGridView_SelectionChanged"
+                            ItemsSource="{Binding favouriteSounds, Mode=TwoWay}"
+                            DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" RightTapped="SoundGridView_RightTapped">
+
+                    </GridView>
+                </PivotItem>
+            </Pivot>
 
             <Grid x:Name="DrawerContentGrid" Grid.Row="2"
                     VerticalAlignment="Bottom" Background="{ThemeResource AppBarBackgroundThemeBrush}" RenderTransformOrigin="0.5,0.5">

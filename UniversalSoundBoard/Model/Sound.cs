@@ -55,16 +55,16 @@ namespace UniversalSoundBoard.Model
             {
                 (App.Current as App)._itemViewHolder.allSoundsChanged = false;
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
+                // Clear sounds ObservableCollections
+                sounds.Clear();
                 (App.Current as App)._itemViewHolder.allSounds.Clear();
+                (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
                 // Create images folder if not exists
                 await FileManager.CreateImagesFolderIfNotExists();
 
                 StorageFolder folder = ApplicationData.Current.LocalFolder;
                 StorageFolder imagesFolder = await folder.GetFolderAsync("images");
                 StorageFolder detailsFolder = await FileManager.createDetailsFolderIfNotExistsAsync();
-
-                // Clear sounds ObservableCollection
-                sounds.Clear();
 
                 List<Sound> newSounds = new List<Sound>();
 
@@ -124,6 +124,10 @@ namespace UniversalSoundBoard.Model
                 {
                     sounds.Add(sound);
                     (App.Current as App)._itemViewHolder.allSounds.Add(sound);
+                    if (sound.Favourite)
+                    {
+                        (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
+                    }
                 }
 
                 await FileManager.UpdateGridView();
@@ -140,10 +144,15 @@ namespace UniversalSoundBoard.Model
                 else
                 {
                     (App.Current as App)._itemViewHolder.sounds.Clear();
+                    (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
                     // Copy all Sounds into selected Sounds list
                     foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
                     {
                         (App.Current as App)._itemViewHolder.sounds.Add(sound);
+                        if (sound.Favourite)
+                        {
+                            (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
+                        }
                     }
                 }
                 
@@ -161,11 +170,16 @@ namespace UniversalSoundBoard.Model
                 }
 
                 (App.Current as App)._itemViewHolder.sounds.Clear();
+                (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
                 foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
                 {
                     if (sound.Name.ToLower().Contains(name.ToLower()))
                     {
                         (App.Current as App)._itemViewHolder.sounds.Add(sound);
+                        if (sound.Favourite)
+                        {
+                            (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
+                        }
                     }
                 }
 
@@ -183,11 +197,16 @@ namespace UniversalSoundBoard.Model
                 }
 
                 (App.Current as App)._itemViewHolder.sounds.Clear();
+                (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
                 foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
                 {
                     if (sound.CategoryName == category.Name)
                     {
                         (App.Current as App)._itemViewHolder.sounds.Add(sound);
+                        if (sound.Favourite)
+                        {
+                            (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
+                        }
                     }
                 }
 
