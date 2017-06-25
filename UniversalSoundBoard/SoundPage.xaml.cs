@@ -187,8 +187,18 @@ namespace UniversalSoundBoard
 
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            GridView selectedGridview;
+            if (soundsPivotSelected)
+            {
+                selectedGridview = SoundGridView;
+            }
+            else
+            {
+                selectedGridview = FavouriteSoundGridView;
+            }
+
             // If no items are selected, disable multi select buttons
-            if (SoundGridView.SelectedItems.Count > 0)
+            if (selectedGridview.SelectedItems.Count > 0)
             {
                 (App.Current as App)._itemViewHolder.multiSelectOptionsEnabled = true;
             }
@@ -487,6 +497,7 @@ namespace UniversalSoundBoard
         private async void SoundsPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
         {
             await FileManager.UpdateGridView();
+            (App.Current as App)._itemViewHolder.selectedSounds.Clear();
             soundsPivotSelected = !soundsPivotSelected;
         }
 
