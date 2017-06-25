@@ -157,12 +157,21 @@ namespace UniversalSoundBoard
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                if(this.PlayingSound.Sounds.Count > 1)
+                if(this.PlayingSound.Sounds.Count > 1 && sender.CurrentItemIndex < this.PlayingSound.Sounds.Count)
                 {
-                    if (this.PlayingSound.Sounds.Count > 1 && sender.CurrentItemIndex < this.PlayingSound.Sounds.Count)
+                    this.PlayingSound.CurrentSound = this.PlayingSound.Sounds.ElementAt((int)sender.CurrentItemIndex);
+                    PlayingSoundName.Text = this.PlayingSound.CurrentSound.Name;
+
+                    // Set the text of the add to Favourites Flyout
+                    FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
+                    AppBarButton FavouriteFlyout = (AppBarButton)transportControlsTemplateRoot.FindName("FavouriteFlyout");
+                    if (this.PlayingSound.CurrentSound.Favourite)
                     {
-                        this.PlayingSound.CurrentSound = this.PlayingSound.Sounds.ElementAt((int)sender.CurrentItemIndex);
-                        PlayingSoundName.Text = this.PlayingSound.CurrentSound.Name;
+                        FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
+                    }
+                    else
+                    {
+                        FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
                     }
                 }
             });
