@@ -158,7 +158,7 @@ namespace UniversalSoundBoard
             // Create new details object and write to details file
             SoundDetails details = new SoundDetails
             {
-                Category = sound.CategoryName,
+                Category = sound.Category.Name,
                 Favourite = favourite
             };
             await WriteFile(sound.DetailsFile, details);
@@ -171,8 +171,7 @@ namespace UniversalSoundBoard
 
             StorageFile newFile = await sound.AudioFile.CopyAsync(folder, sound.AudioFile.Name, NameCollisionOption.GenerateUniqueName);
             await createSoundDetailsFileIfNotExistsAsync(sound.Name);
-
-            await sound.setCategory(sound.CategoryName);
+            await sound.setCategory(sound.Category);
         }
 
         public static async Task<StorageFile> createDataFolderAndJsonFileIfNotExistsAsync()
@@ -288,14 +287,14 @@ namespace UniversalSoundBoard
                     }
                 }
             }
-            return new Category { Icon = "Empty", Name = "Empty" };
+            return new Category { Icon = "", Name = "" };
         }
 
         public async static Task renameCategory(string oldName, string newName)
         {
             foreach (var sound in (App.Current as App)._itemViewHolder.sounds)
             {
-                if (sound.CategoryName == oldName)
+                if (sound.Category.Name == oldName)
                 {
                     SoundDetails details = new SoundDetails();
                     details.Category = newName;

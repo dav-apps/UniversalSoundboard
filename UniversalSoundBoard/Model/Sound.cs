@@ -13,7 +13,7 @@ namespace UniversalSoundBoard.Model
 {
     public class Sound{
         public string Name { get; set; }
-        public string CategoryName { get; set; }
+        public Category Category { get; set; }
         public bool Favourite { get; set; }
         public BitmapImage Image { get; set; }
         public StorageFile ImageFile { get; set; }
@@ -25,26 +25,26 @@ namespace UniversalSoundBoard.Model
 
         }
 
-        public Sound(string name, string category){
+        public Sound(string name, Category category){
             Name = name;
-            CategoryName = category;
+            Category = category;
             Favourite = false;
         }
 
-        public Sound(string name, string category, StorageFile AudioFile)
+        public Sound(string name, Category category, StorageFile AudioFile)
         {
             Name = name;
-            CategoryName = category;
+            Category = category;
             this.AudioFile = AudioFile;
             Favourite = false;
         }
 
-        public async Task setCategory(string category)
+        public async Task setCategory(Category category)
         {
-            CategoryName = category;
+            Category = category;
 
             // Create / get details json and write category into it
-            SoundDetails details = new SoundDetails { Category = category };
+            SoundDetails details = new SoundDetails { Category = category.Name };
             await FileManager.WriteFile(await FileManager.createSoundDetailsFileIfNotExistsAsync(Name), details);
         }
 
@@ -112,7 +112,7 @@ namespace UniversalSoundBoard.Model
                         StorageFile detailsFile = await FileManager.createSoundDetailsFileIfNotExistsAsync(sound.Name);
                         await details.ReadSoundDetailsFile(detailsFile);
                         sound.DetailsFile = detailsFile;
-                        sound.CategoryName = WebUtility.HtmlDecode(details.Category);
+                        sound.Category = await FileManager.GetCategoryByNameAsync(WebUtility.HtmlDecode(details.Category));
                         sound.Favourite = details.Favourite;
 
                         newSounds.Add(sound);
@@ -200,7 +200,7 @@ namespace UniversalSoundBoard.Model
                 (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
                 foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
                 {
-                    if (sound.CategoryName == category.Name)
+                    if (sound.Category.Name == category.Name)
                     {
                         (App.Current as App)._itemViewHolder.sounds.Add(sound);
                         if (sound.Favourite)

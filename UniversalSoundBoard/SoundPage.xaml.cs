@@ -129,8 +129,7 @@ namespace UniversalSoundBoard
                     // Application now has read/write access to the picked file(s)
                     foreach (StorageFile soundFile in items)
                     {
-                        Sound sound = new Sound(soundFile.DisplayName, "", soundFile);
-                        sound.CategoryName = category.Name;
+                        Sound sound = new Sound(soundFile.DisplayName, category, soundFile);
                         await FileManager.addSound(sound);
                     }
 
@@ -269,9 +268,9 @@ namespace UniversalSoundBoard
             MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
             props.Type = MediaPlaybackType.Music;
             props.MusicProperties.Title = sound.Name;
-            if (!String.IsNullOrEmpty(sound.CategoryName))
+            if (!String.IsNullOrEmpty(sound.Category.Name))
             {
-                props.MusicProperties.Artist = sound.CategoryName;
+                props.MusicProperties.Artist = sound.Category.Name;
             }
             if(sound.ImageFile != null)
             {
@@ -327,9 +326,9 @@ namespace UniversalSoundBoard
                 MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
                 props.Type = MediaPlaybackType.Music;
                 props.MusicProperties.Title = sound.Name;
-                if (!String.IsNullOrEmpty(sound.CategoryName))
+                if (!String.IsNullOrEmpty(sound.Category.Name))
                 {
-                    props.MusicProperties.Artist = sound.CategoryName;
+                    props.MusicProperties.Artist = sound.Category.Name;
                 }
                 
                 if (sound.ImageFile != null)

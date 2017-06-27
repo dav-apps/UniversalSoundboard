@@ -452,8 +452,7 @@ namespace UniversalSoundBoard
                 // Application now has read/write access to the picked file(s)
                 foreach (StorageFile soundFile in files)
                 {
-                    Sound sound = new Sound(soundFile.DisplayName, "", soundFile);
-                    sound.CategoryName = category.Name;
+                    Sound sound = new Sound(soundFile.DisplayName, category, soundFile);
                     await FileManager.addSound(sound);
                 }
 
@@ -634,7 +633,7 @@ namespace UniversalSoundBoard
             string category = selectedItem.Text;
             foreach (Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
             {
-                await sound.setCategory(category);
+                await sound.setCategory(await FileManager.GetCategoryByNameAsync(category));
             }
         }
 

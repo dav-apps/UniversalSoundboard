@@ -181,7 +181,7 @@ namespace UniversalSoundBoard
                 {
                     if(((StorageFile)storageItem).ContentType == "audio/wav" || ((StorageFile)storageItem).ContentType == "audio/mpeg")
                     {
-                        Sound sound = new Sound(storageItem.Name, "", storageItem as StorageFile);
+                        Sound sound = new Sound(storageItem.Name, new Category { Icon = "", Name = "" }, storageItem as StorageFile);
                         await FileManager.addSound(sound);
                     }
                 }

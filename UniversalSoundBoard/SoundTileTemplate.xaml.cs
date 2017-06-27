@@ -40,7 +40,6 @@ namespace UniversalSoundBoard
             this.InitializeComponent();
             Loaded += SoundTileTemplate_Loaded;
             this.DataContextChanged += (s, e) => Bindings.Update(); // <-- only working with x:Bind !!!
-            //  this.DataContextChanged += (s, e) => { ViewModel = DataContext as ProfilesViewModel; }
             setDarkThemeLayout();
         }
 
@@ -195,7 +194,7 @@ namespace UniversalSoundBoard
             var sound = this.Sound;
             var selectedItem = (ToggleMenuFlyoutItem) sender;
             string category = selectedItem.Text;
-            await sound.setCategory(category);
+            await sound.setCategory(await FileManager.GetCategoryByNameAsync(category));
             
             unselectAllItemsOfCategoriesFlyoutSubItem();
             selectedItem.IsChecked = true;
@@ -225,7 +224,7 @@ namespace UniversalSoundBoard
             unselectAllItemsOfCategoriesFlyoutSubItem();
             foreach (ToggleMenuFlyoutItem item in CategoriesFlyoutSubItem.Items)
             {
-                if (item.Text == this.Sound.CategoryName)
+                if (item.Text == this.Sound.Category.Name)
                 {
                     item.IsChecked = true;
                 }
