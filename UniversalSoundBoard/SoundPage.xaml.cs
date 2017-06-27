@@ -268,7 +268,7 @@ namespace UniversalSoundBoard
             MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
             props.Type = MediaPlaybackType.Music;
             props.MusicProperties.Title = sound.Name;
-            if (!String.IsNullOrEmpty(sound.Category.Name))
+            if (sound.Category != null)
             {
                 props.MusicProperties.Artist = sound.Category.Name;
             }

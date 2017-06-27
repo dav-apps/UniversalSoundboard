@@ -224,9 +224,12 @@ namespace UniversalSoundBoard
             unselectAllItemsOfCategoriesFlyoutSubItem();
             foreach (ToggleMenuFlyoutItem item in CategoriesFlyoutSubItem.Items)
             {
-                if (item.Text == this.Sound.Category.Name)
+                if(this.Sound.Category != null)
                 {
-                    item.IsChecked = true;
+                    if (item.Text == this.Sound.Category.Name)
+                    {
+                        item.IsChecked = true;
+                    }
                 }
             }
         }

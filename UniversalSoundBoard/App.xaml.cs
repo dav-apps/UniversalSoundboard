@@ -177,15 +177,24 @@ namespace UniversalSoundBoard
             ShareOperation shareOperation = args.ShareOperation;
             if (shareOperation.Data.Contains(StandardDataFormats.StorageItems))
             {
-                foreach(IStorageItem storageItem in await shareOperation.Data.GetStorageItemsAsync())
+                shareOperation.ReportDataRetrieved();
+                StorageFolder folder = ApplicationData.Current.LocalFolder;
+                foreach (IStorageItem storageItem in await shareOperation.Data.GetStorageItemsAsync())
                 {
-                    if(((StorageFile)storageItem).ContentType == "audio/wav" || ((StorageFile)storageItem).ContentType == "audio/mpeg")
+                    if (((StorageFile)storageItem).ContentType == "audio/wav" || ((StorageFile)storageItem).ContentType == "audio/mpeg")
                     {
-                        Sound sound = new Sound(storageItem.Name, new Category { Icon = "", Name = "" }, storageItem as StorageFile);
-                        await FileManager.addSound(sound);
+                        Sound sound = new Sound(storageItem.Name, null, storageItem as StorageFile);
+                        
+                        // Copy new sound into local storage
+                        StorageFile newFile = await sound.AudioFile.CopyAsync(folder, sound.AudioFile.Name, NameCollisionOption.GenerateUniqueName);
+                        await FileManager.createSoundDetailsFileIfNotExistsAsync(sound.Name);
                     }
                 }
-                shareOperation.ReportDataRetrieved();
+                shareOperation.ReportCompleted();
+            }
+            else
+            {
+                shareOperation.ReportError("An error occured.");
             }
         }
     }

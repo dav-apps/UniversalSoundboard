@@ -168,10 +168,17 @@ namespace UniversalSoundBoard
         {
             (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             StorageFolder folder = ApplicationData.Current.LocalFolder;
-
+            Debug.WriteLine("4.2");
             StorageFile newFile = await sound.AudioFile.CopyAsync(folder, sound.AudioFile.Name, NameCollisionOption.GenerateUniqueName);
             await createSoundDetailsFileIfNotExistsAsync(sound.Name);
-            await sound.setCategory(sound.Category);
+            Debug.WriteLine("4.3");
+            if (sound.Category != null)
+            {
+                Debug.WriteLine("4.4");
+                await sound.setCategory(sound.Category);
+                Debug.WriteLine("4.5");
+            }
+            Debug.WriteLine("4.6");
         }
 
         public static async Task<StorageFile> createDataFolderAndJsonFileIfNotExistsAsync()
@@ -287,7 +294,7 @@ namespace UniversalSoundBoard
                     }
                 }
             }
-            return new Category { Icon = "", Name = "" };
+            return null;
         }
 
         public async static Task renameCategory(string oldName, string newName)

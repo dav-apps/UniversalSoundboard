@@ -200,12 +200,15 @@ namespace UniversalSoundBoard.Model
                 (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
                 foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
                 {
-                    if (sound.Category.Name == category.Name)
+                    if(sound.Category != null)
                     {
-                        (App.Current as App)._itemViewHolder.sounds.Add(sound);
-                        if (sound.Favourite)
+                        if (sound.Category.Name == category.Name)
                         {
-                            (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
+                            (App.Current as App)._itemViewHolder.sounds.Add(sound);
+                            if (sound.Favourite)
+                            {
+                                (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
+                            }
                         }
                     }
                 }
