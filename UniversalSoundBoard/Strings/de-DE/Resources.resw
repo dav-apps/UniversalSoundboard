@@ -255,4 +255,7 @@
   <data name="SettingsPivot-General.Header" xml:space="preserve">
     <value>Allgemein</value>
   </data>
+  <data name="SettingsSoundBoardSize" xml:space="preserve">
+    <value>Die Größe deines Soundboard beträgt </value>
+  </data>
 </root>

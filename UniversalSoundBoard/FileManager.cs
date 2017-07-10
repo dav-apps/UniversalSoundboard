@@ -14,6 +14,7 @@ using UniversalSoundBoard.Model;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
@@ -418,6 +419,12 @@ namespace UniversalSoundBoard
 
 
         // Methods not related to project
+
+        public static async Task<float> GetFileSizeInGBAsync(StorageFile file)
+        {
+            BasicProperties pro = await file.GetBasicPropertiesAsync();
+            return (((pro.Size / 1024f) / 1024f)/ 1024f);
+        }
 
         public static async Task WriteFile(StorageFile file, Object objectToWrite)
         {

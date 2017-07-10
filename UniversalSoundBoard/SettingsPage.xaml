@@ -75,7 +75,7 @@
             <PivotItem x:Uid="SettingsPivot-Data">
                 <ScrollViewer>
                     <StackPanel Style="{StaticResource SettingsContentStyle}">
-                        
+                        <TextBlock Name="SoundBoardSizeTextBlock" />
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
