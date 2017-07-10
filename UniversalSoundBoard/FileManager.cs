@@ -30,6 +30,7 @@ namespace UniversalSoundBoard
         public const bool playingSoundsListVisible = false;
         public const bool playOneSoundAtOnce = true;
         public const bool darkTheme = false;
+        public const bool showCategoryIcon = true;
 
         public const int mobileMaxWidth = 550;
         public const int tabletMaxWidth = 650;
@@ -80,6 +81,7 @@ namespace UniversalSoundBoard
                 }
                 else
                 {
+                    Debug.WriteLine((App.Current as App)._itemViewHolder.title);
                     await SoundManager.GetSoundsByCategory(await GetCategoryByNameAsync((App.Current as App)._itemViewHolder.title));
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
                 }

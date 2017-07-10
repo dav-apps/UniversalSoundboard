@@ -1,40 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IO;
 using System.Linq;
 using System.Net;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Runtime.Serialization.Json;
-using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
-using Windows.ApplicationModel.Background;
-using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
-using Windows.Storage.Search;
 using Windows.UI.Core;
-using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 using static UniversalSoundBoard.Model.Sound;
-using Windows.UI.Notifications;
-using NotificationsExtensions.Tiles; // NotificationsExtensions.Win10
-using NotificationsExtensions;
-using Windows.Media.Playback;
-using Windows.Media.Core;
 using Microsoft.Services.Store.Engagement;
-using System.Diagnostics;
 using Windows.UI;
 using Windows.ApplicationModel.Core;
-using Windows.System.Threading;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -145,6 +126,16 @@ namespace UniversalSoundBoard
             else
             {
                 FileManager.UpdateLiveTile();
+            }
+
+            if (localSettings.Values["showCategoryIcon"] == null)
+            {
+                localSettings.Values["showCategoryIcon"] = FileManager.showCategoryIcon;
+                (App.Current as App)._itemViewHolder.showCategoryIcon = FileManager.showCategoryIcon;
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.showCategoryIcon = (bool)localSettings.Values["showCategoryIcon"];
             }
         }
 

@@ -10,7 +10,6 @@
     d:DesignWidth="400">
 
     <Grid Name="ContentRoot" Background="White">
-
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Mobile">
@@ -51,8 +50,8 @@
             <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             <SymbolIcon Name="FavouriteSymbol" Symbol="OutlineStar" 
                         Visibility="{x:Bind Sound.Favourite}" HorizontalAlignment="Left" />
-            <TextBlock Name="CategoryIconSymbol" FontFamily="Segoe MDL2 Assets" Text="{x:Bind Sound.Category.Icon}"
-                        RelativePanel.AlignRightWithPanel="True" HorizontalAlignment="Right" />
+            <TextBlock Name="CategoryIconSymbol" FontFamily="Segoe MDL2 Assets" FontSize="20" Text="{x:Bind Sound.Category.Icon}"
+                        RelativePanel.AlignRightWithPanel="True" HorizontalAlignment="Right" Visibility="{Binding showCategoryIcon}" />
         </RelativePanel>
         <TextBlock Grid.Row="1" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" />
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">

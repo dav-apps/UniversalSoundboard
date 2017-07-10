@@ -52,6 +52,7 @@ namespace UniversalSoundBoard
             setLiveTileToggle();
             setPlayingSoundsListVisibilityToggle();
             setPlayOneSoundAtOnceToggle();
+            setShowCategoryIconToggle();
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -103,6 +104,24 @@ namespace UniversalSoundBoard
             PlayOneSoundAtOnceToggle.IsOn = (bool)localSettings.Values["playOneSoundAtOnce"];
         }
 
+        private void setShowCategoryIconToggle()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            ShowCategoryToggle.IsOn = (bool)localSettings.Values["showCategoryIcon"];
+        }
+
+        private void setToggleMessageVisibility()
+        {
+            if (darkThemeToggledAtBeginning != ThemeToggle.IsOn)
+            {
+                ThemeChangeMessageTextBlock.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                ThemeChangeMessageTextBlock.Visibility = Visibility.Collapsed;
+            }
+        }
+
         private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -140,16 +159,11 @@ namespace UniversalSoundBoard
             setToggleMessageVisibility();
         }
 
-        private void setToggleMessageVisibility()
+        private void ShowCategoryToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            if (darkThemeToggledAtBeginning != ThemeToggle.IsOn)
-            {
-                ThemeChangeMessageTextBlock.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                ThemeChangeMessageTextBlock.Visibility = Visibility.Collapsed;
-            }
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["showCategoryIcon"] = ShowCategoryToggle.IsOn;
+            (App.Current as App)._itemViewHolder.showCategoryIcon = ShowCategoryToggle.IsOn;
         }
     }
 }

@@ -256,6 +256,9 @@
   <data name="SoundsPivotHeader.Header" xml:space="preserve">
     <value>Sounds</value>
   </data>
+  <data name="SettingsEntry-ShowCategoryIcon.Header" xml:space="preserve">
+    <value>Show Icon of the Category of the sound</value>
+  </data>
   <data name="SettingsPivot-Data.Header" xml:space="preserve">
     <value>Data</value>
   </data>

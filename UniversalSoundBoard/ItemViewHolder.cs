@@ -34,6 +34,7 @@ namespace UniversalSoundBoard
         private ObservableCollection<PlayingSound> _playingSounds;
         private Visibility _playingSoundsListVisibility;
         private bool _playOneSoundAtOnce;
+        private bool _showCategoryIcon;
 
         public string title
         {
@@ -241,6 +242,17 @@ namespace UniversalSoundBoard
             {
                 _playOneSoundAtOnce = value;
                 NotifyPropertyChanged("playOneSoundAtOnce");
+            }
+        }
+
+        public bool showCategoryIcon
+        {
+            get { return _showCategoryIcon; }
+
+            set
+            {
+                _showCategoryIcon = value;
+                NotifyPropertyChanged("showCategoryIcon");
             }
         }
 

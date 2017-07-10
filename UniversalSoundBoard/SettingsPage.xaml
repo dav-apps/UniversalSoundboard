@@ -54,16 +54,20 @@
                 <ScrollViewer>
                     <StackPanel Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <ToggleSwitch Name="PlayingSoundsListToggle" x:Uid="PlayingSoundsListToggle" Header="Show list of playing sounds" Toggled="PlayingSoundsListToggle_Toggled" />
-                        </StackPanel>
-
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch Name="ThemeToggle" Header="Dark Theme" Toggled="ThemeToggle_Toggled" />
                             <TextBlock Name="ThemeChangeMessageTextBlock" x:Uid="ThemeChangeMessageTextBlock" Visibility="Collapsed" Margin="0,0,0,10" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch Name="LiveTileToggle" Header="Live Tile" Toggled="LiveTileToggle_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                            <ToggleSwitch Name="PlayingSoundsListToggle" x:Uid="PlayingSoundsListToggle" Header="Show list of playing sounds" Toggled="PlayingSoundsListToggle_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                            <ToggleSwitch Name="ShowCategoryToggle" x:Uid="SettingsEntry-ShowCategoryIcon" Header="Show Category Icon of a Sound" Toggled="ShowCategoryToggle_Toggled" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
