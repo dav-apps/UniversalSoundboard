@@ -256,4 +256,13 @@
   <data name="SoundsPivotHeader.Header" xml:space="preserve">
     <value>Sounds</value>
   </data>
+  <data name="SettingsPivot-Data.Header" xml:space="preserve">
+    <value>Data</value>
+  </data>
+  <data name="SettingsPivot-Design.Header" xml:space="preserve">
+    <value>Design</value>
+  </data>
+  <data name="SettingsPivot-General.Header" xml:space="preserve">
+    <value>General</value>
+  </data>
 </root>
