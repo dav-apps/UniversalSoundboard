@@ -35,6 +35,7 @@ namespace UniversalSoundBoard
         private Visibility _playingSoundsListVisibility;
         private bool _playOneSoundAtOnce;
         private bool _showCategoryIcon;
+        private bool _showSoundsPivot;
 
         public string title
         {
@@ -256,6 +257,16 @@ namespace UniversalSoundBoard
             }
         }
 
+        public bool showSoundsPivot
+        {
+            get { return _showSoundsPivot; }
+
+            set
+            {
+                _showSoundsPivot = value;
+                NotifyPropertyChanged("showSoundsPivot");
+            }
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

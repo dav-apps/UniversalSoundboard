@@ -49,7 +49,8 @@ namespace UniversalSoundBoard
             playingSounds = new ObservableCollection<PlayingSound>(),
             playingSoundsListVisibility = Visibility.Visible,
             playOneSoundAtOnce = false,
-            showCategoryIcon = true
+            showCategoryIcon = true,
+            showSoundsPivot = true
         };
 
         /// <summary>

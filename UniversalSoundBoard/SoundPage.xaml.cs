@@ -48,6 +48,12 @@ namespace UniversalSoundBoard
         void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
+            SetSoundsPivotVisibility();
+        }
+
+        private void SetSoundsPivotVisibility()
+        {
+            SoundGridView2.Visibility = (App.Current as App)._itemViewHolder.showSoundsPivot ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void setDataContext()

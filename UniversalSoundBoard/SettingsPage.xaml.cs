@@ -56,6 +56,7 @@ namespace UniversalSoundBoard
             setPlayingSoundsListVisibilityToggle();
             setPlayOneSoundAtOnceToggle();
             setShowCategoryIconToggle();
+            setShowSoundsPivotToggle();
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -111,6 +112,12 @@ namespace UniversalSoundBoard
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             ShowCategoryToggle.IsOn = (bool)localSettings.Values["showCategoryIcon"];
+        }
+
+        private void setShowSoundsPivotToggle()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            ShowSoundsPivotToggle.IsOn = (bool)localSettings.Values["showSoundsPivot"];
         }
 
         private void setToggleMessageVisibility()
@@ -190,6 +197,13 @@ namespace UniversalSoundBoard
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values["showCategoryIcon"] = ShowCategoryToggle.IsOn;
             (App.Current as App)._itemViewHolder.showCategoryIcon = ShowCategoryToggle.IsOn;
+        }
+
+        private void ShowSoundsPivotToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values["showSoundsPivot"] = ShowSoundsPivotToggle.IsOn;
+            (App.Current as App)._itemViewHolder.showSoundsPivot = ShowSoundsPivotToggle.IsOn;
         }
     }
 }

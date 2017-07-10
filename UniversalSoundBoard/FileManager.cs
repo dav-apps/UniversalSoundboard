@@ -32,6 +32,7 @@ namespace UniversalSoundBoard
         public const bool playOneSoundAtOnce = true;
         public const bool darkTheme = false;
         public const bool showCategoryIcon = true;
+        public const bool showSoundsPivot = true;
 
         public const int mobileMaxWidth = 550;
         public const int tabletMaxWidth = 650;

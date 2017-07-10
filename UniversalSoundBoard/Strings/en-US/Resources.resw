@@ -221,7 +221,7 @@
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>1.1</value>
+    <value>1.2</value>
   </data>
   <data name="PlayingSound_CastButton.Label" xml:space="preserve">
     <value>Cast to Device</value>
@@ -270,5 +270,8 @@
   </data>
   <data name="SettingsSoundBoardSize" xml:space="preserve">
     <value>The size of your Soundboard is </value>
+  </data>
+  <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
+    <value>Show Favourites tab</value>
   </data>
 </root>

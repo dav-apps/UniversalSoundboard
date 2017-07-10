@@ -137,6 +137,16 @@ namespace UniversalSoundBoard
             {
                 (App.Current as App)._itemViewHolder.showCategoryIcon = (bool)localSettings.Values["showCategoryIcon"];
             }
+
+            if (localSettings.Values["showSoundsPivot"] == null)
+            {
+                localSettings.Values["showSoundsPivot"] = FileManager.showSoundsPivot;
+                (App.Current as App)._itemViewHolder.showSoundsPivot = FileManager.showSoundsPivot;
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.showSoundsPivot = (bool)localSettings.Values["showSoundsPivot"];
+            }
         }
 
         private void SetDarkThemeLayout()
@@ -463,6 +473,7 @@ namespace UniversalSoundBoard
 
             if ((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
             {
+                await Task.Delay(50);
                 (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             }
 

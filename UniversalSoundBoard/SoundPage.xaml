@@ -77,7 +77,7 @@
             </StackPanel>
 
             <Pivot x:Name="SoundsPivot" Grid.Row="1"
-                   Margin="5,0,0,0" 
+                   Margin="5,0,0,0" Visibility="{Binding showSoundsPivot}"
                    PivotItemLoaded="SoundsPivot_PivotItemLoaded">
                 <PivotItem x:Uid="SoundsPivotHeader">
                     <GridView Name="SoundGridView"
@@ -97,6 +97,16 @@
                     </GridView>
                 </PivotItem>
             </Pivot>
+
+            <GridView Name="SoundGridView2" Grid.Row="1" Visibility="Collapsed" Margin="5,0,0,0"
+                            ItemClick="SoundGridView_ItemClick"
+                            SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
+                            ItemsSource="{Binding sounds, Mode=TwoWay}"
+                            DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" RightTapped="SoundGridView_RightTapped">
+            </GridView>
+
+
+
 
             <Grid x:Name="DrawerContentGrid" Grid.Row="2"
                     VerticalAlignment="Bottom" Background="{ThemeResource AppBarBackgroundThemeBrush}" RenderTransformOrigin="0.5,0.5">

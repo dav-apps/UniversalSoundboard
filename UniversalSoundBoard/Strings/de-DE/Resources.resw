@@ -258,4 +258,7 @@
   <data name="SettingsSoundBoardSize" xml:space="preserve">
     <value>Die Größe deines Soundboard beträgt </value>
   </data>
+  <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
+    <value>Favoriten anzeigen</value>
+  </data>
 </root>
