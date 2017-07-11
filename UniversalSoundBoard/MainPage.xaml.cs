@@ -182,6 +182,7 @@ namespace UniversalSoundBoard
                 if (String.IsNullOrEmpty(SearchAutoSuggestBox.Text))
                 {   // Hide search box
                     ResetSearchArea();
+                    (App.Current as App)._itemViewHolder.searchQuery = "";
                 }
                 else
                 {   // If user is searching
@@ -199,6 +200,7 @@ namespace UniversalSoundBoard
 
                 // Show Other buttons and search box
                 SearchAutoSuggestBox.Visibility = Visibility.Visible;
+                SearchAutoSuggestBox.Text = (App.Current as App)._itemViewHolder.searchQuery;
                 SearchButton.Visibility = Visibility.Collapsed;
                 AddButton.Visibility = Visibility.Visible;
                 VolumeButton.Visibility = Visibility.Visible;
@@ -292,6 +294,7 @@ namespace UniversalSoundBoard
             }
             skipAutoSuggestBoxTextChanged = true;
             SearchAutoSuggestBox.Text = "";
+            (App.Current as App)._itemViewHolder.searchQuery = "";
             MenuItemsListView.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
@@ -302,6 +305,8 @@ namespace UniversalSoundBoard
         private async Task ShowCategory(Category category)
         {
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+            SearchAutoSuggestBox.Text = "";
+            (App.Current as App)._itemViewHolder.searchQuery = "";
             (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;

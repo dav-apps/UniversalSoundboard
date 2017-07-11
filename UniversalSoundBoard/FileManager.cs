@@ -83,7 +83,6 @@ namespace UniversalSoundBoard
                 }
                 else
                 {
-                    Debug.WriteLine((App.Current as App)._itemViewHolder.title);
                     await SoundManager.GetSoundsByCategory(await GetCategoryByNameAsync((App.Current as App)._itemViewHolder.title));
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
                 }
@@ -172,17 +171,12 @@ namespace UniversalSoundBoard
         {
             (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             StorageFolder folder = ApplicationData.Current.LocalFolder;
-            Debug.WriteLine("4.2");
             StorageFile newFile = await sound.AudioFile.CopyAsync(folder, sound.AudioFile.Name, NameCollisionOption.GenerateUniqueName);
             await createSoundDetailsFileIfNotExistsAsync(sound.Name);
-            Debug.WriteLine("4.3");
             if (sound.Category != null)
             {
-                Debug.WriteLine("4.4");
                 await sound.setCategory(sound.Category);
-                Debug.WriteLine("4.5");
             }
-            Debug.WriteLine("4.6");
         }
 
         public static async Task<StorageFile> createDataFolderAndJsonFileIfNotExistsAsync()
