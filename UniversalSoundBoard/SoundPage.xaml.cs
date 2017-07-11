@@ -197,9 +197,13 @@ namespace UniversalSoundBoard
             {
                 selectedGridview = SoundGridView;
             }
-            else
+            else if(!soundsPivotSelected && (App.Current as App)._itemViewHolder.showSoundsPivot)
             {
                 selectedGridview = FavouriteSoundGridView;
+            }
+            else
+            {
+                selectedGridview = SoundGridView2;
             }
 
             // If no items are selected, disable multi select buttons
@@ -332,7 +336,7 @@ namespace UniversalSoundBoard
                 MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
                 props.Type = MediaPlaybackType.Music;
                 props.MusicProperties.Title = sound.Name;
-                if (!String.IsNullOrEmpty(sound.Category.Name))
+                if (sound.Category != null)
                 {
                     props.MusicProperties.Artist = sound.Category.Name;
                 }
@@ -430,8 +434,8 @@ namespace UniversalSoundBoard
             // If allSounds is true, play all sounds. Else, play only selected sounds
             if (allSounds)
             {
-                // If favourite sounds
-                if (soundsPivotSelected)
+                // If favourite sounds is selected or Favourite sounds are hiding
+                if (soundsPivotSelected || !(App.Current as App)._itemViewHolder.showSoundsPivot)
                 {
                     playSounds((App.Current as App)._itemViewHolder.sounds.ToList(), rounds);
                 }
@@ -453,7 +457,7 @@ namespace UniversalSoundBoard
 
             // Select favourite sounds list if favourite sounds tab is selected
             ObservableCollection<Sound> sounds = new ObservableCollection<Sound>();
-            if (soundsPivotSelected)
+            if (soundsPivotSelected || !(App.Current as App)._itemViewHolder.showSoundsPivot)
             {
                 sounds = (App.Current as App)._itemViewHolder.sounds;
             }
