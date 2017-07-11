@@ -34,6 +34,7 @@ namespace UniversalSoundBoard
     {
         public Sound Sound { get { return this.DataContext as Sound; } }
         int moreButtonClicked = 0;
+        public string fallbackValue = "test";
 
         public SoundTileTemplate()
         {

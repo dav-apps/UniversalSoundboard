@@ -50,7 +50,7 @@
             <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
             <SymbolIcon Name="FavouriteSymbol" Symbol="OutlineStar" 
                         Visibility="{x:Bind Sound.Favourite}" HorizontalAlignment="Left" />
-            <TextBlock Name="CategoryIconSymbol" FontFamily="Segoe MDL2 Assets" FontSize="20" Text="{x:Bind Sound.Category.Icon}"
+            <TextBlock Name="CategoryIconSymbol" FontFamily="Segoe MDL2 Assets" FontSize="20" Text="{x:Bind Sound.Category.Icon, FallbackValue='', TargetNullValue=''}"
                         RelativePanel.AlignRightWithPanel="True" HorizontalAlignment="Right" Visibility="{Binding showCategoryIcon}" />
         </RelativePanel>
         <TextBlock Grid.Row="1" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" />
