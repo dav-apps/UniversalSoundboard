@@ -236,6 +236,21 @@ namespace UniversalSoundBoard
             }
         }
 
+        public static async Task deleteExportAndImportFoldersAsync()
+        {
+            StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
+
+            if (await localDataFolder.TryGetItemAsync("export") != null)
+            {
+                await (await localDataFolder.GetFolderAsync("export")).DeleteAsync();
+            }
+
+            if (await localDataFolder.TryGetItemAsync("import") != null)
+            {
+                await (await localDataFolder.GetFolderAsync("import")).DeleteAsync();
+            }
+        }
+
         public static async Task<ObservableCollection<Category>> GetCategoriesListAsync()
         {
             StorageFile dataFile = await FileManager.createDataFolderAndJsonFileIfNotExistsAsync();

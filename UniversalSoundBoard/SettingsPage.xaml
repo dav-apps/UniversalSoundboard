@@ -81,7 +81,15 @@
             <PivotItem x:Uid="SettingsPivot-Data">
                 <ScrollViewer>
                     <StackPanel Style="{StaticResource SettingsContentStyle}">
-                        <TextBlock Name="SoundBoardSizeTextBlock" />
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                            <Button Name="ExportDataButton" Content="Export Data"
+                                    Click="ExportDataButton_Click" />
+                            <ProgressRing Name="ExportDataProgressRing" Height="30" Width="30" HorizontalAlignment="Left" />
+                        </StackPanel>
+                        
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                            <TextBlock Name="SoundBoardSizeTextBlock" />
+                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>

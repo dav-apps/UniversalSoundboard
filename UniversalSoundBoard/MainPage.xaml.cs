@@ -53,6 +53,7 @@ namespace UniversalSoundBoard
 
             await SoundManager.GetAllSounds();
             await initializePushNotificationSettings();
+            await FileManager.deleteExportAndImportFoldersAsync();
         }
 
         private void setDataContext()
