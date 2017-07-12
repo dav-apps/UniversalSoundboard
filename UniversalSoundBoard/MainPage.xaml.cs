@@ -16,6 +16,7 @@ using static UniversalSoundBoard.Model.Sound;
 using Microsoft.Services.Store.Engagement;
 using Windows.UI;
 using Windows.ApplicationModel.Core;
+using System.Diagnostics;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 

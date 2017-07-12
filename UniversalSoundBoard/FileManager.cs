@@ -1,4 +1,5 @@
-﻿using NotificationsExtensions;
+﻿using Microsoft.Toolkit.Uwp.Notifications;
+using NotificationsExtensions;
 using NotificationsExtensions.Tiles;
 using System;
 using System.Collections.Generic;
@@ -13,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
 using Windows.ApplicationModel.Core;
+using Windows.Data.Xml.Dom;
 using Windows.Foundation;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -386,30 +388,30 @@ namespace UniversalSoundBoard
                 sound = sounds.ElementAt(random.Next(sounds.Count));
             }
 
-            TileBinding binding = new TileBinding()
+            NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
             {
-                Branding = TileBranding.NameAndLogo,
+                Branding = NotificationsExtensions.Tiles.TileBranding.NameAndLogo,
 
-                Content = new TileBindingContentAdaptive()
+                Content = new NotificationsExtensions.Tiles.TileBindingContentAdaptive()
                 {
-                    PeekImage = new TilePeekImage()
+                    PeekImage = new NotificationsExtensions.Tiles.TilePeekImage()
                     {
                         Source = sound.ImageFile.Path
                     },
                     Children =
                     {
-                        new AdaptiveText()
+                        new NotificationsExtensions.AdaptiveText()
                         {
                             Text = sound.Name
                         }
                     },
-                    TextStacking = TileTextStacking.Center
+                    TextStacking = NotificationsExtensions.Tiles.TileTextStacking.Center
                 }
             };
 
-            TileContent content = new TileContent()
+            NotificationsExtensions.Tiles.TileContent content = new NotificationsExtensions.Tiles.TileContent()
             {
-                Visual = new TileVisual()
+                Visual = new NotificationsExtensions.Tiles.TileVisual()
                 {
                     TileMedium = binding,
                     TileWide = binding,
@@ -469,7 +471,7 @@ namespace UniversalSoundBoard
             IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
                     async (workItem) =>
                     {
-                        var t = Task.Run(() => ZipFile.CreateFromDirectory(exportFolder.Path, destinationFolder.Path + @"\SoundBoard.zip"));
+                        var t = Task.Run(() => ZipFile.CreateFromDirectory(exportFolder.Path, destinationFolder.Path + @"\UniversalSoundBoard " + DateTime.Today.ToString("dd.MM.yyyy") + ".zip"));
                         t.Wait();
 
                         await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
@@ -479,8 +481,62 @@ namespace UniversalSoundBoard
                                 (App.Current as App)._itemViewHolder.isExporting = false;
                                 (App.Current as App)._itemViewHolder.exported = true;
                             }));
+                        SendExportSuccessfullNotification();
                         await deleteExportAndImportFoldersAsync();
                     });
+        }
+
+        private static void SendExportSuccessfullNotification()
+        {
+            ToastContent content = new ToastContent()
+            {
+                Launch = "app-defined-string",
+
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new Microsoft.Toolkit.Uwp.Notifications.AdaptiveText()
+                            {
+                                Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("ExportNotification-Title")
+                            },
+
+                            new Microsoft.Toolkit.Uwp.Notifications.AdaptiveText()
+                            {
+                                Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("ExportNotification-Message")
+                            }
+                        },
+                    }
+                }
+                /*
+                Actions = new ToastActionsCustom()
+                {
+                    Buttons =
+                    {
+                        new ToastButton("check", "check")
+                        {
+                            ImageUri = "check.png"
+                        },
+
+                        new ToastButton("cancel", "cancel")
+                        {
+                            ImageUri = "cancel.png"
+                        }
+                    }
+                },
+                
+                Audio = new ToastAudio()
+                {
+                    Src = new Uri("ms-winsoundevent:Notification.Reminder")
+                }
+                */
+            };
+
+            XmlDocument xmlContent = content.GetXml();
+            ToastNotification notification = new ToastNotification(xmlContent);
+            ToastNotificationManager.CreateToastNotifier().Show(notification);
         }
 
         private static async Task CreateExportFoldersAsync()
