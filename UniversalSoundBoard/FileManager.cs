@@ -5,17 +5,21 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
+using Windows.ApplicationModel.Core;
+using Windows.Foundation;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
+using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -425,6 +429,88 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
             (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Visible;
+        }
+
+        public static async Task ExportData(StorageFolder destinationFolder)
+        {
+            (App.Current as App)._itemViewHolder.isExporting = true;
+
+            await deleteExportAndImportFoldersAsync();
+            await createDataFolderAndJsonFileIfNotExistsAsync();
+            await createDetailsFolderIfNotExistsAsync();
+
+            // Copy all data into the folder
+            await SoundManager.GetAllSounds();
+
+            // Create folders in export folder
+            await CreateExportFoldersAsync();
+
+            StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
+            StorageFolder exportFolder = await localDataFolder.GetFolderAsync("export");
+            StorageFolder imagesExportFolder = await exportFolder.GetFolderAsync("images");
+            StorageFolder soundDetailsExportFolder = await exportFolder.GetFolderAsync("soundDetails");
+            StorageFolder dataFolder = await localDataFolder.GetFolderAsync("data");
+            StorageFolder dataExportFolder = await exportFolder.GetFolderAsync("data");
+            StorageFile dataFile = await dataFolder.GetFileAsync("data.json");
+
+            // Copy the files into the export folder
+            foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
+            {
+                await sound.AudioFile.CopyAsync(exportFolder, sound.AudioFile.Name, NameCollisionOption.ReplaceExisting);
+                await sound.DetailsFile.CopyAsync(soundDetailsExportFolder, sound.DetailsFile.Name, NameCollisionOption.ReplaceExisting);
+                if (sound.ImageFile != null)
+                {
+                    await sound.ImageFile.CopyAsync(imagesExportFolder, sound.ImageFile.Name, NameCollisionOption.ReplaceExisting);
+                }
+            }
+            await dataFile.CopyAsync(dataExportFolder, dataFile.Name, NameCollisionOption.ReplaceExisting);
+            // Create Zip file in local storage
+
+            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
+                    async (workItem) =>
+                    {
+                        var t = Task.Run(() => ZipFile.CreateFromDirectory(exportFolder.Path, destinationFolder.Path + @"\SoundBoard.zip"));
+                        t.Wait();
+
+                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                            CoreDispatcherPriority.High,
+                            new DispatchedHandler(() =>
+                            {
+                                (App.Current as App)._itemViewHolder.isExporting = false;
+                                (App.Current as App)._itemViewHolder.exported = true;
+                            }));
+                        await deleteExportAndImportFoldersAsync();
+                    });
+        }
+
+        private static async Task CreateExportFoldersAsync()
+        {
+            StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
+
+            StorageFolder exportFolder;
+            if (await localDataFolder.TryGetItemAsync("export") == null)
+            {
+                exportFolder = await localDataFolder.CreateFolderAsync("export");
+            }
+            else
+            {
+                exportFolder = await localDataFolder.GetFolderAsync("export");
+            }
+
+            if (await exportFolder.TryGetItemAsync("images") == null)
+            {
+                await exportFolder.CreateFolderAsync("images");
+            }
+
+            if (await exportFolder.TryGetItemAsync("soundDetails") == null)
+            {
+                await exportFolder.CreateFolderAsync("soundDetails");
+            }
+
+            if (await exportFolder.TryGetItemAsync("data") == null)
+            {
+                await exportFolder.CreateFolderAsync("data");
+            }
         }
 
 

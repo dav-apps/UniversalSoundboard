@@ -274,4 +274,7 @@
   <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
     <value>Show Favourites tab</value>
   </data>
+  <data name="SettingsEntry-ExportMessage.Text" xml:space="preserve">
+    <value>Your sounds will be exported. Please don't close the app before the process is completed.</value>
+  </data>
 </root>

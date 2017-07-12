@@ -36,6 +36,8 @@ namespace UniversalSoundBoard
         private bool _playOneSoundAtOnce;
         private bool _showCategoryIcon;
         private bool _showSoundsPivot;
+        private bool _isExporting;
+        private bool _exported;
 
         public string title
         {
@@ -267,6 +269,29 @@ namespace UniversalSoundBoard
                 NotifyPropertyChanged("showSoundsPivot");
             }
         }
+
+        public bool isExporting
+        {
+            get { return _isExporting; }
+
+            set
+            {
+                _isExporting = value;
+                NotifyPropertyChanged("isExporting");
+            }
+        }
+
+        public bool exported
+        {
+            get { return _exported; }
+
+            set
+            {
+                _exported = value;
+                NotifyPropertyChanged("exported");
+            }
+        }
+
 
 
         public event PropertyChangedEventHandler PropertyChanged;

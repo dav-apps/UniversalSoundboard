@@ -50,7 +50,9 @@ namespace UniversalSoundBoard
             playingSoundsListVisibility = Visibility.Visible,
             playOneSoundAtOnce = false,
             showCategoryIcon = true,
-            showSoundsPivot = true
+            showSoundsPivot = true,
+            isExporting = false,
+            exported = false
         };
 
         /// <summary>
