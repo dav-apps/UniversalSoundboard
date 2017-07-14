@@ -83,7 +83,23 @@
                     <StackPanel Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <StackPanel Orientation="Horizontal">
-                                <Button Name="ExportDataButton" Content="Export Data"
+                                <Button Name="ImportDataButton" x:Uid="SettingsEntry-ImportDataButton" Content="Import Data"
+                                    Click="ImportDataButton_Click" />
+                                <RelativePanel Margin="7">
+                                    <ProgressRing Name="ImportDataProgressRing"
+                                              Height="25" Width="25" IsActive="{Binding isImporting}" />
+                                    <SymbolIcon IsTapEnabled="False" Symbol="Accept" Visibility="{Binding imported}" />
+                                </RelativePanel>
+                            </StackPanel>
+                            <StackPanel Margin="0,10,0,0">
+                                <TextBlock Name="ImportMessageTextBlock" x:Uid="SettingsEntry-ImportMessage"
+                                           Visibility="{Binding isExporting}" />
+                            </StackPanel>
+                        </StackPanel>
+                        
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                            <StackPanel Orientation="Horizontal">
+                                <Button Name="ExportDataButton" x:Uid="SettingsEntry-ExportDataButton" Content="Export Data"
                                     Click="ExportDataButton_Click" />
                                 <RelativePanel Margin="7">
                                     <ProgressRing Name="ExportDataProgressRing"

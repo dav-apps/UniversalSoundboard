@@ -38,6 +38,8 @@ namespace UniversalSoundBoard
         private bool _showSoundsPivot;
         private bool _isExporting;
         private bool _exported;
+        private bool _isImporting;
+        private bool _imported;
 
         public string title
         {
@@ -289,6 +291,28 @@ namespace UniversalSoundBoard
             {
                 _exported = value;
                 NotifyPropertyChanged("exported");
+            }
+        }
+
+        public bool isImporting
+        {
+            get { return _isImporting; }
+
+            set
+            {
+                _isImporting = value;
+                NotifyPropertyChanged("isImporting");
+            }
+        }
+
+        public bool imported
+        {
+            get { return _imported; }
+
+            set
+            {
+                _imported = value;
+                NotifyPropertyChanged("imported");
             }
         }
 

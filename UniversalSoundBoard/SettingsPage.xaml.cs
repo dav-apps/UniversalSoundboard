@@ -219,12 +219,24 @@ namespace UniversalSoundBoard
             StorageFolder folder = await folderPicker.PickSingleFolderAsync();
             if (folder != null)
             {
-                // Application now has read/write access to all contents in the picked folder
-                // (including other sub-folder contents)
                 Windows.Storage.AccessCache.StorageApplicationPermissions.
                 FutureAccessList.AddOrReplace("PickedFolderToken", folder);
 
                 await FileManager.ExportData(folder);
+            }
+        }
+
+        private async void ImportDataButton_Click(object sender, RoutedEventArgs e)
+        {
+            var picker = new Windows.Storage.Pickers.FileOpenPicker();
+            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
+            picker.FileTypeFilter.Add(".zip");
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                await FileManager.ImportDataZip(file);
             }
         }
     }

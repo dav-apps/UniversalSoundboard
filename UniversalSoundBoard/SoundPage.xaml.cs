@@ -528,7 +528,7 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
 
             // Reload page
-            await MainPage.CreateCategoriesObservableCollection();
+            await FileManager.CreateCategoriesObservableCollection();
             await SoundManager.GetAllSounds();
         }
 
@@ -565,7 +565,7 @@ namespace UniversalSoundBoard
 
             (App.Current as App)._itemViewHolder.title = newName;
             await FileManager.UpdateGridView();
-            await MainPage.CreateCategoriesObservableCollection();
+            await FileManager.CreateCategoriesObservableCollection();
         }
     }
 }

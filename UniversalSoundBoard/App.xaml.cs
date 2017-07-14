@@ -52,7 +52,9 @@ namespace UniversalSoundBoard
             showCategoryIcon = true,
             showSoundsPivot = true,
             isExporting = false,
-            exported = false
+            exported = false,
+            isImporting = false,
+            imported = false
         };
 
         /// <summary>

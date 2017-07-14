@@ -49,7 +49,7 @@ namespace UniversalSoundBoard
             initializeLocalSettings();
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
 
-            await CreateCategoriesObservableCollection();
+            await FileManager.CreateCategoriesObservableCollection();
             CreateSettingsListing();
 
             await SoundManager.GetAllSounds();
@@ -59,17 +59,6 @@ namespace UniversalSoundBoard
         private void setDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
-        }
-
-        public static async Task CreateCategoriesObservableCollection()
-        {
-            (App.Current as App)._itemViewHolder.categories.Clear();
-            (App.Current as App)._itemViewHolder.categories.Add(new Category { Name = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), Icon = "\uE10F" });
-            
-            foreach(Category cat in await FileManager.GetCategoriesListAsync())
-            {
-                (App.Current as App)._itemViewHolder.categories.Add(cat);
-            }
         }
 
         private void CreateSettingsListing()
@@ -699,7 +688,7 @@ namespace UniversalSoundBoard
 
             // Show new category
             await ShowCategory(category);
-            await CreateCategoriesObservableCollection();
+            await FileManager.CreateCategoriesObservableCollection();
         }
 
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -710,7 +699,7 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
 
             // Reload page
-            await CreateCategoriesObservableCollection();
+            await FileManager.CreateCategoriesObservableCollection();
             await ShowAllSounds();
         }
 
@@ -739,7 +728,7 @@ namespace UniversalSoundBoard
             await FileManager.renameCategory(oldName, newName);
 
             // Update page
-            await CreateCategoriesObservableCollection();
+            await FileManager.CreateCategoriesObservableCollection();
             await ShowCategory(new Category() { Name = newName, Icon = icon });
         }
     }

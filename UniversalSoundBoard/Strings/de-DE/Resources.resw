@@ -270,4 +270,13 @@
   <data name="SettingsEntry-ExportMessage.Text" xml:space="preserve">
     <value>Deine Sounds werden exportiert. Bitte schließe die App nicht, bevor dieser Vorgang abgeschlossen ist.</value>
   </data>
+  <data name="SettingsEntry-ExportDataButton.Content" xml:space="preserve">
+    <value>Exportiere Sounboard</value>
+  </data>
+  <data name="SettingsEntry-ImportDataButton.Content" xml:space="preserve">
+    <value>Importiere Soundboard</value>
+  </data>
+  <data name="SettingsEntry-ImportMessage" xml:space="preserve">
+    <value>Deine Sounds werden importiert. Bitte schließe die App nicht, bevor dieser Vorgang abgeschlossen ist.</value>
+  </data>
 </root>
