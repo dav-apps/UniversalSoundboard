@@ -292,4 +292,19 @@
   <data name="SettingsEntry-ImportMessage" xml:space="preserve">
     <value>Your sounds will be imported. Please don't close the app before the process is completed.</value>
   </data>
+  <data name="ExportDataContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Export</value>
+  </data>
+  <data name="ExportDataContentDialog-Text1" xml:space="preserve">
+    <value>You can export your Soundboard as a backup or to import your sounds on another device.
+
+Choose the folder in which you want to save the export file.</value>
+  </data>
+  <data name="ExportDataContentDialog-Text2" xml:space="preserve">
+    <value>You can continue to use the app, but please don't close it before this process is finished.
+This may take some time, depending on how large your Soundboard is.</value>
+  </data>
+  <data name="ExportDataContentDialog-Title" xml:space="preserve">
+    <value>Export Soundboard</value>
+  </data>
 </root>

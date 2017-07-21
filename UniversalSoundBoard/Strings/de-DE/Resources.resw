@@ -256,7 +256,7 @@
     <value>Allgemein</value>
   </data>
   <data name="SettingsSoundBoardSize" xml:space="preserve">
-    <value>Die Größe deines Soundboard beträgt </value>
+    <value>Die Größe deines Soundboards beträgt </value>
   </data>
   <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
     <value>Favoriten anzeigen</value>
@@ -278,5 +278,20 @@
   </data>
   <data name="SettingsEntry-ImportMessage" xml:space="preserve">
     <value>Deine Sounds werden importiert. Bitte schließe die App nicht, bevor dieser Vorgang abgeschlossen ist.</value>
+  </data>
+  <data name="ExportDataContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Exportieren</value>
+  </data>
+  <data name="ExportDataContentDialog-Text1" xml:space="preserve">
+    <value>Du kannst dein Soundboard exportieren, um ein Backup zu machen oder um deine Sounds auf einem anderen Gerät zu importieren.
+
+Bitte wähle den Ordner, in dem dein Soundboard gespeichert werden soll.</value>
+  </data>
+  <data name="ExportDataContentDialog-Text2" xml:space="preserve">
+    <value>Du kannst die App weiterhin verwenden, aber bitte schließe die App nicht, bevor dieser Prozess vollständig abgeschlossen wurde.
+Dies kann etwas länger dauern, je nachdem wie groß dein Soundboard ist.</value>
+  </data>
+  <data name="ExportDataContentDialog-Title" xml:space="preserve">
+    <value>Soundboard exportieren</value>
   </data>
 </root>

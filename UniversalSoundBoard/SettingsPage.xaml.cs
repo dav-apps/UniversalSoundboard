@@ -212,18 +212,15 @@ namespace UniversalSoundBoard
 
         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)
         {
-            var folderPicker = new Windows.Storage.Pickers.FolderPicker();
-            folderPicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.Downloads;
-            folderPicker.FileTypeFilter.Add("*");
+            var ExportDataContentDialog = ContentDialogs.CreateExportDataContentDialog();
+            ExportDataContentDialog.PrimaryButtonClick += ExportDataContentDialog_PrimaryButtonClickAsync;
 
-            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
-            if (folder != null)
-            {
-                Windows.Storage.AccessCache.StorageApplicationPermissions.
-                FutureAccessList.AddOrReplace("PickedFolderToken", folder);
+            await ExportDataContentDialog.ShowAsync();
+        }
 
-                await FileManager.ExportData(folder);
-            }
+        private async void ExportDataContentDialog_PrimaryButtonClickAsync(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            await FileManager.ExportData(ContentDialogs.ExportFolder);
         }
 
         private async void ImportDataButton_Click(object sender, RoutedEventArgs e)

@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -14,19 +16,95 @@ namespace UniversalSoundBoard.Model
         public static TextBox NewCategoryTextBox;
         public static TextBox EditCategoryTextBox;
         public static TextBox RenameSoundTextBox;
+        public static TextBox ExportFolderTextBox;
+        public static StorageFolder ExportFolder;
         public static ComboBox IconSelectionComboBox;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteSoundContentDialog;
         public static ContentDialog RenameSoundContentDialog;
         public static ContentDialog DeleteSoundsContentDialog;
+        public static ContentDialog ExportDataContentDialog;
 
+
+        public static ContentDialog CreateExportDataContentDialog()
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            ExportDataContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("ExportDataContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("ExportDataContentDialog-PrimaryButton"),
+                IsPrimaryButtonEnabled = false,
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+            };
+
+            StackPanel content = new StackPanel();
+            content.Orientation = Orientation.Vertical;
+
+            TextBlock contentText = new TextBlock();
+            contentText.Margin = new Thickness(0, 0, 0, 30);
+            contentText.TextWrapping = TextWrapping.WrapWholeWords;
+            contentText.Text = loader.GetString("ExportDataContentDialog-Text1");
+
+
+            // Create StackPanel with TextBox and Folder button
+            StackPanel folderStackPanel = new StackPanel();
+            folderStackPanel.Orientation = Orientation.Horizontal;
+
+            ExportFolderTextBox = new TextBox();
+            ExportFolderTextBox.IsReadOnly = true;
+            Button folderButton = new Button();
+            folderButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
+            folderButton.Content = "\uE838";
+            folderButton.FontSize = 18;
+            folderButton.Width = 35;
+            folderButton.Height = 35;
+            folderButton.Tapped += FolderButton_Tapped;
+
+            folderStackPanel.Children.Add(folderButton);
+            folderStackPanel.Children.Add(ExportFolderTextBox);
+
+
+            TextBlock contentText2 = new TextBlock();
+            contentText2.Margin = new Thickness(0, 30, 0, 0);
+            contentText2.TextWrapping = TextWrapping.WrapWholeWords;
+            contentText2.Text = loader.GetString("ExportDataContentDialog-Text2");
+
+
+            content.Children.Add(contentText);
+            content.Children.Add(folderStackPanel);
+            content.Children.Add(contentText2);
+
+            ExportDataContentDialog.Content = content;
+
+            return ExportDataContentDialog;
+        }
+
+        private static async void FolderButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            var folderPicker = new FolderPicker();
+            folderPicker.SuggestedStartLocation = PickerLocationId.Downloads;
+            folderPicker.FileTypeFilter.Add("*");
+
+            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+            if (folder != null)
+            {
+                Windows.Storage.AccessCache.StorageApplicationPermissions.
+                FutureAccessList.AddOrReplace("PickedFolderToken", folder);
+
+                // Set TextBox text and path variable and make primary button clickable
+                ExportFolder = folder;
+                ExportFolderTextBox.Text = folder.Path;
+                ExportDataContentDialog.IsPrimaryButtonEnabled = true;
+            }
+        }
 
         public static ContentDialog CreateDeleteSoundsContentDialogAsync()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 
-            ContentDialog DeleteSoundsContentDialog = new ContentDialog
+            DeleteSoundsContentDialog = new ContentDialog
             {
                 Title = loader.GetString("DeleteSoundsContentDialog-Title"),
                 Content = loader.GetString("DeleteSoundsContentDialog-Content"),
