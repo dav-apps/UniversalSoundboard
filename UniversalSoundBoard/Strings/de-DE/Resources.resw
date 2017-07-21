@@ -289,9 +289,25 @@ Bitte wähle den Ordner, in dem dein Soundboard gespeichert werden soll.</value>
   </data>
   <data name="ExportDataContentDialog-Text2" xml:space="preserve">
     <value>Du kannst die App weiterhin verwenden, aber bitte schließe die App nicht, bevor dieser Prozess vollständig abgeschlossen wurde.
-Dies kann etwas länger dauern, je nachdem wie groß dein Soundboard ist.</value>
+Dies kann einige Zeit dauern, je nachdem wie groß dein Soundboard ist.</value>
   </data>
   <data name="ExportDataContentDialog-Title" xml:space="preserve">
     <value>Soundboard exportieren</value>
+  </data>
+  <data name="ImportDataContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Importieren</value>
+  </data>
+  <data name="ImportDataContentDialog-Text1" xml:space="preserve">
+    <value>Du kannst ein bestehendes Soundboard importieren.
+Wähle einfach die Datei aus, die beim Exportieren erstellt wurde.</value>
+  </data>
+  <data name="ImportDataContentDialog-Text2" xml:space="preserve">
+    <value>Die importierten Sounds werden zu deinem bestehenden Soundboard hinzugefügt.
+
+Du kannst die App weiterhin verwenden, aber bitte schließe die App nicht, bevor dieser Prozess vollständig abgeschlossen wurde.
+Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboard ist.</value>
+  </data>
+  <data name="ImportDataContentDialog-Title" xml:space="preserve">
+    <value>Soundboard importieren</value>
   </data>
 </root>

@@ -307,4 +307,20 @@ This may take some time, depending on how large your Soundboard is.</value>
   <data name="ExportDataContentDialog-Title" xml:space="preserve">
     <value>Export Soundboard</value>
   </data>
+  <data name="ImportDataContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="ImportDataContentDialog-Text1" xml:space="preserve">
+    <value>You can import a Soundboard from another device.
+Just choose the file that was generated when you exported your Soundboard.</value>
+  </data>
+  <data name="ImportDataContentDialog-Text2" xml:space="preserve">
+    <value>The new sounds will be added to this Soundboard.
+
+You can continue to use the app, but please don't close it before this process is finished.
+This may take some time, depending on how large the import file is.</value>
+  </data>
+  <data name="ImportDataContentDialog-Title" xml:space="preserve">
+    <value>Import Soundboard</value>
+  </data>
 </root>

@@ -225,16 +225,15 @@ namespace UniversalSoundBoard
 
         private async void ImportDataButton_Click(object sender, RoutedEventArgs e)
         {
-            var picker = new Windows.Storage.Pickers.FileOpenPicker();
-            picker.ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail;
-            picker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary;
-            picker.FileTypeFilter.Add(".zip");
+            var ImportDataContentDialog = ContentDialogs.CreateImportDataContentDialog();
+            ImportDataContentDialog.PrimaryButtonClick += ImportDataContentDialog_PrimaryButtonClick;
 
-            StorageFile file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                await FileManager.ImportDataZip(file);
-            }
+            await ImportDataContentDialog.ShowAsync();
+        }
+
+        private async void ImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            await FileManager.ImportDataZip(ContentDialogs.ImportFile);
         }
     }
 }

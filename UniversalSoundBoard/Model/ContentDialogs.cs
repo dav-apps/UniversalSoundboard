@@ -17,7 +17,9 @@ namespace UniversalSoundBoard.Model
         public static TextBox EditCategoryTextBox;
         public static TextBox RenameSoundTextBox;
         public static TextBox ExportFolderTextBox;
+        public static TextBox ImportFolderTextBox;
         public static StorageFolder ExportFolder;
+        public static StorageFile ImportFile;
         public static ComboBox IconSelectionComboBox;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
@@ -25,7 +27,79 @@ namespace UniversalSoundBoard.Model
         public static ContentDialog RenameSoundContentDialog;
         public static ContentDialog DeleteSoundsContentDialog;
         public static ContentDialog ExportDataContentDialog;
+        public static ContentDialog ImportDataContentDialog;
 
+
+        public static ContentDialog CreateImportDataContentDialog()
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            ImportDataContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("ImportDataContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("ImportDataContentDialog-PrimaryButton"),
+                IsPrimaryButtonEnabled = false,
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+            };
+
+            StackPanel content = new StackPanel();
+            content.Orientation = Orientation.Vertical;
+
+            TextBlock contentText = new TextBlock();
+            contentText.Margin = new Thickness(0, 0, 0, 30);
+            contentText.TextWrapping = TextWrapping.WrapWholeWords;
+            contentText.Text = loader.GetString("ImportDataContentDialog-Text1");
+
+
+            // Create StackPanel with TextBox and Folder button
+            StackPanel folderStackPanel = new StackPanel();
+            folderStackPanel.Orientation = Orientation.Horizontal;
+
+            ImportFolderTextBox = new TextBox();
+            ImportFolderTextBox.IsReadOnly = true;
+            Button folderButton = new Button();
+            folderButton.FontFamily = new FontFamily("Segoe MDL2 Assets");
+            folderButton.Content = "\uE838";
+            folderButton.FontSize = 18;
+            folderButton.Width = 35;
+            folderButton.Height = 35;
+            folderButton.Tapped += ImportFolderButton_Tapped;
+
+            folderStackPanel.Children.Add(folderButton);
+            folderStackPanel.Children.Add(ImportFolderTextBox);
+
+
+            TextBlock contentText2 = new TextBlock();
+            contentText2.Margin = new Thickness(0, 30, 0, 0);
+            contentText2.TextWrapping = TextWrapping.WrapWholeWords;
+            contentText2.Text = loader.GetString("ImportDataContentDialog-Text2");
+
+
+            content.Children.Add(contentText);
+            content.Children.Add(folderStackPanel);
+            content.Children.Add(contentText2);
+
+            ImportDataContentDialog.Content = content;
+
+            return ImportDataContentDialog;
+        }
+
+        private async static void ImportFolderButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            var picker = new FileOpenPicker();
+            picker.ViewMode = PickerViewMode.Thumbnail;
+            picker.SuggestedStartLocation = PickerLocationId.ComputerFolder;
+            picker.FileTypeFilter.Add(".zip");
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                // Set TextBox text and StorageFile variable and make primary button clickable
+                ImportFile = file;
+                ImportFolderTextBox.Text = file.Path;
+                ImportDataContentDialog.IsPrimaryButtonEnabled = true;
+            }
+        }
 
         public static ContentDialog CreateExportDataContentDialog()
         {
@@ -60,7 +134,7 @@ namespace UniversalSoundBoard.Model
             folderButton.FontSize = 18;
             folderButton.Width = 35;
             folderButton.Height = 35;
-            folderButton.Tapped += FolderButton_Tapped;
+            folderButton.Tapped += ExportFolderButton_Tapped;
 
             folderStackPanel.Children.Add(folderButton);
             folderStackPanel.Children.Add(ExportFolderTextBox);
@@ -81,7 +155,7 @@ namespace UniversalSoundBoard.Model
             return ExportDataContentDialog;
         }
 
-        private static async void FolderButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private static async void ExportFolderButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             var folderPicker = new FolderPicker();
             folderPicker.SuggestedStartLocation = PickerLocationId.Downloads;
@@ -93,7 +167,7 @@ namespace UniversalSoundBoard.Model
                 Windows.Storage.AccessCache.StorageApplicationPermissions.
                 FutureAccessList.AddOrReplace("PickedFolderToken", folder);
 
-                // Set TextBox text and path variable and make primary button clickable
+                // Set TextBox text and StorageFolder variable and make primary button clickable
                 ExportFolder = folder;
                 ExportFolderTextBox.Text = folder.Path;
                 ExportDataContentDialog.IsPrimaryButtonEnabled = true;
