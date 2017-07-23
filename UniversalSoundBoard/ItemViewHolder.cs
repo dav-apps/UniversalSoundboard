@@ -43,6 +43,7 @@ namespace UniversalSoundBoard
         private bool _areExportAndImportButtonsEnabled;
         private string _exportMessage;
         private string _importMessage;
+        private string _soundboardSize;
 
         public string title
         {
@@ -349,6 +350,17 @@ namespace UniversalSoundBoard
             {
                 _importMessage = value;
                 NotifyPropertyChanged("importMessage");
+            }
+        }
+
+        public string soundboardSize
+        {
+            get { return _soundboardSize; }
+
+            set
+            {
+                _soundboardSize = value;
+                NotifyPropertyChanged("soundboardSize");
             }
         }
 

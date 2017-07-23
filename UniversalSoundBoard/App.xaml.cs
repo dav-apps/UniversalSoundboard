@@ -57,7 +57,8 @@ namespace UniversalSoundBoard
             imported = false,
             areExportAndImportButtonsEnabled = true,
             exportMessage = "",
-            importMessage = ""
+            importMessage = "",
+            soundboardSize = ""
         };
 
         /// <summary>

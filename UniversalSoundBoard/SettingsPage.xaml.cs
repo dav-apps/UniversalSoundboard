@@ -45,7 +45,7 @@ namespace UniversalSoundBoard
 
             darkThemeToggledAtBeginning = (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? true : false;
             setToggleMessageVisibility();
-            await setSoundBoardSizeText();
+            await FileManager.setSoundBoardSizeTextAsync();
         }
 
         private void setDataContext()
@@ -134,29 +134,6 @@ namespace UniversalSoundBoard
             {
                 ThemeChangeMessageTextBlock.Visibility = Visibility.Collapsed;
             }
-        }
-
-        private async Task setSoundBoardSizeText()
-        {
-            if ((App.Current as App)._itemViewHolder.progressRingIsActive)
-            {
-                await Task.Delay(1000);
-                await setSoundBoardSizeText();
-            }
-
-            float totalSize = 0;
-            foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
-            {
-                float size;
-                size = await FileManager.GetFileSizeInGBAsync(sound.AudioFile);
-                if (sound.ImageFile != null)
-                {
-                    size += await FileManager.GetFileSizeInGBAsync(sound.ImageFile);
-                }
-                totalSize += size;
-            }
-
-            SoundBoardSizeTextBlock.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SettingsSoundBoardSize") + totalSize.ToString("n2") + " GB.";
         }
 
         private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)

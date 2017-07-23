@@ -581,6 +581,7 @@ namespace UniversalSoundBoard
 
                                 await SoundManager.GetAllSounds();
                                 await FileManager.CreateCategoriesObservableCollection();
+                                await setSoundBoardSizeTextAsync();
                             }));
                     });
         }
@@ -650,7 +651,10 @@ namespace UniversalSoundBoard
             // Add imported categories to original list
             foreach(Category category in importCategoriesList)
             {
-                categoriesList.Add(category);
+                if(categoriesList.Where(cat => cat.Name.Equals(category.Name)).Count() == 0)
+                {
+                    categoriesList.Add(category);
+                }
             }
 
             // Write data.json with new categories list
@@ -733,6 +737,29 @@ namespace UniversalSoundBoard
             {
                 importFolder = await localDataFolder.GetFolderAsync("import");
             }
+        }
+
+        public static async Task setSoundBoardSizeTextAsync()
+        {
+            if ((App.Current as App)._itemViewHolder.progressRingIsActive)
+            {
+                await Task.Delay(1000);
+                await setSoundBoardSizeTextAsync();
+            }
+
+            float totalSize = 0;
+            foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
+            {
+                float size;
+                size = await FileManager.GetFileSizeInGBAsync(sound.AudioFile);
+                if (sound.ImageFile != null)
+                {
+                    size += await FileManager.GetFileSizeInGBAsync(sound.ImageFile);
+                }
+                totalSize += size;
+            }
+
+            (App.Current as App)._itemViewHolder.soundboardSize = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SettingsSoundBoardSize") + totalSize.ToString("n2") + " GB.";
         }
 
 

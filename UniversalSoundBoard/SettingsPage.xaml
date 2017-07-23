@@ -113,8 +113,8 @@
                             </StackPanel>
                         </StackPanel>
                         
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}" Margin="5,15,5,5">
-                            <TextBlock Name="SoundBoardSizeTextBlock" />
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}" Margin="5,20,5,5">
+                            <TextBlock Name="SoundBoardSizeTextBlock" Text="{Binding soundboardSize}" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
