@@ -255,6 +255,17 @@ namespace UniversalSoundBoard
             {
                 await (await localDataFolder.GetFolderAsync("import")).DeleteAsync();
             }
+
+
+            if(await localDataFolder.TryGetItemAsync("import.zip") != null)
+            {
+                await (await localDataFolder.GetFileAsync("import.zip")).DeleteAsync();
+            }
+
+            if (await localDataFolder.TryGetItemAsync("export.zip") != null)
+            {
+                await (await localDataFolder.GetFileAsync("export.zip")).DeleteAsync();
+            }
         }
 
         public static async Task CreateCategoriesObservableCollection()
@@ -447,7 +458,10 @@ namespace UniversalSoundBoard
         public static async Task ExportData(StorageFolder destinationFolder)
         {
             (App.Current as App)._itemViewHolder.exported = false;
+            (App.Current as App)._itemViewHolder.imported = false;
             (App.Current as App)._itemViewHolder.isExporting = true;
+            (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = false;
+            (App.Current as App)._itemViewHolder.exportMessage = "Ordner erstellen...";
 
             await deleteExportAndImportFoldersAsync();
             await createDataFolderAndJsonFileIfNotExistsAsync();
@@ -467,6 +481,8 @@ namespace UniversalSoundBoard
             StorageFolder dataExportFolder = await exportFolder.GetFolderAsync("data");
             StorageFile dataFile = await dataFolder.GetFileAsync("data.json");
 
+            (App.Current as App)._itemViewHolder.exportMessage = "Dateien zusammensammeln...";
+
             // Copy the files into the export folder
             foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
             {
@@ -478,30 +494,49 @@ namespace UniversalSoundBoard
                 }
             }
             await dataFile.CopyAsync(dataExportFolder, dataFile.Name, NameCollisionOption.ReplaceExisting);
-            
+            (App.Current as App)._itemViewHolder.exportMessage = "Zip-Datei erstellen...";
+
             // Create Zip file in local storage
             IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
                     async (workItem) =>
                     {
-                        var t = Task.Run(() => ZipFile.CreateFromDirectory(exportFolder.Path, destinationFolder.Path + @"\UniversalSoundBoard " + DateTime.Today.ToString("dd.MM.yyyy") + ".zip"));
+                        var t = Task.Run(() => ZipFile.CreateFromDirectory(exportFolder.Path, localDataFolder.Path + @"\export.zip"));
                         t.Wait();
 
+                        // Get the created file and move it to the picked folder
                         await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                             CoreDispatcherPriority.High,
                             new DispatchedHandler(() =>
                             {
+                                (App.Current as App)._itemViewHolder.exportMessage = "Zip-Datei verschieben...";
+                            }));
+
+                        StorageFile exportZipFile = await localDataFolder.GetFileAsync("export.zip");
+                        await exportZipFile.MoveAsync(destinationFolder, "UniversalSoundBoard " + DateTime.Today.ToString("dd.MM.yyyy") + ".zip", NameCollisionOption.GenerateUniqueName);
+
+                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                            CoreDispatcherPriority.High,
+                            new DispatchedHandler(async () =>
+                            {
+                                (App.Current as App)._itemViewHolder.exportMessage = "Aufräumen...";
+                                await deleteExportAndImportFoldersAsync();
+
+                                (App.Current as App)._itemViewHolder.exportMessage = "";
                                 (App.Current as App)._itemViewHolder.isExporting = false;
                                 (App.Current as App)._itemViewHolder.exported = true;
+                                (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = true;
                             }));
                         // SendExportSuccessfullNotification();
-                        await deleteExportAndImportFoldersAsync();
                     });
         }
 
         public static async Task ImportDataZip(StorageFile zipFile)
         {
             (App.Current as App)._itemViewHolder.isImporting = true;
+            (App.Current as App)._itemViewHolder.exported = false;
             (App.Current as App)._itemViewHolder.imported = false;
+            (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = false;
+            (App.Current as App)._itemViewHolder.importMessage = "Zip-Datei kopieren...";
 
             await deleteExportAndImportFoldersAsync();
             await CreateImportFolders();
@@ -510,8 +545,10 @@ namespace UniversalSoundBoard
             StorageFolder importFolder = await localDataFolder.GetFolderAsync("import");
 
             // Copy zip file into local storage
-            StorageFile newZipFile = await zipFile.CopyAsync(localDataFolder);
-            
+            StorageFile newZipFile = await zipFile.CopyAsync(localDataFolder, "import.zip", NameCollisionOption.ReplaceExisting);
+
+            (App.Current as App)._itemViewHolder.importMessage = "Soundboard extrahieren...";
+
             IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
                     async (workItem) =>
                     {
@@ -519,19 +556,31 @@ namespace UniversalSoundBoard
                         var t = Task.Run(() => ZipFile.ExtractToDirectory(newZipFile.Path, importFolder.Path));
                         t.Wait();
 
+                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                            CoreDispatcherPriority.High,
+                            new DispatchedHandler(() =>
+                            {
+
+                                (App.Current as App)._itemViewHolder.importMessage = "Neue Sounds hinzufügen...";
+                            }));
+
                         await ImportData();
 
                         await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                             CoreDispatcherPriority.High,
                             new DispatchedHandler(async () =>
                             {
+                                (App.Current as App)._itemViewHolder.importMessage = "Aufräumen...";
+                                await deleteExportAndImportFoldersAsync();
+
+                                (App.Current as App)._itemViewHolder.importMessage = "";
                                 (App.Current as App)._itemViewHolder.isImporting = false;
                                 (App.Current as App)._itemViewHolder.imported = true;
                                 (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+                                (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = true;
 
                                 await SoundManager.GetAllSounds();
                                 await FileManager.CreateCategoriesObservableCollection();
-                                await deleteExportAndImportFoldersAsync();
                             }));
                     });
         }
@@ -710,7 +759,7 @@ namespace UniversalSoundBoard
 
         public static string HTMLEncodeSpecialChars(string text)
         {
-            System.Text.StringBuilder sb = new System.Text.StringBuilder();
+            StringBuilder sb = new StringBuilder();
             foreach (char c in text)
             {
                 if (c > 127) // special chars

@@ -280,17 +280,11 @@
   <data name="ExportNotification-Title" xml:space="preserve">
     <value>Export successfull!</value>
   </data>
-  <data name="SettingsEntry-ExportMessage.Text" xml:space="preserve">
-    <value>Your sounds will be exported. Please don't close the app before the process is completed.</value>
-  </data>
   <data name="SettingsEntry-ExportDataButton.Content" xml:space="preserve">
     <value>Export Soundboard</value>
   </data>
   <data name="SettingsEntry-ImportDataButton.Content" xml:space="preserve">
     <value>Import Soundboard</value>
-  </data>
-  <data name="SettingsEntry-ImportMessage" xml:space="preserve">
-    <value>Your sounds will be imported. Please don't close the app before the process is completed.</value>
   </data>
   <data name="ExportDataContentDialog-PrimaryButton" xml:space="preserve">
     <value>Export</value>

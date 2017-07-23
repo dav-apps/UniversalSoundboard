@@ -54,7 +54,10 @@ namespace UniversalSoundBoard
             isExporting = false,
             exported = false,
             isImporting = false,
-            imported = false
+            imported = false,
+            areExportAndImportButtonsEnabled = true,
+            exportMessage = "",
+            importMessage = ""
         };
 
         /// <summary>

@@ -40,6 +40,9 @@ namespace UniversalSoundBoard
         private bool _exported;
         private bool _isImporting;
         private bool _imported;
+        private bool _areExportAndImportButtonsEnabled;
+        private string _exportMessage;
+        private string _importMessage;
 
         public string title
         {
@@ -313,6 +316,39 @@ namespace UniversalSoundBoard
             {
                 _imported = value;
                 NotifyPropertyChanged("imported");
+            }
+        }
+
+        public bool areExportAndImportButtonsEnabled
+        {
+            get { return _areExportAndImportButtonsEnabled; }
+
+            set
+            {
+                _areExportAndImportButtonsEnabled = value;
+                NotifyPropertyChanged("areExportAndImportButtonsEnabled");
+            }
+        }
+
+        public string exportMessage
+        {
+            get { return _exportMessage; }
+
+            set
+            {
+                _exportMessage = value;
+                NotifyPropertyChanged("exportMessage");
+            }
+        }
+
+        public string importMessage
+        {
+            get { return _importMessage; }
+
+            set
+            {
+                _importMessage = value;
+                NotifyPropertyChanged("importMessage");
             }
         }
 

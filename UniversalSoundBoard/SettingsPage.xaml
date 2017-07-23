@@ -84,7 +84,7 @@
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <StackPanel Orientation="Horizontal">
                                 <Button Name="ImportDataButton" x:Uid="SettingsEntry-ImportDataButton" Content="Import Data"
-                                    Click="ImportDataButton_Click" />
+                                    Click="ImportDataButton_Click" IsEnabled="{Binding areExportAndImportButtonsEnabled}" />
                                 <RelativePanel Margin="7">
                                     <ProgressRing Name="ImportDataProgressRing"
                                               Height="25" Width="25" IsActive="{Binding isImporting}" />
@@ -92,15 +92,15 @@
                                 </RelativePanel>
                             </StackPanel>
                             <StackPanel Margin="0,10,0,0">
-                                <TextBlock Name="ImportMessageTextBlock" x:Uid="SettingsEntry-ImportMessage"
-                                           Visibility="{Binding isExporting}" />
+                                <TextBlock Name="ImportMessageTextBlock" Text="{Binding importMessage}"
+                                           FontSize="14" Visibility="{Binding isImporting}" />
                             </StackPanel>
                         </StackPanel>
                         
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <StackPanel Orientation="Horizontal">
                                 <Button Name="ExportDataButton" x:Uid="SettingsEntry-ExportDataButton" Content="Export Data"
-                                    Click="ExportDataButton_Click" />
+                                    Click="ExportDataButton_Click" IsEnabled="{Binding areExportAndImportButtonsEnabled}" />
                                 <RelativePanel Margin="7">
                                     <ProgressRing Name="ExportDataProgressRing"
                                               Height="25" Width="25" IsActive="{Binding isExporting}" />
@@ -108,8 +108,8 @@
                                 </RelativePanel>
                             </StackPanel>
                             <StackPanel Margin="0,10,0,0">
-                                <TextBlock Name="ExportMessageTextBlock" x:Uid="SettingsEntry-ExportMessage"
-                                           Visibility="{Binding isExporting}" />
+                                <TextBlock Name="ExportMessageTextBlock" Text="{Binding exportMessage}"
+                                           FontSize="14" Visibility="{Binding isExporting}" />
                             </StackPanel>
                         </StackPanel>
                         
