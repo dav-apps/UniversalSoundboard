@@ -317,4 +317,28 @@ This may take some time, depending on how large the import file is.</value>
   <data name="ImportDataContentDialog-Title" xml:space="preserve">
     <value>Import Soundboard</value>
   </data>
+  <data name="ExportImportMessage-TidyUp" xml:space="preserve">
+    <value>Tidying up...</value>
+  </data>
+  <data name="ExportMessage-1" xml:space="preserve">
+    <value>Creating folders...</value>
+  </data>
+  <data name="ExportMessage-2" xml:space="preserve">
+    <value>Gathering files...</value>
+  </data>
+  <data name="ExportMessage-3" xml:space="preserve">
+    <value>Creating the zip file...</value>
+  </data>
+  <data name="ExportMessage-4" xml:space="preserve">
+    <value>Moving the zip file...</value>
+  </data>
+  <data name="ImportMessage-1" xml:space="preserve">
+    <value>Copying zip file...</value>
+  </data>
+  <data name="ImportMessage-2" xml:space="preserve">
+    <value>Extracting soundboard...</value>
+  </data>
+  <data name="ImportMessage-3" xml:space="preserve">
+    <value>Adding new sounds...</value>
+  </data>
 </root>

@@ -304,4 +304,28 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="ImportDataContentDialog-Title" xml:space="preserve">
     <value>Soundboard importieren</value>
   </data>
+  <data name="ExportImportMessage-TidyUp" xml:space="preserve">
+    <value>Aufräumen...</value>
+  </data>
+  <data name="ExportMessage-1" xml:space="preserve">
+    <value>Ordner erstellen...</value>
+  </data>
+  <data name="ExportMessage-2" xml:space="preserve">
+    <value>Dateien zusammensammeln...</value>
+  </data>
+  <data name="ExportMessage-3" xml:space="preserve">
+    <value>Zip-Datei erstellen...</value>
+  </data>
+  <data name="ExportMessage-4" xml:space="preserve">
+    <value>Zip-Datei verschieben...</value>
+  </data>
+  <data name="ImportMessage-1" xml:space="preserve">
+    <value>Zip-Datei kopieren...</value>
+  </data>
+  <data name="ImportMessage-2" xml:space="preserve">
+    <value>Soundboard extrahieren...</value>
+  </data>
+  <data name="ImportMessage-3" xml:space="preserve">
+    <value>Neue Sounds hinzufügen...</value>
+  </data>
 </root>

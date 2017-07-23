@@ -457,11 +457,12 @@ namespace UniversalSoundBoard
 
         public static async Task ExportData(StorageFolder destinationFolder)
         {
+            var stringLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
             (App.Current as App)._itemViewHolder.exported = false;
             (App.Current as App)._itemViewHolder.imported = false;
             (App.Current as App)._itemViewHolder.isExporting = true;
             (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = false;
-            (App.Current as App)._itemViewHolder.exportMessage = "Ordner erstellen...";
+            (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-1"); // 1
 
             await deleteExportAndImportFoldersAsync();
             await createDataFolderAndJsonFileIfNotExistsAsync();
@@ -481,7 +482,7 @@ namespace UniversalSoundBoard
             StorageFolder dataExportFolder = await exportFolder.GetFolderAsync("data");
             StorageFile dataFile = await dataFolder.GetFileAsync("data.json");
 
-            (App.Current as App)._itemViewHolder.exportMessage = "Dateien zusammensammeln...";
+            (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-2"); // 2
 
             // Copy the files into the export folder
             foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
@@ -494,7 +495,7 @@ namespace UniversalSoundBoard
                 }
             }
             await dataFile.CopyAsync(dataExportFolder, dataFile.Name, NameCollisionOption.ReplaceExisting);
-            (App.Current as App)._itemViewHolder.exportMessage = "Zip-Datei erstellen...";
+            (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-3"); // 3
 
             // Create Zip file in local storage
             IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
@@ -508,7 +509,7 @@ namespace UniversalSoundBoard
                             CoreDispatcherPriority.High,
                             new DispatchedHandler(() =>
                             {
-                                (App.Current as App)._itemViewHolder.exportMessage = "Zip-Datei verschieben...";
+                                (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-4"); // 4
                             }));
 
                         StorageFile exportZipFile = await localDataFolder.GetFileAsync("export.zip");
@@ -518,7 +519,7 @@ namespace UniversalSoundBoard
                             CoreDispatcherPriority.High,
                             new DispatchedHandler(async () =>
                             {
-                                (App.Current as App)._itemViewHolder.exportMessage = "Aufräumen...";
+                                (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportImportMessage-TidyUp"); // TidyUp
                                 await deleteExportAndImportFoldersAsync();
 
                                 (App.Current as App)._itemViewHolder.exportMessage = "";
@@ -532,11 +533,12 @@ namespace UniversalSoundBoard
 
         public static async Task ImportDataZip(StorageFile zipFile)
         {
+            var stringLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
             (App.Current as App)._itemViewHolder.isImporting = true;
             (App.Current as App)._itemViewHolder.exported = false;
             (App.Current as App)._itemViewHolder.imported = false;
             (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = false;
-            (App.Current as App)._itemViewHolder.importMessage = "Zip-Datei kopieren...";
+            (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-1"); // 1
 
             await deleteExportAndImportFoldersAsync();
             await CreateImportFolders();
@@ -547,7 +549,7 @@ namespace UniversalSoundBoard
             // Copy zip file into local storage
             StorageFile newZipFile = await zipFile.CopyAsync(localDataFolder, "import.zip", NameCollisionOption.ReplaceExisting);
 
-            (App.Current as App)._itemViewHolder.importMessage = "Soundboard extrahieren...";
+            (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-2"); // 2
 
             IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
                     async (workItem) =>
@@ -561,7 +563,7 @@ namespace UniversalSoundBoard
                             new DispatchedHandler(() =>
                             {
 
-                                (App.Current as App)._itemViewHolder.importMessage = "Neue Sounds hinzufügen...";
+                                (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-3"); // 3
                             }));
 
                         await ImportData();
@@ -570,7 +572,7 @@ namespace UniversalSoundBoard
                             CoreDispatcherPriority.High,
                             new DispatchedHandler(async () =>
                             {
-                                (App.Current as App)._itemViewHolder.importMessage = "Aufräumen...";
+                                (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ExportImportMessage-TidyUp"); // TidyUp
                                 await deleteExportAndImportFoldersAsync();
 
                                 (App.Current as App)._itemViewHolder.importMessage = "";
@@ -665,35 +667,6 @@ namespace UniversalSoundBoard
             await GetCategoriesListAsync();
         }
 
-        private static void SendExportSuccessfullNotification()
-        {
-            ToastContent content = new ToastContent()
-            {
-                Visual = new ToastVisual()
-                {
-                    BindingGeneric = new ToastBindingGeneric()
-                    {
-                        Children =
-                        {
-                            new Microsoft.Toolkit.Uwp.Notifications.AdaptiveText()
-                            {
-                                Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("ExportNotification-Title")
-                            },
-
-                            new Microsoft.Toolkit.Uwp.Notifications.AdaptiveText()
-                            {
-                                Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("ExportNotification-Message")
-                            }
-                        }
-                    }
-                }
-            };
-
-            XmlDocument xmlContent = content.GetXml();
-            ToastNotification notification = new ToastNotification(xmlContent);
-            ToastNotificationManager.CreateToastNotifier().Show(notification);
-        }
-
         private static async Task CreateExportFoldersAsync()
         {
             StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
@@ -737,6 +710,35 @@ namespace UniversalSoundBoard
             {
                 importFolder = await localDataFolder.GetFolderAsync("import");
             }
+        }
+
+        private static void SendExportSuccessfullNotification()
+        {
+            ToastContent content = new ToastContent()
+            {
+                Visual = new ToastVisual()
+                {
+                    BindingGeneric = new ToastBindingGeneric()
+                    {
+                        Children =
+                        {
+                            new Microsoft.Toolkit.Uwp.Notifications.AdaptiveText()
+                            {
+                                Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("ExportNotification-Title")
+                            },
+
+                            new Microsoft.Toolkit.Uwp.Notifications.AdaptiveText()
+                            {
+                                Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("ExportNotification-Message")
+                            }
+                        }
+                    }
+                }
+            };
+
+            XmlDocument xmlContent = content.GetXml();
+            ToastNotification notification = new ToastNotification(xmlContent);
+            ToastNotificationManager.CreateToastNotifier().Show(notification);
         }
 
         public static async Task setSoundBoardSizeTextAsync()
