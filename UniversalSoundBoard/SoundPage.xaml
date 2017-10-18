@@ -84,7 +84,8 @@
                             ItemClick="SoundGridView_ItemClick"
                             SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding sounds, Mode=TwoWay}"
-                            DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" RightTapped="SoundGridView_RightTapped">
+                            DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" 
+                            RightTapped="SoundGridView_RightTapped" SizeChanged="SoundGridView_SizeChanged">
                     </GridView>
                 </PivotItem>
                 <PivotItem x:Uid="FavouritesPivotHeader">
@@ -92,8 +93,8 @@
                             ItemClick="SoundGridView_ItemClick"
                             SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding favouriteSounds, Mode=TwoWay}"
-                            DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" RightTapped="SoundGridView_RightTapped">
-
+                            DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" 
+                            RightTapped="SoundGridView_RightTapped" SizeChanged="FavouriteSoundGridView_SizeChanged">
                     </GridView>
                 </PivotItem>
             </Pivot>
@@ -102,7 +103,8 @@
                             ItemClick="SoundGridView_ItemClick"
                             SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding sounds, Mode=TwoWay}"
-                            DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" RightTapped="SoundGridView_RightTapped">
+                            DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" 
+                            RightTapped="SoundGridView_RightTapped" SizeChanged="SoundGridView2_SizeChanged">
             </GridView>
 
 

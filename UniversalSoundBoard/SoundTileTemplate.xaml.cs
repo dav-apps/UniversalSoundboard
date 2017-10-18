@@ -42,11 +42,11 @@ namespace UniversalSoundBoard
             Loaded += SoundTileTemplate_Loaded;
             this.DataContextChanged += (s, e) => Bindings.Update(); // <-- only working with x:Bind !!!
             setDarkThemeLayout();
+            setDataContext();
         }
 
         async void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
         {
-            setDataContext();
             await FileManager.GetCategoriesListAsync();
             createCategoriesFlyout();
         }

@@ -510,6 +510,42 @@ namespace UniversalSoundBoard
             soundsPivotSelected = !soundsPivotSelected;
         }
 
+        private void SoundGridView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SetSoundGridItemWidth(e, SoundGridView);
+        }
+
+        private void FavouriteSoundGridView_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SetSoundGridItemWidth(e, FavouriteSoundGridView);
+        }
+
+        private void SoundGridView2_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SetSoundGridItemWidth(e, SoundGridView2);
+        }
+
+        private void SetSoundGridItemWidth(SizeChangedEventArgs e, GridView gridView)
+        {
+            double optimizedWidth = 130.0;
+
+            if (Window.Current.Bounds.Width > FileManager.tabletMaxWidth)
+            {
+                optimizedWidth = 180;
+            }
+
+            if (Window.Current.Bounds.Width > (FileManager.tabletMaxWidth * 2.3))
+            {
+                optimizedWidth = 300;
+            }
+
+            ItemsWrapGrid appItemsPanel = (ItemsWrapGrid)gridView.ItemsPanelRoot;
+
+            double margin = 12.0;
+            var number = (int)e.NewSize.Width / (int)optimizedWidth;
+            appItemsPanel.ItemWidth = (e.NewSize.Width - margin) / (double)number;
+        }
+
 
 
         // Content Dialog Methods
