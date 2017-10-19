@@ -17,6 +17,8 @@ using Microsoft.Services.Store.Engagement;
 using Windows.UI;
 using Windows.ApplicationModel.Core;
 using System.Diagnostics;
+using Windows.Foundation.Metadata;
+using Windows.UI.ViewManagement;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
 
@@ -28,7 +30,6 @@ namespace UniversalSoundBoard
     public sealed partial class MainPage : Page
     {
         List<string> Suggestions;
-        ObservableCollection<Setting> SettingsListing;
         int moreButtonClicked = 0;
         bool skipAutoSuggestBoxTextChanged = false;
 
@@ -39,7 +40,6 @@ namespace UniversalSoundBoard
             SystemNavigationManager.GetForCurrentView().BackRequested += onBackRequested;
             Suggestions = new List<string>();
 
-            SettingsListing = new ObservableCollection<Setting>();
             AdjustLayout();
         }
 
@@ -50,7 +50,6 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
 
             await FileManager.CreateCategoriesObservableCollection();
-            CreateSettingsListing();
 
             await SoundManager.GetAllSounds();
             await initializePushNotificationSettings();
@@ -59,14 +58,6 @@ namespace UniversalSoundBoard
         private void setDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
-        }
-
-        private void CreateSettingsListing()
-        {
-            // Create Settings List
-            SettingsListing.Clear();
-            //SettingsListing.Add(new Setting { Icon = "\uE2AF", Text = "Log in" });
-            SettingsListing.Add(new Setting { Icon = "\uE713", Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title"), Id = "Settings" });
         }
 
         private async Task initializePushNotificationSettings()
@@ -167,7 +158,7 @@ namespace UniversalSoundBoard
                 {   // If user is on tablet
                     TitleStackPanel.Visibility = Visibility.Visible;
                 }
-                SideBar.DisplayMode = SplitViewDisplayMode.Overlay;
+                //SideBar.DisplayMode = SplitViewDisplayMode.Overlay;
 
                 if (String.IsNullOrEmpty(SearchAutoSuggestBox.Text))
                 {   // Hide search box
@@ -186,7 +177,7 @@ namespace UniversalSoundBoard
             else        // If User is on Desktop
             {
                 TitleStackPanel.Visibility = Visibility.Visible;
-                SideBar.DisplayMode = SplitViewDisplayMode.CompactOverlay;
+                //SideBar.DisplayMode = SplitViewDisplayMode.CompactOverlay;
 
                 // Show Other buttons and search box
                 SearchAutoSuggestBox.Visibility = Visibility.Visible;
@@ -285,7 +276,7 @@ namespace UniversalSoundBoard
             skipAutoSuggestBoxTextChanged = true;
             SearchAutoSuggestBox.Text = "";
             (App.Current as App)._itemViewHolder.searchQuery = "";
-            MenuItemsListView.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
+            SideBar.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             await SoundManager.GetAllSounds();
@@ -300,7 +291,7 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
-            MenuItemsListView.SelectedItem = category;
+            SideBar.SelectedItem = category;
             await SoundManager.GetSoundsByCategory(category);
         }
 
@@ -358,7 +349,7 @@ namespace UniversalSoundBoard
                 if (String.IsNullOrEmpty(text))
                 {
                     await ShowAllSounds();
-                    MenuItemsListView.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
+                    SideBar.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
                     (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
                 }
                 else
