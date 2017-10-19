@@ -6,6 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:UniversalSoundBoard.Model"
+    xmlns:appmodel="using:Windows.ApplicationModel"
     SizeChanged="Page_SizeChanged"
     mc:Ignorable="d">
 
@@ -38,6 +39,7 @@
         </Style>
     </Page.Resources>
 
+
     <Grid Name="ContentRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <NavigationView Name="SideBar" AlwaysShowHeader="False" MenuItemsSource="{Binding categories, Mode=TwoWay}">
             <NavigationView.MenuItemTemplate>
@@ -48,13 +50,14 @@
                     </StackPanel>
                 </DataTemplate>
             </NavigationView.MenuItemTemplate>
+
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <RelativePanel Height="50" VerticalAlignment="Top" Grid.Row="0">
+                <RelativePanel Height="50" VerticalAlignment="Top" Grid.Row="0" Margin="0,26,0,0">
                     <StackPanel Name="TitleStackPanel" Orientation="Horizontal" Margin="20,0,0,0" RelativePanel.AlignVerticalCenterWithPanel="True">
                         <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" />
                         <SymbolIcon Name="CategoryEditButton" 
@@ -179,5 +182,7 @@
                 </Grid>
             </Grid>
         </NavigationView>
+        <TextBlock Text="{x:Bind appmodel:Package.Current.DisplayName}" VerticalAlignment="Top" HorizontalAlignment="Left"
+                   Margin="12,6,0,0" Style="{StaticResource CaptionTextBlockStyle}" />
     </Grid>
 </Page>

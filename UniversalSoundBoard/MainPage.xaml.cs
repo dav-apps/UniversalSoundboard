@@ -40,6 +40,7 @@ namespace UniversalSoundBoard
             SystemNavigationManager.GetForCurrentView().BackRequested += onBackRequested;
             Suggestions = new List<string>();
 
+            customiseTitleBar();
             AdjustLayout();
         }
 
@@ -141,6 +142,15 @@ namespace UniversalSoundBoard
                 MultiSelectOptionsButton_More.Background = new SolidColorBrush(Colors.DimGray);
                 CancelButton.Background = new SolidColorBrush(Colors.DimGray);
             }
+        }
+
+        private void customiseTitleBar()
+        {
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+
+            ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            titleBar.ButtonBackgroundColor = Colors.Transparent;
+            titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
 
         private void AdjustLayout()
