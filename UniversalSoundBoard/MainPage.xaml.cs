@@ -340,11 +340,6 @@ namespace UniversalSoundBoard
             moreButtonClicked++;
         }
 
-        private void HamburgerButton_Click(object sender, RoutedEventArgs e)
-        {
-            SideBar.IsPaneOpen = !SideBar.IsPaneOpen;
-        }
-
         private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             if (!skipAutoSuggestBoxTextChanged)
@@ -484,30 +479,29 @@ namespace UniversalSoundBoard
             }
         }
 
-        private void SettingsMenuListView_ItemClick(object sender, ItemClickEventArgs e)
+        private async void SideBar_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
-            var setting = (Setting)e.ClickedItem;
-            
-            // Reset multi select options and selected Sounds list
-            ResetTopButtons();
+            (App.Current as App)._itemViewHolder.selectedSounds.Clear();
 
-            if (setting.Id == "Settings")
+            ResetSearchArea();
+
+            // Display all Sounds with the selected category
+            if (args.IsSettingsInvoked == true)
             {
-                (App.Current as App)._itemViewHolder.page = typeof(SettingsPage);
-                (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title");
-                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                ContentFrame.Navigate(typeof(SettingsPage));
             }
-            /* else if (setting.Text == "Log in")
-             {
-                 // TODO Add login page
-                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                 (App.Current as App)._itemViewHolder.page = typeof(LoginPage);
-             }
-             */
-
-            SideBar.IsPaneOpen = false;
+            else
+            {
+                var category = (Category)args.InvokedItem;
+                if (category == (App.Current as App)._itemViewHolder.categories.First())
+                {
+                    await ShowAllSounds();
+                }
+                else
+                {
+                    await ShowCategory(category);
+                }
+            }
         }
 
         private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)

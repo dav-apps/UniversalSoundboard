@@ -41,7 +41,7 @@
 
 
     <Grid Name="ContentRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <NavigationView Name="SideBar" AlwaysShowHeader="False" MenuItemsSource="{Binding categories, Mode=TwoWay}">
+        <NavigationView Name="SideBar" AlwaysShowHeader="False" MenuItemsSource="{Binding categories, Mode=TwoWay}" ItemInvoked="SideBar_ItemInvoked">
             <NavigationView.MenuItemTemplate>
                 <DataTemplate x:DataType="data:Category">
                     <StackPanel Orientation="Horizontal">
