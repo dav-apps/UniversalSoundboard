@@ -167,17 +167,17 @@ namespace UniversalSoundBoard
 
         private void SoundGridView_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            switchSelectionMode();
+            //switchSelectionMode();
         }
 
         private void SoundGridView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
         {
-            switchSelectionMode();
+            //switchSelectionMode();
         }
 
         private void SoundGridView_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            switchSelectionMode();
+            //switchSelectionMode();
         }
 
         private void switchSelectionMode()

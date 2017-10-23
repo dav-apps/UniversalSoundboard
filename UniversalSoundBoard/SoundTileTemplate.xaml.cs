@@ -25,6 +25,8 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 using static UniversalSoundBoard.Model.Sound;
+using Microsoft.Xaml.Interactivity;
+using Microsoft.Toolkit.Uwp.UI.Animations;
 
 // The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
 
@@ -34,7 +36,9 @@ namespace UniversalSoundBoard
     {
         public Sound Sound { get { return this.DataContext as Sound; } }
         int moreButtonClicked = 0;
-        public string fallbackValue = "test";
+        MenuFlyout OptionsFlyout;
+        MenuFlyoutItem SetFavouriteFlyout;
+        MenuFlyoutSubItem CategoriesFlyoutSubItem;
 
         public SoundTileTemplate()
         {
@@ -43,6 +47,7 @@ namespace UniversalSoundBoard
             this.DataContextChanged += (s, e) => Bindings.Update(); // <-- only working with x:Bind !!!
             setDarkThemeLayout();
             setDataContext();
+            createFlyout();
         }
 
         async void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
@@ -61,7 +66,7 @@ namespace UniversalSoundBoard
             if((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
             {
                 ContentRoot.Background = new SolidColorBrush(Colors.Black);
-                SoundTileOptionsButton.Background = new SolidColorBrush(Colors.Black);
+                //SoundTileOptionsButton.Background = new SolidColorBrush(Colors.Black);
             }
         }
 
@@ -200,26 +205,7 @@ namespace UniversalSoundBoard
             unselectAllItemsOfCategoriesFlyoutSubItem();
             selectedItem.IsChecked = true;
         }
-
-        private void SoundTileOptionsButton_Click(object sender, RoutedEventArgs e)
-        {
-            createCategoriesFlyout();
-            SelectRightCategory();
-            SetFavouritesMenuItemText();
-        }
-
-        private void SetFavouritesMenuItemText()
-        {
-            if (this.Sound.Favourite)
-            {
-                SoundTileOptionsSetFavourite.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
-            }
-            else
-            {
-                SoundTileOptionsSetFavourite.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
-            }
-        }
-
+        
         private void SelectRightCategory()
         {
             unselectAllItemsOfCategoriesFlyoutSubItem();
@@ -242,6 +228,65 @@ namespace UniversalSoundBoard
             {
                 (CategoriesFlyoutSubItem.Items[i] as ToggleMenuFlyoutItem).IsChecked = false;
             }
+        }
+
+        private void SetFavouritesMenuItemText()
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            if (Sound.Favourite)
+                SetFavouriteFlyout.Text = loader.GetString("SoundTile-UnsetFavourite");
+            else
+                SetFavouriteFlyout.Text = loader.GetString("SoundTile-SetFavourite");
+        }
+
+        private void createFlyout()
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            OptionsFlyout = new MenuFlyout();
+            OptionsFlyout.Opened += Flyout_Opened;
+            CategoriesFlyoutSubItem = new MenuFlyoutSubItem { Text = loader.GetString("SoundTile-Category") };
+            SetFavouriteFlyout = new MenuFlyoutItem();
+            //SetFavouritesMenuItemText();
+            MenuFlyoutSeparator separator = new MenuFlyoutSeparator();
+            MenuFlyoutItem SetImageFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-ChangeImage") };
+            MenuFlyoutItem RenameFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-Rename") };
+            MenuFlyoutItem DeleteFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-Delete") };
+
+            OptionsFlyout.Items.Add(CategoriesFlyoutSubItem);
+            OptionsFlyout.Items.Add(SetFavouriteFlyout);
+            OptionsFlyout.Items.Add(separator);
+            OptionsFlyout.Items.Add(SetImageFlyout);
+            OptionsFlyout.Items.Add(RenameFlyout);
+            OptionsFlyout.Items.Add(DeleteFlyout);
+        }
+
+        private void Flyout_Opened(object sender, object e)
+        {
+            createCategoriesFlyout();
+            SelectRightCategory();
+            SetFavouritesMenuItemText();
+        }
+
+        private void ContentRoot_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+        }
+
+        private void ContentRoot_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+        }
+
+        private void ContentRoot_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            SoundTileImage.Scale(1.1f, 1.1f, 100, 100, 2000, 0, EasingType.Quintic).Start();
+        }
+
+        private void ContentRoot_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            SoundTileImage.Scale(1, 1, 100, 100, 1000, 0, EasingType.Quintic).Start();
         }
     }
 }

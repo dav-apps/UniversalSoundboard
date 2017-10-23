@@ -9,7 +9,9 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <Grid Name="ContentRoot" Background="White">
+    <RelativePanel Name="ContentRoot" Background="White"
+                   RightTapped="ContentRoot_RightTapped" Holding="ContentRoot_Holding" 
+                   PointerEntered="ContentRoot_PointerEntered" PointerExited="ContentRoot_PointerExited">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Mobile">
@@ -17,9 +19,8 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="SoundTileImage.Height" Value="150" />
-                        <Setter Target="SoundTileImage.Width" Value="140" />
-                        <Setter Target="ColDef0.MaxWidth" Value="150" />
+                        <Setter Target="ContentRoot.Height" Value="150" />
+                        <Setter Target="ContentRoot.Width" Value="140" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Desktop">
@@ -27,63 +28,23 @@
                         <AdaptiveTrigger MinWindowWidth="900" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="SoundTileImage.Height" Value="200" />
-                        <Setter Target="SoundTileImage.Width" Value="185" />
                         <Setter Target="SoundTileName.FontSize" Value="25" />
-                        <Setter Target="ColDef0.MaxWidth" Value="250" />
+                        <Setter Target="ContentRoot.Height" Value="200" />
+                        <Setter Target="ContentRoot.Width" Value="185" />
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-            <RowDefinition Height="Auto" />
-            <RowDefinition Height="Auto" />
-        </Grid.RowDefinitions>
+        <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" 
+               RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" />
+        <SymbolIcon Name="FavouriteSymbol" Symbol="OutlineStar" 
+					Visibility="{x:Bind Sound.Favourite}" HorizontalAlignment="Left" VerticalAlignment="Top" />
+        <TextBlock Name="CategoryIconSymbol" Text="{x:Bind Sound.Category.Icon, FallbackValue='', TargetNullValue=''}"
+                    FontFamily="Segoe MDL2 Assets" FontSize="20"
+				    RelativePanel.AlignRightWithPanel="True" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="{Binding showCategoryIcon}" />
 
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="*" MaxWidth="150" x:Name="ColDef0" />
-        </Grid.ColumnDefinitions>
 
-        <RelativePanel>
-            <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
-            <SymbolIcon Name="FavouriteSymbol" Symbol="OutlineStar" 
-                        Visibility="{x:Bind Sound.Favourite}" HorizontalAlignment="Left" />
-            <TextBlock Name="CategoryIconSymbol" FontFamily="Segoe MDL2 Assets" FontSize="20" Text="{x:Bind Sound.Category.Icon, FallbackValue='', TargetNullValue=''}"
-                        RelativePanel.AlignRightWithPanel="True" HorizontalAlignment="Right" Visibility="{Binding showCategoryIcon}" />
-        </RelativePanel>
-        <TextBlock Grid.Row="1" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" />
-        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
-            <Button Name="SoundTileOptionsButton" Content="&#xE10C;" FontFamily="Segoe MDL2 Assets" Background="White"
-                HorizontalAlignment="Right"
-                Click="SoundTileOptionsButton_Click">
-                <Button.Flyout>
-                    <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutSubItem x:Uid="SoundTile-Category" Name="CategoriesFlyoutSubItem">
-
-                        </MenuFlyoutSubItem>
-                        <MenuFlyoutItem Name="SoundTileOptionsSetFavourite" Click="SoundTileOptionsSetFavourite_Click" />
-                        <MenuFlyoutSeparator />
-                        <MenuFlyoutItem x:Uid="SoundTile-ChangeImage" Name="SoundTileOptionsSetImage" Click="SoundTileOptionsSetImage_Click" />
-                        <MenuFlyoutItem x:Uid="SoundTile-Rename" Name="SoundTileOptionsRename" Click="SoundTileOptionsRename_Click" />
-                        <MenuFlyoutItem x:Uid="SoundTile-Delete" Name="SoundTileOptionsDelete" Click="SoundTileOptionsDelete_Click" />
-                        <!--    <MenuFlyoutItem x:Uid="SoundTile-Pin" Name="SoundTileOptionsPin" Click="SoundTileOptionsPin_Click" Text="Pin to start" />   -->
-                        <!--
-                    <MenuFlyoutItem Text="Item 2" />
-                    <MenuFlyoutSeparator />
-                    <MenuFlyoutSubItem Text="Item 3">
-                        <MenuFlyoutItem Text="Item 4" />
-                        <MenuFlyoutSubItem Text="Item 5">
-                            <MenuFlyoutItem Text="Item 6" />
-                            <MenuFlyoutItem Text="Item 7" />
-                        </MenuFlyoutSubItem>
-                    </MenuFlyoutSubItem>
-                    <MenuFlyoutSeparator />
-                    <ToggleMenuFlyoutItem Text="Item 8" /> -->
-                    </MenuFlyout>
-                </Button.Flyout>
-            </Button>
-        </StackPanel>
-    </Grid>
+        <TextBlock Grid.Row="1" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" RelativePanel.AlignBottomWithPanel="True" />
+    </RelativePanel>
 </UserControl>

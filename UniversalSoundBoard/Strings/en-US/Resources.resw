@@ -204,19 +204,19 @@
   <data name="Settings-Title" xml:space="preserve">
     <value>Settings</value>
   </data>
-  <data name="SoundTile-Category.Text" xml:space="preserve">
+  <data name="SoundTile-Category" xml:space="preserve">
     <value>Category</value>
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
-  <data name="SoundTile-ChangeImage.Text" xml:space="preserve">
+  <data name="SoundTile-ChangeImage" xml:space="preserve">
     <value>Change Image</value>
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
-  <data name="SoundTile-Delete.Text" xml:space="preserve">
+  <data name="SoundTile-Delete" xml:space="preserve">
     <value>Delete</value>
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
-  <data name="SoundTile-Rename.Text" xml:space="preserve">
+  <data name="SoundTile-Rename" xml:space="preserve">
     <value>Rename</value>
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
