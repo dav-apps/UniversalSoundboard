@@ -49,6 +49,7 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
 
             await FileManager.CreateCategoriesObservableCollection();
+            SideBar.SelectedItem = SideBar.MenuItems.First();
             customiseTitleBar();
             await SoundManager.GetAllSounds();
             await initializePushNotificationSettings();
@@ -302,6 +303,7 @@ namespace UniversalSoundBoard
             SideBar.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             await SoundManager.GetAllSounds();
             skipAutoSuggestBoxTextChanged = false;
         }
@@ -467,31 +469,6 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;
         }
 
-        private async void MenuItemsListView_ItemClick(object sender, ItemClickEventArgs e)
-        {
-            (App.Current as App)._itemViewHolder.selectedSounds.Clear();
-            var category = (Category)e.ClickedItem;
-            SideBar.IsPaneOpen = false;
-
-            ResetSearchArea();
-
-            if ((App.Current as App)._itemViewHolder.page == typeof(SettingsPage))
-            {
-                await Task.Delay(50);
-                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-            }
-
-            // Display all Sounds with the selected category
-            if (category == (App.Current as App)._itemViewHolder.categories.First())
-            {
-                await ShowAllSounds();
-            }
-            else
-            {
-                await ShowCategory(category);
-            }
-        }
-
         private async void SideBar_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
@@ -501,7 +478,11 @@ namespace UniversalSoundBoard
             // Display all Sounds with the selected category
             if (args.IsSettingsInvoked == true)
             {
-                ContentFrame.Navigate(typeof(SettingsPage));
+                (App.Current as App)._itemViewHolder.page = typeof(SettingsPage);
+                (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title");
+                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
+                SetBackButtonVisibility(true);
             }
             else
             {
