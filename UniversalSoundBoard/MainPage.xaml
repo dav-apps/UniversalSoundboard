@@ -182,7 +182,7 @@
                 </Grid>
             </Grid>
         </NavigationView>
-        <TextBlock Text="{x:Bind appmodel:Package.Current.DisplayName}" VerticalAlignment="Top" HorizontalAlignment="Left"
-                   Margin="12,6,0,0" Style="{StaticResource CaptionTextBlockStyle}" />
+        <TextBlock Name="WindowTitleTextBox" Text="{x:Bind appmodel:Package.Current.DisplayName}" VerticalAlignment="Top" HorizontalAlignment="Left"
+                   Margin="12,7,0,0" Style="{StaticResource CaptionTextBlockStyle}" />
     </Grid>
 </Page>

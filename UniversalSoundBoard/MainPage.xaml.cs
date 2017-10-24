@@ -39,8 +39,6 @@ namespace UniversalSoundBoard
             Loaded += MainPage_Loaded;
             SystemNavigationManager.GetForCurrentView().BackRequested += onBackRequested;
             Suggestions = new List<string>();
-
-            customiseTitleBar();
             AdjustLayout();
         }
 
@@ -51,7 +49,7 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
 
             await FileManager.CreateCategoriesObservableCollection();
-
+            customiseTitleBar();
             await SoundManager.GetAllSounds();
             await initializePushNotificationSettings();
         }
@@ -149,6 +147,7 @@ namespace UniversalSoundBoard
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
 
             ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
+            titleBar.ButtonForegroundColor = ((App.Current as App).RequestedTheme == ApplicationTheme.Dark) ? Colors.White : Colors.Black;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
@@ -235,11 +234,25 @@ namespace UniversalSoundBoard
             if (AreTopButtonsNormal() &&
                 (App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
             {       // Anything is normal, SoundPage shows All Sounds
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                SetBackButtonVisibility(false);
             }
             else
             {
+                SetBackButtonVisibility(true);
+            }
+        }
+
+        private void SetBackButtonVisibility(bool visible)
+        {
+            if (visible)
+            {
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                WindowTitleTextBox.Margin = new Thickness(60, 7, 0, 0);
+            }
+            else
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                WindowTitleTextBox.Margin = new Thickness(12, 7, 0, 0);
             }
         }
 
@@ -281,7 +294,7 @@ namespace UniversalSoundBoard
         {
             if (AreTopButtonsNormal())
             {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                SetBackButtonVisibility(false);
             }
             skipAutoSuggestBoxTextChanged = true;
             SearchAutoSuggestBox.Text = "";
@@ -299,7 +312,7 @@ namespace UniversalSoundBoard
             SearchAutoSuggestBox.Text = "";
             (App.Current as App)._itemViewHolder.searchQuery = "";
             (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            SetBackButtonVisibility(true);
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
             SideBar.SelectedItem = category;
             await SoundManager.GetSoundsByCategory(category);
@@ -364,7 +377,7 @@ namespace UniversalSoundBoard
                     SoundManager.GetSoundsByName(text);
                     Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.ToLower().StartsWith(text.ToLower())).Select(p => p.Name).ToList();
                     SearchAutoSuggestBox.ItemsSource = Suggestions;
-                    SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                    SetBackButtonVisibility(true);
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
                 }
 
@@ -405,7 +418,7 @@ namespace UniversalSoundBoard
 
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            SetBackButtonVisibility(true);
             AddButton.Visibility = Visibility.Collapsed;
             VolumeButton.Visibility = Visibility.Collapsed;
             SearchButton.Visibility = Visibility.Collapsed;
@@ -689,7 +702,7 @@ namespace UniversalSoundBoard
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.deleteCategory((App.Current as App)._itemViewHolder.title);
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+            SetBackButtonVisibility(false);
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
 
