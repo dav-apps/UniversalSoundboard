@@ -5,6 +5,7 @@
     xmlns:local="using:UniversalSoundBoard"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:data="using:UniversalSoundBoard.Model"
     mc:Ignorable="d"
     SizeChanged="Page_SizeChanged">
@@ -81,7 +82,7 @@
                    PivotItemLoaded="SoundsPivot_PivotItemLoaded">
                 <PivotItem x:Uid="SoundsPivotHeader">
                     <GridView Name="SoundGridView"
-                            ItemClick="SoundGridView_ItemClick"
+                            ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
                             SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding sounds, Mode=TwoWay}"
                             DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" 
@@ -90,7 +91,7 @@
                 </PivotItem>
                 <PivotItem x:Uid="FavouritesPivotHeader">
                     <GridView Name="FavouriteSoundGridView"
-                            ItemClick="SoundGridView_ItemClick"
+                            ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
                             SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding favouriteSounds, Mode=TwoWay}"
                             DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" 
@@ -100,7 +101,7 @@
             </Pivot>
 
             <GridView Name="SoundGridView2" Grid.Row="1" Visibility="Collapsed" Margin="5,0,0,0"
-                            ItemClick="SoundGridView_ItemClick"
+                            ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
                             SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding sounds, Mode=TwoWay}"
                             DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" 

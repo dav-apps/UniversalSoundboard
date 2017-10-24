@@ -12,6 +12,11 @@
     <RelativePanel Name="ContentRoot" Background="White"
                    RightTapped="ContentRoot_RightTapped" Holding="ContentRoot_Holding" 
                    PointerEntered="ContentRoot_PointerEntered" PointerExited="ContentRoot_PointerExited">
+
+        <ToolTipService.ToolTip>
+            <TextBlock Text="{x:Bind Sound.Name}" />
+        </ToolTipService.ToolTip>
+
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
                 <VisualState x:Name="Mobile">
@@ -19,8 +24,8 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <Setter Target="ContentRoot.Height" Value="150" />
-                        <Setter Target="ContentRoot.Width" Value="140" />
+                        <!--    <Setter Target="ContentRoot.Height" Value="150" />
+                        <Setter Target="ContentRoot.Width" Value="140" /> -->
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Desktop">
@@ -29,22 +34,34 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="SoundTileName.FontSize" Value="25" />
-                        <Setter Target="ContentRoot.Height" Value="200" />
-                        <Setter Target="ContentRoot.Width" Value="185" />
+                        <!--    <Setter Target="ContentRoot.Height" Value="200" />
+                        <Setter Target="ContentRoot.Width" Value="185" /> -->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}" 
-               RelativePanel.AlignVerticalCenterWithPanel="True" RelativePanel.AlignHorizontalCenterWithPanel="True" />
-        <SymbolIcon Name="FavouriteSymbol" Symbol="OutlineStar" 
-					Visibility="{x:Bind Sound.Favourite}" HorizontalAlignment="Left" VerticalAlignment="Top" />
-        <TextBlock Name="CategoryIconSymbol" Text="{x:Bind Sound.Category.Icon, FallbackValue='', TargetNullValue=''}"
-                    FontFamily="Segoe MDL2 Assets" FontSize="20"
-				    RelativePanel.AlignRightWithPanel="True" HorizontalAlignment="Right" VerticalAlignment="Top" Visibility="{Binding showCategoryIcon}" />
+        <Grid Name="SoundTileGrid" RelativePanel.AlignTopWithPanel="True">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
+            <RelativePanel Name="IconsRelativePanel" Grid.Row="0" Canvas.ZIndex="1">
+                <SymbolIcon Name="FavouriteSymbol" Symbol="OutlineStar" 
+					    Visibility="{x:Bind Sound.Favourite}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" />
+                <TextBlock Name="CategoryIconSymbol" Text="{x:Bind Sound.Category.Icon, FallbackValue='', TargetNullValue=''}"
+                        FontFamily="Segoe MDL2 Assets" FontSize="20" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True"
+                        Visibility="{Binding showCategoryIcon}" />
+            </RelativePanel>
 
-        <TextBlock Grid.Row="1" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" RelativePanel.AlignBottomWithPanel="True" />
+            <RelativePanel Grid.Row="1">
+                <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}"
+                       RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" />
+            </RelativePanel>
+
+            <TextBlock Grid.Row="2" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" Canvas.ZIndex="20" />
+        </Grid>
     </RelativePanel>
 </UserControl>

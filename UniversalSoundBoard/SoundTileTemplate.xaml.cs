@@ -66,7 +66,6 @@ namespace UniversalSoundBoard
             if((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
             {
                 ContentRoot.Background = new SolidColorBrush(Colors.Black);
-                //SoundTileOptionsButton.Background = new SolidColorBrush(Colors.Black);
             }
         }
 
@@ -248,11 +247,14 @@ namespace UniversalSoundBoard
             OptionsFlyout.Opened += Flyout_Opened;
             CategoriesFlyoutSubItem = new MenuFlyoutSubItem { Text = loader.GetString("SoundTile-Category") };
             SetFavouriteFlyout = new MenuFlyoutItem();
-            //SetFavouritesMenuItemText();
+            SetFavouriteFlyout.Click += SoundTileOptionsSetFavourite_Click;
             MenuFlyoutSeparator separator = new MenuFlyoutSeparator();
             MenuFlyoutItem SetImageFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-ChangeImage") };
+            SetImageFlyout.Click += SoundTileOptionsSetImage_Click;
             MenuFlyoutItem RenameFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-Rename") };
+            RenameFlyout.Click += SoundTileOptionsRename_Click;
             MenuFlyoutItem DeleteFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-Delete") };
+            DeleteFlyout.Click += SoundTileOptionsDelete_Click;
 
             OptionsFlyout.Items.Add(CategoriesFlyoutSubItem);
             OptionsFlyout.Items.Add(SetFavouriteFlyout);

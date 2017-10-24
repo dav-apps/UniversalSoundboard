@@ -536,7 +536,7 @@ namespace UniversalSoundBoard
 
             if (Window.Current.Bounds.Width > (FileManager.tabletMaxWidth * 2.3))
             {
-                optimizedWidth = 300;
+                optimizedWidth = 220;
             }
 
             ItemsWrapGrid appItemsPanel = (ItemsWrapGrid)gridView.ItemsPanelRoot;
