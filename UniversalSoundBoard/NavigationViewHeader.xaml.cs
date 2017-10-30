@@ -240,8 +240,21 @@ namespace UniversalSoundBoard
 
         private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            var volumeSlider = sender as Slider;
+            double newValue = e.NewValue;
+            double oldValue = e.OldValue;
+
+            if (volumeSlider == VolumeSlider)
+            {
+                VolumeSlider2.Value = newValue;
+            }
+            else
+            {
+                VolumeSlider.Value = newValue;
+            }
+
             // Change Volume of MediaPlayers
-            double addedValue = e.NewValue - e.OldValue;
+            double addedValue = newValue - oldValue;
 
             foreach (PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
             {
@@ -261,7 +274,7 @@ namespace UniversalSoundBoard
 
             // Save new Volume
             var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values["volume"] = (double)VolumeSlider.Value / 100;
+            localSettings.Values["volume"] = volumeSlider.Value / 100;
         }
 
         private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)
@@ -369,6 +382,16 @@ namespace UniversalSoundBoard
             {
                 await sound.setCategory(await FileManager.GetCategoryByNameAsync(category));
             }
+        }
+
+        private void VolumeFlyout_Click(object sender, RoutedEventArgs e)
+        {
+            VolumeFlyout.ContextFlyout.ShowAt(MoreButton);
+        }
+
+        private void SelectButton_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
         #endregion EventHandlers
 
