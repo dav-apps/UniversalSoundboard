@@ -28,6 +28,11 @@
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
+
+        <Style TargetType="TextBlock" x:Key="TopButtonInnerTextStyle">
+            <Setter Property="Margin" Value="10,-4,0,0" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+        </Style>
     </UserControl.Resources>
 
     <RelativePanel Name="ContentRoot" Margin="20,40,0,0">
@@ -66,7 +71,7 @@
                         Visibility="{Binding volumeButtonVisibility}" Background="{x:Bind ContentRoot.Background}">
                     <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                         <TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" />
-                        <TextBlock Text="Lautstärke" 
+                        <TextBlock Text="Lautstärke" Style="{StaticResource TopButtonInnerTextStyle}"
                                Visibility="{Binding topButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}" />
                     </StackPanel>
 
@@ -80,12 +85,12 @@
 
                 <Button Name="AddButton" Style="{StaticResource TopButtonStyle}"
                         RelativePanel.RightOf="VolumeButton" Visibility="{Binding addButtonVisibility}"
-                        Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}}"
+                        Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, Mode=TwoWay}"
                         Background="{x:Bind ContentRoot.Background}">
                     <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                         <TextBlock Text="&#xE109;" FontFamily="Segoe MDL2 Assets" />
-                        <TextBlock Text="Hinzufügen"
-                               Visibility="{Binding topButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}" />
+                        <TextBlock Text="Hinzufügen" Style="{StaticResource TopButtonInnerTextStyle}"
+                                    Visibility="{Binding topButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}" />
                     </StackPanel>
 
                     <Button.Flyout>
@@ -97,12 +102,12 @@
                 </Button>
 
                 <Button Name="SelectButton" Style="{StaticResource TopButtonStyle}"
-                        RelativePanel.RightOf="AddButton"
+                        RelativePanel.RightOf="AddButton" Visibility="{Binding selectButtonVisibility}"
                         Height="50" Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}}" 
                         FontSize="17" Background="{x:Bind ContentRoot.Background}">
                     <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                         <TextBlock Text="&#xE133;" FontFamily="Segoe MDL2 Assets" />
-                        <TextBlock Text="Auswählen"
+                        <TextBlock Text="Auswählen" Style="{StaticResource TopButtonInnerTextStyle}"
                                Visibility="{Binding topButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}"/>
                     </StackPanel>
                 </Button>
@@ -119,7 +124,7 @@
                         RelativePanel.RightOf="SearchAutoSuggestBox"
 				        Content="&#xE094;" Width="50"
                         Background="{x:Bind ContentRoot.Background}"
-                        Visibility="{Binding searchAutoSuggestBoxVisibility, Converter={StaticResource ReverseBoolConverter}}"/>
+                        Visibility="{Binding searchButtonVisibility}"/>
             </StackPanel>
 
             <StackPanel Name="SelectOptionsStackPanel" Orientation="Horizontal" 

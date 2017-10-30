@@ -62,7 +62,9 @@ namespace UniversalSoundBoard
             searchAutoSuggestBoxVisibility = true,
             volumeButtonVisibility = true,
             addButtonVisibility = true,
-            topButtonsCollapsed = true // TODO change to false
+            selectButtonVisibility = true,
+            searchButtonVisibility = false,
+            topButtonsCollapsed = false
         };
 
         /// <summary>

@@ -41,6 +41,12 @@ namespace UniversalSoundBoard
         public const bool showSoundsPivot = true;
         public const int mobileMaxWidth = 550;
         public const int tabletMaxWidth = 650;
+        public const int topButtonsCollapsedMaxWidth = 1400;
+        public const int sideBarCollapsedMaxWidth = 1100;
+        public const int moveSelectButtonMaxWidth = 850;
+        public const int moveAddButtonMaxWidth = 800;
+        public const int moveVolumeButtonMaxWidth = 750;
+        public const int hideSearchBoxMaxWidth = 700;
 
         public static bool skipAutoSuggestBoxTextChanged = false;
 

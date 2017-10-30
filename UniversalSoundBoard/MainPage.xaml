@@ -41,7 +41,7 @@
 
     <Grid>
         <NavigationView Name="SideBar" AlwaysShowHeader="True" MenuItemsSource="{Binding categories, Mode=TwoWay}" 
-                        ItemInvoked="SideBar_ItemInvoked">
+                        ItemInvoked="SideBar_ItemInvoked" ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}">
 
             <NavigationView.HeaderTemplate>
                 <DataTemplate>

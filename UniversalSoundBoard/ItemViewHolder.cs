@@ -47,6 +47,8 @@ namespace UniversalSoundBoard
         private bool _searchAutoSuggestBoxVisibility;
         private bool _volumeButtonVisibility;
         private bool _addButtonVisibility;
+        private bool _selectButtonVisibility;
+        private bool _searchButtonVisibility;
         private bool _topButtonsCollapsed;
 
         public string title
@@ -398,6 +400,28 @@ namespace UniversalSoundBoard
             {
                 _addButtonVisibility = value;
                 NotifyPropertyChanged("addButtonVisibility");
+            }
+        }
+
+        public bool selectButtonVisibility
+        {
+            get { return _selectButtonVisibility; }
+
+            set
+            {
+                _selectButtonVisibility = value;
+                NotifyPropertyChanged("selectButtonVisibility");
+            }
+        }
+
+        public bool searchButtonVisibility
+        {
+            get { return _searchButtonVisibility; }
+
+            set
+            {
+                _searchButtonVisibility = value;
+                NotifyPropertyChanged("searchButtonVisibility");
             }
         }
 

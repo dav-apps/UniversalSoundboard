@@ -70,41 +70,17 @@ namespace UniversalSoundBoard
 
         private void AdjustLayout()
         {
-            ///SetDarkThemeLayout();
+            Debug.WriteLine(Window.Current.Bounds.Width);
+            SetDarkThemeLayout();
+            double width = Window.Current.Bounds.Width;
 
-            if (Window.Current.Bounds.Width < FileManager.tabletMaxWidth)        // If user is on tablet
-            {
-                if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
-                {   // If user is on mobile
-
-                }
-                else
-                {   // If user is on tablet
-
-                }
-
-                if (String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))
-                {   // Hide search box
-                    FileManager.ResetSearchArea();
-                    (App.Current as App)._itemViewHolder.searchQuery = "";
-                }
-                else
-                {   // If user is searching
-                    // Show only search box
-                    (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = true;
-                    (App.Current as App)._itemViewHolder.addButtonVisibility = false;
-                    (App.Current as App)._itemViewHolder.volumeButtonVisibility = false;
-                }
-            }
-            else        // If User is on Desktop
-            {
-                // Show Other buttons and search box
-                (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = true;
-                ///SearchAutoSuggestBox.Text = (App.Current as App)._itemViewHolder.searchQuery;
-                (App.Current as App)._itemViewHolder.addButtonVisibility = true;
-                (App.Current as App)._itemViewHolder.volumeButtonVisibility = true;
-            }
-
+            (App.Current as App)._itemViewHolder.topButtonsCollapsed = (width < FileManager.topButtonsCollapsedMaxWidth);
+            (App.Current as App)._itemViewHolder.selectButtonVisibility = !(width < FileManager.moveSelectButtonMaxWidth);
+            (App.Current as App)._itemViewHolder.addButtonVisibility = !(width < FileManager.moveAddButtonMaxWidth);
+            (App.Current as App)._itemViewHolder.volumeButtonVisibility = !(width < FileManager.moveVolumeButtonMaxWidth);
+            (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = !(width < FileManager.hideSearchBoxMaxWidth);
+            (App.Current as App)._itemViewHolder.searchButtonVisibility = (width < FileManager.hideSearchBoxMaxWidth);
+            
             FileManager.CheckBackButtonVisibility();
         }
 

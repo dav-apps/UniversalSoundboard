@@ -18,6 +18,8 @@ namespace UniversalSoundBoard
 {
     public sealed partial class MainPage : Page
     {
+        int sideBarCollapsedMaxWidth = FileManager.sideBarCollapsedMaxWidth;
+
         public MainPage()
         {
             this.InitializeComponent();
