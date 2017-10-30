@@ -7,7 +7,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:data="using:UniversalSoundBoard.Model"
     xmlns:appmodel="using:Windows.ApplicationModel"
-    SizeChanged="Page_SizeChanged"
     mc:Ignorable="d">
 
     <Page.Resources>
@@ -40,8 +39,16 @@
     </Page.Resources>
 
 
-    <Grid Name="ContentRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <NavigationView Name="SideBar" AlwaysShowHeader="False" MenuItemsSource="{Binding categories, Mode=TwoWay}" ItemInvoked="SideBar_ItemInvoked">
+    <Grid>
+        <NavigationView Name="SideBar" AlwaysShowHeader="True" MenuItemsSource="{Binding categories, Mode=TwoWay}" 
+                        ItemInvoked="SideBar_ItemInvoked">
+
+            <NavigationView.HeaderTemplate>
+                <DataTemplate>
+                    <local:NavigationViewHeader />
+                </DataTemplate>
+            </NavigationView.HeaderTemplate>
+            
             <NavigationView.MenuItemTemplate>
                 <DataTemplate x:DataType="data:Category">
                     <StackPanel Orientation="Horizontal">
@@ -51,138 +58,22 @@
                 </DataTemplate>
             </NavigationView.MenuItemTemplate>
 
-            <Grid>
+            <Grid Name="ContentRoot">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <RelativePanel Height="50" VerticalAlignment="Top" Grid.Row="0" Margin="0,26,0,0">
-                    <StackPanel Name="TitleStackPanel" Orientation="Horizontal" Margin="20,0,0,0" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" />
-                        <SymbolIcon Name="CategoryEditButton" 
-							            Symbol="Edit" Margin="15,0,0,0" Visibility="{Binding editButtonVisibility}"
-							            Tapped="CategoryEditButton_Tapped" />
-                        <SymbolIcon Name="CategoryDeleteButton" 
-							            Symbol="Delete" Margin="15,0,0,0" Visibility="{Binding editButtonVisibility}"
-							            Tapped="CategoryDeleteButton_Tapped" />
-                        <Button Name="CategoryPlayAllButton" Background="Transparent" Height="25" Width="20"
-					                Content="&#xEDB5;" FontFamily="Segoe MDL2 Assets" FontSize="20" Style="{StaticResource PlayAllButtonStyle}"
-					                Margin="15,0,0,0" Visibility="{Binding playAllButtonVisibility}">
-                            <Button.Flyout>
-                                <MenuFlyout Placement="Bottom">
-                                    <MenuFlyoutItem Name="PlayAllSoundsSimultaneouslyFlyoutItem" x:Uid="PlayAllSoundsSimultaneously" Click="PlayAllSoundsSimultaneouslyFlyoutItem_Click" />
-                                    <MenuFlyoutSubItem Name="PlayAllSoundsSuccessivelyFlyoutItem" x:Uid="PlayAllSoundsSuccessively">
-                                        <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_1x" Text="1x" Click="PlayAllSoundsSuccessivelyFlyoutItem_1x_Click" />
-                                        <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_2x" Text="2x" Click="PlayAllSoundsSuccessivelyFlyoutItem_2x_Click" />
-                                        <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_5x" Text="5x" Click="PlayAllSoundsSuccessivelyFlyoutItem_5x_Click" />
-                                        <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_10x" Text="10x" Click="PlayAllSoundsSuccessivelyFlyoutItem_10x_Click" />
-                                        <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_endless" Text="∞" Click="PlayAllSoundsSuccessivelyFlyoutItem_endless_Click" />
-                                    </MenuFlyoutSubItem>
-                                </MenuFlyout>
-                            </Button.Flyout>
-                        </Button>
-                    </StackPanel>
-
-                    <Button Name="VolumeButton" Style="{StaticResource TopButtonStyle}"
-			                    RelativePanel.LeftOf="SelectionOptions" RelativePanel.AlignVerticalCenterWithPanel="True"
-			                    Margin="0,0,20,0" 
-			                    Content="&#xE767;">
-                        <Button.Flyout>
-                            <Flyout>
-                                <Slider Name="VolumeSlider" ValueChanged="VolumeSlider_ValueChanged"
-						                    Maximum="100" Minimum="0" Width="150" />
-                            </Flyout>
-                        </Button.Flyout>
-                    </Button>
-
-                    <StackPanel Name="SelectionOptions" Orientation="Horizontal" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True">
-                        <StackPanel Name="NormalOptions" Orientation="Horizontal" Visibility="{Binding normalOptionsVisibility}">
-
-                            <Button Name="AddButton" Style="{StaticResource TopButtonStyle}"
-				                RelativePanel.LeftOf="SearchAutoSuggestBox" RelativePanel.AlignVerticalCenterWithPanel="True" 
-				                Margin="0,0,20,0"
-				                Content="&#xE109;">
-                                <Button.Flyout>
-                                    <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutItem Name="NewSoundFlyoutItem" x:Uid="AddButton-Sound" Click="NewSoundFlyoutItem_Click" />
-                                        <MenuFlyoutItem Name="NewCategoryFlyoutItem" x:Uid="AddButton-Category" Click="NewCategoryFlyoutItem_Click" />
-                                    </MenuFlyout>
-                                </Button.Flyout>
-                            </Button>
-                            <AutoSuggestBox Name="SearchAutoSuggestBox" x:Uid="Search"
-					                    VerticalAlignment="Center"
-					                    QueryIcon="Find" 
-					                    Margin="0,0,10,0" Width="200"
-					                    TextChanged="SearchAutoSuggestBox_TextChanged" QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted" />
-                            <Button Name="SearchButton" Style="{StaticResource TopButtonStyle}"
-				                RelativePanel.AlignRightWithPanel="True"
-				                Margin="0,0,15,0" 
-				                Content="&#xE094;" 
-				                Click="SearchButton_Click"/>
-                        </StackPanel>
-
-                        <StackPanel Name="MultiSelectOptions" Orientation="Horizontal" Visibility="{Binding multiSelectOptionsVisibility}"
-				                RelativePanel.AlignVerticalCenterWithPanel="True">
-
-                            <Button Name="PlaySoundsButton" IsEnabled="{Binding multiSelectOptionsEnabled}" Style="{StaticResource TopButtonStyle}"
-				                RelativePanel.AlignVerticalCenterWithPanel="True"
-				                Margin="0,0,20,0"
-				                Content="&#xE768;">
-                                <Button.Flyout>
-                                    <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutItem Name="PlaySoundsSimultaneouslyFlyoutItem" x:Uid="PlaySoundsSimultaneously" Click="PlaySoundsSimultaneouslyFlyoutItem_Click"/>
-                                        <MenuFlyoutSubItem Name="PlaySoundsSuccessivelyFlyoutItem" x:Uid="PlaySoundsSuccessively">
-                                            <MenuFlyoutItem Name="PlaySoundsSuccessivelyFlyoutItem_1x" Text="1x" Click="PlaySoundsSuccessivelyFlyoutItem_1x_Click" />
-                                            <MenuFlyoutItem Name="PlaySoundsSuccessivelyFlyoutItem_2x" Text="2x" Click="PlaySoundsSuccessivelyFlyoutItem_2x_Click" />
-                                            <MenuFlyoutItem Name="PlaySoundsSuccessivelyFlyoutItem_5x" Text="5x" Click="PlaySoundsSuccessivelyFlyoutItem_5x_Click" />
-                                            <MenuFlyoutItem Name="PlaySoundsSuccessivelyFlyoutItem_10x" Text="10x" Click="PlaySoundsSuccessivelyFlyoutItem_10x_Click" />
-                                            <MenuFlyoutItem Name="PlaySoundsSuccessivelyFlyoutItem_endless" Text="∞" Click="PlaySoundsSuccessivelyFlyoutItem_endless_Click" />
-                                        </MenuFlyoutSubItem>
-                                    </MenuFlyout>
-                                </Button.Flyout>
-                            </Button>
-                            <Button Name="MultiSelectOptionsButton_More" IsEnabled="{Binding multiSelectOptionsEnabled}" Style="{StaticResource TopButtonStyle}"
-				                Margin="0,0,20,0"
-				                Content="&#xE10C;"
-					            Click="MultiSelectOptionsButton_More_Click">
-                                <Button.Flyout>
-                                    <MenuFlyout Placement="Bottom">
-                                        <MenuFlyoutSubItem Name="MultiSelectOptionsButton_ChangeCategory" x:Uid="MultiSelectOptionsButton-ChangeCategory">
-
-                                        </MenuFlyoutSubItem>
-                                        <MenuFlyoutItem Name="MultiSelectOptionsButton_Delete" x:Uid="MultiSelectOptionsButton-Delete" Click="MultiSelectOptionsButton_Delete_Click"/>
-                                    </MenuFlyout>
-                                </Button.Flyout>
-                            </Button>
-                            <Button Name="CancelButton" Style="{StaticResource TopButtonStyle}"
-				                RelativePanel.AlignVerticalCenterWithPanel="True"
-				                Height="45" Width="100" Margin="0,0,20,0"
-					                FontFamily="Segoe UI"
-				                x:Uid="MultiSelectionCancelButton"
-				                Click="CancelButton_Click" />
-
-                        </StackPanel>
-                    </StackPanel>
-                </RelativePanel>
-
-                <Grid Grid.Row="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="*" />
-                    </Grid.RowDefinitions>
-
-                    <Frame Name="ContentFrame" SourcePageType="{Binding page, Mode=TwoWay}" Grid.Row="0"/>
-                    <ProgressRing Name="ProgressRing"                 
+                <Frame Name="ContentFrame" SourcePageType="{Binding page, Mode=TwoWay}" Grid.Row="0"/>
+                <ProgressRing Name="ProgressRing"                 
 				                Grid.Row="8" 
 				                Grid.Column="1"
 				                HorizontalAlignment="Center" VerticalAlignment="Center"
 				                Width="50" 
 				                Height="50" 
 				                IsActive="{Binding progressRingIsActive, Mode=TwoWay}" />
-                </Grid>
             </Grid>
         </NavigationView>
         <TextBlock Name="WindowTitleTextBox" Text="{x:Bind appmodel:Package.Current.DisplayName}" VerticalAlignment="Top" HorizontalAlignment="Left"
-                   Margin="12,7,0,0" Style="{StaticResource CaptionTextBlockStyle}" />
+                   Margin="{Binding windowTitleMargin}" Style="{StaticResource CaptionTextBlockStyle}" />
     </Grid>
 </Page>

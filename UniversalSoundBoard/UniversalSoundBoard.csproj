@@ -103,6 +103,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Converters.cs" />
     <Compile Include="CustomMediaTransportControls.cs" />
     <Compile Include="FileManager.cs" />
     <Compile Include="MainPage.xaml.cs">
@@ -113,6 +114,9 @@
     <Compile Include="Model\Data.cs" />
     <Compile Include="Model\Sound.cs" />
     <Compile Include="Model\SoundDetails.cs" />
+    <Compile Include="NavigationViewHeader.xaml.cs">
+      <DependentUpon>NavigationViewHeader.xaml</DependentUpon>
+    </Compile>
     <Compile Include="PlayingSoundTemplate.xaml.cs">
       <DependentUpon>PlayingSoundTemplate.xaml</DependentUpon>
     </Compile>
@@ -204,6 +208,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="NavigationViewHeader.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="PlayingSoundTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -227,9 +235,6 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
-    <SDKReference Include="Microsoft.Services.Store.Engagement, Version=10.0">
-      <Name>Microsoft Engagement Framework</Name>
-    </SDKReference>
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
@@ -246,6 +251,9 @@
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Services.Store.Engagement">
+      <Version>10.1706.16001</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Services.Store.SDK">
       <Version>10.1705.16001</Version>

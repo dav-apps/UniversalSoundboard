@@ -42,8 +42,7 @@ namespace UniversalSoundBoard
             editButtonVisibility = Visibility.Collapsed,
             playAllButtonVisibility = Visibility.Collapsed,
             selectionMode = ListViewSelectionMode.None,
-            normalOptionsVisibility = Visibility.Visible,
-            multiSelectOptionsVisibility = Visibility.Collapsed,
+            normalOptionsVisibility = true,
             multiSelectOptionsEnabled = false,
             selectedSounds = new List<Sound>(),
             playingSounds = new ObservableCollection<PlayingSound>(),
@@ -58,7 +57,12 @@ namespace UniversalSoundBoard
             areExportAndImportButtonsEnabled = true,
             exportMessage = "",
             importMessage = "",
-            soundboardSize = ""
+            soundboardSize = "",
+            windowTitleMargin = new Thickness(12, 7, 0, 0),
+            searchAutoSuggestBoxVisibility = true,
+            volumeButtonVisibility = true,
+            addButtonVisibility = true,
+            topButtonsCollapsed = true // TODO change to false
         };
 
         /// <summary>

@@ -42,7 +42,7 @@ namespace UniversalSoundBoard
             this.InitializeComponent();
             Loaded += SoundPage_Loaded;
 
-            AdjustLayout();
+            ShowPlayingSoundsList();
         }
 
         void SoundPage_Loaded(object sender, RoutedEventArgs e)
@@ -59,21 +59,6 @@ namespace UniversalSoundBoard
         private void setDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
-        }
-
-        private void AdjustLayout()
-        {
-            if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)       // If user is on mobile
-            {
-                // Hide title and show in SoundPage
-                TitleStackPanel.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                TitleStackPanel.Visibility = Visibility.Collapsed;
-            }
-            // Show PlayingSounds list
-            ShowPlayingSoundsList();
         }
 
         private void ShowPlayingSoundsList()
@@ -103,7 +88,7 @@ namespace UniversalSoundBoard
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            AdjustLayout();
+            ShowPlayingSoundsList();
         }
 
         private void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
@@ -132,7 +117,6 @@ namespace UniversalSoundBoard
                         category.Name = (App.Current as App)._itemViewHolder.title;
                     }
 
-                    // Application now has read/write access to the picked file(s)
                     foreach (StorageFile soundFile in items)
                     {
                         Sound sound = new Sound(soundFile.DisplayName, category, soundFile);
@@ -156,28 +140,10 @@ namespace UniversalSoundBoard
         {
             e.AcceptedOperation = DataPackageOperation.Copy;
 
-            // Drag adorner ... change what mouse / icon looks like
-            // as you're dragging the file into the app:
-            // http://igrali.com/2015/05/15/drag-and-drop-photos-into-windows-10-universal-apps/
             e.DragUIOverride.Caption = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Drop");
             e.DragUIOverride.IsCaptionVisible = true;
             e.DragUIOverride.IsContentVisible = true;
             e.DragUIOverride.IsGlyphVisible = true;
-        }
-
-        private void SoundGridView_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            //switchSelectionMode();
-        }
-
-        private void SoundGridView_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
-        {
-            //switchSelectionMode();
-        }
-
-        private void SoundGridView_Holding(object sender, HoldingRoutedEventArgs e)
-        {
-            //switchSelectionMode();
         }
 
         private void switchSelectionMode()
@@ -185,8 +151,8 @@ namespace UniversalSoundBoard
             if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
             {
                 (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.Multiple;
-                (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Collapsed;
-                (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Visible;
+                (App.Current as App)._itemViewHolder.normalOptionsVisibility = false;
+                ///(App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Visible;
             }
         }
 
@@ -471,36 +437,6 @@ namespace UniversalSoundBoard
                 SoundPage.playSound(sound);
             }
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = oldPlayOneSoundAtOnce;
-        }
-
-        private void PlayAllSoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            PlayAllSoundsSimultaneously();
-        }
-
-        private void PlayAllSoundsSuccessivelyFlyoutItem_1x_Click(object sender, RoutedEventArgs e)
-        {
-            StartPlaySoundsSuccessively(1, true);
-        }
-
-        private void PlayAllSoundsSuccessivelyFlyoutItem_2x_Click(object sender, RoutedEventArgs e)
-        {
-            StartPlaySoundsSuccessively(2, true);
-        }
-
-        private void PlayAllSoundsSuccessivelyFlyoutItem_5x_Click(object sender, RoutedEventArgs e)
-        {
-            StartPlaySoundsSuccessively(5, true);
-        }
-
-        private void PlayAllSoundsSuccessivelyFlyoutItem_10x_Click(object sender, RoutedEventArgs e)
-        {
-            StartPlaySoundsSuccessively(10, true);
-        }
-
-        private void PlayAllSoundsSuccessivelyFlyoutItem_endless_Click(object sender, RoutedEventArgs e)
-        {
-            StartPlaySoundsSuccessively(int.MaxValue, true);
         }
 
         private async void SoundsPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)

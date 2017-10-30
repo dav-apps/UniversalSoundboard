@@ -21,8 +21,7 @@ namespace UniversalSoundBoard
         private string _searchQuery;
         private Visibility _editButtonVisibility;
         private Visibility _playAllButtonVisibility;
-        private Visibility _normalOptionsVisibility;
-        private Visibility _multiSelectOptionsVisibility;
+        private bool _normalOptionsVisibility;
         private Type _page;
         private ListViewSelectionMode _selectionMode;
         private ObservableCollection<Category> _categories;
@@ -44,6 +43,11 @@ namespace UniversalSoundBoard
         private string _exportMessage;
         private string _importMessage;
         private string _soundboardSize;
+        private Thickness _windowTitleMargin;
+        private bool _searchAutoSuggestBoxVisibility;
+        private bool _volumeButtonVisibility;
+        private bool _addButtonVisibility;
+        private bool _topButtonsCollapsed;
 
         public string title
         {
@@ -166,7 +170,7 @@ namespace UniversalSoundBoard
             }
         }
 
-        public Visibility normalOptionsVisibility
+        public bool normalOptionsVisibility
         {
             get { return _normalOptionsVisibility; }
 
@@ -174,17 +178,6 @@ namespace UniversalSoundBoard
             {
                 _normalOptionsVisibility = value;
                 NotifyPropertyChanged("normalOptionsVisibility");
-            }
-        }
-
-        public Visibility multiSelectOptionsVisibility
-        {
-            get { return _multiSelectOptionsVisibility; }
-
-            set
-            {
-                _multiSelectOptionsVisibility = value;
-                NotifyPropertyChanged("multiSelectOptionsVisibility");
             }
         }
 
@@ -361,6 +354,61 @@ namespace UniversalSoundBoard
             {
                 _soundboardSize = value;
                 NotifyPropertyChanged("soundboardSize");
+            }
+        }
+
+        public Thickness windowTitleMargin
+        {
+            get { return _windowTitleMargin; }
+
+            set
+            {
+                _windowTitleMargin = value;
+                NotifyPropertyChanged("windowTitleMargin");
+            }
+        }
+
+        public bool searchAutoSuggestBoxVisibility
+        {
+            get { return _searchAutoSuggestBoxVisibility; }
+
+            set
+            {
+                _searchAutoSuggestBoxVisibility = value;
+                NotifyPropertyChanged("searchAutoSuggestBoxVisibility");
+            }
+        }
+
+        public bool volumeButtonVisibility
+        {
+            get { return _volumeButtonVisibility; }
+
+            set
+            {
+                _volumeButtonVisibility = value;
+                NotifyPropertyChanged("volumeButtonVisibility");
+            }
+        }
+
+        public bool addButtonVisibility
+        {
+            get { return _addButtonVisibility; }
+
+            set
+            {
+                _addButtonVisibility = value;
+                NotifyPropertyChanged("addButtonVisibility");
+            }
+        }
+
+        public bool topButtonsCollapsed
+        {
+            get { return _topButtonsCollapsed; }
+
+            set
+            {
+                _topButtonsCollapsed = value;
+                NotifyPropertyChanged("topButtonsCollapsed");
             }
         }
 

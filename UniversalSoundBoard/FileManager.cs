@@ -39,9 +39,10 @@ namespace UniversalSoundBoard
         public const bool darkTheme = false;
         public const bool showCategoryIcon = true;
         public const bool showSoundsPivot = true;
-
         public const int mobileMaxWidth = 550;
         public const int tabletMaxWidth = 650;
+
+        public static bool skipAutoSuggestBoxTextChanged = false;
 
         public static async void addImage(StorageFile file, Sound sound)
         {
@@ -451,8 +452,8 @@ namespace UniversalSoundBoard
         {
             (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.None;
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
-            (App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
-            (App.Current as App)._itemViewHolder.normalOptionsVisibility = Visibility.Visible;
+            ///(App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.normalOptionsVisibility = true;
         }
 
         public static async Task ExportData(StorageFolder destinationFolder)
@@ -763,6 +764,97 @@ namespace UniversalSoundBoard
 
             (App.Current as App)._itemViewHolder.soundboardSize = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SettingsSoundBoardSize") + totalSize.ToString("n2") + " GB.";
         }
+
+        public static void SetBackButtonVisibility(bool visible)
+        {
+            if (visible)
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                (App.Current as App)._itemViewHolder.windowTitleMargin = new Thickness(60, 7, 0, 0);
+            }
+            else
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                (App.Current as App)._itemViewHolder.windowTitleMargin = new Thickness(12, 7, 0, 0);
+            }
+        }
+
+        public static async Task ShowCategory(Category category)
+        {
+            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+            ///SearchAutoSuggestBox.Text = "";
+            (App.Current as App)._itemViewHolder.searchQuery = "";
+            (App.Current as App)._itemViewHolder.searchQuery = "";
+            (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
+            SetBackButtonVisibility(true);
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
+            //SideBar.SelectedItem = SideBar.MenuItems.Last();
+            await SoundManager.GetSoundsByCategory(category);
+        }
+
+        public static bool AreTopButtonsNormal()
+        {
+            if (!(App.Current as App)._itemViewHolder.normalOptionsVisibility ||
+                    (Window.Current.Bounds.Width < tabletMaxWidth && (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility))
+            {
+                return false;
+            }
+            return true;
+        }
+
+        public static void ResetSearchArea()
+        {
+            if (Window.Current.Bounds.Width < FileManager.tabletMaxWidth)
+            {
+                // Clear text and show buttons
+                (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = false;
+                (App.Current as App)._itemViewHolder.addButtonVisibility = true;
+                (App.Current as App)._itemViewHolder.volumeButtonVisibility = true;
+            }
+            FileManager.skipAutoSuggestBoxTextChanged = true;
+            (App.Current as App)._itemViewHolder.searchQuery = "";
+        }
+
+        public static void ResetTopButtons()
+        {
+            (App.Current as App)._itemViewHolder.selectedSounds.Clear();
+            ///(App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.normalOptionsVisibility = true;
+            (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.None;
+
+            ResetSearchArea();
+        }
+
+        public static async Task ShowAllSounds()
+        {
+            if (AreTopButtonsNormal())
+            {
+                SetBackButtonVisibility(false);
+            }
+            skipAutoSuggestBoxTextChanged = true;
+            (App.Current as App)._itemViewHolder.searchQuery = "";
+            //SideBar.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+            await SoundManager.GetAllSounds();
+            skipAutoSuggestBoxTextChanged = false;
+        }
+
+        public static void CheckBackButtonVisibility()
+        {
+            if (FileManager.AreTopButtonsNormal() &&
+                (App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
+            {       // Anything is normal, SoundPage shows All Sounds
+                FileManager.SetBackButtonVisibility(false);
+            }
+            else
+            {
+                FileManager.SetBackButtonVisibility(true);
+            }
+        }
+
+
 
 
         // Methods not related to project

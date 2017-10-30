@@ -46,38 +46,11 @@
 
         <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <StackPanel Name="TitleStackPanel" Grid.Row="0" Orientation="Horizontal" Margin="20,5,0,5">
-                <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Style="{StaticResource TitleTextBlockStyle}" />
-                <SymbolIcon Name="CategoryEditButton" 
-                                    Symbol="Edit" Margin="15,0,0,0" Visibility="{Binding editButtonVisibility}"
-                                    Tapped="CategoryEditButton_Tapped" />
-                <SymbolIcon Name="CategoryDeleteButton" 
-                                    Symbol="Delete" Margin="15,0,0,0" Visibility="{Binding editButtonVisibility}"
-                                    Tapped="CategoryDeleteButton_Tapped" />
-                <Button Name="CategoryPlayAllButton" Background="Transparent" Height="25" Width="20"
-                            Content="&#xEDB5;" FontFamily="Segoe MDL2 Assets" FontSize="20" Style="{StaticResource PlayAllButtonStyle}"
-                            Margin="15,0,0,0" Visibility="{Binding playAllButtonVisibility}">
-                    <Button.Flyout>
-                        <MenuFlyout Placement="Bottom">
-                            <MenuFlyoutItem Name="PlayAllSoundsSimultaneouslyFlyoutItem" x:Uid="PlayAllSoundsSimultaneously" Click="PlayAllSoundsSimultaneouslyFlyoutItem_Click" />
-                            <MenuFlyoutSubItem Name="PlayAllSoundsSuccessivelyFlyoutItem" x:Uid="PlayAllSoundsSuccessively">
-                                <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_1x" Text="1x" Click="PlayAllSoundsSuccessivelyFlyoutItem_1x_Click" />
-                                <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_2x" Text="2x" Click="PlayAllSoundsSuccessivelyFlyoutItem_2x_Click" />
-                                <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_5x" Text="5x" Click="PlayAllSoundsSuccessivelyFlyoutItem_5x_Click" />
-                                <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_10x" Text="10x" Click="PlayAllSoundsSuccessivelyFlyoutItem_10x_Click" />
-                                <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem_endless" Text="∞" Click="PlayAllSoundsSuccessivelyFlyoutItem_endless_Click" />
-                            </MenuFlyoutSubItem>
-                        </MenuFlyout>
-                    </Button.Flyout>
-                </Button>
-            </StackPanel>
-
-            <Pivot x:Name="SoundsPivot" Grid.Row="1"
+            <Pivot x:Name="SoundsPivot" Grid.Row="0"
                    Margin="5,0,0,0" Visibility="{Binding showSoundsPivot}"
                    PivotItemLoaded="SoundsPivot_PivotItemLoaded">
                 <PivotItem x:Uid="SoundsPivotHeader">
@@ -85,8 +58,7 @@
                             ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
                             SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding sounds, Mode=TwoWay}"
-                            DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" 
-                            RightTapped="SoundGridView_RightTapped" SizeChanged="SoundGridView_SizeChanged">
+                            SizeChanged="SoundGridView_SizeChanged">
                     </GridView>
                 </PivotItem>
                 <PivotItem x:Uid="FavouritesPivotHeader">
@@ -94,8 +66,7 @@
                             ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
                             SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding favouriteSounds, Mode=TwoWay}"
-                            DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" 
-                            RightTapped="SoundGridView_RightTapped" SizeChanged="FavouriteSoundGridView_SizeChanged">
+                            SizeChanged="FavouriteSoundGridView_SizeChanged">
                     </GridView>
                 </PivotItem>
             </Pivot>
@@ -104,12 +75,8 @@
                             ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
                             SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                             ItemsSource="{Binding sounds, Mode=TwoWay}"
-                            DoubleTapped="SoundGridView_DoubleTapped" Holding="SoundGridView_Holding" 
-                            RightTapped="SoundGridView_RightTapped" SizeChanged="SoundGridView2_SizeChanged">
+                            SizeChanged="SoundGridView2_SizeChanged">
             </GridView>
-
-
-
 
             <Grid x:Name="DrawerContentGrid" Grid.Row="2"
                     VerticalAlignment="Bottom" Background="{ThemeResource AppBarBackgroundThemeBrush}" RenderTransformOrigin="0.5,0.5">
