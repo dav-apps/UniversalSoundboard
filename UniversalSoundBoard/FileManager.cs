@@ -911,10 +911,6 @@ namespace UniversalSoundBoard
                 (App.Current as App)._itemViewHolder.searchButtonVisibility = (width < FileManager.hideSearchBoxMaxWidth);
             }
 
-            //(App.Current as App)._itemViewHolder.areSelectButtonsEnabled = !((App.Current as App)._itemViewHolder.selectedSounds.Count == 0 
-            //                                                && (App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.Multiple 
-            //                                                && Window.Current.Bounds.Width > hideSearchBoxMaxWidth);
-
             FileManager.CheckBackButtonVisibility();
         }
 

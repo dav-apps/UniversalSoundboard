@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -26,7 +27,25 @@ namespace UniversalSoundBoard
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return (value as string).ToUpper();
+            string newTitle = (string)value;
+            double width = Window.Current.Bounds.Width;
+            int maxLength = 20;
+
+            if (width < FileManager.hideSearchBoxMaxWidth)
+                maxLength = 14;
+            else if (width > FileManager.topButtonsCollapsedMaxWidth)
+                maxLength = 23;
+            else if (width > FileManager.topButtonsCollapsedMaxWidth * 1.5)
+                maxLength = 28;
+            else if (width > FileManager.topButtonsCollapsedMaxWidth * 2.5)
+                maxLength = 35;
+
+            if(newTitle.Count() > maxLength)
+            {
+                newTitle = newTitle.Substring(0, maxLength);
+                newTitle = newTitle.Insert(newTitle.Count(), "...");
+            }
+            return newTitle;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

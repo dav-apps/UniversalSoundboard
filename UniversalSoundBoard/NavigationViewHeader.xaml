@@ -48,7 +48,7 @@
     <RelativePanel Name="ContentRoot" Margin="20,40,0,0">
         <StackPanel Orientation="Horizontal">
             <TextBlock Name="TitleTextBlock" 
-                       Text="{Binding title}"
+                       Text="{Binding title, Converter={StaticResource CutTitleConverter}}"
                         Style="{StaticResource TitleTextBlockStyle}" />
             <SymbolIcon Name="CategoryEditButton" 
 						Symbol="Edit" Margin="15,0,0,0" Visibility="{Binding editButtonVisibility}"
@@ -76,7 +76,7 @@
 
         <RelativePanel RelativePanel.AlignRightWithPanel="True" Margin="0,0,10,0">
             <StackPanel Name="NormalOptionsStackPanel" Orientation="Horizontal" Visibility="{Binding normalOptionsVisibility}">
-                <Button Name="VolumeButton" Style="{StaticResource TopButtonStyle}"
+                <Button Name="VolumeButton" Style="{StaticResource TopButtonStyle}" VerticalAlignment="Center"
                         Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}}"
                         Visibility="{Binding volumeButtonVisibility}" Background="{x:Bind ContentRoot.Background}">
                     <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
@@ -94,7 +94,7 @@
                 </Button>
 
                 <Button Name="AddButton" Style="{StaticResource TopButtonStyle}"
-                        RelativePanel.RightOf="VolumeButton" Visibility="{Binding addButtonVisibility}"
+                        RelativePanel.RightOf="VolumeButton" Visibility="{Binding addButtonVisibility}" VerticalAlignment="Center"
                         Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, Mode=TwoWay}"
                         Background="{x:Bind ContentRoot.Background}">
                     <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
@@ -111,7 +111,7 @@
                     </Button.Flyout>
                 </Button>
 
-                <Button Name="SelectButton" Style="{StaticResource TopButtonStyle}"
+                <Button Name="SelectButton" Style="{StaticResource TopButtonStyle}" VerticalAlignment="Center"
                         RelativePanel.RightOf="AddButton" Visibility="{Binding selectButtonVisibility}"
                         Height="50" Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}}" 
                         FontSize="17" Background="{x:Bind ContentRoot.Background}" Click="SelectButton_Click">
