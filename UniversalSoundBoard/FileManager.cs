@@ -458,7 +458,6 @@ namespace UniversalSoundBoard
         {
             (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.None;
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
-            ///(App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.normalOptionsVisibility = true;
         }
 

@@ -70,7 +70,6 @@ namespace UniversalSoundBoard
 
         private void AdjustLayout()
         {
-            Debug.WriteLine(Window.Current.Bounds.Width);
             SetDarkThemeLayout();
             double width = Window.Current.Bounds.Width;
 
@@ -80,6 +79,9 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.volumeButtonVisibility = !(width < FileManager.moveVolumeButtonMaxWidth);
             (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = !(width < FileManager.hideSearchBoxMaxWidth);
             (App.Current as App)._itemViewHolder.searchButtonVisibility = (width < FileManager.hideSearchBoxMaxWidth);
+            (App.Current as App)._itemViewHolder.cancelButtonVisibility = !(width < FileManager.hideSearchBoxMaxWidth);
+            (App.Current as App)._itemViewHolder.moreButtonVisibility = (width < FileManager.moveSelectButtonMaxWidth 
+                                                                            || !(App.Current as App)._itemViewHolder.normalOptionsVisibility);
             
             FileManager.CheckBackButtonVisibility();
         }
@@ -117,6 +119,15 @@ namespace UniversalSoundBoard
                 }
             }
             moreButtonClicked++;
+        }
+
+        private void switchSelectionMode()
+        {
+            if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
+            {
+                (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.Multiple;
+                (App.Current as App)._itemViewHolder.normalOptionsVisibility = false;
+            }
         }
 
         #region EventHandlers
@@ -360,6 +371,7 @@ namespace UniversalSoundBoard
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             FileManager.resetMultiSelectArea();
+            AdjustLayout();
         }
 
         private void MoreButton_Click(object sender, RoutedEventArgs e)
@@ -391,7 +403,8 @@ namespace UniversalSoundBoard
 
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            switchSelectionMode();
+            AdjustLayout();
         }
         #endregion EventHandlers
 

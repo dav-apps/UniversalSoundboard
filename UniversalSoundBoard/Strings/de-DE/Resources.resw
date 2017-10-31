@@ -168,10 +168,10 @@
   <data name="MultiSelectionCancelButton.Content" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
-  <data name="MultiSelectOptionsButton-ChangeCategory.Text" xml:space="preserve">
+  <data name="MoreButton-ChangeCategory.Text" xml:space="preserve">
     <value>Kategorie ändern</value>
   </data>
-  <data name="MultiSelectOptionsButton-Delete.Text" xml:space="preserve">
+  <data name="MoreButton-DeleteSounds.Text" xml:space="preserve">
     <value>Löschen</value>
   </data>
   <data name="NewCategoryContentDialog-PrimaryButton" xml:space="preserve">
@@ -327,5 +327,8 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="ImportMessage-3" xml:space="preserve">
     <value>Neue Sounds hinzufügen...</value>
+  </data>
+  <data name="MoreButton-Cancel.Text" xml:space="preserve">
+    <value>Abbrechen</value>
   </data>
 </root>

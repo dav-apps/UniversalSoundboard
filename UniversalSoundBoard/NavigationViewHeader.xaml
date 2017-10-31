@@ -15,6 +15,16 @@
         <local:CollapsedButtonsWidthConverter x:Name="CollapsedButtonsWidthConverter" />
         <local:ReverseBoolConverter x:Name="ReverseBoolConverter" />
 
+        <local:ValueConverterGroup x:Name="NormalOptionsInMoreButtonFlyoutVisibilityConverter">
+            <local:ReverseBoolConverter />
+            <local:MakeBoolFalseIfSelectOptionsVisible />
+        </local:ValueConverterGroup>
+
+        <local:ValueConverterGroup x:Name="SelectOptionsInMoreButtonFlyoutVisibilityConverter">
+            <local:ReverseBoolConverter />
+            <local:MakeBoolFalseIfNormalOptionsVisible />
+        </local:ValueConverterGroup>
+
         <Style TargetType="Button" x:Key="TopButtonStyle">
             <Setter Property="Height" Value="50" />
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
@@ -130,6 +140,13 @@
             <StackPanel Name="SelectOptionsStackPanel" Orientation="Horizontal" 
                         RelativePanel.RightOf="NormalOptionsStackPanel" 
                         Visibility="{Binding normalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}">
+                <Button Name="CancelButton" Style="{StaticResource TopButtonStyle}"
+				        Height="50" Width="100"
+					    FontFamily="Segoe UI"
+				        x:Uid="MultiSelectionCancelButton"
+                        Visibility="{Binding cancelButtonVisibility}"
+				        Click="CancelButton_Click" />
+                
                 <Button Name="PlaySoundsButton" IsEnabled="{Binding multiSelectOptionsEnabled}" Style="{StaticResource TopButtonStyle}"
 				        Content="&#xE768;" Width="50">
                     <Button.Flyout>
@@ -145,26 +162,20 @@
                         </MenuFlyout>
                     </Button.Flyout>
                 </Button>
-
-                <Button Name="CancelButton" Style="{StaticResource TopButtonStyle}"
-				        Height="50" Width="100"
-					    FontFamily="Segoe UI"
-				        x:Uid="MultiSelectionCancelButton"
-				        Click="CancelButton_Click" />
             </StackPanel>
 
 
             <Button Name="MoreButton" Style="{StaticResource TopButtonStyle}"
                     RelativePanel.RightOf="SelectOptionsStackPanel"
                     Content="&#xE10C;"
-                    Width="50"
+                    Width="50" Visibility="{Binding moreButtonVisibility}"
                     Background="{x:Bind ContentRoot.Background}"
                     Click="MoreButton_Click">
                 <Button.Flyout>
                     <MenuFlyout Placement="Bottom">
                         <!-- #region Normal Options -->
                         <MenuFlyoutItem Name="VolumeFlyout" Icon="Volume" Text="Lautstärke" 
-                                        Visibility="{Binding volumeButtonVisibility, Converter={StaticResource ReverseBoolConverter}}"
+                                        Visibility="{Binding volumeButtonVisibility, Converter={StaticResource NormalOptionsInMoreButtonFlyoutVisibilityConverter}}"
                                         Click="VolumeFlyout_Click">
                             <MenuFlyoutItem.ContextFlyout>
                                 <Flyout>
@@ -174,13 +185,13 @@
                             </MenuFlyoutItem.ContextFlyout>
                         </MenuFlyoutItem>
                         <MenuFlyoutSubItem Name="AddFlyout" Icon="Add" Text="Hinzufügen" 
-                                        Visibility="{Binding addButtonVisibility, Converter={StaticResource ReverseBoolConverter}}">
+                                        Visibility="{Binding addButtonVisibility, Converter={StaticResource NormalOptionsInMoreButtonFlyoutVisibilityConverter}}">
                             <MenuFlyoutItem Name="NewSoundFlyoutItem2" x:Uid="AddButton-Sound" Click="NewSoundFlyoutItem_Click" />
                             <MenuFlyoutItem Name="NewCategoryFlyoutItem2" x:Uid="AddButton-Category" Click="NewCategoryFlyoutItem_Click" />
                         </MenuFlyoutSubItem>
                         <MenuFlyoutItem Name="SelectFlyout" Icon="Bullets" Text="Auswählen"
                                         Click="SelectButton_Click" 
-                                        Visibility="{Binding selectButtonVisibility, Converter={StaticResource ReverseBoolConverter}}" />
+                                        Visibility="{Binding selectButtonVisibility, Converter={StaticResource NormalOptionsInMoreButtonFlyoutVisibilityConverter}}" />
                         <!-- #endregion Normal Options -->
 
                         <!-- #region Selection Options -->
@@ -188,9 +199,13 @@
                                            x:Uid="MoreButton-ChangeCategory"
                                            Visibility="{Binding normalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}">
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem Name="MoreButton_DeleteSoundsFlyout" 
+                        <MenuFlyoutItem Name="MoreButton_DeleteSoundsFlyout" Icon="Delete"
                                         x:Uid="MoreButton-DeleteSounds" Click="MoreButton_DeleteSoundsFlyout_Click"
                                         Visibility="{Binding normalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}"/>
+
+                        <MenuFlyoutItem Name="MoreButton_Cancel"
+                                        x:Uid="MoreButton-Cancel" Click="CancelButton_Click"
+                                        Visibility="{Binding cancelButtonVisibility, Converter={StaticResource SelectOptionsInMoreButtonFlyoutVisibilityConverter}}"/>
                         <!-- #endregion Selection Options -->
                     </MenuFlyout>
                 </Button.Flyout>

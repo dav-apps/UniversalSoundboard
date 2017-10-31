@@ -64,6 +64,8 @@ namespace UniversalSoundBoard
             addButtonVisibility = true,
             selectButtonVisibility = true,
             searchButtonVisibility = false,
+            cancelButtonVisibility = false,
+            moreButtonVisibility = true,
             topButtonsCollapsed = false
         };
 

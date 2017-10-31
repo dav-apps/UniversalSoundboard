@@ -146,16 +146,6 @@ namespace UniversalSoundBoard
             e.DragUIOverride.IsGlyphVisible = true;
         }
 
-        private void switchSelectionMode()
-        {
-            if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
-            {
-                (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.Multiple;
-                (App.Current as App)._itemViewHolder.normalOptionsVisibility = false;
-                ///(App.Current as App)._itemViewHolder.multiSelectOptionsVisibility = Visibility.Visible;
-            }
-        }
-
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             GridView selectedGridview;
