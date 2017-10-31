@@ -113,39 +113,9 @@ namespace UniversalSoundBoard
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
 
-        private async Task GoBack()
-        {
-            if (!FileManager.AreTopButtonsNormal())
-            {
-                FileManager.ResetTopButtons();
-            }
-            else
-            {
-                if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-                {   // If Settings Page is visible
-                    // Go to All sounds page
-                    (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-                    (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-                    FileManager.ShowAllSounds();
-                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                }
-                else if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
-                {   // If SoundPage shows AllSounds
-                    CoreApplication.Exit();
-                }
-                else
-                {   // If SoundPage shows Category or search results
-                    // Top Buttons are normal, but page shows Category or search results
-                    FileManager.ShowAllSounds();
-                }
-            }
-
-            FileManager.CheckBackButtonVisibility();
-        }
-
         private async void onBackRequested(object sender, BackRequestedEventArgs e)
         {
-            await GoBack();
+            await FileManager.GoBack();
 
             e.Handled = true;
         }

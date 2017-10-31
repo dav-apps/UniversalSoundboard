@@ -124,7 +124,7 @@
 
                 <AutoSuggestBox Name="SearchAutoSuggestBox"
                                 RelativePanel.RightOf="SelectButton"
-                                Width="200"
+                                Width="200" Canvas.ZIndex="1"
                                 x:Uid="Search" Text="{Binding searchQuery, Mode=TwoWay}"
 					            VerticalAlignment="Center" Visibility="{Binding searchAutoSuggestBoxVisibility}"
 					            QueryIcon="Find" Margin="10,3,0,0" Background="{x:Bind ContentRoot.Background}"
@@ -134,7 +134,8 @@
                         RelativePanel.RightOf="SearchAutoSuggestBox"
 				        Content="&#xE094;" Width="50"
                         Background="{x:Bind ContentRoot.Background}"
-                        Visibility="{Binding searchButtonVisibility}"/>
+                        Visibility="{Binding searchButtonVisibility}"
+                        Click="SearchButton_Click"/>
             </StackPanel>
 
             <StackPanel Name="SelectOptionsStackPanel" Orientation="Horizontal" 
@@ -196,10 +197,10 @@
 
                         <!-- #region Selection Options -->
                         <MenuFlyoutSubItem Name="MoreButton_ChangeCategoryFlyout" 
-                                           x:Uid="MoreButton-ChangeCategory"
+                                           x:Uid="MoreButton-ChangeCategory" IsEnabled="{Binding areSelectButtonsEnabled}"
                                            Visibility="{Binding normalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}">
                         </MenuFlyoutSubItem>
-                        <MenuFlyoutItem Name="MoreButton_DeleteSoundsFlyout" Icon="Delete"
+                        <MenuFlyoutItem Name="MoreButton_DeleteSoundsFlyout" Icon="Delete" IsEnabled="{Binding areSelectButtonsEnabled}"
                                         x:Uid="MoreButton-DeleteSounds" Click="MoreButton_DeleteSoundsFlyout_Click"
                                         Visibility="{Binding normalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}"/>
 

@@ -52,6 +52,7 @@ namespace UniversalSoundBoard
         private bool _cancelButtonVisibility;
         private bool _moreButtonVisibility;
         private bool _topButtonsCollapsed;
+        private bool _areSelectButtonsEnabled;
 
         public string title
         {
@@ -457,6 +458,17 @@ namespace UniversalSoundBoard
             {
                 _topButtonsCollapsed = value;
                 NotifyPropertyChanged("topButtonsCollapsed");
+            }
+        }
+
+        public bool areSelectButtonsEnabled
+        {
+            get { return _areSelectButtonsEnabled; }
+
+            set
+            {
+                _areSelectButtonsEnabled = value;
+                NotifyPropertyChanged("areSelectButtonsEnabled");
             }
         }
 

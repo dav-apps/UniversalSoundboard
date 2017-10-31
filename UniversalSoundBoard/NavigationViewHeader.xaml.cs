@@ -36,7 +36,8 @@ namespace UniversalSoundBoard
             this.InitializeComponent();
             setDataContext();
             initializeLocalSettings();
-            AdjustLayout();
+            SetDarkThemeLayout();
+            FileManager.AdjustLayout();
             Suggestions = new List<string>();
         }
 
@@ -66,24 +67,6 @@ namespace UniversalSoundBoard
                 MoreButton.Background = new SolidColorBrush(Colors.DimGray);
                 CancelButton.Background = new SolidColorBrush(Colors.DimGray);
             }
-        }
-
-        private void AdjustLayout()
-        {
-            SetDarkThemeLayout();
-            double width = Window.Current.Bounds.Width;
-
-            (App.Current as App)._itemViewHolder.topButtonsCollapsed = (width < FileManager.topButtonsCollapsedMaxWidth);
-            (App.Current as App)._itemViewHolder.selectButtonVisibility = !(width < FileManager.moveSelectButtonMaxWidth);
-            (App.Current as App)._itemViewHolder.addButtonVisibility = !(width < FileManager.moveAddButtonMaxWidth);
-            (App.Current as App)._itemViewHolder.volumeButtonVisibility = !(width < FileManager.moveVolumeButtonMaxWidth);
-            (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = !(width < FileManager.hideSearchBoxMaxWidth);
-            (App.Current as App)._itemViewHolder.searchButtonVisibility = (width < FileManager.hideSearchBoxMaxWidth);
-            (App.Current as App)._itemViewHolder.cancelButtonVisibility = !(width < FileManager.hideSearchBoxMaxWidth);
-            (App.Current as App)._itemViewHolder.moreButtonVisibility = (width < FileManager.moveSelectButtonMaxWidth 
-                                                                            || !(App.Current as App)._itemViewHolder.normalOptionsVisibility);
-            
-            FileManager.CheckBackButtonVisibility();
         }
 
         private void createCategoriesFlyout()
@@ -121,19 +104,10 @@ namespace UniversalSoundBoard
             moreButtonClicked++;
         }
 
-        private void switchSelectionMode()
-        {
-            if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
-            {
-                (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.Multiple;
-                (App.Current as App)._itemViewHolder.normalOptionsVisibility = false;
-            }
-        }
-
         #region EventHandlers
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            AdjustLayout();
+            FileManager.AdjustLayout();
         }
 
         private async void NewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -239,8 +213,7 @@ namespace UniversalSoundBoard
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             FileManager.SetBackButtonVisibility(true);
-            (App.Current as App)._itemViewHolder.volumeButtonVisibility = false;
-            (App.Current as App)._itemViewHolder.addButtonVisibility = false;
+            (App.Current as App)._itemViewHolder.searchButtonVisibility = false;
             (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = true;
 
             // slightly delay setting focus
@@ -370,8 +343,7 @@ namespace UniversalSoundBoard
 
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
-            FileManager.resetMultiSelectArea();
-            AdjustLayout();
+            FileManager.switchSelectionMode();
         }
 
         private void MoreButton_Click(object sender, RoutedEventArgs e)
@@ -403,8 +375,8 @@ namespace UniversalSoundBoard
 
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
-            switchSelectionMode();
-            AdjustLayout();
+            FileManager.switchSelectionMode();
+            FileManager.AdjustLayout();
         }
         #endregion EventHandlers
 

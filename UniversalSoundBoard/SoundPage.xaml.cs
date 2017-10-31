@@ -166,10 +166,12 @@ namespace UniversalSoundBoard
             if (selectedGridview.SelectedItems.Count > 0)
             {
                 (App.Current as App)._itemViewHolder.multiSelectOptionsEnabled = true;
+                (App.Current as App)._itemViewHolder.areSelectButtonsEnabled = true;
             }
             else
             {
                 (App.Current as App)._itemViewHolder.multiSelectOptionsEnabled = false;
+                (App.Current as App)._itemViewHolder.areSelectButtonsEnabled = false;
             }
 
             // Add new item to selectedSounds list
