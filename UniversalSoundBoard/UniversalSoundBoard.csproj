@@ -16,11 +16,11 @@
     <MinimumVisualStudioVersion>14</MinimumVisualStudioVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{A5A43C5B-DE2A-4C0C-9213-0A381AF9435A};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
-    <PackageCertificateKeyFile>UniversalSoundBoard_StoreKey.pfx</PackageCertificateKeyFile>
+    <PackageCertificateKeyFile>UniversalSoundBoard_TemporaryKey.pfx</PackageCertificateKeyFile>
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>B768B80EBA1FCABA2C76C1187ED2EF2A7FD3F05D</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>EF20255B4C230656E9030C1E5946002C68EF9F5C</PackageCertificateThumbprint>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
   </PropertyGroup>
@@ -194,7 +194,9 @@
     <Content Include="Assets\Generierte Assets\Wide310x150Logo.scale-400.png" />
     <Content Include="Assets\Images\default-dark.png" />
     <Content Include="Assets\Images\default.png" />
-    <None Include="Package.StoreAssociation.xml" />
+    <None Include="Package.StoreAssociation.xml">
+      <SubType>Designer</SubType>
+    </None>
     <Content Include="Assets\Quelle.png" />
     <Content Include="Assets\Quelle2.png" />
     <Content Include="Properties\Default.rd.xml" />
