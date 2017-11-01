@@ -170,7 +170,7 @@
   <data name="EditCategoryContentDialog-Title" xml:space="preserve">
     <value>Edit Category</value>
   </data>
-  <data name="MultiSelectionCancelButton.Content" xml:space="preserve">
+  <data name="CancelButton.Content" xml:space="preserve">
     <value>Cancel</value>
   </data>
   <data name="MoreButton-ChangeCategory.Text" xml:space="preserve">
@@ -343,5 +343,17 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="MoreButton-Cancel.Text" xml:space="preserve">
     <value>Cancel</value>
+  </data>
+  <data name="AddButton.Text" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="SearchButton.Text" xml:space="preserve">
+    <value>Search for Sounds</value>
+  </data>
+  <data name="SelectButton.Text" xml:space="preserve">
+    <value>Select</value>
+  </data>
+  <data name="VolumeButton.Text" xml:space="preserve">
+    <value>Volume</value>
   </data>
 </root>

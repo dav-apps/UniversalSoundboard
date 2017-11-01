@@ -165,7 +165,7 @@
   <data name="EditCategoryContentDialog-Title" xml:space="preserve">
     <value>Kategorie bearbeiten</value>
   </data>
-  <data name="MultiSelectionCancelButton.Content" xml:space="preserve">
+  <data name="CancelButton.Content" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
   <data name="MoreButton-ChangeCategory.Text" xml:space="preserve">
@@ -330,5 +330,17 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="MoreButton-Cancel.Text" xml:space="preserve">
     <value>Abbrechen</value>
+  </data>
+  <data name="AddButton.Text" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="SearchButton.Text" xml:space="preserve">
+    <value>Sounds durchsuchen</value>
+  </data>
+  <data name="SelectButton.Text" xml:space="preserve">
+    <value>Auswählen</value>
+  </data>
+  <data name="VolumeButton.Text" xml:space="preserve">
+    <value>Lautstärke</value>
   </data>
 </root>
