@@ -283,12 +283,12 @@ namespace UniversalSoundBoard
 
         private void ContentRoot_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            SoundTileImage.Scale(1.1f, 1.1f, 100, 100, 2000, 0, EasingType.Quintic).Start();
+            SoundTileImage.Scale(1.1f, 1.1f, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 2000, 0, EasingType.Quintic).Start();
         }
 
         private void ContentRoot_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            SoundTileImage.Scale(1, 1, 100, 100, 1000, 0, EasingType.Quintic).Start();
+            SoundTileImage.Scale(1, 1, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 1000, 0, EasingType.Quintic).Start();
         }
     }
 }

@@ -24,8 +24,7 @@
                         <AdaptiveTrigger MinWindowWidth="0" />
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
-                        <!--    <Setter Target="ContentRoot.Height" Value="150" />
-                        <Setter Target="ContentRoot.Width" Value="140" /> -->
+                        
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="Desktop">
@@ -34,8 +33,6 @@
                     </VisualState.StateTriggers>
                     <VisualState.Setters>
                         <Setter Target="SoundTileName.FontSize" Value="25" />
-                        <!--    <Setter Target="ContentRoot.Height" Value="200" />
-                        <Setter Target="ContentRoot.Width" Value="185" /> -->
                     </VisualState.Setters>
                 </VisualState>
             </VisualStateGroup>
