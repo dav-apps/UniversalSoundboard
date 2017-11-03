@@ -29,6 +29,7 @@ namespace UniversalSoundBoard
     public sealed partial class NavigationViewHeader : UserControl
     {
         List<string> Suggestions;
+        public static ObservableCollection<Sound> PlaySoundsList;
         int moreButtonClicked = 0;
 
         public NavigationViewHeader()
@@ -39,6 +40,7 @@ namespace UniversalSoundBoard
             SetDarkThemeLayout();
             FileManager.AdjustLayout();
             Suggestions = new List<string>();
+            PlaySoundsList = new ObservableCollection<Sound>();
         }
 
         private void setDataContext()
@@ -280,54 +282,45 @@ namespace UniversalSoundBoard
             SoundPage.PlayAllSoundsSimultaneously();
         }
 
-        private void PlayAllSoundsSuccessivelyFlyoutItem_1x_Click(object sender, RoutedEventArgs e)
+        private async void PlaySoundsSuccessivelyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            SoundPage.StartPlaySoundsSuccessively(1, true);
+            PlaySoundsList.Clear();
+            foreach(Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
+            {
+                PlaySoundsList.Add(sound);
+            }
+
+            var template = (DataTemplate)Resources["SoundItemTemplate"];
+            var listViewItemStyle = this.Resources["ListViewItemStyle"] as Style;
+            var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(PlaySoundsList, template, listViewItemStyle);
+            playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
+            await playSoundsSuccessivelyContentDialog.ShowAsync();
         }
 
-        private void PlayAllSoundsSuccessivelyFlyoutItem_2x_Click(object sender, RoutedEventArgs e)
+        private async void PlayAllSoundsSuccessivelyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            SoundPage.StartPlaySoundsSuccessively(2, true);
-        }
+            PlaySoundsList.Clear();
+            // If favourite sounds is selected or Favourite sounds are hiding
+            if (SoundPage.soundsPivotSelected || !(App.Current as App)._itemViewHolder.showSoundsPivot)
+            {
+                foreach(Sound sound in (App.Current as App)._itemViewHolder.sounds)
+                {
+                    PlaySoundsList.Add(sound);
+                }
+            }
+            else
+            {
+                foreach (Sound sound in (App.Current as App)._itemViewHolder.favouriteSounds)
+                {
+                    PlaySoundsList.Add(sound);
+                }
+            }
 
-        private void PlayAllSoundsSuccessivelyFlyoutItem_5x_Click(object sender, RoutedEventArgs e)
-        {
-            SoundPage.StartPlaySoundsSuccessively(5, true);
-        }
-
-        private void PlayAllSoundsSuccessivelyFlyoutItem_10x_Click(object sender, RoutedEventArgs e)
-        {
-            SoundPage.StartPlaySoundsSuccessively(10, true);
-        }
-
-        private void PlayAllSoundsSuccessivelyFlyoutItem_endless_Click(object sender, RoutedEventArgs e)
-        {
-            SoundPage.StartPlaySoundsSuccessively(int.MaxValue, true);
-        }
-
-        private void PlaySoundsSuccessivelyFlyoutItem_1x_Click(object sender, RoutedEventArgs e)
-        {
-            SoundPage.StartPlaySoundsSuccessively(1, false);
-        }
-
-        private void PlaySoundsSuccessivelyFlyoutItem_2x_Click(object sender, RoutedEventArgs e)
-        {
-            SoundPage.StartPlaySoundsSuccessively(2, false);
-        }
-
-        private void PlaySoundsSuccessivelyFlyoutItem_5x_Click(object sender, RoutedEventArgs e)
-        {
-            SoundPage.StartPlaySoundsSuccessively(5, false);
-        }
-
-        private void PlaySoundsSuccessivelyFlyoutItem_10x_Click(object sender, RoutedEventArgs e)
-        {
-            SoundPage.StartPlaySoundsSuccessively(10, false);
-        }
-
-        private void PlaySoundsSuccessivelyFlyoutItem_endless_Click(object sender, RoutedEventArgs e)
-        {
-            SoundPage.StartPlaySoundsSuccessively(int.MaxValue, false);
+            var template = (DataTemplate)Resources["SoundItemTemplate"];
+            var listViewItemStyle = this.Resources["ListViewItemStyle"] as Style;
+            var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(PlaySoundsList, template, listViewItemStyle);
+            playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
+            await playSoundsSuccessivelyContentDialog.ShowAsync();
         }
 
         private void PlaySoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -381,6 +374,19 @@ namespace UniversalSoundBoard
         #endregion EventHandlers
 
         #region ContentDialogs
+        private void PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            List<Sound> sounds = ContentDialogs.SoundsList.ToList();
+            bool randomly = (bool)ContentDialogs.RandomCheckBox.IsChecked;
+            int rounds = int.MaxValue;
+            if (ContentDialogs.RepeatsComboBox.SelectedItem != ContentDialogs.RepeatsComboBox.Items.Last())
+            {
+                int.TryParse(ContentDialogs.RepeatsComboBox.SelectedValue.ToString(), out rounds);
+            }
+
+            SoundPage.playSounds(sounds, rounds, randomly);
+        }
+
         private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get categories List and save with new value

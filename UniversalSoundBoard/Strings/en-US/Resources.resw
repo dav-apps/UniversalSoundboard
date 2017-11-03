@@ -189,7 +189,7 @@
     <value>Play simultaneously</value>
   </data>
   <data name="PlaySoundsSuccessively.Text" xml:space="preserve">
-    <value>Play successively</value>
+    <value>Play one after another</value>
   </data>
   <data name="RenameSoundContentDialog-PrimaryButton" xml:space="preserve">
     <value>Save</value>
@@ -221,7 +221,7 @@
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>1.2</value>
+    <value>2.0</value>
   </data>
   <data name="PlayingSound_CastButton.Label" xml:space="preserve">
     <value>Cast to Device</value>
@@ -242,7 +242,7 @@
     <value>Play all simultaneously</value>
   </data>
   <data name="PlayAllSoundsSuccessively.Text" xml:space="preserve">
-    <value>Play all successively</value>
+    <value>Play all one after another</value>
   </data>
   <data name="SoundTile-SetFavourite" xml:space="preserve">
     <value>Add to Favorites</value>
@@ -355,5 +355,14 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="VolumeButton.Text" xml:space="preserve">
     <value>Volume</value>
+  </data>
+  <data name="PlaySoundsSuccessivelyContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="PlaySoundsSuccessivelyContentDialog-Title" xml:space="preserve">
+    <value>Play sounds one after another</value>
+  </data>
+  <data name="Shuffle" xml:space="preserve">
+    <value>Shuffle</value>
   </data>
 </root>

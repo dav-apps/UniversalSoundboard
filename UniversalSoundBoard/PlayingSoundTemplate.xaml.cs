@@ -143,9 +143,15 @@ namespace UniversalSoundBoard
                 
                 if(this.PlayingSound.repetitions >= 0 && this.PlayingSound.MediaPlayer != null)
                 {
-                    if (this.PlayingSound.Sounds.Count > 1)
+                    if (this.PlayingSound.Sounds.Count > 1) // Multiple Sounds in the list
                     {
-                        // Multiple Sounds in the list
+                        // If randomly is true, shuffle sounds
+                        if (this.PlayingSound.randomly)
+                        {
+                            Random random = new Random();
+                            this.PlayingSound.Sounds = this.PlayingSound.Sounds.OrderBy(a => random.Next()).ToList();
+                        }
+
                         ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).MoveTo(0);
                     }
                     this.PlayingSound.MediaPlayer.Play();

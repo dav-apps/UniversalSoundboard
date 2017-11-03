@@ -35,7 +35,7 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class SoundPage : Page
     {
-        static bool soundsPivotSelected = false;
+        public static bool soundsPivotSelected = false;
 
         public SoundPage()
         {
@@ -278,12 +278,20 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
 
-        public static void playSounds(List<Sound> sounds, int repetitions)
+        public static void playSounds(List<Sound> sounds, int repetitions, bool randomly)
         {
             if(sounds.Count < 1)
             {
                 return;
             }
+
+            // If randomly is true, shuffle sounds
+            if (randomly)
+            {
+                Random random = new Random();
+                sounds = sounds.OrderBy(a => random.Next()).ToList();
+            }
+
             MediaPlayer player = new MediaPlayer();
             MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
 
@@ -311,7 +319,6 @@ namespace UniversalSoundBoard
             
             player.Source = mediaPlaybackList;
 
-
             // Set volume
             var localSettings = ApplicationData.Current.LocalSettings;
             if (localSettings.Values["volume"] != null)
@@ -336,7 +343,7 @@ namespace UniversalSoundBoard
                 RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
             }
 
-            PlayingSound playingSound = new PlayingSound(sounds, player, repetitions);
+            PlayingSound playingSound = new PlayingSound(sounds, player, repetitions, true);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
 
@@ -386,28 +393,30 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
             await SoundManager.GetSoundsByCategory(category);
         }
-
-        public static void StartPlaySoundsSuccessively(int rounds, bool allSounds)
+        /*
+        public static void StartPlaySoundsSuccessively(int rounds, List<Sound> sounds, bool randomly)
         {
+            
             // If allSounds is true, play all sounds. Else, play only selected sounds
             if (allSounds)
             {
                 // If favourite sounds is selected or Favourite sounds are hiding
                 if (soundsPivotSelected || !(App.Current as App)._itemViewHolder.showSoundsPivot)
                 {
-                    playSounds((App.Current as App)._itemViewHolder.sounds.ToList(), rounds);
+                    playSounds((App.Current as App)._itemViewHolder.sounds.ToList(), rounds, randomly);
                 }
                 else
                 {
-                    playSounds((App.Current as App)._itemViewHolder.favouriteSounds.ToList(), rounds);
+                    playSounds((App.Current as App)._itemViewHolder.favouriteSounds.ToList(), rounds, randomly);
                 }
             }
             else
             {
-                playSounds((App.Current as App)._itemViewHolder.selectedSounds, rounds);
+                playSounds((App.Current as App)._itemViewHolder.selectedSounds, rounds, randomly);
             }
+            
         }
-
+        */
         public static void PlayAllSoundsSimultaneously()
         {
             bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.playOneSoundAtOnce;

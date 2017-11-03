@@ -23,14 +23,16 @@ namespace UniversalSoundBoard.Model
     public class PlayingSound
     {
         public Sound CurrentSound { get; set; }
-        public List<Sound> Sounds { get; }
+        public List<Sound> Sounds { get; set; }
         public MediaPlayer MediaPlayer { get; set; }
         public int repetitions { get; set; }
+        public bool randomly { get; set; }
 
         public PlayingSound()
         {
             Sounds = new List<Sound>();
             repetitions = 0;
+            randomly = false;
         }
 
         public PlayingSound(Sound sound, MediaPlayer player)
@@ -41,6 +43,7 @@ namespace UniversalSoundBoard.Model
             CurrentSound = sound;
             this.MediaPlayer = player;
             repetitions = 0;
+            randomly = false;
         }
 
         public PlayingSound(List<Sound> sounds, MediaPlayer player)
@@ -53,6 +56,7 @@ namespace UniversalSoundBoard.Model
             CurrentSound = sounds.First();
             this.MediaPlayer = player;
             repetitions = 0;
+            randomly = false;
         }
 
         public PlayingSound(Sound sound, MediaPlayer player, int repetitions)
@@ -63,9 +67,10 @@ namespace UniversalSoundBoard.Model
             CurrentSound = sound;
             this.MediaPlayer = player;
             this.repetitions = repetitions;
+            randomly = false;
         }
 
-        public PlayingSound(List<Sound> sounds, MediaPlayer player, int repetitions)
+        public PlayingSound(List<Sound> sounds, MediaPlayer player, int repetitions, bool randomly)
         {
             Sounds = new List<Sound>();
             foreach (Sound sound in sounds)
@@ -75,6 +80,7 @@ namespace UniversalSoundBoard.Model
             CurrentSound = sounds.First();
             this.MediaPlayer = player;
             this.repetitions = repetitions;
+            this.randomly = randomly;
         }
 
         public void AddSound(Sound sound)

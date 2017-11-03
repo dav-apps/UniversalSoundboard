@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -7,6 +8,8 @@ using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace UniversalSoundBoard.Model
@@ -21,6 +24,10 @@ namespace UniversalSoundBoard.Model
         public static StorageFolder ExportFolder;
         public static StorageFile ImportFile;
         public static ComboBox IconSelectionComboBox;
+        public static CheckBox RandomCheckBox;
+        public static ListView SoundsListView;
+        public static ComboBox RepeatsComboBox;
+        public static ObservableCollection<Sound> SoundsList;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteSoundContentDialog;
@@ -28,7 +35,67 @@ namespace UniversalSoundBoard.Model
         public static ContentDialog DeleteSoundsContentDialog;
         public static ContentDialog ExportDataContentDialog;
         public static ContentDialog ImportDataContentDialog;
+        public static ContentDialog PlaySoundsSuccessivelyContentDialog;
 
+
+        public static ContentDialog CreatePlaySoundsSuccessivelyContentDialog(ObservableCollection<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle)
+        {
+            SoundsList = sounds;
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            PlaySoundsSuccessivelyContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("PlaySoundsSuccessivelyContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("PlaySoundsSuccessivelyContentDialog-PrimaryButton"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+            };
+
+            StackPanel content = new StackPanel();
+            content.Orientation = Orientation.Vertical;
+
+            SoundsListView = new ListView();
+            SoundsListView.ItemTemplate = itemTemplate;
+            SoundsListView.ItemsSource = SoundsList;
+            SoundsListView.SelectionMode = ListViewSelectionMode.None;
+            SoundsListView.Height = 300;
+            SoundsListView.ItemContainerStyle = listViewItemStyle;
+            SoundsListView.CanReorderItems = true;
+            SoundsListView.CanDrag = true;
+            SoundsListView.AllowDrop = true;
+
+            RepeatsComboBox = new ComboBox();
+            RepeatsComboBox.Margin = new Thickness(0, 10, 0, 0);
+            RepeatsComboBox.Items.Add("1");
+            RepeatsComboBox.Items.Add("2");
+            RepeatsComboBox.Items.Add("3");
+            RepeatsComboBox.Items.Add("4");
+            RepeatsComboBox.Items.Add("5");
+            RepeatsComboBox.Items.Add("6");
+            RepeatsComboBox.Items.Add("7");
+            RepeatsComboBox.Items.Add("8");
+            RepeatsComboBox.Items.Add("9");
+            RepeatsComboBox.Items.Add("10");
+            RepeatsComboBox.Items.Add("15");
+            RepeatsComboBox.Items.Add("20");
+            RepeatsComboBox.Items.Add("25");
+            RepeatsComboBox.Items.Add("30");
+            RepeatsComboBox.Items.Add("40");
+            RepeatsComboBox.Items.Add("50");
+            RepeatsComboBox.Items.Add("100");
+            RepeatsComboBox.Items.Add("∞");
+            RepeatsComboBox.SelectedIndex = 0;
+
+            RandomCheckBox = new CheckBox();
+            RandomCheckBox.Content = loader.GetString("Shuffle");
+            RandomCheckBox.Margin = new Thickness(0, 10, 0, 0);
+
+            content.Children.Add(SoundsListView);
+            content.Children.Add(RepeatsComboBox);
+            content.Children.Add(RandomCheckBox);
+
+            PlaySoundsSuccessivelyContentDialog.Content = content;
+            return PlaySoundsSuccessivelyContentDialog;
+        }
 
         public static ContentDialog CreateImportDataContentDialog()
         {
