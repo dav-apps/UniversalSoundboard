@@ -169,8 +169,8 @@ namespace UniversalSoundBoard
 
                 if (String.IsNullOrEmpty(text))
                 {
-                    //await ShowAllSounds();
-                    //SideBar.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
+                    await FileManager.ShowAllSounds();
+                    FileManager.SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
                     (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
                 }
                 else
