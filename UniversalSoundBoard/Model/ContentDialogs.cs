@@ -50,6 +50,9 @@ namespace UniversalSoundBoard.Model
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
             };
 
+            if(SoundsList.Count() == 0)
+                PlaySoundsSuccessivelyContentDialog.IsPrimaryButtonEnabled = false;
+
             StackPanel content = new StackPanel();
             content.Orientation = Orientation.Vertical;
 

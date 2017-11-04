@@ -183,8 +183,6 @@ namespace UniversalSoundBoard
                     FileManager.SetBackButtonVisibility(true);
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
                 }
-
-                //CheckBackButtonVisibility();
             }
             FileManager.skipAutoSuggestBoxTextChanged = false;
         }
