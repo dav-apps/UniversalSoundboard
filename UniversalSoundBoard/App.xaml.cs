@@ -67,7 +67,8 @@ namespace UniversalSoundBoard
             cancelButtonVisibility = false,
             moreButtonVisibility = true,
             topButtonsCollapsed = false,
-            areSelectButtonsEnabled = false
+            areSelectButtonsEnabled = false,
+            selectedCategory = new Category((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), "\uE10F")
         };
 
         /// <summary>

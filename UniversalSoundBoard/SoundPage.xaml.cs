@@ -125,11 +125,11 @@ namespace UniversalSoundBoard
 
                     if (String.IsNullOrEmpty(category.Name))
                     {
-                        await ShowAllSounds();
+                        await FileManager.ShowAllSounds();
                     }
                     else
                     {
-                        await ShowCategory(category);
+                        await FileManager.ShowCategory(category);
                     }
                 }
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
@@ -376,7 +376,7 @@ namespace UniversalSoundBoard
                 RemovePlayingSound(removedPlayingSounds[i]);
             }
         }
-
+        /*
         private async Task ShowAllSounds()
         {
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
@@ -392,29 +392,6 @@ namespace UniversalSoundBoard
             SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
             await SoundManager.GetSoundsByCategory(category);
-        }
-        /*
-        public static void StartPlaySoundsSuccessively(int rounds, List<Sound> sounds, bool randomly)
-        {
-            
-            // If allSounds is true, play all sounds. Else, play only selected sounds
-            if (allSounds)
-            {
-                // If favourite sounds is selected or Favourite sounds are hiding
-                if (soundsPivotSelected || !(App.Current as App)._itemViewHolder.showSoundsPivot)
-                {
-                    playSounds((App.Current as App)._itemViewHolder.sounds.ToList(), rounds, randomly);
-                }
-                else
-                {
-                    playSounds((App.Current as App)._itemViewHolder.favouriteSounds.ToList(), rounds, randomly);
-                }
-            }
-            else
-            {
-                playSounds((App.Current as App)._itemViewHolder.selectedSounds, rounds, randomly);
-            }
-            
         }
         */
         public static void PlayAllSoundsSimultaneously()

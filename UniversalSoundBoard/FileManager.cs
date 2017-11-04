@@ -34,8 +34,8 @@ namespace UniversalSoundBoard
     {
         public const double volume = 1.0;
         public const bool liveTile = true;
-        public const bool playingSoundsListVisible = false;
-        public const bool playOneSoundAtOnce = true;
+        public const bool playingSoundsListVisible = true;
+        public const bool playOneSoundAtOnce = false;
         public const bool darkTheme = false;
         public const bool showCategoryIcon = true;
         public const bool showSoundsPivot = true;
@@ -295,6 +295,7 @@ namespace UniversalSoundBoard
 
         public async static Task renameCategory(string oldName, string newName)
         {
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             foreach (var sound in (App.Current as App)._itemViewHolder.sounds)
             {
                 if (sound.Category.Name == oldName)
@@ -607,17 +608,18 @@ namespace UniversalSoundBoard
             {
                 (App.Current as App)._itemViewHolder.categories.Add(cat);
             }
+            SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
         }
         #endregion
 
         #region UI Methods
         public static async Task UpdateGridView()
         {
-            // Save title and check at the end if another category was selected
-            string title = (App.Current as App)._itemViewHolder.title;
+            Category selectedCategory = (App.Current as App)._itemViewHolder.selectedCategory;
+
             if ((App.Current as App)._itemViewHolder.searchQuery == "")
             {
-                if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
+                if (selectedCategory.Name == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
                 {
                     await SoundManager.GetAllSounds();
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
@@ -628,7 +630,7 @@ namespace UniversalSoundBoard
                 }
                 else
                 {
-                    await SoundManager.GetSoundsByCategory(await GetCategoryByNameAsync((App.Current as App)._itemViewHolder.title));
+                    await SoundManager.GetSoundsByCategory(selectedCategory);
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
                 }
             }
@@ -639,7 +641,7 @@ namespace UniversalSoundBoard
             }
 
             // Check if another category was selected
-            if (title != (App.Current as App)._itemViewHolder.title)
+            if (selectedCategory != (App.Current as App)._itemViewHolder.selectedCategory)
             {
                 // Update UI
                 await UpdateGridView();
@@ -875,6 +877,7 @@ namespace UniversalSoundBoard
                 {   // If Settings Page is visible
                     // Go to All sounds page
                     (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+                    SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
                     (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
                     FileManager.ShowAllSounds();
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
@@ -891,6 +894,11 @@ namespace UniversalSoundBoard
             }
 
             FileManager.CheckBackButtonVisibility();
+        }
+
+        public static void SelectCategoryByName(string name)
+        {
+            (App.Current as App)._itemViewHolder.selectedCategory = (App.Current as App)._itemViewHolder.categories.Where(cat => cat.Name == name).First();
         }
 
         public static void AdjustLayout()
@@ -936,7 +944,7 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
             SetBackButtonVisibility(true);
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
-            //SideBar.SelectedItem = SideBar.MenuItems.Last();
+            SelectCategoryByName(category.Name);
             await SoundManager.GetSoundsByCategory(category);
         }
 
@@ -948,7 +956,7 @@ namespace UniversalSoundBoard
             }
             skipAutoSuggestBoxTextChanged = true;
             (App.Current as App)._itemViewHolder.searchQuery = "";
-            //SideBar.SelectedItem = (App.Current as App)._itemViewHolder.categories.First();
+            FileManager.SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);

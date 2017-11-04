@@ -433,18 +433,18 @@ namespace UniversalSoundBoard
 
             await FileManager.SaveCategoriesListAsync(categoriesList);
             await FileManager.renameCategory(oldName, newName);
+            (App.Current as App)._itemViewHolder.title = newName;
 
             // Update page
             await FileManager.CreateCategoriesObservableCollection();
+            //FileManager.SelectCategoryByName(newName);
+            await SoundManager.GetAllSounds();
             await FileManager.ShowCategory(new Category() { Name = newName, Icon = icon });
         }
 
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.deleteCategory((App.Current as App)._itemViewHolder.title);
-            FileManager.SetBackButtonVisibility(false);
-            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
 
             // Reload page
             await FileManager.CreateCategoriesObservableCollection();
@@ -453,6 +453,8 @@ namespace UniversalSoundBoard
 
         private async void deleteSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            (App.Current as App)._itemViewHolder.progressRingIsActive = true;
+
             // Delete Sounds
             for (int i = 0; i < (App.Current as App)._itemViewHolder.selectedSounds.Count; i++)
             {

@@ -10,6 +10,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
+        <local:ReturnValueConverter x:Name="ReturnValueConverter" />
+        
         <Style TargetType="TextBlock" x:Key="NavBarItemIconStyle">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
             <Setter Property="FontSize" Value="23" />
@@ -41,7 +43,8 @@
 
     <Grid>
         <NavigationView Name="SideBar" AlwaysShowHeader="True" MenuItemsSource="{Binding categories, Mode=TwoWay}" 
-                        ItemInvoked="SideBar_ItemInvoked" ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}">
+                        ItemInvoked="SideBar_ItemInvoked" ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}"
+                        SelectedItem="{Binding selectedCategory, Mode=TwoWay, Converter={StaticResource ReturnValueConverter}}">
 
             <NavigationView.HeaderTemplate>
                 <DataTemplate>

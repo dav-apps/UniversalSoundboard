@@ -34,9 +34,7 @@
           AllowDrop="True" Drop="SoundGridView_Drop" DragOver="SoundGridView_DragOver">
 
         <Grid.RowDefinitions>
-            <RowDefinition Height="59*" />
-            <RowDefinition Height="21*"/>
-            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -71,14 +69,14 @@
                 </PivotItem>
             </Pivot>
 
-            <GridView Name="SoundGridView2" Grid.Row="1" Visibility="Collapsed" Margin="5,0,0,0"
-                            ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
-                            SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
-                            ItemsSource="{Binding sounds, Mode=TwoWay}"
-                            SizeChanged="SoundGridView2_SizeChanged">
+            <GridView Name="SoundGridView2" Grid.Row="0" Visibility="Collapsed" Margin="5,0,0,0"
+                    ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
+                    SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
+                    ItemsSource="{Binding sounds, Mode=TwoWay}"
+                    SizeChanged="SoundGridView2_SizeChanged">
             </GridView>
 
-            <Grid x:Name="DrawerContentGrid" Grid.Row="2"
+            <Grid x:Name="DrawerContentGrid" Grid.Row="1"
                     VerticalAlignment="Bottom" Background="{ThemeResource AppBarBackgroundThemeBrush}" RenderTransformOrigin="0.5,0.5">
 
                 <Grid.RowDefinitions>

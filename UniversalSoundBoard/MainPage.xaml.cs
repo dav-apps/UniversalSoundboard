@@ -37,7 +37,7 @@ namespace UniversalSoundBoard
             await FileManager.CreateCategoriesObservableCollection();
             customiseTitleBar();
             await SoundManager.GetAllSounds();
-            SideBar.SelectedItem = SideBar.MenuItems.First();
+            FileManager.SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
         }
 
         private void setDataContext()
@@ -138,6 +138,8 @@ namespace UniversalSoundBoard
             else
             {
                 var category = (Category)args.InvokedItem;
+                FileManager.SelectCategoryByName(category.Name);
+
                 if (category == (App.Current as App)._itemViewHolder.categories.First())
                 {
                     await FileManager.ShowAllSounds();
