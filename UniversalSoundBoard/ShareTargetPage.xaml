@@ -36,9 +36,18 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <Button Name="AddButton" x:Uid="ShareTarget-AddButton" Grid.Row="2"
-                IsEnabled="False"
-                Click="AddButton_Click"/>
+            <StackPanel Orientation="Horizontal">
+                <Button Name="AddButton" x:Uid="ShareTarget-AddButton" Grid.Row="2"
+                        IsEnabled="False"
+                        Click="AddButton_Click"/>
+
+                <ProgressRing Name="ProgressRing" 
+                              IsActive="False"
+                              Margin="10,0,10,0" />
+
+                <Button Name="AddCategoryButton" x:Uid="ShareTarget-AddCategoryButton"
+                        Click="AddCategoryButton_Click"/>
+            </StackPanel>
         </StackPanel>
     </ScrollViewer>
 </Page>

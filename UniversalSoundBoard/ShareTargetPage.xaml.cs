@@ -64,6 +64,10 @@ namespace UniversalSoundBoard
 
         private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
+            AddButton.IsEnabled = false;
+            AddCategoryButton.IsEnabled = false;
+            ProgressRing.IsActive = true;
+
             Category category = null;
             if(CategoriesListView.SelectedIndex != 0)
             {
@@ -86,7 +90,42 @@ namespace UniversalSoundBoard
 
         private void CategoriesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            AddButton.IsEnabled = true;
+            if (!ProgressRing.IsActive)
+            {
+                AddButton.IsEnabled = true;
+            }
+        }
+
+        private async void AddCategoryButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Show new Category ContentDialog
+            var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog();
+            newCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
+            await newCategoryContentDialog.ShowAsync();
+        }
+
+        private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Get combobox value
+            ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
+            string icon = typeItem.Content.ToString();
+
+            Category category = new Category
+            {
+                Name = ContentDialogs.NewCategoryTextBox.Text,
+                Icon = icon
+            };
+
+            categories.Add(category);
+            Bindings.Update();
+
+            ObservableCollection<Category> newCategories = new ObservableCollection<Category>();
+
+            foreach (Category cat in categories)
+                newCategories.Add(cat);
+
+            newCategories.RemoveAt(0);
+            await FileManager.SaveCategoriesListAsync(newCategories);
         }
     }
 }

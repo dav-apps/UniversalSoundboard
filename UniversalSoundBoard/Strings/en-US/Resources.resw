@@ -380,6 +380,9 @@ This may take some time, depending on how large the import file is.</value>
   <data name="ShareTarget-AddButton.Content" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="ShareTarget-AddCategoryButton.Content" xml:space="preserve">
+    <value>Add category</value>
+  </data>
   <data name="ShareTarget-SelectCategoryTextBlock.Text" xml:space="preserve">
     <value>Select the category to which you want to add the sounds.</value>
   </data>
