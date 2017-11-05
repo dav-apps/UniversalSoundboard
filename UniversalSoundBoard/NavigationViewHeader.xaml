@@ -67,14 +67,8 @@
 						Tapped="CategoryDeleteButton_Tapped" />
             <Button Name="CategoryPlayAllButton" Background="Transparent" Height="25" Width="20"
 					Content="&#xEDB5;" FontFamily="Segoe MDL2 Assets" FontSize="20" Style="{StaticResource PlayAllButtonStyle}"
-					Margin="15,0,0,0" Visibility="{Binding playAllButtonVisibility}">
-                <Button.Flyout>
-                    <MenuFlyout Placement="Bottom">
-                        <MenuFlyoutItem Name="PlayAllSoundsSimultaneouslyFlyoutItem" x:Uid="PlayAllSoundsSimultaneously" Click="PlayAllSoundsSimultaneouslyFlyoutItem_Click" />
-                        <MenuFlyoutItem Name="PlayAllSoundsSuccessivelyFlyoutItem" x:Uid="PlayAllSoundsSuccessively" Click="PlayAllSoundsSuccessivelyFlyoutItem_Click" />
-                    </MenuFlyout>
-                </Button.Flyout>
-            </Button>
+					Margin="15,0,0,0" Visibility="{Binding playAllButtonVisibility}" 
+                    Click="CategoryPlayAllButton_Click" />
         </StackPanel>
 
         <RelativePanel RelativePanel.AlignRightWithPanel="True" Margin="0,0,10,0">

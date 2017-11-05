@@ -275,11 +275,6 @@ namespace UniversalSoundBoard
             await deleteCategoryContentDialog.ShowAsync();
         }
 
-        private void PlayAllSoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            SoundPage.PlayAllSoundsSimultaneously();
-        }
-
         private async void PlaySoundsSuccessivelyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             PlaySoundsList.Clear();
@@ -295,7 +290,7 @@ namespace UniversalSoundBoard
             await playSoundsSuccessivelyContentDialog.ShowAsync();
         }
 
-        private async void PlayAllSoundsSuccessivelyFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void CategoryPlayAllButton_Click(object sender, RoutedEventArgs e)
         {
             PlaySoundsList.Clear();
             // If favourite sounds is selected or Favourite sounds are hiding

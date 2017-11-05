@@ -148,19 +148,7 @@ namespace UniversalSoundBoard
 
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            GridView selectedGridview;
-            if (soundsPivotSelected)
-            {
-                selectedGridview = SoundGridView;
-            }
-            else if(!soundsPivotSelected && (App.Current as App)._itemViewHolder.showSoundsPivot)
-            {
-                selectedGridview = FavouriteSoundGridView;
-            }
-            else
-            {
-                selectedGridview = SoundGridView2;
-            }
+            GridView selectedGridview = sender as GridView;
 
             // If no items are selected, disable multi select buttons
             if (selectedGridview.SelectedItems.Count > 0)
@@ -376,24 +364,7 @@ namespace UniversalSoundBoard
                 RemovePlayingSound(removedPlayingSounds[i]);
             }
         }
-        /*
-        private async Task ShowAllSounds()
-        {
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            (App.Current as App)._itemViewHolder.searchQuery = "";
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-            await SoundManager.GetAllSounds();
-        }
 
-        private async Task ShowCategory(Category category)
-        {
-            (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
-            await SoundManager.GetSoundsByCategory(category);
-        }
-        */
         public static void PlayAllSoundsSimultaneously()
         {
             bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.playOneSoundAtOnce;

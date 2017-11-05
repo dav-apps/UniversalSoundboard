@@ -238,12 +238,6 @@
   <data name="ThemeChangeMessageTextBlock.Text" xml:space="preserve">
     <value>Please restart the app to apply the new theme.</value>
   </data>
-  <data name="PlayAllSoundsSimultaneously.Text" xml:space="preserve">
-    <value>Play all simultaneously</value>
-  </data>
-  <data name="PlayAllSoundsSuccessively.Text" xml:space="preserve">
-    <value>Play all one after another</value>
-  </data>
   <data name="SoundTile-SetFavourite" xml:space="preserve">
     <value>Add to Favorites</value>
   </data>
