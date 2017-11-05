@@ -352,4 +352,16 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Shuffle" xml:space="preserve">
     <value>Zufallswiedergabe</value>
   </data>
+  <data name="SettingsEntry-DarkThemeRadioButton.Content" xml:space="preserve">
+    <value>Dunkel</value>
+  </data>
+  <data name="SettingsEntry-LightThemeRadioButton.Content" xml:space="preserve">
+    <value>Hell</value>
+  </data>
+  <data name="SettingsEntry-SystemThemeRadioButton.Content" xml:space="preserve">
+    <value>Systemeinstellung verwenden</value>
+  </data>
+  <data name="SettingsEntry-Theme.Text" xml:space="preserve">
+    <value>Thema</value>
+  </data>
 </root>

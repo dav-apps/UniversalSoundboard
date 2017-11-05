@@ -82,12 +82,25 @@ namespace UniversalSoundBoard
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            
+
             // Set dark theme
             var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["darkTheme"] != null)
+            
+            if(localSettings.Values["theme"] != null)
             {
-                (App.Current as App).RequestedTheme = (bool)localSettings.Values["darkTheme"] ? ApplicationTheme.Dark : ApplicationTheme.Light;
+                switch ((string)localSettings.Values["theme"])
+                {
+                    case "dark":
+                        RequestedTheme = ApplicationTheme.Dark;
+                        break;
+                    case "light":
+                        RequestedTheme = ApplicationTheme.Light;
+                        break;
+                }
+            }
+            else
+            {
+                localSettings.Values["theme"] = FileManager.theme;
             }
         }
 

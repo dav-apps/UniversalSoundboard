@@ -60,11 +60,6 @@
                 <ScrollViewer>
                     <StackPanel Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <ToggleSwitch Name="ThemeToggle" Header="Dark Theme" Toggled="ThemeToggle_Toggled" />
-                            <TextBlock Name="ThemeChangeMessageTextBlock" x:Uid="ThemeChangeMessageTextBlock" Visibility="Collapsed" Margin="0,0,0,10" />
-                        </StackPanel>
-
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch Name="LiveTileToggle" Header="Live Tile" Toggled="LiveTileToggle_Toggled" />
                         </StackPanel>
 
@@ -74,6 +69,17 @@
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch Name="ShowCategoryToggle" x:Uid="SettingsEntry-ShowCategoryIcon" Header="Show Category Icon of a Sound" Toggled="ShowCategoryToggle_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                            <TextBlock x:Uid="SettingsEntry-Theme" FontSize="16" Margin="0,0,0,5" />
+                            <RadioButton Name="LightThemeRadioButton" x:Uid="SettingsEntry-LightThemeRadioButton"
+                                         Checked="ThemeRadioButton_Checked" />
+                            <RadioButton Name="DarkThemeRadioButton" x:Uid="SettingsEntry-DarkThemeRadioButton"
+                                         Checked="ThemeRadioButton_Checked" />
+                            <RadioButton Name="SystemThemeRadioButton" x:Uid="SettingsEntry-SystemThemeRadioButton"
+                                         Checked="ThemeRadioButton_Checked" />
+                            <TextBlock Name="ThemeChangeMessageTextBlock" x:Uid="ThemeChangeMessageTextBlock" Visibility="Collapsed" Margin="0,0,0,10" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

@@ -36,7 +36,7 @@ namespace UniversalSoundBoard
         public const bool liveTile = true;
         public const bool playingSoundsListVisible = true;
         public const bool playOneSoundAtOnce = false;
-        public const bool darkTheme = false;
+        public const string theme = "system";
         public const bool showCategoryIcon = true;
         public const bool showSoundsPivot = true;
         public const int mobileMaxWidth = 550;
@@ -617,26 +617,34 @@ namespace UniversalSoundBoard
         {
             Category selectedCategory = (App.Current as App)._itemViewHolder.selectedCategory;
 
-            if ((App.Current as App)._itemViewHolder.searchQuery == "")
+            if(selectedCategory != null)
             {
-                if (selectedCategory.Name == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
+                if ((App.Current as App)._itemViewHolder.searchQuery == "")
                 {
-                    await SoundManager.GetAllSounds();
-                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                }
-                else if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-                {
-                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                    if (selectedCategory.Name == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
+                    {
+                        await SoundManager.GetAllSounds();
+                        (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                    }
+                    else if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+                    {
+                        (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        await SoundManager.GetSoundsByCategory(selectedCategory);
+                        (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
+                    }
                 }
                 else
                 {
-                    await SoundManager.GetSoundsByCategory(selectedCategory);
-                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
+                    SoundManager.GetSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
+                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
                 }
             }
             else
             {
-                SoundManager.GetSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
+                await SoundManager.GetAllSounds();
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
             }
 

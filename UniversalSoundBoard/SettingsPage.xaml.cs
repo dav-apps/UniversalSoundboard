@@ -31,20 +31,23 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class SettingsPage : Page
     {
-        bool darkThemeToggledAtBeginning;
+        static string themeAtBeginning;
 
         public SettingsPage()
         {
             this.InitializeComponent();
             AdjustLayout();
+
+            if(String.IsNullOrEmpty(themeAtBeginning))
+            {
+                var localSettings = ApplicationData.Current.LocalSettings;
+                themeAtBeginning = (string)localSettings.Values["theme"];
+            }
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
-
-            darkThemeToggledAtBeginning = (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? true : false;
-            setToggleMessageVisibility();
             await FileManager.setSoundBoardSizeTextAsync();
         }
 
@@ -55,12 +58,12 @@ namespace UniversalSoundBoard
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            setThemeToggle();
             setLiveTileToggle();
             setPlayingSoundsListVisibilityToggle();
             setPlayOneSoundAtOnceToggle();
             setShowCategoryIconToggle();
             setShowSoundsPivotToggle();
+            setThemeRadioButton();
         }
 
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -80,18 +83,27 @@ namespace UniversalSoundBoard
             }
         }
 
-        private void setThemeToggle()
+        private void setThemeRadioButton()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["darkTheme"] != null)
+
+            if (localSettings.Values["theme"] != null)
             {
-                ThemeToggle.IsOn = (bool)localSettings.Values["darkTheme"];
+                switch ((string)localSettings.Values["theme"])
+                {
+                    case "light":
+                        LightThemeRadioButton.IsChecked = true;
+                        break;
+                    case "dark":
+                        DarkThemeRadioButton.IsChecked = true;
+                        break;
+                    case "system":
+                        SystemThemeRadioButton.IsChecked = true;
+                        break;
+                }
             }
-            else if (Application.Current.RequestedTheme == ApplicationTheme.Dark)
-            {
-                ThemeToggle.IsOn = true;
-            }
-            ThemeChangeMessageTextBlock.Visibility = Visibility.Collapsed;
+
+            setToggleMessageVisibility();
         }
 
         private void setLiveTileToggle()
@@ -126,7 +138,8 @@ namespace UniversalSoundBoard
 
         private void setToggleMessageVisibility()
         {
-            if (darkThemeToggledAtBeginning != ThemeToggle.IsOn)
+            var localSettings = ApplicationData.Current.LocalSettings;
+            if (themeAtBeginning != (string)localSettings.Values["theme"])
             {
                 ThemeChangeMessageTextBlock.Visibility = Visibility.Visible;
             }
@@ -166,10 +179,18 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = PlayOneSoundAtOnceToggle.IsOn;
         }
 
-        private void ThemeToggle_Toggled(object sender, RoutedEventArgs e)
+        private void ThemeRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values["darkTheme"] = ThemeToggle.IsOn;
+
+            RadioButton radioButton = sender as RadioButton;
+            if(radioButton == LightThemeRadioButton)
+                localSettings.Values["theme"] = "light";
+            else if (radioButton == DarkThemeRadioButton)
+                localSettings.Values["theme"] = "dark";
+            else if (radioButton == SystemThemeRadioButton)
+                localSettings.Values["theme"] = "system";
+
             setToggleMessageVisibility();
         }
 

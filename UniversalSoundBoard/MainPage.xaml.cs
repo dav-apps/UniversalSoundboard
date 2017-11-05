@@ -37,7 +37,7 @@ namespace UniversalSoundBoard
             await FileManager.CreateCategoriesObservableCollection();
             customiseTitleBar();
             await SoundManager.GetAllSounds();
-            FileManager.SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
+            //FileManager.SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
         }
 
         private void setDataContext()
