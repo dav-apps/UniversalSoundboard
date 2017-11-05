@@ -248,6 +248,8 @@ namespace UniversalSoundBoard
             CategoriesFlyoutSubItem = new MenuFlyoutSubItem { Text = loader.GetString("SoundTile-Category") };
             SetFavouriteFlyout = new MenuFlyoutItem();
             SetFavouriteFlyout.Click += SoundTileOptionsSetFavourite_Click;
+            MenuFlyoutItem ShareFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("Share") };
+            ShareFlyoutItem.Click += ShareFlyoutItem_Click;
             MenuFlyoutSeparator separator = new MenuFlyoutSeparator();
             MenuFlyoutItem SetImageFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-ChangeImage") };
             SetImageFlyout.Click += SoundTileOptionsSetImage_Click;
@@ -258,10 +260,29 @@ namespace UniversalSoundBoard
 
             OptionsFlyout.Items.Add(CategoriesFlyoutSubItem);
             OptionsFlyout.Items.Add(SetFavouriteFlyout);
+            OptionsFlyout.Items.Add(ShareFlyoutItem);
             OptionsFlyout.Items.Add(separator);
             OptionsFlyout.Items.Add(SetImageFlyout);
             OptionsFlyout.Items.Add(RenameFlyout);
             OptionsFlyout.Items.Add(DeleteFlyout);
+        }
+
+        private void ShareFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            DataTransferManager.ShowShareUI();
+        }
+
+        private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            List<StorageFile> sounds = new List<StorageFile>();
+            sounds.Add(Sound.AudioFile);
+
+            DataRequest request = args.Request;
+            request.Data.SetStorageItems(sounds);
+
+            request.Data.Properties.Title = Sound.AudioFile.Name;
         }
 
         private void Flyout_Opened(object sender, object e)

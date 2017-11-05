@@ -367,4 +367,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="ShareTarget-SelectCategoryTextBlock.Text" xml:space="preserve">
     <value>Wähle die Kategorie, zu der du die Sounds hinzufügen willst.</value>
   </data>
+  <data name="Share" xml:space="preserve">
+    <value>Teilen</value>
+  </data>
 </root>
