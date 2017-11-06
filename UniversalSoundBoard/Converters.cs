@@ -59,7 +59,10 @@ namespace UniversalSoundBoard
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return (bool)value ? 50 : 140;
+            if((string)parameter == "small")
+                return (bool)value ? 50 : 100;
+            else
+                return (bool)value ? 50 : 140;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

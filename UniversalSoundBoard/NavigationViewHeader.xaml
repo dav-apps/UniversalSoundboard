@@ -74,7 +74,7 @@
         <RelativePanel RelativePanel.AlignRightWithPanel="True" Margin="0,0,10,0">
             <StackPanel Name="NormalOptionsStackPanel" Orientation="Horizontal" Visibility="{Binding normalOptionsVisibility}">
                 <Button Name="VolumeButton" Style="{StaticResource TopButtonStyle}" VerticalAlignment="Center"
-                        Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}}"
+                        Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}"
                         Visibility="{Binding volumeButtonVisibility}" Background="{x:Bind ContentRoot.Background}">
                     <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                         <TextBlock Text="&#xE767;" FontFamily="Segoe MDL2 Assets" />
@@ -96,7 +96,7 @@
 
                 <Button Name="AddButton" Style="{StaticResource TopButtonStyle}"
                         RelativePanel.RightOf="VolumeButton" Visibility="{Binding addButtonVisibility}" VerticalAlignment="Center"
-                        Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, Mode=TwoWay}"
+                        Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large, Mode=TwoWay}"
                         Background="{x:Bind ContentRoot.Background}">
                     <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                         <TextBlock Text="&#xE109;" FontFamily="Segoe MDL2 Assets" />
@@ -118,7 +118,7 @@
 
                 <Button Name="SelectButton" Style="{StaticResource TopButtonStyle}" VerticalAlignment="Center"
                         RelativePanel.RightOf="AddButton" Visibility="{Binding selectButtonVisibility}"
-                        Height="50" Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}}" 
+                        Height="50" Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}" 
                         FontSize="17" Background="{x:Bind ContentRoot.Background}" Click="SelectButton_Click">
                     <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                         <TextBlock Text="&#xE133;" FontFamily="Segoe MDL2 Assets" />
@@ -166,7 +166,7 @@
 
                 <Button Name="ShareButton" Style="{StaticResource TopButtonStyle}" VerticalAlignment="Center"
                         Visibility="{Binding shareButtonVisibility}" IsEnabled="{Binding areSelectButtonsEnabled}"
-                        Height="50" Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}}" 
+                        Height="50" Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=small}" 
                         FontSize="17" Background="{x:Bind ContentRoot.Background}" Click="ShareButton_Click">
                     <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                         <TextBlock Text="&#xE72D;" FontFamily="Segoe MDL2 Assets" />
