@@ -13,6 +13,7 @@ using static UniversalSoundBoard.Model.Sound;
 using Windows.UI;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
+using System.Diagnostics;
 
 namespace UniversalSoundBoard
 {
@@ -138,7 +139,6 @@ namespace UniversalSoundBoard
             else
             {
                 var category = (Category)args.InvokedItem;
-                FileManager.SelectCategoryByName(category.Name);
 
                 if (category == (App.Current as App)._itemViewHolder.categories.First())
                 {

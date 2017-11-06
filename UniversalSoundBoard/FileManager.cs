@@ -841,17 +841,13 @@ namespace UniversalSoundBoard
             }
 
             return false;
-
-            //return ((App.Current as App)._itemViewHolder.normalOptionsVisibility && 
-            //    (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility || 
-            //    ((App.Current as App)._itemViewHolder.searchButtonVisibility && Window.Current.Bounds.Width < hideSearchBoxMaxWidth));
         }
 
         public static void ResetSearchArea()
         {
             skipAutoSuggestBoxTextChanged = true;
             (App.Current as App)._itemViewHolder.searchQuery = "";
-
+            
             if (Window.Current.Bounds.Width < hideSearchBoxMaxWidth)
             {
                 // Clear text and show buttons
@@ -946,15 +942,14 @@ namespace UniversalSoundBoard
 
         public static async Task ShowCategory(Category category)
         {
-            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             skipAutoSuggestBoxTextChanged = true;
             (App.Current as App)._itemViewHolder.searchQuery = "";
-            skipAutoSuggestBoxTextChanged = false;
+            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
             SetBackButtonVisibility(true);
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
-            SelectCategoryByName(category.Name);
             await SoundManager.GetSoundsByCategory(category);
+            SelectCategoryByName(category.Name);
         }
 
         public static async Task ShowAllSounds()

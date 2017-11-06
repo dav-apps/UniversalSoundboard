@@ -178,6 +178,7 @@ namespace UniversalSoundBoard
                 {
                     (App.Current as App)._itemViewHolder.title = text;
                     (App.Current as App)._itemViewHolder.searchQuery = text;
+                    FileManager.SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
                     SoundManager.GetSoundsByName(text);
                     Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.ToLower().StartsWith(text.ToLower())).Select(p => p.Name).ToList();
                     SearchAutoSuggestBox.ItemsSource = Suggestions;

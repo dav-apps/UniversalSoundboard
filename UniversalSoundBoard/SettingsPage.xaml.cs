@@ -36,7 +36,6 @@ namespace UniversalSoundBoard
         public SettingsPage()
         {
             this.InitializeComponent();
-            AdjustLayout();
 
             if(String.IsNullOrEmpty(themeAtBeginning))
             {
@@ -64,23 +63,6 @@ namespace UniversalSoundBoard
             setShowCategoryIconToggle();
             setShowSoundsPivotToggle();
             setThemeRadioButton();
-        }
-
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            AdjustLayout();
-        }
-
-        private void AdjustLayout()
-        {
-            if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)       // If user in on mobile
-            {
-                TitleRow.Height = GridLength.Auto;
-            }
-            else
-            {
-                TitleRow.Height = new GridLength(0);
-            }
         }
 
         private void setThemeRadioButton()

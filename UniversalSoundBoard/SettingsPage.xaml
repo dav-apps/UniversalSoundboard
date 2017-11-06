@@ -6,8 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Loaded="Page_Loaded"
-    SizeChanged="Page_SizeChanged">
+    Loaded="Page_Loaded">
 
     <Page.Resources>
         <Style TargetType="StackPanel" x:Key="SettingsContentStyle">
@@ -23,12 +22,8 @@
 
     <Grid Name="ContentRoot">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" x:Name="TitleRow" />
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
-        
-        <TextBlock Name="Title" Text="{Binding title, Mode=TwoWay}" Grid.Row="0"
-                            Style="{StaticResource TitleTextBlockStyle}" Margin="15,10,10,10" />
 
         <Pivot Name="SettingsPivot" Grid.Row="1">
             <PivotItem x:Uid="SettingsPivot-General">
