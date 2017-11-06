@@ -30,6 +30,7 @@ namespace UniversalSoundBoard
     public sealed partial class NavigationViewHeader : UserControl
     {
         List<string> Suggestions;
+        bool skipVolumeSliderValueChangedEvent = false;
         public static ObservableCollection<Sound> PlaySoundsList;
         int moreButtonClicked = 0;
 
@@ -56,7 +57,9 @@ namespace UniversalSoundBoard
             {
                 localSettings.Values["volume"] = FileManager.volume;
             }
-            VolumeSlider.Value = (double)localSettings.Values["volume"] * 100;
+            double volume = (double)localSettings.Values["volume"] * 100;
+            VolumeSlider.Value = volume;
+            VolumeSlider2.Value = volume;
         }
 
         private void SetDarkThemeLayout()
@@ -238,37 +241,38 @@ namespace UniversalSoundBoard
             double newValue = e.NewValue;
             double oldValue = e.OldValue;
 
+            if (!skipVolumeSliderValueChangedEvent)
+            {
+                // Change Volume of MediaPlayers
+                double addedValue = newValue - oldValue;
+
+                foreach (PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
+                {
+                    if ((playingSound.MediaPlayer.Volume + addedValue / 100) > 1)
+                    {
+                        playingSound.MediaPlayer.Volume = 1;
+                    }
+                    else if ((playingSound.MediaPlayer.Volume + addedValue / 100) < 0)
+                    {
+                        playingSound.MediaPlayer.Volume = 0;
+                    }
+                    else
+                    {
+                        playingSound.MediaPlayer.Volume += addedValue / 100;
+                    }
+                }
+
+                // Save new Volume
+                var localSettings = ApplicationData.Current.LocalSettings;
+                localSettings.Values["volume"] = volumeSlider.Value / 100;
+            }
+
+            skipVolumeSliderValueChangedEvent = true;
             if (volumeSlider == VolumeSlider)
-            {
                 VolumeSlider2.Value = newValue;
-            }
             else
-            {
                 VolumeSlider.Value = newValue;
-            }
-
-            // Change Volume of MediaPlayers
-            double addedValue = newValue - oldValue;
-
-            foreach (PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
-            {
-                if ((playingSound.MediaPlayer.Volume + addedValue / 100) > 1)
-                {
-                    playingSound.MediaPlayer.Volume = 1;
-                }
-                else if ((playingSound.MediaPlayer.Volume + addedValue / 100) < 0)
-                {
-                    playingSound.MediaPlayer.Volume = 0;
-                }
-                else
-                {
-                    playingSound.MediaPlayer.Volume += addedValue / 100;
-                }
-            }
-
-            // Save new Volume
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values["volume"] = volumeSlider.Value / 100;
+            skipVolumeSliderValueChangedEvent = false;
         }
 
         private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)
