@@ -888,7 +888,7 @@ namespace UniversalSoundBoard
                 }
                 else if ((App.Current as App)._itemViewHolder.title == (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"))
                 {   // If SoundPage shows AllSounds
-                    CoreApplication.Exit();
+                    
                 }
                 else
                 {   // If SoundPage shows Category or search results
