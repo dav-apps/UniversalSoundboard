@@ -79,29 +79,37 @@ namespace UniversalSoundBoard
                 item.Visibility = Visibility.Collapsed;
             }
 
-            for (int n = 0; n < (App.Current as App)._itemViewHolder.categories.Count; n++)
+            for (int n = 1; n < (App.Current as App)._itemViewHolder.categories.Count; n++)
             {
-                if (n != 0)
+                if (moreButtonClicked == 0)
+                {   // Create the Flyout the first time
+                    var item = new MenuFlyoutItem();
+                    item.Click += MoreButton_ChangeCategory_Click;
+                    item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
+                    MoreButton_ChangeCategoryFlyout.Items.Add(item);
+                }
+                else if (MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1) != null)
+                {   // If the element is already there, set the new text
+                    ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
+                    ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Visibility = Visibility.Visible;
+                }
+                else
                 {
-                    if (moreButtonClicked == 0)
-                    {   // Create the Flyout the first time
-                        var item = new MenuFlyoutItem();
-                        item.Click += MoreButton_ChangeCategory_Click;
-                        item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
-                        MoreButton_ChangeCategoryFlyout.Items.Add(item);
-                    }
-                    else if (MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1) != null)
-                    {   // If the element is already there, set the new text
-                        ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
-                        ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Visibility = Visibility.Visible;
-                    }
-                    else
-                    {
-                        var item = new MenuFlyoutItem();
-                        item.Click += MoreButton_ChangeCategory_Click;
-                        item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
-                        MoreButton_ChangeCategoryFlyout.Items.Add(item);
-                    }
+                    var item = new MenuFlyoutItem();
+                    item.Click += MoreButton_ChangeCategory_Click;
+                    item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
+                    MoreButton_ChangeCategoryFlyout.Items.Add(item);
+                }
+            }
+
+            if (moreButtonClicked == 0)
+            {
+                // Add some more invisible MenuFlyoutItems
+                for (int i = 0; i < 10; i++)
+                {
+                    ToggleMenuFlyoutItem item = new ToggleMenuFlyoutItem { Visibility = Visibility.Collapsed };
+                    item.Click += MoreButton_ChangeCategory_Click;
+                    MoreButton_ChangeCategoryFlyout.Items.Add(item);
                 }
             }
             moreButtonClicked++;
