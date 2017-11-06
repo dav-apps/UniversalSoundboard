@@ -383,4 +383,16 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Share" xml:space="preserve">
     <value>Share</value>
   </data>
+  <data name="MoreButton-Share.Text" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="ShareButton.Text" xml:space="preserve">
+    <value>Share</value>
+  </data>
+  <data name="ShareDialog-MultipleSounds" xml:space="preserve">
+    <value>Multiple sounds</value>
+  </data>
+  <data name="ShareDialog-Title" xml:space="preserve">
+    <value>Shared with UniversalSoundboard</value>
+  </data>
 </root>

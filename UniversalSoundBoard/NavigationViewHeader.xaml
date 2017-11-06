@@ -159,12 +159,28 @@
 				        Height="50" Width="100"
 					    FontFamily="Segoe UI"
 				        x:Uid="CancelButton"
+                        Background="{x:Bind ContentRoot.Background}"
                         Visibility="{Binding cancelButtonVisibility}"
 				        Click="CancelButton_Click">
                 </Button>
-                
-                <Button Name="PlaySoundsButton" IsEnabled="{Binding multiSelectOptionsEnabled}" Style="{StaticResource TopButtonStyle}"
-				        Content="&#xE768;" Width="50">
+
+                <Button Name="ShareButton" Style="{StaticResource TopButtonStyle}" VerticalAlignment="Center"
+                        Visibility="{Binding shareButtonVisibility}" IsEnabled="{Binding areSelectButtonsEnabled}"
+                        Height="50" Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}}" 
+                        FontSize="17" Background="{x:Bind ContentRoot.Background}" Click="ShareButton_Click">
+                    <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
+                        <TextBlock Text="&#xE72D;" FontFamily="Segoe MDL2 Assets" />
+                        <TextBlock x:Uid="ShareButton" Style="{StaticResource TopButtonInnerTextStyle}"
+                               Visibility="{Binding topButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}"/>
+                    </StackPanel>
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock x:Uid="ShareButton" />
+                    </ToolTipService.ToolTip>
+                </Button>
+
+                <Button Name="PlaySoundsButton" IsEnabled="{Binding areSelectButtonsEnabled}" Style="{StaticResource TopButtonStyle}"
+				        Content="&#xE768;" Width="50" Background="{x:Bind ContentRoot.Background}">
                     <Button.Flyout>
                         <MenuFlyout Placement="Bottom">
                             <MenuFlyoutItem Name="PlaySoundsSimultaneouslyFlyoutItem" x:Uid="PlaySoundsSimultaneously" Click="PlaySoundsSimultaneouslyFlyoutItem_Click"/>
@@ -209,13 +225,17 @@
                                            x:Uid="MoreButton-ChangeCategory" IsEnabled="{Binding areSelectButtonsEnabled}"
                                            Visibility="{Binding normalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}">
                         </MenuFlyoutSubItem>
+                        <MenuFlyoutItem Name="MoreButton_ShareFlyout" Icon="Share"
+                                        x:Uid="MoreButton-Share" IsEnabled="{Binding areSelectButtonsEnabled}"
+                                        Click="ShareButton_Click"
+                                        Visibility="{Binding shareButtonVisibility, Converter={StaticResource SelectOptionsInMoreButtonFlyoutVisibilityConverter}}" />
                         <MenuFlyoutItem Name="MoreButton_DeleteSoundsFlyout" Icon="Delete" IsEnabled="{Binding areSelectButtonsEnabled}"
                                         x:Uid="MoreButton-DeleteSounds" Click="MoreButton_DeleteSoundsFlyout_Click"
-                                        Visibility="{Binding normalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}"/>
+                                        Visibility="{Binding normalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}" />
 
                         <MenuFlyoutItem Name="MoreButton_Cancel"
                                         x:Uid="MoreButton-Cancel" Click="CancelButton_Click"
-                                        Visibility="{Binding cancelButtonVisibility, Converter={StaticResource SelectOptionsInMoreButtonFlyoutVisibilityConverter}}"/>
+                                        Visibility="{Binding cancelButtonVisibility, Converter={StaticResource SelectOptionsInMoreButtonFlyoutVisibilityConverter}}" />
                         <!-- #endregion Selection Options -->
                     </MenuFlyout>
                 </Button.Flyout>

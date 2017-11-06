@@ -276,13 +276,15 @@ namespace UniversalSoundBoard
 
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
             List<StorageFile> sounds = new List<StorageFile>();
             sounds.Add(Sound.AudioFile);
 
             DataRequest request = args.Request;
             request.Data.SetStorageItems(sounds);
 
-            request.Data.Properties.Title = Sound.AudioFile.Name;
+            request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
+            request.Data.Properties.Description = Sound.AudioFile.Name;
         }
 
         private void Flyout_Opened(object sender, object e)

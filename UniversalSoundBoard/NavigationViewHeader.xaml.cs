@@ -8,6 +8,7 @@ using System.Net;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Model;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
@@ -363,6 +364,34 @@ namespace UniversalSoundBoard
         {
             FileManager.switchSelectionMode();
             FileManager.AdjustLayout();
+        }
+
+        private void ShareButton_Click(object sender, RoutedEventArgs e)
+        {
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            DataTransferManager.ShowShareUI();
+        }
+
+        private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            if((App.Current as App)._itemViewHolder.selectedSounds.Count > 0)
+            {
+                var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+                List<StorageFile> selectedFiles = new List<StorageFile>();
+
+                foreach (Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
+                    selectedFiles.Add(sound.AudioFile);
+
+                string description = loader.GetString("ShareDialog-MultipleSounds");
+                if (selectedFiles.Count == 1)
+                    description = selectedFiles.First().Name;
+
+                DataRequest request = args.Request;
+                request.Data.SetStorageItems(selectedFiles);
+                request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
+                request.Data.Properties.Description = description;
+            }
         }
         #endregion EventHandlers
 

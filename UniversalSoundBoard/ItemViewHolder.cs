@@ -17,7 +17,6 @@ namespace UniversalSoundBoard
     {
         private string _title;
         private bool _progressRingIsActive;
-        private bool _multiSelectOptionsEnabled;
         private string _searchQuery;
         private Visibility _editButtonVisibility;
         private Visibility _playAllButtonVisibility;
@@ -50,6 +49,7 @@ namespace UniversalSoundBoard
         private bool _selectButtonVisibility;
         private bool _searchButtonVisibility;
         private bool _cancelButtonVisibility;
+        private bool _shareButtonVisibility;
         private bool _moreButtonVisibility;
         private bool _topButtonsCollapsed;
         private bool _areSelectButtonsEnabled;
@@ -74,17 +74,6 @@ namespace UniversalSoundBoard
             {
                 _progressRingIsActive = value;
                 NotifyPropertyChanged("progressRingIsActive");
-            }
-        }
-
-        public bool multiSelectOptionsEnabled
-        {
-            get { return _multiSelectOptionsEnabled; }
-
-            set
-            {
-                _multiSelectOptionsEnabled = value;
-                NotifyPropertyChanged("multiSelectOptionsEnabled");
             }
         }
 
@@ -437,6 +426,17 @@ namespace UniversalSoundBoard
             {
                 _cancelButtonVisibility = value;
                 NotifyPropertyChanged("cancelButtonVisibility");
+            }
+        }
+
+        public bool shareButtonVisibility
+        {
+            get { return _shareButtonVisibility; }
+
+            set
+            {
+                _shareButtonVisibility = value;
+                NotifyPropertyChanged("shareButtonVisibility");
             }
         }
 

@@ -153,12 +153,10 @@ namespace UniversalSoundBoard
             // If no items are selected, disable multi select buttons
             if (selectedGridview.SelectedItems.Count > 0)
             {
-                (App.Current as App)._itemViewHolder.multiSelectOptionsEnabled = true;
                 (App.Current as App)._itemViewHolder.areSelectButtonsEnabled = true;
             }
             else
             {
-                (App.Current as App)._itemViewHolder.multiSelectOptionsEnabled = false;
                 (App.Current as App)._itemViewHolder.areSelectButtonsEnabled = false;
             }
 

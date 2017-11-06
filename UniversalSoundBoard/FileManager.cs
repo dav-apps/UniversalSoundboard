@@ -917,6 +917,7 @@ namespace UniversalSoundBoard
             (App.Current as App)._itemViewHolder.selectButtonVisibility = !(width < FileManager.moveSelectButtonMaxWidth);
             (App.Current as App)._itemViewHolder.addButtonVisibility = !(width < FileManager.moveAddButtonMaxWidth);
             (App.Current as App)._itemViewHolder.volumeButtonVisibility = !(width < FileManager.moveVolumeButtonMaxWidth);
+            (App.Current as App)._itemViewHolder.shareButtonVisibility = !(width < FileManager.moveAddButtonMaxWidth);
             (App.Current as App)._itemViewHolder.cancelButtonVisibility = !(width < FileManager.hideSearchBoxMaxWidth);
             (App.Current as App)._itemViewHolder.moreButtonVisibility = (width < FileManager.moveSelectButtonMaxWidth
                                                                         || !(App.Current as App)._itemViewHolder.normalOptionsVisibility);
