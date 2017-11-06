@@ -35,7 +35,7 @@ namespace UniversalSoundBoard
     /// </summary>
     public sealed partial class SoundPage : Page
     {
-        public static bool soundsPivotSelected = false;
+        public static bool soundsPivotSelected = true;
 
         public SoundPage()
         {
@@ -49,6 +49,11 @@ namespace UniversalSoundBoard
         {
             setDataContext();
             SetSoundsPivotVisibility();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            soundsPivotSelected = true;
         }
 
         private void SetSoundsPivotVisibility()
@@ -363,34 +368,11 @@ namespace UniversalSoundBoard
             }
         }
 
-        public static void PlayAllSoundsSimultaneously()
-        {
-            bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.playOneSoundAtOnce;
-            (App.Current as App)._itemViewHolder.playOneSoundAtOnce = false;
-
-            // Select favourite sounds list if favourite sounds tab is selected
-            ObservableCollection<Sound> sounds = new ObservableCollection<Sound>();
-            if (soundsPivotSelected || !(App.Current as App)._itemViewHolder.showSoundsPivot)
-            {
-                sounds = (App.Current as App)._itemViewHolder.sounds;
-            }
-            else
-            {
-                sounds = (App.Current as App)._itemViewHolder.favouriteSounds;
-            }
-
-            foreach (Sound sound in sounds)
-            {
-                SoundPage.playSound(sound);
-            }
-            (App.Current as App)._itemViewHolder.playOneSoundAtOnce = oldPlayOneSoundAtOnce;
-        }
-
         private async void SoundsPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
         {
             await FileManager.UpdateGridView();
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
-            soundsPivotSelected = !soundsPivotSelected;
+            soundsPivotSelected = (sender.SelectedIndex == 0);
         }
 
         private void SoundGridView_SizeChanged(object sender, SizeChangedEventArgs e)
