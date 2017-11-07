@@ -334,7 +334,7 @@ namespace UniversalSoundBoard
                 RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
             }
 
-            PlayingSound playingSound = new PlayingSound(sounds, player, repetitions, true);
+            PlayingSound playingSound = new PlayingSound(sounds, player, repetitions, randomly);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
 

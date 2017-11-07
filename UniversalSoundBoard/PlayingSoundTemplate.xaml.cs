@@ -9,6 +9,7 @@ using UniversalSoundBoard.Model;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Media;
+using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.UI;
 using Windows.UI.Core;
@@ -149,7 +150,38 @@ namespace UniversalSoundBoard
                         if (this.PlayingSound.randomly)
                         {
                             Random random = new Random();
-                            this.PlayingSound.Sounds = this.PlayingSound.Sounds.OrderBy(a => random.Next()).ToList();
+
+                            // Copy old lists and use them to be able to remove entries
+                            MediaPlaybackList oldMediaPlaybackList = new MediaPlaybackList();
+                            List<Sound> oldSoundsList = new List<Sound>();
+
+                            foreach (var item in ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).Items)
+                                oldMediaPlaybackList.Items.Add(item);
+                            foreach (var item in PlayingSound.Sounds)
+                                oldSoundsList.Add(item);
+
+                            MediaPlaybackList newMediaPlaybackList = new MediaPlaybackList();
+                            List<Sound> newSoundsList = new List<Sound>();
+
+                            // Add items to new lists in random order
+                            for (int i = 0; i < this.PlayingSound.Sounds.Count; i++)
+                            {
+                                int randomNumber = random.Next(oldSoundsList.Count);
+                                newSoundsList.Add(oldSoundsList.ElementAt(randomNumber));
+                                newMediaPlaybackList.Items.Add(oldMediaPlaybackList.Items.ElementAt(randomNumber));
+
+                                oldSoundsList.RemoveAt(randomNumber);
+                                oldMediaPlaybackList.Items.RemoveAt(randomNumber);
+                            }
+
+                            // Replace the old lists with the new ones
+                            ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).Items.Clear();
+                            foreach (var item in newMediaPlaybackList.Items)
+                                ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).Items.Add(item);
+
+                            PlayingSound.Sounds.Clear();
+                            foreach (var item in newSoundsList)
+                                PlayingSound.Sounds.Add(item);
                         }
 
                         ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).MoveTo(0);
@@ -214,8 +246,8 @@ namespace UniversalSoundBoard
                 }
             }
 
-
-            // Set the text of the add to Favourites Flyout
+            
+            // Set the text of the Add to Favourites Flyout
             FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
             AppBarButton FavouriteFlyout = (AppBarButton)transportControlsTemplateRoot.FindName("FavouriteFlyout");
 
