@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using Windows.Media;
 using Windows.Media.Playback;
 
-namespace UniversalSoundBoard.Model
+namespace UniversalSoundBoard.Models
 {
     public class Data
     {

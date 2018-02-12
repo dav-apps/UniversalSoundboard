@@ -1,16 +1,18 @@
 ﻿<Page
-    x:Class="UniversalSoundBoard.MainPage"
+    x:Class="UniversalSoundBoard.Pages.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniversalSoundBoard"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:data="using:UniversalSoundBoard.Model"
+    xmlns:data="using:UniversalSoundBoard.Models"
     xmlns:appmodel="using:Windows.ApplicationModel"
+    xmlns:converters="using:UniversalSoundBoard.Converters"
+    xmlns:components="using:UniversalSoundBoard.Components"
+    xmlns:models="using:UniversalSoundBoard.Models"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <local:ReturnValueConverter x:Name="ReturnValueConverter" />
+        <converters:ReturnValueConverter x:Name="ReturnValueConverter" />
         
         <Style TargetType="TextBlock" x:Key="NavBarItemIconStyle">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
@@ -48,12 +50,12 @@
 
             <NavigationView.HeaderTemplate>
                 <DataTemplate>
-                    <local:NavigationViewHeader />
+                    <components:NavigationViewHeader />
                 </DataTemplate>
             </NavigationView.HeaderTemplate>
             
             <NavigationView.MenuItemTemplate>
-                <DataTemplate x:DataType="data:Category">
+                <DataTemplate x:DataType="models:Category">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind Icon}" Style="{StaticResource NavBarItemIconStyle}"/>
                         <TextBlock Text="{x:Bind Name}" Style="{StaticResource NavBarItemTextStyle}"/>

@@ -1,10 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.Notifications;
-using NotificationsExtensions;
-using NotificationsExtensions.Tiles;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -12,23 +9,20 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
-using UniversalSoundBoard.Model;
+using UniversalSoundBoard.Models;
+using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel.Core;
 using Windows.Data.Xml.Dom;
 using Windows.Foundation;
-using Windows.Media.Core;
-using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
-using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media.Imaging;
-using static UniversalSoundBoard.Model.Sound;
+using static UniversalSoundBoard.Models.Sound;
 
-namespace UniversalSoundBoard
+namespace UniversalSoundBoard.DataAccess
 {
     public class FileManager
     {

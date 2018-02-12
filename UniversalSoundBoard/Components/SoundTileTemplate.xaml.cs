@@ -1,36 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.ServiceModel.Channels;
-using System.Text;
-using System.Threading.Tasks;
-using UniversalSoundBoard.Model;
+using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI;
-using Windows.UI.Popups;
-using Windows.UI.StartScreen;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
-using Windows.UI.Xaml.Navigation;
-using static UniversalSoundBoard.Model.Sound;
-using Microsoft.Xaml.Interactivity;
 using Microsoft.Toolkit.Uwp.UI.Animations;
+using UniversalSoundBoard.DataAccess;
 
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
-
-namespace UniversalSoundBoard
+namespace UniversalSoundBoard.Components
 {
     public sealed partial class SoundTileTemplate : UserControl
     {

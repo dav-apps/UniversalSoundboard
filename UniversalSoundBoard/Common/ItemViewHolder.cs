@@ -2,16 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
-using UniversalSoundBoard.Model;
-using Windows.Media.Playback;
+using UniversalSoundBoard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace UniversalSoundBoard
+namespace UniversalSoundBoard.Common
 {
     public class ItemViewHolder : INotifyPropertyChanged
     {

@@ -3,13 +3,14 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
-using System.Text;
 using System.Threading.Tasks;
+using UniversalSoundBoard.DataAccess;
+using UniversalSoundBoard.Pages;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace UniversalSoundBoard.Model
+namespace UniversalSoundBoard.Models
 {
     public class Sound{
         public string Name { get; set; }

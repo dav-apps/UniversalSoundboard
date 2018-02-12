@@ -1,21 +1,16 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using UniversalSoundBoard.Model;
+﻿using System.Linq;
+using UniversalSoundBoard.Models;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using static UniversalSoundBoard.Model.Sound;
+using static UniversalSoundBoard.Models.Sound;
 using Windows.UI;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
-using System.Diagnostics;
+using UniversalSoundBoard.DataAccess;
 
-namespace UniversalSoundBoard
+namespace UniversalSoundBoard.Pages
 {
     public sealed partial class MainPage : Page
     {
