@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 using UniversalSoundBoard.DataAccess;
+using UniversalSoundBoard.Models;
 using Windows.Storage;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace UniversalSoundBoard.Models
+namespace UniversalSoundBoard.Common
 {
     public class ContentDialogs
     {
@@ -383,7 +383,7 @@ namespace UniversalSoundBoard.Models
             return DeleteCategoryContentDialog;
         }
 
-        public static async Task<ContentDialog> CreateEditCategoryContentDialogAsync()
+        public static ContentDialog CreateEditCategoryContentDialogAsync()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 
@@ -413,7 +413,7 @@ namespace UniversalSoundBoard.Models
             foreach (string icon in IconsList)
             {
                 ComboBoxItem item = new ComboBoxItem { Content = icon, FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 };
-                if (icon == (await FileManager.GetCategoryByNameAsync((App.Current as App)._itemViewHolder.title)).Icon)
+                if (icon == (App.Current as App)._itemViewHolder.selectedCategory.Icon)
                 {
                     item.IsSelected = true;
                 }

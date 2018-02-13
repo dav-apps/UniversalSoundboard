@@ -74,6 +74,9 @@ namespace UniversalSoundBoard
             this.InitializeComponent();
             this.Suspending += OnSuspending;
 
+            // Initialize Database
+            DatabaseOperations.InitializeDatabase();
+
             // Set dark theme
             var localSettings = ApplicationData.Current.LocalSettings;
             

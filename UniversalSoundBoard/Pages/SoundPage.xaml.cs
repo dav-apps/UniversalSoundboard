@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer;
@@ -416,13 +417,13 @@ namespace UniversalSoundBoard.Pages
             (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
 
             // Reload page
-            await FileManager.CreateCategoriesObservableCollection();
+            FileManager.CreateCategoriesObservableCollection();
             await SoundManager.GetAllSounds();
         }
 
         private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            var editCategoryContentDialog = await ContentDialogs.CreateEditCategoryContentDialogAsync();
+            var editCategoryContentDialog = ContentDialogs.CreateEditCategoryContentDialogAsync();
             editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
             await editCategoryContentDialog.ShowAsync();
         }
@@ -453,7 +454,7 @@ namespace UniversalSoundBoard.Pages
 
             (App.Current as App)._itemViewHolder.title = newName;
             await FileManager.UpdateGridView();
-            await FileManager.CreateCategoriesObservableCollection();
+            FileManager.CreateCategoriesObservableCollection();
         }
     }
 }

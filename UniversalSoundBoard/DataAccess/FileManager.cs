@@ -44,6 +44,46 @@ namespace UniversalSoundBoard.DataAccess
 
         public static bool skipAutoSuggestBoxTextChanged = false;
 
+
+        // New Methods
+        public static void AddCategory(Category category)
+        {
+            DatabaseOperations.AddCategory(category.Name, category.Icon);
+            CreateCategoriesObservableCollection();
+        }
+
+        public static void UpdateCategory(Category category)
+        {
+            DatabaseOperations.UpdateCategory(category.Uuid, category.Name, category.Icon);
+            CreateCategoriesObservableCollection();
+        }
+
+        public static void DeleteCategory(string uuid)
+        {
+            DatabaseOperations.DeleteCategory(uuid);
+            CreateCategoriesObservableCollection();
+        }
+
+        public static void CreateCategoriesObservableCollection()
+        {
+            (App.Current as App)._itemViewHolder.categories.Clear();
+            (App.Current as App)._itemViewHolder.categories.Add(new Category { Name = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), Icon = "\uE10F" });
+
+            foreach (Category cat in DatabaseOperations.GetCategories())
+            {
+                (App.Current as App)._itemViewHolder.categories.Add(cat);
+            }
+            SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
+        }
+
+
+
+
+
+
+
+
+
         #region Filesystem Operations
         public static async void addImage(StorageFile file, Sound sound)
         {
@@ -447,7 +487,7 @@ namespace UniversalSoundBoard.DataAccess
                                 (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = true;
 
                                 await SoundManager.GetAllSounds();
-                                await FileManager.CreateCategoriesObservableCollection();
+                                CreateCategoriesObservableCollection();
                                 await setSoundBoardSizeTextAsync();
                             }));
                     });
@@ -591,18 +631,6 @@ namespace UniversalSoundBoard.DataAccess
                 }
             }
             return null;
-        }
-
-        public static async Task CreateCategoriesObservableCollection()
-        {
-            (App.Current as App)._itemViewHolder.categories.Clear();
-            (App.Current as App)._itemViewHolder.categories.Add(new Category { Name = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), Icon = "\uE10F" });
-
-            foreach (Category cat in await GetCategoriesListAsync())
-            {
-                (App.Current as App)._itemViewHolder.categories.Add(cat);
-            }
-            SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
         }
         #endregion
 

@@ -30,7 +30,7 @@ namespace UniversalSoundBoard.Pages
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             SideBar.MenuItemsSource = (App.Current as App)._itemViewHolder.categories;
             
-            await FileManager.CreateCategoriesObservableCollection();
+            FileManager.CreateCategoriesObservableCollection();
             customiseTitleBar();
             await SoundManager.GetAllSounds();
         }

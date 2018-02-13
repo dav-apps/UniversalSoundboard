@@ -12,6 +12,7 @@ using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 using UniversalSoundBoard.DataAccess;
+using UniversalSoundBoard.Common;
 
 namespace UniversalSoundBoard.Components
 {

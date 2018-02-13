@@ -1,6 +1,6 @@
 ﻿using System;
+using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Models;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;

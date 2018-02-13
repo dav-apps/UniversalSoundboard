@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
@@ -269,7 +270,7 @@ namespace UniversalSoundBoard.Components
 
         private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            var editCategoryContentDialog = await ContentDialogs.CreateEditCategoryContentDialogAsync();
+            var editCategoryContentDialog = ContentDialogs.CreateEditCategoryContentDialogAsync();
             editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
             await editCategoryContentDialog.ShowAsync();
         }
@@ -416,9 +417,6 @@ namespace UniversalSoundBoard.Components
 
         private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            // Get categories List and save with new value
-            ObservableCollection<Category> categoriesList = await FileManager.GetCategoriesListAsync();
-
             // Get combobox value
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
             string icon = typeItem.Content.ToString();
@@ -429,9 +427,7 @@ namespace UniversalSoundBoard.Components
                 Icon = icon
             };
 
-            categoriesList.Add(category);
-            await FileManager.SaveCategoriesListAsync(categoriesList);
-            await FileManager.CreateCategoriesObservableCollection();
+            FileManager.AddCategory(category);
 
             // Show new category
             await FileManager.ShowCategory(category);
@@ -440,8 +436,6 @@ namespace UniversalSoundBoard.Components
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get categories List and save with new value
-            ObservableCollection<Category> categoriesList = await FileManager.GetCategoriesListAsync();
-
             // Get combobox value
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
             string icon = typeItem.Content.ToString();
@@ -449,32 +443,22 @@ namespace UniversalSoundBoard.Components
             string newName = ContentDialogs.EditCategoryTextBox.Text;
             string oldName = (App.Current as App)._itemViewHolder.title;
 
-            foreach (Category category in categoriesList)
-            {
-                if (category.Name == oldName)
-                {
-                    category.Name = newName;
-                    category.Icon = icon;
-                }
-            }
+            Category newCategory = new Category((App.Current as App)._itemViewHolder.selectedCategory.Uuid, newName, icon);
 
-            await FileManager.SaveCategoriesListAsync(categoriesList);
-            await FileManager.renameCategory(oldName, newName);
+            FileManager.UpdateCategory(newCategory);
             (App.Current as App)._itemViewHolder.title = newName;
 
             // Update page
-            await FileManager.CreateCategoriesObservableCollection();
-            //FileManager.SelectCategoryByName(newName);
             await SoundManager.GetAllSounds();
             await FileManager.ShowCategory(new Category() { Name = newName, Icon = icon });
         }
 
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.deleteCategory((App.Current as App)._itemViewHolder.title);
+            //await FileManager.deleteCategory((App.Current as App)._itemViewHolder.title);
+            FileManager.DeleteCategory((App.Current as App)._itemViewHolder.selectedCategory.Uuid);
 
             // Reload page
-            await FileManager.CreateCategoriesObservableCollection();
             await FileManager.ShowAllSounds();
         }
 
