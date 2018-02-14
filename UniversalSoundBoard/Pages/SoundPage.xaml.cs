@@ -358,7 +358,7 @@ namespace UniversalSoundBoard.Pages
 
         private async void SoundsPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
         {
-            await FileManager.UpdateGridView();
+            //await FileManager.UpdateGridView();
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
             soundsPivotSelected = (sender.SelectedIndex == 0);
         }
@@ -418,7 +418,7 @@ namespace UniversalSoundBoard.Pages
 
             // Reload page
             FileManager.CreateCategoriesObservableCollection();
-            await SoundManager.GetAllSounds();
+            await FileManager.GetAllSounds();
         }
 
         private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)

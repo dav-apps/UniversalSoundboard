@@ -32,7 +32,7 @@ namespace UniversalSoundBoard.Pages
             
             FileManager.CreateCategoriesObservableCollection();
             customiseTitleBar();
-            await SoundManager.GetAllSounds();
+            await FileManager.GetAllSounds();
         }
 
         private void setDataContext()

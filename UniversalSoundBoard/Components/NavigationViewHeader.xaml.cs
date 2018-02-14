@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Common;
@@ -133,19 +134,20 @@ namespace UniversalSoundBoard.Components
 
             if (files.Any())
             {
-                Category category = new Category();
+                //Category category = new Category();
                 // Get category if a category is selected
-                if ((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title") &&
-                    String.IsNullOrEmpty(SearchAutoSuggestBox.Text) && (App.Current as App)._itemViewHolder.editButtonVisibility == Visibility.Visible)
-                {
-                    category.Name = (App.Current as App)._itemViewHolder.title;
-                }
+                //if ((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title") &&
+                //    String.IsNullOrEmpty(SearchAutoSuggestBox.Text) && (App.Current as App)._itemViewHolder.editButtonVisibility == Visibility.Visible)
+                //{
+                //    category.Name = (App.Current as App)._itemViewHolder.title;
+                //}
+
 
                 // Application now has read/write access to the picked file(s)
                 foreach (StorageFile soundFile in files)
                 {
-                    Sound sound = new Sound(soundFile.DisplayName, category, soundFile);
-                    await FileManager.addSound(sound);
+                    Sound sound = new Sound(soundFile.DisplayName, (App.Current as App)._itemViewHolder.selectedCategory, soundFile);
+                    await FileManager.AddSound(sound);
                 }
 
                 await FileManager.UpdateGridView();
@@ -183,7 +185,7 @@ namespace UniversalSoundBoard.Components
                     (App.Current as App)._itemViewHolder.title = text;
                     (App.Current as App)._itemViewHolder.searchQuery = text;
                     FileManager.SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
-                    SoundManager.GetSoundsByName(text);
+                    FileManager.GetSoundsByName(text);
                     Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.ToLower().StartsWith(text.ToLower())).Select(p => p.Name).ToList();
                     SearchAutoSuggestBox.ItemsSource = Suggestions;
                     FileManager.SetBackButtonVisibility(true);
@@ -210,7 +212,7 @@ namespace UniversalSoundBoard.Components
                 (App.Current as App)._itemViewHolder.title = text;
                 (App.Current as App)._itemViewHolder.searchQuery = text;
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                SoundManager.GetSoundsByName(text);
+                FileManager.GetSoundsByName(text);
             }
 
             FileManager.CheckBackButtonVisibility();
@@ -357,7 +359,7 @@ namespace UniversalSoundBoard.Components
             string category = selectedItem.Text;
             foreach (Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
             {
-                await sound.setCategory(await FileManager.GetCategoryByNameAsync(category));
+                sound.SetCategory(await FileManager.GetCategoryByNameAsync(category));
             }
         }
 
@@ -449,7 +451,7 @@ namespace UniversalSoundBoard.Components
             (App.Current as App)._itemViewHolder.title = newName;
 
             // Update page
-            await SoundManager.GetAllSounds();
+            await FileManager.GetAllSounds();
             await FileManager.ShowCategory(new Category() { Name = newName, Icon = icon });
         }
 

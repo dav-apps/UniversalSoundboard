@@ -34,9 +34,9 @@ namespace UniversalSoundBoard.Components
             createFlyout();
         }
 
-        async void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
+        void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
         {
-            await FileManager.GetCategoriesListAsync();
+            FileManager.CreateCategoriesObservableCollection();
             createCategoriesFlyout();
         }
 
@@ -105,7 +105,7 @@ namespace UniversalSoundBoard.Components
             {
                 // Application now has read/write access to the picked file
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-                FileManager.addImage(file, sound);
+                FileManager.AddImage(file, sound.Uuid);
                 FileManager.UpdateLiveTile();
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
             }
@@ -121,9 +121,9 @@ namespace UniversalSoundBoard.Components
 
         private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.deleteSound(this.Sound);
+            await FileManager.DeleteSound(this.Sound.Uuid);
             // UpdateGridView nicht in deleteSound, weil es auch in einer Schleife aufgerufen wird (löschen mehrerer Sounds)
-            await FileManager.UpdateGridView();
+            //await FileManager.UpdateGridView();
         }
 
         private async void SoundTileOptionsRename_Click(object sender, RoutedEventArgs e)
@@ -166,7 +166,6 @@ namespace UniversalSoundBoard.Components
                 }
                 else
                 {
-                    // This does not work
                     var item = new ToggleMenuFlyoutItem();
                     item.Click += CategoryToggleMenuItem_Click;
                     item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
@@ -192,7 +191,7 @@ namespace UniversalSoundBoard.Components
             var sound = this.Sound;
             var selectedItem = (ToggleMenuFlyoutItem) sender;
             string category = selectedItem.Text;
-            await sound.setCategory(await FileManager.GetCategoryByNameAsync(category));
+            sound.SetCategory(await FileManager.GetCategoryByNameAsync(category));
             
             unselectAllItemsOfCategoriesFlyoutSubItem();
             selectedItem.IsChecked = true;

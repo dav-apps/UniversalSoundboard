@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Media.Imaging;
 namespace UniversalSoundBoard.Models
 {
     public class Sound{
+        public string Uuid { get; }
         public string Name { get; set; }
         public Category Category { get; set; }
         public bool Favourite { get; set; }
@@ -24,6 +25,13 @@ namespace UniversalSoundBoard.Models
         public Sound()
         {
 
+        }
+
+        public Sound(string uuid, string name, bool favourite)
+        {
+            Uuid = uuid;
+            Name = name;
+            Favourite = favourite;
         }
 
         public Sound(string name, Category category){
@@ -40,18 +48,17 @@ namespace UniversalSoundBoard.Models
             Favourite = false;
         }
 
-        public async Task setCategory(Category category)
+        public void SetCategory(Category category)
         {
             Category = category;
 
-            // Create / get details json and write category into it
-            SoundDetails details = new SoundDetails { Category = category.Name };
-            await FileManager.WriteFile(await FileManager.createSoundDetailsFileIfNotExistsAsync(Name), details);
+            //SoundDetails details = new SoundDetails { Category = category.Name };
+            //await FileManager.WriteFile(await FileManager.createSoundDetailsFileIfNotExistsAsync(Name), details);
         }
 
 
         public class SoundManager{
-
+            /*
             private static async Task GetSavedSounds(ObservableCollection<Sound> sounds)
             {
                 (App.Current as App)._itemViewHolder.allSoundsChanged = false;
@@ -134,7 +141,8 @@ namespace UniversalSoundBoard.Models
                 await FileManager.UpdateGridView();
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
             }
-
+            */
+            /*
             public static async Task GetAllSounds()
             {
                 (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
@@ -159,77 +167,7 @@ namespace UniversalSoundBoard.Models
                 
                 ShowPlayAllButton();
             }
-
-            public static async void GetSoundsByName(string name)
-            {
-                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
-                (App.Current as App)._itemViewHolder.sounds.Clear();
-
-                if ((App.Current as App)._itemViewHolder.allSoundsChanged)
-                {
-                    await GetSavedSounds((App.Current as App)._itemViewHolder.sounds);
-                }
-
-                (App.Current as App)._itemViewHolder.sounds.Clear();
-                (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
-                foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
-                {
-                    if (sound.Name.ToLower().Contains(name.ToLower()))
-                    {
-                        (App.Current as App)._itemViewHolder.sounds.Add(sound);
-                        if (sound.Favourite)
-                        {
-                            (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
-                        }
-                    }
-                }
-
-                ShowPlayAllButton();
-            }
-
-            public static async Task GetSoundsByCategory(Category category)
-            {
-                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
-                (App.Current as App)._itemViewHolder.sounds.Clear();
-
-                if ((App.Current as App)._itemViewHolder.allSoundsChanged)
-                {
-                    await GetSavedSounds((App.Current as App)._itemViewHolder.sounds);
-                }
-
-                (App.Current as App)._itemViewHolder.sounds.Clear();
-                (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
-                foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
-                {
-                    if(sound.Category != null)
-                    {
-                        if (sound.Category.Name == category.Name)
-                        {
-                            (App.Current as App)._itemViewHolder.sounds.Add(sound);
-                            if (sound.Favourite)
-                            {
-                                (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
-                            }
-                        }
-                    }
-                }
-
-                ShowPlayAllButton();
-            }
-
-            public static void ShowPlayAllButton()
-            {
-                if((App.Current as App)._itemViewHolder.page != typeof(SoundPage) 
-                    || (App.Current as App)._itemViewHolder.progressRingIsActive 
-                    || (App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-                {
-                    (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
-                }
-                else
-                {
-                    (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Visible;
-                }
-            }
+            */
         }
     }
 }
