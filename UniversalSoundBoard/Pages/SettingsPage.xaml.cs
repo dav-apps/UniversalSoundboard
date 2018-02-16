@@ -27,7 +27,7 @@ namespace UniversalSoundBoard.Pages
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             setDataContext();
-            await FileManager.setSoundBoardSizeTextAsync();
+            await FileManager.SetSoundBoardSizeTextAsync();
         }
 
         private void setDataContext()

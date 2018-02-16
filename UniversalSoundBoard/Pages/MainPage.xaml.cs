@@ -4,7 +4,6 @@ using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using static UniversalSoundBoard.Models.Sound;
 using Windows.UI;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
@@ -30,7 +29,6 @@ namespace UniversalSoundBoard.Pages
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             SideBar.MenuItemsSource = (App.Current as App)._itemViewHolder.categories;
             
-            FileManager.CreateCategoriesObservableCollection();
             customiseTitleBar();
             await FileManager.GetAllSounds();
         }
@@ -67,14 +65,6 @@ namespace UniversalSoundBoard.Pages
             if (localSettings.Values["liveTile"] == null)
             {
                 localSettings.Values["liveTile"] = FileManager.liveTile;
-                if (FileManager.liveTile)
-                {
-                    FileManager.UpdateLiveTile();
-                }
-            }
-            else
-            {
-                FileManager.UpdateLiveTile();
             }
 
             if (localSettings.Values["showCategoryIcon"] == null)
@@ -108,10 +98,9 @@ namespace UniversalSoundBoard.Pages
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
 
-        private async void onBackRequested(object sender, BackRequestedEventArgs e)
+        private void onBackRequested(object sender, BackRequestedEventArgs e)
         {
-            await FileManager.GoBack();
-
+            FileManager.GoBack();
             e.Handled = true;
         }
 
@@ -132,7 +121,15 @@ namespace UniversalSoundBoard.Pages
             }
             else
             {
+                // Find the selected category in the categories list and set selectedCategory
                 var category = (Category)args.InvokedItem;
+                for(int i = 0; i < (App.Current as App)._itemViewHolder.categories.Count(); i++)
+                {
+                    if ((App.Current as App)._itemViewHolder.categories[i].Uuid == category.Uuid)
+                    {
+                        (App.Current as App)._itemViewHolder.selectedCategory = i;
+                    }
+                }
 
                 if (category == (App.Current as App)._itemViewHolder.categories.First())
                 {

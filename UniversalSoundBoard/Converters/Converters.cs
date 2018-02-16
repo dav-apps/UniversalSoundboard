@@ -121,4 +121,19 @@ namespace UniversalSoundBoard.Converters
             return value as Category;
         }
     }
+
+    public class SelectedCategoryConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            // Get the index and return the category from the categories list at the index
+            int index = (int) value;
+            return (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory];
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

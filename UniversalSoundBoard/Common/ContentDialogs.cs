@@ -325,7 +325,7 @@ namespace UniversalSoundBoard.Common
             StackPanel stackPanel = new StackPanel();
             stackPanel.Orientation = Orientation.Vertical;
 
-            List<string> IconsList = FileManager.createIconsList();
+            List<string> IconsList = FileManager.GetIconsList();
 
             Random random = new Random();
             int randomNumber = random.Next(IconsList.Count);
@@ -386,6 +386,7 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog CreateEditCategoryContentDialogAsync()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            Category currentCategory = (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory];
 
             EditCategoryContentDialog = new ContentDialog
             {
@@ -397,10 +398,10 @@ namespace UniversalSoundBoard.Common
             StackPanel stackPanel = new StackPanel();
             stackPanel.Orientation = Orientation.Vertical;
 
-            List<string> IconsList = FileManager.createIconsList();
+            List<string> IconsList = FileManager.GetIconsList();
 
             EditCategoryTextBox = new TextBox { Width = 300 };
-            EditCategoryTextBox.Text = (App.Current as App)._itemViewHolder.title;
+            EditCategoryTextBox.Text = currentCategory.Name;
 
             IconSelectionComboBox = new ComboBox
             {
@@ -413,7 +414,7 @@ namespace UniversalSoundBoard.Common
             foreach (string icon in IconsList)
             {
                 ComboBoxItem item = new ComboBoxItem { Content = icon, FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 };
-                if (icon == (App.Current as App)._itemViewHolder.selectedCategory.Icon)
+                if (icon == currentCategory.Icon)
                 {
                     item.IsSelected = true;
                 }

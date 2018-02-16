@@ -11,45 +11,45 @@ namespace UniversalSoundBoard.Common
 {
     public class ItemViewHolder : INotifyPropertyChanged
     {
-        private string _title;
-        private bool _progressRingIsActive;
-        private string _searchQuery;
-        private Visibility _editButtonVisibility;
-        private Visibility _playAllButtonVisibility;
-        private bool _normalOptionsVisibility;
-        private Type _page;
-        private ListViewSelectionMode _selectionMode;
-        private ObservableCollection<Category> _categories;
-        private ObservableCollection<Sound> _sounds;
-        private ObservableCollection<Sound> _favouriteSounds;
-        private ObservableCollection<Sound> _allSounds;
-        private bool _allSoundsChanged;
-        private List<Sound> _selectedSounds;
-        private ObservableCollection<PlayingSound> _playingSounds;
-        private Visibility _playingSoundsListVisibility;
-        private bool _playOneSoundAtOnce;
-        private bool _showCategoryIcon;
-        private bool _showSoundsPivot;
-        private bool _isExporting;
-        private bool _exported;
-        private bool _isImporting;
-        private bool _imported;
-        private bool _areExportAndImportButtonsEnabled;
-        private string _exportMessage;
-        private string _importMessage;
-        private string _soundboardSize;
-        private Thickness _windowTitleMargin;
-        private bool _searchAutoSuggestBoxVisibility;
-        private bool _volumeButtonVisibility;
-        private bool _addButtonVisibility;
-        private bool _selectButtonVisibility;
-        private bool _searchButtonVisibility;
-        private bool _cancelButtonVisibility;
-        private bool _shareButtonVisibility;
-        private bool _moreButtonVisibility;
-        private bool _topButtonsCollapsed;
-        private bool _areSelectButtonsEnabled;
-        private Category _selectedCategory;
+        private string _title;                                      // Is the text of the title
+        private bool _progressRingIsActive;                         // Shows the Progress Ring if true
+        private string _searchQuery;                                // The string entered into the search box
+        private Visibility _editButtonVisibility;                   // If true shows the edit button next to the title, only when a category is selected
+        private Visibility _playAllButtonVisibility;                // If true shows the Play button next to the title, only when a category or All Sounds is selected
+        private bool _normalOptionsVisibility;                      // If true shows the normal buttons at the top, e.g. Search bar and Volume Button. If false shows the multi select buttons
+        private Type _page;                                         // The current page
+        private ListViewSelectionMode _selectionMode;               // The selection mode of the GridView. Is either ListViewSelectionMode.None or ListViewSelectionMode.Multiple
+        private ObservableCollection<Category> _categories;         // A list of all categories.
+        private ObservableCollection<Sound> _sounds;                // A list of the sounds which are displayed when the Sound pivot is selected
+        private ObservableCollection<Sound> _favouriteSounds;       // A list of the favourite sound which are displayed when the Favourite pivot is selected
+        private ObservableCollection<Sound> _allSounds;             // A list of all sounds
+        private bool _allSoundsChanged;                             // If there was made change to one or multiple sounds so that a reload of the sounds is required
+        private List<Sound> _selectedSounds;                        // A list of the sounds which are selected
+        private ObservableCollection<PlayingSound> _playingSounds;  // A list of the Playing Sounds which are displayed in the right menu
+        private Visibility _playingSoundsListVisibility;            // If true shows the Playing Sounds list at the right
+        private bool _playOneSoundAtOnce;                           // If true plays only one sound at a time
+        private bool _showCategoryIcon;                             // If true shows the icon of the category on the sound tile
+        private bool _showSoundsPivot;                              // If true shows the pivot to select Sounds or Favourite sounds
+        private bool _isExporting;                                  // If true the soundboard is currently being exported
+        private bool _exported;                                     // If true the soundboard was exported in the app session
+        private bool _isImporting;                                  // If true a soundboard is currently being imported
+        private bool _imported;                                     // If true a soundboard was import in the app session
+        private bool _areExportAndImportButtonsEnabled;             // If true shows the export and import buttons on the settings page
+        private string _exportMessage;                              // The text describing the status of the export
+        private string _importMessage;                              // The text describing the status of the import
+        private string _soundboardSize;                             // The text shown on the settings page which describes the size of the soundboard
+        private Thickness _windowTitleMargin;                       // The margin of the window title at the top left of the window
+        private bool _searchAutoSuggestBoxVisibility;               // If true the search box is visible, if false multi selection is on or the search button shown
+        private bool _volumeButtonVisibility;                       // If true the volume button at the top is visible
+        private bool _addButtonVisibility;                          // If true the Add button at the top to add sounds or a category is visible
+        private bool _selectButtonVisibility;                       // If true the button to switch to multi selection mode is visible
+        private bool _searchButtonVisibility;                       // If true the search button at the top is visible
+        private bool _cancelButtonVisibility;                       // If the the cancel button at the top to switch from multi selection mode to normal mode is visible
+        private bool _shareButtonVisibility;                        // If true the Share button at the top to share sounds is visible
+        private bool _moreButtonVisibility;                         // If true the More button at the top, when multi selection mode is on, is visible
+        private bool _topButtonsCollapsed;                          // If true the buttons at the top show only the icon, if false they show the icon and text
+        private bool _areSelectButtonsEnabled;                      // If false the buttons at the top in multi selection mode are disabled
+        private int _selectedCategory;                         // The index of the currently selected category in the category list
 
         public string title
         {
@@ -469,7 +469,7 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public Category selectedCategory
+        public int selectedCategory
         {
             get { return _selectedCategory; }
 

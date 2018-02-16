@@ -105,8 +105,7 @@ namespace UniversalSoundBoard.Components
             {
                 // Application now has read/write access to the picked file
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-                FileManager.AddImage(file, sound.Uuid);
-                FileManager.UpdateLiveTile();
+                FileManager.AddImage(sound.Uuid, file);
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
             }
         }

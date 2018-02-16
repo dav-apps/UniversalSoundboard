@@ -113,7 +113,7 @@ namespace UniversalSoundBoard.Pages
                     foreach (StorageFile soundFile in items)
                     {
                         Sound sound = new Sound(soundFile.DisplayName, category, soundFile);
-                        await FileManager.addSound(sound);
+                        await FileManager.AddSound(sound);
                     }
 
                     if (String.IsNullOrEmpty(category.Name))

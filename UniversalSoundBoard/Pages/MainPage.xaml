@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:data="using:UniversalSoundBoard.Models"
     xmlns:appmodel="using:Windows.ApplicationModel"
     xmlns:converters="using:UniversalSoundBoard.Converters"
     xmlns:components="using:UniversalSoundBoard.Components"
@@ -12,8 +11,8 @@
     mc:Ignorable="d">
 
     <Page.Resources>
-        <converters:ReturnValueConverter x:Name="ReturnValueConverter" />
-        
+        <converters:SelectedCategoryConverter x:Name="SelectedCategoryConverter" />
+
         <Style TargetType="TextBlock" x:Key="NavBarItemIconStyle">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
             <Setter Property="FontSize" Value="23" />
@@ -46,7 +45,7 @@
     <Grid>
         <NavigationView Name="SideBar" AlwaysShowHeader="True" MenuItemsSource="{Binding categories, Mode=TwoWay}" 
                         ItemInvoked="SideBar_ItemInvoked" ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}"
-                        SelectedItem="{Binding selectedCategory, Mode=TwoWay, Converter={StaticResource ReturnValueConverter}}">
+                        SelectedItem="{Binding selectedCategory, Mode=OneWay, Converter={StaticResource SelectedCategoryConverter}}">
 
             <NavigationView.HeaderTemplate>
                 <DataTemplate>

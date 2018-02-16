@@ -146,7 +146,7 @@ namespace UniversalSoundBoard.Components
                 // Application now has read/write access to the picked file(s)
                 foreach (StorageFile soundFile in files)
                 {
-                    Sound sound = new Sound(soundFile.DisplayName, (App.Current as App)._itemViewHolder.selectedCategory, soundFile);
+                    Sound sound = new Sound(soundFile.DisplayName, (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory], soundFile);
                     await FileManager.AddSound(sound);
                 }
 
@@ -177,14 +177,16 @@ namespace UniversalSoundBoard.Components
                 if (String.IsNullOrEmpty(text))
                 {
                     await FileManager.ShowAllSounds();
-                    FileManager.SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
+                    //FileManager.SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
+                    (App.Current as App)._itemViewHolder.selectedCategory = 0;
                     (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
                 }
                 else
                 {
                     (App.Current as App)._itemViewHolder.title = text;
                     (App.Current as App)._itemViewHolder.searchQuery = text;
-                    FileManager.SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
+                    //FileManager.SelectCategoryByName((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"));
+                    (App.Current as App)._itemViewHolder.selectedCategory = 0;
                     FileManager.GetSoundsByName(text);
                     Suggestions = (App.Current as App)._itemViewHolder.sounds.Where(p => p.Name.ToLower().StartsWith(text.ToLower())).Select(p => p.Name).ToList();
                     SearchAutoSuggestBox.ItemsSource = Suggestions;
@@ -445,7 +447,7 @@ namespace UniversalSoundBoard.Components
             string newName = ContentDialogs.EditCategoryTextBox.Text;
             string oldName = (App.Current as App)._itemViewHolder.title;
 
-            Category newCategory = new Category((App.Current as App)._itemViewHolder.selectedCategory.Uuid, newName, icon);
+            Category newCategory = new Category((App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory].Uuid, newName, icon);
 
             FileManager.UpdateCategory(newCategory);
             (App.Current as App)._itemViewHolder.title = newName;
@@ -458,7 +460,7 @@ namespace UniversalSoundBoard.Components
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             //await FileManager.deleteCategory((App.Current as App)._itemViewHolder.title);
-            FileManager.DeleteCategory((App.Current as App)._itemViewHolder.selectedCategory.Uuid);
+            FileManager.DeleteCategory((App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory].Uuid);
 
             // Reload page
             await FileManager.ShowAllSounds();

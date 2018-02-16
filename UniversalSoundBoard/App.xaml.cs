@@ -59,7 +59,8 @@ namespace UniversalSoundBoard
             moreButtonVisibility = true,
             topButtonsCollapsed = false,
             areSelectButtonsEnabled = false,
-            selectedCategory = new Category((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), "\uE10F")
+            //selectedCategory = new Category((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), "\uE10F")
+            selectedCategory = 0
         };
 
         /// <summary>
@@ -96,6 +97,8 @@ namespace UniversalSoundBoard
             {
                 localSettings.Values["theme"] = FileManager.theme;
             }
+
+            FileManager.CreateCategoriesObservableCollection();
         }
 
         /// <summary>
