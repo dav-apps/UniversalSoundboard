@@ -48,7 +48,6 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Filesystem Methods
-        // Ok
         public static async Task<StorageFolder> GetSoundsFolderAsync()
         {
             StorageFolder root = ApplicationData.Current.LocalFolder;
@@ -64,7 +63,6 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        // Ok
         public static async Task<StorageFolder> GetImagesFolderAsync()
         {
             // Create images folder if not exists
@@ -83,7 +81,6 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Database Methods
-        // Ok
         private static async Task<List<Sound>> GetSavedSounds()
         {
             List<object> soundObjects = DatabaseOperations.GetAllSounds();
@@ -149,10 +146,10 @@ namespace UniversalSoundBoard.DataAccess
 
                 sounds.Add(sound);
             }
+            (App.Current as App)._itemViewHolder.allSoundsChanged = false;
             return sounds;
         }
 
-        // Ok
         public static async Task GetAllSounds()
         {
             (App.Current as App)._itemViewHolder.progressRingIsActive = true;
@@ -193,7 +190,6 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;
         }
 
-        // Ok
         public static async Task AddSound(Sound sound)
         {
             string uuid = Guid.NewGuid().ToString();
@@ -207,7 +203,6 @@ namespace UniversalSoundBoard.DataAccess
             await GetAllSounds();
         }
 
-        // Ok
         public static async Task GetSoundsByCategory(Category category)
         {
             (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
@@ -238,7 +233,6 @@ namespace UniversalSoundBoard.DataAccess
             ShowPlayAllButton();
         }
 
-        // Ok
         public static async void GetSoundsByName(string name)
         {
             (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
@@ -266,7 +260,6 @@ namespace UniversalSoundBoard.DataAccess
             ShowPlayAllButton();
         }
 
-        // Ok
         public static async Task DeleteSound(string uuid)
         {
             // Find the sound and image file and delete them
@@ -295,7 +288,6 @@ namespace UniversalSoundBoard.DataAccess
             await GetAllSounds();
         }
 
-        // Ok
         public static async void AddImage(string uuid, StorageFile file)
         {
             StorageFolder imagesFolder = await GetImagesFolderAsync();
@@ -306,27 +298,23 @@ namespace UniversalSoundBoard.DataAccess
             await GetAllSounds();
         }
 
-        // Ok
         public static void AddCategory(Category category)
         {
             DatabaseOperations.AddCategory(category.Name, category.Icon);
             CreateCategoriesObservableCollection();
         }
 
-        // Ok
         public static List<Category> GetAllCategories()
         {
             return DatabaseOperations.GetCategories();
         }
 
-        // Ok
         public static void UpdateCategory(Category category)
         {
             DatabaseOperations.UpdateCategory(category.Uuid, category.Name, category.Icon);
             CreateCategoriesObservableCollection();
         }
 
-        // Ok
         public static void DeleteCategory(string uuid)
         {
             DatabaseOperations.DeleteCategory(uuid);
@@ -335,7 +323,6 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region UI Methods
-        // OK
         public static bool AreTopButtonsNormal()
         {
             if ((App.Current as App)._itemViewHolder.normalOptionsVisibility)
@@ -354,7 +341,6 @@ namespace UniversalSoundBoard.DataAccess
             return false;
         }
 
-        // Ok
         public static void SetBackButtonVisibility(bool visible)
         {
             if (visible)
@@ -369,7 +355,6 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        // Ok
         public static void CheckBackButtonVisibility()
         {
             if (FileManager.AreTopButtonsNormal() && (App.Current as App)._itemViewHolder.selectedCategory == 0)
@@ -382,7 +367,6 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        // Ok
         public static async Task ShowAllSounds()
         {
             if (AreTopButtonsNormal())
@@ -399,7 +383,6 @@ namespace UniversalSoundBoard.DataAccess
             skipAutoSuggestBoxTextChanged = false;
         }
 
-        // Ok
         public static void AdjustLayout()
         {
             double width = Window.Current.Bounds.Width;
@@ -422,7 +405,6 @@ namespace UniversalSoundBoard.DataAccess
     CheckBackButtonVisibility();
         }
 
-        // Ok
         public static void ShowPlayAllButton()
         {
             if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage)
@@ -437,7 +419,6 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        // Ok
         public static async Task UpdateGridView()
         {
             int selectedCategoryIndex = (App.Current as App)._itemViewHolder.selectedCategory;
@@ -483,7 +464,6 @@ namespace UniversalSoundBoard.DataAccess
             ShowPlayAllButton();
         }
 
-        // Ok
         public static async Task ShowCategory(Category category)
         {
             skipAutoSuggestBoxTextChanged = true;
@@ -496,7 +476,6 @@ namespace UniversalSoundBoard.DataAccess
             SelectCategory(category.Uuid);
         }
 
-        // Ok
         public static void ResetSearchArea()
         {
             skipAutoSuggestBoxTextChanged = true;
@@ -511,7 +490,6 @@ namespace UniversalSoundBoard.DataAccess
             AdjustLayout();
         }
 
-        // Ok
         public static void switchSelectionMode()
         {
             if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
@@ -536,7 +514,6 @@ namespace UniversalSoundBoard.DataAccess
             AdjustLayout();
         }
 
-        // Ok
         public static void ResetTopButtons()
         {
             if ((App.Current as App)._itemViewHolder.selectionMode != ListViewSelectionMode.None)
@@ -549,7 +526,6 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        // Ok
         public static void GoBack()
         {
             if (!AreTopButtonsNormal())
@@ -583,7 +559,6 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region General Methods
-        // Ok
         public static void CreateCategoriesObservableCollection()
         {
             (App.Current as App)._itemViewHolder.categories.Clear();
@@ -596,7 +571,6 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.selectedCategory = 0;
         }
 
-        // Ok
         public static void SelectCategory(string uuid)
         {
             for (int i = 0; i < (App.Current as App)._itemViewHolder.categories.Count(); i++)
@@ -608,7 +582,6 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        // Ok
         public static void UpdateLiveTile()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -685,7 +658,6 @@ namespace UniversalSoundBoard.DataAccess
             TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
         }
 
-        // Ok
         public static async Task SetSoundBoardSizeTextAsync()
         {
             if ((App.Current as App)._itemViewHolder.progressRingIsActive)
@@ -711,13 +683,12 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Other Methods
-        // OK
         public static async Task<float> GetFileSizeInGBAsync(StorageFile file)
         {
             BasicProperties pro = await file.GetBasicPropertiesAsync();
             return (((pro.Size / 1024f) / 1024f)/ 1024f);
         }
-        // OK
+        
         public static async Task WriteFile(StorageFile file, Object objectToWrite)
         {
             DataContractJsonSerializer js = new DataContractJsonSerializer(objectToWrite.GetType());
@@ -730,7 +701,7 @@ namespace UniversalSoundBoard.DataAccess
 
             await FileIO.WriteTextAsync(file, data);
         }
-        // OK
+        
         public static string HTMLEncodeSpecialChars(string text)
         {
             StringBuilder sb = new StringBuilder();
@@ -743,7 +714,7 @@ namespace UniversalSoundBoard.DataAccess
             }
             return sb.ToString();
         }
-        // OK
+        
         public static List<string> GetIconsList()
         {
             List<string> Icons = new List<string>();
@@ -827,7 +798,7 @@ namespace UniversalSoundBoard.DataAccess
             return Icons;
         }
         #endregion
-
+        /*
         #region Old Methods
         public static async Task<StorageFolder> CreateDetailsFolderIfNotExistsAsync()
         {
@@ -1362,5 +1333,6 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
         #endregion
+        */
     }
 }
