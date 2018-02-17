@@ -16,7 +16,7 @@ namespace UniversalSoundBoard.Components
 
         public CustomMediaTransportControls()
         {
-            this.DefaultStyleKey = typeof(CustomMediaTransportControls);
+            DefaultStyleKey = typeof(CustomMediaTransportControls);
         }
 
         protected override void OnApplyTemplate()
@@ -42,40 +42,19 @@ namespace UniversalSoundBoard.Components
             base.OnApplyTemplate();
         }
 
-        private void RemoveButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Raise an event on the custom control when 'Removed' is clicked
-            Removed?.Invoke(this, EventArgs.Empty);
-        }
+        // Raise an event on the custom control when 'Removed' is clicked
+        private void RemoveButton_Click(object sender, RoutedEventArgs e) => Removed?.Invoke(this, EventArgs.Empty);
 
-        private void FavouriteFlyout_Click(object sender, RoutedEventArgs e)
-        {
-            FavouriteFlyout_Clicked?.Invoke(this, EventArgs.Empty);
-        }
+        private void FavouriteFlyout_Click(object sender, RoutedEventArgs e) => FavouriteFlyout_Clicked?.Invoke(this, EventArgs.Empty);
 
-        private void Repeat_1x_Click(object sender, RoutedEventArgs e)
-        {
-            Repeat_1x_Clicked?.Invoke(this, EventArgs.Empty);
-        }
+        private void Repeat_1x_Click(object sender, RoutedEventArgs e) => Repeat_1x_Clicked?.Invoke(this, EventArgs.Empty);
 
-        private void Repeat_2x_Click(object sender, RoutedEventArgs e)
-        {
-            Repeat_2x_Clicked?.Invoke(this, EventArgs.Empty);
-        }
+        private void Repeat_2x_Click(object sender, RoutedEventArgs e) => Repeat_2x_Clicked?.Invoke(this, EventArgs.Empty);
 
-        private void Repeat_5x_Click(object sender, RoutedEventArgs e)
-        {
-            Repeat_5x_Clicked?.Invoke(this, EventArgs.Empty);
-        }
+        private void Repeat_5x_Click(object sender, RoutedEventArgs e) => Repeat_5x_Clicked?.Invoke(this, EventArgs.Empty);
 
-        private void Repeat_10x_Click(object sender, RoutedEventArgs e)
-        {
-            Repeat_10x_Clicked?.Invoke(this, EventArgs.Empty);
-        }
+        private void Repeat_10x_Click(object sender, RoutedEventArgs e) => Repeat_10x_Clicked?.Invoke(this, EventArgs.Empty);
 
-        private void Repeat_endless_Click(object sender, RoutedEventArgs e)
-        {
-            Repeat_endless_Clicked?.Invoke(this, EventArgs.Empty);
-        }
+        private void Repeat_endless_Click(object sender, RoutedEventArgs e) => Repeat_endless_Clicked?.Invoke(this, EventArgs.Empty);
     }
 }
