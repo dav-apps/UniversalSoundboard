@@ -102,13 +102,7 @@ namespace UniversalSoundBoard.Pages
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 if (items.Any())
                 {
-                    Category category = new Category();
-                    // Get category if a category is selected
-                    if ((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title") &&
-                        String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery) && (App.Current as App)._itemViewHolder.editButtonVisibility == Visibility.Visible)
-                    {
-                        category.Name = (App.Current as App)._itemViewHolder.title;
-                    }
+                    Category category = (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory];
 
                     foreach (StorageFile soundFile in items)
                     {
@@ -116,13 +110,13 @@ namespace UniversalSoundBoard.Pages
                         await FileManager.AddSound(sound);
                     }
 
-                    if (String.IsNullOrEmpty(category.Name))
+                    if ((App.Current as App)._itemViewHolder.selectedCategory == 0)
                     {
                         await FileManager.ShowAllSounds();
                     }
                     else
                     {
-                        await FileManager.ShowCategory(category);
+                        await FileManager.ShowCategory((App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory].Uuid);
                     }
                 }
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;

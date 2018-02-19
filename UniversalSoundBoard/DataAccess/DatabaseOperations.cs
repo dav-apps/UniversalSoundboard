@@ -303,6 +303,48 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
+        public static Category GetCategory(string uuid)
+        {
+            Category category = new Category(uuid, "", "");
+
+            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            {
+                db.Open();
+                string selectCommandText = "SELECT * FROM " + CategoryTableName + " WHERE uuid = @Uuid;";
+                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
+                selectCommand.Parameters.AddWithValue("@Uuid", uuid);
+                SqliteDataReader query;
+
+                try
+                {
+                    query = selectCommand.ExecuteReader();
+                }
+                catch(SqliteException error)
+                {
+                    Debug.WriteLine("Error in GetCategory");
+                    Debug.WriteLine(error.Message);
+                    return null;
+                }
+
+                bool categoryExists = false;
+                while (query.Read())
+                {
+                    uuid = query.GetString(1);
+                    string name = query.GetString(2);
+                    string icon = query.GetString(3);
+
+                    category.Name = name;
+                    category.Icon = icon;
+                    categoryExists = true;
+                }
+                if (categoryExists)
+                    return category;
+
+                db.Close();
+                return null;
+            }
+        }
+
         public static List<Category> GetCategories()
         {
             List<Category> entries = new List<Category>();

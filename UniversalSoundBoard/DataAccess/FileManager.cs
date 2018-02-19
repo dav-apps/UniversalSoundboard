@@ -157,37 +157,32 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.sounds.Clear();
             (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
 
-            if ((App.Current as App)._itemViewHolder.allSoundsChanged)
-            {
-                // Get all sounds from the database
-                (App.Current as App)._itemViewHolder.allSounds.Clear();
+            await UpdateAllSoundsList();
 
-                foreach (Sound sound in await GetSavedSounds())
-                {
-                    (App.Current as App)._itemViewHolder.allSounds.Add(sound);
-                    (App.Current as App)._itemViewHolder.sounds.Add(sound);
-                    if (sound.Favourite)
-                    {
-                        (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
-                    }
-                }
-
-                UpdateLiveTile();
-            }
-            else
+            // Get the sounds from itemViewHolder
+            foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
             {
-                // Get the sounds from itemViewHolder
-                foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
+                (App.Current as App)._itemViewHolder.sounds.Add(sound);
+                if (sound.Favourite)
                 {
-                    (App.Current as App)._itemViewHolder.sounds.Add(sound);
-                    if (sound.Favourite)
-                    {
-                        (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
-                    }
+                    (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
                 }
             }
 
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;
+        }
+
+        private static async Task UpdateAllSoundsList()
+        {
+            if ((App.Current as App)._itemViewHolder.allSoundsChanged)
+            {
+                (App.Current as App)._itemViewHolder.allSounds.Clear();
+                foreach (Sound sound in await GetSavedSounds())
+                {
+                    (App.Current as App)._itemViewHolder.allSounds.Add(sound);
+                }
+                UpdateLiveTile();
+            }
         }
 
         public static async Task AddSound(Sound sound)
@@ -200,18 +195,15 @@ namespace UniversalSoundBoard.DataAccess
             StorageFile newFile = await sound.AudioFile.CopyAsync(soundsFolder, uuid + sound.AudioFile.FileType, NameCollisionOption.ReplaceExisting);
 
             DatabaseOperations.AddSound(uuid, sound.Name, sound.Category.Uuid, ext);
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             await GetAllSounds();
         }
 
         public static async Task GetSoundsByCategory(Category category)
         {
             (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
-            (App.Current as App)._itemViewHolder.sounds.Clear();
 
-            if ((App.Current as App)._itemViewHolder.allSoundsChanged)
-            {
-                await GetSavedSounds();
-            }
+            await UpdateAllSoundsList();
 
             (App.Current as App)._itemViewHolder.sounds.Clear();
             (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
@@ -233,15 +225,12 @@ namespace UniversalSoundBoard.DataAccess
             ShowPlayAllButton();
         }
 
-        public static async void GetSoundsByName(string name)
+        public static async Task GetSoundsByName(string name)
         {
             (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.sounds.Clear();
 
-            if ((App.Current as App)._itemViewHolder.allSoundsChanged)
-            {
-                await GetAllSounds();
-            }
+            await UpdateAllSoundsList();
 
             (App.Current as App)._itemViewHolder.sounds.Clear();
             (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
@@ -285,7 +274,14 @@ namespace UniversalSoundBoard.DataAccess
                 // Delete Sound from database
                 DatabaseOperations.DeleteSound(uuid);
             }
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             await GetAllSounds();
+        }
+
+        public static void SetCategoryOfSound(string soundUuid, string categoryUuid)
+        {
+            DatabaseOperations.UpdateSound(soundUuid, null, categoryUuid, null, null, null);
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
         }
 
         public static async void AddImage(string uuid, StorageFile file)
@@ -295,12 +291,14 @@ namespace UniversalSoundBoard.DataAccess
             string imageExt = file.FileType.Replace(".", "");
 
             DatabaseOperations.UpdateSound(uuid, null, null, null, imageExt, null);
+
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             await GetAllSounds();
         }
 
-        public static void AddCategory(Category category)
+        public static void AddCategory(string name, string icon)
         {
-            DatabaseOperations.AddCategory(category.Name, category.Icon);
+            DatabaseOperations.AddCategory(name, icon);
             CreateCategoriesObservableCollection();
         }
 
@@ -309,9 +307,9 @@ namespace UniversalSoundBoard.DataAccess
             return DatabaseOperations.GetCategories();
         }
 
-        public static void UpdateCategory(Category category)
+        public static void UpdateCategory(string uuid, string name, string icon)
         {
-            DatabaseOperations.UpdateCategory(category.Uuid, category.Name, category.Icon);
+            DatabaseOperations.UpdateCategory(uuid, name, icon);
             CreateCategoriesObservableCollection();
         }
 
@@ -439,7 +437,7 @@ namespace UniversalSoundBoard.DataAccess
                     }
                     else
                     {
-                        await FileManager.GetSoundsByCategory(selectedCategory);
+                        await GetSoundsByCategory(selectedCategory);
                         (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
                     }
                 }
@@ -464,16 +462,24 @@ namespace UniversalSoundBoard.DataAccess
             ShowPlayAllButton();
         }
 
-        public static async Task ShowCategory(Category category)
+        public static async Task ShowCategory(string uuid)
         {
-            skipAutoSuggestBoxTextChanged = true;
-            (App.Current as App)._itemViewHolder.searchQuery = "";
-            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-            (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
-            SetBackButtonVisibility(true);
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
-            await GetSoundsByCategory(category);
-            SelectCategory(category.Uuid);
+            Category category = DatabaseOperations.GetCategory(uuid);
+            if(category != null)
+            {
+                skipAutoSuggestBoxTextChanged = true;
+                (App.Current as App)._itemViewHolder.searchQuery = "";
+                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+                (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
+                SetBackButtonVisibility(true);
+                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
+                await GetSoundsByCategory(category);
+                SelectCategory(category.Uuid);
+            }
+            else
+            {
+                await ShowAllSounds();
+            }
         }
 
         public static void ResetSearchArea()
@@ -490,7 +496,7 @@ namespace UniversalSoundBoard.DataAccess
             AdjustLayout();
         }
 
-        public static void switchSelectionMode()
+        public static void SwitchSelectionMode()
         {
             if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
             {   // If Normal view
@@ -518,7 +524,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             if ((App.Current as App)._itemViewHolder.selectionMode != ListViewSelectionMode.None)
             {
-                switchSelectionMode();
+                SwitchSelectionMode();
             }
             else
             {
@@ -798,7 +804,7 @@ namespace UniversalSoundBoard.DataAccess
             return Icons;
         }
         #endregion
-        /*
+        
         #region Old Methods
         public static async Task<StorageFolder> CreateDetailsFolderIfNotExistsAsync()
         {
@@ -1333,6 +1339,6 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
         #endregion
-        */
+        
     }
 }
