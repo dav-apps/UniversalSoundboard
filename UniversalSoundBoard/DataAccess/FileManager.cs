@@ -1343,7 +1343,7 @@ namespace UniversalSoundBoard.DataAccess
             await createSoundDetailsFileIfNotExistsAsync(sound.Name);
             if (sound.Category != null)
             {
-                sound.SetCategory(sound.Category);
+                sound.Category = sound.Category;
             }
         }
         #endregion

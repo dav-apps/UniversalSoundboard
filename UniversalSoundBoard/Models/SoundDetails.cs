@@ -22,8 +22,8 @@ namespace UniversalSoundBoard.Models
             var ms = new MemoryStream(Encoding.UTF8.GetBytes(soundDetailsText));
             var data = (SoundDetails)serializer.ReadObject(ms);
 
-            this.Category = data.Category;
-            this.Favourite = data.Favourite;
+            Category = data.Category;
+            Favourite = data.Favourite;
         }
     }
 }
