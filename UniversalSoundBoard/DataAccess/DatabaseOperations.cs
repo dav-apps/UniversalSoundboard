@@ -226,7 +226,7 @@ namespace UniversalSoundBoard.DataAccess
                 if(favourite != null)
                 {
                     updateCommandText += "favourite = @Favourite, ";
-                    updateCommand.Parameters.AddWithValue("@Favourite", favourite);
+                    updateCommand.Parameters.AddWithValue("@Favourite", favourite.ToLower() == "true");
                 }
                 updateCommandText = updateCommandText.Remove(updateCommandText.Length - 2); // Remove the last two characters, which are ", "
                 updateCommandText += " WHERE uuid = @Uuid;";

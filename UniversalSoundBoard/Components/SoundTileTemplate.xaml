@@ -8,9 +8,12 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <RelativePanel Name="ContentRoot" Background="White"
-                   RightTapped="ContentRoot_RightTapped" Holding="ContentRoot_Holding" 
-                   PointerEntered="ContentRoot_PointerEntered" PointerExited="ContentRoot_PointerExited">
+    <RelativePanel Name="ContentRoot" 
+                   Background="White"
+                   RightTapped="ContentRoot_RightTapped" 
+                   Holding="ContentRoot_Holding" 
+                   PointerEntered="ContentRoot_PointerEntered" 
+                   PointerExited="ContentRoot_PointerExited">
 
         <ToolTipService.ToolTip>
             <TextBlock Text="{x:Bind Sound.Name}" />
@@ -37,27 +40,44 @@
             </VisualStateGroup>
         </VisualStateManager.VisualStateGroups>
 
-        <Grid Name="SoundTileGrid" RelativePanel.AlignTopWithPanel="True">
+        <Grid Name="SoundTileGrid" 
+              RelativePanel.AlignTopWithPanel="True">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
-            <RelativePanel Name="IconsRelativePanel" Grid.Row="0" Canvas.ZIndex="1">
-                <SymbolIcon Name="FavouriteSymbol" Symbol="OutlineStar" 
-					    Visibility="{x:Bind Sound.Favourite}" RelativePanel.AlignLeftWithPanel="True" RelativePanel.AlignTopWithPanel="True" />
-                <TextBlock Name="CategoryIconSymbol" Text="{x:Bind Sound.Category.Icon, FallbackValue='', TargetNullValue=''}"
-                        FontFamily="Segoe MDL2 Assets" FontSize="20" RelativePanel.AlignRightWithPanel="True" RelativePanel.AlignTopWithPanel="True"
-                        Visibility="{Binding showCategoryIcon}" />
+            <RelativePanel Name="IconsRelativePanel" 
+                           Grid.Row="0" 
+                           Canvas.ZIndex="1">
+                <SymbolIcon Name="FavouriteSymbol" 
+                            Symbol="OutlineStar" 
+					        Visibility="{x:Bind Sound.Favourite}" 
+                            RelativePanel.AlignLeftWithPanel="True" 
+                            RelativePanel.AlignTopWithPanel="True" />
+                <TextBlock Name="CategoryIconSymbol" 
+                           Text="{x:Bind Sound.Category.Icon, FallbackValue='', TargetNullValue=''}"
+                           FontFamily="Segoe MDL2 Assets" 
+                           FontSize="20" 
+                           RelativePanel.AlignRightWithPanel="True" 
+                           RelativePanel.AlignTopWithPanel="True"
+                           Visibility="{Binding showCategoryIcon}" />
             </RelativePanel>
 
-            <RelativePanel Grid.Row="1" Height="150">
-                <Image Name="SoundTileImage" Source="{x:Bind Sound.Image}"
-                       RelativePanel.AlignHorizontalCenterWithPanel="True" RelativePanel.AlignVerticalCenterWithPanel="True" />
+            <RelativePanel Grid.Row="1" 
+                           Height="150">
+                <Image Name="SoundTileImage" 
+                       Source="{x:Bind Sound.Image}"
+                       RelativePanel.AlignHorizontalCenterWithPanel="True" 
+                       RelativePanel.AlignVerticalCenterWithPanel="True" />
             </RelativePanel>
 
-            <TextBlock Grid.Row="2" Name="SoundTileName" FontSize="20" Text="{x:Bind Sound.Name}" Canvas.ZIndex="20" />
+            <TextBlock Name="SoundTileName" 
+                       Grid.Row="2" 
+                       Text="{x:Bind Sound.Name}" 
+                       FontSize="20" 
+                       Canvas.ZIndex="20" />
         </Grid>
     </RelativePanel>
 </UserControl>

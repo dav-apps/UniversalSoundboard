@@ -278,6 +278,12 @@ namespace UniversalSoundBoard.DataAccess
             await GetAllSounds();
         }
 
+        public static void RenameSound(string uuid, string newName)
+        {
+            DatabaseOperations.UpdateSound(uuid, newName, null, null, null, null);
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+        }
+
         public static void SetCategoryOfSound(string soundUuid, string categoryUuid)
         {
             DatabaseOperations.UpdateSound(soundUuid, null, categoryUuid, null, null, null);
