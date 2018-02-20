@@ -12,10 +12,11 @@ namespace UniversalSoundBoard.Components
     {
         public Sound Sound { get { return this.DataContext as Sound; } }
 
+        
         public SoundItemTemplate()
         {
-            this.InitializeComponent();
-            this.DataContextChanged += (s, e) => Bindings.Update();
+            InitializeComponent();
+            DataContextChanged += (s, e) => Bindings.Update();
 
             if(App.Current.RequestedTheme == ApplicationTheme.Dark)
                 RemoveSoundButton.Background = new SolidColorBrush(Colors.Black);
@@ -27,7 +28,7 @@ namespace UniversalSoundBoard.Components
         {
             ContentDialogs.SoundsList.Remove(Sound);
 
-            if(ContentDialogs.SoundsList.Count() == 0)
+            if(ContentDialogs.SoundsList.Count == 0)
             {
                 ContentDialogs.PlaySoundsSuccessivelyContentDialog.IsPrimaryButtonEnabled = false;
             }
