@@ -15,31 +15,32 @@ namespace UniversalSoundBoard.Pages
     {
         int sideBarCollapsedMaxWidth = FileManager.sideBarCollapsedMaxWidth;
 
+        
         public MainPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             Loaded += MainPage_Loaded;
-            SystemNavigationManager.GetForCurrentView().BackRequested += onBackRequested;
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
         }
-
+        
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            setDataContext();
-            initializeLocalSettings();
+            SetDataContext();
+            InitializeLocalSettings();
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             SideBar.MenuItemsSource = (App.Current as App)._itemViewHolder.categories;
             
-            customiseTitleBar();
+            CustomiseTitleBar();
             await FileManager.GetAllSounds();
         }
-
-        private void setDataContext()
+        
+        private void SetDataContext()
         {
             WindowTitleTextBox.DataContext = (App.Current as App)._itemViewHolder;
             SideBar.DataContext = (App.Current as App)._itemViewHolder;
         }
-
-        private void initializeLocalSettings()
+        
+        private void InitializeLocalSettings()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             if (localSettings.Values["playingSoundsListVisible"] == null)
@@ -87,23 +88,22 @@ namespace UniversalSoundBoard.Pages
                 (App.Current as App)._itemViewHolder.showSoundsPivot = (bool)localSettings.Values["showSoundsPivot"];
             }
         }
-
-        private void customiseTitleBar()
+        
+        private void CustomiseTitleBar()
         {
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-
             ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonForegroundColor = ((App.Current as App).RequestedTheme == ApplicationTheme.Dark) ? Colors.White : Colors.Black;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
-
-        private void onBackRequested(object sender, BackRequestedEventArgs e)
+        
+        private void OnBackRequested(object sender, BackRequestedEventArgs e)
         {
             FileManager.GoBack();
             e.Handled = true;
         }
-
+        
         private async void SideBar_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
