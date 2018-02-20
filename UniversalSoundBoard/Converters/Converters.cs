@@ -48,7 +48,7 @@ namespace UniversalSoundBoard.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            return (App.Current as App)._itemViewHolder.title;
         }
     }
 

@@ -1,8 +1,6 @@
-﻿using Microsoft.Toolkit.Uwp.Notifications;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -13,7 +11,6 @@ using System.Threading.Tasks;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel.Core;
-using Windows.Data.Xml.Dom;
 using Windows.Foundation;
 using Windows.Storage;
 using Windows.Storage.FileProperties;

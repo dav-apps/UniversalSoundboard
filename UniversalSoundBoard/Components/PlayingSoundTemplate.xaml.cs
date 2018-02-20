@@ -81,7 +81,7 @@ namespace UniversalSoundBoard.Components
         
         private void RepeatSound(int repetitions)
         {
-            PlayingSound.repetitions = repetitions + 1;
+            PlayingSound.Repetitions = repetitions + 1;
         }
         
         private void InitializePlayingSound()
@@ -94,7 +94,7 @@ namespace UniversalSoundBoard.Components
                 ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
                 ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
                 PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
-                if(PlayingSound.repetitions >= 0)
+                if(PlayingSound.Repetitions >= 0)
                 {
                     MediaPlayerElement.MediaPlayer.Play();
                 }
@@ -126,18 +126,18 @@ namespace UniversalSoundBoard.Components
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                PlayingSound.repetitions--;
-                if (PlayingSound.repetitions <= 0)
+                PlayingSound.Repetitions--;
+                if (PlayingSound.Repetitions <= 0)
                 {
                     RemovePlayingSound();
                 }
                 
-                if(PlayingSound.repetitions >= 0 && PlayingSound.MediaPlayer != null)
+                if(PlayingSound.Repetitions >= 0 && PlayingSound.MediaPlayer != null)
                 {
                     if (PlayingSound.Sounds.Count > 1) // Multiple Sounds in the list
                     {
                         // If randomly is true, shuffle sounds
-                        if (PlayingSound.randomly)
+                        if (PlayingSound.Randomly)
                         {
                             Random random = new Random();
 
