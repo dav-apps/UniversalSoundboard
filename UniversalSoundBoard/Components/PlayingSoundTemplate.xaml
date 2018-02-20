@@ -11,7 +11,6 @@
     SizeChanged="UserControl_SizeChanged">
 
     <Grid Name="ContentRoot" Background="White">
-
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -21,11 +20,15 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Name="PlayingSoundName" Text="{x:Bind PlayingSound.CurrentSound.Name}"
-                   VerticalAlignment="Center" Margin="10,5,0,0" TextWrapping="WrapWholeWords" />
+        <TextBlock Name="PlayingSoundName" 
+                   Text="{x:Bind PlayingSound.CurrentSound.Name}"
+                   VerticalAlignment="Center" 
+                   Margin="10,5,0,0" 
+                   TextWrapping="WrapWholeWords" />
 
-        <MediaPlayerElement Name="MediaPlayerElement" Grid.Row="1"
-                                AreTransportControlsEnabled="True">
+        <MediaPlayerElement Name="MediaPlayerElement" 
+                            Grid.Row="1"
+                            AreTransportControlsEnabled="True">
             <MediaPlayerElement.TransportControls>
                 <components:CustomMediaTransportControls IsCompact="True"
                                         IsFullWindowButtonVisible="False"

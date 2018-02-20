@@ -284,6 +284,11 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.allSoundsChanged = true;
         }
 
+        public static void SetSoundAsFavourite(string uuid, bool favourite)
+        {
+            DatabaseOperations.UpdateSound(uuid, null, null, null, null, favourite.ToString());
+        }
+
         public static async void AddImage(string uuid, StorageFile file)
         {
             StorageFolder imagesFolder = await GetImagesFolderAsync();
