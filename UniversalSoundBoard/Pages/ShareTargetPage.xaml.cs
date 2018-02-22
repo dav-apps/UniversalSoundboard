@@ -14,16 +14,17 @@ namespace UniversalSoundBoard.Pages
 {
     public sealed partial class ShareTargetPage : Page
     {
-        ObservableCollection<Category> categories;
         ShareOperation shareOperation;
+        ObservableCollection<Category> categories;
         List<StorageFile> items;
 
+        
         public ShareTargetPage()
         {
-            this.InitializeComponent();
-            this.DataContextChanged += (s, e) => Bindings.Update();
+            InitializeComponent();
+            DataContextChanged += (s, e) => Bindings.Update();
         }
-
+        
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             shareOperation = e.Parameter as ShareOperation;
@@ -35,11 +36,10 @@ namespace UniversalSoundBoard.Pages
                 items.Add(file);
             }
         }
-
+        
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             categories = new ObservableCollection<Category>();
-            //categories.Add(new Category((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), "\uE10F"));
             FileManager.CreateCategoriesObservableCollection();
 
             // Get all Categories and show them
@@ -49,7 +49,7 @@ namespace UniversalSoundBoard.Pages
             }
             Bindings.Update();
         }
-
+        
         private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
             AddButton.IsEnabled = false;
@@ -68,14 +68,13 @@ namespace UniversalSoundBoard.Pages
                 {
                     if (storagefile.ContentType == "audio/wav" || storagefile.ContentType == "audio/mpeg")
                     {
-                        Sound sound = new Sound(storagefile.DisplayName, category, storagefile as StorageFile);
-                        await FileManager.addSound(sound);
+                        await FileManager.AddSound(null, storagefile.DisplayName, category.Uuid, storagefile);
                     }
                 }
             }
             shareOperation.ReportCompleted();
         }
-
+        
         private void CategoriesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!ProgressRing.IsActive)
@@ -83,7 +82,7 @@ namespace UniversalSoundBoard.Pages
                 AddButton.IsEnabled = true;
             }
         }
-
+        
         private async void AddCategoryButton_Click(object sender, RoutedEventArgs e)
         {
             // Show new Category ContentDialog
@@ -92,7 +91,7 @@ namespace UniversalSoundBoard.Pages
             await newCategoryContentDialog.ShowAsync();
         }
 
-        private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get combobox value
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
@@ -104,16 +103,8 @@ namespace UniversalSoundBoard.Pages
                 Icon = icon
             };
 
-            categories.Add(category);
+            categories.Add(FileManager.AddCategory(null, category.Name, category.Icon));
             Bindings.Update();
-
-            ObservableCollection<Category> newCategories = new ObservableCollection<Category>();
-
-            foreach (Category cat in categories)
-                newCategories.Add(cat);
-
-            newCategories.RemoveAt(0);
-            await FileManager.SaveCategoriesListAsync(newCategories);
         }
     }
 }
