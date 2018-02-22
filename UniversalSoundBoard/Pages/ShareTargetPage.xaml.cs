@@ -36,13 +36,14 @@ namespace UniversalSoundBoard.Pages
             }
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             categories = new ObservableCollection<Category>();
-            categories.Add(new Category((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), "\uE10F"));
+            //categories.Add(new Category((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), "\uE10F"));
+            FileManager.CreateCategoriesObservableCollection();
 
             // Get all Categories and show them
-            foreach(Category cat in await FileManager.GetCategoriesListAsync())
+            foreach(Category cat in (App.Current as App)._itemViewHolder.categories)
             {
                 categories.Add(cat);
             }

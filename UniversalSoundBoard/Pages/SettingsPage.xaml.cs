@@ -13,9 +13,10 @@ namespace UniversalSoundBoard.Pages
     {
         static string themeAtBeginning;
 
+        
         public SettingsPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
 
             if(String.IsNullOrEmpty(themeAtBeginning))
             {
@@ -23,29 +24,29 @@ namespace UniversalSoundBoard.Pages
                 themeAtBeginning = (string)localSettings.Values["theme"];
             }
         }
-
+        
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            setDataContext();
+            SetDataContext();
             await FileManager.SetSoundBoardSizeTextAsync();
         }
-
-        private void setDataContext()
+        
+        private void SetDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
-
+        
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            setLiveTileToggle();
-            setPlayingSoundsListVisibilityToggle();
-            setPlayOneSoundAtOnceToggle();
-            setShowCategoryIconToggle();
-            setShowSoundsPivotToggle();
-            setThemeRadioButton();
+            SetLiveTileToggle();
+            SetPlayingSoundsListVisibilityToggle();
+            SetPlayOneSoundAtOnceToggle();
+            SetShowCategoryIconToggle();
+            SetShowSoundsPivotToggle();
+            SetThemeRadioButton();
         }
-
-        private void setThemeRadioButton()
+        
+        private void SetThemeRadioButton()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
 
@@ -65,40 +66,40 @@ namespace UniversalSoundBoard.Pages
                 }
             }
 
-            setToggleMessageVisibility();
+            SetToggleMessageVisibility();
         }
-
-        private void setLiveTileToggle()
+        
+        private void SetLiveTileToggle()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             LiveTileToggle.IsOn = (bool)localSettings.Values["liveTile"];
         }
-
-        private void setPlayingSoundsListVisibilityToggle()
+        
+        private void SetPlayingSoundsListVisibilityToggle()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             PlayingSoundsListToggle.IsOn = (bool)localSettings.Values["playingSoundsListVisible"];
         }
-
-        private void setPlayOneSoundAtOnceToggle()
+        
+        private void SetPlayOneSoundAtOnceToggle()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             PlayOneSoundAtOnceToggle.IsOn = (bool)localSettings.Values["playOneSoundAtOnce"];
         }
-
-        private void setShowCategoryIconToggle()
+        
+        private void SetShowCategoryIconToggle()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             ShowCategoryToggle.IsOn = (bool)localSettings.Values["showCategoryIcon"];
         }
-
-        private void setShowSoundsPivotToggle()
+        
+        private void SetShowSoundsPivotToggle()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             ShowSoundsPivotToggle.IsOn = (bool)localSettings.Values["showSoundsPivot"];
         }
-
-        private void setToggleMessageVisibility()
+        
+        private void SetToggleMessageVisibility()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             if (themeAtBeginning != (string)localSettings.Values["theme"])
@@ -110,7 +111,7 @@ namespace UniversalSoundBoard.Pages
                 ThemeChangeMessageTextBlock.Visibility = Visibility.Collapsed;
             }
         }
-
+        
         private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -126,21 +127,21 @@ namespace UniversalSoundBoard.Pages
                 FileManager.UpdateLiveTile();
             }
         }
-
+        
         private void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values["playingSoundsListVisible"] = PlayingSoundsListToggle.IsOn;
             (App.Current as App)._itemViewHolder.playingSoundsListVisibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
         }
-
+        
         private void PlayOneSoundAtOnceToggle_Toggled(object sender, RoutedEventArgs e)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values["playOneSoundAtOnce"] = PlayOneSoundAtOnceToggle.IsOn;
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = PlayOneSoundAtOnceToggle.IsOn;
         }
-
+        
         private void ThemeRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -153,23 +154,23 @@ namespace UniversalSoundBoard.Pages
             else if (radioButton == SystemThemeRadioButton)
                 localSettings.Values["theme"] = "system";
 
-            setToggleMessageVisibility();
+            SetToggleMessageVisibility();
         }
-
+        
         private void ShowCategoryToggle_Toggled(object sender, RoutedEventArgs e)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values["showCategoryIcon"] = ShowCategoryToggle.IsOn;
             (App.Current as App)._itemViewHolder.showCategoryIcon = ShowCategoryToggle.IsOn;
         }
-
+        
         private void ShowSoundsPivotToggle_Toggled(object sender, RoutedEventArgs e)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values["showSoundsPivot"] = ShowSoundsPivotToggle.IsOn;
             (App.Current as App)._itemViewHolder.showSoundsPivot = ShowSoundsPivotToggle.IsOn;
         }
-
+        
         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)
         {
             var ExportDataContentDialog = ContentDialogs.CreateExportDataContentDialog();
@@ -177,20 +178,19 @@ namespace UniversalSoundBoard.Pages
 
             await ExportDataContentDialog.ShowAsync();
         }
-
+        
         private async void ExportDataContentDialog_PrimaryButtonClickAsync(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.ExportData(ContentDialogs.ExportFolder);
         }
-
+        
         private async void ImportDataButton_Click(object sender, RoutedEventArgs e)
         {
             var ImportDataContentDialog = ContentDialogs.CreateImportDataContentDialog();
             ImportDataContentDialog.PrimaryButtonClick += ImportDataContentDialog_PrimaryButtonClick;
-
             await ImportDataContentDialog.ShowAsync();
         }
-
+        
         private async void ImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.ImportDataZip(ContentDialogs.ImportFile);

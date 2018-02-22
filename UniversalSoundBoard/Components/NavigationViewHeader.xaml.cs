@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Common;
@@ -134,8 +133,11 @@ namespace UniversalSoundBoard.Components
                 // Application now has read/write access to the picked file(s)
                 foreach (StorageFile soundFile in files)
                 {
-                    Sound sound = new Sound(soundFile.DisplayName, (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory], soundFile);
-                    await FileManager.AddSound(sound);
+                    int selectedCategory = (App.Current as App)._itemViewHolder.selectedCategory;
+                    string categoryUuid = selectedCategory == 0 ? null : (App.Current as App)._itemViewHolder.categories[selectedCategory].Uuid;
+
+                    Sound sound = new Sound(soundFile.DisplayName, (App.Current as App)._itemViewHolder.categories[selectedCategory], soundFile);
+                    await FileManager.AddSound(null, sound.Name, categoryUuid, soundFile);
                 }
 
                 await FileManager.UpdateGridView();
@@ -416,7 +418,8 @@ namespace UniversalSoundBoard.Components
                 Icon = icon
             };
 
-            FileManager.AddCategory(category.Name, category.Icon);
+            FileManager.AddCategory(null, category.Name, category.Icon);
+            FileManager.CreateCategoriesObservableCollection();
 
             // Show new category
             await FileManager.ShowCategory((App.Current as App)._itemViewHolder.categories.Last().Uuid);

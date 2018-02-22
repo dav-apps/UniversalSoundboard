@@ -2,7 +2,7 @@
 {
     public class Category
     {
-        public string Uuid { get; }
+        public string Uuid { get; set; }
         public string Name { get; set; }
         public string Icon { get; set; }
 

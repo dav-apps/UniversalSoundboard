@@ -272,10 +272,8 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static void AddCategory(string name, string icon)
+        public static void AddCategory(string uuid, string name, string icon)
         {
-            string uuid = Guid.NewGuid().ToString();
-
             using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
             {
                 db.Open();

@@ -106,8 +106,8 @@ namespace UniversalSoundBoard.Pages
 
                     foreach (StorageFile soundFile in items)
                     {
-                        Sound sound = new Sound(soundFile.DisplayName, category, soundFile);
-                        await FileManager.AddSound(sound);
+                        await FileManager.AddSound(null, soundFile.DisplayName, category.Uuid, soundFile);
+                        await FileManager.UpdateGridView();
                     }
 
                     if ((App.Current as App)._itemViewHolder.selectedCategory == 0)
@@ -424,6 +424,7 @@ namespace UniversalSoundBoard.Pages
 
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            /*
             // Get categories List and save with new value
             ObservableCollection<Category> categoriesList = await FileManager.GetCategoriesListAsync();
 
@@ -449,6 +450,7 @@ namespace UniversalSoundBoard.Pages
             (App.Current as App)._itemViewHolder.title = newName;
             await FileManager.UpdateGridView();
             FileManager.CreateCategoriesObservableCollection();
+            */
         }
     }
 }

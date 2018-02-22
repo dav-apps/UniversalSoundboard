@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -75,6 +76,85 @@ namespace UniversalSoundBoard.DataAccess
                 return imagesFolder = await folder.GetFolderAsync(imagesFolderName);
             }
         }
+
+        private static async Task<StorageFolder> CreateExportFoldersAsync()
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalCacheFolder;
+            StorageFolder exportFolder;
+            string exportFolderName = "export";
+            string imagesFolderName = "images";
+            string soundsFolderName = "sounds";
+            string dataFileName = "data.json";
+
+            if (await localFolder.TryGetItemAsync(exportFolderName) == null)
+            {
+                exportFolder = await localFolder.CreateFolderAsync(exportFolderName);
+            }
+            else
+            {
+                exportFolder = await localFolder.GetFolderAsync(exportFolderName);
+            }
+
+            if (await exportFolder.TryGetItemAsync(imagesFolderName) == null)
+            {
+                await exportFolder.CreateFolderAsync(imagesFolderName);
+            }
+
+            if (await exportFolder.TryGetItemAsync(soundsFolderName) == null)
+            {
+                await exportFolder.CreateFolderAsync(soundsFolderName);
+            }
+
+            if(await exportFolder.TryGetItemAsync(dataFileName) == null)
+            {
+                await exportFolder.CreateFileAsync(dataFileName);
+            }
+            
+            return exportFolder;
+        }
+
+        private async static Task<StorageFolder> CreateImportFolder()
+        {
+            StorageFolder localDataFolder = ApplicationData.Current.LocalCacheFolder;
+            string importFolderName = "import";
+
+            StorageFolder importFolder;
+            if (await localDataFolder.TryGetItemAsync(importFolderName) == null)
+            {
+                importFolder = await localDataFolder.CreateFolderAsync(importFolderName);
+            }
+            else
+            {
+                importFolder = await localDataFolder.GetFolderAsync(importFolderName);
+            }
+            return importFolder;
+        }
+
+        public static async Task DeleteExportAndImportFoldersAsync()
+        {
+            StorageFolder localFolder = ApplicationData.Current.LocalCacheFolder;
+
+            if (await localFolder.TryGetItemAsync("export") != null)
+            {
+                await (await localFolder.GetFolderAsync("export")).DeleteAsync();
+            }
+
+            if (await localFolder.TryGetItemAsync("import") != null)
+            {
+                await (await localFolder.GetFolderAsync("import")).DeleteAsync();
+            }
+
+
+            if (await localFolder.TryGetItemAsync("import.zip") != null)
+            {
+                await (await localFolder.GetFileAsync("import.zip")).DeleteAsync();
+            }
+
+            if (await localFolder.TryGetItemAsync("export.zip") != null)
+            {
+                await (await localFolder.GetFileAsync("export.zip")).DeleteAsync();
+            }
+        }
         #endregion
 
         #region Database Methods
@@ -147,6 +227,79 @@ namespace UniversalSoundBoard.DataAccess
             return sounds;
         }
 
+        private static async Task ExportDatabaseToFile(StorageFile fileToWrite)
+        {
+            List<object> soundObjects = DatabaseOperations.GetAllSounds();
+            NewData data = new NewData
+            {
+                Sounds = new List<SoundData>(),
+                Categories = new List<Category>()
+            };
+
+            // Get all sounds from the database and add the data to the AllData object
+            foreach (object obj in soundObjects)
+            {
+                SoundData soundData = new SoundData
+                {
+                    Uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString(),
+                    Name = HTMLEncodeSpecialChars(obj.GetType().GetProperty("name").GetValue(obj).ToString()),
+                    Favourite = obj.GetType().GetProperty("favourite").GetValue(obj).ToString().ToLower() == "true",
+                    SoundExt = obj.GetType().GetProperty("sound_ext").GetValue(obj).ToString(),
+                    ImageExt = obj.GetType().GetProperty("image_ext").GetValue(obj).ToString(),
+                    CategoryId = obj.GetType().GetProperty("category_id").GetValue(obj).ToString()
+                };
+
+                data.Sounds.Add(soundData);
+            }
+            // Add all categories to the NewData object
+            for(int i = 1; i < (App.Current as App)._itemViewHolder.categories.Count; i++)
+            {
+                Category category = (App.Current as App)._itemViewHolder.categories[i];
+                category.Name = HTMLEncodeSpecialChars(category.Name);
+                data.Categories.Add(category);
+            }
+
+            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(NewData));
+            MemoryStream ms = new MemoryStream();
+            js.WriteObject(ms, data);
+            
+            ms.Position = 0;
+            StreamReader sr = new StreamReader(ms);
+            string dataString = sr.ReadToEnd();
+            
+            await FileIO.WriteTextAsync(fileToWrite, dataString);
+        }
+
+        public static async Task<ObservableCollection<Category>> GetCategoriesListAsync(StorageFile dataFile)
+        {
+            string data = await FileIO.ReadTextAsync(dataFile);
+
+            //Deserialize Json
+            var serializer = new DataContractJsonSerializer(typeof(Data));
+            var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
+            var dataReader = (Data)serializer.ReadObject(ms);
+
+            ObservableCollection<Category> categoriesList = dataReader.Categories;
+            foreach (Category category in categoriesList)
+            {
+                category.Name = WebUtility.HtmlDecode(category.Name);
+            }
+
+            return categoriesList;
+        }
+
+        public static async Task<NewData> GetDataFromFile(StorageFile dataFile)
+        {
+            string data = await FileIO.ReadTextAsync(dataFile);
+
+            //Deserialize Json
+            var serializer = new DataContractJsonSerializer(typeof(NewData));
+            var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
+            var dataReader = (NewData)serializer.ReadObject(ms);
+
+            return dataReader;
+        }
+
         public static async Task GetAllSounds()
         {
             (App.Current as App)._itemViewHolder.progressRingIsActive = true;
@@ -182,18 +335,34 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static async Task AddSound(Sound sound)
+        public static async Task<string> AddSound(string uuid, string name, string categoryUuid, StorageFile audioFile)
         {
-            string uuid = Guid.NewGuid().ToString();
-            string ext = sound.AudioFile.FileType.Replace(".", "");
+            if(uuid == null)
+                uuid = Guid.NewGuid().ToString();
 
-            // Move the file into the sounds folder
-            StorageFolder soundsFolder = await GetSoundsFolderAsync();
-            StorageFile newFile = await sound.AudioFile.CopyAsync(soundsFolder, uuid + sound.AudioFile.FileType, NameCollisionOption.ReplaceExisting);
+            if (DatabaseOperations.GetSound(uuid) != null)
+            {       // Sound already exists
+                string ext = audioFile.FileType.Replace(".", "");
 
-            DatabaseOperations.AddSound(uuid, sound.Name, sound.Category.Uuid, ext);
+                // Move the file into the sounds folder
+                StorageFolder soundsFolder = await GetSoundsFolderAsync();
+                StorageFile newFile = await audioFile.CopyAsync(soundsFolder, uuid + audioFile.FileType, NameCollisionOption.ReplaceExisting);
+
+                DatabaseOperations.UpdateSound(uuid, name, categoryUuid, ext, null, null);
+            }
+            else
+            {       // Sound does not exist
+                string ext = audioFile.FileType.Replace(".", "");
+
+                // Move the file into the sounds folder
+                StorageFolder soundsFolder = await GetSoundsFolderAsync();
+                StorageFile newFile = await audioFile.CopyAsync(soundsFolder, uuid + audioFile.FileType, NameCollisionOption.ReplaceExisting);
+
+                DatabaseOperations.AddSound(uuid, name, categoryUuid, ext);
+            }
+            
             (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-            await GetAllSounds();
+            return uuid;
         }
 
         public static async Task GetSoundsByCategory(Category category)
@@ -292,7 +461,7 @@ namespace UniversalSoundBoard.DataAccess
             DatabaseOperations.UpdateSound(uuid, null, null, null, null, favourite.ToString());
         }
 
-        public static async void AddImage(string uuid, StorageFile file)
+        public static async Task AddImage(string uuid, StorageFile file)
         {
             StorageFolder imagesFolder = await GetImagesFolderAsync();
             StorageFile newFile = await file.CopyAsync(imagesFolder, uuid + file.FileType, NameCollisionOption.ReplaceExisting);
@@ -301,13 +470,23 @@ namespace UniversalSoundBoard.DataAccess
             DatabaseOperations.UpdateSound(uuid, null, null, null, imageExt, null);
 
             (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-            await GetAllSounds();
         }
 
-        public static void AddCategory(string name, string icon)
+        public static Category AddCategory(string uuid, string name, string icon)
         {
-            DatabaseOperations.AddCategory(name, icon);
-            CreateCategoriesObservableCollection();
+            if(uuid == null)
+                uuid = Guid.NewGuid().ToString();
+
+            if(DatabaseOperations.GetCategory(uuid) != null)
+            {       // Category already exists
+                DatabaseOperations.UpdateCategory(uuid, name, icon);
+            }
+            else
+            {
+                DatabaseOperations.AddCategory(uuid, name, icon);
+            }
+            
+            return new Category(uuid, name, icon);
         }
 
         public static List<Category> GetAllCategories()
@@ -694,6 +873,254 @@ namespace UniversalSoundBoard.DataAccess
 
             (App.Current as App)._itemViewHolder.soundboardSize = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SettingsSoundBoardSize") + totalSize.ToString("n2") + " GB.";
         }
+        // Ok
+        public static async Task ExportData(StorageFolder destinationFolder)
+        {
+            var stringLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            (App.Current as App)._itemViewHolder.exported = false;
+            (App.Current as App)._itemViewHolder.imported = false;
+            (App.Current as App)._itemViewHolder.isExporting = true;
+            (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = false;
+            (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-1"); // 1
+
+            await DeleteExportAndImportFoldersAsync();
+
+            // Copy all data into the folder
+            await GetAllSounds();
+
+            // Create folders in export folder
+            await CreateExportFoldersAsync();
+
+            StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
+            StorageFolder exportFolder = await localCacheFolder.GetFolderAsync("export");               // cache/export
+            StorageFolder imagesExportFolder = await exportFolder.GetFolderAsync("images");             // cache/export/images
+            StorageFolder soundsExportFolder = await exportFolder.GetFolderAsync("sounds");             // cache/export/sounds
+            StorageFile dataExportFile = await exportFolder.GetFileAsync("data.json");                 // cache/export/data.json
+
+            (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-2"); // 2
+
+            // Copy the files into the export folder
+            foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
+            {
+                await sound.AudioFile.CopyAsync(soundsExportFolder, sound.AudioFile.Name, NameCollisionOption.ReplaceExisting);
+                
+                if (sound.ImageFile != null)
+                {
+                    await sound.ImageFile.CopyAsync(imagesExportFolder, sound.ImageFile.Name, NameCollisionOption.ReplaceExisting);
+                }
+            }
+
+            // Create data file
+            await ExportDatabaseToFile(dataExportFile);
+
+            (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-3"); // 3
+
+            // Create Zip file in local storage
+            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
+                    async (workItem) =>
+                    {
+                        var t = Task.Run(() => ZipFile.CreateFromDirectory(exportFolder.Path, localCacheFolder.Path + @"\export.zip"));
+                        t.Wait();
+
+                        // Get the created file and move it to the picked folder
+                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                            CoreDispatcherPriority.High,
+                            new DispatchedHandler(() =>
+                            {
+                                (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-4"); // 4
+                            }));
+
+                        StorageFile exportZipFile = await localCacheFolder.GetFileAsync("export.zip");
+                        await exportZipFile.MoveAsync(destinationFolder, "UniversalSoundBoard " + DateTime.Today.ToString("dd.MM.yyyy") + ".zip", NameCollisionOption.GenerateUniqueName);
+
+                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                            CoreDispatcherPriority.High,
+                            new DispatchedHandler(async () =>
+                            {
+                                (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportImportMessage-TidyUp"); // TidyUp
+                                await DeleteExportAndImportFoldersAsync();
+
+                                (App.Current as App)._itemViewHolder.exportMessage = "";
+                                (App.Current as App)._itemViewHolder.isExporting = false;
+                                (App.Current as App)._itemViewHolder.exported = true;
+                                (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = true;
+                            }));
+                    });
+        }
+        // Ok
+        public static async Task ImportDataZip(StorageFile zipFile)
+        {
+            var stringLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            (App.Current as App)._itemViewHolder.isImporting = true;
+            (App.Current as App)._itemViewHolder.exported = false;
+            (App.Current as App)._itemViewHolder.imported = false;
+            (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = false;
+            (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-1"); // 1
+
+            await DeleteExportAndImportFoldersAsync();
+
+            StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
+            StorageFolder importFolder = await CreateImportFolder();
+
+            // Copy zip file into local storage
+            StorageFile newZipFile = await zipFile.CopyAsync(localCacheFolder, "import.zip", NameCollisionOption.ReplaceExisting);
+
+            (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-2"); // 2
+
+            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
+                    async (workItem) =>
+                    {
+                        // Extract zip file in local storage
+                        var t = Task.Run(() => ZipFile.ExtractToDirectory(newZipFile.Path, importFolder.Path));
+                        t.Wait();
+
+                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                            CoreDispatcherPriority.High,
+                            new DispatchedHandler(async () =>
+                            {
+                                (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-3"); // 3
+
+                                await ImportData();
+
+                                (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ExportImportMessage-TidyUp"); // TidyUp
+                                await DeleteExportAndImportFoldersAsync();
+
+                                (App.Current as App)._itemViewHolder.importMessage = "";
+                                (App.Current as App)._itemViewHolder.isImporting = false;
+                                (App.Current as App)._itemViewHolder.imported = true;
+                                (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+                                (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = true;
+
+                                CreateCategoriesObservableCollection();
+                                await GetAllSounds();
+                                await SetSoundBoardSizeTextAsync();
+                            }));
+                    });
+        }
+
+        private async static Task ImportData()
+        {
+            StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
+            StorageFolder importFolder = await localCacheFolder.GetFolderAsync("import");
+
+            // Check if the import is of old or new format
+            if ((await importFolder.TryGetItemAsync("soundDetails")) == null)
+            {
+                // New Backup format
+                StorageFolder soundsImportFolder = await importFolder.GetFolderAsync("sounds");
+                StorageFolder imagesImportFolder = await importFolder.GetFolderAsync("images");
+                StorageFile dataImportFile = await importFolder.GetFileAsync("data.json");
+                ObservableCollection<SoundData> soundDatas = new ObservableCollection<SoundData>();
+
+                // Read data.json and add data to database
+                NewData newData = await GetDataFromFile(dataImportFile);
+
+                foreach (SoundData soundData in newData.Sounds)
+                {
+                    soundDatas.Add(soundData);
+                }
+
+                foreach(Category category in newData.Categories)
+                {
+                    AddCategory(category.Uuid, category.Name, category.Icon);
+                }
+
+                foreach(SoundData soundData in soundDatas)
+                {
+                    StorageFile audioFile = await soundsImportFolder.TryGetItemAsync(soundData.Uuid + "." + soundData.SoundExt) as StorageFile;
+                    if(audioFile != null)
+                    {
+                        string soundUuid = await AddSound(soundData.Uuid, soundData.Name, soundData.CategoryId, audioFile);
+
+                        StorageFile imageFile = await imagesImportFolder.TryGetItemAsync(soundData.Uuid + "." + soundData.ImageExt) as StorageFile;
+                        if (imageFile != null)
+                        {
+                            // Add image
+                            await AddImage(soundUuid, imageFile);
+                        }
+
+                        if (soundData.Favourite)
+                        {
+                            SetSoundAsFavourite(soundUuid, soundData.Favourite);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Old backup format
+                StorageFolder soundDetailsImportFolder = await importFolder.GetFolderAsync("soundDetails");     // cache/import/soundDetails
+                StorageFolder imagesImportFolder = await importFolder.GetFolderAsync("images");                 // cache/import/images
+                StorageFolder dataImportFolder = await importFolder.GetFolderAsync("data");                     // cache/import/data
+                StorageFile dataImportFile = await dataImportFolder.GetFileAsync("data.json");                  // cache/import/data/data.json
+                StorageFolder imagesFolder = await GetImagesFolderAsync();
+                StorageFolder soundsFolder = await GetSoundsFolderAsync();
+
+                List<Category> categories = new List<Category>();
+
+                // Get the categories
+                foreach(Category cat in await GetCategoriesListAsync(dataImportFile))
+                {
+                    categories.Add(AddCategory(null, cat.Name, cat.Icon));
+                }
+                CreateCategoriesObservableCollection();
+
+                // Get the sound files
+                foreach (var file in await importFolder.GetFilesAsync())
+                {
+                    if (file.ContentType == "audio/wav" || file.ContentType == "audio/mpeg")
+                    {
+                        string name = file.DisplayName;
+                        string uuid = null;
+                        string categoryName = null;
+                        string categoryUuid = null;
+                        bool favourite = false;
+
+                        // Get the soundDetails file of the sound
+                        StorageFile soundDetailsFile = await soundDetailsImportFolder.TryGetItemAsync(name + ".json") as StorageFile;
+                        if(soundDetailsFile != null)
+                        {
+                            SoundDetails soundDetails = new SoundDetails();
+                            await soundDetails.ReadSoundDetailsFile(soundDetailsFile);
+                            categoryName = soundDetails.Category;
+                            favourite = soundDetails.Favourite;
+                        }
+
+                        // Find the category of the sound
+                        if (!String.IsNullOrEmpty(categoryName))
+                        {
+                            foreach (Category category in (App.Current as App)._itemViewHolder.categories)
+                            {
+                                if (category.Name == categoryName)
+                                {
+                                    categoryUuid = category.Uuid;
+                                    break;
+                                }
+                            }
+                        }
+                        // Save the sound
+                        uuid = await AddSound(null, name, categoryUuid, file);
+
+                        if (favourite)
+                            SetSoundAsFavourite(uuid, favourite);
+
+                        // Copy the sound file
+                        await file.CopyAsync(soundsFolder, uuid + file.FileType, NameCollisionOption.ReplaceExisting);
+
+                        // Get the image file of the sound
+                        foreach (StorageFile imageFile in await imagesImportFolder.GetFilesAsync())
+                        {
+                            if(name == imageFile.DisplayName)
+                            {
+                                await imageFile.CopyAsync(imagesFolder, uuid + imageFile.FileType, NameCollisionOption.ReplaceExisting);
+                                await AddImage(uuid, imageFile);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+        }
         #endregion
 
         #region Other Methods
@@ -938,51 +1365,6 @@ namespace UniversalSoundBoard.DataAccess
             return dataFile;
         }
 
-        public static async Task deleteExportAndImportFoldersAsync()
-        {
-            StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
-
-            if (await localDataFolder.TryGetItemAsync("export") != null)
-            {
-                await (await localDataFolder.GetFolderAsync("export")).DeleteAsync();
-            }
-
-            if (await localDataFolder.TryGetItemAsync("import") != null)
-            {
-                await (await localDataFolder.GetFolderAsync("import")).DeleteAsync();
-            }
-
-
-            if (await localDataFolder.TryGetItemAsync("import.zip") != null)
-            {
-                await (await localDataFolder.GetFileAsync("import.zip")).DeleteAsync();
-            }
-
-            if (await localDataFolder.TryGetItemAsync("export.zip") != null)
-            {
-                await (await localDataFolder.GetFileAsync("export.zip")).DeleteAsync();
-            }
-        }
-
-        public static async Task<ObservableCollection<Category>> GetCategoriesListAsync()
-        {
-            StorageFile dataFile = await FileManager.createDataFolderAndJsonFileIfNotExistsAsync();
-            string data = await FileIO.ReadTextAsync(dataFile);
-
-            //Deserialize Json
-            var serializer = new DataContractJsonSerializer(typeof(Data));
-            var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
-            var dataReader = (Data)serializer.ReadObject(ms);
-
-            ObservableCollection<Category> categoriesList = dataReader.Categories;
-            foreach (Category category in categoriesList)
-            {
-                category.Name = WebUtility.HtmlDecode(category.Name);
-            }
-
-            return categoriesList;
-        }
-
         public static async Task SaveCategoriesListAsync(ObservableCollection<Category> categories)
         {
             StorageFile dataFile = await FileManager.createDataFolderAndJsonFileIfNotExistsAsync();
@@ -1005,7 +1387,7 @@ namespace UniversalSoundBoard.DataAccess
 
             await FileIO.WriteTextAsync(dataFile, dataString);
 
-            await GetCategoriesListAsync();
+            //await GetCategoriesListAsync();
         }
 
         public async static Task renameCategory(string oldName, string newName)
@@ -1025,7 +1407,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task deleteCategory(string name)
         {
-            ObservableCollection<Category> categories = await GetCategoriesListAsync();
+            ObservableCollection<Category> categories = (App.Current as App)._itemViewHolder.categories;
 
             Category deletedCategory = new Category();
             foreach (Category category in categories)
@@ -1040,280 +1422,7 @@ namespace UniversalSoundBoard.DataAccess
 
             await SaveCategoriesListAsync(categories);
         }
-
-        public static async Task ExportData(StorageFolder destinationFolder)
-        {
-            var stringLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            (App.Current as App)._itemViewHolder.exported = false;
-            (App.Current as App)._itemViewHolder.imported = false;
-            (App.Current as App)._itemViewHolder.isExporting = true;
-            (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = false;
-            (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-1"); // 1
-
-            await deleteExportAndImportFoldersAsync();
-            await createDataFolderAndJsonFileIfNotExistsAsync();
-            await CreateDetailsFolderIfNotExistsAsync();
-
-            // Copy all data into the folder
-            await FileManager.GetAllSounds();
-
-            // Create folders in export folder
-            await CreateExportFoldersAsync();
-
-            StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
-            StorageFolder exportFolder = await localDataFolder.GetFolderAsync("export");
-            StorageFolder imagesExportFolder = await exportFolder.GetFolderAsync("images");
-            StorageFolder soundDetailsExportFolder = await exportFolder.GetFolderAsync("soundDetails");
-            StorageFolder dataFolder = await localDataFolder.GetFolderAsync("data");
-            StorageFolder dataExportFolder = await exportFolder.GetFolderAsync("data");
-            StorageFile dataFile = await dataFolder.GetFileAsync("data.json");
-
-            (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-2"); // 2
-
-            // Copy the files into the export folder
-            foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
-            {
-                await sound.AudioFile.CopyAsync(exportFolder, sound.AudioFile.Name, NameCollisionOption.ReplaceExisting);
-                await sound.DetailsFile.CopyAsync(soundDetailsExportFolder, sound.DetailsFile.Name, NameCollisionOption.ReplaceExisting);
-                if (sound.ImageFile != null)
-                {
-                    await sound.ImageFile.CopyAsync(imagesExportFolder, sound.ImageFile.Name, NameCollisionOption.ReplaceExisting);
-                }
-            }
-            await dataFile.CopyAsync(dataExportFolder, dataFile.Name, NameCollisionOption.ReplaceExisting);
-            (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-3"); // 3
-
-            // Create Zip file in local storage
-            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
-                    async (workItem) =>
-                    {
-                        var t = Task.Run(() => ZipFile.CreateFromDirectory(exportFolder.Path, localDataFolder.Path + @"\export.zip"));
-                        t.Wait();
-
-                        // Get the created file and move it to the picked folder
-                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                            CoreDispatcherPriority.High,
-                            new DispatchedHandler(() =>
-                            {
-                                (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportMessage-4"); // 4
-                            }));
-
-                        StorageFile exportZipFile = await localDataFolder.GetFileAsync("export.zip");
-                        await exportZipFile.MoveAsync(destinationFolder, "UniversalSoundBoard " + DateTime.Today.ToString("dd.MM.yyyy") + ".zip", NameCollisionOption.GenerateUniqueName);
-
-                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                            CoreDispatcherPriority.High,
-                            new DispatchedHandler(async () =>
-                            {
-                                (App.Current as App)._itemViewHolder.exportMessage = stringLoader.GetString("ExportImportMessage-TidyUp"); // TidyUp
-                                await deleteExportAndImportFoldersAsync();
-
-                                (App.Current as App)._itemViewHolder.exportMessage = "";
-                                (App.Current as App)._itemViewHolder.isExporting = false;
-                                (App.Current as App)._itemViewHolder.exported = true;
-                                (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = true;
-                            }));
-                        // SendExportSuccessfullNotification();
-                    });
-        }
-
-        public static async Task ImportDataZip(StorageFile zipFile)
-        {
-            var stringLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            (App.Current as App)._itemViewHolder.isImporting = true;
-            (App.Current as App)._itemViewHolder.exported = false;
-            (App.Current as App)._itemViewHolder.imported = false;
-            (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = false;
-            (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-1"); // 1
-
-            await deleteExportAndImportFoldersAsync();
-            await CreateImportFolders();
-
-            StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
-            StorageFolder importFolder = await localDataFolder.GetFolderAsync("import");
-
-            // Copy zip file into local storage
-            StorageFile newZipFile = await zipFile.CopyAsync(localDataFolder, "import.zip", NameCollisionOption.ReplaceExisting);
-
-            (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-2"); // 2
-
-            IAsyncAction asyncAction = Windows.System.Threading.ThreadPool.RunAsync(
-                    async (workItem) =>
-                    {
-                        // Extract zip file in local storage
-                        var t = Task.Run(() => ZipFile.ExtractToDirectory(newZipFile.Path, importFolder.Path));
-                        t.Wait();
-
-                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                            CoreDispatcherPriority.High,
-                            new DispatchedHandler(() =>
-                            {
-
-                                (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-3"); // 3
-                            }));
-
-                        await ImportData();
-
-                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
-                            CoreDispatcherPriority.High,
-                            new DispatchedHandler(async () =>
-                            {
-                                (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ExportImportMessage-TidyUp"); // TidyUp
-                                await deleteExportAndImportFoldersAsync();
-
-                                (App.Current as App)._itemViewHolder.importMessage = "";
-                                (App.Current as App)._itemViewHolder.isImporting = false;
-                                (App.Current as App)._itemViewHolder.imported = true;
-                                (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-                                (App.Current as App)._itemViewHolder.areExportAndImportButtonsEnabled = true;
-
-                                await FileManager.GetAllSounds();
-                                CreateCategoriesObservableCollection();
-                                await SetSoundBoardSizeTextAsync();
-                            }));
-                    });
-        }
-
-        private async static Task ImportData()
-        {
-            StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
-            StorageFolder importFolder = await localDataFolder.GetFolderAsync("import");
-            StorageFolder soundDetailsImportFolder = await importFolder.GetFolderAsync("soundDetails");
-            StorageFolder imagesImportFolder = await importFolder.GetFolderAsync("images");
-            StorageFolder dataImportFolder = await importFolder.GetFolderAsync("data");
-
-            StorageFolder soundDetailsFolder = await localDataFolder.GetFolderAsync("soundDetails");
-            StorageFolder imagesFolder = await localDataFolder.GetFolderAsync("images");
-
-            // Copy Sound files into local storage
-            foreach (var file in await importFolder.GetFilesAsync())
-            {
-                if (file.ContentType == "audio/wav" || file.ContentType == "audio/mpeg")
-                {
-                    if (await localDataFolder.TryGetItemAsync(file.Name) == null)
-                    {
-                        await file.CopyAsync(localDataFolder);
-                    }
-                }
-            }
-
-            // Copy detail files into local storage
-            foreach (var file in await soundDetailsImportFolder.GetFilesAsync())
-            {
-                if (await soundDetailsFolder.TryGetItemAsync(file.Name) == null)
-                {
-                    await file.CopyAsync(soundDetailsFolder);
-                }
-            }
-
-            // Copy images into local storage
-            foreach (var file in await imagesImportFolder.GetFilesAsync())
-            {
-                if (file.ContentType == "image/jpeg" || file.ContentType == "image/png")
-                {
-                    if (await imagesFolder.TryGetItemAsync(file.Name) == null)
-                    {
-                        await file.CopyAsync(imagesFolder);
-                    }
-                }
-            }
-
-            // Read data.json and add categories
-            StorageFile dataFile = await createDataFolderAndJsonFileIfNotExistsAsync();
-            StorageFile dataImportFile = await dataImportFolder.GetFileAsync("data.json");
-
-            // Read data file
-            string data = await FileIO.ReadTextAsync(dataFile);
-            var serializer = new DataContractJsonSerializer(typeof(Data));
-            var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
-            var dataReader = (Data)serializer.ReadObject(ms);
-            ObservableCollection<Category> categoriesList = dataReader.Categories;
-
-            // Read import data file
-            string importData = await FileIO.ReadTextAsync(dataImportFile);
-            var serializer2 = new DataContractJsonSerializer(typeof(Data));
-            var ms2 = new MemoryStream(Encoding.UTF8.GetBytes(importData));
-            var dataReader2 = (Data)serializer.ReadObject(ms2);
-            ObservableCollection<Category> importCategoriesList = dataReader2.Categories;
-
-            // Add imported categories to original list
-            foreach (Category category in importCategoriesList)
-            {
-                if (categoriesList.Where(cat => cat.Name.Equals(category.Name)).Count() == 0)
-                {
-                    categoriesList.Add(category);
-                }
-            }
-
-            // Write data.json with new categories list
-            Data categoryData = new Data();
-            categoryData.Categories = categoriesList;
-            await WriteFile(dataFile, categoryData);
-
-            await GetCategoriesListAsync();
-        }
-
-        private static async Task CreateExportFoldersAsync()
-        {
-            StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
-
-            StorageFolder exportFolder;
-            if (await localDataFolder.TryGetItemAsync("export") == null)
-            {
-                exportFolder = await localDataFolder.CreateFolderAsync("export");
-            }
-            else
-            {
-                exportFolder = await localDataFolder.GetFolderAsync("export");
-            }
-
-            if (await exportFolder.TryGetItemAsync("images") == null)
-            {
-                await exportFolder.CreateFolderAsync("images");
-            }
-
-            if (await exportFolder.TryGetItemAsync("soundDetails") == null)
-            {
-                await exportFolder.CreateFolderAsync("soundDetails");
-            }
-
-            if (await exportFolder.TryGetItemAsync("data") == null)
-            {
-                await exportFolder.CreateFolderAsync("data");
-            }
-        }
-
-        private async static Task CreateImportFolders()
-        {
-            StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
-
-            StorageFolder importFolder;
-            if (await localDataFolder.TryGetItemAsync("import") == null)
-            {
-                importFolder = await localDataFolder.CreateFolderAsync("import");
-            }
-            else
-            {
-                importFolder = await localDataFolder.GetFolderAsync("import");
-            }
-        }
-
-        public static async Task<Category> GetCategoryByNameAsync(string categoryName)
-        {
-            if (categoryName != "" || (await GetCategoriesListAsync()).Count >= 1)
-            {
-                ObservableCollection<Category> categories = await GetCategoriesListAsync();
-                foreach (Category category in categories)
-                {
-                    if (category.Name == categoryName)
-                    {
-                        return category;
-                    }
-                }
-            }
-            return null;
-        }
-
+        
         public static async Task<StorageFile> createSoundDetailsFileIfNotExistsAsync(string soundName)
         {
             StorageFolder detailsFolder = await CreateDetailsFolderIfNotExistsAsync();

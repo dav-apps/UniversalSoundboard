@@ -110,6 +110,7 @@ namespace UniversalSoundBoard.Components
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
                 FileManager.AddImage(sound.Uuid, file);
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
+                await FileManager.UpdateGridView();
             }
         }
         
