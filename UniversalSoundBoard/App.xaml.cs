@@ -59,7 +59,6 @@ namespace UniversalSoundBoard
             moreButtonVisibility = true,
             topButtonsCollapsed = false,
             areSelectButtonsEnabled = false,
-            //selectedCategory = new Category((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), "\uE10F")
             selectedCategory = 0
         };
 
@@ -72,8 +71,8 @@ namespace UniversalSoundBoard
             Microsoft.ApplicationInsights.WindowsAppInitializer.InitializeAsync(
                 Microsoft.ApplicationInsights.WindowsCollectors.Metadata |
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
-            this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            InitializeComponent();
+            Suspending += OnSuspending;
 
             // Initialize Database
             DatabaseOperations.InitializeDatabase();
@@ -202,7 +201,7 @@ namespace UniversalSoundBoard
             deferral.Complete();
         }
 
-        protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
             ShareOperation shareOperation = args.ShareOperation;
             if (shareOperation.Data.Contains(StandardDataFormats.StorageItems))
