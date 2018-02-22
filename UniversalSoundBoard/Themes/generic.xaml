@@ -749,13 +749,6 @@
                                                     <FontIcon Glyph="&#xEC57;"/>
                                                 </AppBarButton.Icon>
                                             </AppBarButton>
-                                 <!--           <AppBarToggleButton x:Name="RepeatButton"
-                                                                Height="48"
-                                                                Width="48">
-                                                <AppBarToggleButton.Icon>
-                                                    <SymbolIcon Symbol="RepeatAll" />
-                                                </AppBarToggleButton.Icon>
-                                            </AppBarToggleButton>   -->
                                             <AppBarButton x:Name="RemoveButton"
                                                           Style="{StaticResource AppBarButtonStyle}">
                                                 <AppBarButton.Icon>
@@ -773,15 +766,6 @@
                                                     <FontIcon Glyph="&#xE799;"/>
                                                 </AppBarButton.Icon>
                                             </AppBarButton>
-                                            <!--
-                                            <AppBarButton x:Name='CastButton'
-                                                            Style='{StaticResource AppBarButtonStyle}'
-                                                            MediaTransportControlsHelper.DropoutOrder='11'>
-                                                <AppBarButton.Icon>
-                                                    <FontIcon Glyph="&#xEC15;"/>
-                                                </AppBarButton.Icon>
-                                            </AppBarButton>
-                                            -->
                                             <AppBarButton x:Name='FullWindowButton'
                                                 Style='{StaticResource AppBarButtonStyle}'
                                                 MediaTransportControlsHelper.DropoutOrder='17'>
