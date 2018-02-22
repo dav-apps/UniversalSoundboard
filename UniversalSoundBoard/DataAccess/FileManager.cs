@@ -155,6 +155,61 @@ namespace UniversalSoundBoard.DataAccess
                 await (await localFolder.GetFileAsync("export.zip")).DeleteAsync();
             }
         }
+
+        private static async Task ExportDatabaseToFile(StorageFile fileToWrite)
+        {
+            List<object> soundObjects = DatabaseOperations.GetAllSounds();
+            NewData data = new NewData
+            {
+                Sounds = new List<SoundData>(),
+                Categories = new List<Category>()
+            };
+
+            // Get all sounds from the database and add the data to the AllData object
+            foreach (object obj in soundObjects)
+            {
+                SoundData soundData = new SoundData
+                {
+                    Uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString(),
+                    Name = HTMLEncodeSpecialChars(obj.GetType().GetProperty("name").GetValue(obj).ToString()),
+                    Favourite = obj.GetType().GetProperty("favourite").GetValue(obj).ToString().ToLower() == "true",
+                    SoundExt = obj.GetType().GetProperty("sound_ext").GetValue(obj).ToString(),
+                    ImageExt = obj.GetType().GetProperty("image_ext").GetValue(obj).ToString(),
+                    CategoryId = obj.GetType().GetProperty("category_id").GetValue(obj).ToString()
+                };
+
+                data.Sounds.Add(soundData);
+            }
+            // Add all categories to the NewData object
+            for (int i = 1; i < (App.Current as App)._itemViewHolder.categories.Count; i++)
+            {
+                Category category = (App.Current as App)._itemViewHolder.categories[i];
+                category.Name = HTMLEncodeSpecialChars(category.Name);
+                data.Categories.Add(category);
+            }
+
+            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(NewData));
+            MemoryStream ms = new MemoryStream();
+            js.WriteObject(ms, data);
+
+            ms.Position = 0;
+            StreamReader sr = new StreamReader(ms);
+            string dataString = sr.ReadToEnd();
+
+            await FileIO.WriteTextAsync(fileToWrite, dataString);
+        }
+
+        public static async Task<NewData> GetDataFromFile(StorageFile dataFile)
+        {
+            string data = await FileIO.ReadTextAsync(dataFile);
+
+            //Deserialize Json
+            var serializer = new DataContractJsonSerializer(typeof(NewData));
+            var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
+            var dataReader = (NewData)serializer.ReadObject(ms);
+
+            return dataReader;
+        }
         #endregion
 
         #region Database Methods
@@ -227,79 +282,6 @@ namespace UniversalSoundBoard.DataAccess
             return sounds;
         }
 
-        private static async Task ExportDatabaseToFile(StorageFile fileToWrite)
-        {
-            List<object> soundObjects = DatabaseOperations.GetAllSounds();
-            NewData data = new NewData
-            {
-                Sounds = new List<SoundData>(),
-                Categories = new List<Category>()
-            };
-
-            // Get all sounds from the database and add the data to the AllData object
-            foreach (object obj in soundObjects)
-            {
-                SoundData soundData = new SoundData
-                {
-                    Uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString(),
-                    Name = HTMLEncodeSpecialChars(obj.GetType().GetProperty("name").GetValue(obj).ToString()),
-                    Favourite = obj.GetType().GetProperty("favourite").GetValue(obj).ToString().ToLower() == "true",
-                    SoundExt = obj.GetType().GetProperty("sound_ext").GetValue(obj).ToString(),
-                    ImageExt = obj.GetType().GetProperty("image_ext").GetValue(obj).ToString(),
-                    CategoryId = obj.GetType().GetProperty("category_id").GetValue(obj).ToString()
-                };
-
-                data.Sounds.Add(soundData);
-            }
-            // Add all categories to the NewData object
-            for(int i = 1; i < (App.Current as App)._itemViewHolder.categories.Count; i++)
-            {
-                Category category = (App.Current as App)._itemViewHolder.categories[i];
-                category.Name = HTMLEncodeSpecialChars(category.Name);
-                data.Categories.Add(category);
-            }
-
-            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(NewData));
-            MemoryStream ms = new MemoryStream();
-            js.WriteObject(ms, data);
-            
-            ms.Position = 0;
-            StreamReader sr = new StreamReader(ms);
-            string dataString = sr.ReadToEnd();
-            
-            await FileIO.WriteTextAsync(fileToWrite, dataString);
-        }
-
-        public static async Task<ObservableCollection<Category>> GetCategoriesListAsync(StorageFile dataFile)
-        {
-            string data = await FileIO.ReadTextAsync(dataFile);
-
-            //Deserialize Json
-            var serializer = new DataContractJsonSerializer(typeof(Data));
-            var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
-            var dataReader = (Data)serializer.ReadObject(ms);
-
-            ObservableCollection<Category> categoriesList = dataReader.Categories;
-            foreach (Category category in categoriesList)
-            {
-                category.Name = WebUtility.HtmlDecode(category.Name);
-            }
-
-            return categoriesList;
-        }
-
-        public static async Task<NewData> GetDataFromFile(StorageFile dataFile)
-        {
-            string data = await FileIO.ReadTextAsync(dataFile);
-
-            //Deserialize Json
-            var serializer = new DataContractJsonSerializer(typeof(NewData));
-            var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
-            var dataReader = (NewData)serializer.ReadObject(ms);
-
-            return dataReader;
-        }
-
         public static async Task GetAllSounds()
         {
             (App.Current as App)._itemViewHolder.progressRingIsActive = true;
@@ -320,19 +302,6 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;
-        }
-
-        private static async Task UpdateAllSoundsList()
-        {
-            if ((App.Current as App)._itemViewHolder.allSoundsChanged)
-            {
-                (App.Current as App)._itemViewHolder.allSounds.Clear();
-                foreach (Sound sound in await GetSavedSounds())
-                {
-                    (App.Current as App)._itemViewHolder.allSounds.Add(sound);
-                }
-                UpdateLiveTile();
-            }
         }
 
         public static async Task<string> AddSound(string uuid, string name, string categoryUuid, StorageFile audioFile)
@@ -526,6 +495,18 @@ namespace UniversalSoundBoard.DataAccess
             return false;
         }
 
+        public static void CheckBackButtonVisibility()
+        {
+            if (FileManager.AreTopButtonsNormal() && (App.Current as App)._itemViewHolder.selectedCategory == 0)
+            {       // Anything is normal, SoundPage shows All Sounds
+                FileManager.SetBackButtonVisibility(false);
+            }
+            else
+            {
+                FileManager.SetBackButtonVisibility(true);
+            }
+        }
+
         public static void SetBackButtonVisibility(bool visible)
         {
             if (visible)
@@ -537,18 +518,6 @@ namespace UniversalSoundBoard.DataAccess
             {
                 SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
                 (App.Current as App)._itemViewHolder.windowTitleMargin = new Thickness(12, 7, 0, 0);
-            }
-        }
-
-        public static void CheckBackButtonVisibility()
-        {
-            if (FileManager.AreTopButtonsNormal() && (App.Current as App)._itemViewHolder.selectedCategory == 0)
-            {       // Anything is normal, SoundPage shows All Sounds
-                FileManager.SetBackButtonVisibility(false);
-            }
-            else
-            {
-                FileManager.SetBackButtonVisibility(true);
             }
         }
 
@@ -764,6 +733,19 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.selectedCategory = 0;
         }
 
+        private static async Task UpdateAllSoundsList()
+        {
+            if ((App.Current as App)._itemViewHolder.allSoundsChanged)
+            {
+                (App.Current as App)._itemViewHolder.allSounds.Clear();
+                foreach (Sound sound in await GetSavedSounds())
+                {
+                    (App.Current as App)._itemViewHolder.allSounds.Add(sound);
+                }
+                UpdateLiveTile();
+            }
+        }
+
         public static void SelectCategory(string uuid)
         {
             for (int i = 0; i < (App.Current as App)._itemViewHolder.categories.Count(); i++)
@@ -873,7 +855,7 @@ namespace UniversalSoundBoard.DataAccess
 
             (App.Current as App)._itemViewHolder.soundboardSize = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SettingsSoundBoardSize") + totalSize.ToString("n2") + " GB.";
         }
-        // Ok
+        
         public static async Task ExportData(StorageFolder destinationFolder)
         {
             var stringLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -947,7 +929,7 @@ namespace UniversalSoundBoard.DataAccess
                             }));
                     });
         }
-        // Ok
+        
         public static async Task ImportDataZip(StorageFile zipFile)
         {
             var stringLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -1239,223 +1221,25 @@ namespace UniversalSoundBoard.DataAccess
             return Icons;
         }
         #endregion
-        
+
         #region Old Methods
-        public static async Task<StorageFolder> CreateDetailsFolderIfNotExistsAsync()
+        public static async Task<ObservableCollection<Category>> GetCategoriesListAsync(StorageFile dataFile)
         {
-            StorageFolder root = ApplicationData.Current.LocalFolder;
-            StorageFolder detailsFolder;
-            if (await root.TryGetItemAsync("soundDetails") == null)
-            {
-                return detailsFolder = await root.CreateFolderAsync("soundDetails");
-            }
-            else
-            {
-                return detailsFolder = await root.GetFolderAsync("soundDetails");
-            }
-        }
+            string data = await FileIO.ReadTextAsync(dataFile);
 
-        public static async void addImage(StorageFile file, Sound sound)
-        {
-            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-            StorageFolder folder = ApplicationData.Current.LocalFolder;
-            StorageFolder imagesFolder = await folder.GetFolderAsync("images");
+            //Deserialize Json
+            var serializer = new DataContractJsonSerializer(typeof(Data));
+            var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
+            var dataReader = (Data)serializer.ReadObject(ms);
 
-            if (file.ContentType.Equals("image/png"))
+            ObservableCollection<Category> categoriesList = dataReader.Categories;
+            foreach (Category category in categoriesList)
             {
-                // Copy new image and delete the old one
-                StorageFile newFile = await file.CopyAsync(imagesFolder, sound.Name + ".png", NameCollisionOption.ReplaceExisting);
-
-                StorageFile oldFile = (StorageFile)await imagesFolder.TryGetItemAsync(sound.Name + ".jpg");
-                if (oldFile != null)
-                {
-                    await oldFile.DeleteAsync();
-                }
-            }
-            else if (file.ContentType.Equals("image/jpeg"))
-            {
-                StorageFile newFile = await file.CopyAsync(imagesFolder, sound.Name + ".jpg", NameCollisionOption.ReplaceExisting);
-
-                StorageFile oldFile = (StorageFile)await imagesFolder.TryGetItemAsync(sound.Name + ".png");
-                if (oldFile != null)
-                {
-                    await oldFile.DeleteAsync();
-                }
+                category.Name = WebUtility.HtmlDecode(category.Name);
             }
 
-            // Update GridView
-            await UpdateGridView();
-        }
-
-        public static async Task renameSound(Sound sound, string newName)
-        {
-            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-            StorageFile audioFile = sound.AudioFile;
-            StorageFile imageFile = sound.ImageFile;
-            if (sound.DetailsFile == null)
-            {
-                sound.DetailsFile = await createSoundDetailsFileIfNotExistsAsync(sound.Name);
-            }
-            await sound.DetailsFile.RenameAsync(newName + sound.DetailsFile.FileType);
-
-            await audioFile.RenameAsync(newName + audioFile.FileType);
-            if (imageFile != null)
-            {
-                await imageFile.RenameAsync(newName + imageFile.FileType);
-            }
-
-            await UpdateGridView();
-        }
-
-        public static async Task deleteSound(Sound sound)
-        {
-            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-            await sound.AudioFile.DeleteAsync();
-            if (sound.ImageFile != null)
-            {
-                await sound.ImageFile.DeleteAsync();
-            }
-            if (sound.DetailsFile == null)
-            {
-                await createSoundDetailsFileIfNotExistsAsync(sound.Name);
-            }
-            await sound.DetailsFile.DeleteAsync();
-        }
-
-        public static async Task setSoundAsFavourite(Sound sound, bool favourite)
-        {
-            // Check if details file of the sound exists
-            if (sound.DetailsFile == null)
-            {
-                sound.DetailsFile = await createSoundDetailsFileIfNotExistsAsync(sound.Name);
-            }
-
-            // Create new details object and write to details file
-            SoundDetails details = new SoundDetails
-            {
-                Category = sound.Category.Name,
-                Favourite = favourite
-            };
-            await WriteFile(sound.DetailsFile, details);
-        }
-
-        public static async Task<StorageFile> createDataFolderAndJsonFileIfNotExistsAsync()
-        {
-            StorageFolder root = ApplicationData.Current.LocalFolder;
-            StorageFolder dataFolder;
-            if (await root.TryGetItemAsync("data") == null)
-            {
-                dataFolder = await root.CreateFolderAsync("data");
-            }
-            else
-            {
-                dataFolder = await root.GetFolderAsync("data");
-            }
-
-            StorageFile dataFile;
-            if (await dataFolder.TryGetItemAsync("data.json") == null)
-            {
-                dataFile = await dataFolder.CreateFileAsync("data.json");
-                await FileIO.WriteTextAsync(dataFile, "{\"Categories\": []}");
-            }
-            else
-            {
-                dataFile = await dataFolder.GetFileAsync("data.json");
-            }
-            return dataFile;
-        }
-
-        public static async Task SaveCategoriesListAsync(ObservableCollection<Category> categories)
-        {
-            StorageFile dataFile = await FileManager.createDataFolderAndJsonFileIfNotExistsAsync();
-
-            Data data = new Data();
-            data.Categories = categories;
-
-            foreach (var category in data.Categories)
-            {
-                category.Name = HTMLEncodeSpecialChars(category.Name);
-            }
-
-            DataContractJsonSerializer js = new DataContractJsonSerializer(typeof(Data));
-            MemoryStream ms = new MemoryStream();
-            js.WriteObject(ms, data);
-
-            ms.Position = 0;
-            StreamReader sr = new StreamReader(ms);
-            string dataString = sr.ReadToEnd();
-
-            await FileIO.WriteTextAsync(dataFile, dataString);
-
-            //await GetCategoriesListAsync();
-        }
-
-        public async static Task renameCategory(string oldName, string newName)
-        {
-            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-            foreach (var sound in (App.Current as App)._itemViewHolder.sounds)
-            {
-                if (sound.Category.Name == oldName)
-                {
-                    SoundDetails details = new SoundDetails();
-                    details.Category = newName;
-                    details.Favourite = sound.Favourite;
-                    await WriteFile(sound.DetailsFile, details);
-                }
-            }
-        }
-
-        public static async Task deleteCategory(string name)
-        {
-            ObservableCollection<Category> categories = (App.Current as App)._itemViewHolder.categories;
-
-            Category deletedCategory = new Category();
-            foreach (Category category in categories)
-            {
-                if (category.Name == name)
-                {
-                    deletedCategory = category;
-                }
-            }
-
-            categories.Remove(deletedCategory);
-
-            await SaveCategoriesListAsync(categories);
-        }
-        
-        public static async Task<StorageFile> createSoundDetailsFileIfNotExistsAsync(string soundName)
-        {
-            StorageFolder detailsFolder = await CreateDetailsFolderIfNotExistsAsync();
-            StorageFile detailsFile;
-            if (await detailsFolder.TryGetItemAsync(soundName + ".json") == null)
-            {
-                // Create file and write empty json
-                detailsFile = await detailsFolder.CreateFileAsync(soundName + ".json");
-                SoundDetails details = new SoundDetails();
-                details.Category = "";
-
-                await WriteFile(detailsFile, details);
-
-                return detailsFile;
-            }
-            else
-            {
-                return detailsFile = await detailsFolder.GetFileAsync(soundName + ".json");
-            }
-        }
-
-        public static async Task addSound(Sound sound)
-        {
-            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-            StorageFolder folder = ApplicationData.Current.LocalFolder;
-            StorageFile newFile = await sound.AudioFile.CopyAsync(folder, sound.AudioFile.Name, NameCollisionOption.GenerateUniqueName);
-            await createSoundDetailsFileIfNotExistsAsync(sound.Name);
-            if (sound.Category != null)
-            {
-                sound.Category = sound.Category;
-            }
+            return categoriesList;
         }
         #endregion
-        
     }
 }

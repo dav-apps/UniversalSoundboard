@@ -321,7 +321,7 @@ namespace UniversalSoundBoard.Components
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = false;
             foreach (Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
             {
-                SoundPage.playSound(sound);
+                SoundPage.PlaySound(sound);
             }
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = oldPlayOneSoundAtOnce;
         }
@@ -478,7 +478,7 @@ namespace UniversalSoundBoard.Components
                 int.TryParse(ContentDialogs.RepeatsComboBox.SelectedValue.ToString(), out rounds);
             }
 
-            SoundPage.playSounds(sounds, rounds, randomly);
+            SoundPage.PlaySounds(sounds, rounds, randomly);
         }
         #endregion ContentDialogs
     }
