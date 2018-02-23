@@ -999,6 +999,7 @@ namespace UniversalSoundBoard.DataAccess
 
                 foreach (SoundData soundData in newData.Sounds)
                 {
+                    soundData.Name = WebUtility.HtmlDecode(soundData.Name);
                     soundDatas.Add(soundData);
                 }
 
