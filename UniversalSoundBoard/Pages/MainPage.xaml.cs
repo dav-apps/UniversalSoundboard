@@ -31,6 +31,9 @@ namespace UniversalSoundBoard.Pages
             SideBar.MenuItemsSource = (App.Current as App)._itemViewHolder.categories;
             
             CustomiseTitleBar();
+
+            await FileManager.MigrateToDatabase();
+
             await FileManager.GetAllSounds();
         }
         
