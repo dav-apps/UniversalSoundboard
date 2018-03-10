@@ -1,0 +1,31 @@
+﻿<Page
+    x:Class="UniversalSoundBoard.Pages.UpgradeDataSplashScreen"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <Grid Background="{ThemeResource SystemControlForegroundAccentBrush}">
+        <Canvas>
+            <Image Name="SplashScreenLogo" 
+                   Source="ms-appx:///Assets/Generierte Assets/SplashScreen.png" />
+
+            <ProgressRing Name="SplashProgressRing" 
+                          IsActive="True" 
+                          HorizontalAlignment="Center"
+                          Width="40" 
+                          Height="40" 
+                          Foreground="White" />
+            
+            <StackPanel Name="StatusStackPanel"
+                        HorizontalAlignment="Center">
+                <TextBlock Name="StatusTextBlock" 
+                           TextWrapping="WrapWholeWords"
+                           TextAlignment="Center"
+                           Text="Applying the update. Please do not close or minimize the app."
+                           FontSize="20"/>
+            </StackPanel>
+        </Canvas>
+    </Grid>
+</Page>

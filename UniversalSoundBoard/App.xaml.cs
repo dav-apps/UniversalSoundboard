@@ -139,6 +139,15 @@ namespace UniversalSoundBoard
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+            if (e.PreviousExecutionState != ApplicationExecutionState.Running)
+            {
+                bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
+                UpgradeDataSplashScreen upgradeDataSplashScreen = new UpgradeDataSplashScreen(e.SplashScreen, loadState);
+                Window.Current.Content = upgradeDataSplashScreen;
+            }
+
+            Window.Current.Activate();
         }
 
         void CreateRootFrame(ApplicationExecutionState previousExecutionState, string arguments)

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -95,17 +94,19 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             // Create data folder
-            if(oldDataFolder.TryGetItemAsync(dataFolderName) == null)
+            if(await oldDataFolder.TryGetItemAsync(dataFolderName) == null)
             {
                 await oldDataFolder.CreateFolderAsync(dataFolderName);
             }
 
-            if(oldDataFolder.TryGetItemAsync(imagesFolderName) == null)
+            // Create images folder
+            if(await oldDataFolder.TryGetItemAsync(imagesFolderName) == null)
             {
                 await oldDataFolder.CreateFolderAsync(imagesFolderName);
             }
 
-            if(oldDataFolder.TryGetItemAsync(soundDetailsFolderName) == null)
+            // Create sound details folder
+            if(await oldDataFolder.TryGetItemAsync(soundDetailsFolderName) == null)
             {
                 await oldDataFolder.CreateFolderAsync(soundDetailsFolderName);
             }
@@ -1153,7 +1154,8 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task MigrateToDatabase()
         {
-            bool oldModel = true;
+            bool oldModel = false;
+            StorageFolder localStorageFolder = ApplicationData.Current.LocalFolder;
             var localSettings = ApplicationData.Current.LocalSettings;
             if (localSettings.Values["oldModel"] != null)
             {
@@ -1162,13 +1164,22 @@ namespace UniversalSoundBoard.DataAccess
 
             if (oldModel)
             {
-                StorageFolder localStorageFolder = ApplicationData.Current.LocalFolder;
+                // Check if the old folders exist
+                if(await localStorageFolder.TryGetItemAsync("data") != null || 
+                    await localStorageFolder.TryGetItemAsync("soundDetails") != null)
+                {
+                    oldModel = true;
+                }
+            }
+
+            if (oldModel)
+            {
                 StorageFolder oldDataFolder = await GetOldDataFolderAsync();
 
                 StorageFolder dataOldDataFolder = await oldDataFolder.GetFolderAsync("data");
                 StorageFolder imagesOldDataFolder = await oldDataFolder.GetFolderAsync("images");
                 StorageFolder soundDetailsOldDataFolder = await oldDataFolder.GetFolderAsync("soundDetails");
-                StorageFile dataOldDataFile = await dataOldDataFolder.GetFileAsync("data.json");
+                //StorageFile dataOldDataFile = await dataOldDataFolder.GetFileAsync("data.json");
 
                 // Move all data into oldData folder
                 // Move data folder
