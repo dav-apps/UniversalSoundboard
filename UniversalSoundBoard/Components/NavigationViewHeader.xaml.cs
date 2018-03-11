@@ -138,6 +138,7 @@ namespace UniversalSoundBoard.Components
 
                     Sound sound = new Sound(soundFile.DisplayName, (App.Current as App)._itemViewHolder.categories[selectedCategory], soundFile);
                     await FileManager.AddSound(null, sound.Name, categoryUuid, soundFile);
+                    (App.Current as App)._itemViewHolder.allSoundsChanged = true;
                 }
 
                 await FileManager.UpdateGridView();

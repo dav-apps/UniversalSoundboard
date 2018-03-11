@@ -105,7 +105,7 @@ namespace UniversalSoundBoard
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -142,9 +142,12 @@ namespace UniversalSoundBoard
 
             if (e.PreviousExecutionState != ApplicationExecutionState.Running)
             {
-                bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
-                UpgradeDataSplashScreen upgradeDataSplashScreen = new UpgradeDataSplashScreen(e.SplashScreen, loadState);
-                Window.Current.Content = upgradeDataSplashScreen;
+                if(await FileManager.UsesOldDataModel())
+                {
+                    bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
+                    UpgradeDataSplashScreen upgradeDataSplashScreen = new UpgradeDataSplashScreen(e.SplashScreen, loadState);
+                    Window.Current.Content = upgradeDataSplashScreen;
+                }
             }
 
             Window.Current.Activate();

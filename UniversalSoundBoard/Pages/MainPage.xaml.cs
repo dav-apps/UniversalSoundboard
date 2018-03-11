@@ -32,8 +32,6 @@ namespace UniversalSoundBoard.Pages
             
             CustomiseTitleBar();
 
-            await FileManager.MigrateToDatabase();
-
             await FileManager.GetAllSounds();
         }
         

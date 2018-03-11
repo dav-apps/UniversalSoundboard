@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -367,7 +368,6 @@ namespace UniversalSoundBoard.DataAccess
                 DatabaseOperations.AddSound(uuid, name, categoryUuid, ext);
             }
             
-            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             return uuid;
         }
 
@@ -475,7 +475,10 @@ namespace UniversalSoundBoard.DataAccess
 
             DatabaseOperations.UpdateSound(uuid, null, null, null, imageExt, null);
 
-            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+            });
         }
 
         public static Category AddCategory(string uuid, string name, string icon)
@@ -794,6 +797,22 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
+        public static async Task<bool> UsesOldDataModel()
+        {
+            bool oldModel = false;
+            StorageFolder localStorageFolder = ApplicationData.Current.LocalFolder;
+            
+            if (await localStorageFolder.TryGetItemAsync("data") != null ||
+                await localStorageFolder.TryGetItemAsync("soundDetails") != null ||
+                (await localStorageFolder.GetFilesAsync()).Count > 1 ||
+                (await localStorageFolder.TryGetItemAsync("oldData")) != null)
+            {
+                oldModel = true;
+            }
+            
+            return oldModel;
+        }
+
         public static void UpdateLiveTile()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -993,14 +1012,16 @@ namespace UniversalSoundBoard.DataAccess
                         var t = Task.Run(() => ZipFile.ExtractToDirectory(newZipFile.Path, importFolder.Path));
                         t.Wait();
 
+                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => {
+                            (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-3"); // 3
+                        });
+
+                        await ImportData();
+
                         await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                             CoreDispatcherPriority.High,
                             new DispatchedHandler(async () =>
                             {
-                                (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-3"); // 3
-
-                                await ImportData();
-
                                 (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ExportImportMessage-TidyUp"); // TidyUp
                                 await DeleteExportAndImportFoldersAsync();
 
@@ -1080,41 +1101,51 @@ namespace UniversalSoundBoard.DataAccess
         private static async Task ImportOldData(StorageFolder root)
         {
             // Old data format
-            StorageFolder soundDetailsImportFolder = await root.GetFolderAsync("soundDetails");     // cache/import/soundDetails
-            StorageFolder imagesImportFolder = await root.GetFolderAsync("images");                 // cache/import/images
-            StorageFolder dataImportFolder = await root.GetFolderAsync("data");                     // cache/import/data
-            StorageFile dataImportFile = await dataImportFolder.GetFileAsync("data.json");          // cache/import/data/data.json
+            StorageFolder soundDetailsImportFolder = await root.TryGetItemAsync("soundDetails") as StorageFolder;   // root/soundDetails
+            StorageFolder imagesImportFolder = await root.TryGetItemAsync("images") as StorageFolder;               // root/images
+            StorageFolder dataImportFolder = await root.TryGetItemAsync("data") as StorageFolder;                   // root/data
+            StorageFile dataImportFile = null;
+            if (dataImportFolder != null)
+                dataImportFile = await dataImportFolder.TryGetItemAsync("data.json") as StorageFile;        // root/data/data.json
             StorageFolder imagesFolder = await GetImagesFolderAsync();
             StorageFolder soundsFolder = await GetSoundsFolderAsync();
 
             List<Category> categories = new List<Category>();
 
             // Get the categories
-            foreach (Category cat in await GetCategoriesListAsync(dataImportFile))
+            if(dataImportFile != null)
             {
-                categories.Add(AddCategory(null, cat.Name, cat.Icon));
+                foreach (Category cat in await GetCategoriesListAsync(dataImportFile))
+                {
+                    categories.Add(AddCategory(null, cat.Name, cat.Icon));
+                }
+                await dataImportFolder.DeleteAsync();
+                CreateCategoriesObservableCollection();
             }
-            CreateCategoriesObservableCollection();
 
             // Get the sound files
             foreach (var file in await root.GetFilesAsync())
             {
                 if (file.ContentType == "audio/wav" || file.ContentType == "audio/mpeg")
                 {
+                    StorageFile soundDetailsFile = null;
                     string name = file.DisplayName;
                     string uuid = null;
                     string categoryName = null;
                     string categoryUuid = null;
                     bool favourite = false;
 
-                    // Get the soundDetails file of the sound
-                    StorageFile soundDetailsFile = await soundDetailsImportFolder.TryGetItemAsync(name + ".json") as StorageFile;
-                    if (soundDetailsFile != null)
+                    // Get the soundDetails file of the sound and get favourite and category information
+                    if(soundDetailsImportFolder != null)
                     {
-                        SoundDetails soundDetails = new SoundDetails();
-                        await soundDetails.ReadSoundDetailsFile(soundDetailsFile);
-                        categoryName = soundDetails.Category;
-                        favourite = soundDetails.Favourite;
+                        soundDetailsFile = await soundDetailsImportFolder.TryGetItemAsync(name + ".json") as StorageFile;
+                        if (soundDetailsFile != null)
+                        {
+                            SoundDetails soundDetails = new SoundDetails();
+                            await soundDetails.ReadSoundDetailsFile(soundDetailsFile);
+                            categoryName = soundDetails.Category;
+                            favourite = soundDetails.Favourite;
+                        }
                     }
 
                     // Find the category of the sound
@@ -1129,13 +1160,11 @@ namespace UniversalSoundBoard.DataAccess
                             }
                         }
                     }
+
                     // Save the sound
                     uuid = await AddSound(null, name, categoryUuid, file);
 
-                    if (favourite)
-                        SetSoundAsFavourite(uuid, favourite);
-
-                    // Copy the sound file
+                    // Move the sound file
                     await file.MoveAsync(soundsFolder, uuid + file.FileType, NameCollisionOption.ReplaceExisting);
 
                     // Get the image file of the sound
@@ -1143,34 +1172,31 @@ namespace UniversalSoundBoard.DataAccess
                     {
                         if (name == imageFile.DisplayName)
                         {
-                            await imageFile.MoveAsync(imagesFolder, uuid + imageFile.FileType, NameCollisionOption.ReplaceExisting);
                             await AddImage(uuid, imageFile);
+
+                            // Delete the image
+                            await imageFile.DeleteAsync();
                             break;
                         }
                     }
+
+                    if (favourite)
+                        SetSoundAsFavourite(uuid, favourite);
+
+                    // Delete the soundDetails file
+                    if (soundDetailsFile != null)
+                        await soundDetailsFile.DeleteAsync();
                 }
             }
+
+            // Delete the oldData folder
+            await root.DeleteAsync();
         }
 
-        public static async Task MigrateToDatabase()
+        public static async Task MigrateToNewDataModel()
         {
-            bool oldModel = false;
+            bool oldModel = await UsesOldDataModel();
             StorageFolder localStorageFolder = ApplicationData.Current.LocalFolder;
-            var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["oldModel"] != null)
-            {
-                oldModel = (bool)localSettings.Values["oldModel"];
-            }
-
-            if (oldModel)
-            {
-                // Check if the old folders exist
-                if(await localStorageFolder.TryGetItemAsync("data") != null || 
-                    await localStorageFolder.TryGetItemAsync("soundDetails") != null)
-                {
-                    oldModel = true;
-                }
-            }
 
             if (oldModel)
             {
@@ -1179,27 +1205,39 @@ namespace UniversalSoundBoard.DataAccess
                 StorageFolder dataOldDataFolder = await oldDataFolder.GetFolderAsync("data");
                 StorageFolder imagesOldDataFolder = await oldDataFolder.GetFolderAsync("images");
                 StorageFolder soundDetailsOldDataFolder = await oldDataFolder.GetFolderAsync("soundDetails");
-                //StorageFile dataOldDataFile = await dataOldDataFolder.GetFileAsync("data.json");
 
                 // Move all data into oldData folder
                 // Move data folder
                 StorageFolder dataFolder = await localStorageFolder.TryGetItemAsync("data") as StorageFolder;
                 if(dataFolder != null)
                 {
-                    StorageFile dataFile = await dataFolder.GetFileAsync("data.json");
-                    await dataFile.MoveAsync(dataOldDataFolder);
-                    await dataFolder.DeleteAsync();
+                    StorageFile dataFile = await dataFolder.TryGetItemAsync("data.json") as StorageFile;
+                    if(dataFile != null)
+                    {
+                        await dataFile.MoveAsync(dataOldDataFolder);
+                        await dataFolder.DeleteAsync();
+                    }
                 }
 
-                // Move images folder
+                // Rename images folder to oldImages and move images to oldData folder
+                string oldImagesFolderName = "oldImages";
                 StorageFolder imagesFolder = await localStorageFolder.TryGetItemAsync("images") as StorageFolder;
-                if(imagesFolder != null)
+                StorageFolder oldImagesFolder = await localStorageFolder.TryGetItemAsync(oldImagesFolderName) as StorageFolder;
+
+                if(oldImagesFolder == null && imagesFolder != null)
                 {
-                    foreach (StorageFile imageFile in await imagesFolder.GetFilesAsync())
+                    await imagesFolder.RenameAsync(oldImagesFolderName);
+                }
+
+                imagesFolder = await GetImagesFolderAsync();
+                oldImagesFolder = await localStorageFolder.TryGetItemAsync(oldImagesFolderName) as StorageFolder;
+
+                if(oldImagesFolder != null)
+                {
+                    foreach (StorageFile imageFile in await oldImagesFolder.GetFilesAsync())
                     {
-                        await imageFile.MoveAsync(imagesFolder);
+                        await imageFile.MoveAsync(imagesOldDataFolder);
                     }
-                    await imagesFolder.DeleteAsync();
                 }
 
                 // Move soundDetails folder
@@ -1210,6 +1248,7 @@ namespace UniversalSoundBoard.DataAccess
                     {
                         await detailsFile.MoveAsync(soundDetailsOldDataFolder);
                     }
+                    await soundDetailsFolder.DeleteAsync();
                 }
 
                 // Move sound files
@@ -1223,10 +1262,15 @@ namespace UniversalSoundBoard.DataAccess
 
                 await ImportOldData(oldDataFolder);
 
-                localSettings.Values["oldModel"] = false;
-            }
+                // Delete oldImages folder
+                oldImagesFolder = await localStorageFolder.TryGetItemAsync(oldImagesFolderName) as StorageFolder;
+                if (oldImagesFolder != null)
+                    await oldImagesFolder.DeleteAsync();
 
-            localSettings.Values["oldModel"] = oldModel;
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+                });
+            }
         }
         #endregion
 

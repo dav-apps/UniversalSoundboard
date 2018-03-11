@@ -71,6 +71,7 @@ namespace UniversalSoundBoard.Pages
                         await FileManager.AddSound(null, storagefile.DisplayName, category.Uuid, storagefile);
                     }
                 }
+                (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             }
             shareOperation.ReportCompleted();
         }

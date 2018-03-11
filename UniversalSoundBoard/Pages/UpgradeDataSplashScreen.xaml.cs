@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using UniversalSoundBoard.DataAccess;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.UI.Core;
@@ -50,12 +51,21 @@ namespace UniversalSoundBoard.Pages
         }
 
         // Include code to be executed when the system has transitioned from the splash screen to the extended splash screen (application's first view).
-        void DismissedEventHandler(SplashScreen sender, object e)
+        async void DismissedEventHandler(SplashScreen sender, object e)
         {
             dismissed = true;
 
             // Complete app setup operations here...
+            await FileManager.MigrateToNewDataModel();
+            DismissExtendedSplash();
+        }
 
+        async void DismissExtendedSplash()
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                rootFrame = new Frame();
+                rootFrame.Content = new MainPage(); Window.Current.Content = rootFrame;
+            });
         }
 
         void PositionElements()
