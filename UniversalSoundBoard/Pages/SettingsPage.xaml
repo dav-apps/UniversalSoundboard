@@ -45,6 +45,10 @@
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <HyperlinkButton Content="Privacy Policy" 
                                              NavigateUri="http://dav-apps.tech/privacy" />
+                            
+                            <HyperlinkButton Content="UniversalSoundboard on GitHub" 
+                                             NavigateUri="https://github.com/Dav2070/UniversalSoundboard"
+                                             Margin="0,-8,0,5"/>
 
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="Version" 
@@ -53,7 +57,7 @@
                                 <TextBlock x:Uid="Version" 
                                            IsTextSelectionEnabled="True" />
                             </StackPanel>
-                            <TextBlock Text="Copyright © 2017 by dav" />
+                            <TextBlock Text="Copyright © 2018 by dav" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
