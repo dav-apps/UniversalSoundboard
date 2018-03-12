@@ -37,7 +37,6 @@ namespace UniversalSoundBoard.Components
         
         void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
         {
-            FileManager.CreateCategoriesObservableCollection();
             CreateCategoriesFlyout();
         }
         
@@ -108,7 +107,8 @@ namespace UniversalSoundBoard.Components
             {
                 // Application now has read/write access to the picked file
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-                FileManager.AddImage(sound.Uuid, file);
+                await FileManager.AddImage(sound.Uuid, file);
+                (App.Current as App)._itemViewHolder.allSoundsChanged = true;
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
                 await FileManager.UpdateGridView();
             }

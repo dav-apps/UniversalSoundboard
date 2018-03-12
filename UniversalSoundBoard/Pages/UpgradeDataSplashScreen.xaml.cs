@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using UniversalSoundBoard.DataAccess;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;

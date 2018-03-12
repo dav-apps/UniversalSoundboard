@@ -474,11 +474,6 @@ namespace UniversalSoundBoard.DataAccess
             string imageExt = file.FileType.Replace(".", "");
 
             DatabaseOperations.UpdateSound(uuid, null, null, null, imageExt, null);
-
-            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-            });
         }
 
         public static Category AddCategory(string uuid, string name, string icon)
@@ -1012,12 +1007,13 @@ namespace UniversalSoundBoard.DataAccess
                         var t = Task.Run(() => ZipFile.ExtractToDirectory(newZipFile.Path, importFolder.Path));
                         t.Wait();
 
-                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => {
+                        await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                             (App.Current as App)._itemViewHolder.importMessage = stringLoader.GetString("ImportMessage-3"); // 3
                         });
-
-                        await ImportData();
-
+                        
+                        var t2 = Task.Run(() => ImportData());
+                        t2.Wait();
+                        
                         await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                             CoreDispatcherPriority.High,
                             new DispatchedHandler(async () =>
