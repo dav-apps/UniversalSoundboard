@@ -48,7 +48,7 @@
                         MenuItemsSource="{Binding categories, Mode=TwoWay}" 
                         ItemInvoked="SideBar_ItemInvoked" 
                         ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}"
-                        SelectedItem="{Binding selectedCategory, Mode=OneWay, Converter={StaticResource SelectedCategoryConverter}}">
+                        SelectedItem="{Binding selectedCategory, Mode=TwoWay, Converter={StaticResource SelectedCategoryConverter}}">
 
             <NavigationView.HeaderTemplate>
                 <DataTemplate>

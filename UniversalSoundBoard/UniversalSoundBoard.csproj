@@ -7,8 +7,8 @@
     <ProjectGuid>{D28C5D63-9E01-456A-B935-63D72F3F4E46}</ProjectGuid>
     <OutputType>AppContainerExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>UniversalSoundBoard</RootNamespace>
-    <AssemblyName>UniversalSoundBoard</AssemblyName>
+    <RootNamespace>UniversalSoundboard</RootNamespace>
+    <AssemblyName>UniversalSoundboard</AssemblyName>
     <DefaultLanguage>en-US</DefaultLanguage>
     <TargetPlatformIdentifier>UAP</TargetPlatformIdentifier>
     <TargetPlatformVersion>10.0.16299.0</TargetPlatformVersion>

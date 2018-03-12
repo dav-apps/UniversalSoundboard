@@ -133,7 +133,17 @@ namespace UniversalSoundBoard.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            // Get the category and return the index
+            var category = value as Category;
+
+            int i = 0;
+            foreach(Category cat in (App.Current as App)._itemViewHolder.categories)
+            {
+                if (cat == category)
+                    return i;
+                i++;
+            }
+            return 0;
         }
     }
 }

@@ -569,6 +569,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             await GetAllSounds();
+            ShowPlayAllButton();
             skipAutoSuggestBoxTextChanged = false;
         }
 
@@ -740,9 +741,10 @@ namespace UniversalSoundBoard.DataAccess
                     ShowAllSounds();
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
                 }
-                else if ((App.Current as App)._itemViewHolder.selectedCategory == 0)
+                else if ((App.Current as App)._itemViewHolder.selectedCategory == 0 && 
+                        String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))
                 {   // If SoundPage shows AllSounds
-
+                    
                 }
                 else
                 {   // If SoundPage shows Category or search results

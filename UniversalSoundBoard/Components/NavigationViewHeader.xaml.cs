@@ -29,7 +29,7 @@ namespace UniversalSoundBoard.Components
         
         public NavigationViewHeader()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             SetDataContext();
             InitializeLocalSettings();
             SetDarkThemeLayout();
@@ -107,7 +107,6 @@ namespace UniversalSoundBoard.Components
         }
 
         #region EventHandlers
-        
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             FileManager.AdjustLayout();
@@ -406,7 +405,6 @@ namespace UniversalSoundBoard.Components
         #endregion EventHandlers
 
         #region ContentDialogs
-        
         private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get combobox value
