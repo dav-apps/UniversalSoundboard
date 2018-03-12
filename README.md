@@ -7,8 +7,11 @@ Add your sounds or music and sort them in categories. You can also add images to
 
 ## Getting started
 
-You can download UniversalSoundBoard here: https://www.microsoft.com/de-de/store/p/universalsoundboard/9nblggh51005
-Or just download the project and open it in Visual Studio.
+You can find UniversalSoundboard in the Microsoft Store: 
+
+https://www.microsoft.com/de-de/store/p/universalsoundboard/9nblggh51005
+
+You can also download the project from here and open the solution in Visual Studio.
 
 ## Contributing
 
