@@ -59,7 +59,8 @@ namespace UniversalSoundBoard
             moreButtonVisibility = true,
             topButtonsCollapsed = false,
             areSelectButtonsEnabled = false,
-            selectedCategory = 0
+            selectedCategory = 0,
+            upgradeDataStatusText = "Preparing..."
         };
 
         /// <summary>

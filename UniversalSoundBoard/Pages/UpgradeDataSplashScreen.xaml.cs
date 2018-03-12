@@ -39,6 +39,16 @@ namespace UniversalSoundBoard.Pages
             rootFrame = new Frame();
         }
 
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetDataContext();
+        }
+
+        private void SetDataContext()
+        {
+            ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+        }
+
         private void Page_OnResize(object sender, WindowSizeChangedEventArgs e)
         {
             // Safely update the extended splash screen image coordinates. This function will be fired in response to snapping, unsnapping, rotation, etc...
@@ -83,7 +93,7 @@ namespace UniversalSoundBoard.Pages
             // Position the Text
             StatusStackPanel.Width = SplashScreenLogo.Width * 0.5;
             StatusStackPanel.SetValue(Canvas.LeftProperty, (Window.Current.Bounds.Width / 2) - (StatusStackPanel.Width / 2));
-            StatusStackPanel.SetValue(Canvas.TopProperty, Window.Current.Bounds.Height / 2 + SplashScreenLogo.Height * 0.6);
+            StatusStackPanel.SetValue(Canvas.TopProperty, Window.Current.Bounds.Height / 2 + SplashScreenLogo.Height * 0.52);
         }
     }
 }

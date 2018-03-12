@@ -49,7 +49,8 @@ namespace UniversalSoundBoard.Common
         private bool _moreButtonVisibility;                         // If true the More button at the top, when multi selection mode is on, is visible
         private bool _topButtonsCollapsed;                          // If true the buttons at the top show only the icon, if false they show the icon and text
         private bool _areSelectButtonsEnabled;                      // If false the buttons at the top in multi selection mode are disabled
-        private int _selectedCategory;                         // The index of the currently selected category in the category list
+        private int _selectedCategory;                              // The index of the currently selected category in the category list
+        private string _upgradeDataStatusText;
 
         public string title
         {
@@ -477,6 +478,17 @@ namespace UniversalSoundBoard.Common
             {
                 _selectedCategory = value;
                 NotifyPropertyChanged("selectedCategory");
+            }
+        }
+
+        public string upgradeDataStatusText
+        {
+            get { return _upgradeDataStatusText; }
+
+            set
+            {
+                _upgradeDataStatusText = value;
+                NotifyPropertyChanged("upgradeDataStatusText");
             }
         }
 

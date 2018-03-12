@@ -1120,12 +1120,23 @@ namespace UniversalSoundBoard.DataAccess
                     categories.Add(AddCategory(null, cat.Name, cat.Icon));
                 }
                 await dataImportFolder.DeleteAsync();
-                CreateCategoriesObservableCollection();
+
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    CreateCategoriesObservableCollection();
+                });
             }
+
+            int i = 1;
+            int filesCount = (await root.GetFilesAsync()).Count;
 
             // Get the sound files
             foreach (var file in await root.GetFilesAsync())
             {
+                double percent = Math.Round(((double)i / filesCount) * 100);
+                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    (App.Current as App)._itemViewHolder.upgradeDataStatusText = percent + " %";
+                });
+
                 if (file.ContentType == "audio/wav" || file.ContentType == "audio/mpeg")
                 {
                     StorageFile soundDetailsFile = null;
@@ -1187,6 +1198,7 @@ namespace UniversalSoundBoard.DataAccess
                     if (soundDetailsFile != null)
                         await soundDetailsFile.DeleteAsync();
                 }
+                i++;
             }
 
             // Delete the oldData folder
@@ -1195,6 +1207,11 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task MigrateToNewDataModel()
         {
+            // Set the Status message
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                (App.Current as App)._itemViewHolder.upgradeDataStatusText =
+                                    new Windows.ApplicationModel.Resources.ResourceLoader().GetString("UpgradeDataStatusMessage-Preparing");
+            });
             bool oldModel = await UsesOldDataModel();
             StorageFolder localStorageFolder = ApplicationData.Current.LocalFolder;
 
