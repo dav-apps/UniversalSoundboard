@@ -1,52 +1,46 @@
-﻿using System;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Threading.Tasks;
-using UniversalSoundBoard.Model;
+﻿using System.Linq;
+using UniversalSoundBoard.Models;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using static UniversalSoundBoard.Model.Sound;
 using Windows.UI;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
-using System.Diagnostics;
+using UniversalSoundBoard.DataAccess;
 
-namespace UniversalSoundBoard
+namespace UniversalSoundBoard.Pages
 {
     public sealed partial class MainPage : Page
     {
         int sideBarCollapsedMaxWidth = FileManager.sideBarCollapsedMaxWidth;
 
+        
         public MainPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             Loaded += MainPage_Loaded;
-            SystemNavigationManager.GetForCurrentView().BackRequested += onBackRequested;
+            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
         }
-
+        
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            setDataContext();
-            initializeLocalSettings();
+            SetDataContext();
+            InitializeLocalSettings();
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             SideBar.MenuItemsSource = (App.Current as App)._itemViewHolder.categories;
             
-            await FileManager.CreateCategoriesObservableCollection();
-            customiseTitleBar();
-            await SoundManager.GetAllSounds();
+            CustomiseTitleBar();
+            await FileManager.ShowAllSounds();
         }
-
-        private void setDataContext()
+        
+        private void SetDataContext()
         {
             WindowTitleTextBox.DataContext = (App.Current as App)._itemViewHolder;
             SideBar.DataContext = (App.Current as App)._itemViewHolder;
         }
-
-        private void initializeLocalSettings()
+        
+        private void InitializeLocalSettings()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             if (localSettings.Values["playingSoundsListVisible"] == null)
@@ -72,14 +66,6 @@ namespace UniversalSoundBoard
             if (localSettings.Values["liveTile"] == null)
             {
                 localSettings.Values["liveTile"] = FileManager.liveTile;
-                if (FileManager.liveTile)
-                {
-                    FileManager.UpdateLiveTile();
-                }
-            }
-            else
-            {
-                FileManager.UpdateLiveTile();
             }
 
             if (localSettings.Values["showCategoryIcon"] == null)
@@ -102,24 +88,22 @@ namespace UniversalSoundBoard
                 (App.Current as App)._itemViewHolder.showSoundsPivot = (bool)localSettings.Values["showSoundsPivot"];
             }
         }
-
-        private void customiseTitleBar()
+        
+        private void CustomiseTitleBar()
         {
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-
             ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonForegroundColor = ((App.Current as App).RequestedTheme == ApplicationTheme.Dark) ? Colors.White : Colors.Black;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
-
-        private async void onBackRequested(object sender, BackRequestedEventArgs e)
+        
+        private void OnBackRequested(object sender, BackRequestedEventArgs e)
         {
-            await FileManager.GoBack();
-
+            FileManager.GoBack();
             e.Handled = true;
         }
-
+        
         private async void SideBar_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
         {
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
@@ -137,15 +121,23 @@ namespace UniversalSoundBoard
             }
             else
             {
+                // Find the selected category in the categories list and set selectedCategory
                 var category = (Category)args.InvokedItem;
+                for(int i = 0; i < (App.Current as App)._itemViewHolder.categories.Count(); i++)
+                {
+                    if ((App.Current as App)._itemViewHolder.categories[i].Uuid == category.Uuid)
+                    {
+                        (App.Current as App)._itemViewHolder.selectedCategory = i;
+                    }
+                }
 
-                if (category == (App.Current as App)._itemViewHolder.categories.First())
+                if ((App.Current as App)._itemViewHolder.selectedCategory == 0)
                 {
                     await FileManager.ShowAllSounds();
                 }
                 else
                 {
-                    await FileManager.ShowCategory(category);
+                    await FileManager.ShowCategory(category.Uuid);
                 }
             }
         }

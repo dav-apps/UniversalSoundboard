@@ -1,29 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UniversalSoundBoard.Model;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Media;
-using Windows.Media.Core;
+using UniversalSoundBoard.DataAccess;
+using UniversalSoundBoard.Models;
+using UniversalSoundBoard.Pages;
 using Windows.Media.Playback;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
-// The User Control item template is documented at http://go.microsoft.com/fwlink/?LinkId=234236
-
-namespace UniversalSoundBoard
+namespace UniversalSoundBoard.Components
 {
     public sealed partial class PlayingSoundTemplate : UserControl
     {
@@ -32,40 +21,46 @@ namespace UniversalSoundBoard
         CoreDispatcher dispatcher;
         public string FavouriteFlyoutText = "Add Favorite";
 
+        
         public PlayingSoundTemplate()
         {
             this.InitializeComponent();
             Loaded += PlayingSoundTemplate_Loaded;
 
-            setDarkThemeLayout();
-            setDataContext();
+            SetDarkThemeLayout();
+            SetDataContext();
             DataContextChanged += PlayingSoundTemplate_DataContextChanged;
 
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
         }
-
+        
         private void PlayingSoundTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            if(this.DataContext != null)
+            if(DataContext != null)
             {
-                this.PlayingSound = this.DataContext as PlayingSound;
+                PlayingSound = DataContext as PlayingSound;
 
-                initializePlayingSound();
+                InitializePlayingSound();
             }
         }
-
+        
         private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs eventArgs)
         {
-            initializePlayingSound();
-            setMediaPlayerElementIsCompact();
+            InitializePlayingSound();
+            SetMediaPlayerElementIsCompact();
         }
-
-        private void setDataContext()
+        
+        private void SetDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
-
-        private void setMediaPlayerElementIsCompact()
+        
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SetMediaPlayerElementIsCompact();
+        }
+        
+        private void SetMediaPlayerElementIsCompact()
         {
             if(Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
             {
@@ -75,31 +70,31 @@ namespace UniversalSoundBoard
                 MediaPlayerElement.TransportControls.IsCompact = false;
             }
         }
-
-        private void setDarkThemeLayout()
+        
+        private void SetDarkThemeLayout()
         {
             if((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
             {
                 ContentRoot.Background = new SolidColorBrush(Colors.Black);
             }
         }
-
-        private void repeatSound(int repetitions)
+        
+        private void RepeatSound(int repetitions)
         {
-            this.PlayingSound.repetitions = repetitions;
+            PlayingSound.Repetitions = repetitions + 1;
         }
-
-        private void initializePlayingSound()
+        
+        private void InitializePlayingSound()
         {
-            if (this.PlayingSound.MediaPlayer != null)
+            if (PlayingSound.MediaPlayer != null)
             {
-                MediaPlayerElement.SetMediaPlayer(this.PlayingSound.MediaPlayer);
+                MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
                 MediaPlayerElement.MediaPlayer.MediaEnded -= Player_MediaEnded;
                 MediaPlayerElement.MediaPlayer.MediaEnded += Player_MediaEnded;
                 ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
                 ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
-                PlayingSoundName.Text = this.PlayingSound.CurrentSound.Name;
-                if(this.PlayingSound.repetitions >= 0)
+                PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
+                if(PlayingSound.Repetitions >= 0)
                 {
                     MediaPlayerElement.MediaPlayer.Play();
                 }
@@ -107,47 +102,42 @@ namespace UniversalSoundBoard
                 // Set the text of the add to Favourites Flyout
                 FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
                 AppBarButton FavouriteFlyout = (AppBarButton)transportControlsTemplateRoot.FindName("FavouriteFlyout");
-                if (this.PlayingSound.CurrentSound.Favourite)
-                {
-                    FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
-                }
-                else
-                {
+                FavouriteFlyout.Label = PlayingSound.CurrentSound.Favourite ?
+                    FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
                     FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
-                }
             }
         }
-
-        private void removePlayingSound()
+        
+        private void RemovePlayingSound()
         {
-            if (this.PlayingSound.MediaPlayer != null)
+            if (PlayingSound.MediaPlayer != null)
             {
-                this.PlayingSound.MediaPlayer.Pause();
+                PlayingSound.MediaPlayer.Pause();
                 MediaPlayerElement.MediaPlayer.MediaEnded -= Player_MediaEnded;
                 ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
                 MediaPlayerElement.SetMediaPlayer(null);
                 PlayingSoundName.Text = "";
-                this.PlayingSound.MediaPlayer = null;
+                PlayingSound.MediaPlayer = null;
             }
-            SoundPage.RemovePlayingSound(this.PlayingSound);
+            SoundPage.RemovePlayingSound(PlayingSound);
         }
-
+        
         private async void Player_MediaEnded(MediaPlayer sender, object args)
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                this.PlayingSound.repetitions--;
-                if (this.PlayingSound.repetitions <= 0)
+                PlayingSound.Repetitions--;
+                if (PlayingSound.Repetitions <= 0)
                 {
-                    removePlayingSound();
+                    RemovePlayingSound();
                 }
                 
-                if(this.PlayingSound.repetitions >= 0 && this.PlayingSound.MediaPlayer != null)
+                if(PlayingSound.Repetitions >= 0 && PlayingSound.MediaPlayer != null)
                 {
-                    if (this.PlayingSound.Sounds.Count > 1) // Multiple Sounds in the list
+                    if (PlayingSound.Sounds.Count > 1) // Multiple Sounds in the list
                     {
                         // If randomly is true, shuffle sounds
-                        if (this.PlayingSound.randomly)
+                        if (PlayingSound.Randomly)
                         {
                             Random random = new Random();
 
@@ -155,7 +145,7 @@ namespace UniversalSoundBoard
                             MediaPlaybackList oldMediaPlaybackList = new MediaPlaybackList();
                             List<Sound> oldSoundsList = new List<Sound>();
 
-                            foreach (var item in ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).Items)
+                            foreach (var item in ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items)
                                 oldMediaPlaybackList.Items.Add(item);
                             foreach (var item in PlayingSound.Sounds)
                                 oldSoundsList.Add(item);
@@ -164,7 +154,7 @@ namespace UniversalSoundBoard
                             List<Sound> newSoundsList = new List<Sound>();
 
                             // Add items to new lists in random order
-                            for (int i = 0; i < this.PlayingSound.Sounds.Count; i++)
+                            for (int i = 0; i < PlayingSound.Sounds.Count; i++)
                             {
                                 int randomNumber = random.Next(oldSoundsList.Count);
                                 newSoundsList.Add(oldSoundsList.ElementAt(randomNumber));
@@ -175,71 +165,63 @@ namespace UniversalSoundBoard
                             }
 
                             // Replace the old lists with the new ones
-                            ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).Items.Clear();
+                            ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items.Clear();
                             foreach (var item in newMediaPlaybackList.Items)
-                                ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).Items.Add(item);
+                                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items.Add(item);
 
                             PlayingSound.Sounds.Clear();
                             foreach (var item in newSoundsList)
                                 PlayingSound.Sounds.Add(item);
                         }
 
-                        ((MediaPlaybackList)this.PlayingSound.MediaPlayer.Source).MoveTo(0);
+                        ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveTo(0);
                     }
-                    this.PlayingSound.MediaPlayer.Play();
+                    PlayingSound.MediaPlayer.Play();
                 }
             });
         }
-
+        
         private async void PlayingSoundTemplate_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                if(this.PlayingSound.Sounds.Count > 1 && sender.CurrentItemIndex < this.PlayingSound.Sounds.Count)
+                if(PlayingSound.Sounds.Count > 1 && sender.CurrentItemIndex < PlayingSound.Sounds.Count)
                 {
-                    this.PlayingSound.CurrentSound = this.PlayingSound.Sounds.ElementAt((int)sender.CurrentItemIndex);
-                    PlayingSoundName.Text = this.PlayingSound.CurrentSound.Name;
+                    PlayingSound.CurrentSound = PlayingSound.Sounds.ElementAt((int)sender.CurrentItemIndex);
+                    PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
 
                     // Set the text of the add to Favourites Flyout
                     FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
                     AppBarButton FavouriteFlyout = (AppBarButton)transportControlsTemplateRoot.FindName("FavouriteFlyout");
-                    if (this.PlayingSound.CurrentSound.Favourite)
-                    {
-                        FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
-                    }
-                    else
-                    {
-                        FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
-                    }
+                    FavouriteFlyout.Label = PlayingSound.CurrentSound.Favourite ?
+                        (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
+                        (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
                 }
             });
         }
-
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            setMediaPlayerElementIsCompact();
-        }
-
+        
         private void CustomMediaTransportControls_Removed(object sender, EventArgs e)
         {
-            removePlayingSound();
+            RemovePlayingSound();
         }
-
-        private async void CustomMediaTransportControls_FavouriteFlyout_Clicked(object sender, EventArgs e)
+        
+        private void CustomMediaTransportControls_FavouriteFlyout_Clicked(object sender, EventArgs e)
         {
-            bool oldFav = this.PlayingSound.CurrentSound.Favourite;
-            bool newFav = !this.PlayingSound.CurrentSound.Favourite;
-            Sound currentSound = this.PlayingSound.CurrentSound;
+            bool oldFav = PlayingSound.CurrentSound.Favourite;
+            bool newFav = !PlayingSound.CurrentSound.Favourite;
+            Sound currentSound = PlayingSound.CurrentSound;
 
             // Update all lists containing sounds with the new favourite value
-            List<ObservableCollection<Sound>> soundLists = new List<ObservableCollection<Sound>>();
-            soundLists.Add((App.Current as App)._itemViewHolder.sounds);
-            soundLists.Add((App.Current as App)._itemViewHolder.allSounds);
-            soundLists.Add((App.Current as App)._itemViewHolder.favouriteSounds);
+            List<ObservableCollection<Sound>> soundLists = new List<ObservableCollection<Sound>>
+            {
+                (App.Current as App)._itemViewHolder.sounds,
+                (App.Current as App)._itemViewHolder.allSounds,
+                (App.Current as App)._itemViewHolder.favouriteSounds
+            };
 
             foreach (ObservableCollection<Sound> soundList in soundLists)
             {
-                var sounds = soundList.Where(s => s.Name == currentSound.Name);
+                var sounds = soundList.Where(s => s.Uuid == currentSound.Uuid);
                 if (sounds.Count() > 0)
                 {
                     sounds.First().Favourite = newFav;
@@ -264,32 +246,32 @@ namespace UniversalSoundBoard
                 FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
             }
 
-            await FileManager.setSoundAsFavourite(currentSound, newFav);
+            FileManager.SetSoundAsFavourite(currentSound.Uuid, newFav);
         }
-
+        
         private void CustomMediaTransportControls_Repeat_1x_Clicked(object sender, EventArgs e)
         {
-            repeatSound(1);
+            RepeatSound(1);
         }
-
+        
         private void CustomMediaTransportControls_Repeat_2x_Clicked(object sender, EventArgs e)
         {
-            repeatSound(2);
+            RepeatSound(2);
         }
-
+        
         private void CustomMediaTransportControls_Repeat_5x_Clicked(object sender, EventArgs e)
         {
-            repeatSound(5);
+            RepeatSound(5);
         }
-
+        
         private void CustomMediaTransportControls_Repeat_10x_Clicked(object sender, EventArgs e)
         {
-            repeatSound(10);
+            RepeatSound(10);
         }
-
+        
         private void CustomMediaTransportControls_Repeat_endless_Clicked(object sender, EventArgs e)
         {
-            repeatSound(int.MaxValue);
+            RepeatSound(int.MaxValue);
         }
     }
 }

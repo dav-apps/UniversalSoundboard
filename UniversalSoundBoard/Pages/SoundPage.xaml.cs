@@ -1,16 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Net;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Threading.Tasks;
-using UniversalSoundBoard.Model;
+using UniversalSoundBoard.Common;
+using UniversalSoundBoard.DataAccess;
+using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -19,53 +13,46 @@ using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
-using static UniversalSoundBoard.Model.Sound;
 
-// Die Elementvorlage "Leere Seite" ist unter http://go.microsoft.com/fwlink/?LinkId=234238 dokumentiert.
-
-namespace UniversalSoundBoard
+namespace UniversalSoundBoard.Pages
 {
-    /// <summary>
-    /// Eine leere Seite, die eigenständig verwendet oder zu der innerhalb eines Rahmens navigiert werden kann.
-    /// </summary>
     public sealed partial class SoundPage : Page
     {
         public static bool soundsPivotSelected = true;
 
+        
         public SoundPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             Loaded += SoundPage_Loaded;
 
             ShowPlayingSoundsList();
         }
-
+        
         void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
-            setDataContext();
+            SetDataContext();
             SetSoundsPivotVisibility();
         }
-
+        
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             soundsPivotSelected = true;
         }
-
+        
         private void SetSoundsPivotVisibility()
         {
             SoundGridView2.Visibility = (App.Current as App)._itemViewHolder.showSoundsPivot ? Visibility.Collapsed : Visibility.Visible;
         }
-
-        private void setDataContext()
+        
+        private void SetDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
-
+        
         private void ShowPlayingSoundsList()
         {
             if ((App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
@@ -90,57 +77,21 @@ namespace UniversalSoundBoard
                 DrawerContentGrid.Visibility = Visibility.Collapsed;
             }
         }
-
+        
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ShowPlayingSoundsList();
         }
-
+        
         private void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var sound = (Sound)e.ClickedItem;
             if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
             {
-                playSound(sound);
+                PlaySound(sound);
             }
         }
-
-        private async void SoundGridView_Drop(object sender, DragEventArgs e)
-        {
-            if (e.DataView.Contains(StandardDataFormats.StorageItems))
-            {
-                var items = await e.DataView.GetStorageItemsAsync();
-
-                (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-                if (items.Any())
-                {
-                    Category category = new Category();
-                    // Get category if a category is selected
-                    if ((App.Current as App)._itemViewHolder.title != (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title") &&
-                        String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery) && (App.Current as App)._itemViewHolder.editButtonVisibility == Visibility.Visible)
-                    {
-                        category.Name = (App.Current as App)._itemViewHolder.title;
-                    }
-
-                    foreach (StorageFile soundFile in items)
-                    {
-                        Sound sound = new Sound(soundFile.DisplayName, category, soundFile);
-                        await FileManager.addSound(sound);
-                    }
-
-                    if (String.IsNullOrEmpty(category.Name))
-                    {
-                        await FileManager.ShowAllSounds();
-                    }
-                    else
-                    {
-                        await FileManager.ShowCategory(category);
-                    }
-                }
-                (App.Current as App)._itemViewHolder.progressRingIsActive = false;
-            }
-        }
-
+        
         private void SoundGridView_DragOver(object sender, DragEventArgs e)
         {
             e.AcceptedOperation = DataPackageOperation.Copy;
@@ -150,7 +101,38 @@ namespace UniversalSoundBoard
             e.DragUIOverride.IsContentVisible = true;
             e.DragUIOverride.IsGlyphVisible = true;
         }
+        
+        private async void SoundGridView_Drop(object sender, DragEventArgs e)
+        {
+            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            {
+                var items = await e.DataView.GetStorageItemsAsync();
 
+                (App.Current as App)._itemViewHolder.progressRingIsActive = true;
+                if (items.Any())
+                {
+                    Category category = (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory];
+
+                    foreach (StorageFile soundFile in items)
+                    {
+                        await FileManager.AddSound(null, soundFile.DisplayName, category.Uuid, soundFile);
+                        (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+                        await FileManager.UpdateGridView();
+                    }
+
+                    if ((App.Current as App)._itemViewHolder.selectedCategory == 0)
+                    {
+                        await FileManager.ShowAllSounds();
+                    }
+                    else
+                    {
+                        await FileManager.ShowCategory((App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory].Uuid);
+                    }
+                }
+                (App.Current as App)._itemViewHolder.progressRingIsActive = false;
+            }
+        }
+        
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             GridView selectedGridview = sender as GridView;
@@ -174,50 +156,48 @@ namespace UniversalSoundBoard
                 (App.Current as App)._itemViewHolder.selectedSounds.Remove((Sound)e.RemovedItems.First());
             }
         }
-
+        
         private void HandleGrid_OnManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
         {
             var themeBrush = Application.Current.Resources["AppBarToggleButtonBackgroundCheckedPointerOver"] as SolidColorBrush;
-
             if (themeBrush != null) HandleGrid.Background = themeBrush;
         }
-
+        
         private void HandleGrid_OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
             DrawerContentGrid.Height = DrawerContentGrid.ActualHeight + -e.Delta.Translation.Y;
-            if(DrawerContentGrid.Height > this.ActualHeight)
+            if(DrawerContentGrid.Height > ActualHeight)
             {
-                DrawerContentGrid.Height = this.ActualHeight;
+                DrawerContentGrid.Height = ActualHeight;
             }
         }
-
+        
         private void HandleGrid_OnManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
             var themeBrush = Application.Current.Resources["AppBarBorderThemeBrush"] as SolidColorBrush;
-
             if (themeBrush != null) HandleGrid.Background = themeBrush;
         }
-
+        
         private void HandleGrid_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            if (DrawerContentGrid.Height == this.ActualHeight)
+            if (DrawerContentGrid.Height == ActualHeight)
             {
                 DrawerContentGrid.Height = HandleGrid.ActualHeight;
             }
-            else if (DrawerContentGrid.Height > this.ActualHeight/2)
+            else if (DrawerContentGrid.Height > ActualHeight / 2)
             {
-                DrawerContentGrid.Height = this.ActualHeight;
+                DrawerContentGrid.Height = ActualHeight;
             }else if (DrawerContentGrid.Height <= HandleGrid.ActualHeight)
             {
-                DrawerContentGrid.Height = this.ActualHeight;
+                DrawerContentGrid.Height = ActualHeight;
             }
             else
             {
                 DrawerContentGrid.Height = HandleGrid.ActualHeight;
             }
         }
-
-        public static void playSound(Sound sound)
+        
+        public static void PlaySound(Sound sound)
         {
             MediaPlayer player = new MediaPlayer();
             MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
@@ -239,7 +219,6 @@ namespace UniversalSoundBoard
             mediaPlaybackItem.ApplyDisplayProperties(props);
             mediaPlaybackList.Items.Add(mediaPlaybackItem);
             player.Source = mediaPlaybackList;
-
 
             // Set volume
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -268,8 +247,8 @@ namespace UniversalSoundBoard
             PlayingSound playingSound = new PlayingSound(sound, player);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
-
-        public static void playSounds(List<Sound> sounds, int repetitions, bool randomly)
+        
+        public static void PlaySounds(List<Sound> sounds, int repetitions, bool randomly)
         {
             if(sounds.Count < 1)
             {
@@ -297,7 +276,6 @@ namespace UniversalSoundBoard
                 {
                     props.MusicProperties.Artist = sound.Category.Name;
                 }
-                
                 if (sound.ImageFile != null)
                 {
                     props.Thumbnail = RandomAccessStreamReference.CreateFromFile(sound.ImageFile);
@@ -307,7 +285,6 @@ namespace UniversalSoundBoard
 
                 mediaPlaybackList.Items.Add(mediaPlaybackItem);
             }
-            
             player.Source = mediaPlaybackList;
 
             // Set volume
@@ -337,12 +314,12 @@ namespace UniversalSoundBoard
             PlayingSound playingSound = new PlayingSound(sounds, player, repetitions, randomly);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
-
+        
         public static void RemovePlayingSound(PlayingSound playingSound)
         {
             (App.Current as App)._itemViewHolder.playingSounds.Remove(playingSound);
         }
-
+        
         private static void RemoveUnusedSounds()
         {
             List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
@@ -357,7 +334,7 @@ namespace UniversalSoundBoard
 
             RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
         }
-
+        
         private static void RemoveSoundsFromPlayingSoundsList(List<PlayingSound> removedPlayingSounds)
         {
             for (int i = 0; i < removedPlayingSounds.Count; i++)
@@ -367,29 +344,28 @@ namespace UniversalSoundBoard
                 RemovePlayingSound(removedPlayingSounds[i]);
             }
         }
-
-        private async void SoundsPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
+        
+        private void SoundsPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
         {
-            await FileManager.UpdateGridView();
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
             soundsPivotSelected = (sender.SelectedIndex == 0);
         }
-
+        
         private void SoundGridView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SetSoundGridItemWidth(e, SoundGridView);
         }
-
+        
         private void FavouriteSoundGridView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SetSoundGridItemWidth(e, FavouriteSoundGridView);
         }
-
+        
         private void SoundGridView2_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SetSoundGridItemWidth(e, SoundGridView2);
         }
-
+        
         private void SetSoundGridItemWidth(SizeChangedEventArgs e, GridView gridView)
         {
             double optimizedWidth = 130.0;
@@ -408,65 +384,47 @@ namespace UniversalSoundBoard
 
             double margin = 12.0;
             var number = (int)e.NewSize.Width / (int)optimizedWidth;
-            appItemsPanel.ItemWidth = (e.NewSize.Width - margin) / (double)number;
+            appItemsPanel.ItemWidth = (e.NewSize.Width - margin) / number;
         }
 
-
-
-        // Content Dialog Methods
+        #region ContentDialog Methods
+        
         private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var deleteCategoryContentDialog = ContentDialogs.CreateDeleteCategoryContentDialogAsync();
             deleteCategoryContentDialog.PrimaryButtonClick += DeleteCategoryContentDialog_PrimaryButtonClick;
             await deleteCategoryContentDialog.ShowAsync();
         }
-
+        
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.deleteCategory((App.Current as App)._itemViewHolder.title);
-            SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            FileManager.DeleteCategory((App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory].Uuid);
 
-            // Reload page
-            await FileManager.CreateCategoriesObservableCollection();
-            await SoundManager.GetAllSounds();
+            FileManager.CreateCategoriesObservableCollection();
+            await FileManager.ShowAllSounds();
         }
-
+        
         private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            var editCategoryContentDialog = await ContentDialogs.CreateEditCategoryContentDialogAsync();
+            var editCategoryContentDialog = ContentDialogs.CreateEditCategoryContentDialogAsync();
             editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
             await editCategoryContentDialog.ShowAsync();
         }
-
+        
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            // Get categories List and save with new value
-            ObservableCollection<Category> categoriesList = await FileManager.GetCategoriesListAsync();
-
             // Get combobox value
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
             string icon = typeItem.Content.ToString();
-
             string newName = ContentDialogs.EditCategoryTextBox.Text;
-            string oldName = (App.Current as App)._itemViewHolder.title;
-
-            foreach(Category category in categoriesList)
-            {
-                if(category.Name == oldName)
-                {
-                    category.Name = newName;
-                    category.Icon = icon;
-                }
-            }
-
-            await FileManager.SaveCategoriesListAsync(categoriesList);
-            await FileManager.renameCategory(oldName, newName);
+            
+            Category selectedCategory = (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory];
+            FileManager.UpdateCategory(selectedCategory.Uuid, newName, icon);
 
             (App.Current as App)._itemViewHolder.title = newName;
+            FileManager.CreateCategoriesObservableCollection();
             await FileManager.UpdateGridView();
-            await FileManager.CreateCategoriesObservableCollection();
         }
+        #endregion
     }
 }

@@ -1,15 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using UniversalSoundBoard.Model;
-using Windows.UI.Core;
+using UniversalSoundBoard.DataAccess;
+using UniversalSoundBoard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 
-namespace UniversalSoundBoard
+namespace UniversalSoundBoard.Converters
 {
     public class ValueConverterGroup : List<IValueConverter>, IValueConverter
     {
@@ -51,7 +48,7 @@ namespace UniversalSoundBoard
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            throw new NotImplementedException();
+            return (App.Current as App)._itemViewHolder.title;
         }
     }
 
@@ -122,6 +119,31 @@ namespace UniversalSoundBoard
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             return value as Category;
+        }
+    }
+
+    public class SelectedCategoryConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            // Get the index and return the category from the categories list at the index
+            int index = (int) value;
+            return (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory];
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            // Get the category and return the index
+            var category = value as Category;
+
+            int i = 0;
+            foreach(Category cat in (App.Current as App)._itemViewHolder.categories)
+            {
+                if (cat == category)
+                    return i;
+                i++;
+            }
+            return 0;
         }
     }
 }

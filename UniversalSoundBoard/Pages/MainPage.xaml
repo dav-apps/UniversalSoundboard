@@ -1,17 +1,18 @@
 ﻿<Page
-    x:Class="UniversalSoundBoard.MainPage"
+    x:Class="UniversalSoundBoard.Pages.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:UniversalSoundBoard"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:data="using:UniversalSoundBoard.Model"
     xmlns:appmodel="using:Windows.ApplicationModel"
+    xmlns:converters="using:UniversalSoundBoard.Converters"
+    xmlns:components="using:UniversalSoundBoard.Components"
+    xmlns:models="using:UniversalSoundBoard.Models"
     mc:Ignorable="d">
 
     <Page.Resources>
-        <local:ReturnValueConverter x:Name="ReturnValueConverter" />
-        
+        <converters:SelectedCategoryConverter x:Name="SelectedCategoryConverter" />
+
         <Style TargetType="TextBlock" x:Key="NavBarItemIconStyle">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
             <Setter Property="FontSize" Value="23" />
@@ -42,18 +43,21 @@
 
 
     <Grid>
-        <NavigationView Name="SideBar" AlwaysShowHeader="True" MenuItemsSource="{Binding categories, Mode=TwoWay}" 
-                        ItemInvoked="SideBar_ItemInvoked" ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}"
-                        SelectedItem="{Binding selectedCategory, Mode=TwoWay, Converter={StaticResource ReturnValueConverter}}">
+        <NavigationView Name="SideBar" 
+                        AlwaysShowHeader="True" 
+                        MenuItemsSource="{Binding categories, Mode=TwoWay}" 
+                        ItemInvoked="SideBar_ItemInvoked" 
+                        ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}"
+                        SelectedItem="{Binding selectedCategory, Mode=TwoWay, Converter={StaticResource SelectedCategoryConverter}}">
 
             <NavigationView.HeaderTemplate>
                 <DataTemplate>
-                    <local:NavigationViewHeader />
+                    <components:NavigationViewHeader />
                 </DataTemplate>
             </NavigationView.HeaderTemplate>
             
             <NavigationView.MenuItemTemplate>
-                <DataTemplate x:DataType="data:Category">
+                <DataTemplate x:DataType="models:Category">
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="{x:Bind Icon}" Style="{StaticResource NavBarItemIconStyle}"/>
                         <TextBlock Text="{x:Bind Name}" Style="{StaticResource NavBarItemTextStyle}"/>
@@ -66,17 +70,23 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Frame Name="ContentFrame" SourcePageType="{Binding page, Mode=TwoWay}" Grid.Row="0"/>
+                <Frame Name="ContentFrame" 
+                       SourcePageType="{Binding page, Mode=TwoWay}" 
+                       Grid.Row="0"/>
                 <ProgressRing Name="ProgressRing"                 
-				                Grid.Row="8" 
-				                Grid.Column="1"
-				                HorizontalAlignment="Center" VerticalAlignment="Center"
-				                Width="50" 
-				                Height="50" 
-				                IsActive="{Binding progressRingIsActive, Mode=TwoWay}" />
+				              Grid.Row="8" 
+				              Grid.Column="1"
+				              HorizontalAlignment="Center" VerticalAlignment="Center"
+				              Width="50" 
+				              Height="50" 
+				              IsActive="{Binding progressRingIsActive, Mode=TwoWay}" />
             </Grid>
         </NavigationView>
-        <TextBlock Name="WindowTitleTextBox" Text="{x:Bind appmodel:Package.Current.DisplayName}" VerticalAlignment="Top" HorizontalAlignment="Left"
-                   Margin="{Binding windowTitleMargin}" Style="{StaticResource CaptionTextBlockStyle}" />
+        <TextBlock Name="WindowTitleTextBox" 
+                   Style="{StaticResource CaptionTextBlockStyle}"
+                   Text="{x:Bind appmodel:Package.Current.DisplayName}" 
+                   VerticalAlignment="Top" 
+                   HorizontalAlignment="Left"
+                   Margin="{Binding windowTitleMargin}" />
     </Grid>
 </Page>

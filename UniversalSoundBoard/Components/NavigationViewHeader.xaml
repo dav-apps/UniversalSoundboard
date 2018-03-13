@@ -1,0 +1,335 @@
+﻿<UserControl
+    x:Class="UniversalSoundBoard.Components.NavigationViewHeader"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:components="using:UniversalSoundBoard.Components"
+    xmlns:models="using:UniversalSoundBoard.Models"
+    xmlns:converters="using:UniversalSoundBoard.Converters"
+    mc:Ignorable="d"
+    d:DesignHeight="100"
+    d:DesignWidth="1000"
+    SizeChanged="UserControl_SizeChanged">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="SoundItemTemplate" x:DataType="models:Sound">
+            <components:SoundItemTemplate />
+        </DataTemplate>
+
+        <converters:ValueConverterGroup x:Name="NormalOptionsInMoreButtonFlyoutVisibilityConverter">
+            <converters:ReverseBoolConverter />
+            <converters:MakeBoolFalseIfSelectOptionsVisible />
+        </converters:ValueConverterGroup>
+
+        <converters:ValueConverterGroup x:Name="SelectOptionsInMoreButtonFlyoutVisibilityConverter">
+            <converters:ReverseBoolConverter />
+            <converters:MakeBoolFalseIfNormalOptionsVisible />
+        </converters:ValueConverterGroup>
+
+        <converters:CutTitleConverter x:Name="CutTitleConverter" />
+        <converters:CollapsedButtonsWidthConverter x:Name="CollapsedButtonsWidthConverter" />
+        <converters:ReverseBoolConverter x:Name="ReverseBoolConverter" />
+
+        <Style TargetType="ListViewItem" x:Key="ListViewItemStyle">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+        
+        <Style TargetType="Button" x:Key="TopButtonStyle">
+            <Setter Property="Height" Value="50" />
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="FontSize" Value="17" />
+            <Setter Property="Margin" Value="10,0,0,0" />
+            <Setter Property="Background" Value="White" />
+        </Style>
+
+        <Style TargetType="StackPanel" x:Key="TopButtonInnerStackPanelStyle">
+            <Setter Property="Orientation" Value="Horizontal" />
+            <Setter Property="HorizontalAlignment" Value="Center" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+        </Style>
+
+        <Style TargetType="TextBlock" x:Key="TopButtonInnerTextStyle">
+            <Setter Property="Margin" Value="10,-4,0,0" />
+            <Setter Property="FontFamily" Value="Segoe UI" />
+        </Style>
+    </UserControl.Resources>
+
+    <RelativePanel Name="ContentRoot" 
+                   Margin="20,40,0,0">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock  Name="TitleTextBlock" 
+                        Style="{StaticResource TitleTextBlockStyle}"
+                        Text="{Binding title, 
+                        Converter={StaticResource CutTitleConverter}}" />
+            <SymbolIcon Name="CategoryEditButton" 
+						Symbol="Edit" 
+                        Margin="15,0,0,0" 
+                        Visibility="{Binding editButtonVisibility}"
+						Tapped="CategoryEditButton_Tapped" />
+            <SymbolIcon Name="CategoryDeleteButton" 
+						Symbol="Delete" 
+                        Margin="15,0,0,0" 
+                        Visibility="{Binding editButtonVisibility}"
+						Tapped="CategoryDeleteButton_Tapped" />
+            <Button Name="CategoryPlayAllButton" 
+                    Style="{StaticResource PlayAllButtonStyle}"
+                    Content="&#xEDB5;" 
+                    FontFamily="Segoe MDL2 Assets" 
+                    FontSize="20"
+                    Background="Transparent" 
+                    Height="25" 
+                    Width="20"
+					Margin="15,0,0,0" 
+                    Visibility="{Binding playAllButtonVisibility}" 
+                    Click="CategoryPlayAllButton_Click" />
+        </StackPanel>
+
+        <RelativePanel RelativePanel.AlignRightWithPanel="True" 
+                       Margin="0,0,10,0">
+            <StackPanel Name="NormalOptionsStackPanel" 
+                        Orientation="Horizontal" 
+                        Visibility="{Binding normalOptionsVisibility}">
+                <Button Name="VolumeButton" 
+                        Style="{StaticResource TopButtonStyle}" 
+                        VerticalAlignment="Center"
+                        Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}"
+                        Visibility="{Binding volumeButtonVisibility}" 
+                        Background="{x:Bind ContentRoot.Background}">
+                    <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
+                        <TextBlock Text="&#xE767;" 
+                                   FontFamily="Segoe MDL2 Assets" />
+                        <TextBlock x:Uid="VolumeButton" 
+                                   Style="{StaticResource TopButtonInnerTextStyle}"
+                                   Visibility="{Binding topButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}" />
+                    </StackPanel>
+
+                    <Button.Flyout>
+                        <Flyout>
+                            <Slider Name="VolumeSlider" 
+                                    ValueChanged="VolumeSlider_ValueChanged"
+						            Maximum="100" 
+                                    Minimum="0" 
+                                    Width="150" />
+                        </Flyout>
+                    </Button.Flyout>
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock x:Uid="VolumeButton" />
+                    </ToolTipService.ToolTip>
+                </Button>
+
+                <Button Name="AddButton" 
+                        Style="{StaticResource TopButtonStyle}"
+                        RelativePanel.RightOf="VolumeButton" 
+                        VerticalAlignment="Center"
+                        Visibility="{Binding addButtonVisibility}" 
+                        Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large, Mode=TwoWay}"
+                        Background="{x:Bind ContentRoot.Background}">
+                    <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
+                        <TextBlock Text="&#xE109;" 
+                                   FontFamily="Segoe MDL2 Assets" />
+                        <TextBlock x:Uid="AddButton" 
+                                   Style="{StaticResource TopButtonInnerTextStyle}"
+                                   Visibility="{Binding topButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}" />
+                    </StackPanel>
+
+                    <Button.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Name="NewSoundFlyoutItem" 
+                                            x:Uid="AddButton-Sound" 
+                                            Click="NewSoundFlyoutItem_Click" />
+                            <MenuFlyoutItem Name="NewCategoryFlyoutItem" 
+                                            x:Uid="AddButton-Category" 
+                                            Click="NewCategoryFlyoutItem_Click" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock x:Uid="AddButton" />
+                    </ToolTipService.ToolTip>
+                </Button>
+
+                <Button Name="SelectButton" 
+                        Style="{StaticResource TopButtonStyle}" 
+                        VerticalAlignment="Center"
+                        RelativePanel.RightOf="AddButton" 
+                        Visibility="{Binding selectButtonVisibility}"
+                        Height="50" 
+                        Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}" 
+                        FontSize="17" 
+                        Background="{x:Bind ContentRoot.Background}" 
+                        Click="SelectButton_Click">
+                    <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
+                        <TextBlock Text="&#xE133;" 
+                                   FontFamily="Segoe MDL2 Assets" />
+                        <TextBlock x:Uid="SelectButton" 
+                                   Style="{StaticResource TopButtonInnerTextStyle}"
+                                   Visibility="{Binding topButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}"/>
+                    </StackPanel>
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock x:Uid="SelectButton" />
+                    </ToolTipService.ToolTip>
+                </Button>
+
+                <AutoSuggestBox Name="SearchAutoSuggestBox"
+                                RelativePanel.RightOf="SelectButton"
+                                Width="200" 
+                                Canvas.ZIndex="1"
+                                x:Uid="Search" 
+                                Text="{Binding searchQuery, Mode=TwoWay}"
+					            VerticalAlignment="Center" 
+                                Visibility="{Binding searchAutoSuggestBoxVisibility}"
+					            QueryIcon="Find" 
+                                Margin="10,3,0,0" 
+                                Background="{x:Bind ContentRoot.Background}"
+                                TextChanged="SearchAutoSuggestBox_TextChanged" 
+                                QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted" />
+
+                <Button Name="SearchButton" 
+                        Style="{StaticResource TopButtonStyle}"
+                        RelativePanel.RightOf="SearchAutoSuggestBox"
+				        Content="&#xE094;" 
+                        Width="50"
+                        Background="{x:Bind ContentRoot.Background}"
+                        Visibility="{Binding searchButtonVisibility}"
+                        Click="SearchButton_Click">
+                    
+                    <ToolTipService.ToolTip>
+                        <TextBlock x:Uid="SearchButton" />
+                    </ToolTipService.ToolTip>
+                </Button>
+            </StackPanel>
+
+            <StackPanel Name="SelectOptionsStackPanel" 
+                        Orientation="Horizontal" 
+                        RelativePanel.RightOf="NormalOptionsStackPanel" 
+                        Visibility="{Binding normalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}">
+                <Button Name="CancelButton" 
+                        Style="{StaticResource TopButtonStyle}"
+				        Height="50" 
+                        Width="100"
+					    FontFamily="Segoe UI"
+				        x:Uid="CancelButton"
+                        Background="{x:Bind ContentRoot.Background}"
+                        Visibility="{Binding cancelButtonVisibility}"
+				        Click="CancelButton_Click">
+                </Button>
+
+                <Button Name="ShareButton" 
+                        Style="{StaticResource TopButtonStyle}" 
+                        VerticalAlignment="Center"
+                        Visibility="{Binding shareButtonVisibility}" 
+                        IsEnabled="{Binding areSelectButtonsEnabled}"
+                        Height="50" 
+                        Width="{Binding topButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=small}" 
+                        FontSize="17" 
+                        Background="{x:Bind ContentRoot.Background}" 
+                        Click="ShareButton_Click">
+                    <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
+                        <TextBlock Text="&#xE72D;" 
+                                   FontFamily="Segoe MDL2 Assets" />
+                        <TextBlock x:Uid="ShareButton" 
+                                   Style="{StaticResource TopButtonInnerTextStyle}"
+                                   Visibility="{Binding topButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}"/>
+                    </StackPanel>
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock x:Uid="ShareButton" />
+                    </ToolTipService.ToolTip>
+                </Button>
+
+                <Button Name="PlaySoundsButton" 
+                        IsEnabled="{Binding areSelectButtonsEnabled}" 
+                        Style="{StaticResource TopButtonStyle}"
+				        Content="&#xE768;" 
+                        Width="50" 
+                        Background="{x:Bind ContentRoot.Background}">
+                    <Button.Flyout>
+                        <MenuFlyout Placement="Bottom">
+                            <MenuFlyoutItem Name="PlaySoundsSimultaneouslyFlyoutItem" 
+                                            x:Uid="PlaySoundsSimultaneously" 
+                                            Click="PlaySoundsSimultaneouslyFlyoutItem_Click"/>
+                            <MenuFlyoutItem Name="PlaySoundsSuccessivelyFlyoutItem" 
+                                            x:Uid="PlaySoundsSuccessively" 
+                                            Click="PlaySoundsSuccessivelyFlyoutItem_Click" />
+                        </MenuFlyout>
+                    </Button.Flyout>
+                </Button>
+            </StackPanel>
+
+
+            <Button Name="MoreButton" 
+                    Style="{StaticResource TopButtonStyle}"
+                    RelativePanel.RightOf="SelectOptionsStackPanel"
+                    Content="&#xE10C;"
+                    Width="50" 
+                    Visibility="{Binding moreButtonVisibility}"
+                    Background="{x:Bind ContentRoot.Background}"
+                    Click="MoreButton_Click">
+                <Button.Flyout>
+                    <MenuFlyout Placement="Bottom">
+                        <!-- #region Normal Options -->
+                        <MenuFlyoutItem Name="VolumeFlyout" 
+                                        Icon="Volume" 
+                                        x:Uid="VolumeButton"
+                                        Visibility="{Binding volumeButtonVisibility, Converter={StaticResource NormalOptionsInMoreButtonFlyoutVisibilityConverter}}"
+                                        Click="VolumeFlyout_Click">
+                            <MenuFlyoutItem.ContextFlyout>
+                                <Flyout>
+                                    <Slider Name="VolumeSlider2" 
+                                            ValueChanged="VolumeSlider_ValueChanged"
+						                    Maximum="100" 
+                                            Minimum="0" 
+                                            Width="150" />
+                                </Flyout>
+                            </MenuFlyoutItem.ContextFlyout>
+                        </MenuFlyoutItem>
+                        <MenuFlyoutSubItem Name="AddFlyout" 
+                                           Icon="Add" 
+                                           x:Uid="AddButton"
+                                           Visibility="{Binding addButtonVisibility, Converter={StaticResource NormalOptionsInMoreButtonFlyoutVisibilityConverter}}">
+                            <MenuFlyoutItem Name="NewSoundFlyoutItem2" 
+                                            x:Uid="AddButton-Sound" 
+                                            Click="NewSoundFlyoutItem_Click" />
+                            <MenuFlyoutItem Name="NewCategoryFlyoutItem2" 
+                                            x:Uid="AddButton-Category" 
+                                            Click="NewCategoryFlyoutItem_Click" />
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutItem Name="SelectFlyout" 
+                                        x:Uid="SelectButton"
+                                        Icon="Bullets" 
+                                        Visibility="{Binding selectButtonVisibility, Converter={StaticResource NormalOptionsInMoreButtonFlyoutVisibilityConverter}}"
+                                        Click="SelectButton_Click" />
+                        <!-- #endregion Normal Options -->
+
+                        <!-- #region Selection Options -->
+                        <MenuFlyoutSubItem Name="MoreButton_ChangeCategoryFlyout" 
+                                           x:Uid="MoreButton-ChangeCategory" 
+                                           IsEnabled="{Binding areSelectButtonsEnabled}"
+                                           Visibility="{Binding normalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}">
+                        </MenuFlyoutSubItem>
+                        <MenuFlyoutItem Name="MoreButton_ShareFlyout" 
+                                        x:Uid="MoreButton-Share" 
+                                        Icon="Share"
+                                        IsEnabled="{Binding areSelectButtonsEnabled}"
+                                        Visibility="{Binding shareButtonVisibility, Converter={StaticResource SelectOptionsInMoreButtonFlyoutVisibilityConverter}}"
+                                        Click="ShareButton_Click" />
+                        <MenuFlyoutItem Name="MoreButton_DeleteSoundsFlyout" 
+                                        x:Uid="MoreButton-DeleteSounds" Click="MoreButton_DeleteSoundsFlyout_Click"
+                                        Icon="Delete" 
+                                        IsEnabled="{Binding areSelectButtonsEnabled}"
+                                        Visibility="{Binding normalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}" />
+
+                        <MenuFlyoutItem Name="MoreButton_Cancel"
+                                        x:Uid="MoreButton-Cancel" 
+                                        Visibility="{Binding cancelButtonVisibility, Converter={StaticResource SelectOptionsInMoreButtonFlyoutVisibilityConverter}}"
+                                        Click="CancelButton_Click" />
+                        <!-- #endregion Selection Options -->
+                    </MenuFlyout>
+                </Button.Flyout>
+            </Button>
+        </RelativePanel>
+    </RelativePanel>
+</UserControl>

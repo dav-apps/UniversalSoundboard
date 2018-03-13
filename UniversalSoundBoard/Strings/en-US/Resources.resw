@@ -221,7 +221,7 @@
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>1.3</value>
+    <value>1.4</value>
   </data>
   <data name="PlayingSound_CastButton.Label" xml:space="preserve">
     <value>Cast to Device</value>
@@ -394,5 +394,11 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="ShareDialog-Title" xml:space="preserve">
     <value>Shared with UniversalSoundboard</value>
+  </data>
+  <data name="UpgradeDataMessage.Text" xml:space="preserve">
+    <value>Applying the update. Please do not close or minimize the app.</value>
+  </data>
+  <data name="UpgradeDataStatusMessage-Preparing" xml:space="preserve">
+    <value>Preparing...</value>
   </data>
 </root>

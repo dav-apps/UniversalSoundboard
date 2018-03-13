@@ -1,26 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using UniversalSoundBoard.Model;
+using UniversalSoundBoard.Common;
+using UniversalSoundBoard.DataAccess;
+using UniversalSoundBoard.Models;
+using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.Media.Playback;
 using Windows.Storage;
-using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundBoard
@@ -68,7 +59,8 @@ namespace UniversalSoundBoard
             moreButtonVisibility = true,
             topButtonsCollapsed = false,
             areSelectButtonsEnabled = false,
-            selectedCategory = new Category((new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), "\uE10F")
+            selectedCategory = 0,
+            upgradeDataStatusText = "Preparing..."
         };
 
         /// <summary>
@@ -80,8 +72,11 @@ namespace UniversalSoundBoard
             Microsoft.ApplicationInsights.WindowsAppInitializer.InitializeAsync(
                 Microsoft.ApplicationInsights.WindowsCollectors.Metadata |
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
-            this.InitializeComponent();
-            this.Suspending += OnSuspending;
+            InitializeComponent();
+            Suspending += OnSuspending;
+
+            // Initialize Database
+            DatabaseOperations.InitializeDatabase();
 
             // Set dark theme
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -102,6 +97,8 @@ namespace UniversalSoundBoard
             {
                 localSettings.Values["theme"] = FileManager.theme;
             }
+
+            FileManager.CreateCategoriesObservableCollection();
         }
 
         /// <summary>
@@ -109,7 +106,7 @@ namespace UniversalSoundBoard
         /// will be used such as when the application is launched to open a specific file.
         /// </summary>
         /// <param name="e">Details about the launch request and process.</param>
-        protected override void OnLaunched(LaunchActivatedEventArgs e)
+        protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -143,6 +140,18 @@ namespace UniversalSoundBoard
                 // Ensure the current window is active
                 Window.Current.Activate();
             }
+
+            if (e.PreviousExecutionState != ApplicationExecutionState.Running)
+            {
+                if(await FileManager.UsesOldDataModel())
+                {
+                    bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
+                    UpgradeDataSplashScreen upgradeDataSplashScreen = new UpgradeDataSplashScreen(e.SplashScreen, loadState);
+                    Window.Current.Content = upgradeDataSplashScreen;
+                }
+            }
+
+            Window.Current.Activate();
         }
 
         void CreateRootFrame(ApplicationExecutionState previousExecutionState, string arguments)
@@ -205,7 +214,7 @@ namespace UniversalSoundBoard
             deferral.Complete();
         }
 
-        protected override async void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
+        protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
             ShareOperation shareOperation = args.ShareOperation;
             if (shareOperation.Data.Contains(StandardDataFormats.StorageItems))
