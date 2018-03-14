@@ -61,14 +61,14 @@ namespace UniversalSoundBoard.Models
             Randomly = false;
         }
 
-        public PlayingSound(List<Sound> sounds, MediaPlayer player, int repetitions, bool randomly)
+        public PlayingSound(List<Sound> sounds, MediaPlayer player, int repetitions, bool randomly, int current)
         {
             Sounds = new List<Sound>();
             foreach (Sound sound in sounds)
             {
                 Sounds.Add(sound);
             }
-            CurrentSound = sounds.First();
+            CurrentSound = sounds[current];
             MediaPlayer = player;
             Repetitions = repetitions;
             Randomly = randomly;

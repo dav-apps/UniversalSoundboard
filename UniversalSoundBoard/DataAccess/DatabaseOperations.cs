@@ -11,6 +11,7 @@ namespace UniversalSoundBoard.DataAccess
         private const string DatabaseName = "universalsoundboard.db";
         private const string CategoryTableName = "Category";
         private const string SoundTableName = "Sound";
+        private const string PlayingSoundTableName = "PlayingSound";
 
         public static void InitializeDatabase()
         {
@@ -24,7 +25,7 @@ namespace UniversalSoundBoard.DataAccess
                                         " (id INTEGER PRIMARY KEY, " +
                                         "uuid VARCHAR NOT NULL, " +
                                         "name VARCHAR(100) NOT NULL, " +
-                                        "icon VARCHAR)";
+                                        "icon VARCHAR);";
                 SqliteCommand categoryTableCommand = new SqliteCommand(categoryTableCommandText, db);
                 try
                 {
@@ -56,6 +57,26 @@ namespace UniversalSoundBoard.DataAccess
                     Debug.WriteLine("Error in create sound table");
                     Debug.WriteLine(e.Message);
                 }
+
+                // Create PlayingSound table
+                string playingSoundTableCommandText = "CREATE TABLE IF NOT EXISTS " + PlayingSoundTableName +
+                                                    " (id VARCHAR PRIMARY KEY, " +
+                                                    "uuid VARCHAR NOT NULL, " +
+                                                    "sound_ids TEXT NOT NULL, " +
+                                                    "current INTEGER DEFAULT 0, " +
+                                                    "repetitions INTEGER DEFAULT 0, " +
+                                                    "randomly BOOLEAN DEFAULT false);";
+                SqliteCommand playingSoundTableCommand = new SqliteCommand(playingSoundTableCommandText, db);
+                try
+                {
+                    playingSoundTableCommand.ExecuteReader();
+                }
+                catch(SqliteException e)
+                {
+                    Debug.WriteLine("Error in create playingSound table");
+                    Debug.WriteLine(e.Message);
+                }
+
                 db.Close();
             }
         }
@@ -101,7 +122,7 @@ namespace UniversalSoundBoard.DataAccess
             using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
             {
                 db.Open();
-                string selectCommandText = "SELECT * FROM " + SoundTableName + " WHERE uuid = @Uuid";
+                string selectCommandText = "SELECT * FROM " + SoundTableName + " WHERE uuid = @Uuid;";
                 SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
                 selectCommand.Parameters.AddWithValue("@Uuid", uuid);
                 SqliteDataReader query;
@@ -145,6 +166,52 @@ namespace UniversalSoundBoard.DataAccess
                 db.Close();
                 return null;
             }
+        }
+
+        public static List<object> GetAllPlayingSounds()
+        {
+            List<object> entries = new List<object>();
+            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            {
+                db.Open();
+                string selectCommandText = "SELECT * FROM " + PlayingSoundTableName + ";";
+
+                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
+                SqliteDataReader query;
+
+                try
+                {
+                    query = selectCommand.ExecuteReader();
+                }
+                catch (SqliteException e)
+                {
+                    Debug.WriteLine("Error in GetAllPlayingSounds");
+                    Debug.WriteLine(e.Message);
+                    return entries;
+                }
+
+                while (query.Read())
+                {
+                    string uuid = query.GetString(1);
+                    string soundIds = query.GetString(2);
+                    int current = query.GetInt32(3);
+                    int repetitions = query.GetInt32(4);
+                    bool randomly = query.GetBoolean(5);
+
+                    var obj = new
+                    {
+                        uuid,
+                        soundIds,
+                        current,
+                        repetitions,
+                        randomly
+                    };
+
+                    entries.Add(obj);
+                }
+                db.Close();
+            }
+            return entries;
         }
 
         public static List<object> GetAllSounds()
@@ -203,27 +270,27 @@ namespace UniversalSoundBoard.DataAccess
                 string updateCommandText = "UPDATE " + SoundTableName + " SET ";
                 SqliteCommand updateCommand = new SqliteCommand();
                 
-                if (name != null)
+                if (!String.IsNullOrEmpty(name))
                 {
                     updateCommandText += "name = @Name, ";
                     updateCommand.Parameters.AddWithValue("@Name", name);
                 }
-                if(category_id != null)
+                if(!String.IsNullOrEmpty(category_id))
                 {
                     updateCommandText += "category_id = @CategoryId, ";
                     updateCommand.Parameters.AddWithValue("@CategoryId", category_id);
                 }
-                if(sound_ext != null)
+                if(!String.IsNullOrEmpty(sound_ext))
                 {
                     updateCommandText += "sound_ext = @SoundExt, ";
                     updateCommand.Parameters.AddWithValue("@SoundExt", sound_ext);
                 }
-                if(image_ext != null)
+                if(!String.IsNullOrEmpty(image_ext))
                 {
                     updateCommandText += "image_ext = @ImageExt, ";
                     updateCommand.Parameters.AddWithValue("@ImageExt", image_ext);
                 }
-                if(favourite != null)
+                if(!String.IsNullOrEmpty(favourite))
                 {
                     updateCommandText += "favourite = @Favourite, ";
                     updateCommand.Parameters.AddWithValue("@Favourite", favourite.ToLower() == "true");
@@ -428,6 +495,177 @@ namespace UniversalSoundBoard.DataAccess
                 }
                 db.Close();
             }
+        }
+
+        public static void AddPlayingSound(string uuid, List<string> soundIds, int current, int repetitions, bool randomly)
+        {
+            string soundIdsString = ConvertIdListToString(soundIds);
+
+            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            {
+                db.Open();
+                SqliteCommand insertCommand = new SqliteCommand();
+                insertCommand.Connection = db;
+
+                insertCommand.CommandText = "INSERT INTO " + PlayingSoundTableName +
+                                            " (uuid, sound_ids, current, repetitions, randomly) " +
+                                            "VALUES (@Uuid, @SoundIds, @Current, @Repetitions, @Randomly);";
+
+                insertCommand.Parameters.AddWithValue("@Uuid", uuid);
+                insertCommand.Parameters.AddWithValue("@SoundIds", soundIdsString);
+                insertCommand.Parameters.AddWithValue("@Current", current);
+                insertCommand.Parameters.AddWithValue("@Repetitions", repetitions);
+                insertCommand.Parameters.AddWithValue("@Randomly", randomly);
+
+                try
+                {
+                    insertCommand.ExecuteReader();
+                }
+                catch (SqliteException error)
+                {
+                    Debug.WriteLine("Error in AddPlayingSound");
+                    Debug.WriteLine(error.Message);
+                }
+                db.Close();
+            }
+        }
+
+        public static object GetPlayingSound(string uuid)
+        {
+            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            {
+                db.Open();
+                string selectCommandText = "SELECT * FROM " + PlayingSoundTableName + " WHERE uuid = @Uuid;";
+                SqliteCommand selectCommand = new SqliteCommand(selectCommandText);
+                selectCommand.Parameters.AddWithValue("@Uuid", uuid);
+                SqliteDataReader query;
+
+                try
+                {
+                    query = selectCommand.ExecuteReader();
+                }
+                catch (SqliteException e)
+                {
+                    Debug.WriteLine("Error in GetPlayingSound");
+                    Debug.WriteLine(e.Message);
+                    return null;
+                }
+
+                bool soundExists = false;
+                object obj = new object();
+                while (query.Read())
+                {
+                    uuid = query.GetString(1);
+                    string soundIds = query.GetString(2);
+                    int current = query.GetInt32(3);
+                    int repetitions = query.GetInt32(4);
+                    bool randomly = query.GetBoolean(5);
+
+                    obj = new
+                    {
+                        uuid,
+                        soundIds,
+                        current,
+                        repetitions,
+                        randomly
+                    };
+                    soundExists = true;
+                }
+
+                if (soundExists)
+                    return obj;
+
+                db.Close();
+                return null;
+            }
+        }
+
+        public static void UpdatePlayingSound(string uuid, List<string> soundIds, string current, string repetitions, string randomly)
+        {
+            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            {
+                db.Open();
+                string updateCommandText = "UPDATE " + PlayingSoundTableName + " SET ";
+                SqliteCommand updateCommand = new SqliteCommand();
+                
+                if(soundIds != null)
+                {
+                    string soundIdsString = ConvertIdListToString(soundIds);
+                    updateCommandText += "sound_ids = @SoundIds, ";
+                    updateCommand.Parameters.AddWithValue("@SoundIds", soundIdsString);
+                }
+                if(String.IsNullOrEmpty(current))
+                {
+                    updateCommandText += "current = @Current, ";
+                    updateCommand.Parameters.AddWithValue("@Current", current);
+                }
+                if (String.IsNullOrEmpty(repetitions))
+                {
+                    updateCommandText += "repetitions = @Repetitions, ";
+                    updateCommand.Parameters.AddWithValue("@Repetitions", repetitions);
+                }
+                if (String.IsNullOrEmpty(randomly))
+                {
+                    updateCommandText += "randomly = @Randomly, ";
+                    updateCommand.Parameters.AddWithValue("@Randomly", randomly);
+                }
+                updateCommandText = updateCommandText.Remove(updateCommandText.Length - 2);
+                updateCommandText += " WHERE uuid = @Uuid;";
+                updateCommand.Parameters.AddWithValue("@Uuid", uuid);
+
+                updateCommand.Connection = db;
+                updateCommand.CommandText = updateCommandText;
+
+                try
+                {
+                    updateCommand.ExecuteReader();
+                }
+                catch (SqliteException error)
+                {
+                    Debug.WriteLine("Error in UpdatePlayingSound");
+                    Debug.WriteLine(error.Message);
+                }
+                db.Close();
+            }
+        }
+
+        public static void DeletePlayingSound(string uuid)
+        {
+            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            {
+                db.Open();
+                SqliteCommand insertCommand = new SqliteCommand();
+                insertCommand.Connection = db;
+
+                insertCommand.CommandText = "DELETE FROM " + PlayingSoundTableName + " WHERE uuid = @Uuid;";
+                insertCommand.Parameters.AddWithValue("@Uuid", uuid);
+
+                try
+                {
+                    insertCommand.ExecuteReader();
+                }
+                catch (SqliteException error)
+                {
+                    Debug.WriteLine("Error in DeletePlayingSound");
+                    Debug.WriteLine(error.Message);
+                }
+                db.Close();
+            }
+        }
+
+
+        // Other methods
+        private static string ConvertIdListToString(List<string> ids)
+        {
+            string idsString = "";
+            foreach (string id in ids)
+            {
+                idsString += id + ",";
+            }
+            // Remove the last character, which is a ,
+            idsString = idsString.Remove(idsString.Length - 1);
+
+            return idsString;
         }
     }
 }

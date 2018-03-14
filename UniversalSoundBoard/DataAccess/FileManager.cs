@@ -13,8 +13,12 @@ using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
+using Windows.Media;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
+using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
@@ -255,65 +259,11 @@ namespace UniversalSoundBoard.DataAccess
         {
             List<object> soundObjects = DatabaseOperations.GetAllSounds();
             List<Sound> sounds = new List<Sound>();
-            StorageFolder soundsFolder = await GetSoundsFolderAsync();
-            StorageFolder imagesFolder = await GetImagesFolderAsync();
+            
 
             foreach (object obj in soundObjects)
             {
-                string uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString();
-                string name = obj.GetType().GetProperty("name").GetValue(obj).ToString();
-                bool favourite = obj.GetType().GetProperty("favourite").GetValue(obj).ToString().ToLower() == "true";
-                string sound_ext = obj.GetType().GetProperty("sound_ext").GetValue(obj).ToString();
-                string image_ext = obj.GetType().GetProperty("image_ext").GetValue(obj).ToString();
-                string category_id = obj.GetType().GetProperty("category_id").GetValue(obj).ToString();
-
-                Sound sound = new Sound(uuid, name, favourite);
-
-                // Get the category of the sound
-                if (!String.IsNullOrEmpty(category_id))
-                {
-                    var foundCategories = (App.Current as App)._itemViewHolder.categories.Where(cat => cat.Uuid == category_id);
-                    if (foundCategories.Count() > 0)
-                    {
-                        sound.Category = foundCategories.First();
-                    }
-                }
-
-
-                // Get Image for Sound
-                BitmapImage image = new BitmapImage();
-
-                Uri defaultImageUri;
-                if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
-                {
-                    defaultImageUri = new Uri("ms-appx:///Assets/Images/default-dark.png", UriKind.Absolute);
-                }
-                else
-                {
-                    defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
-                }
-                image.UriSource = defaultImageUri;
-
-                if (!String.IsNullOrEmpty(image_ext))
-                {
-                    string imageFileName = uuid + "." + image_ext;
-
-                    try
-                    {
-                        StorageFile imageFile = await imagesFolder.GetFileAsync(imageFileName);
-
-                        Uri uri = new Uri(imageFile.Path, UriKind.Absolute);
-                        image.UriSource = uri;
-                        sound.ImageFile = imageFile;
-                    }
-                    catch (Exception e) { }
-                }
-                sound.Image = image;
-
-                // Add the sound file to the sound
-                string soundFileName = uuid + "." + sound_ext;
-                sound.AudioFile = await soundsFolder.GetFileAsync(soundFileName);
-
+                Sound sound = await GetSoundByObject(obj);
                 sounds.Add(sound);
             }
             (App.Current as App)._itemViewHolder.allSoundsChanged = false;
@@ -508,6 +458,62 @@ namespace UniversalSoundBoard.DataAccess
         {
             DatabaseOperations.DeleteCategory(uuid);
             CreateCategoriesObservableCollection();
+        }
+
+        public static void AddPlayingSound(string uuid, List<string> soundIds, int current, int repetitions, bool randomly)
+        {
+            if (uuid == null)
+                uuid = Guid.NewGuid().ToString();
+
+            if(DatabaseOperations.GetPlayingSound(uuid) != null)
+            {
+                DatabaseOperations.AddPlayingSound(uuid, soundIds, current, repetitions, randomly);
+            }
+        }
+
+        public static async Task<List<PlayingSound>> GetAllPlayingSounds()
+        {
+            List<object> playingSoundObjects = DatabaseOperations.GetAllPlayingSounds();
+            List<PlayingSound> playingSounds = new List<PlayingSound>();
+
+            foreach(object obj in playingSoundObjects)
+            {
+                string uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString();
+                string soundIds = obj.GetType().GetProperty("soundIds").GetValue(obj).ToString();
+                int current = int.Parse(obj.GetType().GetProperty("current").GetValue(obj).ToString());
+                int repetitions = int.Parse(obj.GetType().GetProperty("repetitions").GetValue(obj).ToString());
+                bool randomly = bool.Parse(obj.GetType().GetProperty("soundIds").GetValue(obj).ToString());
+
+                List<Sound> sounds = new List<Sound>();
+                // Get the sounds
+                foreach (string id in soundIds.Split(","))
+                {
+                    object soundObject = DatabaseOperations.GetSound(id);
+                    if (soundObject != null)
+                        sounds.Add(await GetSoundByObject(soundObject));
+                }
+
+                // Create the media player
+                MediaPlayer player = CreateMediaPlayer(sounds, randomly);
+
+                PlayingSound playingSound = new PlayingSound(sounds, player, repetitions, randomly, current);
+            }
+            return playingSounds;
+        }
+
+        public static void SetCurrentOfPlayingSound(string uuid, int current)
+        {
+            DatabaseOperations.UpdatePlayingSound(uuid, null, current.ToString(), null, null);
+        }
+
+        public static void SetRepetitionsOfPlayingSound(string uuid, int repetitions)
+        {
+            DatabaseOperations.UpdatePlayingSound(uuid, null, null, repetitions.ToString(), null);
+        }
+
+        public static void DeletePlayingSound(string uuid)
+        {
+            DatabaseOperations.DeletePlayingSound(uuid);
         }
         #endregion
 
@@ -1286,6 +1292,116 @@ namespace UniversalSoundBoard.DataAccess
                     (App.Current as App)._itemViewHolder.allSoundsChanged = true;
                 });
             }
+        }
+
+        private static async Task<Sound> GetSoundByObject(object obj)
+        {
+            StorageFolder soundsFolder = await GetSoundsFolderAsync();
+            StorageFolder imagesFolder = await GetImagesFolderAsync();
+
+            string uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString();
+            string name = obj.GetType().GetProperty("name").GetValue(obj).ToString();
+            bool favourite = bool.Parse(obj.GetType().GetProperty("favourite").GetValue(obj).ToString());
+            string sound_ext = obj.GetType().GetProperty("sound_ext").GetValue(obj).ToString();
+            string image_ext = obj.GetType().GetProperty("image_ext").GetValue(obj).ToString();
+            string category_id = obj.GetType().GetProperty("category_id").GetValue(obj).ToString();
+
+            Sound sound = new Sound(uuid, name, favourite);
+
+            // Get the category of the sound
+            if (!String.IsNullOrEmpty(category_id))
+            {
+                var foundCategories = (App.Current as App)._itemViewHolder.categories.Where(cat => cat.Uuid == category_id);
+                if (foundCategories.Count() > 0)
+                {
+                    sound.Category = foundCategories.First();
+                }
+            }
+
+            // Get Image for Sound
+            BitmapImage image = new BitmapImage();
+
+            Uri defaultImageUri;
+            if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
+            {
+                defaultImageUri = new Uri("ms-appx:///Assets/Images/default-dark.png", UriKind.Absolute);
+            }
+            else
+            {
+                defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
+            }
+            image.UriSource = defaultImageUri;
+
+            if (!String.IsNullOrEmpty(image_ext))
+            {
+                string imageFileName = uuid + "." + image_ext;
+
+                try
+                {
+                    StorageFile imageFile = await imagesFolder.GetFileAsync(imageFileName);
+
+                    Uri uri = new Uri(imageFile.Path, UriKind.Absolute);
+                    image.UriSource = uri;
+                    sound.ImageFile = imageFile;
+                }
+                catch (Exception e) { }
+            }
+            sound.Image = image;
+
+            // Add the sound file to the sound
+            string soundFileName = uuid + "." + sound_ext;
+            sound.AudioFile = await soundsFolder.GetFileAsync(soundFileName);
+
+            return sound;
+        }
+
+        public static MediaPlayer CreateMediaPlayer(List<Sound> sounds, bool randomly)
+        {
+            // If randomly is true, shuffle sounds
+            if (randomly)
+            {
+                Random random = new Random();
+                sounds = sounds.OrderBy(a => random.Next()).ToList();
+            }
+
+            MediaPlayer player = new MediaPlayer();
+            MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
+
+            foreach (Sound sound in sounds)
+            {
+                MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(sound.AudioFile));
+
+                MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
+                props.Type = MediaPlaybackType.Music;
+                props.MusicProperties.Title = sound.Name;
+                if (sound.Category != null)
+                {
+                    props.MusicProperties.Artist = sound.Category.Name;
+                }
+                if (sound.ImageFile != null)
+                {
+                    props.Thumbnail = RandomAccessStreamReference.CreateFromFile(sound.ImageFile);
+                }
+
+                mediaPlaybackItem.ApplyDisplayProperties(props);
+
+                mediaPlaybackList.Items.Add(mediaPlaybackItem);
+            }
+            player.Source = mediaPlaybackList;
+
+            // Set volume
+            var localSettings = ApplicationData.Current.LocalSettings;
+            if (localSettings.Values["volume"] != null)
+            {
+                player.Volume = (double)localSettings.Values["volume"];
+            }
+            else
+            {
+                localSettings.Values["volume"] = 1.0;
+                player.Volume = 1.0;
+            }
+
+            return player;
         }
         #endregion
 

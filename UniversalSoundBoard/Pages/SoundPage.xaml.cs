@@ -5,12 +5,8 @@ using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Media;
-using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
-using Windows.Storage.Streams;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -199,50 +195,9 @@ namespace UniversalSoundBoard.Pages
         
         public static void PlaySound(Sound sound)
         {
-            MediaPlayer player = new MediaPlayer();
-            MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
-
-            MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(sound.AudioFile));
-
-            MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
-            props.Type = MediaPlaybackType.Music;
-            props.MusicProperties.Title = sound.Name;
-            if (sound.Category != null)
-            {
-                props.MusicProperties.Artist = sound.Category.Name;
-            }
-            if(sound.ImageFile != null)
-            {
-                props.Thumbnail = RandomAccessStreamReference.CreateFromFile(sound.ImageFile);
-            }
-
-            mediaPlaybackItem.ApplyDisplayProperties(props);
-            mediaPlaybackList.Items.Add(mediaPlaybackItem);
-            player.Source = mediaPlaybackList;
-
-            // Set volume
-            var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["volume"] != null)
-            {
-                player.Volume = (double)localSettings.Values["volume"];
-            }
-            else
-            {
-                localSettings.Values["volume"] = 1.0;
-                player.Volume = 1.0;
-            }
-
-            // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
-            if((App.Current as App)._itemViewHolder.playOneSoundAtOnce)
-            {
-                List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
-                foreach (PlayingSound pSound in (App.Current as App)._itemViewHolder.playingSounds)
-                {
-                    removedPlayingSounds.Add(pSound);
-                }
-
-                RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
-            }
+            List<Sound> soundList = new List<Sound>();
+            soundList.Add(sound);
+            MediaPlayer player = FileManager.CreateMediaPlayer(soundList, false);
 
             PlayingSound playingSound = new PlayingSound(sound, player);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
@@ -255,49 +210,7 @@ namespace UniversalSoundBoard.Pages
                 return;
             }
 
-            // If randomly is true, shuffle sounds
-            if (randomly)
-            {
-                Random random = new Random();
-                sounds = sounds.OrderBy(a => random.Next()).ToList();
-            }
-
-            MediaPlayer player = new MediaPlayer();
-            MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
-
-            foreach(Sound sound in sounds)
-            {
-                MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(sound.AudioFile));
-
-                MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
-                props.Type = MediaPlaybackType.Music;
-                props.MusicProperties.Title = sound.Name;
-                if (sound.Category != null)
-                {
-                    props.MusicProperties.Artist = sound.Category.Name;
-                }
-                if (sound.ImageFile != null)
-                {
-                    props.Thumbnail = RandomAccessStreamReference.CreateFromFile(sound.ImageFile);
-                }
-
-                mediaPlaybackItem.ApplyDisplayProperties(props);
-
-                mediaPlaybackList.Items.Add(mediaPlaybackItem);
-            }
-            player.Source = mediaPlaybackList;
-
-            // Set volume
-            var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["volume"] != null)
-            {
-                player.Volume = (double)localSettings.Values["volume"];
-            }
-            else
-            {
-                localSettings.Values["volume"] = 1.0;
-                player.Volume = 1.0;
-            }
+            MediaPlayer player = FileManager.CreateMediaPlayer(sounds, randomly);
 
             // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
             if ((App.Current as App)._itemViewHolder.playOneSoundAtOnce)
@@ -311,7 +224,7 @@ namespace UniversalSoundBoard.Pages
                 RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
             }
 
-            PlayingSound playingSound = new PlayingSound(sounds, player, repetitions, randomly);
+            PlayingSound playingSound = new PlayingSound(sounds, player, repetitions, randomly, 0);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
         
