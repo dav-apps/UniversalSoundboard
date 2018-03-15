@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
@@ -24,7 +25,7 @@ namespace UniversalSoundBoard.Components
         
         public PlayingSoundTemplate()
         {
-            this.InitializeComponent();
+            InitializeComponent();
             Loaded += PlayingSoundTemplate_Loaded;
 
             SetDarkThemeLayout();
@@ -39,7 +40,6 @@ namespace UniversalSoundBoard.Components
             if(DataContext != null)
             {
                 PlayingSound = DataContext as PlayingSound;
-
                 InitializePlayingSound();
             }
         }
@@ -81,7 +81,8 @@ namespace UniversalSoundBoard.Components
         
         private void RepeatSound(int repetitions)
         {
-            PlayingSound.Repetitions = repetitions + 1;
+            PlayingSound.Repetitions = ++repetitions;
+            FileManager.SetRepetitionsOfPlayingSound(PlayingSound.Uuid, ++repetitions);
         }
         
         private void InitializePlayingSound()
@@ -94,10 +95,6 @@ namespace UniversalSoundBoard.Components
                 ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
                 ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
                 PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
-                if(PlayingSound.Repetitions >= 0)
-                {
-                    MediaPlayerElement.MediaPlayer.Play();
-                }
 
                 // Set the text of the add to Favourites Flyout
                 FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
@@ -127,6 +124,7 @@ namespace UniversalSoundBoard.Components
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 PlayingSound.Repetitions--;
+                FileManager.SetRepetitionsOfPlayingSound(PlayingSound.Uuid, PlayingSound.Repetitions);
                 if (PlayingSound.Repetitions <= 0)
                 {
                     RemovePlayingSound();
@@ -172,6 +170,9 @@ namespace UniversalSoundBoard.Components
                             PlayingSound.Sounds.Clear();
                             foreach (var item in newSoundsList)
                                 PlayingSound.Sounds.Add(item);
+
+                            // Update PlayingSound in the Database
+                            FileManager.SetSoundsListOfPlayingSound(PlayingSound.Uuid, newSoundsList);
                         }
 
                         ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveTo(0);
@@ -187,7 +188,9 @@ namespace UniversalSoundBoard.Components
             {
                 if(PlayingSound.Sounds.Count > 1 && sender.CurrentItemIndex < PlayingSound.Sounds.Count)
                 {
-                    PlayingSound.CurrentSound = PlayingSound.Sounds.ElementAt((int)sender.CurrentItemIndex);
+                    int currentItemIndex = (int)sender.CurrentItemIndex;
+                    PlayingSound.CurrentSound = PlayingSound.Sounds.ElementAt(currentItemIndex);
+                    FileManager.SetCurrentOfPlayingSound(PlayingSound.Uuid, currentItemIndex);
                     PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
 
                     // Set the text of the add to Favourites Flyout

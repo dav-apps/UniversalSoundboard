@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
@@ -200,6 +201,7 @@ namespace UniversalSoundBoard.Pages
             MediaPlayer player = FileManager.CreateMediaPlayer(soundList, false);
 
             PlayingSound playingSound = new PlayingSound(sound, player);
+            playingSound.Uuid = FileManager.AddPlayingSound(null, soundList, 0, 0, false);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
         
@@ -224,12 +226,14 @@ namespace UniversalSoundBoard.Pages
                 RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
             }
 
-            PlayingSound playingSound = new PlayingSound(sounds, player, repetitions, randomly, 0);
+            PlayingSound playingSound = new PlayingSound(null, sounds, player, repetitions, randomly, 0);
+            playingSound.Uuid = FileManager.AddPlayingSound(null, sounds, 0, 0, false);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
         
         public static void RemovePlayingSound(PlayingSound playingSound)
         {
+            FileManager.DeletePlayingSound(playingSound.Uuid);
             (App.Current as App)._itemViewHolder.playingSounds.Remove(playingSound);
         }
         
@@ -301,7 +305,6 @@ namespace UniversalSoundBoard.Pages
         }
 
         #region ContentDialog Methods
-        
         private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var deleteCategoryContentDialog = ContentDialogs.CreateDeleteCategoryContentDialogAsync();

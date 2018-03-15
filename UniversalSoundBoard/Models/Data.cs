@@ -13,6 +13,7 @@ namespace UniversalSoundBoard.Models
     
     public class PlayingSound
     {
+        public string Uuid { get; set; }
         public Sound CurrentSound { get; set; }
         public List<Sound> Sounds { get; set; }
         public MediaPlayer MediaPlayer { get; set; }
@@ -61,8 +62,9 @@ namespace UniversalSoundBoard.Models
             Randomly = false;
         }
 
-        public PlayingSound(List<Sound> sounds, MediaPlayer player, int repetitions, bool randomly, int current)
+        public PlayingSound(string uuid, List<Sound> sounds, MediaPlayer player, int repetitions, bool randomly, int current)
         {
+            Uuid = uuid;
             Sounds = new List<Sound>();
             foreach (Sound sound in sounds)
             {

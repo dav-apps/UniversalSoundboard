@@ -168,52 +168,6 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static List<object> GetAllPlayingSounds()
-        {
-            List<object> entries = new List<object>();
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                string selectCommandText = "SELECT * FROM " + PlayingSoundTableName + ";";
-
-                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
-                SqliteDataReader query;
-
-                try
-                {
-                    query = selectCommand.ExecuteReader();
-                }
-                catch (SqliteException e)
-                {
-                    Debug.WriteLine("Error in GetAllPlayingSounds");
-                    Debug.WriteLine(e.Message);
-                    return entries;
-                }
-
-                while (query.Read())
-                {
-                    string uuid = query.GetString(1);
-                    string soundIds = query.GetString(2);
-                    int current = query.GetInt32(3);
-                    int repetitions = query.GetInt32(4);
-                    bool randomly = query.GetBoolean(5);
-
-                    var obj = new
-                    {
-                        uuid,
-                        soundIds,
-                        current,
-                        repetitions,
-                        randomly
-                    };
-
-                    entries.Add(obj);
-                }
-                db.Close();
-            }
-            return entries;
-        }
-
         public static List<object> GetAllSounds()
         {
             List<object> entries = new List<object>();
@@ -530,13 +484,59 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
+        public static List<object> GetAllPlayingSounds()
+        {
+            List<object> entries = new List<object>();
+            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            {
+                db.Open();
+                string selectCommandText = "SELECT * FROM " + PlayingSoundTableName + ";";
+
+                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
+                SqliteDataReader query;
+
+                try
+                {
+                    query = selectCommand.ExecuteReader();
+                }
+                catch (SqliteException e)
+                {
+                    Debug.WriteLine("Error in GetAllPlayingSounds");
+                    Debug.WriteLine(e.Message);
+                    return entries;
+                }
+
+                while (query.Read())
+                {
+                    string uuid = query.GetString(1);
+                    string soundIds = query.GetString(2);
+                    int current = query.GetInt32(3);
+                    int repetitions = query.GetInt32(4);
+                    bool randomly = query.GetBoolean(5);
+
+                    var obj = new
+                    {
+                        uuid,
+                        soundIds,
+                        current,
+                        repetitions,
+                        randomly
+                    };
+
+                    entries.Add(obj);
+                }
+                db.Close();
+            }
+            return entries;
+        }
+
         public static object GetPlayingSound(string uuid)
         {
             using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
             {
                 db.Open();
                 string selectCommandText = "SELECT * FROM " + PlayingSoundTableName + " WHERE uuid = @Uuid;";
-                SqliteCommand selectCommand = new SqliteCommand(selectCommandText);
+                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
                 selectCommand.Parameters.AddWithValue("@Uuid", uuid);
                 SqliteDataReader query;
 
@@ -594,17 +594,17 @@ namespace UniversalSoundBoard.DataAccess
                     updateCommandText += "sound_ids = @SoundIds, ";
                     updateCommand.Parameters.AddWithValue("@SoundIds", soundIdsString);
                 }
-                if(String.IsNullOrEmpty(current))
+                if(!String.IsNullOrEmpty(current))
                 {
                     updateCommandText += "current = @Current, ";
                     updateCommand.Parameters.AddWithValue("@Current", current);
                 }
-                if (String.IsNullOrEmpty(repetitions))
+                if (!String.IsNullOrEmpty(repetitions))
                 {
                     updateCommandText += "repetitions = @Repetitions, ";
                     updateCommand.Parameters.AddWithValue("@Repetitions", repetitions);
                 }
-                if (String.IsNullOrEmpty(randomly))
+                if (!String.IsNullOrEmpty(randomly))
                 {
                     updateCommandText += "randomly = @Randomly, ";
                     updateCommand.Parameters.AddWithValue("@Randomly", randomly);

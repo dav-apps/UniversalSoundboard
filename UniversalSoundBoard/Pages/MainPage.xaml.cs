@@ -8,6 +8,8 @@ using Windows.UI;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 using UniversalSoundBoard.DataAccess;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -21,6 +23,7 @@ namespace UniversalSoundBoard.Pages
             InitializeComponent();
             Loaded += MainPage_Loaded;
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+            CustomiseTitleBar();
         }
         
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -29,8 +32,8 @@ namespace UniversalSoundBoard.Pages
             InitializeLocalSettings();
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             SideBar.MenuItemsSource = (App.Current as App)._itemViewHolder.categories;
-            
-            CustomiseTitleBar();
+
+            await AddSavedPlayingSounds();
             await FileManager.ShowAllSounds();
         }
         
@@ -38,6 +41,15 @@ namespace UniversalSoundBoard.Pages
         {
             WindowTitleTextBox.DataContext = (App.Current as App)._itemViewHolder;
             SideBar.DataContext = (App.Current as App)._itemViewHolder;
+        }
+
+        private async Task AddSavedPlayingSounds()
+        {
+            foreach(PlayingSound ps in await FileManager.GetAllPlayingSounds())
+            {
+                ps.MediaPlayer.AutoPlay = false;
+                (App.Current as App)._itemViewHolder.playingSounds.Add(ps);
+            }
         }
         
         private void InitializeLocalSettings()
