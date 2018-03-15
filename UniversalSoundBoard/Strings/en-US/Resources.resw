@@ -401,4 +401,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="UpgradeDataStatusMessage-Preparing" xml:space="preserve">
     <value>Preparing...</value>
   </data>
+  <data name="SettingsEntry-SavePlayingSounds.Header" xml:space="preserve">
+    <value>Save playing sounds</value>
+  </data>
 </root>

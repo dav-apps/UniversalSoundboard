@@ -45,7 +45,7 @@ namespace UniversalSoundBoard.Pages
 
         private async Task AddSavedPlayingSounds()
         {
-            foreach(PlayingSound ps in await FileManager.GetAllPlayingSounds())
+            foreach (PlayingSound ps in await FileManager.GetAllPlayingSounds())
             {
                 ps.MediaPlayer.AutoPlay = false;
                 (App.Current as App)._itemViewHolder.playingSounds.Add(ps);
@@ -55,49 +55,55 @@ namespace UniversalSoundBoard.Pages
         private void InitializeLocalSettings()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values["playingSoundsListVisible"] == null)
+            if (localSettings.Values[FileManager.playingSoundsListVisibleKey] == null)
             {
-                localSettings.Values["playingSoundsListVisible"] = FileManager.playingSoundsListVisible;
+                localSettings.Values[FileManager.playingSoundsListVisibleKey] = FileManager.playingSoundsListVisible;
                 (App.Current as App)._itemViewHolder.playingSoundsListVisibility = FileManager.playingSoundsListVisible ? Visibility.Visible : Visibility.Collapsed;
             }
             else
             {
-                (App.Current as App)._itemViewHolder.playingSoundsListVisibility = (bool)localSettings.Values["playingSoundsListVisible"] ? Visibility.Visible : Visibility.Collapsed;
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility = (bool)localSettings.Values[FileManager.playingSoundsListVisibleKey] ? Visibility.Visible : Visibility.Collapsed;
             }
 
-            if (localSettings.Values["playOneSoundAtOnce"] == null)
+            if (localSettings.Values[FileManager.playOneSoundAtOnceKey] == null)
             {
-                localSettings.Values["playOneSoundAtOnce"] = FileManager.playOneSoundAtOnce;
+                localSettings.Values[FileManager.playOneSoundAtOnceKey] = FileManager.playOneSoundAtOnce;
                 (App.Current as App)._itemViewHolder.playOneSoundAtOnce = FileManager.playOneSoundAtOnce;
             }
             else
             {
-                (App.Current as App)._itemViewHolder.playOneSoundAtOnce = (bool)localSettings.Values["playOneSoundAtOnce"];
+                (App.Current as App)._itemViewHolder.playOneSoundAtOnce = (bool)localSettings.Values[FileManager.playOneSoundAtOnceKey];
             }
 
-            if (localSettings.Values["liveTile"] == null)
+            if (localSettings.Values[FileManager.liveTileKey] == null)
             {
-                localSettings.Values["liveTile"] = FileManager.liveTile;
+                localSettings.Values[FileManager.liveTileKey] = FileManager.liveTile;
             }
 
-            if (localSettings.Values["showCategoryIcon"] == null)
+            if (localSettings.Values[FileManager.showCategoryIconKey] == null)
             {
-                localSettings.Values["showCategoryIcon"] = FileManager.showCategoryIcon;
+                localSettings.Values[FileManager.showCategoryIconKey] = FileManager.showCategoryIcon;
                 (App.Current as App)._itemViewHolder.showCategoryIcon = FileManager.showCategoryIcon;
             }
             else
             {
-                (App.Current as App)._itemViewHolder.showCategoryIcon = (bool)localSettings.Values["showCategoryIcon"];
+                (App.Current as App)._itemViewHolder.showCategoryIcon = (bool)localSettings.Values[FileManager.showCategoryIconKey];
             }
 
-            if (localSettings.Values["showSoundsPivot"] == null)
+            if (localSettings.Values[FileManager.showSoundsPivotKey] == null)
             {
-                localSettings.Values["showSoundsPivot"] = FileManager.showSoundsPivot;
+                localSettings.Values[FileManager.showSoundsPivotKey] = FileManager.showSoundsPivot;
                 (App.Current as App)._itemViewHolder.showSoundsPivot = FileManager.showSoundsPivot;
             }
             else
             {
-                (App.Current as App)._itemViewHolder.showSoundsPivot = (bool)localSettings.Values["showSoundsPivot"];
+                (App.Current as App)._itemViewHolder.showSoundsPivot = (bool)localSettings.Values[FileManager.showSoundsPivotKey];
+            }
+
+            if(localSettings.Values[FileManager.savePlayingSoundsKey] == null)
+            {
+                localSettings.Values[FileManager.savePlayingSoundsKey] = FileManager.savePlayingSounds;
+                (App.Current as App)._itemViewHolder.savePlayingSounds = FileManager.savePlayingSounds;
             }
         }
         

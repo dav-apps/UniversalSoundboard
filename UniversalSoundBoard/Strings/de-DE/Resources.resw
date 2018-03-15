@@ -388,4 +388,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="UpgradeDataStatusMessage-Preparing" xml:space="preserve">
     <value>Vorbereiten...</value>
   </data>
+  <data name="SettingsEntry-SavePlayingSounds.Header" xml:space="preserve">
+    <value>Speichere spielende Sounds</value>
+  </data>
 </root>

@@ -39,7 +39,15 @@
                             <ToggleSwitch Name="ShowSoundsPivotToggle" 
                                           x:Uid="SettingsEntry-ShowSoundsPivot" 
                                           Header="Show Favourites Tab"
-                                          Toggled="ShowSoundsPivotToggle_Toggled"/>
+                                          Toggled="ShowSoundsPivotToggle_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel Name="SavePlayingSoundsStackPanel"
+                                    Style="{StaticResource SettingsEntryStyle}">
+                            <ToggleSwitch Name="SavePlayingSoundsToggle"
+                                          x:Uid="SettingsEntry-SavePlayingSounds"
+                                          Header="Save playing sounds"
+                                          Toggled="SavePlayingSoundsToggle_Toggled" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">

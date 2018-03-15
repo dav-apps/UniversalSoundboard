@@ -30,6 +30,7 @@ namespace UniversalSoundBoard.Common
         private bool _playOneSoundAtOnce;                           // If true plays only one sound at a time
         private bool _showCategoryIcon;                             // If true shows the icon of the category on the sound tile
         private bool _showSoundsPivot;                              // If true shows the pivot to select Sounds or Favourite sounds
+        private bool _savePlayingSounds;                            // If true saves the PlayingSounds and loads them when starting the app
         private bool _isExporting;                                  // If true the soundboard is currently being exported
         private bool _exported;                                     // If true the soundboard was exported in the app session
         private bool _isImporting;                                  // If true a soundboard is currently being imported
@@ -258,6 +259,17 @@ namespace UniversalSoundBoard.Common
             {
                 _showSoundsPivot = value;
                 NotifyPropertyChanged("showSoundsPivot");
+            }
+        }
+
+        public bool savePlayingSounds
+        {
+            get { return _savePlayingSounds; }
+
+            set
+            {
+                _savePlayingSounds = value;
+                NotifyPropertyChanged("savePlayingSounds");
             }
         }
 

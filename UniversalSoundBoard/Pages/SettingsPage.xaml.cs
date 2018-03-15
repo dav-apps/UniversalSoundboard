@@ -12,16 +12,16 @@ namespace UniversalSoundBoard.Pages
     public sealed partial class SettingsPage : Page
     {
         static string themeAtBeginning;
+        ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
 
-        
+
         public SettingsPage()
         {
             InitializeComponent();
 
             if(String.IsNullOrEmpty(themeAtBeginning))
             {
-                var localSettings = ApplicationData.Current.LocalSettings;
-                themeAtBeginning = (string)localSettings.Values["theme"];
+                themeAtBeginning = (string)localSettings.Values[FileManager.themeKey];
             }
         }
         
@@ -44,15 +44,40 @@ namespace UniversalSoundBoard.Pages
             SetShowCategoryIconToggle();
             SetShowSoundsPivotToggle();
             SetThemeRadioButton();
+            SetSavePlayingSoundsTogggle();
         }
         
-        private void SetThemeRadioButton()
+        private void SetLiveTileToggle()
+        {
+            LiveTileToggle.IsOn = (bool)localSettings.Values[FileManager.liveTileKey];
+        }
+        
+        private void SetPlayingSoundsListVisibilityToggle()
+        {
+            PlayingSoundsListToggle.IsOn = (bool)localSettings.Values[FileManager.playingSoundsListVisibleKey];
+        }
+        
+        private void SetPlayOneSoundAtOnceToggle()
+        {
+            PlayOneSoundAtOnceToggle.IsOn = (bool)localSettings.Values[FileManager.playOneSoundAtOnceKey];
+        }
+        
+        private void SetShowCategoryIconToggle()
+        {
+            ShowCategoryToggle.IsOn = (bool)localSettings.Values[FileManager.showCategoryIconKey];
+        }
+        
+        private void SetShowSoundsPivotToggle()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
+            ShowSoundsPivotToggle.IsOn = (bool)localSettings.Values[FileManager.showSoundsPivotKey];
+        }
 
-            if (localSettings.Values["theme"] != null)
+        private void SetThemeRadioButton()
+        {
+            if (localSettings.Values[FileManager.themeKey] != null)
             {
-                switch ((string)localSettings.Values["theme"])
+                switch ((string)localSettings.Values[FileManager.themeKey])
                 {
                     case "light":
                         LightThemeRadioButton.IsChecked = true;
@@ -68,41 +93,16 @@ namespace UniversalSoundBoard.Pages
 
             SetToggleMessageVisibility();
         }
-        
-        private void SetLiveTileToggle()
+
+        private void SetSavePlayingSoundsTogggle()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            LiveTileToggle.IsOn = (bool)localSettings.Values["liveTile"];
+            SavePlayingSoundsToggle.IsOn = (bool)localSettings.Values[FileManager.savePlayingSoundsKey];
+            SavePlayingSoundsStackPanel.Visibility = (App.Current as App)._itemViewHolder.playingSoundsListVisibility;
         }
-        
-        private void SetPlayingSoundsListVisibilityToggle()
-        {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            PlayingSoundsListToggle.IsOn = (bool)localSettings.Values["playingSoundsListVisible"];
-        }
-        
-        private void SetPlayOneSoundAtOnceToggle()
-        {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            PlayOneSoundAtOnceToggle.IsOn = (bool)localSettings.Values["playOneSoundAtOnce"];
-        }
-        
-        private void SetShowCategoryIconToggle()
-        {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            ShowCategoryToggle.IsOn = (bool)localSettings.Values["showCategoryIcon"];
-        }
-        
-        private void SetShowSoundsPivotToggle()
-        {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            ShowSoundsPivotToggle.IsOn = (bool)localSettings.Values["showSoundsPivot"];
-        }
-        
+
         private void SetToggleMessageVisibility()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            if (themeAtBeginning != (string)localSettings.Values["theme"])
+            if (themeAtBeginning != (string)localSettings.Values[FileManager.themeKey])
             {
                 ThemeChangeMessageTextBlock.Visibility = Visibility.Visible;
             }
@@ -114,10 +114,8 @@ namespace UniversalSoundBoard.Pages
         
         private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-
             // Create a simple setting
-            localSettings.Values["liveTile"] = LiveTileToggle.IsOn;
+            localSettings.Values[FileManager.liveTileKey] = LiveTileToggle.IsOn;
             if (!LiveTileToggle.IsOn)
             {
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();
@@ -130,47 +128,49 @@ namespace UniversalSoundBoard.Pages
         
         private void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values["playingSoundsListVisible"] = PlayingSoundsListToggle.IsOn;
+            localSettings.Values[FileManager.playingSoundsListVisibleKey] = PlayingSoundsListToggle.IsOn;
             (App.Current as App)._itemViewHolder.playingSoundsListVisibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+
+            SavePlayingSoundsStackPanel.Visibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
         }
         
         private void PlayOneSoundAtOnceToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values["playOneSoundAtOnce"] = PlayOneSoundAtOnceToggle.IsOn;
+            localSettings.Values[FileManager.playOneSoundAtOnceKey] = PlayOneSoundAtOnceToggle.IsOn;
             (App.Current as App)._itemViewHolder.playOneSoundAtOnce = PlayOneSoundAtOnceToggle.IsOn;
         }
         
         private void ThemeRadioButton_Checked(object sender, RoutedEventArgs e)
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-
             RadioButton radioButton = sender as RadioButton;
             if(radioButton == LightThemeRadioButton)
-                localSettings.Values["theme"] = "light";
+                localSettings.Values[FileManager.themeKey] = "light";
             else if (radioButton == DarkThemeRadioButton)
-                localSettings.Values["theme"] = "dark";
+                localSettings.Values[FileManager.themeKey] = "dark";
             else if (radioButton == SystemThemeRadioButton)
-                localSettings.Values["theme"] = "system";
+                localSettings.Values[FileManager.themeKey] = "system";
 
             SetToggleMessageVisibility();
         }
         
         private void ShowCategoryToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values["showCategoryIcon"] = ShowCategoryToggle.IsOn;
+            localSettings.Values[FileManager.showCategoryIconKey] = ShowCategoryToggle.IsOn;
             (App.Current as App)._itemViewHolder.showCategoryIcon = ShowCategoryToggle.IsOn;
         }
         
         private void ShowSoundsPivotToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values["showSoundsPivot"] = ShowSoundsPivotToggle.IsOn;
+            localSettings.Values[FileManager.showSoundsPivotKey] = ShowSoundsPivotToggle.IsOn;
             (App.Current as App)._itemViewHolder.showSoundsPivot = ShowSoundsPivotToggle.IsOn;
         }
-        
+
+        private void SavePlayingSoundsToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            localSettings.Values[FileManager.savePlayingSoundsKey] = SavePlayingSoundsToggle.IsOn;
+            (App.Current as App)._itemViewHolder.savePlayingSounds = SavePlayingSoundsToggle.IsOn;
+        }
+
         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)
         {
             var ExportDataContentDialog = ContentDialogs.CreateExportDataContentDialog();

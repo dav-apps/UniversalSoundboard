@@ -30,6 +30,16 @@ namespace UniversalSoundBoard.DataAccess
     public class FileManager
     {
         #region Variables
+        // Variables for the localSettings keys
+        public const string playingSoundsListVisibleKey = "playingSoundsListVisible";
+        public const string playOneSoundAtOnceKey = "playOneSoundAtOnce";
+        public const string liveTileKey = "liveTile";
+        public const string showCategoryIconKey = "showCategoryIcon";
+        public const string showSoundsPivotKey = "showSoundsPivot";
+        public const string savePlayingSoundsKey = "savePlayingSounds";
+        public const string themeKey = "theme";
+
+        // Variables for defaults
         public const double volume = 1.0;
         public const bool liveTile = true;
         public const bool playingSoundsListVisible = true;
@@ -37,6 +47,7 @@ namespace UniversalSoundBoard.DataAccess
         public const string theme = "system";
         public const bool showCategoryIcon = true;
         public const bool showSoundsPivot = true;
+        public const bool savePlayingSounds = true;
         public const int mobileMaxWidth = 550;
         public const int tabletMaxWidth = 650;
         public const int topButtonsCollapsedMaxWidth = 1400;
@@ -465,15 +476,19 @@ namespace UniversalSoundBoard.DataAccess
             if (uuid == null)
                 uuid = Guid.NewGuid().ToString();
 
-            if(DatabaseOperations.GetPlayingSound(uuid) == null)
+            if((App.Current as App)._itemViewHolder.savePlayingSounds && 
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
             {
-                List<string> soundIds = new List<string>();
-                foreach(Sound sound in sounds)
+                if (DatabaseOperations.GetPlayingSound(uuid) == null)
                 {
-                    soundIds.Add(sound.Uuid);
-                }
+                    List<string> soundIds = new List<string>();
+                    foreach (Sound sound in sounds)
+                    {
+                        soundIds.Add(sound.Uuid);
+                    }
 
-                DatabaseOperations.AddPlayingSound(uuid, soundIds, current, repetitions, randomly);
+                    DatabaseOperations.AddPlayingSound(uuid, soundIds, current, repetitions, randomly);
+                }
             }
             return uuid;
         }
@@ -511,28 +526,38 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void SetCurrentOfPlayingSound(string uuid, int current)
         {
-            DatabaseOperations.UpdatePlayingSound(uuid, null, current.ToString(), null, null);
+            if((App.Current as App)._itemViewHolder.savePlayingSounds &&
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
+                DatabaseOperations.UpdatePlayingSound(uuid, null, current.ToString(), null, null);
         }
 
         public static void SetRepetitionsOfPlayingSound(string uuid, int repetitions)
         {
-            DatabaseOperations.UpdatePlayingSound(uuid, null, null, repetitions.ToString(), null);
+            if ((App.Current as App)._itemViewHolder.savePlayingSounds &&
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
+                DatabaseOperations.UpdatePlayingSound(uuid, null, null, repetitions.ToString(), null);
         }
 
         public static void SetSoundsListOfPlayingSound(string uuid, List<Sound> sounds)
         {
-            List<string> soundIds = new List<string>();
-            foreach (Sound sound in sounds)
+            if ((App.Current as App)._itemViewHolder.savePlayingSounds &&
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
             {
-                soundIds.Add(sound.Uuid);
-            }
+                List<string> soundIds = new List<string>();
+                foreach (Sound sound in sounds)
+                {
+                    soundIds.Add(sound.Uuid);
+                }
 
-            DatabaseOperations.UpdatePlayingSound(uuid, soundIds, null, null, null);
+                DatabaseOperations.UpdatePlayingSound(uuid, soundIds, null, null, null);
+            }
         }
 
         public static void DeletePlayingSound(string uuid)
         {
-            DatabaseOperations.DeletePlayingSound(uuid);
+            if ((App.Current as App)._itemViewHolder.savePlayingSounds &&
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
+                DatabaseOperations.DeletePlayingSound(uuid);
         }
         #endregion
 

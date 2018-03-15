@@ -200,6 +200,18 @@ namespace UniversalSoundBoard.Pages
             soundList.Add(sound);
             MediaPlayer player = FileManager.CreateMediaPlayer(soundList, 0);
 
+            // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
+            if ((App.Current as App)._itemViewHolder.playOneSoundAtOnce)
+            {
+                List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
+                foreach (PlayingSound pSound in (App.Current as App)._itemViewHolder.playingSounds)
+                {
+                    removedPlayingSounds.Add(pSound);
+                }
+
+                RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
+            }
+
             PlayingSound playingSound = new PlayingSound(sound, player);
             playingSound.Uuid = FileManager.AddPlayingSound(null, soundList, 0, 0, false);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
