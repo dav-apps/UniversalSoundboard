@@ -501,7 +501,7 @@ namespace UniversalSoundBoard.DataAccess
                 }
 
                 // Create the media player
-                MediaPlayer player = CreateMediaPlayer(sounds, randomly);
+                MediaPlayer player = CreateMediaPlayer(sounds, current);
 
                 PlayingSound playingSound = new PlayingSound(uuid, sounds, player, repetitions, randomly, current);
                 playingSounds.Add(playingSound);
@@ -1374,15 +1374,8 @@ namespace UniversalSoundBoard.DataAccess
             return sound;
         }
 
-        public static MediaPlayer CreateMediaPlayer(List<Sound> sounds, bool randomly)
+        public static MediaPlayer CreateMediaPlayer(List<Sound> sounds, int current)
         {
-            // If randomly is true, shuffle sounds
-            if (randomly)
-            {
-                Random random = new Random();
-                sounds = sounds.OrderBy(a => random.Next()).ToList();
-            }
-
             MediaPlayer player = new MediaPlayer();
             MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
 
@@ -1406,6 +1399,7 @@ namespace UniversalSoundBoard.DataAccess
 
                 mediaPlaybackList.Items.Add(mediaPlaybackItem);
             }
+
             player.Source = mediaPlaybackList;
             player.AutoPlay = true;
 
@@ -1421,6 +1415,7 @@ namespace UniversalSoundBoard.DataAccess
                 player.Volume = 1.0;
             }
 
+            mediaPlaybackList.MoveTo((uint)current);
             return player;
         }
         #endregion

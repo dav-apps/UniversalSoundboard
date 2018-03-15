@@ -176,6 +176,7 @@ namespace UniversalSoundBoard.Components
                         }
 
                         ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveTo(0);
+                        FileManager.SetCurrentOfPlayingSound(PlayingSound.Uuid, 0);
                     }
                     PlayingSound.MediaPlayer.Play();
                 }

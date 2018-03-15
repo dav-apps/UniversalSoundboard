@@ -198,7 +198,7 @@ namespace UniversalSoundBoard.Pages
         {
             List<Sound> soundList = new List<Sound>();
             soundList.Add(sound);
-            MediaPlayer player = FileManager.CreateMediaPlayer(soundList, false);
+            MediaPlayer player = FileManager.CreateMediaPlayer(soundList, 0);
 
             PlayingSound playingSound = new PlayingSound(sound, player);
             playingSound.Uuid = FileManager.AddPlayingSound(null, soundList, 0, 0, false);
@@ -212,7 +212,14 @@ namespace UniversalSoundBoard.Pages
                 return;
             }
 
-            MediaPlayer player = FileManager.CreateMediaPlayer(sounds, randomly);
+            // If randomly is true, shuffle sounds
+            if (randomly)
+            {
+                Random random = new Random();
+                sounds = sounds.OrderBy(a => random.Next()).ToList();
+            }
+
+            MediaPlayer player = FileManager.CreateMediaPlayer(sounds, 0);
 
             // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
             if ((App.Current as App)._itemViewHolder.playOneSoundAtOnce)

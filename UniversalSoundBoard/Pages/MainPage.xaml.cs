@@ -32,7 +32,7 @@ namespace UniversalSoundBoard.Pages
             InitializeLocalSettings();
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             SideBar.MenuItemsSource = (App.Current as App)._itemViewHolder.categories;
-
+            
             await AddSavedPlayingSounds();
             await FileManager.ShowAllSounds();
         }
