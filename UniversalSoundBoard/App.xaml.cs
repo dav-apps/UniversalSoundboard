@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
@@ -9,6 +10,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -152,6 +154,12 @@ namespace UniversalSoundBoard
                 }
             }
 
+            // Check if app was launched from a secondary tile
+            if (!String.IsNullOrEmpty(e.Arguments))
+            {
+                SoundPage.PlaySound(await FileManager.GetSound(e.Arguments));
+            }
+
             Window.Current.Activate();
         }
 
@@ -163,7 +171,7 @@ namespace UniversalSoundBoard
             // just ensure that the window is active
             if (rootFrame == null)
             {
-                System.Diagnostics.Debug.WriteLine("CreateFrame: Initializing root frame ...");
+                Debug.WriteLine("CreateFrame: Initializing root frame ...");
 
                 // Create a Frame to act as the navigation context and navigate to the first page
                 rootFrame = new Frame();

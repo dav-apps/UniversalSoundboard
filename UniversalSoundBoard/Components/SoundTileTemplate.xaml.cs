@@ -293,7 +293,7 @@ namespace UniversalSoundBoard.Components
                 // Construct the tile
                 string tileId = Sound.Uuid;
                 string displayName = Sound.Name;
-                string arguments = "sound=" + Sound.Uuid;
+                string arguments = Sound.Uuid;
                 
                 SecondaryTile tile = new SecondaryTile(
                         tileId,

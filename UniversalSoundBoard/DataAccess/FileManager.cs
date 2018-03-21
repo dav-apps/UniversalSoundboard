@@ -266,6 +266,41 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Database Methods
+        public static async Task<string> AddSound(string uuid, string name, string categoryUuid, StorageFile audioFile)
+        {
+            if (uuid == null)
+                uuid = Guid.NewGuid().ToString();
+
+            if (DatabaseOperations.GetSound(uuid) != null)
+            {       // Sound already exists
+                string ext = audioFile.FileType.Replace(".", "");
+
+                // Move the file into the sounds folder
+                StorageFolder soundsFolder = await GetSoundsFolderAsync();
+                StorageFile newFile = await audioFile.CopyAsync(soundsFolder, uuid + audioFile.FileType, NameCollisionOption.ReplaceExisting);
+
+                DatabaseOperations.UpdateSound(uuid, name, categoryUuid, ext, null, null);
+            }
+            else
+            {       // Sound does not exist
+                string ext = audioFile.FileType.Replace(".", "");
+
+                // Move the file into the sounds folder
+                StorageFolder soundsFolder = await GetSoundsFolderAsync();
+                StorageFile newFile = await audioFile.CopyAsync(soundsFolder, uuid + audioFile.FileType, NameCollisionOption.ReplaceExisting);
+
+                DatabaseOperations.AddSound(uuid, name, categoryUuid, ext);
+            }
+
+            return uuid;
+        }
+
+        public static async Task<Sound> GetSound(string uuid)
+        {
+            var soundObject = DatabaseOperations.GetSound(uuid);
+            return await GetSoundByObject(soundObject);
+        }
+
         private static async Task<List<Sound>> GetSavedSounds()
         {
             List<object> soundObjects = DatabaseOperations.GetAllSounds();
@@ -301,35 +336,6 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;
-        }
-
-        public static async Task<string> AddSound(string uuid, string name, string categoryUuid, StorageFile audioFile)
-        {
-            if(uuid == null)
-                uuid = Guid.NewGuid().ToString();
-
-            if (DatabaseOperations.GetSound(uuid) != null)
-            {       // Sound already exists
-                string ext = audioFile.FileType.Replace(".", "");
-
-                // Move the file into the sounds folder
-                StorageFolder soundsFolder = await GetSoundsFolderAsync();
-                StorageFile newFile = await audioFile.CopyAsync(soundsFolder, uuid + audioFile.FileType, NameCollisionOption.ReplaceExisting);
-
-                DatabaseOperations.UpdateSound(uuid, name, categoryUuid, ext, null, null);
-            }
-            else
-            {       // Sound does not exist
-                string ext = audioFile.FileType.Replace(".", "");
-
-                // Move the file into the sounds folder
-                StorageFolder soundsFolder = await GetSoundsFolderAsync();
-                StorageFile newFile = await audioFile.CopyAsync(soundsFolder, uuid + audioFile.FileType, NameCollisionOption.ReplaceExisting);
-
-                DatabaseOperations.AddSound(uuid, name, categoryUuid, ext);
-            }
-            
-            return uuid;
         }
 
         public static async Task GetSoundsByCategory(Category category)
