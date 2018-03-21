@@ -1290,7 +1290,7 @@ namespace UniversalSoundBoard.DataAccess
                 StorageFolder oldImagesFolder = await localStorageFolder.TryGetItemAsync(oldImagesFolderName) as StorageFolder;
 
                 if(oldImagesFolder == null && imagesFolder != null)
-                {
+                {   // If only the images folder exists
                     await imagesFolder.RenameAsync(oldImagesFolderName);
                 }
 
