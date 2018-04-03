@@ -456,15 +456,19 @@ namespace UniversalSoundBoard.Components
             (App.Current as App)._itemViewHolder.progressRingIsActive = true;
 
             // Delete Sounds
+            List<string> soundUuids = new List<string>();
             for (int i = 0; i < (App.Current as App)._itemViewHolder.selectedSounds.Count; i++)
             {
-                await FileManager.DeleteSound((App.Current as App)._itemViewHolder.selectedSounds.ElementAt(i).Uuid);
+                soundUuids.Add((App.Current as App)._itemViewHolder.selectedSounds.ElementAt(i).Uuid);
             }
+            if (soundUuids.Count != 0)
+                await FileManager.DeleteSounds(soundUuids);
+
             // Clear selected sounds list
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
-            await FileManager.UpdateGridView();
-
             (App.Current as App)._itemViewHolder.progressRingIsActive = false;
+
+            await FileManager.UpdateGridView();
         }
         
         private void PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

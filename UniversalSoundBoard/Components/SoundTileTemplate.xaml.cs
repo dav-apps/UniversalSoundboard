@@ -187,7 +187,7 @@ namespace UniversalSoundBoard.Components
             }
         }
         
-        private void CategoryToggleMenuItem_Click(object sender, RoutedEventArgs e)
+        private async void CategoryToggleMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var categoryObject = (ToggleMenuFlyoutItem) sender;
             string categoryUuid = categoryObject.Tag.ToString();
@@ -195,6 +195,8 @@ namespace UniversalSoundBoard.Components
             
             UnselectAllItemsOfCategoriesFlyoutSubItem();
             categoryObject.IsChecked = true;
+
+            await FileManager.UpdateGridView();
         }
         
         private void SelectRightCategory()

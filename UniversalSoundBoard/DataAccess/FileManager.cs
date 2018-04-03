@@ -394,6 +394,9 @@ namespace UniversalSoundBoard.DataAccess
             var soundObject = DatabaseOperations.GetSound(uuid);
             if (soundObject != null)
             {
+                // Delete Sound from database
+                DatabaseOperations.DeleteSound(uuid);
+
                 string image_ext = soundObject.GetType().GetProperty("image_ext").GetValue(soundObject).ToString();
                 string sound_ext = soundObject.GetType().GetProperty("sound_ext").GetValue(soundObject).ToString();
 
@@ -402,6 +405,7 @@ namespace UniversalSoundBoard.DataAccess
                 string soundName = uuid + "." + sound_ext;
                 string imageName = uuid + "." + image_ext;
 
+                // Try to get sound and image file, and delete them if they exist
                 StorageFile soundFile = await soundsFolder.TryGetItemAsync(soundName) as StorageFile;
                 if (soundFile != null)
                     await soundFile.DeleteAsync();
@@ -410,11 +414,42 @@ namespace UniversalSoundBoard.DataAccess
                 if (imageFile != null)
                     await imageFile.DeleteAsync();
 
-                // Delete Sound from database
-                DatabaseOperations.DeleteSound(uuid);
+                (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             }
+        }
+
+        public static async Task DeleteSounds(List<string> sounds)
+        {
+            StorageFolder soundsFolder = await GetSoundsFolderAsync();
+            StorageFolder imagesFolder = await GetImagesFolderAsync();
+
+            foreach (string uuid in sounds)
+            {
+                // Find the sound and image file and delete them
+                var soundObject = DatabaseOperations.GetSound(uuid);
+                if(soundObject != null)
+                {
+                    // Delete Sound from database
+                    DatabaseOperations.DeleteSound(uuid);
+
+                    string image_ext = soundObject.GetType().GetProperty("image_ext").GetValue(soundObject).ToString();
+                    string sound_ext = soundObject.GetType().GetProperty("sound_ext").GetValue(soundObject).ToString();
+
+                    string soundName = uuid + "." + sound_ext;
+                    string imageName = uuid + "." + image_ext;
+
+                    // Try to get sound and image file, and delete them if they exist
+                    StorageFile soundFile = await soundsFolder.TryGetItemAsync(soundName) as StorageFile;
+                    if (soundFile != null)
+                        await soundFile.DeleteAsync();
+
+                    StorageFile imageFile = await imagesFolder.TryGetItemAsync(imageName) as StorageFile;
+                    if (imageFile != null)
+                        await imageFile.DeleteAsync();
+                }
+            }
+
             (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-            await GetAllSounds();
         }
 
         public static void RenameSound(string uuid, string newName)
@@ -698,8 +733,8 @@ namespace UniversalSoundBoard.DataAccess
                 }
                 else
                 {
-                    GetSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                    await GetSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
                 }
             }
             else
