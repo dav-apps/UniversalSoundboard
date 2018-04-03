@@ -523,9 +523,16 @@ namespace UniversalSoundBoard.DataAccess
 
                 // Create the media player
                 MediaPlayer player = CreateMediaPlayer(sounds, current);
-
-                PlayingSound playingSound = new PlayingSound(uuid, sounds, player, repetitions, randomly, current);
-                playingSounds.Add(playingSound);
+                if(player != null)
+                {
+                    PlayingSound playingSound = new PlayingSound(uuid, sounds, player, repetitions, randomly, current);
+                    playingSounds.Add(playingSound);
+                }
+                else
+                {
+                    // Remove the PlayingSound from the DB
+                    DatabaseOperations.DeletePlayingSound(uuid);
+                }
             }
             return playingSounds;
         }
@@ -816,6 +823,7 @@ namespace UniversalSoundBoard.DataAccess
         #region General Methods
         public static void CreateCategoriesObservableCollection()
         {
+            int selectedCategory = (App.Current as App)._itemViewHolder.selectedCategory;
             (App.Current as App)._itemViewHolder.categories.Clear();
             (App.Current as App)._itemViewHolder.categories.Add(new Category { Name = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), Icon = "\uE10F" });
 
@@ -823,7 +831,8 @@ namespace UniversalSoundBoard.DataAccess
             {
                 (App.Current as App)._itemViewHolder.categories.Add(cat);
             }
-            (App.Current as App)._itemViewHolder.selectedCategory = 0;
+            (App.Current as App)._itemViewHolder.selectedCategory = selectedCategory;
+            Debug.WriteLine((App.Current as App)._itemViewHolder.categories.Last().Name);
         }
 
         private static async Task UpdateAllSoundsList()
@@ -1407,6 +1416,9 @@ namespace UniversalSoundBoard.DataAccess
 
         public static MediaPlayer CreateMediaPlayer(List<Sound> sounds, int current)
         {
+            if (sounds.Count == 0)
+                return null;
+
             MediaPlayer player = new MediaPlayer();
             MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
 
@@ -1447,6 +1459,7 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             mediaPlaybackList.MoveTo((uint)current);
+
             return player;
         }
         #endregion

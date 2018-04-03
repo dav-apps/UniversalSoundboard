@@ -16,13 +16,16 @@ namespace UniversalSoundBoard.Pages
     public sealed partial class MainPage : Page
     {
         int sideBarCollapsedMaxWidth = FileManager.sideBarCollapsedMaxWidth;
+        public static CoreDispatcher dispatcher;
 
-        
+
         public MainPage()
         {
             InitializeComponent();
             Loaded += MainPage_Loaded;
             SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
+            dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+
             CustomiseTitleBar();
         }
         
@@ -47,8 +50,11 @@ namespace UniversalSoundBoard.Pages
         {
             foreach (PlayingSound ps in await FileManager.GetAllPlayingSounds())
             {
-                ps.MediaPlayer.AutoPlay = false;
-                (App.Current as App)._itemViewHolder.playingSounds.Add(ps);
+                if(ps.MediaPlayer != null)
+                {
+                    ps.MediaPlayer.AutoPlay = false;
+                    (App.Current as App)._itemViewHolder.playingSounds.Add(ps);
+                }
             }
         }
         

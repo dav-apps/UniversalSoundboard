@@ -198,7 +198,10 @@ namespace UniversalSoundBoard.Pages
         {
             List<Sound> soundList = new List<Sound>();
             soundList.Add(sound);
+
             MediaPlayer player = FileManager.CreateMediaPlayer(soundList, 0);
+            if (player == null)
+                return;
 
             // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
             if ((App.Current as App)._itemViewHolder.playOneSoundAtOnce)
@@ -219,11 +222,6 @@ namespace UniversalSoundBoard.Pages
         
         public static void PlaySounds(List<Sound> sounds, int repetitions, bool randomly)
         {
-            if(sounds.Count < 1)
-            {
-                return;
-            }
-
             // If randomly is true, shuffle sounds
             if (randomly)
             {
@@ -232,6 +230,8 @@ namespace UniversalSoundBoard.Pages
             }
 
             MediaPlayer player = FileManager.CreateMediaPlayer(sounds, 0);
+            if (player == null)
+                return;
 
             // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
             if ((App.Current as App)._itemViewHolder.playOneSoundAtOnce)

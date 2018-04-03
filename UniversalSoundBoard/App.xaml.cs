@@ -12,6 +12,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -153,7 +154,7 @@ namespace UniversalSoundBoard
                     Window.Current.Content = upgradeDataSplashScreen;
                 }
             }
-
+            
             // Check if app was launched from a secondary tile
             if (!String.IsNullOrEmpty(e.Arguments))
             {
@@ -163,7 +164,7 @@ namespace UniversalSoundBoard
             Window.Current.Activate();
         }
 
-        void CreateRootFrame(ApplicationExecutionState previousExecutionState, string arguments)
+        private Frame CreateRootFrame(ApplicationExecutionState previousExecutionState, string arguments, Type page)
         {
             Frame rootFrame = Window.Current.Content as Frame;
 
@@ -190,13 +191,7 @@ namespace UniversalSoundBoard
                 Window.Current.Content = rootFrame;
             }
 
-            if (rootFrame.Content == null)
-            {
-                // When the navigation stack isn't restored navigate to the first page,
-                // configuring the new page by passing required information as a navigation
-                // parameter
-                rootFrame.Navigate(typeof(MainPage), arguments);
-            }
+            return rootFrame;
         }
 
         /// <summary>
@@ -225,21 +220,43 @@ namespace UniversalSoundBoard
 
         protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
-            ShareOperation shareOperation = args.ShareOperation;
-            if (shareOperation.Data.Contains(StandardDataFormats.StorageItems))
+            //var rootFrame = CreateRootFrame(args.PreviousExecutionState, "");
+            //Frame rootFrame = Window.Current.Content as Frame;
+
+            if (args.PreviousExecutionState == ApplicationExecutionState.NotRunning)
             {
-                shareOperation.ReportDataRetrieved();
-                StorageFolder folder = ApplicationData.Current.LocalFolder;
+                ShareOperation shareOperation = args.ShareOperation;
+                if (shareOperation.Data.Contains(StandardDataFormats.StorageItems))
+                {
+                    shareOperation.ReportDataRetrieved();
 
-                Frame frame = new Frame();
-                frame.Navigate(typeof(ShareTargetPage), shareOperation);
+                    Frame frame = new Frame();
+                    frame.Navigate(typeof(ShareTargetPage), shareOperation);
 
-                Window.Current.Content = frame;
-                Window.Current.Activate();
+                    Window.Current.Content = frame;
+                    Window.Current.Activate();
+                }
+                else
+                {
+                    shareOperation.ReportError("An error occured.");
+                }
             }
             else
             {
-                shareOperation.ReportError("An error occured.");
+                // App is running
+                ShareOperation shareOperation = args.ShareOperation;
+                if (shareOperation.Data.Contains(StandardDataFormats.StorageItems))
+                {
+                    shareOperation.ReportDataRetrieved();
+
+                    var rootFrame = CreateRootFrame(args.PreviousExecutionState, "", typeof(ShareTargetPage));
+                    rootFrame.Navigate(typeof(ShareTargetPage), shareOperation);
+                    Window.Current.Activate();
+                }
+                else
+                {
+                    shareOperation.ReportError("An error occured.");
+                }
             }
         }
     }

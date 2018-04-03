@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Windows.Media.Playback;
 
@@ -70,7 +72,18 @@ namespace UniversalSoundBoard.Models
             {
                 Sounds.Add(sound);
             }
-            CurrentSound = sounds[current];
+
+            try
+            {
+                CurrentSound = sounds[current];
+            }
+            catch(Exception e)
+            {
+                if(sounds.Count != 0)
+                {
+                    CurrentSound = sounds[0];
+                }
+            }
             MediaPlayer = player;
             Repetitions = repetitions;
             Randomly = randomly;

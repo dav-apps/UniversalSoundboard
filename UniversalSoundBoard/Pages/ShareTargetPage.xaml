@@ -12,7 +12,8 @@
         <StackPanel>
             <TextBlock Name="SelectCategoryTextBlock" 
                        x:Uid="ShareTarget-SelectCategoryTextBlock"
-                       Grid.Row="0" />
+                       Grid.Row="0"
+                       Margin="12,5,0,10"/>
 
             <ListView Name="CategoriesListView" 
                       Grid.Row="1"
@@ -41,7 +42,8 @@
                 </ListView.ItemTemplate>
             </ListView>
 
-            <StackPanel Orientation="Horizontal">
+            <StackPanel Orientation="Horizontal"
+                        Margin="10,10,0,0">
                 <Button Name="AddButton" 
                         x:Uid="ShareTarget-AddButton" 
                         Grid.Row="2"

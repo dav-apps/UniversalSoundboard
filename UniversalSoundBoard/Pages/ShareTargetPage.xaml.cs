@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -17,8 +19,9 @@ namespace UniversalSoundBoard.Pages
         ShareOperation shareOperation;
         ObservableCollection<Category> categories;
         List<StorageFile> items;
+        CoreDispatcher dispatcher;
 
-        
+
         public ShareTargetPage()
         {
             InitializeComponent();
@@ -27,8 +30,9 @@ namespace UniversalSoundBoard.Pages
         
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            shareOperation = e.Parameter as ShareOperation;
+            dispatcher = MainPage.dispatcher == null ? CoreWindow.GetForCurrentThread().Dispatcher : MainPage.dispatcher;
 
+            shareOperation = e.Parameter as ShareOperation;
             items = new List<StorageFile>();
 
             foreach (StorageFile file in await shareOperation.Data.GetStorageItemsAsync())
@@ -37,16 +41,19 @@ namespace UniversalSoundBoard.Pages
             }
         }
         
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            categories = new ObservableCollection<Category>();
-            FileManager.CreateCategoriesObservableCollection();
-
-            // Get all Categories and show them
-            foreach(Category cat in (App.Current as App)._itemViewHolder.categories)
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                categories.Add(cat);
-            }
+                categories = new ObservableCollection<Category>();
+                FileManager.CreateCategoriesObservableCollection();
+
+                // Get all Categories and show them
+                foreach (Category cat in (App.Current as App)._itemViewHolder.categories)
+                {
+                    categories.Add(cat);
+                }
+            });
             Bindings.Update();
         }
         
@@ -71,9 +78,17 @@ namespace UniversalSoundBoard.Pages
                         await FileManager.AddSound(null, storagefile.DisplayName, category.Uuid, storagefile);
                     }
                 }
-                (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+                await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+                });
             }
             shareOperation.ReportCompleted();
+
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                await FileManager.UpdateGridView();
+            });
         }
         
         private void CategoriesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -92,7 +107,7 @@ namespace UniversalSoundBoard.Pages
             await newCategoryContentDialog.ShowAsync();
         }
 
-        private void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get combobox value
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
@@ -106,6 +121,11 @@ namespace UniversalSoundBoard.Pages
 
             categories.Add(FileManager.AddCategory(null, category.Name, category.Icon));
             Bindings.Update();
+
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                FileManager.CreateCategoriesObservableCollection();
+            });
         }
     }
 }
