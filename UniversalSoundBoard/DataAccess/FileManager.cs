@@ -628,13 +628,15 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void CheckBackButtonVisibility()
         {
-            if (FileManager.AreTopButtonsNormal() && (App.Current as App)._itemViewHolder.selectedCategory == 0)
+            if (AreTopButtonsNormal() && 
+                (App.Current as App)._itemViewHolder.selectedCategory == 0 &&
+                String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))
             {       // Anything is normal, SoundPage shows All Sounds
-                FileManager.SetBackButtonVisibility(false);
+                SetBackButtonVisibility(false);
             }
             else
             {
-                FileManager.SetBackButtonVisibility(true);
+                SetBackButtonVisibility(true);
             }
         }
 
@@ -673,7 +675,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             double width = Window.Current.Bounds.Width;
 
-        (App.Current as App)._itemViewHolder.topButtonsCollapsed = (width<topButtonsCollapsedMaxWidth);
+            (App.Current as App)._itemViewHolder.topButtonsCollapsed = (width<topButtonsCollapsedMaxWidth);
             (App.Current as App)._itemViewHolder.selectButtonVisibility = !(width<moveSelectButtonMaxWidth);
             (App.Current as App)._itemViewHolder.addButtonVisibility = !(width<moveAddButtonMaxWidth);
             (App.Current as App)._itemViewHolder.volumeButtonVisibility = !(width<moveVolumeButtonMaxWidth);
@@ -688,7 +690,7 @@ namespace UniversalSoundBoard.DataAccess
                 (App.Current as App)._itemViewHolder.searchButtonVisibility = (width<hideSearchBoxMaxWidth);
             }
 
-    CheckBackButtonVisibility();
+            CheckBackButtonVisibility();
         }
 
         public static void ShowPlayAllButton()
@@ -773,7 +775,6 @@ namespace UniversalSoundBoard.DataAccess
         public static void ResetSearchArea()
         {
             skipAutoSuggestBoxTextChanged = true;
-            (App.Current as App)._itemViewHolder.searchQuery = "";
 
             if (Window.Current.Bounds.Width < hideSearchBoxMaxWidth)
             {
@@ -848,7 +849,7 @@ namespace UniversalSoundBoard.DataAccess
                     ShowAllSounds();
                 }
             }
-
+            
             CheckBackButtonVisibility();
         }
         #endregion
