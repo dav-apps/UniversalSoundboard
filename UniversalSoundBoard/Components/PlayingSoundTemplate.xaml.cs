@@ -81,8 +81,9 @@ namespace UniversalSoundBoard.Components
         
         private void RepeatSound(int repetitions)
         {
-            PlayingSound.Repetitions = ++repetitions;
-            FileManager.SetRepetitionsOfPlayingSound(PlayingSound.Uuid, ++repetitions);
+            int newRepetitions = repetitions + 1;
+            PlayingSound.Repetitions = newRepetitions;
+            FileManager.SetRepetitionsOfPlayingSound(PlayingSound.Uuid, newRepetitions);
         }
         
         private void InitializePlayingSound()

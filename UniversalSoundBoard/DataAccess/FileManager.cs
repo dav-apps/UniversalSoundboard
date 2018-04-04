@@ -581,9 +581,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void SetRepetitionsOfPlayingSound(string uuid, int repetitions)
         {
-            if ((App.Current as App)._itemViewHolder.savePlayingSounds &&
-                (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
-                DatabaseOperations.UpdatePlayingSound(uuid, null, null, repetitions.ToString(), null);
+            DatabaseOperations.UpdatePlayingSound(uuid, null, null, repetitions.ToString(), null);
         }
 
         public static void SetSoundsListOfPlayingSound(string uuid, List<Sound> sounds)
@@ -867,7 +865,6 @@ namespace UniversalSoundBoard.DataAccess
                 (App.Current as App)._itemViewHolder.categories.Add(cat);
             }
             (App.Current as App)._itemViewHolder.selectedCategory = selectedCategory;
-            Debug.WriteLine((App.Current as App)._itemViewHolder.categories.Last().Name);
         }
 
         private static async Task UpdateAllSoundsList()
