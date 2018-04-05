@@ -525,7 +525,7 @@ namespace UniversalSoundBoard.DataAccess
             if ((App.Current as App)._itemViewHolder.savePlayingSounds && 
                 (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
             {
-                if (DatabaseOperations.GetPlayingSound(uuid) == null)
+                if(DatabaseOperations.GetPlayingSound(uuid) == null)
                 {
                     List<string> soundIds = new List<string>();
                     foreach (Sound sound in sounds)
@@ -579,11 +579,47 @@ namespace UniversalSoundBoard.DataAccess
             return playingSounds;
         }
 
+        public static void AddOrRemoveAllPlayingSounds()
+        {
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+
+            // Check the settings if all playingSounds should be removed or added
+            bool savePlayingSounds = true;
+            savePlayingSounds = (bool)localSettings.Values[savePlayingSoundsKey] &&
+                                (bool)localSettings.Values[playingSoundsListVisibleKey];
+
+            foreach (PlayingSound ps in (App.Current as App)._itemViewHolder.playingSounds)
+            {
+                if (savePlayingSounds)
+                {
+                    // Check, if the playingSound is already saved
+                    if (DatabaseOperations.GetPlayingSound(ps.Uuid) == null)
+                    {
+                        // Add the playingSound
+                        List<string> soundIds = new List<string>();
+                        foreach (Sound sound in ps.Sounds)
+                        {
+                            soundIds.Add(sound.Uuid);
+                        }
+
+                        DatabaseOperations.AddPlayingSound(ps.Uuid, soundIds, ((int)((MediaPlaybackList)ps.MediaPlayer.Source).CurrentItemIndex), ps.Repetitions, ps.Randomly, ps.MediaPlayer.Volume);
+                    }
+                }
+                else
+                {
+                    // Check, if the playingSound is saved
+                    if (DatabaseOperations.GetPlayingSound(ps.Uuid) != null)
+                    {
+                        // Remove the playingSound
+                        DatabaseOperations.DeletePlayingSound(ps.Uuid);
+                    }
+                }
+            }
+        }
+
         public static void SetCurrentOfPlayingSound(string uuid, int current)
         {
-            if((App.Current as App)._itemViewHolder.savePlayingSounds &&
-                (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
-                DatabaseOperations.UpdatePlayingSound(uuid, null, current.ToString(), null, null, null);
+            DatabaseOperations.UpdatePlayingSound(uuid, null, current.ToString(), null, null, null);
         }
 
         public static void SetRepetitionsOfPlayingSound(string uuid, int repetitions)
@@ -593,17 +629,13 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void SetSoundsListOfPlayingSound(string uuid, List<Sound> sounds)
         {
-            if ((App.Current as App)._itemViewHolder.savePlayingSounds &&
-                (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
+            List<string> soundIds = new List<string>();
+            foreach (Sound sound in sounds)
             {
-                List<string> soundIds = new List<string>();
-                foreach (Sound sound in sounds)
-                {
-                    soundIds.Add(sound.Uuid);
-                }
-
-                DatabaseOperations.UpdatePlayingSound(uuid, soundIds, null, null, null, null);
+                soundIds.Add(sound.Uuid);
             }
+
+            DatabaseOperations.UpdatePlayingSound(uuid, soundIds, null, null, null, null);
         }
 
         public static void SetVolumeOfPlayingSound(string uuid, double volume)
@@ -618,9 +650,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void DeletePlayingSound(string uuid)
         {
-            if ((App.Current as App)._itemViewHolder.savePlayingSounds &&
-                (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
-                DatabaseOperations.DeletePlayingSound(uuid);
+            DatabaseOperations.DeletePlayingSound(uuid);
         }
         #endregion
 

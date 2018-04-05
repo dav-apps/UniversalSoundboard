@@ -1,6 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
+using System.Threading.Tasks;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
+using UniversalSoundBoard.Models;
 using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
@@ -132,6 +135,11 @@ namespace UniversalSoundBoard.Pages
             (App.Current as App)._itemViewHolder.playingSoundsListVisibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
 
             SavePlayingSoundsStackPanel.Visibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+
+            Task.Run(() =>
+            {
+                FileManager.AddOrRemoveAllPlayingSounds();
+            });
         }
         
         private void PlayOneSoundAtOnceToggle_Toggled(object sender, RoutedEventArgs e)
@@ -169,6 +177,11 @@ namespace UniversalSoundBoard.Pages
         {
             localSettings.Values[FileManager.savePlayingSoundsKey] = SavePlayingSoundsToggle.IsOn;
             (App.Current as App)._itemViewHolder.savePlayingSounds = SavePlayingSoundsToggle.IsOn;
+
+            Task.Run(() =>
+            {
+                FileManager.AddOrRemoveAllPlayingSounds();
+            });
         }
 
         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)
