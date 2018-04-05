@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Common;
@@ -447,8 +448,8 @@ namespace UniversalSoundBoard.Components
             (App.Current as App)._itemViewHolder.title = newName;
 
             // Update page
-            await FileManager.GetAllSounds();
-            await FileManager.ShowCategory(oldCategory.Uuid);
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+            await FileManager.UpdateGridView();
         }
         
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

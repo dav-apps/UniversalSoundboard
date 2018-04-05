@@ -158,7 +158,7 @@ namespace UniversalSoundBoard.Common
 
             DeleteCategoryContentDialog = new ContentDialog
             {
-                Title = loader.GetString("DeleteCategoryContentDialog-Title") + (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory],
+                Title = loader.GetString("DeleteCategoryContentDialog-Title") + (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory].Name,
                 Content = loader.GetString("DeleteCategoryContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteCategoryContentDialog-PrimaryButton"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel")

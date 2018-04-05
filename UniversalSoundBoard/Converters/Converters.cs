@@ -128,7 +128,14 @@ namespace UniversalSoundBoard.Converters
         {
             // Get the index and return the category from the categories list at the index
             int index = (int) value;
-            return (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory];
+
+            try
+            {
+                return (App.Current as App)._itemViewHolder.categories[index];
+            }catch(Exception e)
+            {
+                return (App.Current as App)._itemViewHolder.categories[0];
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
