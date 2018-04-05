@@ -108,6 +108,7 @@
                         <Flyout>
                             <Slider Name="VolumeSlider" 
                                     ValueChanged="VolumeSlider_ValueChanged"
+                                    LostFocus="VolumeSlider_LostFocus"
 						            Maximum="100" 
                                     Minimum="0" 
                                     Width="150" />
@@ -280,6 +281,7 @@
                                 <Flyout>
                                     <Slider Name="VolumeSlider2" 
                                             ValueChanged="VolumeSlider_ValueChanged"
+                                            LostFocus="VolumeSlider_LostFocus"
 						                    Maximum="100" 
                                             Minimum="0" 
                                             Width="150" />

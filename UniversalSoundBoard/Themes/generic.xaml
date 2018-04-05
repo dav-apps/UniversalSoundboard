@@ -647,12 +647,12 @@
                                                                 </AppBarButton.Icon>
                                                             </AppBarButton>
                                                             <Slider x:Name='VolumeSlider'
-                                                          Value='50'
-                                                          IsThumbToolTipEnabled='False'
-                                                          Width='{ThemeResource MTCHorizontalVolumeSliderWidth}'
-                                                          VerticalAlignment='Center'
-                                                          HorizontalAlignment='Center'
-                                                          Margin='0'/>
+                                                                    Value='50'
+                                                                    IsThumbToolTipEnabled='False'
+                                                                    Width='{ThemeResource MTCHorizontalVolumeSliderWidth}'
+                                                                    VerticalAlignment='Center'
+                                                                    HorizontalAlignment='Center'
+                                                                    Margin='0' />
                                                             <TextBlock x:Name='VolumeValue'
                                                             Style='{StaticResource MediaTextBlockStyle}'
                                                             Text="{Binding ElementName=VolumeSlider,Path=Value}"

@@ -1,12 +1,14 @@
 ﻿using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace UniversalSoundBoard.Components
 {
     public sealed class CustomMediaTransportControls : MediaTransportControls
     {
         public event EventHandler<EventArgs> Removed;
+        public event EventHandler<EventArgs> VolumeSlider_LostFocus;
         public event EventHandler<EventArgs> FavouriteFlyout_Clicked;
         public event EventHandler<EventArgs> Repeat_1x_Clicked;
         public event EventHandler<EventArgs> Repeat_2x_Clicked;
@@ -24,6 +26,9 @@ namespace UniversalSoundBoard.Components
             // This is where you would get your custom button and create an event handler for its click method.
             Button RemoveButton = GetTemplateChild("RemoveButton") as Button;
             RemoveButton.Click += RemoveButton_Click;
+
+            Slider VolumeSlider = GetTemplateChild("VolumeSlider") as Slider;
+            VolumeSlider.LostFocus += VolumeSlider_LostFocusEvent;
 
             AppBarButton FavouriteFlyout = GetTemplateChild("FavouriteFlyout") as AppBarButton;
             FavouriteFlyout.Click += FavouriteFlyout_Click;
@@ -44,6 +49,8 @@ namespace UniversalSoundBoard.Components
 
         // Raise an event on the custom control when 'Removed' is clicked
         private void RemoveButton_Click(object sender, RoutedEventArgs e) => Removed?.Invoke(this, EventArgs.Empty);
+
+        private void VolumeSlider_LostFocusEvent(object sender, RoutedEventArgs e) => VolumeSlider_LostFocus?.Invoke(this, EventArgs.Empty);
 
         private void FavouriteFlyout_Click(object sender, RoutedEventArgs e) => FavouriteFlyout_Clicked?.Invoke(this, EventArgs.Empty);
 

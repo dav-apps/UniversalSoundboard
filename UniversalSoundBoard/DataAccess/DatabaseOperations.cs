@@ -98,7 +98,8 @@ namespace UniversalSoundBoard.DataAccess
                                                     "sound_ids TEXT NOT NULL, " +
                                                     "current INTEGER DEFAULT 0, " +
                                                     "repetitions INTEGER DEFAULT 0, " +
-                                                    "randomly BOOLEAN DEFAULT false);";
+                                                    "randomly BOOLEAN DEFAULT false," +
+                                                    "volume REAL DEFAULT 1);";
             SqliteCommand playingSoundTableCommand = new SqliteCommand(playingSoundTableCommandText, db);
             try
             {
@@ -508,7 +509,7 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static void AddPlayingSound(string uuid, List<string> soundIds, int current, int repetitions, bool randomly)
+        public static void AddPlayingSound(string uuid, List<string> soundIds, int current, int repetitions, bool randomly, double volume)
         {
             string soundIdsString = ConvertIdListToString(soundIds);
 
@@ -519,14 +520,15 @@ namespace UniversalSoundBoard.DataAccess
                 insertCommand.Connection = db;
 
                 insertCommand.CommandText = "INSERT INTO " + PlayingSoundTableName +
-                                            " (uuid, sound_ids, current, repetitions, randomly) " +
-                                            "VALUES (@Uuid, @SoundIds, @Current, @Repetitions, @Randomly);";
+                                            " (uuid, sound_ids, current, repetitions, randomly, volume) " +
+                                            "VALUES (@Uuid, @SoundIds, @Current, @Repetitions, @Randomly, @Volume);";
 
                 insertCommand.Parameters.AddWithValue("@Uuid", uuid);
                 insertCommand.Parameters.AddWithValue("@SoundIds", soundIdsString);
                 insertCommand.Parameters.AddWithValue("@Current", current);
                 insertCommand.Parameters.AddWithValue("@Repetitions", repetitions);
                 insertCommand.Parameters.AddWithValue("@Randomly", randomly);
+                insertCommand.Parameters.AddWithValue("@Volume", volume);
 
                 try
                 {
@@ -570,6 +572,7 @@ namespace UniversalSoundBoard.DataAccess
                     int current = query.GetInt32(3);
                     int repetitions = query.GetInt32(4);
                     bool randomly = query.GetBoolean(5);
+                    double volume = query.GetDouble(6);
 
                     var obj = new
                     {
@@ -577,7 +580,8 @@ namespace UniversalSoundBoard.DataAccess
                         soundIds,
                         current,
                         repetitions,
-                        randomly
+                        randomly,
+                        volume
                     };
 
                     entries.Add(obj);
@@ -617,6 +621,7 @@ namespace UniversalSoundBoard.DataAccess
                     int current = query.GetInt32(3);
                     int repetitions = query.GetInt32(4);
                     bool randomly = query.GetBoolean(5);
+                    double volume = query.GetDouble(6);
 
                     obj = new
                     {
@@ -624,7 +629,8 @@ namespace UniversalSoundBoard.DataAccess
                         soundIds,
                         current,
                         repetitions,
-                        randomly
+                        randomly,
+                        volume
                     };
                     soundExists = true;
                 }
@@ -637,7 +643,7 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static void UpdatePlayingSound(string uuid, List<string> soundIds, string current, string repetitions, string randomly)
+        public static void UpdatePlayingSound(string uuid, List<string> soundIds, string current, string repetitions, string randomly, string volume)
         {
             using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
             {
@@ -666,6 +672,13 @@ namespace UniversalSoundBoard.DataAccess
                     updateCommandText += "randomly = @Randomly, ";
                     updateCommand.Parameters.AddWithValue("@Randomly", randomly);
                 }
+                if (!String.IsNullOrEmpty(volume))
+                {
+                    volume = volume.Replace(',', '.');
+                    updateCommandText += "volume = @Volume, ";
+                    updateCommand.Parameters.AddWithValue("@Volume", volume);
+                }
+
                 updateCommandText = updateCommandText.Remove(updateCommandText.Length - 2);
                 updateCommandText += " WHERE uuid = @Uuid;";
                 updateCommand.Parameters.AddWithValue("@Uuid", uuid);

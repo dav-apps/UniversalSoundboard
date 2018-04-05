@@ -268,7 +268,16 @@ namespace UniversalSoundBoard.Components
                 VolumeSlider.Value = newValue;
             skipVolumeSliderValueChangedEvent = false;
         }
-        
+
+        private void VolumeSlider_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // Save the new volume of all playing sounds
+            foreach (PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
+            {
+                FileManager.SetVolumeOfPlayingSound(playingSound.Uuid, playingSound.MediaPlayer.Volume);
+            }
+        }
+
         private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var editCategoryContentDialog = ContentDialogs.CreateEditCategoryContentDialogAsync();

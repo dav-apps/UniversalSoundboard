@@ -512,12 +512,17 @@ namespace UniversalSoundBoard.DataAccess
             CreateCategoriesObservableCollection();
         }
 
-        public static string AddPlayingSound(string uuid, List<Sound> sounds, int current, int repetitions, bool randomly)
+        public static string AddPlayingSound(string uuid, List<Sound> sounds, int current, int repetitions, bool randomly, double volume)
         {
             if (uuid == null)
                 uuid = Guid.NewGuid().ToString();
 
-            if((App.Current as App)._itemViewHolder.savePlayingSounds && 
+            if (volume >= 1)
+                volume = 1;
+            else if (volume <= 0)
+                volume = 0;
+
+            if ((App.Current as App)._itemViewHolder.savePlayingSounds && 
                 (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
             {
                 if (DatabaseOperations.GetPlayingSound(uuid) == null)
@@ -528,7 +533,7 @@ namespace UniversalSoundBoard.DataAccess
                         soundIds.Add(sound.Uuid);
                     }
 
-                    DatabaseOperations.AddPlayingSound(uuid, soundIds, current, repetitions, randomly);
+                    DatabaseOperations.AddPlayingSound(uuid, soundIds, current, repetitions, randomly, volume);
                 }
             }
             return uuid;
@@ -546,6 +551,7 @@ namespace UniversalSoundBoard.DataAccess
                 int current = int.Parse(obj.GetType().GetProperty("current").GetValue(obj).ToString());
                 int repetitions = int.Parse(obj.GetType().GetProperty("repetitions").GetValue(obj).ToString());
                 bool randomly = bool.Parse(obj.GetType().GetProperty("randomly").GetValue(obj).ToString());
+                double volume = double.Parse(obj.GetType().GetProperty("volume").GetValue(obj).ToString());
 
                 List<Sound> sounds = new List<Sound>();
                 // Get the sounds
@@ -558,6 +564,7 @@ namespace UniversalSoundBoard.DataAccess
 
                 // Create the media player
                 MediaPlayer player = CreateMediaPlayer(sounds, current);
+                player.Volume = volume;
                 if(player != null)
                 {
                     PlayingSound playingSound = new PlayingSound(uuid, sounds, player, repetitions, randomly, current);
@@ -576,12 +583,12 @@ namespace UniversalSoundBoard.DataAccess
         {
             if((App.Current as App)._itemViewHolder.savePlayingSounds &&
                 (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
-                DatabaseOperations.UpdatePlayingSound(uuid, null, current.ToString(), null, null);
+                DatabaseOperations.UpdatePlayingSound(uuid, null, current.ToString(), null, null, null);
         }
 
         public static void SetRepetitionsOfPlayingSound(string uuid, int repetitions)
         {
-            DatabaseOperations.UpdatePlayingSound(uuid, null, null, repetitions.ToString(), null);
+            DatabaseOperations.UpdatePlayingSound(uuid, null, null, repetitions.ToString(), null, null);
         }
 
         public static void SetSoundsListOfPlayingSound(string uuid, List<Sound> sounds)
@@ -595,8 +602,18 @@ namespace UniversalSoundBoard.DataAccess
                     soundIds.Add(sound.Uuid);
                 }
 
-                DatabaseOperations.UpdatePlayingSound(uuid, soundIds, null, null, null);
+                DatabaseOperations.UpdatePlayingSound(uuid, soundIds, null, null, null, null);
             }
+        }
+
+        public static void SetVolumeOfPlayingSound(string uuid, double volume)
+        {
+            if (volume >= 1)
+                volume = 1;
+            else if (volume <= 0)
+                volume = 0;
+
+            DatabaseOperations.UpdatePlayingSound(uuid, null, null, null, null, volume.ToString());
         }
 
         public static void DeletePlayingSound(string uuid)

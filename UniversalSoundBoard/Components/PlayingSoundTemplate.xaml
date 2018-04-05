@@ -34,6 +34,7 @@
                                         IsFullWindowButtonVisible="False"
                                         IsZoomButtonVisible="False"
                                         Removed="CustomMediaTransportControls_Removed"
+                                        VolumeSlider_LostFocus="CustomMediaTransportControls_VolumeSlider_LostFocus"
                                         FavouriteFlyout_Clicked="CustomMediaTransportControls_FavouriteFlyout_Clicked"
                                         Repeat_1x_Clicked="CustomMediaTransportControls_Repeat_1x_Clicked"
                                         Repeat_2x_Clicked="CustomMediaTransportControls_Repeat_2x_Clicked"

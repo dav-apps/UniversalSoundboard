@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
@@ -204,7 +205,16 @@ namespace UniversalSoundBoard.Components
                 }
             });
         }
-        
+
+        private void CustomMediaTransportControls_VolumeSlider_LostFocus(object sender, EventArgs e)
+        {
+            if (MediaPlayerElement.MediaPlayer != null)
+            {
+                // Save new Volume
+                FileManager.SetVolumeOfPlayingSound(PlayingSound.Uuid, MediaPlayerElement.MediaPlayer.Volume);
+            }
+        }
+
         private void CustomMediaTransportControls_Removed(object sender, EventArgs e)
         {
             RemovePlayingSound();
