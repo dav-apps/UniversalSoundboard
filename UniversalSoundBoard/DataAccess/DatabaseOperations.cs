@@ -12,7 +12,9 @@ namespace UniversalSoundBoard.DataAccess
         private const string CategoryTableName = "Category";
         private const string SoundTableName = "Sound";
         private const string PlayingSoundTableName = "PlayingSound";
+        private const int currentDatabaseVersion = 0;
 
+        #region Initialization
         public static void InitializeDatabase()
         {
             SQLitePCL.Batteries.Init();
@@ -21,24 +23,53 @@ namespace UniversalSoundBoard.DataAccess
                 db.Open();
 
                 // Create Category table
-                string categoryTableCommandText = "CREATE TABLE IF NOT EXISTS " + CategoryTableName +
+                CreateCategoryTable(db);
+
+                // Create Sound table
+                CreateSoundTable(db);
+
+                // Create PlayingSound table
+                CreatePlayingSoundTable(db);
+
+
+                // Check if the database is on the newest version
+                // Upgrade the database schema and version if necessary
+                // https://stackoverflow.com/questions/989558/best-practices-for-in-app-database-migration-for-sqlite
+                int databaseVersion = GetUserVersion(db);
+                if(databaseVersion != currentDatabaseVersion)
+                {
+                    if(databaseVersion == 0)
+                    {
+                        // Upgrade to version 1
+                    }
+                }
+
+                db.Close();
+            }
+        }
+
+        private static void CreateCategoryTable(SqliteConnection db)
+        {
+            string categoryTableCommandText = "CREATE TABLE IF NOT EXISTS " + CategoryTableName +
                                         " (id INTEGER PRIMARY KEY, " +
                                         "uuid VARCHAR NOT NULL, " +
                                         "name VARCHAR(100) NOT NULL, " +
                                         "icon VARCHAR);";
-                SqliteCommand categoryTableCommand = new SqliteCommand(categoryTableCommandText, db);
-                try
-                {
-                    categoryTableCommand.ExecuteReader();
-                }
-                catch (SqliteException e)
-                {
-                    Debug.WriteLine("Error in create category table");
-                    Debug.WriteLine(e.Message);
-                }
+            SqliteCommand categoryTableCommand = new SqliteCommand(categoryTableCommandText, db);
+            try
+            {
+                categoryTableCommand.ExecuteReader();
+            }
+            catch (SqliteException e)
+            {
+                Debug.WriteLine("Error in create category table");
+                Debug.WriteLine(e.Message);
+            }
+        }
 
-                // Create Sound table
-                string soundTableCommandText = "CREATE TABLE IF NOT EXISTS " + SoundTableName +
+        private static void CreateSoundTable(SqliteConnection db)
+        {
+            string soundTableCommandText = "CREATE TABLE IF NOT EXISTS " + SoundTableName +
                                         " (id VARCHAR PRIMARY KEY, " +
                                         "uuid VARCHAR NOT NULL, " +
                                         "name VARCHAR(100) NOT NULL, " +
@@ -47,39 +78,65 @@ namespace UniversalSoundBoard.DataAccess
                                         "image_ext VARCHAR, " +
                                         "category_id VARCHAR, " +
                                         "FOREIGN KEY(category_id) REFERENCES categories(uuid));";
-                SqliteCommand soundTableCommand = new SqliteCommand(soundTableCommandText, db);
-                try
-                {
-                    soundTableCommand.ExecuteReader();
-                }
-                catch (SqliteException e)
-                {
-                    Debug.WriteLine("Error in create sound table");
-                    Debug.WriteLine(e.Message);
-                }
+            SqliteCommand soundTableCommand = new SqliteCommand(soundTableCommandText, db);
+            try
+            {
+                soundTableCommand.ExecuteReader();
+            }
+            catch (SqliteException e)
+            {
+                Debug.WriteLine("Error in create sound table");
+                Debug.WriteLine(e.Message);
+            }
+        }
 
-                // Create PlayingSound table
-                string playingSoundTableCommandText = "CREATE TABLE IF NOT EXISTS " + PlayingSoundTableName +
+        private static void CreatePlayingSoundTable(SqliteConnection db)
+        {
+            string playingSoundTableCommandText = "CREATE TABLE IF NOT EXISTS " + PlayingSoundTableName +
                                                     " (id VARCHAR PRIMARY KEY, " +
                                                     "uuid VARCHAR NOT NULL, " +
                                                     "sound_ids TEXT NOT NULL, " +
                                                     "current INTEGER DEFAULT 0, " +
                                                     "repetitions INTEGER DEFAULT 0, " +
                                                     "randomly BOOLEAN DEFAULT false);";
-                SqliteCommand playingSoundTableCommand = new SqliteCommand(playingSoundTableCommandText, db);
-                try
-                {
-                    playingSoundTableCommand.ExecuteReader();
-                }
-                catch(SqliteException e)
-                {
-                    Debug.WriteLine("Error in create playingSound table");
-                    Debug.WriteLine(e.Message);
-                }
-
-                db.Close();
+            SqliteCommand playingSoundTableCommand = new SqliteCommand(playingSoundTableCommandText, db);
+            try
+            {
+                playingSoundTableCommand.ExecuteReader();
+            }
+            catch (SqliteException e)
+            {
+                Debug.WriteLine("Error in create playingSound table");
+                Debug.WriteLine(e.Message);
             }
         }
+
+        private static int GetUserVersion(SqliteConnection db)
+        {
+            // Get the user_version
+            string userVersionCommandText = "PRAGMA user_version;";
+            SqliteCommand userVersionCommand = new SqliteCommand(userVersionCommandText, db);
+            SqliteDataReader query;
+            int userVersion = 0;
+
+            try
+            {
+                query = userVersionCommand.ExecuteReader();
+
+                while (query.Read())
+                {
+                    userVersion = query.GetInt32(0);
+                }
+            }
+            catch (SqliteException e)
+            {
+                Debug.WriteLine("Error in getting the user_version");
+                Debug.WriteLine(e.Message);
+            }
+
+            return userVersion;
+        }
+        # endregion
 
         public static void AddSound(string uuid, string name, string category_id, string ext)
         {
