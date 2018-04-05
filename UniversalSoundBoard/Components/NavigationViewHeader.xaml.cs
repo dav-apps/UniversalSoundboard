@@ -88,19 +88,27 @@ namespace UniversalSoundBoard.Components
 
             for (int n = 1; n < (App.Current as App)._itemViewHolder.categories.Count; n++)
             {
-                if(MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1) != null)
+                if (MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1) != null)
                 {   // If the element is already there, set the new text
                     Category cat = (App.Current as App)._itemViewHolder.categories.ElementAt(n);
+                    FontIcon icon = new FontIcon();
+                    icon.Glyph = cat.Icon;
+
                     ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Text = cat.Name;
                     ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Tag = cat.Uuid;
                     ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Visibility = Visibility.Visible;
+                    ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Icon = icon;
                 }
                 else
                 {
                     var item = new MenuFlyoutItem();
+                    FontIcon icon = new FontIcon();
+                    icon.Glyph = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Icon;
+
                     item.Click += MoreButton_ChangeCategory_Click;
                     item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
                     item.Tag = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Uuid;
+                    item.Icon = icon;
                     MoreButton_ChangeCategoryFlyout.Items.Add(item);
                 }
             }
