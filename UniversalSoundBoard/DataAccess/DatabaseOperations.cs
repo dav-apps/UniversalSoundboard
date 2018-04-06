@@ -17,7 +17,7 @@ namespace UniversalSoundBoard.DataAccess
         #region Initialization
         public static void InitializeDatabase()
         {
-            SQLitePCL.Batteries.Init();
+            SQLitePCL.Batteries_V2.Init();
             using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
             {
                 db.Open();

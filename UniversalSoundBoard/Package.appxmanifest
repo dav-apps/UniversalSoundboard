@@ -3,7 +3,7 @@
   <Identity Name="49427davSoftwareDevelopme.UniversalSoundBoard" Publisher="CN=34761CCA-A79E-46B8-A1BC-D17F44039844" Version="1.4.0.0" />
   <mp:PhoneIdentity PhoneProductId="0ed8f8ed-1633-468d-8f96-d7a7be9c1a54" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>UniversalSoundboard</DisplayName>
+    <DisplayName>UniversalSoundBoard</DisplayName>
     <PublisherDisplayName>dav Apps</PublisherDisplayName>
     <Logo>Assets\Generierte Assets\StoreLogo.png</Logo>
   </Properties>
@@ -15,7 +15,7 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="UniversalSoundBoard.App">
-      <uap:VisualElements DisplayName="UniversalSoundboard" Square150x150Logo="Assets\Generierte Assets\Square150x150Logo.png" Square44x44Logo="Assets\Generierte Assets\Square44x44Logo.png" Description="Create your own soundboard! Add images to your sounds and sort them in categories to keep track of all your sounds." BackgroundColor="transparent">
+      <uap:VisualElements DisplayName="UniversalSoundBoard" Square150x150Logo="Assets\Generierte Assets\Square150x150Logo.png" Square44x44Logo="Assets\Generierte Assets\Square44x44Logo.png" Description="Create your own soundboard! Add images to your sounds and sort them in categories to keep track of all your sounds." BackgroundColor="transparent">
         <uap:LockScreen Notification="badge" BadgeLogo="Assets\Generierte Assets\BadgeLogo.png" />
         <uap:DefaultTile Wide310x150Logo="Assets\Generierte Assets\Wide310x150Logo.png" ShortName="UniversalSoundBoard" Square310x310Logo="Assets\Generierte Assets\Square310x310Logo.png" Square71x71Logo="Assets\Generierte Assets\Square71x71Logo.png">
           <uap:ShowNameOnTiles>
