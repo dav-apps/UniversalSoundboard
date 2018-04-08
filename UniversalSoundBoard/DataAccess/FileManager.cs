@@ -38,6 +38,7 @@ namespace UniversalSoundBoard.DataAccess
         public const string showSoundsPivotKey = "showSoundsPivot";
         public const string savePlayingSoundsKey = "savePlayingSounds";
         public const string themeKey = "theme";
+        public const string jwtKey = "jwt";
 
         // Variables for defaults
         public const double volume = 1.0;

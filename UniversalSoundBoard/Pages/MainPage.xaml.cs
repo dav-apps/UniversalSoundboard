@@ -10,6 +10,7 @@ using Windows.UI.ViewManagement;
 using UniversalSoundBoard.DataAccess;
 using System.Threading.Tasks;
 using System.Diagnostics;
+using UniversalSoundboard.Pages;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -164,6 +165,12 @@ namespace UniversalSoundBoard.Pages
                     await FileManager.ShowCategory(category.Uuid);
                 }
             }
+        }
+
+        private void LogInMenuItem_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            (App.Current as App)._itemViewHolder.title = "Account";
+            (App.Current as App)._itemViewHolder.page = typeof(AccountPage);
         }
     }
 }

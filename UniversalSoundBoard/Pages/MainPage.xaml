@@ -65,6 +65,13 @@
                 </DataTemplate>
             </NavigationView.MenuItemTemplate>
 
+            <NavigationView.PaneFooter>
+                <NavigationViewItem Name="LogInMenuItem" 
+                                    Icon="Contact" 
+                                    Content="Log in" 
+                                    Tapped="LogInMenuItem_Tapped" />
+            </NavigationView.PaneFooter>
+
             <Grid Name="ContentRoot">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
