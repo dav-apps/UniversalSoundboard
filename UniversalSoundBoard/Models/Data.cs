@@ -124,4 +124,13 @@ namespace UniversalSoundBoard.Models
         public List<SoundData> Sounds { get; set; }
         public List<Category> Categories { get; set; }
     }
+
+    // The model for the get user http response
+    public class UserData
+    {
+        public string username { get; set; }
+        public string avatar { get; set; }
+        public long total_storage { get; set; }
+        public long used_storage { get; set; }
+    }
 }

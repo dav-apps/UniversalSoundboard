@@ -131,6 +131,25 @@ namespace UniversalSoundBoard.DataAccess
             return oldDataFolder;
         }
 
+        public static async Task<StorageFolder> GetUserFolderAsnyc()
+        {
+            StorageFolder localStorageFolder = ApplicationData.Current.LocalFolder;
+            StorageFolder userFolder;
+            string userFolderName = "user";
+
+            if(await localStorageFolder.TryGetItemAsync(userFolderName) == null)
+            {
+                // Create user folder
+                userFolder = await localStorageFolder.CreateFolderAsync(userFolderName);
+            }
+            else
+            {
+                userFolder = await localStorageFolder.GetFolderAsync(userFolderName);
+            }
+
+            return userFolder;
+        }
+
         private static async Task<StorageFolder> CreateExportFoldersAsync()
         {
             StorageFolder localFolder = ApplicationData.Current.LocalCacheFolder;

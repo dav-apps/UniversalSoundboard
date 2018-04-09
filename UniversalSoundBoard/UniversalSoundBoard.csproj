@@ -105,8 +105,10 @@
     </Compile>
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Components\CustomMediaTransportControls.cs" />
+    <Compile Include="DataAccess\ApiManager.cs" />
     <Compile Include="DataAccess\DatabaseOperations.cs" />
     <Compile Include="DataAccess\FileManager.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Pages\AccountPage.xaml.cs">
       <DependentUpon>AccountPage.xaml</DependentUpon>
     </Compile>
@@ -205,6 +207,7 @@
     <Content Include="Assets\Generierte Assets\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Generierte Assets\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Generierte Assets\Wide310x150Logo.scale-400.png" />
+    <Content Include="Assets\Images\avatar-default.png" />
     <Content Include="Assets\Images\default-dark.png" />
     <Content Include="Assets\Images\default.png" />
     <None Include="Package.StoreAssociation.xml">

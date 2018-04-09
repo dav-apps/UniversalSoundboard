@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using UniversalSoundboard.DataAccess;
 using UniversalSoundBoard.DataAccess;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
@@ -24,13 +25,13 @@ namespace UniversalSoundboard.Pages
             Uri requestUrl = new Uri("https://dav-apps.tech/login_implicit?api_key=" + apiKey + "&redirect_url=" + redirectUrl);
 
             var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
-            Debug.WriteLine(webAuthenticationResult.ResponseData);
             switch (webAuthenticationResult.ResponseStatus)
             {
                 case WebAuthenticationStatus.Success:
                     // Get the JWT from the response string
                     string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
                     SaveJwt(jwt);
+                    Debug.WriteLine(jwt);
                     break;
                 default:
                     Debug.WriteLine("There was an error with logging you in.");
@@ -38,29 +39,17 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             // Get JWT from local storage
-            var localSettings = ApplicationData.Current.LocalSettings;
-
-            var jwtObject = localSettings.Values[FileManager.jwtKey];
-            bool loggedIn = false;
-
-            if(jwtObject != null)
-            {
-                jwt = jwtObject.ToString();
-                if (!String.IsNullOrEmpty(jwt))
-                {
-                    loggedIn = true;
-                }
-            }
+            jwt = ApiManager.GetJwt();
 
             ShowLoggedInContent();
 
-            if (loggedIn)
+            if (jwt != null)
             {
                 // Get the user information from the server and update layout if necessary
-
+                await ApiManager.GetUser();
             }
         }
 
