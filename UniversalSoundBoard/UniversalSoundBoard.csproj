@@ -311,7 +311,7 @@
     <PackageReference Include="NotificationsExtensions.Win10">
       <Version>14332.0.2</Version>
     </PackageReference>
-    <PackageReference Include="SQLitePCLRaw.bundle_winsqlite3">
+    <PackageReference Include="SQLitePCLRaw.provider.sqlite3.uwp10">
       <Version>1.1.10</Version>
     </PackageReference>
   </ItemGroup>
