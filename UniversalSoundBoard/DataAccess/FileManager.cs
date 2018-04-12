@@ -40,6 +40,10 @@ namespace UniversalSoundBoard.DataAccess
         public const string themeKey = "theme";
         public const string jwtKey = "jwt";
         public const string avatarEtagKey = "avatarEtag";
+        public const string userKey = "user";
+        public const string userUsernameKey = "username";
+        public const string userTotalStorageKey = "totalStorage";
+        public const string userUsedStorageKey = "usedStorage";
 
         // Variables for defaults
         public const double volume = 1.0;

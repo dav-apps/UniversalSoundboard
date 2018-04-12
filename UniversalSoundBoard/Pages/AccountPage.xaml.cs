@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Models;
+using UniversalSoundBoard;
 using UniversalSoundBoard.DataAccess;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
@@ -16,6 +18,57 @@ namespace UniversalSoundboard.Pages
         public AccountPage()
         {
             InitializeComponent();
+        }
+
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetDataContext();
+
+            // Get the JWT from local storage
+            jwt = ApiManager.GetJwt();
+            ShowLoggedInContent();
+
+            if (jwt != null)
+            {
+                SetUsedStorageTextBlock();
+
+                // Get the user information
+                var newUser = await ApiManager.GetUser();
+
+                if (newUser != null)
+                {
+                    (App.Current as App)._itemViewHolder.user = newUser;
+                    SetUsedStorageTextBlock();
+                }
+                else
+                {
+
+                }
+            }
+        }
+
+        private void SetDataContext()
+        {
+            ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+        }
+
+        private void SetUsedStorageTextBlock()
+        {
+            if((App.Current as App)._itemViewHolder.user.TotalStorage != 0)
+            {
+                double usedStorageGB = Math.Round((App.Current as App)._itemViewHolder.user.UsedStorage / 1000.0 / 1000.0 / 1000.0, 1);
+                double totalStorageGB = Math.Round((App.Current as App)._itemViewHolder.user.TotalStorage / 1000.0 / 1000.0 / 1000.0, 1);
+
+                double percentage = usedStorageGB / totalStorageGB * 100;
+
+                StorageProgressBar.Value = percentage;
+                string message = usedStorageGB.ToString() + " GB of " + totalStorageGB.ToString() + " GB used";
+
+                StorageTextBlock.Text = message;
+
+                if (totalStorageGB < 50)
+                    UpgradeLink.Visibility = Visibility.Visible;
+            }
         }
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
@@ -37,21 +90,7 @@ namespace UniversalSoundboard.Pages
                     break;
             }
         }
-
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            // Get JWT from local storage
-            jwt = ApiManager.GetJwt();
-
-            ShowLoggedInContent();
-
-            if (jwt != null)
-            {
-                // Get the user information from the server and update layout if necessary
-                await ApiManager.GetUser();
-            }
-        }
-
+        
         private void ShowLoggedInContent()
         {
             if (!String.IsNullOrEmpty(jwt))
@@ -73,6 +112,16 @@ namespace UniversalSoundboard.Pages
             this.jwt = jwt;
 
             ShowLoggedInContent();
+        }
+
+        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void UpgradeLink_Click(object sender, RoutedEventArgs e)
+        {
+
         }
     }
 }

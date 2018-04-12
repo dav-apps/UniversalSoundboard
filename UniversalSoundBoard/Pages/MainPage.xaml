@@ -66,10 +66,26 @@
             </NavigationView.MenuItemTemplate>
 
             <NavigationView.PaneFooter>
-                <NavigationViewItem Name="LogInMenuItem" 
+                <StackPanel>
+                    <NavigationViewItem Name="LoginMenuItem" 
+                                    x:Uid="LoginMenuItem"
                                     Icon="Contact" 
-                                    Content="Log in" 
                                     Tapped="LogInMenuItem_Tapped" />
+
+                    <NavigationViewItem Name="AccountMenuItem" 
+                                        Visibility="Collapsed" 
+                                        Tapped="LogInMenuItem_Tapped">
+                        <StackPanel Orientation="Horizontal">
+                            <PersonPicture ProfilePicture="{Binding user.Avatar}" 
+                                           Height="25"
+                                           Width="25" 
+                                           Margin="-4,0,0,0" />
+                            <TextBlock Text="{Binding user.Username}" 
+                                       Margin="11,0,0,0" 
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </NavigationViewItem>
+                </StackPanel>
             </NavigationView.PaneFooter>
 
             <Grid Name="ContentRoot">

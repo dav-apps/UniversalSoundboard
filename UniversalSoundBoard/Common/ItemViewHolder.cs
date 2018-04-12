@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using UniversalSoundboard.Models;
 using UniversalSoundBoard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -51,7 +52,8 @@ namespace UniversalSoundBoard.Common
         private bool _topButtonsCollapsed;                          // If true the buttons at the top show only the icon, if false they show the icon and text
         private bool _areSelectButtonsEnabled;                      // If false the buttons at the top in multi selection mode are disabled
         private int _selectedCategory;                              // The index of the currently selected category in the category list
-        private string _upgradeDataStatusText;
+        private string _upgradeDataStatusText;                      // The text that is shown on the splash screen when the old data is migrated
+        private User _user;                                         // The User object with username and avatar
 
         public string title
         {
@@ -501,6 +503,17 @@ namespace UniversalSoundBoard.Common
             {
                 _upgradeDataStatusText = value;
                 NotifyPropertyChanged("upgradeDataStatusText");
+            }
+        }
+
+        public User user
+        {
+            get { return _user; }
+
+            set
+            {
+                _user = value;
+                NotifyPropertyChanged("user");
             }
         }
 

@@ -11,6 +11,7 @@ using UniversalSoundBoard.DataAccess;
 using System.Threading.Tasks;
 using System.Diagnostics;
 using UniversalSoundboard.Pages;
+using UniversalSoundboard.DataAccess;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -36,8 +37,10 @@ namespace UniversalSoundBoard.Pages
             InitializeLocalSettings();
             (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
             SideBar.MenuItemsSource = (App.Current as App)._itemViewHolder.categories;
-            
-            await AddSavedPlayingSounds();
+
+            InitializeAccountSettings();
+
+            AddSavedPlayingSounds();
             await FileManager.ShowAllSounds();
         }
         
@@ -45,6 +48,21 @@ namespace UniversalSoundBoard.Pages
         {
             WindowTitleTextBox.DataContext = (App.Current as App)._itemViewHolder;
             SideBar.DataContext = (App.Current as App)._itemViewHolder;
+        }
+
+        private async Task InitializeAccountSettings()
+        {
+            if (ApiManager.GetJwt() != null)
+            {
+                (App.Current as App)._itemViewHolder.user = await ApiManager.GetUser();
+                LoginMenuItem.Visibility = Visibility.Collapsed;
+                AccountMenuItem.Visibility = Visibility.Visible;
+            }
+            else
+            {
+                LoginMenuItem.Visibility = Visibility.Visible;
+                AccountMenuItem.Visibility = Visibility.Collapsed;
+            }
         }
 
         private async Task AddSavedPlayingSounds()
@@ -169,7 +187,7 @@ namespace UniversalSoundBoard.Pages
 
         private void LogInMenuItem_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            (App.Current as App)._itemViewHolder.title = "Account";
+            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Account-Title");
             (App.Current as App)._itemViewHolder.page = typeof(AccountPage);
         }
     }

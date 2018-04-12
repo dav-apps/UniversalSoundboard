@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using UniversalSoundboard.Models;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
@@ -10,9 +11,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
-using Windows.Foundation.Metadata;
 using Windows.Storage;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -64,7 +63,8 @@ namespace UniversalSoundBoard
             topButtonsCollapsed = false,
             areSelectButtonsEnabled = false,
             selectedCategory = 0,
-            upgradeDataStatusText = "Preparing..."
+            upgradeDataStatusText = "Preparing...",
+            user = new User("", 0, 0)
         };
 
         /// <summary>

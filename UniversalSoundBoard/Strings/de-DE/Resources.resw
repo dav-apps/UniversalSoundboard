@@ -397,4 +397,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Unpin" xml:space="preserve">
     <value>Von Start lösen</value>
   </data>
+  <data name="Account-UpgradeLink.Content" xml:space="preserve">
+    <value>Brauchst du mehr?</value>
+  </data>
+  <data name="Account-Title" xml:space="preserve">
+    <value>Dein Account</value>
+  </data>
+  <data name="LoginMenuItem.Content" xml:space="preserve">
+    <value>Anmelden</value>
+  </data>
 </root>

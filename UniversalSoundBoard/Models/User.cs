@@ -17,7 +17,9 @@ namespace UniversalSoundboard.Models
 
         public User(string username, long totalStorage, long usedStorage)
         {
-
+            Username = username;
+            TotalStorage = totalStorage;
+            UsedStorage = usedStorage;
         }
     }
 }

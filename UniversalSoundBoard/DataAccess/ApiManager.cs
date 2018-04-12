@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Net.NetworkInformation;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
@@ -30,55 +31,103 @@ namespace UniversalSoundboard.DataAccess
                 return null;
             }
 
-            HttpClient httpClient = new HttpClient();
-            var headers = httpClient.DefaultRequestHeaders;
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(jwt);
-
-            Uri requestUri = new Uri(ApiBaseUrl + "auth/user");
-
-            HttpResponseMessage httpResponse = new HttpResponseMessage();
-            string httpResponseBody = "";
-
-            try
+            if (NetworkInterface.GetIsNetworkAvailable())
             {
-                //Send the GET request
-                httpResponse = await httpClient.GetAsync(requestUri);
-                httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
+                HttpClient httpClient = new HttpClient();
+                var headers = httpClient.DefaultRequestHeaders;
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(jwt);
 
-                if (httpResponse.IsSuccessStatusCode)
+                Uri requestUri = new Uri(ApiBaseUrl + "auth/user");
+
+                HttpResponseMessage httpResponse = new HttpResponseMessage();
+                string httpResponseBody = "";
+
+                try
                 {
-                    // Deserialize the json and create a user object
-                    var serializer = new DataContractJsonSerializer(typeof(UserData));
-                    var ms = new MemoryStream(Encoding.UTF8.GetBytes(httpResponseBody));
-                    var dataReader = (UserData)serializer.ReadObject(ms);
-                    User user = new User(dataReader.username, dataReader.total_storage, dataReader.used_storage);
+                    //Send the GET request
+                    httpResponse = await httpClient.GetAsync(requestUri);
+                    httpResponseBody = await httpResponse.Content.ReadAsStringAsync();
 
-                    // If the etag is outdated, download the avatar
-                    if (!CheckAvatarEtag(dataReader.avatar_etag))
+                    if (httpResponse.IsSuccessStatusCode)
                     {
-                        DownloadAvatar(dataReader.avatar);
-                        SetAvatarEtag(dataReader.avatar_etag);
-                    }
+                        // Deserialize the json and create a user object
+                        var serializer = new DataContractJsonSerializer(typeof(UserData));
+                        var ms = new MemoryStream(Encoding.UTF8.GetBytes(httpResponseBody));
+                        var dataReader = (UserData)serializer.ReadObject(ms);
+                        User user = new User(dataReader.username, dataReader.total_storage, dataReader.used_storage);
 
-                    // Get the avatar of the user
+                        // If the etag is outdated, download the avatar
+                        if (!CheckAvatarEtag(dataReader.avatar_etag))
+                        {
+                            DownloadAvatar(dataReader.avatar);
+                            SetAvatarEtag(dataReader.avatar_etag);
+                        }
+
+                        // Get the avatar of the user
+                        user.Avatar = await GetAvatar();
+
+                        SetUserInLocalSettings(user.Username, user.TotalStorage, user.UsedStorage);
+                        return user;
+                    }
+                    else
+                    {
+                        // Clear the JWT if it is invalid or expired
+                        Debug.WriteLine(httpResponse.StatusCode);
+                        Debug.WriteLine(httpResponse.Content);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    httpResponseBody = "Error: " + ex.HResult.ToString("X") + " Message: " + ex.Message;
+                    Debug.WriteLine(httpResponseBody);
+                }
+            }
+            else
+            {
+                return await GetUserFromLocalSettings();
+            }
+            return null;
+        }
+
+        private static async Task<User> GetUserFromLocalSettings()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            ApplicationDataCompositeValue composite = (ApplicationDataCompositeValue)localSettings.Values[FileManager.userKey];
+
+            if (composite != null)
+            {
+                string username = composite[FileManager.userUsernameKey] as string;
+                var totalStorageObject = composite[FileManager.userTotalStorageKey];
+                var usedStorageObject = composite[FileManager.userUsedStorageKey];
+                long totalStorage = 0;
+                long usedStorage = 0;
+
+                if (totalStorageObject != null)
+                    totalStorage = long.Parse(totalStorageObject.ToString());
+
+                if (usedStorageObject != null)
+                    usedStorage = long.Parse(usedStorageObject.ToString());
+
+                if(!String.IsNullOrEmpty(username) && totalStorageObject != null && usedStorageObject != null)
+                {
+                    User user = new User(username, totalStorage, usedStorage);
                     user.Avatar = await GetAvatar();
-                    
                     return user;
                 }
-                else
-                {
-                    // Clear the JWT if it is invalid or expired
-                    Debug.WriteLine(httpResponse.StatusCode);
-                    Debug.WriteLine(httpResponse.Content);
-                }
             }
-            catch (Exception ex)
-            {
-                httpResponseBody = "Error: " + ex.HResult.ToString("X") + " Message: " + ex.Message;
-                Debug.WriteLine(httpResponseBody);
-            }
-
             return null;
+        }
+
+        private static void SetUserInLocalSettings(string username, long totalStorage, long usedStorage)
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+
+            ApplicationDataCompositeValue userComposite = new ApplicationDataCompositeValue();
+            userComposite[FileManager.userUsernameKey] = username;
+            userComposite[FileManager.userTotalStorageKey] = totalStorage;
+            userComposite[FileManager.userUsedStorageKey] = usedStorage;
+
+            localSettings.Values[FileManager.userKey] = userComposite;
         }
 
         private static async Task<BitmapImage> GetAvatar()
