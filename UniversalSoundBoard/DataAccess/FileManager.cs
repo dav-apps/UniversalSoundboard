@@ -39,6 +39,7 @@ namespace UniversalSoundBoard.DataAccess
         public const string savePlayingSoundsKey = "savePlayingSounds";
         public const string themeKey = "theme";
         public const string jwtKey = "jwt";
+        public const string avatarEtagKey = "avatarEtag";
 
         // Variables for defaults
         public const double volume = 1.0;
@@ -1495,15 +1496,14 @@ namespace UniversalSoundBoard.DataAccess
             {
                 string imageFileName = uuid + "." + image_ext;
 
-                try
-                {
-                    StorageFile imageFile = await imagesFolder.GetFileAsync(imageFileName);
+                StorageFile imageFile = await imagesFolder.TryGetItemAsync(imageFileName) as StorageFile;
 
+                if(imageFile != null)
+                {
                     Uri uri = new Uri(imageFile.Path, UriKind.Absolute);
                     image.UriSource = uri;
                     sound.ImageFile = imageFile;
                 }
-                catch (Exception e) { }
             }
             sound.Image = image;
 

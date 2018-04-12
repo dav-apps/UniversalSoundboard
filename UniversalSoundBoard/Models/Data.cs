@@ -132,5 +132,6 @@ namespace UniversalSoundBoard.Models
         public string avatar { get; set; }
         public long total_storage { get; set; }
         public long used_storage { get; set; }
+        public string avatar_etag { get; set; }
     }
 }

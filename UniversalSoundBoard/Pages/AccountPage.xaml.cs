@@ -31,7 +31,6 @@ namespace UniversalSoundboard.Pages
                     // Get the JWT from the response string
                     string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
                     SaveJwt(jwt);
-                    Debug.WriteLine(jwt);
                     break;
                 default:
                     Debug.WriteLine("There was an error with logging you in.");
