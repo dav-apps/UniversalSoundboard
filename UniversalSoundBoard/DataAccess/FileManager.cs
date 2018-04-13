@@ -902,13 +902,13 @@ namespace UniversalSoundBoard.DataAccess
             else
             {
                 if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-                {   // If Settings Page is visible
+                {   // If Settings Page or AccountPage is visible
                     // Go to All sounds page
                     (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
                     (App.Current as App)._itemViewHolder.selectedCategory = 0;
                     (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-                    ShowAllSounds();
                     (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                    ShowAllSounds();
                 }
                 else if ((App.Current as App)._itemViewHolder.selectedCategory == 0 && 
                         String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))

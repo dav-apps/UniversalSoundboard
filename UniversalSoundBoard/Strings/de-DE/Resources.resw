@@ -406,4 +406,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="LoginMenuItem.Content" xml:space="preserve">
     <value>Anmelden</value>
   </data>
+  <data name="Account-UsedStorage" xml:space="preserve">
+    <value>| GB von _ GB verwendet</value>
+  </data>
 </root>

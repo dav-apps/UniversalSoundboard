@@ -56,13 +56,16 @@ namespace UniversalSoundboard.Pages
         {
             if((App.Current as App)._itemViewHolder.user.TotalStorage != 0)
             {
+                string message = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Account-UsedStorage");
+
                 double usedStorageGB = Math.Round((App.Current as App)._itemViewHolder.user.UsedStorage / 1000.0 / 1000.0 / 1000.0, 1);
                 double totalStorageGB = Math.Round((App.Current as App)._itemViewHolder.user.TotalStorage / 1000.0 / 1000.0 / 1000.0, 1);
 
                 double percentage = usedStorageGB / totalStorageGB * 100;
 
                 StorageProgressBar.Value = percentage;
-                string message = usedStorageGB.ToString() + " GB of " + totalStorageGB.ToString() + " GB used";
+                message = message.Replace("|", usedStorageGB.ToString());
+                message = message.Replace("_", totalStorageGB.ToString());
 
                 StorageTextBlock.Text = message;
 

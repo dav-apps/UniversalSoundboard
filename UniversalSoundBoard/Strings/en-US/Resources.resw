@@ -419,4 +419,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="LoginMenuItem.Content" xml:space="preserve">
     <value>Log in</value>
   </data>
+  <data name="Account-UsedStorage" xml:space="preserve">
+    <value>| GB of _ GB used</value>
+  </data>
 </root>

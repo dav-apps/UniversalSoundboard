@@ -189,6 +189,9 @@ namespace UniversalSoundBoard.Pages
         {
             (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Account-Title");
             (App.Current as App)._itemViewHolder.page = typeof(AccountPage);
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
+            FileManager.SetBackButtonVisibility(true);
         }
     }
 }

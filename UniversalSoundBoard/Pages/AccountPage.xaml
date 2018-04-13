@@ -27,9 +27,9 @@
             </StackPanel>
             <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
                 <ProgressBar Name="StorageProgressBar"
-                             Value="30" Width="250" Margin="0,40,0,0" />
+                             Value="0" Width="250" Margin="0,40,0,0" />
                 <TextBlock Name="StorageTextBlock"
-                           Text="2 GB of 5 GB used"
+                           Text=""
                            Margin="0,10,0,0" />
                 <HyperlinkButton Name="UpgradeLink"
                                  NavigateUri="http://dav-apps.tech/pricing"
