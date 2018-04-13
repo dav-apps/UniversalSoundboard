@@ -10,10 +10,14 @@
     <Grid Name="ContentRoot"
           Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
         <Button Name="LoginButton"
-                Content="Log in"
+                x:Uid="LoginButton"
                 Click="LoginButton_Click" />
+        <Button Name="LogoutButton"
+                x:Uid="LogoutButton"
+                Visibility="Collapsed"
+                Click="LogoutButton_Click" />
 
-        <StackPanel Name="LoggedInContent" Visibility="Visible" Margin="30,30,0,0">
+        <StackPanel Name="LoggedInContent" Visibility="Collapsed" Margin="30,30,0,0">
             <StackPanel Name="UserInformationStackPanel" Orientation="Horizontal">
                 <PersonPicture Name="AvatarPicture"
                                Width="150"
@@ -38,7 +42,7 @@
             </StackPanel>
         </StackPanel>
 
-        <StackPanel Name="LoggedOutContent" Visibility="Collapsed">
+        <StackPanel Name="LoggedOutContent" Visibility="Visible">
             <TextBlock Text="You are not logged in." />
         </StackPanel>
     </Grid>

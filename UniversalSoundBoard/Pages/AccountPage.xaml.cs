@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using UniversalSoundBoard;
+using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
@@ -23,7 +25,16 @@ namespace UniversalSoundboard.Pages
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             SetDataContext();
+            await UpdateUserLayout();
+        }
 
+        private void SetDataContext()
+        {
+            ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+        }
+
+        private async Task UpdateUserLayout()
+        {
             // Get the JWT from local storage
             jwt = ApiManager.GetJwt();
             ShowLoggedInContent();
@@ -39,17 +50,17 @@ namespace UniversalSoundboard.Pages
                 {
                     (App.Current as App)._itemViewHolder.user = newUser;
                     SetUsedStorageTextBlock();
+                    (App.Current as App)._itemViewHolder.loginMenuItemVisibility = false;
                 }
                 else
                 {
-
+                    (App.Current as App)._itemViewHolder.loginMenuItemVisibility = true;
                 }
             }
-        }
-
-        private void SetDataContext()
-        {
-            ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+            else
+            {
+                (App.Current as App)._itemViewHolder.loginMenuItemVisibility = true;
+            }
         }
 
         private void SetUsedStorageTextBlock()
@@ -73,26 +84,6 @@ namespace UniversalSoundboard.Pages
                     UpgradeLink.Visibility = Visibility.Visible;
             }
         }
-
-        private async void LoginButton_Click(object sender, RoutedEventArgs e)
-        {
-            Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
-            string apiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";
-            Uri requestUrl = new Uri("https://dav-apps.tech/login_implicit?api_key=" + apiKey + "&redirect_url=" + redirectUrl);
-
-            var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
-            switch (webAuthenticationResult.ResponseStatus)
-            {
-                case WebAuthenticationStatus.Success:
-                    // Get the JWT from the response string
-                    string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
-                    SaveJwt(jwt);
-                    break;
-                default:
-                    Debug.WriteLine("There was an error with logging you in.");
-                    break;
-            }
-        }
         
         private void ShowLoggedInContent()
         {
@@ -100,31 +91,37 @@ namespace UniversalSoundboard.Pages
             {
                 LoggedInContent.Visibility = Visibility.Visible;
                 LoggedOutContent.Visibility = Visibility.Collapsed;
+
+                LoginButton.Visibility = Visibility.Collapsed;
+                LogoutButton.Visibility = Visibility.Visible;
             }
             else
             {
                 LoggedInContent.Visibility = Visibility.Collapsed;
                 LoggedOutContent.Visibility = Visibility.Visible;
+
+                LoginButton.Visibility = Visibility.Visible;
+                LogoutButton.Visibility = Visibility.Collapsed;
             }
         }
 
-        private void SaveJwt(string jwt)
+        private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[FileManager.jwtKey] = jwt;
-            this.jwt = jwt;
-
-            ShowLoggedInContent();
+            await ApiManager.Login();
+            await UpdateUserLayout();
         }
 
-        private void LogoutButton_Click(object sender, RoutedEventArgs e)
+        private async void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var logoutContentDialog = ContentDialogs.CreateLogoutContentDialog();
+            logoutContentDialog.PrimaryButtonClick += LogoutContentDialog_PrimaryButtonClick;
+            await logoutContentDialog.ShowAsync();
         }
 
-        private void UpgradeLink_Click(object sender, RoutedEventArgs e)
+        private async void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-
+            ApiManager.Logout();
+            await UpdateUserLayout();
         }
     }
 }

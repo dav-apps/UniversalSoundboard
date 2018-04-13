@@ -50,18 +50,16 @@ namespace UniversalSoundBoard.Pages
             SideBar.DataContext = (App.Current as App)._itemViewHolder;
         }
 
-        private async Task InitializeAccountSettings()
+        public async Task InitializeAccountSettings()
         {
             if (ApiManager.GetJwt() != null)
             {
                 (App.Current as App)._itemViewHolder.user = await ApiManager.GetUser();
-                LoginMenuItem.Visibility = Visibility.Collapsed;
-                AccountMenuItem.Visibility = Visibility.Visible;
+                (App.Current as App)._itemViewHolder.loginMenuItemVisibility = false;
             }
             else
             {
-                LoginMenuItem.Visibility = Visibility.Visible;
-                AccountMenuItem.Visibility = Visibility.Collapsed;
+                (App.Current as App)._itemViewHolder.loginMenuItemVisibility = true;
             }
         }
 

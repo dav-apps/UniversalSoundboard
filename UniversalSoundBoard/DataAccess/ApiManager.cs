@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using UniversalSoundboard.Models;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
+using Windows.Security.Authentication.Web;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -118,6 +119,31 @@ namespace UniversalSoundboard.DataAccess
             return null;
         }
 
+        public static async Task Login()
+        {
+            Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
+            string apiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";
+            Uri requestUrl = new Uri("https://dav-apps.tech/login_implicit?api_key=" + apiKey + "&redirect_url=" + redirectUrl);
+
+            var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
+            switch (webAuthenticationResult.ResponseStatus)
+            {
+                case WebAuthenticationStatus.Success:
+                    // Get the JWT from the response string
+                    string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
+                    SetJwt(jwt);
+                    break;
+                default:
+                    Debug.WriteLine("There was an error with logging you in.");
+                    break;
+            }
+        }
+
+        public static void Logout()
+        {
+            SetJwt("");
+        }
+
         private static void SetUserInLocalSettings(string username, long totalStorage, long usedStorage)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -194,6 +220,12 @@ namespace UniversalSoundboard.DataAccess
             {
                 return null;
             }
+        }
+
+        public static void SetJwt(string jwt)
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            localSettings.Values[FileManager.jwtKey] = jwt;
         }
     }
 }

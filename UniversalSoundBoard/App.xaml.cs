@@ -64,7 +64,8 @@ namespace UniversalSoundBoard
             areSelectButtonsEnabled = false,
             selectedCategory = 0,
             upgradeDataStatusText = "Preparing...",
-            user = new User("", 0, 0)
+            user = new User("", 0, 0),
+            loginMenuItemVisibility = true
         };
 
         /// <summary>
