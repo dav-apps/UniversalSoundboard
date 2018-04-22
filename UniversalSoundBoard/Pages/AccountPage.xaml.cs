@@ -8,8 +8,10 @@ using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace UniversalSoundboard.Pages
 {
@@ -25,12 +27,22 @@ namespace UniversalSoundboard.Pages
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             SetDataContext();
+            SetDarkThemeLayout();
             await UpdateUserLayout();
         }
 
         private void SetDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+        }
+
+        private void SetDarkThemeLayout()
+        {
+            if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
+            {
+                LoginButton.Background = new SolidColorBrush(Colors.DimGray);
+                SignupButton.Background = new SolidColorBrush(Colors.DimGray);
+            }
         }
 
         private async Task UpdateUserLayout()
@@ -122,6 +134,11 @@ namespace UniversalSoundboard.Pages
         {
             ApiManager.Logout();
             await UpdateUserLayout();
+        }
+
+        private async void SignupButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Windows.System.Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/signup"));
         }
     }
 }
