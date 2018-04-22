@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using UniversalSoundboard.Models;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
+using Windows.Networking.BackgroundTransfer;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
@@ -21,7 +22,8 @@ namespace UniversalSoundboard.DataAccess
 {
     public class ApiManager
     {
-        private const string ApiBaseUrl = "https://dav-backend-staging.herokuapp.com/v1/";
+        //private const string ApiBaseUrl = "https://dav-backend.herokuapp.com/v1/";
+        private const string ApiBaseUrl = "http://localhost:3111/v1/";
 
         public static async Task<User> GetUser()
         {
@@ -227,5 +229,114 @@ namespace UniversalSoundboard.DataAccess
             var localSettings = ApplicationData.Current.LocalSettings;
             localSettings.Values[FileManager.jwtKey] = jwt;
         }
+
+        public static void SyncSoundboard()
+        {
+            // 1. Upload the categories
+            // Get all SyncCategory entries and apply the changes
+            List<SyncObject> syncCategories = DatabaseOperations.GetAllSyncObjects(DatabaseOperations.SyncTables.SyncCategory);
+            foreach(SyncObject syncObject in syncCategories)
+            {
+                switch (syncObject.Operation)
+                {
+                    case 0:     // New Category
+                        UploadNewCategory(syncObject.Uuid);
+                        break;
+                    case 1:     // Updated Category
+                        UploadUpdatedCategory(syncObject.Uuid);
+                        break;
+                    case 2:     // Deleted Category
+                        UploadDeletedCategory(syncObject.Uuid);
+                        break;
+                }
+            }
+
+            // 2. Upload the sounds
+            List<SyncObject> syncSounds = DatabaseOperations.GetAllSyncObjects(DatabaseOperations.SyncTables.SyncSound);
+            foreach(SyncObject syncObject in syncSounds)
+            {
+                switch (syncObject.Operation)
+                {
+                    case 0:     // New Sound
+                        UploadNewSound(syncObject.Uuid);
+                        break;
+                    case 1:     // Updated Sound
+                        UploadUpdatedSound(syncObject.Uuid);
+                        break;
+                    case 2:     // Deleted Sound
+                        UploadDeletedSound(syncObject.Uuid);
+                        break;
+                }
+            }
+
+            // 3. Upload the playingSounds
+            List<SyncObject> syncPlayingSounds = DatabaseOperations.GetAllSyncObjects(DatabaseOperations.SyncTables.SyncPlayingSound);
+            foreach(SyncObject syncObject in syncPlayingSounds)
+            {
+                switch (syncObject.Operation)
+                {
+                    case 0:     // New PlayingSound
+                        UploadNewSound(syncObject.Uuid);
+                        break;
+                    case 1:     // Updated PlayingSound
+                        UploadUpdatedSound(syncObject.Uuid);
+                        break;
+                    case 2:     // Deleted PlayingSound
+                        UploadDeletedSound(syncObject.Uuid);
+                        break;
+                }
+            }
+        }
+
+        #region Upload Category changes
+        private static void UploadNewCategory(Guid uuid)
+        {
+
+        }
+
+        private static void UploadUpdatedCategory(Guid uuid)
+        {
+
+        }
+
+        private static void UploadDeletedCategory(Guid uuid)
+        {
+
+        }
+        #endregion
+
+        #region Upload Sound changes
+        private static void UploadNewSound(Guid uuid)
+        {
+
+        }
+
+        private static void UploadUpdatedSound(Guid uuid)
+        {
+
+        }
+
+        private static void UploadDeletedSound(Guid uuid)
+        {
+
+        }
+        #endregion
+
+        #region Upload PlayingSound changes
+        private static void UploadNewPlayingSound(Guid uuid)
+        {
+
+        }
+
+        private static void UploadUpdatedPlayingSound(Guid uuid)
+        {
+
+        }
+
+        private static void UploadDeletedPlayingSound(Guid uuid)
+        {
+
+        }
+        #endregion
     }
 }

@@ -134,4 +134,23 @@ namespace UniversalSoundBoard.Models
         public long used_storage { get; set; }
         public string avatar_etag { get; set; }
     }
+
+    public class SyncObject
+    {
+        public int Id { get; set; }
+        public Guid Uuid { get; set; }
+        public int Operation { get; set; }
+
+        public SyncObject()
+        {
+
+        }
+
+        public SyncObject(int id, Guid uuid, int operation)
+        {
+            Id = id;
+            Uuid = uuid;
+            Operation = operation;
+        }
+    }
 }

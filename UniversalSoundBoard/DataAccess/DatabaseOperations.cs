@@ -12,7 +12,16 @@ namespace UniversalSoundBoard.DataAccess
         private const string CategoryTableName = "Category";
         private const string SoundTableName = "Sound";
         private const string PlayingSoundTableName = "PlayingSound";
+        private const string SyncCategoryTableName = "SyncCategory";
+        private const string SyncSoundTableName = "SyncSound";
+        private const string SyncPlayingSoundTableName = "SyncPlayingSound";
         private const int currentDatabaseVersion = 0;
+        public enum SyncTables
+        {
+            SyncCategory,
+            SyncSound,
+            SyncPlayingSound
+        };
 
         #region Initialization
         public static void InitializeDatabase()
@@ -31,6 +40,8 @@ namespace UniversalSoundBoard.DataAccess
                 // Create PlayingSound table
                 CreatePlayingSoundTable(db);
 
+                // Create the tables for synchronisation
+                CreateSyncTables(db);
 
                 // Check if the database is on the newest version
                 // Upgrade the database schema and version if necessary
@@ -46,6 +57,32 @@ namespace UniversalSoundBoard.DataAccess
 
                 db.Close();
             }
+        }
+
+        private static int GetUserVersion(SqliteConnection db)
+        {
+            // Get the user_version
+            string userVersionCommandText = "PRAGMA user_version;";
+            SqliteCommand userVersionCommand = new SqliteCommand(userVersionCommandText, db);
+            SqliteDataReader query;
+            int userVersion = 0;
+
+            try
+            {
+                query = userVersionCommand.ExecuteReader();
+
+                while (query.Read())
+                {
+                    userVersion = query.GetInt32(0);
+                }
+            }
+            catch (SqliteException e)
+            {
+                Debug.WriteLine("Error in getting the user_version");
+                Debug.WriteLine(e.Message);
+            }
+
+            return userVersion;
         }
 
         private static void CreateCategoryTable(SqliteConnection db)
@@ -112,30 +149,68 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        private static int GetUserVersion(SqliteConnection db)
+        private static void CreateSyncTables(SqliteConnection db)
         {
-            // Get the user_version
-            string userVersionCommandText = "PRAGMA user_version;";
-            SqliteCommand userVersionCommand = new SqliteCommand(userVersionCommandText, db);
-            SqliteDataReader query;
-            int userVersion = 0;
+            CreateSyncCategoryTable(db);
+            CreateSyncSoundTable(db);
+            CreateSyncPlayingSoundTable(db);
+        }
 
+        private static void CreateSyncCategoryTable(SqliteConnection db)
+        {
+            string syncCategoryTableCommandText = "CREATE TABLE IF NOT EXISTS " + SyncCategoryTableName +
+                                                    " (id INTEGER PRIMARY KEY, " +
+                                                    " uuid VARCHAR NOT NULL, " +
+                                                    " operation INTEGER NOT NULL);";
+
+            SqliteCommand syncCategoryTableCommand = new SqliteCommand(syncCategoryTableCommandText, db);
             try
             {
-                query = userVersionCommand.ExecuteReader();
-
-                while (query.Read())
-                {
-                    userVersion = query.GetInt32(0);
-                }
+                syncCategoryTableCommand.ExecuteReader();
             }
             catch (SqliteException e)
             {
-                Debug.WriteLine("Error in getting the user_version");
+                Debug.WriteLine("Error in create SyncCategory table");
                 Debug.WriteLine(e.Message);
             }
+        }
 
-            return userVersion;
+        private static void CreateSyncSoundTable(SqliteConnection db)
+        {
+            string syncSoundTableCommandText = "CREATE TABLE IF NOT EXISTS " + SyncSoundTableName +
+                                                    " (id INTEGER PRIMARY KEY, " +
+                                                    " uuid VARCHAR NOT NULL, " +
+                                                    " operation INTEGER NOT NULL);";
+
+            SqliteCommand syncSoundTableCommand = new SqliteCommand(syncSoundTableCommandText, db);
+            try
+            {
+                syncSoundTableCommand.ExecuteReader();
+            }
+            catch (SqliteException e)
+            {
+                Debug.WriteLine("Error in create SyncSound table");
+                Debug.WriteLine(e.Message);
+            }
+        }
+
+        private static void CreateSyncPlayingSoundTable(SqliteConnection db)
+        {
+            string syncPlayingSoundTableCommandText = "CREATE TABLE IF NOT EXISTS " + SyncPlayingSoundTableName +
+                                                    " (id INTEGER PRIMARY KEY, " +
+                                                    " uuid VARCHAR NOT NULL, " +
+                                                    " operation INTEGER NOT NULL);";
+
+            SqliteCommand syncPlayingSoundTableCommand = new SqliteCommand(syncPlayingSoundTableCommandText, db);
+            try
+            {
+                syncPlayingSoundTableCommand.ExecuteReader();
+            }
+            catch (SqliteException e)
+            {
+                Debug.WriteLine("Error in create SyncPlayingSound table");
+                Debug.WriteLine(e.Message);
+            }
         }
         # endregion
 
@@ -723,6 +798,92 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
+        public static void AddSyncObject(SyncTables table, Guid uuid, int operation)
+        {
+            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            {
+                db.Open();
+                SqliteCommand insertCommand = new SqliteCommand();
+                insertCommand.Connection = db;
+
+                insertCommand.CommandText = "INSERT INTO " + GetSyncTableName(table) +
+                                            " (uuid, operation) " +
+                                            "VALUES (@Uuid, @Operation);";
+
+                insertCommand.Parameters.AddWithValue("@Uuid", uuid);
+                insertCommand.Parameters.AddWithValue("@Operation", operation);
+
+                try
+                {
+                    insertCommand.ExecuteReader();
+                }
+                catch (SqliteException error)
+                {
+                    Debug.WriteLine("Error in AddSyncObject");
+                    Debug.WriteLine(error.Message);
+                }
+                db.Close();
+            }
+        }
+
+        public static List<SyncObject> GetAllSyncObjects(SyncTables table)
+        {
+            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            {
+                db.Open();
+
+                string selectCommandText = "SELECT * FROM " + GetSyncTableName(table) + ";";
+                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
+                SqliteDataReader query;
+
+                try
+                {
+                    query = selectCommand.ExecuteReader();
+                }catch(SqliteException e)
+                {
+                    Debug.WriteLine("Error in GetAllSyncObjects");
+                    Debug.WriteLine(e.Message);
+                    return null;
+                }
+
+                List<SyncObject> syncObjects = new List<SyncObject>();
+                while (query.Read())
+                {
+                    SyncObject syncObject = new SyncObject(query.GetInt32(0),
+                                                            query.GetGuid(1),
+                                                            query.GetInt32(2));
+                    syncObjects.Add(syncObject);
+                }
+
+                db.Close();
+                return syncObjects;
+            }
+        }
+
+        public static void DeleteSyncObject(SyncTables table, int id)
+        {
+            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            {
+                db.Open();
+                SqliteCommand insertCommand = new SqliteCommand();
+                insertCommand.Connection = db;
+
+                insertCommand.CommandText = "DELETE FROM " + GetSyncTableName(table) + " WHERE id = @Id;";
+                insertCommand.Parameters.AddWithValue("@Id", id);
+
+                try
+                {
+                    insertCommand.ExecuteReader();
+                }
+                catch (SqliteException error)
+                {
+                    Debug.WriteLine("Error in DeleteSyncObject");
+                    Debug.WriteLine(error.Message);
+                }
+                db.Close();
+            }
+        }
+
 
         // Other methods
         private static string ConvertIdListToString(List<string> ids)
@@ -736,6 +897,25 @@ namespace UniversalSoundBoard.DataAccess
             idsString = idsString.Remove(idsString.Length - 1);
 
             return idsString;
+        }
+
+        private static string GetSyncTableName(SyncTables table)
+        {
+            string tableName = "";
+            switch (table)
+            {
+                case SyncTables.SyncCategory:
+                    tableName = SyncCategoryTableName;
+                    break;
+                case SyncTables.SyncSound:
+                    tableName = SyncSoundTableName;
+                    break;
+                case SyncTables.SyncPlayingSound:
+                    tableName = SyncPlayingSoundTableName;
+                    break;
+            }
+
+            return tableName;
         }
     }
 }
