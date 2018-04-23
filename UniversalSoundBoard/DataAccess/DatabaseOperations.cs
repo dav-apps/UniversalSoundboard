@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UniversalSoundBoard.Models;
+using static UniversalSoundBoard.Models.SyncObject;
 
 namespace UniversalSoundBoard.DataAccess
 {
@@ -16,12 +17,6 @@ namespace UniversalSoundBoard.DataAccess
         private const string SyncSoundTableName = "SyncSound";
         private const string SyncPlayingSoundTableName = "SyncPlayingSound";
         private const int currentDatabaseVersion = 0;
-        public enum SyncTables
-        {
-            SyncCategory,
-            SyncSound,
-            SyncPlayingSound
-        };
 
         #region Initialization
         public static void InitializeDatabase()
@@ -798,7 +793,7 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static void AddSyncObject(SyncTables table, Guid uuid, int operation)
+        public static void AddSyncObject(SyncTable table, Guid uuid, SyncOperation operation)
         {
             using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
             {
@@ -806,12 +801,12 @@ namespace UniversalSoundBoard.DataAccess
                 SqliteCommand insertCommand = new SqliteCommand();
                 insertCommand.Connection = db;
 
-                insertCommand.CommandText = "INSERT INTO " + GetSyncTableName(table) +
+                insertCommand.CommandText = "INSERT INTO " + GetNameOfSyncTable(table) +
                                             " (uuid, operation) " +
                                             "VALUES (@Uuid, @Operation);";
 
                 insertCommand.Parameters.AddWithValue("@Uuid", uuid);
-                insertCommand.Parameters.AddWithValue("@Operation", operation);
+                insertCommand.Parameters.AddWithValue("@Operation", GetValueOfSyncOperation(operation));
 
                 try
                 {
@@ -826,13 +821,13 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static List<SyncObject> GetAllSyncObjects(SyncTables table)
+        public static List<SyncObject> GetAllSyncObjects(SyncTable table)
         {
             using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
             {
                 db.Open();
 
-                string selectCommandText = "SELECT * FROM " + GetSyncTableName(table) + ";";
+                string selectCommandText = "SELECT * FROM " + GetNameOfSyncTable(table) + ";";
                 SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
                 SqliteDataReader query;
 
@@ -849,9 +844,10 @@ namespace UniversalSoundBoard.DataAccess
                 List<SyncObject> syncObjects = new List<SyncObject>();
                 while (query.Read())
                 {
+                    
                     SyncObject syncObject = new SyncObject(query.GetInt32(0),
                                                             query.GetGuid(1),
-                                                            query.GetInt32(2));
+                                                            GetSyncOperationOfValue(query.GetInt32(2)));
                     syncObjects.Add(syncObject);
                 }
 
@@ -860,7 +856,7 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static void DeleteSyncObject(SyncTables table, int id)
+        public static void DeleteSyncObject(SyncTable table, int id)
         {
             using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
             {
@@ -868,7 +864,7 @@ namespace UniversalSoundBoard.DataAccess
                 SqliteCommand insertCommand = new SqliteCommand();
                 insertCommand.Connection = db;
 
-                insertCommand.CommandText = "DELETE FROM " + GetSyncTableName(table) + " WHERE id = @Id;";
+                insertCommand.CommandText = "DELETE FROM " + GetNameOfSyncTable(table) + " WHERE id = @Id;";
                 insertCommand.Parameters.AddWithValue("@Id", id);
 
                 try
@@ -899,23 +895,61 @@ namespace UniversalSoundBoard.DataAccess
             return idsString;
         }
 
-        private static string GetSyncTableName(SyncTables table)
+        private static string GetNameOfSyncTable(SyncTable table)
         {
             string tableName = "";
             switch (table)
             {
-                case SyncTables.SyncCategory:
+                case SyncTable.SyncCategory:
                     tableName = SyncCategoryTableName;
                     break;
-                case SyncTables.SyncSound:
+                case SyncTable.SyncSound:
                     tableName = SyncSoundTableName;
                     break;
-                case SyncTables.SyncPlayingSound:
+                case SyncTable.SyncPlayingSound:
                     tableName = SyncPlayingSoundTableName;
                     break;
             }
 
             return tableName;
+        }
+
+        private static int GetValueOfSyncOperation(SyncOperation operation)
+        {
+            int operationValue = 0;
+            switch (operation)
+            {
+                case SyncOperation.Create:
+                    operationValue = 0;
+                    break;
+                case SyncOperation.Update:
+                    operationValue = 1;
+                    break;
+                case SyncOperation.Delete:
+                    operationValue = 2;
+                    break;
+            }
+
+            return operationValue;
+        }
+
+        private static SyncOperation GetSyncOperationOfValue(int operation)
+        {
+            SyncOperation syncOperation = SyncOperation.Create;
+            switch (operation)
+            {
+                case 0:
+                    syncOperation = SyncOperation.Create;
+                    break;
+                case 1:
+                    syncOperation = SyncOperation.Update;
+                    break;
+                case 2:
+                    syncOperation = SyncOperation.Delete;
+                    break;
+            }
+
+            return syncOperation;
         }
     }
 }

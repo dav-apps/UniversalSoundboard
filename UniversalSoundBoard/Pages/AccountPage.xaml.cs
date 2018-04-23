@@ -51,7 +51,7 @@ namespace UniversalSoundboard.Pages
             jwt = ApiManager.GetJwt();
             ShowLoggedInContent();
 
-            if (jwt != null)
+            if (!String.IsNullOrEmpty(jwt))
             {
                 SetUsedStorageTextBlock();
 

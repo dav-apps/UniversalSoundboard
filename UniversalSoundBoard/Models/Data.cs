@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Windows.Media.Playback;
+using static UniversalSoundBoard.DataAccess.DatabaseOperations;
 
 namespace UniversalSoundBoard.Models
 {
@@ -139,14 +140,27 @@ namespace UniversalSoundBoard.Models
     {
         public int Id { get; set; }
         public Guid Uuid { get; set; }
-        public int Operation { get; set; }
+        public SyncOperation Operation { get; set; }
+
+        public enum SyncTable
+        {
+            SyncCategory,
+            SyncSound,
+            SyncPlayingSound
+        };
+        public enum SyncOperation
+        {
+            Create,
+            Update,
+            Delete
+        };
 
         public SyncObject()
         {
 
         }
 
-        public SyncObject(int id, Guid uuid, int operation)
+        public SyncObject(int id, Guid uuid, SyncOperation operation)
         {
             Id = id;
             Uuid = uuid;

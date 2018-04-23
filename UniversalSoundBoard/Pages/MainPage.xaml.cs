@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 using System.Diagnostics;
 using UniversalSoundboard.Pages;
 using UniversalSoundboard.DataAccess;
+using System;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -52,10 +53,11 @@ namespace UniversalSoundBoard.Pages
 
         public async Task InitializeAccountSettings()
         {
-            if (ApiManager.GetJwt() != null)
+            if (!String.IsNullOrEmpty(ApiManager.GetJwt()))
             {
                 (App.Current as App)._itemViewHolder.user = await ApiManager.GetUser();
                 (App.Current as App)._itemViewHolder.loginMenuItemVisibility = false;
+                await ApiManager.SyncSoundboard();
             }
             else
             {

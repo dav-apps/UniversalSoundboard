@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -9,14 +10,17 @@ using System.Net.Http.Headers;
 using System.Net.NetworkInformation;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UniversalSoundboard.Models;
+using UniversalSoundBoard;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.Networking.BackgroundTransfer;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
+using static UniversalSoundBoard.Models.SyncObject;
 
 namespace UniversalSoundboard.DataAccess
 {
@@ -24,12 +28,19 @@ namespace UniversalSoundboard.DataAccess
     {
         //private const string ApiBaseUrl = "https://dav-backend.herokuapp.com/v1/";
         private const string ApiBaseUrl = "http://localhost:3111/v1/";
+        //private const int AppId = 8;
+        private const int AppId = 8;
+        private const string SoundFileTableName = "SoundFile";
+        private const string ImageFileTableName = "ImageFile";
+        private const string CategoryTableName = "Category";
+        private const string SoundTableName = "Sound";
+        private const string PlayingSoundTableName = "PlayingSound";
+
+        private static string jwt = "";
 
         public static async Task<User> GetUser()
         {
-            string jwt = GetJwt();
-
-            if(jwt == null)
+            if(String.IsNullOrEmpty(GetJwt()))
             {
                 return null;
             }
@@ -38,7 +49,7 @@ namespace UniversalSoundboard.DataAccess
             {
                 HttpClient httpClient = new HttpClient();
                 var headers = httpClient.DefaultRequestHeaders;
-                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(jwt);
+                httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue(GetJwt());
 
                 Uri requestUri = new Uri(ApiBaseUrl + "auth/user");
 
@@ -123,22 +134,48 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task Login()
         {
-            Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
-            string apiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";
-            Uri requestUrl = new Uri("https://dav-apps.tech/login_implicit?api_key=" + apiKey + "&redirect_url=" + redirectUrl);
-
-            var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
-            switch (webAuthenticationResult.ResponseStatus)
+            if (NetworkInterface.GetIsNetworkAvailable())
             {
-                case WebAuthenticationStatus.Success:
-                    // Get the JWT from the response string
-                    string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
-                    SetJwt(jwt);
-                    break;
-                default:
-                    Debug.WriteLine("There was an error with logging you in.");
-                    break;
+                Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
+                string apiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";
+                Uri requestUrl = new Uri("https://dav-apps.tech/login_implicit?api_key=" + apiKey + "&redirect_url=" + redirectUrl);
+
+                var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
+                switch (webAuthenticationResult.ResponseStatus)
+                {
+                    case WebAuthenticationStatus.Success:
+                        // Get the JWT from the response string
+                        string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
+                        SetJwt(jwt);
+                        await UploadData();
+                        break;
+                    default:
+                        Debug.WriteLine("There was an error with logging you in.");
+                        break;
+                }
             }
+            else
+            {
+                Debug.WriteLine("No internet connection");
+            }
+        }
+
+        private static async Task UploadData()
+        {
+            // Add all categories to the SyncCategory table
+            for(int i = 1; i < (App.Current as App)._itemViewHolder.categories.Count; i++)
+            {
+                DatabaseOperations.AddSyncObject(SyncTable.SyncCategory, 
+                                                Guid.Parse((App.Current as App)._itemViewHolder.categories[i].Uuid), 
+                                                SyncOperation.Create);
+            }
+
+            foreach(Sound sound in (App.Current as App)._itemViewHolder.sounds)
+            {
+                DatabaseOperations.AddSyncObject(SyncTable.SyncSound, Guid.Parse(sound.Uuid), SyncOperation.Create);
+            }
+
+            await SyncSoundboard();
         }
 
         public static void Logout()
@@ -209,131 +246,182 @@ namespace UniversalSoundboard.DataAccess
 
         public static string GetJwt()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
-
-            var jwtObject = localSettings.Values[FileManager.jwtKey];
-
-            if (jwtObject != null)
+            if (String.IsNullOrEmpty(jwt))
             {
-                string jwt = jwtObject.ToString();
-                return !String.IsNullOrEmpty(jwt) ? jwt : null;
+                var localSettings = ApplicationData.Current.LocalSettings;
+
+                var jwtObject = localSettings.Values[FileManager.jwtKey];
+
+                if (jwtObject != null)
+                {
+                    if (!String.IsNullOrEmpty(jwtObject.ToString()))
+                    {
+                        jwt = jwtObject.ToString();
+                        return jwt;
+                    }
+                    else
+                    {
+                        return null;
+                    }
+                }
+                else
+                {
+                    return null;
+                }
             }
             else
             {
-                return null;
+                return jwt;
             }
         }
 
-        public static void SetJwt(string jwt)
+        public static void SetJwt(string newJwt)
         {
             var localSettings = ApplicationData.Current.LocalSettings;
-            localSettings.Values[FileManager.jwtKey] = jwt;
+            localSettings.Values[FileManager.jwtKey] = newJwt;
+            jwt = newJwt;
         }
 
-        public static void SyncSoundboard()
+        public static async Task SyncSoundboard()
         {
-            // 1. Upload the categories
+            // Upload the categories
             // Get all SyncCategory entries and apply the changes
-            List<SyncObject> syncCategories = DatabaseOperations.GetAllSyncObjects(DatabaseOperations.SyncTables.SyncCategory);
+            List<SyncObject> syncCategories = DatabaseOperations.GetAllSyncObjects(SyncTable.SyncCategory);
             foreach(SyncObject syncObject in syncCategories)
             {
-                switch (syncObject.Operation)
-                {
-                    case 0:     // New Category
-                        UploadNewCategory(syncObject.Uuid);
-                        break;
-                    case 1:     // Updated Category
-                        UploadUpdatedCategory(syncObject.Uuid);
-                        break;
-                    case 2:     // Deleted Category
-                        UploadDeletedCategory(syncObject.Uuid);
-                        break;
-                }
+                await UploadCategory(syncObject.Id, syncObject.Uuid, syncObject.Operation);
             }
 
-            // 2. Upload the sounds
-            List<SyncObject> syncSounds = DatabaseOperations.GetAllSyncObjects(DatabaseOperations.SyncTables.SyncSound);
+            // Upload the sounds
+            List<SyncObject> syncSounds = DatabaseOperations.GetAllSyncObjects(SyncTable.SyncSound);
             foreach(SyncObject syncObject in syncSounds)
             {
-                switch (syncObject.Operation)
-                {
-                    case 0:     // New Sound
-                        UploadNewSound(syncObject.Uuid);
-                        break;
-                    case 1:     // Updated Sound
-                        UploadUpdatedSound(syncObject.Uuid);
-                        break;
-                    case 2:     // Deleted Sound
-                        UploadDeletedSound(syncObject.Uuid);
-                        break;
-                }
+                await UploadSound(syncObject.Id, syncObject.Uuid, syncObject.Operation);
             }
 
-            // 3. Upload the playingSounds
-            List<SyncObject> syncPlayingSounds = DatabaseOperations.GetAllSyncObjects(DatabaseOperations.SyncTables.SyncPlayingSound);
+            // Upload the playingSounds
+            List<SyncObject> syncPlayingSounds = DatabaseOperations.GetAllSyncObjects(SyncTable.SyncPlayingSound);
             foreach(SyncObject syncObject in syncPlayingSounds)
             {
-                switch (syncObject.Operation)
-                {
-                    case 0:     // New PlayingSound
-                        UploadNewSound(syncObject.Uuid);
-                        break;
-                    case 1:     // Updated PlayingSound
-                        UploadUpdatedSound(syncObject.Uuid);
-                        break;
-                    case 2:     // Deleted PlayingSound
-                        UploadDeletedSound(syncObject.Uuid);
-                        break;
-                }
+                UploadPlayingSound(syncObject.Id, syncObject.Uuid, syncObject.Operation);
             }
         }
 
         #region Upload Category changes
-        private static void UploadNewCategory(Guid uuid)
+        private static async Task UploadCategory(int id, Guid uuid, SyncOperation syncOperation)
         {
+            // Get the category from the database
+            Category category = DatabaseOperations.GetCategory(uuid.ToString());
 
-        }
+            HttpClient httpClient = new HttpClient();
 
-        private static void UploadUpdatedCategory(Guid uuid)
-        {
+            Uri requestUri;
+            HttpMethod httpMethod;
 
-        }
+            if (syncOperation == SyncOperation.Create)
+            {
+                requestUri = new Uri(ApiBaseUrl +
+                                    "apps/object?table_name=" + CategoryTableName +
+                                    "&app_id=" + AppId.ToString() +
+                                    "&uuid=" + uuid);
+                httpMethod = HttpMethod.Post;
+            }
+            else if (syncOperation == SyncOperation.Update)
+            {
+                requestUri = new Uri(ApiBaseUrl + "apps/object/" + uuid.ToString());
+                httpMethod = HttpMethod.Put;
+            }
+            else
+            {
+                requestUri = new Uri(ApiBaseUrl + "apps/object/" + uuid.ToString());
+                httpMethod = HttpMethod.Delete;
+            }
 
-        private static void UploadDeletedCategory(Guid uuid)
-        {
+            string content = JsonConvert.SerializeObject(new { name = category.Name, icon = category.Icon });
 
+            HttpRequestMessage requestMessage = new HttpRequestMessage(httpMethod, requestUri);
+            requestMessage.Content = new StringContent(content, Encoding.UTF8, "application/json");
+            requestMessage.Headers.Authorization = new AuthenticationHeaderValue(GetJwt());
+
+            HttpResponseMessage response = await httpClient.SendAsync(requestMessage);
+            string httpResponseBody = await response.Content.ReadAsStringAsync();
+
+            if (response.IsSuccessStatusCode)
+            {
+                // Remove the SyncObject from the database
+                DatabaseOperations.DeleteSyncObject(SyncTable.SyncCategory, id);
+            }
+            else
+            {
+                // TODO Check if the object already exists
+                Debug.WriteLine("Error in UploadCategory");
+                Debug.WriteLine(httpResponseBody);
+
+                // Error code 2704: uuid already taken
+                if (httpResponseBody.Contains("2704"))
+                {
+                    // Remove the object from the database
+                    DatabaseOperations.DeleteSyncObject(SyncTable.SyncCategory, id);
+                }
+            }
         }
         #endregion
-
+        
         #region Upload Sound changes
-        private static void UploadNewSound(Guid uuid)
+        private static async Task UploadSound(int id, Guid uuid, SyncOperation syncOperation)
         {
+            CancellationTokenSource cts = new CancellationTokenSource();
+            // - Sound informationen
+            // - Sound File
+            // - Image File
+            /*
+             * 1. Sound File mit neu erstellter UUID hochladen
+             * 2. sound_uuid in der DB speichern
+             * 3. Sound Informationen hochladen
+             * 4. Wenn es ein Bild gibt, mit neu erstellter UUID speichern
+             * 5. uuid in der DB speichern
+             * 6. Sound Informationen auf dem Server aktualisieren
+             * 
+             * */
 
+            // 0. Get the sound from the database
+            Sound sound = await FileManager.GetSound(uuid.ToString());
+
+            // 1. Upload the SoundFile
+            Guid soundFileUuid = Guid.NewGuid();
+
+            Uri soundFileUri = new Uri(ApiBaseUrl +
+                                        "apps/object?table_name=" + SoundFileTableName +
+                                        "&app_id=" + AppId.ToString() +
+                                        "&uuid=" + soundFileUuid +
+                                        "&ext=" + sound.AudioFile.FileType.Replace(".", ""));
+            BackgroundUploader uploader = new BackgroundUploader();
+            uploader.SetRequestHeader("Authorization", GetJwt());
+            uploader.SetRequestHeader("Content-Type", "audio/mpeg");
+            UploadOperation upload = uploader.CreateUpload(soundFileUri, sound.AudioFile);
+
+            // Start the upload
+            Progress<UploadOperation> progressCallback = new Progress<UploadOperation>(UploadProgress);
+            await upload.StartAsync().AsTask(cts.Token, progressCallback);
         }
 
-        private static void UploadUpdatedSound(Guid uuid)
+        private static void UploadProgress(UploadOperation upload)
         {
+            BackgroundUploadProgress currentProgress = upload.Progress;
 
-        }
+            double percentSent = 100;
+            if (currentProgress.TotalBytesToSend > 0)
+            {
+                percentSent = currentProgress.BytesSent * 100 / currentProgress.TotalBytesToSend;
+            }
 
-        private static void UploadDeletedSound(Guid uuid)
-        {
-
+            Debug.WriteLine(String.Format("Sent bytes: {0} of {1}", currentProgress.BytesSent, currentProgress.TotalBytesToSend));
+            Debug.WriteLine(String.Format("progress: {0}", percentSent));
         }
         #endregion
 
         #region Upload PlayingSound changes
-        private static void UploadNewPlayingSound(Guid uuid)
-        {
-
-        }
-
-        private static void UploadUpdatedPlayingSound(Guid uuid)
-        {
-
-        }
-
-        private static void UploadDeletedPlayingSound(Guid uuid)
+        private static void UploadPlayingSound(int id, Guid uuid, SyncOperation syncOperation)
         {
 
         }
