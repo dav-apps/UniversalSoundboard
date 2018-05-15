@@ -58,7 +58,7 @@ namespace UniversalSoundboard.Pages
                 // Get the user information
                 var newUser = await ApiManager.GetUser();
 
-                if (newUser != null)
+                if (newUser.TotalStorage != 0)
                 {
                     (App.Current as App)._itemViewHolder.user = newUser;
                     SetUsedStorageTextBlock();

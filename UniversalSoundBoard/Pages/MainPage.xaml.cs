@@ -55,7 +55,11 @@ namespace UniversalSoundBoard.Pages
         {
             if (!String.IsNullOrEmpty(ApiManager.GetJwt()))
             {
-                (App.Current as App)._itemViewHolder.user = await ApiManager.GetUser();
+                var user = await ApiManager.GetUser();
+
+                if (user.TotalStorage != 0)
+                    (App.Current as App)._itemViewHolder.user = user;
+
                 (App.Current as App)._itemViewHolder.loginMenuItemVisibility = false;
                 await ApiManager.SyncSoundboard();
             }

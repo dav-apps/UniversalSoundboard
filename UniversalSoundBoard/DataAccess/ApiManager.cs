@@ -16,6 +16,8 @@ using UniversalSoundboard.Models;
 using UniversalSoundBoard;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
+using Windows.ApplicationModel.Background;
+using Windows.Foundation;
 using Windows.Networking.BackgroundTransfer;
 using Windows.Security.Authentication.Web;
 using Windows.Storage;
@@ -40,9 +42,10 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task<User> GetUser()
         {
-            if(String.IsNullOrEmpty(GetJwt()))
+            User defaultUser = await GetUserFromLocalSettings();
+            if (String.IsNullOrEmpty(GetJwt()))
             {
-                return null;
+                return defaultUser;
             }
 
             if (NetworkInterface.GetIsNetworkAvailable())
@@ -98,9 +101,9 @@ namespace UniversalSoundboard.DataAccess
             }
             else
             {
-                return await GetUserFromLocalSettings();
+                return defaultUser;
             }
-            return null;
+            return defaultUser;
         }
 
         private static async Task<User> GetUserFromLocalSettings()
@@ -129,34 +132,44 @@ namespace UniversalSoundboard.DataAccess
                     return user;
                 }
             }
-            return null;
+            return new User("", 0, 0);
         }
 
         public static async Task Login()
         {
             if (NetworkInterface.GetIsNetworkAvailable())
             {
-                Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
-                string apiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";
-                Uri requestUrl = new Uri("https://dav-apps.tech/login_implicit?api_key=" + apiKey + "&redirect_url=" + redirectUrl);
-
-                var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
-                switch (webAuthenticationResult.ResponseStatus)
+                try
                 {
-                    case WebAuthenticationStatus.Success:
-                        // Get the JWT from the response string
-                        string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
-                        SetJwt(jwt);
-                        await UploadData();
-                        break;
-                    default:
-                        Debug.WriteLine("There was an error with logging you in.");
-                        break;
+                    Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
+                    string apiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";
+                    Uri requestUrl = new Uri("https://dav-apps.tech/login_implicit?api_key=" + apiKey + "&redirect_url=" + redirectUrl);
+
+                    var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
+                    switch (webAuthenticationResult.ResponseStatus)
+                    {
+                        case WebAuthenticationStatus.Success:
+                            // Get the JWT from the response string
+                            string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
+                            SetJwt(jwt);
+                            await UploadData();
+                            break;
+                        default:
+                            Debug.WriteLine("There was an error with logging you in.");
+                            break;
+                    }
+                }
+                catch(Exception e)
+                {
+                    Debug.WriteLine("Can't connect to the server");
+                    Debug.WriteLine(e);
+                    // TODO Show error message
                 }
             }
             else
             {
                 Debug.WriteLine("No internet connection");
+                // TODO Show error message
             }
         }
 
@@ -170,10 +183,13 @@ namespace UniversalSoundboard.DataAccess
                                                 SyncOperation.Create);
             }
 
+            /*
             foreach(Sound sound in (App.Current as App)._itemViewHolder.sounds)
             {
                 DatabaseOperations.AddSyncObject(SyncTable.SyncSound, Guid.Parse(sound.Uuid), SyncOperation.Create);
             }
+            */
+            DatabaseOperations.AddSyncObject(SyncTable.SyncSound, Guid.Parse((App.Current as App)._itemViewHolder.sounds[1].Uuid), SyncOperation.Create);
 
             await SyncSoundboard();
         }
@@ -296,7 +312,7 @@ namespace UniversalSoundboard.DataAccess
             List<SyncObject> syncSounds = DatabaseOperations.GetAllSyncObjects(SyncTable.SyncSound);
             foreach(SyncObject syncObject in syncSounds)
             {
-                await UploadSound(syncObject.Id, syncObject.Uuid, syncObject.Operation);
+                UploadSound(syncObject.Id, syncObject.Uuid, syncObject.Operation);
             }
 
             // Upload the playingSounds
@@ -368,55 +384,9 @@ namespace UniversalSoundboard.DataAccess
         #endregion
         
         #region Upload Sound changes
-        private static async Task UploadSound(int id, Guid uuid, SyncOperation syncOperation)
+        private static void UploadSound(int id, Guid uuid, SyncOperation syncOperation)
         {
-            CancellationTokenSource cts = new CancellationTokenSource();
-            // - Sound informationen
-            // - Sound File
-            // - Image File
-            /*
-             * 1. Sound File mit neu erstellter UUID hochladen
-             * 2. sound_uuid in der DB speichern
-             * 3. Sound Informationen hochladen
-             * 4. Wenn es ein Bild gibt, mit neu erstellter UUID speichern
-             * 5. uuid in der DB speichern
-             * 6. Sound Informationen auf dem Server aktualisieren
-             * 
-             * */
-
-            // 0. Get the sound from the database
-            Sound sound = await FileManager.GetSound(uuid.ToString());
-
-            // 1. Upload the SoundFile
-            Guid soundFileUuid = Guid.NewGuid();
-
-            Uri soundFileUri = new Uri(ApiBaseUrl +
-                                        "apps/object?table_name=" + SoundFileTableName +
-                                        "&app_id=" + AppId.ToString() +
-                                        "&uuid=" + soundFileUuid +
-                                        "&ext=" + sound.AudioFile.FileType.Replace(".", ""));
-            BackgroundUploader uploader = new BackgroundUploader();
-            uploader.SetRequestHeader("Authorization", GetJwt());
-            uploader.SetRequestHeader("Content-Type", "audio/mpeg");
-            UploadOperation upload = uploader.CreateUpload(soundFileUri, sound.AudioFile);
-
-            // Start the upload
-            Progress<UploadOperation> progressCallback = new Progress<UploadOperation>(UploadProgress);
-            await upload.StartAsync().AsTask(cts.Token, progressCallback);
-        }
-
-        private static void UploadProgress(UploadOperation upload)
-        {
-            BackgroundUploadProgress currentProgress = upload.Progress;
-
-            double percentSent = 100;
-            if (currentProgress.TotalBytesToSend > 0)
-            {
-                percentSent = currentProgress.BytesSent * 100 / currentProgress.TotalBytesToSend;
-            }
-
-            Debug.WriteLine(String.Format("Sent bytes: {0} of {1}", currentProgress.BytesSent, currentProgress.TotalBytesToSend));
-            Debug.WriteLine(String.Format("progress: {0}", percentSent));
+            
         }
         #endregion
 
