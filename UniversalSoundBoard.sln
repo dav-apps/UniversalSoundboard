@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.27428.2037
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalSoundBoard", "UniversalSoundBoard\UniversalSoundBoard.csproj", "{D28C5D63-9E01-456A-B935-63D72F3F4E46}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "davClassLibrary", "..\..\..\..\source\repos\davClassLibrary\davClassLibrary\davClassLibrary.csproj", "{F904272A-0782-43E9-B1A4-4205925411DF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -37,6 +39,22 @@ Global
 		{D28C5D63-9E01-456A-B935-63D72F3F4E46}.Release|x86.ActiveCfg = Release|x86
 		{D28C5D63-9E01-456A-B935-63D72F3F4E46}.Release|x86.Build.0 = Release|x86
 		{D28C5D63-9E01-456A-B935-63D72F3F4E46}.Release|x86.Deploy.0 = Release|x86
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Debug|ARM.ActiveCfg = Debug|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Debug|ARM.Build.0 = Debug|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Debug|x64.Build.0 = Debug|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Debug|x86.Build.0 = Debug|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Release|ARM.ActiveCfg = Release|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Release|ARM.Build.0 = Release|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Release|x64.ActiveCfg = Release|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Release|x64.Build.0 = Release|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Release|x86.ActiveCfg = Release|Any CPU
+		{F904272A-0782-43E9-B1A4-4205925411DF}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -89,21 +89,24 @@ namespace UniversalSoundBoard.Components
         
         private void InitializePlayingSound()
         {
-            if (PlayingSound.MediaPlayer != null)
+            if(PlayingSound != null)
             {
-                MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
-                MediaPlayerElement.MediaPlayer.MediaEnded -= Player_MediaEnded;
-                MediaPlayerElement.MediaPlayer.MediaEnded += Player_MediaEnded;
-                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
-                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
-                PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
+                if (PlayingSound.MediaPlayer != null)
+                {
+                    MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
+                    MediaPlayerElement.MediaPlayer.MediaEnded -= Player_MediaEnded;
+                    MediaPlayerElement.MediaPlayer.MediaEnded += Player_MediaEnded;
+                    ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
+                    ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
+                    PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
 
-                // Set the text of the add to Favourites Flyout
-                FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
-                AppBarButton FavouriteFlyout = (AppBarButton)transportControlsTemplateRoot.FindName("FavouriteFlyout");
-                FavouriteFlyout.Label = PlayingSound.CurrentSound.Favourite ?
-                    FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
-                    FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+                    // Set the text of the add to Favourites Flyout
+                    FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
+                    AppBarButton FavouriteFlyout = (AppBarButton)transportControlsTemplateRoot.FindName("FavouriteFlyout");
+                    FavouriteFlyout.Label = PlayingSound.CurrentSound.Favourite ?
+                        FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
+                        FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+                }
             }
         }
         

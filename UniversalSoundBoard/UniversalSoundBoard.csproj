@@ -108,6 +108,7 @@
     <Compile Include="DataAccess\ApiManager.cs" />
     <Compile Include="DataAccess\DatabaseOperations.cs" />
     <Compile Include="DataAccess\FileManager.cs" />
+    <Compile Include="Models\OldDatabaseModels.cs" />
     <Compile Include="Models\User.cs" />
     <Compile Include="Pages\AccountPage.xaml.cs">
       <DependentUpon>AccountPage.xaml</DependentUpon>
@@ -282,7 +283,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights">
-      <Version>2.5.1</Version>
+      <Version>2.6.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.ApplicationInsights.PersistenceChannel">
       <Version>1.2.3</Version>
@@ -290,11 +291,8 @@
     <PackageReference Include="Microsoft.ApplicationInsights.WindowsApps">
       <Version>1.1.1</Version>
     </PackageReference>
-    <PackageReference Include="Microsoft.Data.Sqlite.Core">
-      <Version>2.0.1</Version>
-    </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.8</Version>
+      <Version>6.1.4</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Services.Store.Engagement">
       <Version>10.1711.28001</Version>
@@ -311,9 +309,15 @@
     <PackageReference Include="NotificationsExtensions.Win10">
       <Version>14332.0.2</Version>
     </PackageReference>
-    <PackageReference Include="SQLitePCLRaw.provider.sqlite3.uwp10">
-      <Version>1.1.10</Version>
+    <PackageReference Include="sqlite-net-pcl">
+      <Version>1.4.118</Version>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\..\source\repos\davClassLibrary\davClassLibrary\davClassLibrary.csproj">
+      <Project>{f904272a-0782-43e9-b1a4-4205925411df}</Project>
+      <Name>davClassLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

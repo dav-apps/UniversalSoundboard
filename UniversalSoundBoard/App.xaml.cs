@@ -1,7 +1,9 @@
-﻿using System;
+﻿using davClassLibrary;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using UniversalSoundboard.Models;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
@@ -23,6 +25,9 @@ namespace UniversalSoundBoard
     /// </summary>
     sealed partial class App : Application
     {
+        static DavDatabase database;
+        private static string databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DatabaseOperations.DatabaseName);
+
         public ItemViewHolder _itemViewHolder = new ItemViewHolder {
             title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
             progressRingIsActive = false,
@@ -67,7 +72,19 @@ namespace UniversalSoundBoard
             user = new User("", 0, 0),
             loginMenuItemVisibility = true
         };
-
+        
+        public static DavDatabase Database
+        {
+            get
+            {
+                if (database == null)
+                {
+                    database = new DavDatabase(databasePath);
+                }
+                return database;
+            }
+        }
+        
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().

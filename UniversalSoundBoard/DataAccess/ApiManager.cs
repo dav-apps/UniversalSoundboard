@@ -178,9 +178,11 @@ namespace UniversalSoundboard.DataAccess
             // Add all categories to the SyncCategory table
             for(int i = 1; i < (App.Current as App)._itemViewHolder.categories.Count; i++)
             {
+                /*
                 DatabaseOperations.AddSyncObject(SyncTable.SyncCategory, 
                                                 Guid.Parse((App.Current as App)._itemViewHolder.categories[i].Uuid), 
                                                 SyncOperation.Create);
+                                                */
             }
 
             /*
@@ -189,7 +191,7 @@ namespace UniversalSoundboard.DataAccess
                 DatabaseOperations.AddSyncObject(SyncTable.SyncSound, Guid.Parse(sound.Uuid), SyncOperation.Create);
             }
             */
-            DatabaseOperations.AddSyncObject(SyncTable.SyncSound, Guid.Parse((App.Current as App)._itemViewHolder.sounds[1].Uuid), SyncOperation.Create);
+            //DatabaseOperations.AddSyncObject(SyncTable.SyncSound, Guid.Parse((App.Current as App)._itemViewHolder.sounds[1].Uuid), SyncOperation.Create);
 
             await SyncSoundboard();
         }
@@ -300,6 +302,7 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task SyncSoundboard()
         {
+            /*
             // Upload the categories
             // Get all SyncCategory entries and apply the changes
             List<SyncObject> syncCategories = DatabaseOperations.GetAllSyncObjects(SyncTable.SyncCategory);
@@ -321,6 +324,7 @@ namespace UniversalSoundboard.DataAccess
             {
                 UploadPlayingSound(syncObject.Id, syncObject.Uuid, syncObject.Operation);
             }
+            */
         }
 
         #region Upload Category changes
@@ -365,7 +369,7 @@ namespace UniversalSoundboard.DataAccess
             if (response.IsSuccessStatusCode)
             {
                 // Remove the SyncObject from the database
-                DatabaseOperations.DeleteSyncObject(SyncTable.SyncCategory, id);
+                //DatabaseOperations.DeleteSyncObject(SyncTable.SyncCategory, id);
             }
             else
             {
@@ -377,7 +381,7 @@ namespace UniversalSoundboard.DataAccess
                 if (httpResponseBody.Contains("2704"))
                 {
                     // Remove the object from the database
-                    DatabaseOperations.DeleteSyncObject(SyncTable.SyncCategory, id);
+                    //DatabaseOperations.DeleteSyncObject(SyncTable.SyncCategory, id);
                 }
             }
         }

@@ -75,7 +75,7 @@ namespace UniversalSoundBoard.Pages
             {
                 if(ps.MediaPlayer != null)
                 {
-                    ps.MediaPlayer.AutoPlay = false;
+                    //ps.MediaPlayer.AutoPlay = false;
                     (App.Current as App)._itemViewHolder.playingSounds.Add(ps);
                 }
             }

@@ -9,6 +9,7 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using UniversalSoundboard.Models;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel.Core;
@@ -236,16 +237,17 @@ namespace UniversalSoundBoard.DataAccess
 
         private static async Task ExportDatabaseToFile(StorageFile fileToWrite)
         {
-            List<object> soundObjects = DatabaseOperations.GetAllSounds();
+            List<OldSoundDatabaseModel> soundObjects = DatabaseOperations.GetAllSounds();
             NewData data = new NewData
             {
                 Sounds = new List<SoundData>(),
                 Categories = new List<Category>()
             };
 
-            // Get all sounds from the database and add the data to the AllData object
-            foreach (object obj in soundObjects)
+            // Get all sounds from the database and add the data to the NewData object
+            foreach (var obj in soundObjects)
             {
+                /*
                 SoundData soundData = new SoundData
                 {
                     Uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString(),
@@ -254,6 +256,16 @@ namespace UniversalSoundBoard.DataAccess
                     SoundExt = obj.GetType().GetProperty("sound_ext").GetValue(obj).ToString(),
                     ImageExt = obj.GetType().GetProperty("image_ext").GetValue(obj).ToString(),
                     CategoryId = obj.GetType().GetProperty("category_id").GetValue(obj).ToString()
+                };
+                */
+                SoundData soundData = new SoundData
+                {
+                    Uuid = obj.uuid,
+                    Name = HTMLEncodeSpecialChars(obj.name),
+                    Favourite = obj.favourite,
+                    SoundExt = obj.sound_ext,
+                    ImageExt = obj.image_ext,
+                    CategoryId = obj.category_id
                 };
 
                 data.Sounds.Add(soundData);
@@ -323,18 +335,18 @@ namespace UniversalSoundBoard.DataAccess
         public static async Task<Sound> GetSound(string uuid)
         {
             var soundObject = DatabaseOperations.GetSound(uuid);
-            return await GetSoundByObject(soundObject);
+            return await GetSoundByOldDatabaseModel(soundObject);
         }
 
         private static async Task<List<Sound>> GetSavedSounds()
         {
-            List<object> soundObjects = DatabaseOperations.GetAllSounds();
+            List<OldSoundDatabaseModel> soundObjects = DatabaseOperations.GetAllSounds();
             List<Sound> sounds = new List<Sound>();
             
 
-            foreach (object obj in soundObjects)
+            foreach (var obj in soundObjects)
             {
-                Sound sound = await GetSoundByObject(obj);
+                Sound sound = await GetSoundByOldDatabaseModel(obj);
                 sounds.Add(sound);
             }
             (App.Current as App)._itemViewHolder.allSoundsChanged = false;
@@ -566,39 +578,41 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task<List<PlayingSound>> GetAllPlayingSounds()
         {
-            List<object> playingSoundObjects = DatabaseOperations.GetAllPlayingSounds();
+            List<OldPlayingSoundDatabaseModel> playingSoundObjects = DatabaseOperations.GetAllPlayingSounds();
             List<PlayingSound> playingSounds = new List<PlayingSound>();
 
-            foreach(object obj in playingSoundObjects)
+            foreach(var obj in playingSoundObjects)
             {
+                /*
                 string uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString();
                 string soundIds = obj.GetType().GetProperty("soundIds").GetValue(obj).ToString();
                 int current = int.Parse(obj.GetType().GetProperty("current").GetValue(obj).ToString());
                 int repetitions = int.Parse(obj.GetType().GetProperty("repetitions").GetValue(obj).ToString());
                 bool randomly = bool.Parse(obj.GetType().GetProperty("randomly").GetValue(obj).ToString());
                 double volume = double.Parse(obj.GetType().GetProperty("volume").GetValue(obj).ToString());
-
+                */
                 List<Sound> sounds = new List<Sound>();
                 // Get the sounds
-                foreach (string id in soundIds.Split(","))
+                foreach (string id in obj.sound_ids.Split(","))
                 {
-                    object soundObject = DatabaseOperations.GetSound(id);
+                    OldSoundDatabaseModel soundObject = DatabaseOperations.GetSound(id);
                     if (soundObject != null)
-                        sounds.Add(await GetSoundByObject(soundObject));
+                        sounds.Add(await GetSoundByOldDatabaseModel(soundObject));
                 }
 
                 // Create the media player
-                MediaPlayer player = CreateMediaPlayer(sounds, current);
+                MediaPlayer player = CreateMediaPlayer(sounds, obj.current);
                 player.Volume = volume;
+                player.AutoPlay = false;
                 if(player != null)
                 {
-                    PlayingSound playingSound = new PlayingSound(uuid, sounds, player, repetitions, randomly, current);
+                    PlayingSound playingSound = new PlayingSound(obj.uuid, sounds, player, obj.repetitions, obj.randomly, obj.current);
                     playingSounds.Add(playingSound);
                 }
                 else
                 {
                     // Remove the PlayingSound from the DB
-                    DatabaseOperations.DeletePlayingSound(uuid);
+                    DatabaseOperations.DeletePlayingSound(obj.uuid);
                 }
             }
             return playingSounds;
@@ -1458,24 +1472,24 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        private static async Task<Sound> GetSoundByObject(object obj)
+        private static async Task<Sound> GetSoundByOldDatabaseModel(OldSoundDatabaseModel obj)
         {
             StorageFolder soundsFolder = await GetSoundsFolderAsync();
             StorageFolder imagesFolder = await GetImagesFolderAsync();
-
+            /*
             string uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString();
             string name = obj.GetType().GetProperty("name").GetValue(obj).ToString();
             bool favourite = bool.Parse(obj.GetType().GetProperty("favourite").GetValue(obj).ToString());
             string sound_ext = obj.GetType().GetProperty("sound_ext").GetValue(obj).ToString();
             string image_ext = obj.GetType().GetProperty("image_ext").GetValue(obj).ToString();
             string category_id = obj.GetType().GetProperty("category_id").GetValue(obj).ToString();
-
-            Sound sound = new Sound(uuid, name, favourite);
+            */
+            Sound sound = new Sound(obj.uuid, obj.name, obj.favourite);
 
             // Get the category of the sound
-            if (!String.IsNullOrEmpty(category_id))
+            if (!String.IsNullOrEmpty(obj.category_id))
             {
-                var foundCategories = (App.Current as App)._itemViewHolder.categories.Where(cat => cat.Uuid == category_id);
+                var foundCategories = (App.Current as App)._itemViewHolder.categories.Where(cat => cat.Uuid == obj.category_id);
                 if (foundCategories.Count() > 0)
                 {
                     sound.Category = foundCategories.First();
@@ -1496,9 +1510,9 @@ namespace UniversalSoundBoard.DataAccess
             }
             image.UriSource = defaultImageUri;
 
-            if (!String.IsNullOrEmpty(image_ext))
+            if (!String.IsNullOrEmpty(obj.image_ext))
             {
-                string imageFileName = uuid + "." + image_ext;
+                string imageFileName = obj.uuid + "." + obj.image_ext;
 
                 StorageFile imageFile = await imagesFolder.TryGetItemAsync(imageFileName) as StorageFile;
 
@@ -1512,7 +1526,7 @@ namespace UniversalSoundBoard.DataAccess
             sound.Image = image;
 
             // Add the sound file to the sound
-            string soundFileName = uuid + "." + sound_ext;
+            string soundFileName = obj.uuid + "." + obj.sound_ext;
             sound.AudioFile = await soundsFolder.GetFileAsync(soundFileName);
 
             return sound;
