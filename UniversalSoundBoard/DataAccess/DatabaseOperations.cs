@@ -206,15 +206,6 @@ namespace UniversalSoundBoard.DataAccess
         {
             var db = new SQLiteConnection(databasePath);
 
-            /*
-            string commandText = "INSERT INTO " + SoundTableName +
-                                " (uuid, name, category_id, sound_ext, image_ext) " +
-                                "VALUES (?, ?, ?, ?, ?);";
-
-            string categoryId = "";
-            if (!String.IsNullOrEmpty(category_id))
-                categoryId = category_id;
-                */
             try
             {
                 db.Insert(new OldSoundDatabaseModel
@@ -224,8 +215,6 @@ namespace UniversalSoundBoard.DataAccess
                     category_id = category_id,
                     sound_ext = ext
                 });
-
-                //db.Query<object>(commandText, uuid, name, categoryId, ext, "");
             }
             catch (SQLiteException error)
             {
@@ -260,26 +249,6 @@ namespace UniversalSoundBoard.DataAccess
                 Debug.WriteLine(error.Message);
                 return null;
             }
-            /*
-            if (sound != null)
-            {
-                object obj = new object();
-
-                obj = new
-                {
-                    sound.uuid,
-                    sound.name,
-                    sound.favourite,
-                    sound.sound_ext,
-                    sound.image_ext,
-                    sound.category_id
-                };
-
-                return obj;
-            }
-            
-            return null;
-            */
         }
 
         public static List<OldSoundDatabaseModel> GetAllSounds()
@@ -292,20 +261,7 @@ namespace UniversalSoundBoard.DataAccess
             try
             {
                 foreach(OldSoundDatabaseModel sound in db.Query<OldSoundDatabaseModel>(selectCommandText))
-                {
-                    /*
-                    var obj = new
-                    {
-                        sound.uuid,
-                        sound.name,
-                        sound.favourite,
-                        sound.sound_ext,
-                        sound.image_ext,
-                        sound.category_id
-                    };
-                    */
                     entries.Add(sound);
-                }
             }
             catch (SQLiteException error)
             {
@@ -408,7 +364,7 @@ namespace UniversalSoundBoard.DataAccess
 
             try
             {
-                var categoryList = db.Query<OldCategoryDatabaseModel>(selectCommandText);
+                var categoryList = db.Query<OldCategoryDatabaseModel>(selectCommandText, uuid);
                 if (categoryList.Count > 0)
                     category = categoryList[0];
             }
@@ -528,21 +484,8 @@ namespace UniversalSoundBoard.DataAccess
 
             try
             {
-                foreach(var playingSound in db.Query<OldPlayingSoundDatabaseModel>(selectCommandText)){
-                    /*
-                    var obj = new
-                    {
-                        playingSound.uuid,
-                        soundIds = playingSound.sound_ids,
-                        playingSound.current,
-                        playingSound.repetitions,
-                        playingSound.randomly,
-                        playingSound.volume
-                    };
-                    */
-
+                foreach(var playingSound in db.Query<OldPlayingSoundDatabaseModel>(selectCommandText))
                     entries.Add(playingSound);
-                }
             }
             catch (SQLiteException e)
             {
@@ -565,17 +508,7 @@ namespace UniversalSoundBoard.DataAccess
                 var playingSoundList = db.Query<OldPlayingSoundDatabaseModel>(selectCommandText, uuid);
                 if (playingSoundList.Count > 0)
                     playingSound = playingSoundList[0];
-                /*
-                var obj = new
-                {
-                    playingSound.uuid,
-                    soundIds = playingSound.sound_ids,
-                    playingSound.current,
-                    playingSound.repetitions,
-                    playingSound.randomly,
-                    playingSound.volume
-                };
-                */
+
                 return playingSound;
             }
             catch (SQLiteException e)

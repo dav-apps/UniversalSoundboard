@@ -247,17 +247,6 @@ namespace UniversalSoundBoard.DataAccess
             // Get all sounds from the database and add the data to the NewData object
             foreach (var obj in soundObjects)
             {
-                /*
-                SoundData soundData = new SoundData
-                {
-                    Uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString(),
-                    Name = HTMLEncodeSpecialChars(obj.GetType().GetProperty("name").GetValue(obj).ToString()),
-                    Favourite = obj.GetType().GetProperty("favourite").GetValue(obj).ToString().ToLower() == "true",
-                    SoundExt = obj.GetType().GetProperty("sound_ext").GetValue(obj).ToString(),
-                    ImageExt = obj.GetType().GetProperty("image_ext").GetValue(obj).ToString(),
-                    CategoryId = obj.GetType().GetProperty("category_id").GetValue(obj).ToString()
-                };
-                */
                 SoundData soundData = new SoundData
                 {
                     Uuid = obj.uuid,
@@ -583,14 +572,6 @@ namespace UniversalSoundBoard.DataAccess
 
             foreach(var obj in playingSoundObjects)
             {
-                /*
-                string uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString();
-                string soundIds = obj.GetType().GetProperty("soundIds").GetValue(obj).ToString();
-                int current = int.Parse(obj.GetType().GetProperty("current").GetValue(obj).ToString());
-                int repetitions = int.Parse(obj.GetType().GetProperty("repetitions").GetValue(obj).ToString());
-                bool randomly = bool.Parse(obj.GetType().GetProperty("randomly").GetValue(obj).ToString());
-                double volume = double.Parse(obj.GetType().GetProperty("volume").GetValue(obj).ToString());
-                */
                 List<Sound> sounds = new List<Sound>();
                 // Get the sounds
                 foreach (string id in obj.sound_ids.Split(","))
@@ -1476,14 +1457,6 @@ namespace UniversalSoundBoard.DataAccess
         {
             StorageFolder soundsFolder = await GetSoundsFolderAsync();
             StorageFolder imagesFolder = await GetImagesFolderAsync();
-            /*
-            string uuid = obj.GetType().GetProperty("uuid").GetValue(obj).ToString();
-            string name = obj.GetType().GetProperty("name").GetValue(obj).ToString();
-            bool favourite = bool.Parse(obj.GetType().GetProperty("favourite").GetValue(obj).ToString());
-            string sound_ext = obj.GetType().GetProperty("sound_ext").GetValue(obj).ToString();
-            string image_ext = obj.GetType().GetProperty("image_ext").GetValue(obj).ToString();
-            string category_id = obj.GetType().GetProperty("category_id").GetValue(obj).ToString();
-            */
             Sound sound = new Sound(obj.uuid, obj.name, obj.favourite);
 
             // Get the category of the sound
