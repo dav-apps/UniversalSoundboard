@@ -103,6 +103,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\LocalDataSettings.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Components\CustomMediaTransportControls.cs" />
     <Compile Include="DataAccess\ApiManager.cs" />

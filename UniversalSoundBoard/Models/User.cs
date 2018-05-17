@@ -1,5 +1,4 @@
-﻿using System;
-using Windows.UI.Xaml.Media.Imaging;
+﻿using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundboard.Models
 {

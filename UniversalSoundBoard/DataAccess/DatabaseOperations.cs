@@ -12,7 +12,7 @@ namespace UniversalSoundBoard.DataAccess
 {
     class DatabaseOperations
     {
-        public const string DatabaseName = "universalsoundboard.db";
+        private const string DatabaseName = "universalsoundboard.db";
         private const string CategoryTableName = "Category";
         private const string SoundTableName = "Sound";
         private const string PlayingSoundTableName = "PlayingSound";

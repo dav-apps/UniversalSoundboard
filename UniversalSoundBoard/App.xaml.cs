@@ -1,9 +1,11 @@
 ﻿using davClassLibrary;
+using davClassLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Models;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
@@ -26,7 +28,6 @@ namespace UniversalSoundBoard
     sealed partial class App : Application
     {
         static DavDatabase database;
-        private static string databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DatabaseOperations.DatabaseName);
 
         public ItemViewHolder _itemViewHolder = new ItemViewHolder {
             title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
@@ -69,7 +70,7 @@ namespace UniversalSoundBoard
             areSelectButtonsEnabled = false,
             selectedCategory = 0,
             upgradeDataStatusText = "Preparing...",
-            user = new User("", 0, 0),
+            user = new DavUser(),
             loginMenuItemVisibility = true
         };
         
@@ -79,7 +80,7 @@ namespace UniversalSoundBoard
             {
                 if (database == null)
                 {
-                    database = new DavDatabase(databasePath);
+                    database = new DavDatabase();
                 }
                 return database;
             }
@@ -99,6 +100,7 @@ namespace UniversalSoundBoard
 
             // Initialize Database
             DatabaseOperations.InitializeDatabase();
+            davClassLibrary.Common.ProjectInterface.LocalDataSettings = new LocalDataSettings();
 
             // Set dark theme
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -130,6 +132,7 @@ namespace UniversalSoundBoard
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
+            Dav.DataPath = (await FileManager.GetDavDataFolderAsync()).Path;
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,

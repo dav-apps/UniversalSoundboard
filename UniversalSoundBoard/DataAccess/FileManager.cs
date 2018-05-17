@@ -45,6 +45,7 @@ namespace UniversalSoundBoard.DataAccess
         public const string userUsernameKey = "username";
         public const string userTotalStorageKey = "totalStorage";
         public const string userUsedStorageKey = "usedStorage";
+        public const string davKey = "dav";
 
         // Variables for defaults
         public const double volume = 1.0;
@@ -154,6 +155,25 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             return userFolder;
+        }
+
+        public static async Task<StorageFolder> GetDavDataFolderAsync()
+        {
+            StorageFolder localStorageFolder = ApplicationData.Current.LocalFolder;
+            StorageFolder davDataFolder;
+            string davDataFolderName = "dav";
+
+            if(await localStorageFolder.TryGetItemAsync(davDataFolderName) == null)
+            {
+                // Create dav folder
+                davDataFolder = await localStorageFolder.CreateFolderAsync(davDataFolderName);
+            }
+            else
+            {
+                davDataFolder = await localStorageFolder.GetFolderAsync(davDataFolderName);
+            }
+
+            return davDataFolder;
         }
 
         private static async Task<StorageFolder> CreateExportFoldersAsync()
