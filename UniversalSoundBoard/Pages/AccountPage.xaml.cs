@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
@@ -17,18 +18,16 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class AccountPage : Page
     {
-        string jwt = "";
-
         public AccountPage()
         {
             InitializeComponent();
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             SetDataContext();
             SetDarkThemeLayout();
-            await UpdateUserLayout();
+            UpdateUserLayout();
         }
 
         private void SetDataContext()
@@ -45,29 +44,14 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        private async Task UpdateUserLayout()
+        private void UpdateUserLayout()
         {
-            // Get the JWT from local storage
-            jwt = ApiManager.GetJwt();
             ShowLoggedInContent();
 
-            if (!String.IsNullOrEmpty(jwt))
+            if ((App.Current as App)._itemViewHolder.user.IsLoggedIn)
             {
                 SetUsedStorageTextBlock();
-
-                // Get the user information
-                var newUser = await ApiManager.GetUser();
-
-                if (newUser.TotalStorage != 0)
-                {
-                    (App.Current as App)._itemViewHolder.user = newUser;
-                    SetUsedStorageTextBlock();
-                    (App.Current as App)._itemViewHolder.loginMenuItemVisibility = false;
-                }
-                else
-                {
-                    (App.Current as App)._itemViewHolder.loginMenuItemVisibility = true;
-                }
+                (App.Current as App)._itemViewHolder.loginMenuItemVisibility = false;
             }
             else
             {
@@ -75,9 +59,45 @@ namespace UniversalSoundboard.Pages
             }
         }
 
+        public static async Task Login()
+        {
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                try
+                {
+                    Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
+                    Uri requestUrl = new Uri(FileManager.LoginImplicitUrl + "?api_key=" + FileManager.ApiKey + "&redirect_url=" + redirectUrl);
+
+                    var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
+                    switch (webAuthenticationResult.ResponseStatus)
+                    {
+                        case WebAuthenticationStatus.Success:
+                            // Get the JWT from the response string
+                            string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
+                            await (App.Current as App)._itemViewHolder.user.Login(jwt);
+                            break;
+                        default:
+                            Debug.WriteLine("There was an error with logging you in.");
+                            break;
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine("Can't connect to the server");
+                    Debug.WriteLine(e);
+                    // TODO Show error message
+                }
+            }
+            else
+            {
+                Debug.WriteLine("No internet connection");
+                // TODO Show error message
+            }
+        }
+
         private void SetUsedStorageTextBlock()
         {
-            if((App.Current as App)._itemViewHolder.user.TotalStorage != 0)
+            if((App.Current as App)._itemViewHolder.user.UsedStorage > 0 && (App.Current as App)._itemViewHolder.user.TotalStorage > 0)
             {
                 string message = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Account-UsedStorage");
 
@@ -99,7 +119,7 @@ namespace UniversalSoundboard.Pages
         
         private void ShowLoggedInContent()
         {
-            if (!String.IsNullOrEmpty(jwt))
+            if ((App.Current as App)._itemViewHolder.user.IsLoggedIn)
             {
                 LoggedInContent.Visibility = Visibility.Visible;
                 LoggedOutContent.Visibility = Visibility.Collapsed;
@@ -119,8 +139,8 @@ namespace UniversalSoundboard.Pages
 
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            await ApiManager.Login();
-            await UpdateUserLayout();
+            await Login();
+            UpdateUserLayout();
         }
 
         private async void LogoutButton_Click(object sender, RoutedEventArgs e)
@@ -130,10 +150,10 @@ namespace UniversalSoundboard.Pages
             await logoutContentDialog.ShowAsync();
         }
 
-        private async void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            ApiManager.Logout();
-            await UpdateUserLayout();
+            (App.Current as App)._itemViewHolder.user.Logout();
+            UpdateUserLayout();
         }
 
         private async void SignupButton_Click(object sender, RoutedEventArgs e)

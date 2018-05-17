@@ -54,20 +54,7 @@ namespace UniversalSoundBoard.Pages
 
         public async Task InitializeAccountSettings()
         {
-            if (!String.IsNullOrEmpty(ApiManager.GetJwt()))
-            {
-                var user = await ApiManager.GetUser();
-
-                if (user.TotalStorage != 0)
-                    (App.Current as App)._itemViewHolder.user = user;
-
-                (App.Current as App)._itemViewHolder.loginMenuItemVisibility = false;
-                await ApiManager.SyncSoundboard();
-            }
-            else
-            {
-                (App.Current as App)._itemViewHolder.loginMenuItemVisibility = true;
-            }
+            (App.Current as App)._itemViewHolder.loginMenuItemVisibility = !(App.Current as App)._itemViewHolder.user.IsLoggedIn;
         }
 
         private async Task AddSavedPlayingSounds()

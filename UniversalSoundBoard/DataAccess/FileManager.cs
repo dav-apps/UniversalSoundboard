@@ -39,12 +39,6 @@ namespace UniversalSoundBoard.DataAccess
         public const string showSoundsPivotKey = "showSoundsPivot";
         public const string savePlayingSoundsKey = "savePlayingSounds";
         public const string themeKey = "theme";
-        public const string jwtKey = "jwt";
-        public const string avatarEtagKey = "avatarEtag";
-        public const string userKey = "user";
-        public const string userUsernameKey = "username";
-        public const string userTotalStorageKey = "totalStorage";
-        public const string userUsedStorageKey = "usedStorage";
         public const string davKey = "dav";
 
         // Variables for defaults
@@ -66,8 +60,14 @@ namespace UniversalSoundBoard.DataAccess
         public const int hideSearchBoxMaxWidth = 700;
 
         public static bool skipAutoSuggestBoxTextChanged = false;
-        #endregion
 
+        // dav Keys
+        public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";
+        //public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";
+        public const string LoginImplicitUrl = "https://dav-apps.tech/login_implicit";
+        //public const string LoginImplicitUrl = "localhost:3000/login_implicit";
+        #endregion
+        
         #region Filesystem Methods
         public static async Task<StorageFolder> GetSoundsFolderAsync()
         {

@@ -1,4 +1,5 @@
 ﻿using davClassLibrary;
+using davClassLibrary.Common;
 using davClassLibrary.Models;
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ namespace UniversalSoundBoard
             areSelectButtonsEnabled = false,
             selectedCategory = 0,
             upgradeDataStatusText = "Preparing...",
-            user = new DavUser(),
+            user = null,
             loginMenuItemVisibility = true
         };
         
@@ -100,7 +101,10 @@ namespace UniversalSoundBoard
 
             // Initialize Database
             DatabaseOperations.InitializeDatabase();
-            davClassLibrary.Common.ProjectInterface.LocalDataSettings = new LocalDataSettings();
+
+            ProjectInterface.LocalDataSettings = new LocalDataSettings();
+            Dav.ApiKey = FileManager.ApiKey;
+            (App.Current as App)._itemViewHolder.user = new DavUser();
 
             // Set dark theme
             var localSettings = ApplicationData.Current.LocalSettings;
