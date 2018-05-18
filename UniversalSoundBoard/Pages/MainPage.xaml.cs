@@ -9,11 +9,7 @@ using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 using UniversalSoundBoard.DataAccess;
 using System.Threading.Tasks;
-using System.Diagnostics;
 using UniversalSoundboard.Pages;
-using UniversalSoundboard.DataAccess;
-using System;
-using UniversalSoundboard.Common;
 
 namespace UniversalSoundBoard.Pages
 {

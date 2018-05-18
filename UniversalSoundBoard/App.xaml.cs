@@ -102,10 +102,6 @@ namespace UniversalSoundBoard
             // Initialize Database
             DatabaseOperations.InitializeDatabase();
 
-            ProjectInterface.LocalDataSettings = new LocalDataSettings();
-            Dav.ApiKey = FileManager.ApiKey;
-            (App.Current as App)._itemViewHolder.user = new DavUser();
-
             // Set dark theme
             var localSettings = ApplicationData.Current.LocalSettings;
             
@@ -136,7 +132,12 @@ namespace UniversalSoundBoard
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
+            // Initialize Dav settings
             Dav.DataPath = (await FileManager.GetDavDataFolderAsync()).Path;
+            Dav.ApiKey = FileManager.ApiKey;
+            ProjectInterface.LocalDataSettings = new LocalDataSettings();
+            (App.Current as App)._itemViewHolder.user = new DavUser();
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,

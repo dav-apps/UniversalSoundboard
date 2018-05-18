@@ -97,7 +97,7 @@ namespace UniversalSoundboard.Pages
 
         private void SetUsedStorageTextBlock()
         {
-            if((App.Current as App)._itemViewHolder.user.UsedStorage > 0 && (App.Current as App)._itemViewHolder.user.TotalStorage > 0)
+            if((App.Current as App)._itemViewHolder.user.TotalStorage > 0)
             {
                 string message = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Account-UsedStorage");
 
@@ -150,9 +150,9 @@ namespace UniversalSoundboard.Pages
             await logoutContentDialog.ShowAsync();
         }
 
-        private void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            (App.Current as App)._itemViewHolder.user.Logout();
+            await (App.Current as App)._itemViewHolder.user.Logout();
             UpdateUserLayout();
         }
 
