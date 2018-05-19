@@ -1,35 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Net.NetworkInformation;
-using System.Runtime.Serialization.Json;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using UniversalSoundboard.Models;
-using UniversalSoundBoard;
-using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Models;
-using Windows.ApplicationModel.Background;
-using Windows.Foundation;
-using Windows.Networking.BackgroundTransfer;
-using Windows.Security.Authentication.Web;
-using Windows.Storage;
-using Windows.UI.Xaml.Media.Imaging;
-using static UniversalSoundBoard.Models.SyncObject;
-
-namespace UniversalSoundboard.DataAccess
+﻿namespace UniversalSoundboard.DataAccess
 {
     public class ApiManager
     {
-        private const string ApiBaseUrl = "http://localhost:3111/v1/";
-        private const int AppId = 8;
         private const string SoundFileTableName = "SoundFile";
         private const string ImageFileTableName = "ImageFile";
         private const string CategoryTableName = "Category";

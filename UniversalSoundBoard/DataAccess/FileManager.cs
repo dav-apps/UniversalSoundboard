@@ -62,10 +62,11 @@ namespace UniversalSoundBoard.DataAccess
         public static bool skipAutoSuggestBoxTextChanged = false;
 
         // dav Keys
-        public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";
-        //public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";
-        public const string LoginImplicitUrl = "https://dav-apps.tech/login_implicit";
+        //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";
+        public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";
+        public const string LoginImplicitUrl = "https://49f9fbdd.ngrok.io/login_implicit";
         //public const string LoginImplicitUrl = "localhost:3000/login_implicit";
+        public const int AppId = 8;
         #endregion
         
         #region Filesystem Methods
@@ -983,10 +984,19 @@ namespace UniversalSoundBoard.DataAccess
         {
             bool oldModel = false;
             StorageFolder localStorageFolder = ApplicationData.Current.LocalFolder;
+            int filesCount = 1;
+            try
+            {
+                filesCount = (await localStorageFolder.GetFilesAsync()).Count;
+            }
+            catch (Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
             
             if (await localStorageFolder.TryGetItemAsync("data") != null ||
                 await localStorageFolder.TryGetItemAsync("soundDetails") != null ||
-                (await localStorageFolder.GetFilesAsync()).Count > 1 ||
+                filesCount > 1 ||
                 (await localStorageFolder.TryGetItemAsync("oldData")) != null)
             {
                 oldModel = true;

@@ -48,7 +48,7 @@ namespace UniversalSoundBoard.Pages
             SideBar.DataContext = (App.Current as App)._itemViewHolder;
         }
 
-        public async Task InitializeAccountSettings()
+        public void InitializeAccountSettings()
         {
             (App.Current as App)._itemViewHolder.loginMenuItemVisibility = !(App.Current as App)._itemViewHolder.user.IsLoggedIn;
         }

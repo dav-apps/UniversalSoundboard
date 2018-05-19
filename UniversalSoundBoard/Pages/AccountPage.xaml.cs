@@ -2,13 +2,10 @@
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
-using UniversalSoundboard.DataAccess;
-using UniversalSoundboard.Models;
 using UniversalSoundBoard;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using Windows.Security.Authentication.Web;
-using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

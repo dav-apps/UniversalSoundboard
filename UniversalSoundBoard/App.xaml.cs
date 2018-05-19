@@ -28,7 +28,6 @@ namespace UniversalSoundBoard
     /// </summary>
     sealed partial class App : Application
     {
-        static DavDatabase database;
 
         public ItemViewHolder _itemViewHolder = new ItemViewHolder {
             title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
@@ -75,18 +74,6 @@ namespace UniversalSoundBoard
             loginMenuItemVisibility = true
         };
         
-        public static DavDatabase Database
-        {
-            get
-            {
-                if (database == null)
-                {
-                    database = new DavDatabase();
-                }
-                return database;
-            }
-        }
-        
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -98,9 +85,6 @@ namespace UniversalSoundBoard
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
             InitializeComponent();
             Suspending += OnSuspending;
-
-            // Initialize Database
-            DatabaseOperations.InitializeDatabase();
 
             // Set dark theme
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -135,6 +119,7 @@ namespace UniversalSoundBoard
             // Initialize Dav settings
             Dav.DataPath = (await FileManager.GetDavDataFolderAsync()).Path;
             Dav.ApiKey = FileManager.ApiKey;
+            Dav.AppId = FileManager.AppId;
             ProjectInterface.LocalDataSettings = new LocalDataSettings();
             (App.Current as App)._itemViewHolder.user = new DavUser();
 

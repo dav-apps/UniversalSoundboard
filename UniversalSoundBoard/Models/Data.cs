@@ -125,46 +125,4 @@ namespace UniversalSoundBoard.Models
         public List<SoundData> Sounds { get; set; }
         public List<Category> Categories { get; set; }
     }
-
-    // The model for the get user http response
-    public class UserData
-    {
-        public string username { get; set; }
-        public string avatar { get; set; }
-        public long total_storage { get; set; }
-        public long used_storage { get; set; }
-        public string avatar_etag { get; set; }
-    }
-
-    public class SyncObject
-    {
-        public int Id { get; set; }
-        public Guid Uuid { get; set; }
-        public SyncOperation Operation { get; set; }
-
-        public enum SyncTable
-        {
-            SyncCategory,
-            SyncSound,
-            SyncPlayingSound
-        };
-        public enum SyncOperation
-        {
-            Create,
-            Update,
-            Delete
-        };
-
-        public SyncObject()
-        {
-
-        }
-
-        public SyncObject(int id, Guid uuid, SyncOperation operation)
-        {
-            Id = id;
-            Uuid = uuid;
-            Operation = operation;
-        }
-    }
 }

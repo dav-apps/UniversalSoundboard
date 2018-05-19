@@ -6,7 +6,6 @@ using System.IO;
 using UniversalSoundboard.Models;
 using UniversalSoundBoard.Models;
 using Windows.Storage;
-using static UniversalSoundBoard.Models.SyncObject;
 
 namespace UniversalSoundBoard.DataAccess
 {
@@ -23,6 +22,7 @@ namespace UniversalSoundBoard.DataAccess
         private static string databasePath = Path.Combine(ApplicationData.Current.LocalFolder.Path, DatabaseName);
 
         #region Initialization
+        /*
         public static void InitializeDatabase()
         {
             var db = new SQLiteConnection(databasePath);
@@ -51,7 +51,8 @@ namespace UniversalSoundBoard.DataAccess
                 }
             }
         }
-
+        */
+        /*
         private static int GetUserVersion(SQLiteConnection db)
         {
             // Get the user_version
@@ -75,7 +76,8 @@ namespace UniversalSoundBoard.DataAccess
 
             return userVersion;
         }
-
+        */
+        /*
         private static void CreateCategoryTable(SQLiteConnection db)
         {
             string categoryTableCommandText = "CREATE TABLE IF NOT EXISTS " + CategoryTableName +
@@ -94,7 +96,8 @@ namespace UniversalSoundBoard.DataAccess
                 Debug.WriteLine(e.Message);
             }
         }
-
+        */
+        /*
         private static void CreateSoundTable(SQLiteConnection db)
         {
             string soundTableCommandText = "CREATE TABLE IF NOT EXISTS " + SoundTableName +
@@ -117,7 +120,8 @@ namespace UniversalSoundBoard.DataAccess
                 Debug.WriteLine(e.Message);
             }
         }
-
+        */
+        /*
         private static void CreatePlayingSoundTable(SQLiteConnection db)
         {
             string playingSoundTableCommandText = "CREATE TABLE IF NOT EXISTS " + PlayingSoundTableName +
@@ -139,14 +143,16 @@ namespace UniversalSoundBoard.DataAccess
                 Debug.WriteLine(e.Message);
             }
         }
-
+        */
+        /*
         private static void CreateSyncTables(SQLiteConnection db)
         {
             CreateSyncCategoryTable(db);
             CreateSyncSoundTable(db);
             CreateSyncPlayingSoundTable(db);
         }
-
+        */
+        /*
         private static void CreateSyncCategoryTable(SQLiteConnection db)
         {
             string syncCategoryTableCommandText = "CREATE TABLE IF NOT EXISTS " + SyncCategoryTableName +
@@ -164,7 +170,8 @@ namespace UniversalSoundBoard.DataAccess
                 Debug.WriteLine(e.Message);
             }
         }
-
+        */
+        /*
         private static void CreateSyncSoundTable(SQLiteConnection db)
         {
             string syncSoundTableCommandText = "CREATE TABLE IF NOT EXISTS " + SyncSoundTableName +
@@ -182,7 +189,8 @@ namespace UniversalSoundBoard.DataAccess
                 Debug.WriteLine(e.Message);
             }
         }
-
+        */
+        /*
         private static void CreateSyncPlayingSoundTable(SQLiteConnection db)
         {
             string syncPlayingSoundTableCommandText = "CREATE TABLE IF NOT EXISTS " + SyncPlayingSoundTableName +
@@ -200,8 +208,9 @@ namespace UniversalSoundBoard.DataAccess
                 Debug.WriteLine(e.Message);
             }
         }
+        */
         # endregion
-
+        
         public static void AddSound(string uuid, string name, string category_id, string ext)
         {
             var db = new SQLiteConnection(databasePath);
@@ -585,81 +594,6 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        /*
-        public static void AddSyncObject(SyncTable table, Guid uuid, SyncOperation operation)
-        {
-            SqliteCommand insertCommand = new SqliteCommand();
-            insertCommand.Connection = db;
-
-            insertCommand.CommandText = "INSERT INTO " + GetNameOfSyncTable(table) +
-                                        " (uuid, operation) " +
-                                        "VALUES (@Uuid, @Operation);";
-
-            insertCommand.Parameters.AddWithValue("@Uuid", uuid);
-            insertCommand.Parameters.AddWithValue("@Operation", GetValueOfSyncOperation(operation));
-
-            try
-            {
-                insertCommand.ExecuteReader();
-            }
-            catch (SqliteException error)
-            {
-                Debug.WriteLine("Error in AddSyncObject");
-                Debug.WriteLine(error.Message);
-            }
-        }
-
-        public static List<SyncObject> GetAllSyncObjects(SyncTable table)
-        {
-            string selectCommandText = "SELECT * FROM " + GetNameOfSyncTable(table) + ";";
-            SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
-            SqliteDataReader query;
-
-            try
-            {
-                query = selectCommand.ExecuteReader();
-            }
-            catch (SqliteException e)
-            {
-                Debug.WriteLine("Error in GetAllSyncObjects");
-                Debug.WriteLine(e.Message);
-                return null;
-            }
-
-            List<SyncObject> syncObjects = new List<SyncObject>();
-            while (query.Read())
-            {
-
-                SyncObject syncObject = new SyncObject(query.GetInt32(0),
-                                                        query.GetGuid(1),
-                                                        GetSyncOperationOfValue(query.GetInt32(2)));
-                syncObjects.Add(syncObject);
-            }
-
-            List<SyncObject> syncObjects = new List<SyncObject>();
-            return syncObjects;
-        }
-
-        public static void DeleteSyncObject(SyncTable table, int id)
-        {
-            SqliteCommand insertCommand = new SqliteCommand();
-            insertCommand.Connection = db;
-
-            insertCommand.CommandText = "DELETE FROM " + GetNameOfSyncTable(table) + " WHERE id = @Id;";
-            insertCommand.Parameters.AddWithValue("@Id", id);
-
-            try
-            {
-                insertCommand.ExecuteReader();
-            }
-            catch (SqliteException error)
-            {
-                Debug.WriteLine("Error in DeleteSyncObject");
-                Debug.WriteLine(error.Message);
-            }
-        }
-        */
-
 
         // Other methods
         private static string ConvertIdListToString(List<string> ids)
@@ -673,63 +607,6 @@ namespace UniversalSoundBoard.DataAccess
             idsString = idsString.Remove(idsString.Length - 1);
 
             return idsString;
-        }
-
-        private static string GetNameOfSyncTable(SyncTable table)
-        {
-            string tableName = "";
-            switch (table)
-            {
-                case SyncTable.SyncCategory:
-                    tableName = SyncCategoryTableName;
-                    break;
-                case SyncTable.SyncSound:
-                    tableName = SyncSoundTableName;
-                    break;
-                case SyncTable.SyncPlayingSound:
-                    tableName = SyncPlayingSoundTableName;
-                    break;
-            }
-
-            return tableName;
-        }
-
-        private static int GetValueOfSyncOperation(SyncOperation operation)
-        {
-            int operationValue = 0;
-            switch (operation)
-            {
-                case SyncOperation.Create:
-                    operationValue = 0;
-                    break;
-                case SyncOperation.Update:
-                    operationValue = 1;
-                    break;
-                case SyncOperation.Delete:
-                    operationValue = 2;
-                    break;
-            }
-
-            return operationValue;
-        }
-
-        private static SyncOperation GetSyncOperationOfValue(int operation)
-        {
-            SyncOperation syncOperation = SyncOperation.Create;
-            switch (operation)
-            {
-                case 0:
-                    syncOperation = SyncOperation.Create;
-                    break;
-                case 1:
-                    syncOperation = SyncOperation.Update;
-                    break;
-                case 2:
-                    syncOperation = SyncOperation.Delete;
-                    break;
-            }
-
-            return syncOperation;
         }
     }
 }
