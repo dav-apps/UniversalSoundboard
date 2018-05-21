@@ -1,4 +1,5 @@
-﻿using System;
+﻿using PCLStorage;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -63,12 +64,33 @@ namespace UniversalSoundBoard.DataAccess
 
         // dav Keys
         //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";
-        public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";
-        public const string LoginImplicitUrl = "https://49f9fbdd.ngrok.io/login_implicit";
-        //public const string LoginImplicitUrl = "localhost:3000/login_implicit";
-        public const int AppId = 8;
+        public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
+        public const string LoginImplicitUrl = "https://4f27d098.ngrok.io/login_implicit";
+        public const int AppId = 8;                 // Dev: 8; Prod: 
+        public const int SoundFileTableId = 11;      // Dev: 11; Prod: 
+        public const int ImageFileTableId = 15;      // Dev: 15; Prod: 
+        public const int CategoryTableId = 16;       // Dev: 16; Prod:
+        public const int SoundTableId = 17;          // Dev: 17; Prod:
+        public const int PlayingsoundTableId = 18;   // Dev: 18; Prod:
+
+        public const string SoundTableNamePropertyName = "name";
+        public const string SoundTableFavouritePropertyName = "favourite";
+        public const string SoundTableSoundUuidPropertyName = "sound_uuid";
+        public const string SoundTableSoundExtPropertyName = "sound_ext";
+        public const string SoundTableImageUuidPropertyName = "image_uuid";
+        public const string SoundTableImageExtPropertyName = "image_ext";
+        public const string SoundTableCategoryUuidPropertyName = "category_uuid";
+
+        public const string CategoryTableNamePropertyName = "name";
+        public const string CategoryTableIconPropertyName = "icon";
+
+        public const string PlayingSoundTableSoundIdsPropertyName = "sound_ids";
+        public const string PlayingSoundTableCurrentPropertyName = "current";
+        public const string PlayingSoundTableRepetitionsPropertyName = "repetitions";
+        public const string PlayingSoundTableRandomlyPropertyName = "randomly";
+        public const string PlayingSoundTableVolumePropertyName = "volume";
         #endregion
-        
+
         #region Filesystem Methods
         public static async Task<StorageFolder> GetSoundsFolderAsync()
         {
@@ -310,34 +332,41 @@ namespace UniversalSoundBoard.DataAccess
 
             return dataReader;
         }
-        #endregion
-
-        #region Database Methods
-        public static async Task<string> AddSound(string uuid, string name, string categoryUuid, StorageFile audioFile)
+        /*
+        public static async Task<FileInfo> ConvertStorageFileToFileInfo(StorageFile file)
         {
-            if (uuid == null)
-                uuid = Guid.NewGuid().ToString();
+            return await FileSystem.Current.GetFileFromPathAsync(file.Path);
+        }
+        */
+        #endregion
+        
+        #region Database Methods
+        public static Guid AddSound(Guid uuid, string name, Guid categoryUuid, StorageFile audioFile)
+        {
+            // Generate a new uuid if necessary
+            if (Equals(uuid, Guid.Empty))
+                uuid = Guid.NewGuid();
+
+            // Generate a uuid for the soundFile
+            Guid soundFileUuid = Guid.NewGuid();
+
+            // Add the soundFile to the database
+            DatabaseOperations.AddSoundFile(soundFileUuid, audioFile);
+
+            string ext = audioFile.FileType.Replace(".", "");
 
             if (DatabaseOperations.GetSound(uuid) != null)
             {       // Sound already exists
-                string ext = audioFile.FileType.Replace(".", "");
-
-                // Move the file into the sounds folder
-                StorageFolder soundsFolder = await GetSoundsFolderAsync();
-                StorageFile newFile = await audioFile.CopyAsync(soundsFolder, uuid + audioFile.FileType, NameCollisionOption.ReplaceExisting);
-
                 DatabaseOperations.UpdateSound(uuid, name, categoryUuid, ext, null, null);
             }
             else
             {       // Sound does not exist
-                string ext = audioFile.FileType.Replace(".", "");
-
-                // Move the file into the sounds folder
-                StorageFolder soundsFolder = await GetSoundsFolderAsync();
-                StorageFile newFile = await audioFile.CopyAsync(soundsFolder, uuid + audioFile.FileType, NameCollisionOption.ReplaceExisting);
-
-                DatabaseOperations.AddSound(uuid, name, categoryUuid, ext);
+                DatabaseOperations.AddSound(uuid, name, soundFileUuid, ext, categoryUuid);
             }
+
+            // Move the file into the sounds folder
+            //StorageFolder soundsFolder = await GetSoundsFolderAsync();
+            //StorageFile newFile = await audioFile.CopyAsync(soundsFolder, soundFileUuid + audioFile.FileType, Windows.Storage.NameCollisionOption.ReplaceExisting);
 
             return uuid;
         }
