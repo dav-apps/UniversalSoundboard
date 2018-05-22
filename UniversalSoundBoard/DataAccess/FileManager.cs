@@ -1,4 +1,4 @@
-﻿using PCLStorage;
+﻿using davClassLibrary.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -63,7 +63,7 @@ namespace UniversalSoundBoard.DataAccess
         public static bool skipAutoSuggestBoxTextChanged = false;
 
         // dav Keys
-        //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";
+        //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
         public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
         public const string LoginImplicitUrl = "https://4f27d098.ngrok.io/login_implicit";
         public const int AppId = 8;                 // Dev: 8; Prod: 
@@ -92,36 +92,7 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Filesystem Methods
-        public static async Task<StorageFolder> GetSoundsFolderAsync()
-        {
-            StorageFolder root = ApplicationData.Current.LocalFolder;
-            StorageFolder detailsFolder;
-            string soundsFolderName = "sounds";
-            if (await root.TryGetItemAsync(soundsFolderName) == null)
-            {
-                return detailsFolder = await root.CreateFolderAsync(soundsFolderName);
-            }
-            else
-            {
-                return detailsFolder = await root.GetFolderAsync(soundsFolderName);
-            }
-        }
-
-        public static async Task<StorageFolder> GetImagesFolderAsync()
-        {
-            // Create images folder if not exists
-            StorageFolder folder = ApplicationData.Current.LocalFolder;
-            StorageFolder imagesFolder;
-            string imagesFolderName = "images";
-            if (await folder.TryGetItemAsync(imagesFolderName) == null)
-            {
-                return imagesFolder = await folder.CreateFolderAsync(imagesFolderName);
-            }
-            else
-            {
-                return imagesFolder = await folder.GetFolderAsync(imagesFolderName);
-            }
-        }
+        
 
         public static async Task<StorageFolder> GetOldDataFolderAsync(){
             StorageFolder localStorageFolder = ApplicationData.Current.LocalFolder;
@@ -159,25 +130,6 @@ namespace UniversalSoundBoard.DataAccess
             }
             
             return oldDataFolder;
-        }
-
-        public static async Task<StorageFolder> GetUserFolderAsnyc()
-        {
-            StorageFolder localStorageFolder = ApplicationData.Current.LocalFolder;
-            StorageFolder userFolder;
-            string userFolderName = "user";
-
-            if(await localStorageFolder.TryGetItemAsync(userFolderName) == null)
-            {
-                // Create user folder
-                userFolder = await localStorageFolder.CreateFolderAsync(userFolderName);
-            }
-            else
-            {
-                userFolder = await localStorageFolder.GetFolderAsync(userFolderName);
-            }
-
-            return userFolder;
         }
 
         public static async Task<StorageFolder> GetDavDataFolderAsync()
@@ -332,683 +284,9 @@ namespace UniversalSoundBoard.DataAccess
 
             return dataReader;
         }
-        /*
-        public static async Task<FileInfo> ConvertStorageFileToFileInfo(StorageFile file)
-        {
-            return await FileSystem.Current.GetFileFromPathAsync(file.Path);
-        }
-        */
-        #endregion
-        
-        #region Database Methods
-        public static Guid AddSound(Guid uuid, string name, Guid categoryUuid, StorageFile audioFile)
-        {
-            // Generate a new uuid if necessary
-            if (Equals(uuid, Guid.Empty))
-                uuid = Guid.NewGuid();
-
-            // Generate a uuid for the soundFile
-            Guid soundFileUuid = Guid.NewGuid();
-
-            // Add the soundFile to the database
-            DatabaseOperations.AddSoundFile(soundFileUuid, audioFile);
-
-            string ext = audioFile.FileType.Replace(".", "");
-
-            if (DatabaseOperations.GetSound(uuid) != null)
-            {       // Sound already exists
-                DatabaseOperations.UpdateSound(uuid, name, categoryUuid, ext, null, null);
-            }
-            else
-            {       // Sound does not exist
-                DatabaseOperations.AddSound(uuid, name, soundFileUuid, ext, categoryUuid);
-            }
-
-            // Move the file into the sounds folder
-            //StorageFolder soundsFolder = await GetSoundsFolderAsync();
-            //StorageFile newFile = await audioFile.CopyAsync(soundsFolder, soundFileUuid + audioFile.FileType, Windows.Storage.NameCollisionOption.ReplaceExisting);
-
-            return uuid;
-        }
-
-        public static async Task<Sound> GetSound(string uuid)
-        {
-            var soundObject = DatabaseOperations.GetSound(uuid);
-            return await GetSoundByOldDatabaseModel(soundObject);
-        }
-
-        private static async Task<List<Sound>> GetSavedSounds()
-        {
-            List<OldSoundDatabaseModel> soundObjects = DatabaseOperations.GetAllSounds();
-            List<Sound> sounds = new List<Sound>();
-            
-
-            foreach (var obj in soundObjects)
-            {
-                Sound sound = await GetSoundByOldDatabaseModel(obj);
-                sounds.Add(sound);
-            }
-            (App.Current as App)._itemViewHolder.allSoundsChanged = false;
-            return sounds;
-        }
-
-        public static async Task GetAllSounds()
-        {
-            (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-
-            (App.Current as App)._itemViewHolder.sounds.Clear();
-            (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
-
-            await UpdateAllSoundsList();
-
-            // Get the sounds from itemViewHolder
-            foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
-            {
-                (App.Current as App)._itemViewHolder.sounds.Add(sound);
-                if (sound.Favourite)
-                {
-                    (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
-                }
-            }
-
-            (App.Current as App)._itemViewHolder.progressRingIsActive = false;
-        }
-
-        public static async Task GetSoundsByCategory(Category category)
-        {
-            (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
-
-            await UpdateAllSoundsList();
-
-            (App.Current as App)._itemViewHolder.sounds.Clear();
-            (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
-            foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
-            {
-                if (sound.Category != null)
-                {
-                    if (sound.Category.Uuid == category.Uuid)
-                    {
-                        (App.Current as App)._itemViewHolder.sounds.Add(sound);
-                        if (sound.Favourite)
-                        {
-                            (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
-                        }
-                    }
-                }
-            }
-
-            ShowPlayAllButton();
-        }
-
-        public static async Task GetSoundsByName(string name)
-        {
-            (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
-            (App.Current as App)._itemViewHolder.sounds.Clear();
-
-            await UpdateAllSoundsList();
-
-            (App.Current as App)._itemViewHolder.sounds.Clear();
-            (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
-            foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
-            {
-                if (sound.Name.ToLower().Contains(name.ToLower()))
-                {
-                    (App.Current as App)._itemViewHolder.sounds.Add(sound);
-                    if (sound.Favourite)
-                    {
-                        (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
-                    }
-                }
-            }
-
-            ShowPlayAllButton();
-        }
-
-        public static async Task DeleteSound(string uuid)
-        {
-            // Find the sound and image file and delete them
-            var soundObject = DatabaseOperations.GetSound(uuid);
-            if (soundObject != null)
-            {
-                // Delete Sound from database
-                DatabaseOperations.DeleteSound(uuid);
-
-                string image_ext = soundObject.GetType().GetProperty("image_ext").GetValue(soundObject).ToString();
-                string sound_ext = soundObject.GetType().GetProperty("sound_ext").GetValue(soundObject).ToString();
-
-                StorageFolder soundsFolder = await GetSoundsFolderAsync();
-                StorageFolder imagesFolder = await GetImagesFolderAsync();
-                string soundName = uuid + "." + sound_ext;
-                string imageName = uuid + "." + image_ext;
-
-                // Try to get sound and image file, and delete them if they exist
-                StorageFile soundFile = await soundsFolder.TryGetItemAsync(soundName) as StorageFile;
-                if (soundFile != null)
-                    await soundFile.DeleteAsync();
-
-                StorageFile imageFile = await imagesFolder.TryGetItemAsync(imageName) as StorageFile;
-                if (imageFile != null)
-                    await imageFile.DeleteAsync();
-
-                (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-            }
-        }
-
-        public static async Task DeleteSounds(List<string> sounds)
-        {
-            StorageFolder soundsFolder = await GetSoundsFolderAsync();
-            StorageFolder imagesFolder = await GetImagesFolderAsync();
-
-            foreach (string uuid in sounds)
-            {
-                // Find the sound and image file and delete them
-                var soundObject = DatabaseOperations.GetSound(uuid);
-                if(soundObject != null)
-                {
-                    // Delete Sound from database
-                    DatabaseOperations.DeleteSound(uuid);
-
-                    string image_ext = soundObject.GetType().GetProperty("image_ext").GetValue(soundObject).ToString();
-                    string sound_ext = soundObject.GetType().GetProperty("sound_ext").GetValue(soundObject).ToString();
-
-                    string soundName = uuid + "." + sound_ext;
-                    string imageName = uuid + "." + image_ext;
-
-                    // Try to get sound and image file, and delete them if they exist
-                    StorageFile soundFile = await soundsFolder.TryGetItemAsync(soundName) as StorageFile;
-                    if (soundFile != null)
-                        await soundFile.DeleteAsync();
-
-                    StorageFile imageFile = await imagesFolder.TryGetItemAsync(imageName) as StorageFile;
-                    if (imageFile != null)
-                        await imageFile.DeleteAsync();
-                }
-            }
-
-            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-        }
-
-        public static void RenameSound(string uuid, string newName)
-        {
-            DatabaseOperations.UpdateSound(uuid, newName, null, null, null, null);
-            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-        }
-
-        public static void SetCategoryOfSound(string soundUuid, string categoryUuid)
-        {
-            DatabaseOperations.UpdateSound(soundUuid, null, categoryUuid, null, null, null);
-            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-        }
-
-        public static void SetSoundAsFavourite(string uuid, bool favourite)
-        {
-            DatabaseOperations.UpdateSound(uuid, null, null, null, null, favourite.ToString());
-        }
-
-        public static async Task AddImage(string uuid, StorageFile file)
-        {
-            StorageFolder imagesFolder = await GetImagesFolderAsync();
-            StorageFile newFile = await file.CopyAsync(imagesFolder, uuid + file.FileType, NameCollisionOption.ReplaceExisting);
-            string imageExt = file.FileType.Replace(".", "");
-
-            DatabaseOperations.UpdateSound(uuid, null, null, null, imageExt, null);
-        }
-
-        public static Category AddCategory(string uuid, string name, string icon)
-        {
-            if(uuid == null)
-                uuid = Guid.NewGuid().ToString();
-
-            if(DatabaseOperations.GetCategory(uuid) != null)
-            {       // Category already exists
-                DatabaseOperations.UpdateCategory(uuid, name, icon);
-            }
-            else
-            {
-                DatabaseOperations.AddCategory(uuid, name, icon);
-            }
-            
-            return new Category(uuid, name, icon);
-        }
-
-        public static List<Category> GetAllCategories()
-        {
-            return DatabaseOperations.GetCategories();
-        }
-
-        public static void UpdateCategory(string uuid, string name, string icon)
-        {
-            DatabaseOperations.UpdateCategory(uuid, name, icon);
-            CreateCategoriesObservableCollection();
-        }
-
-        public static void DeleteCategory(string uuid)
-        {
-            DatabaseOperations.DeleteCategory(uuid);
-            CreateCategoriesObservableCollection();
-        }
-
-        public static string AddPlayingSound(string uuid, List<Sound> sounds, int current, int repetitions, bool randomly, double volume)
-        {
-            if (uuid == null)
-                uuid = Guid.NewGuid().ToString();
-
-            if (volume >= 1)
-                volume = 1;
-            else if (volume <= 0)
-                volume = 0;
-
-            if ((App.Current as App)._itemViewHolder.savePlayingSounds && 
-                (App.Current as App)._itemViewHolder.playingSoundsListVisibility == Visibility.Visible)
-            {
-                if(DatabaseOperations.GetPlayingSound(uuid) == null)
-                {
-                    List<string> soundIds = new List<string>();
-                    foreach (Sound sound in sounds)
-                    {
-                        soundIds.Add(sound.Uuid);
-                    }
-
-                    DatabaseOperations.AddPlayingSound(uuid, soundIds, current, repetitions, randomly, volume);
-                }
-            }
-            return uuid;
-        }
-
-        public static async Task<List<PlayingSound>> GetAllPlayingSounds()
-        {
-            List<OldPlayingSoundDatabaseModel> playingSoundObjects = DatabaseOperations.GetAllPlayingSounds();
-            List<PlayingSound> playingSounds = new List<PlayingSound>();
-
-            foreach(var obj in playingSoundObjects)
-            {
-                List<Sound> sounds = new List<Sound>();
-                // Get the sounds
-                foreach (string id in obj.sound_ids.Split(","))
-                {
-                    OldSoundDatabaseModel soundObject = DatabaseOperations.GetSound(id);
-                    if (soundObject != null)
-                        sounds.Add(await GetSoundByOldDatabaseModel(soundObject));
-                }
-
-                // Create the media player
-                MediaPlayer player = CreateMediaPlayer(sounds, obj.current);
-                player.Volume = volume;
-                player.AutoPlay = false;
-                if(player != null)
-                {
-                    PlayingSound playingSound = new PlayingSound(obj.uuid, sounds, player, obj.repetitions, obj.randomly, obj.current);
-                    playingSounds.Add(playingSound);
-                }
-                else
-                {
-                    // Remove the PlayingSound from the DB
-                    DatabaseOperations.DeletePlayingSound(obj.uuid);
-                }
-            }
-            return playingSounds;
-        }
-
-        public static void AddOrRemoveAllPlayingSounds()
-        {
-            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-
-            // Check the settings if all playingSounds should be removed or added
-            bool savePlayingSounds = true;
-            savePlayingSounds = (bool)localSettings.Values[savePlayingSoundsKey] &&
-                                (bool)localSettings.Values[playingSoundsListVisibleKey];
-
-            foreach (PlayingSound ps in (App.Current as App)._itemViewHolder.playingSounds)
-            {
-                if (savePlayingSounds)
-                {
-                    // Check, if the playingSound is already saved
-                    if (DatabaseOperations.GetPlayingSound(ps.Uuid) == null)
-                    {
-                        // Add the playingSound
-                        List<string> soundIds = new List<string>();
-                        foreach (Sound sound in ps.Sounds)
-                        {
-                            soundIds.Add(sound.Uuid);
-                        }
-
-                        DatabaseOperations.AddPlayingSound(ps.Uuid, soundIds, ((int)((MediaPlaybackList)ps.MediaPlayer.Source).CurrentItemIndex), ps.Repetitions, ps.Randomly, ps.MediaPlayer.Volume);
-                    }
-                }
-                else
-                {
-                    // Check, if the playingSound is saved
-                    if (DatabaseOperations.GetPlayingSound(ps.Uuid) != null)
-                    {
-                        // Remove the playingSound
-                        DatabaseOperations.DeletePlayingSound(ps.Uuid);
-                    }
-                }
-            }
-        }
-
-        public static void SetCurrentOfPlayingSound(string uuid, int current)
-        {
-            DatabaseOperations.UpdatePlayingSound(uuid, null, current.ToString(), null, null, null);
-        }
-
-        public static void SetRepetitionsOfPlayingSound(string uuid, int repetitions)
-        {
-            DatabaseOperations.UpdatePlayingSound(uuid, null, null, repetitions.ToString(), null, null);
-        }
-
-        public static void SetSoundsListOfPlayingSound(string uuid, List<Sound> sounds)
-        {
-            List<string> soundIds = new List<string>();
-            foreach (Sound sound in sounds)
-            {
-                soundIds.Add(sound.Uuid);
-            }
-
-            DatabaseOperations.UpdatePlayingSound(uuid, soundIds, null, null, null, null);
-        }
-
-        public static void SetVolumeOfPlayingSound(string uuid, double volume)
-        {
-            if (volume >= 1)
-                volume = 1;
-            else if (volume <= 0)
-                volume = 0;
-
-            DatabaseOperations.UpdatePlayingSound(uuid, null, null, null, null, volume.ToString());
-        }
-
-        public static void DeletePlayingSound(string uuid)
-        {
-            DatabaseOperations.DeletePlayingSound(uuid);
-        }
-        #endregion
-
-        #region UI Methods
-        public static bool AreTopButtonsNormal()
-        {
-            if ((App.Current as App)._itemViewHolder.normalOptionsVisibility)
-            {
-                if ((App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility && Window.Current.Bounds.Width >= hideSearchBoxMaxWidth)
-                {
-                    return true;
-                }
-
-                if ((App.Current as App)._itemViewHolder.searchButtonVisibility && Window.Current.Bounds.Width < hideSearchBoxMaxWidth)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-        public static void CheckBackButtonVisibility()
-        {
-            if (AreTopButtonsNormal() && 
-                (App.Current as App)._itemViewHolder.selectedCategory == 0 &&
-                String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))
-            {       // Anything is normal, SoundPage shows All Sounds
-                SetBackButtonVisibility(false);
-            }
-            else
-            {
-                SetBackButtonVisibility(true);
-            }
-        }
-
-        public static void SetBackButtonVisibility(bool visible)
-        {
-            if (visible)
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                (App.Current as App)._itemViewHolder.windowTitleMargin = new Thickness(60, 7, 0, 0);
-            }
-            else
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-                (App.Current as App)._itemViewHolder.windowTitleMargin = new Thickness(12, 7, 0, 0);
-            }
-        }
-
-        public static async Task ShowAllSounds()
-        {
-            if (AreTopButtonsNormal())
-            {
-                SetBackButtonVisibility(false);
-            }
-            skipAutoSuggestBoxTextChanged = true;
-            (App.Current as App)._itemViewHolder.searchQuery = "";
-            (App.Current as App)._itemViewHolder.selectedCategory = 0;
-            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-            await GetAllSounds();
-            ShowPlayAllButton();
-            skipAutoSuggestBoxTextChanged = false;
-        }
-
-        public static void AdjustLayout()
-        {
-            double width = Window.Current.Bounds.Width;
-
-            (App.Current as App)._itemViewHolder.topButtonsCollapsed = (width<topButtonsCollapsedMaxWidth);
-            (App.Current as App)._itemViewHolder.selectButtonVisibility = !(width<moveSelectButtonMaxWidth);
-            (App.Current as App)._itemViewHolder.addButtonVisibility = !(width<moveAddButtonMaxWidth);
-            (App.Current as App)._itemViewHolder.volumeButtonVisibility = !(width<moveVolumeButtonMaxWidth);
-            (App.Current as App)._itemViewHolder.shareButtonVisibility = !(width<moveAddButtonMaxWidth);
-            (App.Current as App)._itemViewHolder.cancelButtonVisibility = !(width<hideSearchBoxMaxWidth);
-            (App.Current as App)._itemViewHolder.moreButtonVisibility = (width<moveSelectButtonMaxWidth
-                                                                        || !(App.Current as App)._itemViewHolder.normalOptionsVisibility);
-
-            if (String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))
-            {
-                (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = !(width<hideSearchBoxMaxWidth);
-                (App.Current as App)._itemViewHolder.searchButtonVisibility = (width<hideSearchBoxMaxWidth);
-            }
-
-            CheckBackButtonVisibility();
-        }
-
-        public static void ShowPlayAllButton()
-        {
-            if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage)
-                || (App.Current as App)._itemViewHolder.progressRingIsActive
-                || (App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-            {
-                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
-            }
-            else
-            {
-                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Visible;
-            }
-        }
-
-        public static async Task UpdateGridView()
-        {
-            int selectedCategoryIndex = (App.Current as App)._itemViewHolder.selectedCategory;
-            Category selectedCategory = (App.Current as App)._itemViewHolder.categories[selectedCategoryIndex];
-
-            if (selectedCategory != null)
-            {
-                if ((App.Current as App)._itemViewHolder.searchQuery == "")
-                {
-                    if (selectedCategoryIndex == 0)
-                    {
-                        await GetAllSounds();
-                        (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                    }
-                    else if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-                    {
-                        (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                    }
-                    else
-                    {
-                        await GetSoundsByCategory(selectedCategory);
-                        (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
-                    }
-                }
-                else
-                {
-                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                    await GetSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
-                }
-            }
-            else
-            {
-                await GetAllSounds();
-                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-            }
-
-            // Check if another category was selected
-            if (selectedCategoryIndex != (App.Current as App)._itemViewHolder.selectedCategory)
-            {
-                // Update UI
-                await UpdateGridView();
-            }
-            ShowPlayAllButton();
-        }
-
-        public static async Task ShowCategory(string uuid)
-        {
-            Category category = DatabaseOperations.GetCategory(uuid);
-            if(category != null)
-            {
-                skipAutoSuggestBoxTextChanged = true;
-                (App.Current as App)._itemViewHolder.searchQuery = "";
-                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-                (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
-                SetBackButtonVisibility(true);
-                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
-                await GetSoundsByCategory(category);
-                SelectCategory(category.Uuid);
-            }
-            else
-            {
-                await ShowAllSounds();
-            }
-        }
-
-        public static void ResetSearchArea()
-        {
-            skipAutoSuggestBoxTextChanged = true;
-
-            if (Window.Current.Bounds.Width < hideSearchBoxMaxWidth)
-            {
-                // Clear text and show buttons
-                (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = false;
-                (App.Current as App)._itemViewHolder.searchButtonVisibility = true;
-            }
-            AdjustLayout();
-        }
-
-        public static void SwitchSelectionMode()
-        {
-            if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
-            {   // If Normal view
-                (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.Multiple;
-                (App.Current as App)._itemViewHolder.normalOptionsVisibility = false;
-                (App.Current as App)._itemViewHolder.areSelectButtonsEnabled = false;
-            }
-            else
-            {   // If selection view
-                (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.None;
-                (App.Current as App)._itemViewHolder.selectedSounds.Clear();
-                (App.Current as App)._itemViewHolder.normalOptionsVisibility = true;
-                (App.Current as App)._itemViewHolder.areSelectButtonsEnabled = true;
-
-                if (!String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))
-                {
-                    (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = true;
-                    (App.Current as App)._itemViewHolder.searchButtonVisibility = false;
-                }
-            }
-            AdjustLayout();
-        }
-
-        public static void ResetTopButtons()
-        {
-            if ((App.Current as App)._itemViewHolder.selectionMode != ListViewSelectionMode.None)
-            {
-                SwitchSelectionMode();
-            }
-            else
-            {
-                ResetSearchArea();
-            }
-        }
-
-        public static void GoBack()
-        {
-            if (!AreTopButtonsNormal())
-            {
-                ResetTopButtons();
-            }
-            else
-            {
-                if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
-                {   // If Settings Page or AccountPage is visible
-                    // Go to All sounds page
-                    (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
-                    (App.Current as App)._itemViewHolder.selectedCategory = 0;
-                    (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
-                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                    ShowAllSounds();
-                }
-                else if ((App.Current as App)._itemViewHolder.selectedCategory == 0 && 
-                        String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))
-                {   // If SoundPage shows AllSounds
-                    
-                }
-                else
-                {   // If SoundPage shows Category or search results
-                    // Top Buttons are normal, but page shows Category or search results
-                    ShowAllSounds();
-                }
-            }
-            
-            CheckBackButtonVisibility();
-        }
         #endregion
 
         #region General Methods
-        public static void CreateCategoriesObservableCollection()
-        {
-            int selectedCategory = (App.Current as App)._itemViewHolder.selectedCategory;
-            (App.Current as App)._itemViewHolder.categories.Clear();
-            (App.Current as App)._itemViewHolder.categories.Add(new Category { Name = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), Icon = "\uE10F" });
-
-            foreach (Category cat in DatabaseOperations.GetCategories())
-            {
-                (App.Current as App)._itemViewHolder.categories.Add(cat);
-            }
-            (App.Current as App)._itemViewHolder.selectedCategory = selectedCategory;
-        }
-
-        private static async Task UpdateAllSoundsList()
-        {
-            if ((App.Current as App)._itemViewHolder.allSoundsChanged)
-            {
-                (App.Current as App)._itemViewHolder.allSounds.Clear();
-                foreach (Sound sound in await GetSavedSounds())
-                {
-                    (App.Current as App)._itemViewHolder.allSounds.Add(sound);
-                }
-                UpdateLiveTile();
-            }
-        }
-
-        public static void SelectCategory(string uuid)
-        {
-            for (int i = 0; i < (App.Current as App)._itemViewHolder.categories.Count(); i++)
-            {
-                if ((App.Current as App)._itemViewHolder.categories[i].Uuid == uuid)
-                {
-                    (App.Current as App)._itemViewHolder.selectedCategory = i;
-                }
-            }
-        }
-
         public static async Task<bool> UsesOldDataModel()
         {
             bool oldModel = false;
@@ -1032,105 +310,6 @@ namespace UniversalSoundBoard.DataAccess
             }
             
             return oldModel;
-        }
-
-        public static void UpdateLiveTile()
-        {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            bool isLiveTileOn = false;
-
-            if (localSettings.Values["liveTile"] == null)
-            {
-                localSettings.Values["liveTile"] = liveTile;
-                isLiveTileOn = liveTile;
-            }
-            else
-            {
-                isLiveTileOn = (bool)localSettings.Values["liveTile"];
-            }
-
-            if ((App.Current as App)._itemViewHolder.allSounds.Count == 0 || !isLiveTileOn)
-            {
-                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-                return;
-            }
-            
-            List<Sound> sounds = new List<Sound>();
-            // Get sound with image
-            foreach(Sound s in (App.Current as App)._itemViewHolder.allSounds.Where(s => s.ImageFile != null))
-            {
-                sounds.Add(s);
-            }
-
-            Sound sound;
-            if (sounds.Count == 0)
-            {
-                return;
-            }
-            else
-            {
-                Random random = new Random();
-                sound = sounds.ElementAt(random.Next(sounds.Count));
-            }
-
-            NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
-            {
-                Branding = NotificationsExtensions.Tiles.TileBranding.NameAndLogo,
-
-                Content = new NotificationsExtensions.Tiles.TileBindingContentAdaptive()
-                {
-                    PeekImage = new NotificationsExtensions.Tiles.TilePeekImage()
-                    {
-                        Source = sound.ImageFile.Path
-                    },
-                    Children =
-                    {
-                        new NotificationsExtensions.AdaptiveText()
-                        {
-                            Text = sound.Name
-                        }
-                    },
-                    TextStacking = NotificationsExtensions.Tiles.TileTextStacking.Center
-                }
-            };
-
-            NotificationsExtensions.Tiles.TileContent content = new NotificationsExtensions.Tiles.TileContent()
-            {
-                Visual = new NotificationsExtensions.Tiles.TileVisual()
-                {
-                    TileMedium = binding,
-                    TileWide = binding,
-                    TileLarge = binding
-                }
-            };
-
-            // Create the tile notification
-            var notification = new TileNotification(content.GetXml());
-            // And send the notification
-            TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
-        }
-
-        public static async Task SetSoundBoardSizeTextAsync()
-        {
-            if ((App.Current as App)._itemViewHolder.progressRingIsActive)
-            {
-                await Task.Delay(1000);
-                await SetSoundBoardSizeTextAsync();
-            }
-
-            float totalSize = 0;
-            foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
-            {
-                float size;
-                size = await GetFileSizeInGBAsync(sound.AudioFile);
-                if (sound.ImageFile != null)
-                {
-                    size += await GetFileSizeInGBAsync(sound.ImageFile);
-                }
-                totalSize += size;
-            }
-
-            (App.Current as App)._itemViewHolder.soundboardSize = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SettingsSoundBoardSize") + totalSize.ToString("n2") + " GB.";
         }
         
         public static async Task ExportData(StorageFolder destinationFolder)
@@ -1180,7 +359,7 @@ namespace UniversalSoundBoard.DataAccess
                     {
                         var t = Task.Run(() => ZipFile.CreateFromDirectory(exportFolder.Path, localCacheFolder.Path + @"\export.zip"));
                         t.Wait();
-
+                        
                         // Get the created file and move it to the picked folder
                         await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
                             CoreDispatcherPriority.High,
@@ -1519,7 +698,7 @@ namespace UniversalSoundBoard.DataAccess
             Sound sound = new Sound(obj.uuid, obj.name, obj.favourite);
 
             // Get the category of the sound
-            if (!String.IsNullOrEmpty(obj.category_id))
+            if (!Equals(obj.category_id, Guid.Empty))
             {
                 var foundCategories = (App.Current as App)._itemViewHolder.categories.Where(cat => cat.Uuid == obj.category_id);
                 if (foundCategories.Count() > 0)
@@ -1533,13 +712,9 @@ namespace UniversalSoundBoard.DataAccess
 
             Uri defaultImageUri;
             if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
-            {
                 defaultImageUri = new Uri("ms-appx:///Assets/Images/default-dark.png", UriKind.Absolute);
-            }
             else
-            {
                 defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
-            }
             image.UriSource = defaultImageUri;
 
             if (!String.IsNullOrEmpty(obj.image_ext))
@@ -1562,6 +737,887 @@ namespace UniversalSoundBoard.DataAccess
             sound.AudioFile = await soundsFolder.GetFileAsync(soundFileName);
 
             return sound;
+        }
+        #endregion
+
+
+
+
+        
+
+
+
+
+
+        #region Database Methods
+        private static async Task<List<Sound>> GetSavedSounds()
+        {
+            List<Sound> sounds = await GetAllSounds();
+            (App.Current as App)._itemViewHolder.allSoundsChanged = false;
+            return sounds;
+        }
+
+        public static async Task<List<Sound>> GetAllSounds()
+        {
+            List<TableObject> soundsTableObjectList = DatabaseOperations.GetAllSounds();
+            List<Sound> soundsList = new List<Sound>();
+
+            foreach (var soundTableObject in soundsTableObjectList)
+            {
+                soundsList.Add(await GetSound(soundTableObject.Uuid));
+            }
+
+            return soundsList;
+        }
+
+        public static async Task LoadAllSounds()
+        {
+            (App.Current as App)._itemViewHolder.progressRingIsActive = true;
+
+            (App.Current as App)._itemViewHolder.sounds.Clear();
+            (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
+
+            await UpdateAllSoundsList();
+
+            // Get the sounds from itemViewHolder
+            foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
+            {
+                (App.Current as App)._itemViewHolder.sounds.Add(sound);
+                if (sound.Favourite)
+                {
+                    (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
+                }
+            }
+
+            (App.Current as App)._itemViewHolder.progressRingIsActive = false;
+        }
+
+        public static async Task LoadSoundsByCategory(Guid uuid)
+        {
+            (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
+
+            await UpdateAllSoundsList();
+
+            (App.Current as App)._itemViewHolder.sounds.Clear();
+            (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
+            foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
+            {
+                if (sound.Category != null)
+                {
+                    if (sound.Category.Uuid == uuid)
+                    {
+                        (App.Current as App)._itemViewHolder.sounds.Add(sound);
+                        if (sound.Favourite)
+                            (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
+                    }
+                }
+            }
+
+            ShowPlayAllButton();
+        }
+
+        public static async Task LoadSoundsByName(string name)
+        {
+            (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
+
+            await UpdateAllSoundsList();
+
+            (App.Current as App)._itemViewHolder.sounds.Clear();
+            (App.Current as App)._itemViewHolder.favouriteSounds.Clear();
+            foreach (var sound in (App.Current as App)._itemViewHolder.allSounds)
+            {
+                if (sound.Name.ToLower().Contains(name.ToLower()))
+                {
+                    (App.Current as App)._itemViewHolder.sounds.Add(sound);
+                    if (sound.Favourite)
+                    {
+                        (App.Current as App)._itemViewHolder.favouriteSounds.Add(sound);
+                    }
+                }
+            }
+
+            ShowPlayAllButton();
+        }
+
+        public static Guid AddSound(Guid uuid, string name, Guid categoryUuid, StorageFile audioFile)
+        {
+            if (DatabaseOperations.GetObject(uuid) != null)
+                return uuid;
+
+            // Generate a new uuid if necessary
+            if (Equals(uuid, Guid.Empty))
+                uuid = Guid.NewGuid();
+
+            // Generate a uuid for the soundFile
+            Guid soundFileUuid = Guid.NewGuid();
+
+            DatabaseOperations.AddSoundFile(soundFileUuid, audioFile);
+            DatabaseOperations.AddSound(uuid, name, soundFileUuid.ToString(), audioFile.FileType.Replace(".", ""), Equals(categoryUuid, Guid.Empty) ? null : categoryUuid.ToString());
+
+            return uuid;
+        }
+
+        public static async Task<Sound> GetSound(Guid uuid)
+        {
+            var soundTableObject = DatabaseOperations.GetObject(uuid);
+
+            if (soundTableObject == null || soundTableObject.TableId != SoundTableId)
+                return null;
+
+            StorageFolder soundsFolder = await GetSoundsFolderAsync();
+            StorageFolder imagesFolder = await GetImagesFolderAsync();
+
+            Sound sound = new Sound(soundTableObject.Uuid)
+            {
+                Name = soundTableObject.GetPropertyValue(SoundTableNamePropertyName)
+            };
+
+            // Get favourite
+            var favouriteString = soundTableObject.GetPropertyValue(SoundTableFavouritePropertyName);
+            bool favourite = false;
+            if (!String.IsNullOrEmpty(favouriteString))
+            {
+                bool.TryParse(favouriteString, out favourite);
+                sound.Favourite = favourite;
+            }
+
+            // Get the category
+            var categoryUuidString = soundTableObject.GetPropertyValue(SoundTableCategoryUuidPropertyName);
+            Guid categoryUuid = Guid.Empty;
+            if (!String.IsNullOrEmpty(categoryUuidString))
+            {
+                if (Guid.TryParse(categoryUuidString, out categoryUuid))
+                {
+                    sound.Category = GetCategory(categoryUuid);
+                }
+            }
+
+            // Get Image for Sound
+            BitmapImage image = new BitmapImage();
+
+            Uri defaultImageUri;
+            if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
+                defaultImageUri = new Uri("ms-appx:///Assets/Images/default-dark.png", UriKind.Absolute);
+            else
+                defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
+            image.UriSource = defaultImageUri;
+
+            string imageFileUuidString = soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName);
+            Guid imageFileUuid = ConvertStringToGuid(imageFileUuidString);
+            if (!Equals(imageFileUuid, Guid.Empty))
+            {
+                var imageFile = await GetTableObjectFile(imageFileUuid, ImageFileTableId);
+
+                if (imageFile != null)
+                {
+                    sound.ImageFile = imageFile;
+                    image.UriSource = new Uri(imageFile.Path);
+                }
+            }
+            sound.Image = image;
+
+            // Add the sound file to the sound
+            string soundFileUuidString = soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName);
+            Guid soundFileUuid = ConvertStringToGuid(soundFileUuidString);
+            if (!Equals(soundFileUuid, Guid.Empty))
+            {
+                var soundFile = await GetTableObjectFile(soundFileUuid, SoundFileTableId);
+
+                if (soundFile != null)
+                    sound.AudioFile = soundFile;
+                else
+                    Debug.WriteLine("Can't find the sound file of the sound " + soundTableObject.Uuid);
+            }
+            else
+            {
+                Debug.WriteLine("Can't find the sound file of the sound " + soundTableObject.Uuid);
+            }
+
+            return sound;
+        }
+
+        public static void RenameSound(Guid uuid, string newName)
+        {
+            DatabaseOperations.UpdateSound(uuid, newName, null, null, null, null, null, null);
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+        }
+
+        public static void SetCategoryOfSound(Guid soundUuid, Guid categoryUuid)
+        {
+            DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, null, null, categoryUuid.ToString());
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+        }
+
+        public static void SetSoundAsFavourite(Guid uuid, bool favourite)
+        {
+            DatabaseOperations.UpdateSound(uuid, null, favourite.ToString(), null, null, null, null, null);
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+        }
+
+        public static void UpdateImageOfSound(Guid soundUuid, StorageFile file)
+        {
+            var soundTableObject = DatabaseOperations.GetObject(soundUuid);
+            if (soundTableObject == null || soundTableObject.TableId != SoundTableId)
+                return;
+
+            string imageExt = file.FileType.Replace(".", "");
+            Guid imageUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName));
+
+            if (Equals(imageUuid, Guid.Empty))
+            {
+                // Create new image file
+                Guid imageFileUuid = Guid.NewGuid();
+                DatabaseOperations.AddImageFile(imageFileUuid, file);
+                DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, imageFileUuid.ToString(), imageExt, null);
+            }
+            else
+            {
+                // Update the existing image file
+                DatabaseOperations.UpdateImageFile(imageUuid, file);
+                DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, null, imageExt, null);
+            }
+
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+        }
+
+        public static void DeleteSound(Guid uuid)
+        {
+            // Find the sound and image file and delete them
+            DatabaseOperations.DeleteSound(uuid);
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+        }
+
+        public static void DeleteSounds(List<Guid> sounds)
+        {
+            foreach (Guid uuid in sounds)
+            {
+                DatabaseOperations.DeleteSound(uuid);
+            }
+
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+        }
+
+        public static Category AddCategory(Guid uuid, string name, string icon)
+        {
+            if (Equals(uuid, Guid.Empty))
+                uuid = Guid.NewGuid();
+
+            if (DatabaseOperations.GetObject(uuid) != null)
+                return null;
+
+            DatabaseOperations.AddCategory(uuid, name, icon);
+
+            CreateCategoriesObservableCollection();
+            return new Category(uuid, name, icon);
+        }
+
+        private static List<Category> GetAllCategories()
+        {
+            List<TableObject> categoriesTableObjectList = DatabaseOperations.GetAllCategories();
+            List<Category> categoriesList = new List<Category>();
+
+            foreach (var categoryTableObject in categoriesTableObjectList)
+                categoriesList.Add(GetCategory(categoryTableObject.Uuid));
+
+            return categoriesList;
+        }
+
+        private static Category GetCategory(Guid uuid)
+        {
+            var categoryTableObject = DatabaseOperations.GetObject(uuid);
+
+            if (categoryTableObject == null || categoryTableObject.TableId != CategoryTableId)
+                return null;
+
+            return new Category(categoryTableObject.Uuid,
+                                            categoryTableObject.GetPropertyValue(CategoryTableNamePropertyName),
+                                            categoryTableObject.GetPropertyValue(CategoryTableIconPropertyName));
+        }
+
+        public static void UpdateCategory(Guid uuid, string name, string icon)
+        {
+            DatabaseOperations.UpdateCategory(uuid, name, icon);
+            CreateCategoriesObservableCollection();
+        }
+
+        public static void DeleteCategory(Guid uuid)
+        {
+            var categoryTableObject = DatabaseOperations.GetObject(uuid);
+
+            if (categoryTableObject == null || categoryTableObject.TableId != CategoryTableId)
+                return;
+
+            DatabaseOperations.DeleteObject(uuid);
+            CreateCategoriesObservableCollection();
+        }
+
+        public static Guid AddPlayingSound(Guid uuid, List<Sound> sounds, int current, int repetitions, bool randomly, double volume)
+        {
+            if (Equals(uuid, Guid.Empty))
+                uuid = Guid.NewGuid();
+
+            if (!(App.Current as App)._itemViewHolder.savePlayingSounds ||
+                (App.Current as App)._itemViewHolder.playingSoundsListVisibility != Visibility.Visible)
+                return uuid;
+
+            if (volume >= 1)
+                volume = 1;
+            else if (volume <= 0)
+                volume = 0;
+
+            if (DatabaseOperations.GetObject(uuid) == null)
+            {
+                List<string> soundIds = new List<string>();
+                foreach (Sound sound in sounds)
+                {
+                    soundIds.Add(sound.Uuid.ToString());
+                }
+
+                DatabaseOperations.AddPlayingSound(uuid, soundIds, current, repetitions, randomly, volume);
+            }
+            return uuid;
+        }
+
+        public static async Task<List<PlayingSound>> GetAllPlayingSounds()
+        {
+            List<TableObject> playingSoundObjects = DatabaseOperations.GetAllPlayingSounds();
+            List<PlayingSound> playingSounds = new List<PlayingSound>();
+
+            foreach (var obj in playingSoundObjects)
+            {
+                List<Sound> sounds = new List<Sound>();
+                string soundIds = obj.GetPropertyValue(PlayingSoundTableSoundIdsPropertyName);
+
+                // Get the sounds
+                if (!String.IsNullOrEmpty(soundIds))
+                {
+                    foreach (string uuidString in soundIds.Split(","))
+                    {
+                        // Convert the uuid string into a Guid
+                        Guid uuid = ConvertStringToGuid(uuidString);
+
+                        if (!Equals(uuid, Guid.Empty))
+                        {
+                            var sound = await GetSound(uuid);
+                            if (sound != null)
+                                sounds.Add(sound);
+                        }
+                    }
+                }
+
+                // Get the properties of the table objects
+                int current = 0;
+                string currentString = obj.GetPropertyValue(PlayingSoundTableCurrentPropertyName);
+                int.TryParse(currentString, out current);
+
+                double volume = 1.0;
+                string volumeString = obj.GetPropertyValue(PlayingSoundTableVolumePropertyName);
+                double.TryParse(volumeString, out volume);
+
+                int repetitions = 1;
+                string repetitionsString = obj.GetPropertyValue(PlayingSoundTableRepetitionsPropertyName);
+                int.TryParse(repetitionsString, out repetitions);
+
+                bool randomly = false;
+                string randomlyString = obj.GetPropertyValue(PlayingSoundTableRandomlyPropertyName);
+                bool.TryParse(randomlyString, out randomly);
+
+                // Create the media player
+                MediaPlayer player = CreateMediaPlayer(sounds, current);
+                player.Volume = volume;
+                player.AutoPlay = false;
+                if (player != null)
+                {
+                    PlayingSound playingSound = new PlayingSound(obj.Uuid, sounds, player, repetitions, randomly, current);
+                    playingSounds.Add(playingSound);
+                }
+                else
+                {
+                    // Remove the PlayingSound from the DB
+                    DatabaseOperations.DeleteObject(obj.Uuid);
+                }
+            }
+            return playingSounds;
+        }
+
+        public static void AddOrRemoveAllPlayingSounds()
+        {
+            // Check the settings if all playingSounds should be removed or added
+            bool savePlayingSounds = true;
+            bool playingSoundListVisible = true;
+
+            ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+            var savePlayingSoundsSetting = localSettings.Values[savePlayingSoundsKey];
+            var playingSoundsListVisibleSetting = localSettings.Values[playingSoundsListVisibleKey];
+
+            if (savePlayingSoundsSetting != null)
+                savePlayingSounds = (bool)savePlayingSoundsSetting;
+            if (playingSoundsListVisibleSetting != null)
+                playingSoundListVisible = (bool)playingSoundsListVisibleSetting;
+
+            savePlayingSounds = savePlayingSounds && playingSoundListVisible;
+
+            foreach (PlayingSound ps in (App.Current as App)._itemViewHolder.playingSounds)
+            {
+                if (savePlayingSounds)
+                {
+                    // Check, if the playingSound is already saved
+                    if (DatabaseOperations.GetObject(ps.Uuid) == null)
+                    {
+                        // Add the playingSound
+                        List<string> soundIds = new List<string>();
+                        foreach (Sound sound in ps.Sounds)
+                        {
+                            soundIds.Add(sound.Uuid.ToString());
+                        }
+
+                        DatabaseOperations.AddPlayingSound(ps.Uuid, soundIds, ((int)((MediaPlaybackList)ps.MediaPlayer.Source).CurrentItemIndex), ps.Repetitions, ps.Randomly, ps.MediaPlayer.Volume);
+                    }
+                }
+                else
+                {
+                    // Check, if the playingSound is saved
+                    if (DatabaseOperations.GetObject(ps.Uuid) != null)
+                    {
+                        // Remove the playingSound
+                        DatabaseOperations.DeleteObject(ps.Uuid);
+                    }
+                }
+            }
+        }
+
+        public static void SetCurrentOfPlayingSound(Guid uuid, int current)
+        {
+            DatabaseOperations.UpdatePlayingSound(uuid, null, current.ToString(), null, null, null);
+        }
+
+        public static void SetRepetitionsOfPlayingSound(Guid uuid, int repetitions)
+        {
+            DatabaseOperations.UpdatePlayingSound(uuid, null, null, repetitions.ToString(), null, null);
+        }
+
+        public static void SetSoundsListOfPlayingSound(Guid uuid, List<Sound> sounds)
+        {
+            List<string> soundIds = new List<string>();
+            foreach (Sound sound in sounds)
+            {
+                soundIds.Add(sound.Uuid.ToString());
+            }
+
+            DatabaseOperations.UpdatePlayingSound(uuid, soundIds, null, null, null, null);
+        }
+
+        public static void SetVolumeOfPlayingSound(Guid uuid, double volume)
+        {
+            if (volume >= 1)
+                volume = 1;
+            else if (volume <= 0)
+                volume = 0;
+
+            DatabaseOperations.UpdatePlayingSound(uuid, null, null, null, null, volume.ToString());
+        }
+
+        public static void DeletePlayingSound(Guid uuid)
+        {
+            DatabaseOperations.DeleteObject(uuid);
+        }
+
+        private static async Task<StorageFile> GetTableObjectFile(Guid uuid, int tableId)
+        {
+            var fileTableObject = DatabaseOperations.GetObject(uuid);
+
+            if (fileTableObject == null || fileTableObject.TableId != tableId)
+                return null;
+
+            return await StorageFile.GetFileFromPathAsync(fileTableObject.File.FullName);
+        }
+        #endregion
+
+        #region UI Methods
+        public static bool AreTopButtonsNormal()
+        {
+            if ((App.Current as App)._itemViewHolder.normalOptionsVisibility)
+            {
+                if ((App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility && Window.Current.Bounds.Width >= hideSearchBoxMaxWidth)
+                {
+                    return true;
+                }
+
+                if ((App.Current as App)._itemViewHolder.searchButtonVisibility && Window.Current.Bounds.Width < hideSearchBoxMaxWidth)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        public static void CheckBackButtonVisibility()
+        {
+            if (AreTopButtonsNormal() &&
+                (App.Current as App)._itemViewHolder.selectedCategory == 0 &&
+                String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))
+            {       // Anything is normal, SoundPage shows All Sounds
+                SetBackButtonVisibility(false);
+            }
+            else
+            {
+                SetBackButtonVisibility(true);
+            }
+        }
+
+        public static void SetBackButtonVisibility(bool visible)
+        {
+            if (visible)
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+                (App.Current as App)._itemViewHolder.windowTitleMargin = new Thickness(60, 7, 0, 0);
+            }
+            else
+            {
+                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
+                (App.Current as App)._itemViewHolder.windowTitleMargin = new Thickness(12, 7, 0, 0);
+            }
+        }
+
+        public static async Task ShowAllSounds()
+        {
+            if (AreTopButtonsNormal())
+            {
+                SetBackButtonVisibility(false);
+            }
+            skipAutoSuggestBoxTextChanged = true;
+            (App.Current as App)._itemViewHolder.searchQuery = "";
+            (App.Current as App)._itemViewHolder.selectedCategory = 0;
+            (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+            (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+            await GetAllSounds();
+            ShowPlayAllButton();
+            skipAutoSuggestBoxTextChanged = false;
+        }
+
+        public static void AdjustLayout()
+        {
+            double width = Window.Current.Bounds.Width;
+
+            (App.Current as App)._itemViewHolder.topButtonsCollapsed = (width < topButtonsCollapsedMaxWidth);
+            (App.Current as App)._itemViewHolder.selectButtonVisibility = !(width < moveSelectButtonMaxWidth);
+            (App.Current as App)._itemViewHolder.addButtonVisibility = !(width < moveAddButtonMaxWidth);
+            (App.Current as App)._itemViewHolder.volumeButtonVisibility = !(width < moveVolumeButtonMaxWidth);
+            (App.Current as App)._itemViewHolder.shareButtonVisibility = !(width < moveAddButtonMaxWidth);
+            (App.Current as App)._itemViewHolder.cancelButtonVisibility = !(width < hideSearchBoxMaxWidth);
+            (App.Current as App)._itemViewHolder.moreButtonVisibility = (width < moveSelectButtonMaxWidth
+                                                                        || !(App.Current as App)._itemViewHolder.normalOptionsVisibility);
+
+            if (String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))
+            {
+                (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = !(width < hideSearchBoxMaxWidth);
+                (App.Current as App)._itemViewHolder.searchButtonVisibility = (width < hideSearchBoxMaxWidth);
+            }
+
+            CheckBackButtonVisibility();
+        }
+
+        public static void ShowPlayAllButton()
+        {
+            if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage)
+                || (App.Current as App)._itemViewHolder.progressRingIsActive
+                || (App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+            {
+                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Collapsed;
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.playAllButtonVisibility = Visibility.Visible;
+            }
+        }
+
+        public static async Task UpdateGridView()
+        {
+            int selectedCategoryIndex = (App.Current as App)._itemViewHolder.selectedCategory;
+            Category selectedCategory = (App.Current as App)._itemViewHolder.categories[selectedCategoryIndex];
+
+            if (selectedCategory != null)
+            {
+                if ((App.Current as App)._itemViewHolder.searchQuery == "")
+                {
+                    if (selectedCategoryIndex == 0)
+                    {
+                        await GetAllSounds();
+                        (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                    }
+                    else if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+                    {
+                        (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                    }
+                    else
+                    {
+                        await LoadSoundsByCategory(selectedCategory.Uuid);
+                        (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
+                    }
+                }
+                else
+                {
+                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                    await LoadSoundsByName((App.Current as App)._itemViewHolder.searchQuery);
+                }
+            }
+            else
+            {
+                await GetAllSounds();
+                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+            }
+
+            // Check if another category was selected
+            if (selectedCategoryIndex != (App.Current as App)._itemViewHolder.selectedCategory)
+            {
+                // Update UI
+                await UpdateGridView();
+            }
+            ShowPlayAllButton();
+        }
+
+        public static async Task ShowCategory(Guid uuid)
+        {
+            var categoryTableObject = DatabaseOperations.GetObject(uuid);
+
+            if (categoryTableObject != null && categoryTableObject.TableId == CategoryTableId)
+            {
+                Category category = new Category(categoryTableObject.Uuid, categoryTableObject.GetPropertyValue(CategoryTableNamePropertyName), categoryTableObject.GetPropertyValue(CategoryTableIconPropertyName));
+
+                skipAutoSuggestBoxTextChanged = true;
+                (App.Current as App)._itemViewHolder.searchQuery = "";
+                (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+                (App.Current as App)._itemViewHolder.title = WebUtility.HtmlDecode(category.Name);
+                SetBackButtonVisibility(true);
+                (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Visible;
+                await LoadSoundsByCategory(category.Uuid);
+                SelectCategory(category.Uuid);
+            }
+            else
+            {
+                await ShowAllSounds();
+            }
+        }
+
+        public static void ResetSearchArea()
+        {
+            skipAutoSuggestBoxTextChanged = true;
+
+            if (Window.Current.Bounds.Width < hideSearchBoxMaxWidth)
+            {
+                // Clear text and show buttons
+                (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = false;
+                (App.Current as App)._itemViewHolder.searchButtonVisibility = true;
+            }
+            AdjustLayout();
+        }
+
+        public static void SwitchSelectionMode()
+        {
+            if ((App.Current as App)._itemViewHolder.selectionMode == ListViewSelectionMode.None)
+            {   // If Normal view
+                (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.Multiple;
+                (App.Current as App)._itemViewHolder.normalOptionsVisibility = false;
+                (App.Current as App)._itemViewHolder.areSelectButtonsEnabled = false;
+            }
+            else
+            {   // If selection view
+                (App.Current as App)._itemViewHolder.selectionMode = ListViewSelectionMode.None;
+                (App.Current as App)._itemViewHolder.selectedSounds.Clear();
+                (App.Current as App)._itemViewHolder.normalOptionsVisibility = true;
+                (App.Current as App)._itemViewHolder.areSelectButtonsEnabled = true;
+
+                if (!String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))
+                {
+                    (App.Current as App)._itemViewHolder.searchAutoSuggestBoxVisibility = true;
+                    (App.Current as App)._itemViewHolder.searchButtonVisibility = false;
+                }
+            }
+            AdjustLayout();
+        }
+
+        public static void ResetTopButtons()
+        {
+            if ((App.Current as App)._itemViewHolder.selectionMode != ListViewSelectionMode.None)
+            {
+                SwitchSelectionMode();
+            }
+            else
+            {
+                ResetSearchArea();
+            }
+        }
+
+        public static void GoBack()
+        {
+            if (!AreTopButtonsNormal())
+            {
+                ResetTopButtons();
+            }
+            else
+            {
+                if ((App.Current as App)._itemViewHolder.page != typeof(SoundPage))
+                {   // If Settings Page or AccountPage is visible
+                    // Go to All sounds page
+                    (App.Current as App)._itemViewHolder.page = typeof(SoundPage);
+                    (App.Current as App)._itemViewHolder.selectedCategory = 0;
+                    (App.Current as App)._itemViewHolder.title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+                    (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
+                    ShowAllSounds();
+                }
+                else if ((App.Current as App)._itemViewHolder.selectedCategory == 0 &&
+                        String.IsNullOrEmpty((App.Current as App)._itemViewHolder.searchQuery))
+                {   // If SoundPage shows AllSounds
+
+                }
+                else
+                {   // If SoundPage shows Category or search results
+                    // Top Buttons are normal, but page shows Category or search results
+                    ShowAllSounds();
+                }
+            }
+
+            CheckBackButtonVisibility();
+        }
+        #endregion
+
+        #region General Methods
+        public static void CreateCategoriesObservableCollection()
+        {
+            int selectedCategory = (App.Current as App)._itemViewHolder.selectedCategory;
+            (App.Current as App)._itemViewHolder.categories.Clear();
+            (App.Current as App)._itemViewHolder.categories.Add(new Category(Guid.Empty, (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), "\uE10F"));
+
+            foreach (Category cat in GetAllCategories())
+            {
+                (App.Current as App)._itemViewHolder.categories.Add(cat);
+            }
+        (App.Current as App)._itemViewHolder.selectedCategory = selectedCategory;
+        }
+
+        private static async Task UpdateAllSoundsList()
+        {
+            if ((App.Current as App)._itemViewHolder.allSoundsChanged)
+            {
+                (App.Current as App)._itemViewHolder.allSounds.Clear();
+                foreach (Sound sound in await GetSavedSounds())
+                {
+                    (App.Current as App)._itemViewHolder.allSounds.Add(sound);
+                }
+                UpdateLiveTile();
+            }
+        }
+
+        public static void SelectCategory(Guid uuid)
+        {
+            for (int i = 0; i < (App.Current as App)._itemViewHolder.categories.Count(); i++)
+            {
+                if (Equals((App.Current as App)._itemViewHolder.categories[i].Uuid, uuid))
+                {
+                    (App.Current as App)._itemViewHolder.selectedCategory = i;
+                }
+            }
+        }
+
+        public static void UpdateLiveTile()
+        {
+            var localSettings = ApplicationData.Current.LocalSettings;
+            bool isLiveTileOn = false;
+
+            if (localSettings.Values["liveTile"] == null)
+            {
+                localSettings.Values["liveTile"] = liveTile;
+                isLiveTileOn = liveTile;
+            }
+            else
+            {
+                isLiveTileOn = (bool)localSettings.Values["liveTile"];
+            }
+
+            if ((App.Current as App)._itemViewHolder.allSounds.Count == 0 || !isLiveTileOn)
+            {
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+                return;
+            }
+
+            List<Sound> sounds = new List<Sound>();
+            // Get sound with image
+            foreach (Sound s in (App.Current as App)._itemViewHolder.allSounds.Where(s => s.ImageFile != null))
+            {
+                sounds.Add(s);
+            }
+
+            Sound sound;
+            if (sounds.Count == 0)
+            {
+                return;
+            }
+            else
+            {
+                Random random = new Random();
+                sound = sounds.ElementAt(random.Next(sounds.Count));
+            }
+
+            NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
+            {
+                Branding = NotificationsExtensions.Tiles.TileBranding.NameAndLogo,
+
+                Content = new NotificationsExtensions.Tiles.TileBindingContentAdaptive()
+                {
+                    PeekImage = new NotificationsExtensions.Tiles.TilePeekImage()
+                    {
+                        Source = sound.ImageFile.Path
+                    },
+                    Children =
+                    {
+                        new NotificationsExtensions.AdaptiveText()
+                        {
+                            Text = sound.Name
+                        }
+                    },
+                    TextStacking = NotificationsExtensions.Tiles.TileTextStacking.Center
+                }
+            };
+
+            NotificationsExtensions.Tiles.TileContent content = new NotificationsExtensions.Tiles.TileContent()
+            {
+                Visual = new NotificationsExtensions.Tiles.TileVisual()
+                {
+                    TileMedium = binding,
+                    TileWide = binding,
+                    TileLarge = binding
+                }
+            };
+
+            // Create the tile notification
+            var notification = new TileNotification(content.GetXml());
+            // And send the notification
+            TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
+        }
+
+        public static async Task SetSoundBoardSizeTextAsync()
+        {
+            if ((App.Current as App)._itemViewHolder.progressRingIsActive)
+            {
+                await Task.Delay(1000);
+                await SetSoundBoardSizeTextAsync();
+            }
+
+            float totalSize = 0;
+            foreach (Sound sound in (App.Current as App)._itemViewHolder.allSounds)
+            {
+                float size;
+                size = await GetFileSizeInGBAsync(sound.AudioFile);
+                if (sound.ImageFile != null)
+                {
+                    size += await GetFileSizeInGBAsync(sound.ImageFile);
+                }
+                totalSize += size;
+            }
+
+            (App.Current as App)._itemViewHolder.soundboardSize = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SettingsSoundBoardSize") + totalSize.ToString("n2") + " GB.";
         }
 
         public static MediaPlayer CreateMediaPlayer(List<Sound> sounds, int current)
@@ -1614,13 +1670,13 @@ namespace UniversalSoundBoard.DataAccess
         }
         #endregion
 
-        #region Other Methods
+        #region Helper Methods
         public static async Task<float> GetFileSizeInGBAsync(StorageFile file)
         {
             BasicProperties pro = await file.GetBasicPropertiesAsync();
-            return (((pro.Size / 1024f) / 1024f)/ 1024f);
+            return (((pro.Size / 1024f) / 1024f) / 1024f);
         }
-        
+
         public static async Task WriteFile(StorageFile file, Object objectToWrite)
         {
             DataContractJsonSerializer js = new DataContractJsonSerializer(objectToWrite.GetType());
@@ -1633,7 +1689,7 @@ namespace UniversalSoundBoard.DataAccess
 
             await FileIO.WriteTextAsync(file, data);
         }
-        
+
         public static string HTMLEncodeSpecialChars(string text)
         {
             StringBuilder sb = new StringBuilder();
@@ -1646,7 +1702,7 @@ namespace UniversalSoundBoard.DataAccess
             }
             return sb.ToString();
         }
-        
+
         public static List<string> GetIconsList()
         {
             List<string> Icons = new List<string>();
@@ -1729,6 +1785,13 @@ namespace UniversalSoundBoard.DataAccess
 
             return Icons;
         }
+
+        public static Guid ConvertStringToGuid(string uuidString)
+        {
+            Guid uuid = Guid.Empty;
+            Guid.TryParse(uuidString, out uuid);
+            return uuid;
+        }
         #endregion
 
         #region Old Methods
@@ -1748,6 +1811,37 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             return categoriesList;
+        }
+
+        public static async Task<StorageFolder> GetSoundsFolderAsync()
+        {
+            StorageFolder root = ApplicationData.Current.LocalFolder;
+            StorageFolder detailsFolder;
+            string soundsFolderName = "sounds";
+            if (await root.TryGetItemAsync(soundsFolderName) == null)
+            {
+                return detailsFolder = await root.CreateFolderAsync(soundsFolderName);
+            }
+            else
+            {
+                return detailsFolder = await root.GetFolderAsync(soundsFolderName);
+            }
+        }
+
+        public static async Task<StorageFolder> GetImagesFolderAsync()
+        {
+            // Create images folder if not exists
+            StorageFolder folder = ApplicationData.Current.LocalFolder;
+            StorageFolder imagesFolder;
+            string imagesFolderName = "images";
+            if (await folder.TryGetItemAsync(imagesFolderName) == null)
+            {
+                return imagesFolder = await folder.CreateFolderAsync(imagesFolderName);
+            }
+            else
+            {
+                return imagesFolder = await folder.GetFolderAsync(imagesFolderName);
+            }
         }
         #endregion
     }

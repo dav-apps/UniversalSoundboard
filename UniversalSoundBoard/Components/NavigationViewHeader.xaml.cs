@@ -184,7 +184,7 @@ namespace UniversalSoundBoard.Components
                     (App.Current as App)._itemViewHolder.title = text;
                     (App.Current as App)._itemViewHolder.searchQuery = text;
                     (App.Current as App)._itemViewHolder.selectedCategory = 0;
-                    FileManager.GetSoundsByName(text);
+                    FileManager.LoadSoundsByName(text);
                     Suggestions = (App.Current as App)._itemViewHolder.allSounds.Where(p => p.Name.ToLower().StartsWith(text.ToLower())).Select(p => p.Name).ToList();
                     SearchAutoSuggestBox.ItemsSource = Suggestions;
                     FileManager.SetBackButtonVisibility(true);
@@ -211,7 +211,7 @@ namespace UniversalSoundBoard.Components
                 (App.Current as App)._itemViewHolder.title = text;
                 (App.Current as App)._itemViewHolder.searchQuery = text;
                 (App.Current as App)._itemViewHolder.editButtonVisibility = Visibility.Collapsed;
-                FileManager.GetSoundsByName(text);
+                FileManager.LoadSoundsByName(text);
             }
 
             FileManager.CheckBackButtonVisibility();

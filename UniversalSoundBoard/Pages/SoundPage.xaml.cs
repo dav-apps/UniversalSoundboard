@@ -112,7 +112,7 @@ namespace UniversalSoundBoard.Pages
 
                     foreach (StorageFile soundFile in items)
                     {
-                        await FileManager.AddSound(null, soundFile.DisplayName, category.Uuid, soundFile);
+                        FileManager.AddSound(Guid.Empty, soundFile.DisplayName, category.Uuid, soundFile);
                         (App.Current as App)._itemViewHolder.allSoundsChanged = true;
                         await FileManager.UpdateGridView();
                     }

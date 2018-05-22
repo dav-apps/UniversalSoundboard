@@ -1,8 +1,10 @@
-﻿namespace UniversalSoundBoard.Models
+﻿using System;
+
+namespace UniversalSoundBoard.Models
 {
     public class Category
     {
-        public string Uuid { get; set; }
+        public Guid Uuid { get; set; }
         public string Name { get; set; }
         public string Icon { get; set; }
 
@@ -16,7 +18,7 @@
             Icon = icon;
         }
 
-        public Category(string uuid, string name, string icon)
+        public Category(Guid uuid, string name, string icon)
         {
             Uuid = uuid;
             Name = name;

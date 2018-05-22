@@ -1,10 +1,11 @@
-﻿using Windows.Storage;
+﻿using System;
+using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundBoard.Models
 {
     public class Sound{
-        public string Uuid { get; }
+        public Guid Uuid { get; }
         public string Name { get; set; }
         public Category Category { get; set; }
         public bool Favourite { get; set; }
@@ -15,13 +16,18 @@ namespace UniversalSoundBoard.Models
 
         public Sound(){}
 
+        public Sound(Guid uuid)
+        {
+            Uuid = uuid;
+        }
+
         public Sound(string name, Category category){
             Name = name;
             Category = category;
             Favourite = false;
         }
 
-        public Sound(string uuid, string name, bool favourite)
+        public Sound(Guid uuid, string name, bool favourite)
         {
             Uuid = uuid;
             Name = name;
