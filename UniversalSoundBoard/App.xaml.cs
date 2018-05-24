@@ -104,6 +104,11 @@ namespace UniversalSoundBoard
                 localSettings.Values["theme"] = FileManager.theme;
             }
 
+            // Initialize Dav settings
+            ProjectInterface.RetrieveConstants = new RetrieveConstants();
+            ProjectInterface.LocalDataSettings = new LocalDataSettings();
+            (App.Current as App)._itemViewHolder.user = new DavUser();
+
             FileManager.CreateCategoriesObservableCollection();
         }
 
@@ -114,13 +119,6 @@ namespace UniversalSoundBoard
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
-            // Initialize Dav settings
-            Dav.DataPath = (await FileManager.GetDavDataFolderAsync()).Path;
-            Dav.ApiKey = FileManager.ApiKey;
-            Dav.AppId = FileManager.AppId;
-            ProjectInterface.LocalDataSettings = new LocalDataSettings();
-            (App.Current as App)._itemViewHolder.user = new DavUser();
-
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -167,7 +165,8 @@ namespace UniversalSoundBoard
             // Check if app was launched from a secondary tile
             if (!String.IsNullOrEmpty(e.Arguments))
             {
-                SoundPage.PlaySound(await FileManager.GetSound(e.Arguments));
+                Guid soundUuid = FileManager.ConvertStringToGuid(e.Arguments);
+                SoundPage.PlaySound(await FileManager.GetSound(soundUuid));
             }
 
             Window.Current.Activate();

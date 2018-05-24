@@ -75,7 +75,7 @@ namespace UniversalSoundBoard.Pages
                 {
                     if (storagefile.ContentType == "audio/wav" || storagefile.ContentType == "audio/mpeg")
                     {
-                        await FileManager.AddSound(null, storagefile.DisplayName, category.Uuid, storagefile);
+                        FileManager.AddSound(Guid.Empty, storagefile.DisplayName, category.Uuid, storagefile);
                     }
                 }
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -119,7 +119,7 @@ namespace UniversalSoundBoard.Pages
                 Icon = icon
             };
 
-            categories.Add(FileManager.AddCategory(null, category.Name, category.Icon));
+            categories.Add(FileManager.AddCategory(Guid.Empty, category.Name, category.Icon));
             Bindings.Update();
 
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>

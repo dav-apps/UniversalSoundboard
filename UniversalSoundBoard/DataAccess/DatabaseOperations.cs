@@ -27,7 +27,7 @@ namespace UniversalSoundBoard.DataAccess
             // Create TableObject with sound informations and TableObject with the Soundfile
             var soundTableObject = new TableObject(uuid, FileManager.SoundTableId);
             soundTableObject.SetPropertyValue(FileManager.SoundTableNamePropertyName, name);
-            soundTableObject.SetPropertyValue(FileManager.SoundTableFavouritePropertyName, false.ToString());
+            soundTableObject.SetPropertyValue(FileManager.SoundTableFavouritePropertyName, bool.FalseString);
             soundTableObject.SetPropertyValue(FileManager.SoundTableSoundUuidPropertyName, soundUuid);
             soundTableObject.SetPropertyValue(FileManager.SoundTableSoundExtPropertyName, soundExt);
             if(!String.IsNullOrEmpty(categoryUuid))
@@ -43,6 +43,9 @@ namespace UniversalSoundBoard.DataAccess
         {
             // Get the sound table object
             var soundTableObject = Dav.Database.GetTableObject(uuid);
+
+            if (soundTableObject == null) return;
+            if (soundTableObject.TableId != FileManager.SoundTableId) return;
 
             if (!String.IsNullOrEmpty(name))
                 soundTableObject.SetPropertyValue(FileManager.SoundTableNamePropertyName, name);
@@ -64,8 +67,8 @@ namespace UniversalSoundBoard.DataAccess
         {
             var soundTableObject = Dav.Database.GetTableObject(uuid);
 
-            if (soundTableObject == null || soundTableObject.TableId != FileManager.SoundTableId)
-                return;
+            if (soundTableObject == null) return;
+            if (soundTableObject.TableId != FileManager.SoundTableId) return;
 
             // Delete the sound file and the image file
             Guid soundFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
@@ -84,7 +87,8 @@ namespace UniversalSoundBoard.DataAccess
         #region SoundFile
         public static void AddSoundFile(Guid uuid, StorageFile audioFile)
         {
-            Dav.Database.CreateTableObject(new TableObject(uuid, FileManager.SoundFileTableId, new FileInfo(audioFile.Path)));
+            var tableObject = new TableObject(uuid, FileManager.SoundFileTableId);
+            tableObject.SetFile(new FileInfo(audioFile.Path));
         }
 
         public static List<TableObject> GetAllSoundFiles()
@@ -96,15 +100,18 @@ namespace UniversalSoundBoard.DataAccess
         #region ImageFile
         public static void AddImageFile(Guid uuid, StorageFile imageFile)
         {
-            Dav.Database.CreateTableObject(new TableObject(uuid, FileManager.ImageFileTableId, new FileInfo(imageFile.Path)));
+            var tableObject = new TableObject(uuid, FileManager.ImageFileTableId);
+            tableObject.SetFile(new FileInfo(imageFile.Path));
         }
 
         public static void UpdateImageFile(Guid uuid, StorageFile imageFile)
         {
             var imageFileTableObject = Dav.Database.GetTableObject(uuid);
 
-            if(imageFileTableObject != null)
-                imageFileTableObject.File = new FileInfo(imageFile.Path);
+            if (imageFileTableObject == null) return;
+            if (imageFileTableObject.TableId != FileManager.ImageFileTableId) return;
+
+            imageFileTableObject.SetFile(new FileInfo(imageFile.Path));
         }
         #endregion
 
@@ -124,6 +131,9 @@ namespace UniversalSoundBoard.DataAccess
         public static void UpdateCategory(Guid uuid, string name, string icon)
         {
             var categoryTableObject = Dav.Database.GetTableObject(uuid);
+
+            if (categoryTableObject == null) return;
+            if (categoryTableObject.TableId != FileManager.CategoryTableId) return;
 
             if (!String.IsNullOrEmpty(name))
                 categoryTableObject.SetPropertyValue(FileManager.CategoryTableNamePropertyName, name);
@@ -151,6 +161,9 @@ namespace UniversalSoundBoard.DataAccess
         public static void UpdatePlayingSound(Guid uuid, List<string> soundIds, string current, string repetitions, string randomly, string volume)
         {
             var playingSoundTableObject = Dav.Database.GetTableObject(uuid);
+
+            if (playingSoundTableObject == null) return;
+            if (playingSoundTableObject.TableId != FileManager.CategoryTableId) return;
 
             if (soundIds != null)
                 playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName, ConvertIdListToString(soundIds));

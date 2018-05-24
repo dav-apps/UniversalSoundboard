@@ -26,6 +26,9 @@ namespace UniversalSoundBoard.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             string newTitle = (string)value;
+            if (String.IsNullOrEmpty(newTitle))
+                return "";
+
             double width = Window.Current.Bounds.Width;
             int maxLength = 20;
 

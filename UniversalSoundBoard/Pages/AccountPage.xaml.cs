@@ -149,7 +149,7 @@ namespace UniversalSoundboard.Pages
 
         private async void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await (App.Current as App)._itemViewHolder.user.Logout();
+            (App.Current as App)._itemViewHolder.user.Logout();
             UpdateUserLayout();
         }
 

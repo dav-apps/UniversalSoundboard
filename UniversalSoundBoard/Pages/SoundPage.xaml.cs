@@ -216,7 +216,7 @@ namespace UniversalSoundBoard.Pages
             }
 
             PlayingSound playingSound = new PlayingSound(sound, player);
-            playingSound.Uuid = FileManager.AddPlayingSound(null, soundList, 0, 0, false, player.Volume);
+            playingSound.Uuid = FileManager.AddPlayingSound(Guid.Empty, soundList, 0, 0, false, player.Volume);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
         
@@ -245,8 +245,8 @@ namespace UniversalSoundBoard.Pages
                 RemoveSoundsFromPlayingSoundsList(removedPlayingSounds);
             }
 
-            PlayingSound playingSound = new PlayingSound(null, sounds, player, repetitions, randomly, 0);
-            playingSound.Uuid = FileManager.AddPlayingSound(null, sounds, 0, repetitions, false, player.Volume);
+            PlayingSound playingSound = new PlayingSound(Guid.Empty, sounds, player, repetitions, randomly, 0);
+            playingSound.Uuid = FileManager.AddPlayingSound(Guid.Empty, sounds, 0, repetitions, false, player.Volume);
             (App.Current as App)._itemViewHolder.playingSounds.Add(playingSound);
         }
         

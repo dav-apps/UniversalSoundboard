@@ -104,6 +104,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\LocalDataSettings.cs" />
+    <Compile Include="Common\RetrieveConstants.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Components\CustomMediaTransportControls.cs" />
     <Compile Include="DataAccess\ApiManager.cs" />

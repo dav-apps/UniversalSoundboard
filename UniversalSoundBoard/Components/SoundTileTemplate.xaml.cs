@@ -111,7 +111,7 @@ namespace UniversalSoundBoard.Components
             {
                 // Application now has read/write access to the picked file
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-                await FileManager.UpdateImageOfSound(sound.Uuid, file);
+                FileManager.UpdateImageOfSound(sound.Uuid, file);
                 (App.Current as App)._itemViewHolder.allSoundsChanged = true;
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
                 await FileManager.UpdateGridView();
@@ -127,7 +127,7 @@ namespace UniversalSoundBoard.Components
         
         private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.DeleteSound(Sound.Uuid);
+            FileManager.DeleteSound(Sound.Uuid);
             // UpdateGridView nicht in deleteSound, weil es auch in einer Schleife aufgerufen wird (löschen mehrerer Sounds)
             await FileManager.UpdateGridView();
         }
@@ -190,7 +190,8 @@ namespace UniversalSoundBoard.Components
         private async void CategoryToggleMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var categoryObject = (ToggleMenuFlyoutItem) sender;
-            string categoryUuid = categoryObject.Tag.ToString();
+            string categoryUuidString = categoryObject.Tag.ToString();
+            Guid categoryUuid = FileManager.ConvertStringToGuid(categoryUuidString);
             FileManager.SetCategoryOfSound(Sound.Uuid, categoryUuid);
             
             UnselectAllItemsOfCategoriesFlyoutSubItem();
@@ -206,7 +207,8 @@ namespace UniversalSoundBoard.Components
             {
                 if(Sound.Category != null && item.Tag != null)
                 {
-                    if (item.Tag.ToString() == Sound.Category.Uuid)
+                    Guid tagUuid = FileManager.ConvertStringToGuid(item.Tag.ToString());
+                    if (Equals(tagUuid, Sound.Category.Uuid))
                     {
                         item.IsChecked = true;
                     }
@@ -236,7 +238,7 @@ namespace UniversalSoundBoard.Components
         private void SetPinFlyoutText()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            bool isPinned = SecondaryTile.Exists(Sound.Uuid);
+            bool isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
             PinFlyoutItem.Text = isPinned ? loader.GetString("Unpin") : loader.GetString("Pin");
         }
         
@@ -247,7 +249,7 @@ namespace UniversalSoundBoard.Components
             // Check if the sound is pinned to start
             bool isPinned = false;
             if (Sound != null)
-                isPinned = SecondaryTile.Exists(Sound.Uuid);
+                isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
 
             OptionsFlyout = new MenuFlyout();
             OptionsFlyout.Opened += Flyout_Opened;
@@ -279,13 +281,13 @@ namespace UniversalSoundBoard.Components
 
         private async void PinFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            bool isPinned = SecondaryTile.Exists(Sound.Uuid);
+            bool isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
 
             // Check if the should be pinned or unpinned
             if (isPinned)
             {
                 // Initialize a secondary tile with the same tile ID you want removed
-                SecondaryTile toBeDeleted = new SecondaryTile(Sound.Uuid);
+                SecondaryTile toBeDeleted = new SecondaryTile(Sound.Uuid.ToString());
 
                 // And then unpin the tile
                 await toBeDeleted.RequestDeleteAsync();
@@ -293,9 +295,9 @@ namespace UniversalSoundBoard.Components
             else
             {
                 // Construct the tile
-                string tileId = Sound.Uuid;
+                string tileId = Sound.Uuid.ToString();
                 string displayName = Sound.Name;
-                string arguments = Sound.Uuid;
+                string arguments = Sound.Uuid.ToString();
                 
                 SecondaryTile tile = new SecondaryTile(
                         tileId,

@@ -65,7 +65,7 @@ namespace UniversalSoundBoard.Pages
             dismissed = true;
 
             // Complete app setup operations here...
-            await FileManager.MigrateToNewDataModel();
+            //await FileManager.MigrateToNewDataModel();
             DismissExtendedSplash();
         }
 

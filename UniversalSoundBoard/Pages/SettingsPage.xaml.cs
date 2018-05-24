@@ -206,7 +206,7 @@ namespace UniversalSoundBoard.Pages
         
         private async void ImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.ImportDataZip(ContentDialogs.ImportFile);
+            //await FileManager.ImportDataZip(ContentDialogs.ImportFile);
         }
     }
 }

@@ -142,10 +142,10 @@ namespace UniversalSoundBoard.Components
                 foreach (StorageFile soundFile in files)
                 {
                     int selectedCategory = (App.Current as App)._itemViewHolder.selectedCategory;
-                    string categoryUuid = selectedCategory == 0 ? null : (App.Current as App)._itemViewHolder.categories[selectedCategory].Uuid;
+                    Guid categoryUuid = selectedCategory == 0 ? Guid.Empty : (App.Current as App)._itemViewHolder.categories[selectedCategory].Uuid;
 
                     Sound sound = new Sound(soundFile.DisplayName, (App.Current as App)._itemViewHolder.categories[selectedCategory], soundFile);
-                    await FileManager.AddSound(null, sound.Name, categoryUuid, soundFile);
+                    await FileManager.AddSound(Guid.Empty, sound.Name, categoryUuid, soundFile);
                     (App.Current as App)._itemViewHolder.allSoundsChanged = true;
                 }
 
@@ -365,7 +365,8 @@ namespace UniversalSoundBoard.Components
         private async void MoreButton_ChangeCategory_Click(object sender, RoutedEventArgs e)
         {
             var selectedItem = (MenuFlyoutItem)sender;
-            string uuid = selectedItem.Tag.ToString();
+            string uuidString = selectedItem.Tag.ToString();
+            Guid uuid = FileManager.ConvertStringToGuid(uuidString);
             
             foreach (Sound sound in (App.Current as App)._itemViewHolder.selectedSounds)
             {
@@ -435,7 +436,7 @@ namespace UniversalSoundBoard.Components
                 Icon = icon
             };
 
-            FileManager.AddCategory(null, category.Name, category.Icon);
+            FileManager.AddCategory(Guid.Empty, category.Name, category.Icon);
             FileManager.CreateCategoriesObservableCollection();
 
             // Show new category
@@ -474,13 +475,13 @@ namespace UniversalSoundBoard.Components
             (App.Current as App)._itemViewHolder.progressRingIsActive = true;
 
             // Delete Sounds
-            List<string> soundUuids = new List<string>();
+            List<Guid> soundUuids = new List<Guid>();
             for (int i = 0; i < (App.Current as App)._itemViewHolder.selectedSounds.Count; i++)
             {
                 soundUuids.Add((App.Current as App)._itemViewHolder.selectedSounds.ElementAt(i).Uuid);
             }
             if (soundUuids.Count != 0)
-                await FileManager.DeleteSounds(soundUuids);
+                FileManager.DeleteSounds(soundUuids);
 
             // Clear selected sounds list
             (App.Current as App)._itemViewHolder.selectedSounds.Clear();
