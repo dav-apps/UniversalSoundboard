@@ -15,6 +15,11 @@ namespace UniversalSoundBoard.DataAccess
             return Dav.Database.GetTableObject(uuid);
         }
 
+        public static bool ObjectExists(Guid uuid)
+        {
+            return Dav.Database.TableObjectExists(uuid);
+        }
+
         public static void DeleteObject(Guid uuid)
         {
             Dav.Database.DeleteTableObject(uuid);
@@ -25,13 +30,18 @@ namespace UniversalSoundBoard.DataAccess
         public static void AddSound(Guid uuid, string name, string soundUuid, string soundExt, string categoryUuid)
         {
             // Create TableObject with sound informations and TableObject with the Soundfile
-            var soundTableObject = new TableObject(uuid, FileManager.SoundTableId);
-            soundTableObject.SetPropertyValue(FileManager.SoundTableNamePropertyName, name);
-            soundTableObject.SetPropertyValue(FileManager.SoundTableFavouritePropertyName, bool.FalseString);
-            soundTableObject.SetPropertyValue(FileManager.SoundTableSoundUuidPropertyName, soundUuid);
-            soundTableObject.SetPropertyValue(FileManager.SoundTableSoundExtPropertyName, soundExt);
-            if(!String.IsNullOrEmpty(categoryUuid))
-                soundTableObject.SetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName, categoryUuid);
+            var properties = new List<Property>
+            {
+                new Property{Name = FileManager.SoundTableNamePropertyName, Value = name},
+                new Property{Name = FileManager.SoundTableFavouritePropertyName, Value = bool.FalseString},
+                new Property{Name = FileManager.SoundTableSoundUuidPropertyName, Value = soundUuid},
+                new Property{Name = FileManager.SoundTableSoundExtPropertyName, Value = soundExt}
+            };
+
+            if (!String.IsNullOrEmpty(categoryUuid))
+                properties.Add(new Property { Name = FileManager.SoundTableCategoryUuidPropertyName, Value = categoryUuid });
+
+            new TableObject(uuid, FileManager.SoundTableId, properties);
         }
 
         public static List<TableObject> GetAllSounds()
@@ -118,9 +128,12 @@ namespace UniversalSoundBoard.DataAccess
         #region Category
         public static void AddCategory(Guid uuid, string name, string icon)
         {
-            var categoryTableObject = new TableObject(uuid, FileManager.CategoryTableId);
-            categoryTableObject.SetPropertyValue(FileManager.CategoryTableNamePropertyName, name);
-            categoryTableObject.SetPropertyValue(FileManager.CategoryTableIconPropertyName, icon);
+            List<Property> properties = new List<Property>
+            {
+                new Property{Name = FileManager.CategoryTableNamePropertyName, Value = name},
+                new Property{Name = FileManager.CategoryTableIconPropertyName, Value = icon}
+            };
+            new TableObject(uuid, FileManager.CategoryTableId, properties);
         }
 
         public static List<TableObject> GetAllCategories()
@@ -145,17 +158,21 @@ namespace UniversalSoundBoard.DataAccess
         #region PlayingSound
         public static void AddPlayingSound(Guid uuid, List<string> soundIds, int current, int repetitions, bool randomly, double volume)
         {
-            var playingSoundTableObject = new TableObject(uuid, FileManager.PlayingsoundTableId);
-            playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName, ConvertIdListToString(soundIds));
-            playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName, current.ToString());
-            playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName, repetitions.ToString());
-            playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName, randomly.ToString());
-            playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName, volume.ToString());
+            var properties = new List<Property>
+            {
+                new Property{Name = FileManager.PlayingSoundTableSoundIdsPropertyName, Value = ConvertIdListToString(soundIds)},
+                new Property{Name = FileManager.PlayingSoundTableCurrentPropertyName, Value = current.ToString()},
+                new Property{Name = FileManager.PlayingSoundTableRepetitionsPropertyName, Value = repetitions.ToString()},
+                new Property{Name = FileManager.PlayingSoundTableRandomlyPropertyName, Value = randomly.ToString()},
+                new Property{Name = FileManager.PlayingSoundTableVolumePropertyName, Value = volume.ToString()}
+            };
+
+            new TableObject(uuid, FileManager.PlayingSoundTableId, properties);
         }
 
         public static List<TableObject> GetAllPlayingSounds()
         {
-            return Dav.Database.GetAllTableObjects(FileManager.PlayingsoundTableId);
+            return Dav.Database.GetAllTableObjects(FileManager.PlayingSoundTableId);
         }
 
         public static void UpdatePlayingSound(Guid uuid, List<string> soundIds, string current, string repetitions, string randomly, string volume)
@@ -163,7 +180,7 @@ namespace UniversalSoundBoard.DataAccess
             var playingSoundTableObject = Dav.Database.GetTableObject(uuid);
 
             if (playingSoundTableObject == null) return;
-            if (playingSoundTableObject.TableId != FileManager.CategoryTableId) return;
+            if (playingSoundTableObject.TableId != FileManager.PlayingSoundTableId) return;
 
             if (soundIds != null)
                 playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName, ConvertIdListToString(soundIds));

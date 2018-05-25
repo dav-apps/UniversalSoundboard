@@ -464,8 +464,16 @@ namespace UniversalSoundBoard.Components
         
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            FileManager.DeleteCategory((App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory].Uuid);
-
+            try
+            {
+                FileManager.DeleteCategory((App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory].Uuid);
+            }
+            catch(Exception e)
+            {
+                Debug.WriteLine(e.Message);
+            }
+            (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+            
             // Reload page
             await FileManager.ShowAllSounds();
         }

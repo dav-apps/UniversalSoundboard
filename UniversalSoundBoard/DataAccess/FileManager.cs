@@ -68,7 +68,7 @@ namespace UniversalSoundBoard.DataAccess
         public const int ImageFileTableId = 15;      // Dev: 15; Prod: 
         public const int CategoryTableId = 16;       // Dev: 16; Prod:
         public const int SoundTableId = 17;          // Dev: 17; Prod:
-        public const int PlayingsoundTableId = 18;   // Dev: 18; Prod:
+        public const int PlayingSoundTableId = 18;   // Dev: 18; Prod:
 
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
@@ -925,7 +925,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.allSoundsChanged = true;
         }
 
-        public static void UpdateImageOfSound(Guid soundUuid, StorageFile file)
+        public static async Task UpdateImageOfSound(Guid soundUuid, StorageFile file)
         {
             var soundTableObject = DatabaseOperations.GetObject(soundUuid);
             if (soundTableObject == null || soundTableObject.TableId != SoundTableId)
@@ -933,18 +933,19 @@ namespace UniversalSoundBoard.DataAccess
 
             string imageExt = file.FileType.Replace(".", "");
             Guid imageUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName));
+            StorageFile newImageFile = await file.CopyAsync(ApplicationData.Current.LocalCacheFolder, "newImage" + file.FileType, NameCollisionOption.ReplaceExisting);
 
             if (Equals(imageUuid, Guid.Empty))
             {
                 // Create new image file
                 Guid imageFileUuid = Guid.NewGuid();
-                DatabaseOperations.AddImageFile(imageFileUuid, file);
+                DatabaseOperations.AddImageFile(imageFileUuid, newImageFile);
                 DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, imageFileUuid.ToString(), imageExt, null);
             }
             else
             {
                 // Update the existing image file
-                DatabaseOperations.UpdateImageFile(imageUuid, file);
+                DatabaseOperations.UpdateImageFile(imageUuid, newImageFile);
                 DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, null, imageExt, null);
             }
 
@@ -1027,6 +1028,8 @@ namespace UniversalSoundBoard.DataAccess
             if (Equals(uuid, Guid.Empty))
                 uuid = Guid.NewGuid();
 
+            if (DatabaseOperations.ObjectExists(uuid)) return uuid;
+
             if (!(App.Current as App)._itemViewHolder.savePlayingSounds ||
                 (App.Current as App)._itemViewHolder.playingSoundsListVisibility != Visibility.Visible)
                 return uuid;
@@ -1036,16 +1039,14 @@ namespace UniversalSoundBoard.DataAccess
             else if (volume <= 0)
                 volume = 0;
 
-            if (DatabaseOperations.GetObject(uuid) == null)
+            List<string> soundIds = new List<string>();
+            foreach (Sound sound in sounds)
             {
-                List<string> soundIds = new List<string>();
-                foreach (Sound sound in sounds)
-                {
-                    soundIds.Add(sound.Uuid.ToString());
-                }
-
-                DatabaseOperations.AddPlayingSound(uuid, soundIds, current, repetitions, randomly, volume);
+                soundIds.Add(sound.Uuid.ToString());
             }
+
+            DatabaseOperations.AddPlayingSound(uuid, soundIds, current, repetitions, randomly, volume);
+
             return uuid;
         }
 
