@@ -574,9 +574,10 @@ namespace UniversalSoundBoard.DataAccess
 
                 // Create the media player
                 MediaPlayer player = CreateMediaPlayer(sounds, current);
-                player.Volume = volume;
                 if(player != null)
                 {
+                    player.Volume = volume;
+
                     PlayingSound playingSound = new PlayingSound(uuid, sounds, player, repetitions, randomly, current);
                     playingSounds.Add(playingSound);
                 }
