@@ -310,16 +310,15 @@ namespace UniversalSoundBoard.DataAccess
 
         private static async Task<List<Sound>> GetSavedSounds()
         {
+            (App.Current as App)._itemViewHolder.allSoundsChanged = false;
             List<object> soundObjects = DatabaseOperations.GetAllSounds();
             List<Sound> sounds = new List<Sound>();
-            
 
             foreach (object obj in soundObjects)
             {
                 Sound sound = await GetSoundByObject(obj);
                 sounds.Add(sound);
             }
-            (App.Current as App)._itemViewHolder.allSoundsChanged = false;
             return sounds;
         }
 
