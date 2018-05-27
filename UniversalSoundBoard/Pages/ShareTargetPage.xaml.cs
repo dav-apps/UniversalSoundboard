@@ -73,10 +73,7 @@ namespace UniversalSoundBoard.Pages
             {
                 foreach (StorageFile storagefile in items)
                 {
-                    if (storagefile.ContentType == "audio/wav" || storagefile.ContentType == "audio/mpeg")
-                    {
-                        await FileManager.AddSound(null, storagefile.DisplayName, category.Uuid, storagefile);
-                    }
+                    await FileManager.AddSound(null, storagefile.DisplayName, category.Uuid, storagefile);
                 }
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {

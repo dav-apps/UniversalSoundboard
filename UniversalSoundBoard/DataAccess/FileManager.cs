@@ -269,6 +269,9 @@ namespace UniversalSoundBoard.DataAccess
         #region Database Methods
         public static async Task<string> AddSound(string uuid, string name, string categoryUuid, StorageFile audioFile)
         {
+            if (audioFile.ContentType != "audio/wav" && audioFile.ContentType != "audio/mpeg")
+                return null;
+
             if (uuid == null)
                 uuid = Guid.NewGuid().ToString();
 
