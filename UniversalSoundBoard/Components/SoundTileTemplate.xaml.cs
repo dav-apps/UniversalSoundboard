@@ -111,7 +111,7 @@ namespace UniversalSoundBoard.Components
             {
                 // Application now has read/write access to the picked file
                 (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-                FileManager.UpdateImageOfSound(sound.Uuid, file);
+                await FileManager.UpdateImageOfSound(sound.Uuid, file);
                 (App.Current as App)._itemViewHolder.allSoundsChanged = true;
                 (App.Current as App)._itemViewHolder.progressRingIsActive = false;
                 await FileManager.UpdateGridView();
