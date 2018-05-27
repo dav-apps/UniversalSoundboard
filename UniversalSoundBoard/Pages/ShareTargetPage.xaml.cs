@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
@@ -63,17 +62,18 @@ namespace UniversalSoundBoard.Pages
             AddCategoryButton.IsEnabled = false;
             ProgressRing.IsActive = true;
 
-            Category category = null;
+            string categoryUuid = "";
             if(CategoriesListView.SelectedIndex != 0)
             {
-                category = CategoriesListView.SelectedItem as Category;
+                Category category = CategoriesListView.SelectedItem as Category;
+                categoryUuid = category.Uuid;
             }
 
             if (items.Count > 0)
             {
                 foreach (StorageFile storagefile in items)
                 {
-                    await FileManager.AddSound(null, storagefile.DisplayName, category.Uuid, storagefile);
+                    await FileManager.AddSound(null, storagefile.DisplayName, categoryUuid, storagefile);
                 }
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
