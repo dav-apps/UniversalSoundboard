@@ -266,13 +266,13 @@
     <SDKReference Include="Microsoft.VCLibs, Version=14.0">
       <Name>Visual C++ 2015 Runtime for Universal Windows Platform Apps</Name>
     </SDKReference>
-    <SDKReference Include="SQLite.UWP.2015, Version=3.23.0">
-      <Name>SQLite for Universal Windows Platform</Name>
+    <SDKReference Include="SQLite.UWP.2015, Version=3.23.1">
+      <Name>SQLite for Universal Windows Platform %28SQLite.UWP.2015, Version=3.23.1%29</Name>
     </SDKReference>
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.ApplicationInsights">
-      <Version>2.5.1</Version>
+      <Version>2.6.4</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.ApplicationInsights.PersistenceChannel">
       <Version>1.2.3</Version>
@@ -284,7 +284,7 @@
       <Version>2.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.0.8</Version>
+      <Version>6.1.4</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.Services.Store.Engagement">
       <Version>10.1711.28001</Version>
@@ -302,7 +302,7 @@
       <Version>14332.0.2</Version>
     </PackageReference>
     <PackageReference Include="SQLitePCLRaw.provider.sqlite3.uwp10">
-      <Version>1.1.10</Version>
+      <Version>1.1.11</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup />

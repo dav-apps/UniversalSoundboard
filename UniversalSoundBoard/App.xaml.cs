@@ -13,6 +13,7 @@ using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.UI.Core;
+using Windows.UI.StartScreen;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -158,7 +159,11 @@ namespace UniversalSoundBoard
             // Check if app was launched from a secondary tile
             if (!String.IsNullOrEmpty(e.Arguments))
             {
-                SoundPage.PlaySound(await FileManager.GetSound(e.Arguments));
+                Sound sound = await FileManager.GetSound(e.Arguments);
+                if (sound != null)
+                    SoundPage.PlaySound(sound);
+                else
+                    await FileManager.RemoveSecondaryTileAsync(e.Arguments);
             }
 
             Window.Current.Activate();

@@ -21,6 +21,7 @@ using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
+using Windows.UI.StartScreen;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -298,7 +299,10 @@ namespace UniversalSoundBoard.DataAccess
         public static async Task<Sound> GetSound(string uuid)
         {
             var soundObject = DatabaseOperations.GetSound(uuid);
-            return await GetSoundByObject(soundObject);
+            if (soundObject != null)
+                return await GetSoundByObject(soundObject);
+            else
+                return null;
         }
 
         private static async Task<List<Sound>> GetSavedSounds()
@@ -414,6 +418,9 @@ namespace UniversalSoundBoard.DataAccess
                 if (imageFile != null)
                     await imageFile.DeleteAsync();
 
+                // Remove the SecondaryTile if it exists
+                await RemoveSecondaryTileAsync(uuid);
+
                 (App.Current as App)._itemViewHolder.allSoundsChanged = true;
             }
         }
@@ -446,6 +453,9 @@ namespace UniversalSoundBoard.DataAccess
                     StorageFile imageFile = await imagesFolder.TryGetItemAsync(imageName) as StorageFile;
                     if (imageFile != null)
                         await imageFile.DeleteAsync();
+
+                    // Remove the SecondaryTile if it exists
+                    await RemoveSecondaryTileAsync(uuid);
                 }
             }
 
@@ -1541,6 +1551,15 @@ namespace UniversalSoundBoard.DataAccess
             mediaPlaybackList.MoveTo((uint)current);
 
             return player;
+        }
+
+        public static async Task RemoveSecondaryTileAsync(string uuid)
+        {
+            if (SecondaryTile.Exists(uuid))
+            {
+                SecondaryTile soundTile = new SecondaryTile(uuid);
+                await soundTile.RequestDeleteAsync();
+            }
         }
         #endregion
 
