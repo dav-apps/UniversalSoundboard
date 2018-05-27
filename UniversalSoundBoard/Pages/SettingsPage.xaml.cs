@@ -47,7 +47,7 @@ namespace UniversalSoundBoard.Pages
             SetShowCategoryIconToggle();
             SetShowSoundsPivotToggle();
             SetThemeRadioButton();
-            SetSavePlayingSoundsTogggle();
+            SetSavePlayingSoundsToggle();
         }
         
         private void SetLiveTileToggle()
@@ -97,7 +97,7 @@ namespace UniversalSoundBoard.Pages
             SetToggleMessageVisibility();
         }
 
-        private void SetSavePlayingSoundsTogggle()
+        private void SetSavePlayingSoundsToggle()
         {
             SavePlayingSoundsToggle.IsOn = (bool)localSettings.Values[FileManager.savePlayingSoundsKey];
             SavePlayingSoundsStackPanel.Visibility = (App.Current as App)._itemViewHolder.playingSoundsListVisibility;

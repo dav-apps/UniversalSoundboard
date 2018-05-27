@@ -111,6 +111,10 @@ namespace UniversalSoundBoard.Pages
                 localSettings.Values[FileManager.savePlayingSoundsKey] = FileManager.savePlayingSounds;
                 (App.Current as App)._itemViewHolder.savePlayingSounds = FileManager.savePlayingSounds;
             }
+            else
+            {
+                (App.Current as App)._itemViewHolder.savePlayingSounds = (bool)localSettings.Values[FileManager.savePlayingSoundsKey];
+            }
         }
         
         private void CustomiseTitleBar()
