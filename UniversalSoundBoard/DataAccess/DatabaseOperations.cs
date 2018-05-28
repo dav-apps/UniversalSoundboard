@@ -1,8 +1,12 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Models;
+using SQLite;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
+using UniversalSoundboard.Models;
+using UniversalSoundBoard.Models;
 using Windows.Storage;
 
 namespace UniversalSoundBoard.DataAccess
@@ -207,6 +211,59 @@ namespace UniversalSoundBoard.DataAccess
             idsString = idsString.Remove(idsString.Length - 1);
 
             return idsString;
+        }
+        #endregion
+
+        #region Old Methods
+        public static List<OldSoundDatabaseModel> GetAllSoundsFromDatabaseFile(StorageFile databaseFile)
+        {
+            List<OldSoundDatabaseModel> entries = new List<OldSoundDatabaseModel>();
+
+            var db = new SQLiteConnection(databaseFile.Path);
+            string selectCommandText = "SELECT * FROM Sound;";
+
+            try
+            {
+                foreach (OldSoundDatabaseModel sound in db.Query<OldSoundDatabaseModel>(selectCommandText))
+                    entries.Add(sound);
+            }
+            catch (SQLiteException error)
+            {
+                Debug.WriteLine(error.Message);
+                return entries;
+            }
+
+            db.Close();
+            return entries;
+        }
+
+        public static List<Category> GetAllCategoriesFromDatabaseFile(StorageFile databaseFile)
+        {
+            List<Category> entries = new List<Category>();
+            var db = new SQLiteConnection(databaseFile.Path);
+
+            string selectCommandText = "SELECT * FROM Category;";
+
+            try
+            {
+                foreach (var category in db.Query<OldCategoryDatabaseModel>(selectCommandText))
+                {
+                    entries.Add(new Category
+                    {
+                        Uuid = category.uuid,
+                        Name = category.name,
+                        Icon = category.icon
+                    });
+                }
+            }
+            catch (SQLiteException error)
+            {
+                Debug.WriteLine(error.Message);
+                return entries;
+            }
+
+            db.Close();
+            return entries;
         }
         #endregion
     }

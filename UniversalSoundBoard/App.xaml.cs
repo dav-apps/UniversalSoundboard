@@ -154,7 +154,7 @@ namespace UniversalSoundBoard
 
             if (e.PreviousExecutionState != ApplicationExecutionState.Running)
             {
-                if(await FileManager.UsesOldDataModel())
+                if(!await FileManager.UsesDavDataModel())
                 {
                     bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
                     UpgradeDataSplashScreen upgradeDataSplashScreen = new UpgradeDataSplashScreen(e.SplashScreen, loadState);

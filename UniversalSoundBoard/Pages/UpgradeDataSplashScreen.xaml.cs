@@ -1,6 +1,7 @@
 ﻿using System;
 using UniversalSoundBoard.DataAccess;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -65,13 +66,14 @@ namespace UniversalSoundBoard.Pages
             dismissed = true;
 
             // Complete app setup operations here...
-            //await FileManager.MigrateToNewDataModel();
+            await FileManager.MigrateData();
+
             DismissExtendedSplash();
         }
 
         async void DismissExtendedSplash()
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
                 rootFrame = new Frame();
                 rootFrame.Content = new MainPage(); Window.Current.Content = rootFrame;
             });
