@@ -45,14 +45,14 @@ namespace UniversalSoundboard.Pages
         {
             ShowLoggedInContent();
 
-            if ((App.Current as App)._itemViewHolder.user.IsLoggedIn)
+            if ((App.Current as App)._itemViewHolder.User.IsLoggedIn)
             {
                 SetUsedStorageTextBlock();
-                (App.Current as App)._itemViewHolder.loginMenuItemVisibility = false;
+                (App.Current as App)._itemViewHolder.LoginMenuItemVisibility = false;
             }
             else
             {
-                (App.Current as App)._itemViewHolder.loginMenuItemVisibility = true;
+                (App.Current as App)._itemViewHolder.LoginMenuItemVisibility = true;
             }
         }
 
@@ -71,7 +71,7 @@ namespace UniversalSoundboard.Pages
                         case WebAuthenticationStatus.Success:
                             // Get the JWT from the response string
                             string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
-                            await (App.Current as App)._itemViewHolder.user.Login(jwt);
+                            await (App.Current as App)._itemViewHolder.User.Login(jwt);
                             break;
                         default:
                             Debug.WriteLine("There was an error with logging you in.");
@@ -94,12 +94,12 @@ namespace UniversalSoundboard.Pages
 
         private void SetUsedStorageTextBlock()
         {
-            if((App.Current as App)._itemViewHolder.user.TotalStorage > 0)
+            if((App.Current as App)._itemViewHolder.User.TotalStorage > 0)
             {
                 string message = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Account-UsedStorage");
 
-                double usedStorageGB = Math.Round((App.Current as App)._itemViewHolder.user.UsedStorage / 1000.0 / 1000.0 / 1000.0, 1);
-                double totalStorageGB = Math.Round((App.Current as App)._itemViewHolder.user.TotalStorage / 1000.0 / 1000.0 / 1000.0, 1);
+                double usedStorageGB = Math.Round((App.Current as App)._itemViewHolder.User.UsedStorage / 1000.0 / 1000.0 / 1000.0, 1);
+                double totalStorageGB = Math.Round((App.Current as App)._itemViewHolder.User.TotalStorage / 1000.0 / 1000.0 / 1000.0, 1);
 
                 double percentage = usedStorageGB / totalStorageGB * 100;
 
@@ -116,7 +116,7 @@ namespace UniversalSoundboard.Pages
         
         private void ShowLoggedInContent()
         {
-            if ((App.Current as App)._itemViewHolder.user.IsLoggedIn)
+            if ((App.Current as App)._itemViewHolder.User.IsLoggedIn)
             {
                 LoggedInContent.Visibility = Visibility.Visible;
                 LoggedOutContent.Visibility = Visibility.Collapsed;
@@ -149,7 +149,7 @@ namespace UniversalSoundboard.Pages
 
         private async void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            (App.Current as App)._itemViewHolder.user.Logout();
+            (App.Current as App)._itemViewHolder.User.Logout();
             UpdateUserLayout();
         }
 

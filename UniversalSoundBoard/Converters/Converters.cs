@@ -51,7 +51,7 @@ namespace UniversalSoundBoard.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            return (App.Current as App)._itemViewHolder.title;
+            return (App.Current as App)._itemViewHolder.Title;
         }
     }
 
@@ -89,7 +89,7 @@ namespace UniversalSoundBoard.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             // Make more button normal options flyout entries invisible if select options are visible
-            return (App.Current as App)._itemViewHolder.normalOptionsVisibility ? (bool)value : false;
+            return (App.Current as App)._itemViewHolder.NormalOptionsVisibility ? (bool)value : false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -103,7 +103,7 @@ namespace UniversalSoundBoard.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             // Make more button select options flyout entries invisible if normal options are visible
-            return (App.Current as App)._itemViewHolder.normalOptionsVisibility ? false : (bool)value;
+            return (App.Current as App)._itemViewHolder.NormalOptionsVisibility ? false : (bool)value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -134,10 +134,10 @@ namespace UniversalSoundBoard.Converters
 
             try
             {
-                return (App.Current as App)._itemViewHolder.categories[index];
+                return (App.Current as App)._itemViewHolder.Categories[index];
             }catch(Exception e)
             {
-                return (App.Current as App)._itemViewHolder.categories[0];
+                return (App.Current as App)._itemViewHolder.Categories[0];
             }
         }
 
@@ -147,7 +147,7 @@ namespace UniversalSoundBoard.Converters
             var category = value as Category;
 
             int i = 0;
-            foreach(Category cat in (App.Current as App)._itemViewHolder.categories)
+            foreach(Category cat in (App.Current as App)._itemViewHolder.Categories)
             {
                 if (cat == category)
                     return i;

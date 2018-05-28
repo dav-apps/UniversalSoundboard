@@ -97,7 +97,7 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog CreateEditCategoryContentDialogAsync()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            Category currentCategory = (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory];
+            Category currentCategory = (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory];
 
             EditCategoryContentDialog = new ContentDialog
             {
@@ -159,7 +159,7 @@ namespace UniversalSoundBoard.Common
 
             DeleteCategoryContentDialog = new ContentDialog
             {
-                Title = loader.GetString("DeleteCategoryContentDialog-Title") + (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory].Name,
+                Title = loader.GetString("DeleteCategoryContentDialog-Title") + (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Name,
                 Content = loader.GetString("DeleteCategoryContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteCategoryContentDialog-PrimaryButton"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel")

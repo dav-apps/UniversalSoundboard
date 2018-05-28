@@ -30,10 +30,10 @@
                         <PersonPicture  Name="AvatarPicture"
                                         Width="150"
                                         Height="150"
-                                        ProfilePicture="{Binding user.Avatar}" />
+                                        ProfilePicture="{Binding User.Avatar}" />
 
                         <TextBlock Name="UsernameTextBlock"
-                                   Text="{Binding user.Username}"
+                                   Text="{Binding User.Username}"
                                    FontSize="33"
                                    Margin="30,0,0,0" />
                     </StackPanel>

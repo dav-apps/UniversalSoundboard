@@ -46,10 +46,10 @@
     <Grid>
         <NavigationView Name="SideBar" 
                         AlwaysShowHeader="True" 
-                        MenuItemsSource="{Binding categories, Mode=TwoWay}" 
+                        MenuItemsSource="{Binding Categories, Mode=TwoWay}" 
                         ItemInvoked="SideBar_ItemInvoked" 
                         ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}"
-                        SelectedItem="{Binding selectedCategory, Mode=TwoWay, Converter={StaticResource SelectedCategoryConverter}}">
+                        SelectedItem="{Binding SelectedCategory, Mode=TwoWay, Converter={StaticResource SelectedCategoryConverter}}">
 
             <NavigationView.HeaderTemplate>
                 <DataTemplate>
@@ -72,17 +72,17 @@
                                         x:Uid="LoginButton"
                                         Icon="Contact" 
                                         Tapped="LogInMenuItem_Tapped"
-                                        Visibility="{Binding loginMenuItemVisibility}" />
+                                        Visibility="{Binding LoginMenuItemVisibility}" />
 
                     <NavigationViewItem Name="AccountMenuItem" 
-                                        Visibility="{Binding loginMenuItemVisibility, Converter={StaticResource ReverseBoolConverter}}" 
+                                        Visibility="{Binding LoginMenuItemVisibility, Converter={StaticResource ReverseBoolConverter}}" 
                                         Tapped="LogInMenuItem_Tapped">
                         <StackPanel Orientation="Horizontal">
-                            <PersonPicture ProfilePicture="{Binding user.Avatar}" 
+                            <PersonPicture ProfilePicture="{Binding User.Avatar}" 
                                            Height="25"
                                            Width="25" 
                                            Margin="-4,0,0,0" />
-                            <TextBlock Text="{Binding user.Username}" 
+                            <TextBlock Text="{Binding User.Username}" 
                                        Margin="11,0,0,0" 
                                        VerticalAlignment="Center" />
                         </StackPanel>
@@ -96,7 +96,7 @@
                 </Grid.RowDefinitions>
 
                 <Frame Name="ContentFrame" 
-                       SourcePageType="{Binding page, Mode=TwoWay}" 
+                       SourcePageType="{Binding Page, Mode=TwoWay}" 
                        Grid.Row="0"/>
                 <ProgressRing Name="ProgressRing"                 
 				              Grid.Row="8" 
@@ -104,7 +104,7 @@
 				              HorizontalAlignment="Center" VerticalAlignment="Center"
 				              Width="50" 
 				              Height="50" 
-				              IsActive="{Binding progressRingIsActive, Mode=TwoWay}" />
+				              IsActive="{Binding ProgressRingIsActive, Mode=TwoWay}" />
             </Grid>
         </NavigationView>
         <TextBlock Name="WindowTitleTextBox" 
@@ -112,6 +112,6 @@
                    Text="{x:Bind appmodel:Package.Current.DisplayName}" 
                    VerticalAlignment="Top" 
                    HorizontalAlignment="Left"
-                   Margin="{Binding windowTitleMargin}" />
+                   Margin="{Binding WindowTitleMargin}" />
     </Grid>
 </Page>

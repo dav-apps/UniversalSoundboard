@@ -49,21 +49,21 @@
             </Grid.RowDefinitions>
 
             <Pivot x:Name="SoundsPivot" Grid.Row="0"
-                   Margin="5,0,0,0" Visibility="{Binding showSoundsPivot}"
+                   Margin="5,0,0,0" Visibility="{Binding ShowSoundsPivot}"
                    PivotItemLoaded="SoundsPivot_PivotItemLoaded">
                 <PivotItem x:Uid="SoundsPivotHeader">
                     <GridView Name="SoundGridView"
                             ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
-                            SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
-                            ItemsSource="{Binding sounds, Mode=TwoWay}"
+                            SelectionMode="{Binding SelectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
+                            ItemsSource="{Binding Sounds, Mode=TwoWay}"
                             SizeChanged="SoundGridView_SizeChanged">
                     </GridView>
                 </PivotItem>
                 <PivotItem x:Uid="FavouritesPivotHeader">
                     <GridView Name="FavouriteSoundGridView"
                             ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
-                            SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
-                            ItemsSource="{Binding favouriteSounds, Mode=TwoWay}"
+                            SelectionMode="{Binding SelectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
+                            ItemsSource="{Binding FavouriteSounds, Mode=TwoWay}"
                             SizeChanged="FavouriteSoundGridView_SizeChanged">
                     </GridView>
                 </PivotItem>
@@ -71,8 +71,8 @@
 
             <GridView Name="SoundGridView2" Grid.Row="0" Visibility="Collapsed" Margin="5,0,0,0"
                     ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
-                    SelectionMode="{Binding selectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
-                    ItemsSource="{Binding sounds, Mode=TwoWay}"
+                    SelectionMode="{Binding SelectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
+                    ItemsSource="{Binding Sounds, Mode=TwoWay}"
                     SizeChanged="SoundGridView2_SizeChanged">
             </GridView>
 
@@ -93,7 +93,7 @@
                 </Grid>
 
                 <Grid Name="DrawerContent2" Grid.Row="1">
-                    <ListView Name="PlayingSoundsListView2" ItemsSource="{Binding playingSounds}" IsItemClickEnabled="False">
+                    <ListView Name="PlayingSoundsListView2" ItemsSource="{Binding PlayingSounds}" IsItemClickEnabled="False">
                         <ListView.ItemContainerStyle>
                             <Style TargetType="ListViewItem">
                                 <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -111,7 +111,7 @@
         </Grid>
 
         <Grid Name="DrawerContent" Grid.Row="0" Grid.Column="1" Grid.RowSpan="2">
-            <ListView Name="PlayingSoundsListView" ItemsSource="{Binding playingSounds}" IsItemClickEnabled="False">
+            <ListView Name="PlayingSoundsListView" ItemsSource="{Binding PlayingSounds}" IsItemClickEnabled="False">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
                         <Setter Property="HorizontalContentAlignment" Value="Stretch" />

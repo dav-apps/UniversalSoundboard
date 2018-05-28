@@ -97,7 +97,7 @@ namespace UniversalSoundBoard.Models
 
         public static PlayingSound GetPlayingSoundByMediaPlayer(MediaPlayer player)
         {
-            foreach(PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
+            foreach(PlayingSound playingSound in (App.Current as App)._itemViewHolder.PlayingSounds)
             {
                 if(playingSound.MediaPlayer == player)
                 {

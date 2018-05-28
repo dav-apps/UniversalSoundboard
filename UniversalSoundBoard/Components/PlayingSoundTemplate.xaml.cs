@@ -232,9 +232,9 @@ namespace UniversalSoundBoard.Components
             // Update all lists containing sounds with the new favourite value
             List<ObservableCollection<Sound>> soundLists = new List<ObservableCollection<Sound>>
             {
-                (App.Current as App)._itemViewHolder.sounds,
-                (App.Current as App)._itemViewHolder.allSounds,
-                (App.Current as App)._itemViewHolder.favouriteSounds
+                (App.Current as App)._itemViewHolder.Sounds,
+                (App.Current as App)._itemViewHolder.AllSounds,
+                (App.Current as App)._itemViewHolder.FavouriteSounds
             };
 
             foreach (ObservableCollection<Sound> soundList in soundLists)
@@ -254,13 +254,13 @@ namespace UniversalSoundBoard.Components
             if (oldFav)
             {
                 // Remove sound from favourites
-                (App.Current as App)._itemViewHolder.favouriteSounds.Remove(currentSound);
+                (App.Current as App)._itemViewHolder.FavouriteSounds.Remove(currentSound);
                 FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
             }
             else
             {
                 // Add to favourites
-                (App.Current as App)._itemViewHolder.favouriteSounds.Add(currentSound);
+                (App.Current as App)._itemViewHolder.FavouriteSounds.Add(currentSound);
                 FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
             }
 

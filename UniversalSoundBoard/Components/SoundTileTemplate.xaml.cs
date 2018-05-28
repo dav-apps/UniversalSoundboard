@@ -64,9 +64,9 @@ namespace UniversalSoundBoard.Components
             // Update all lists containing sounds with the new favourite value
             List<ObservableCollection<Sound>> soundLists = new List<ObservableCollection<Sound>>
             {
-                (App.Current as App)._itemViewHolder.sounds,
-                (App.Current as App)._itemViewHolder.allSounds,
-                (App.Current as App)._itemViewHolder.favouriteSounds
+                (App.Current as App)._itemViewHolder.Sounds,
+                (App.Current as App)._itemViewHolder.AllSounds,
+                (App.Current as App)._itemViewHolder.FavouriteSounds
             };
 
             foreach (ObservableCollection<Sound> soundList in soundLists)
@@ -81,12 +81,12 @@ namespace UniversalSoundBoard.Components
             if (newFav)
             {
                 // Add to favourites
-                (App.Current as App)._itemViewHolder.favouriteSounds.Add(Sound);
+                (App.Current as App)._itemViewHolder.FavouriteSounds.Add(Sound);
             }
             else
             {
                 // Remove sound from favourites
-                (App.Current as App)._itemViewHolder.favouriteSounds.Remove(Sound);
+                (App.Current as App)._itemViewHolder.FavouriteSounds.Remove(Sound);
             }
 
             FavouriteSymbol.Visibility = newFav ? Visibility.Visible : Visibility.Collapsed;
@@ -110,10 +110,10 @@ namespace UniversalSoundBoard.Components
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                (App.Current as App)._itemViewHolder.progressRingIsActive = true;
+                (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
                 await FileManager.UpdateImageOfSound(sound.Uuid, file);
-                (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-                (App.Current as App)._itemViewHolder.progressRingIsActive = false;
+                (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+                (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
                 await FileManager.UpdateGridView();
             }
         }
@@ -154,7 +154,7 @@ namespace UniversalSoundBoard.Components
             if (moreButtonClicked == 0)
             {
                 // Add some more invisible MenuFlyoutItems
-                for (int i = 0; i < (App.Current as App)._itemViewHolder.categories.Count + 10; i++)
+                for (int i = 0; i < (App.Current as App)._itemViewHolder.Categories.Count + 10; i++)
                 {
                     ToggleMenuFlyoutItem item = new ToggleMenuFlyoutItem { Visibility = Visibility.Collapsed };
                     item.Click += CategoryToggleMenuItem_Click;
@@ -167,11 +167,11 @@ namespace UniversalSoundBoard.Components
                 item.Visibility = Visibility.Collapsed;
             }
 
-            for (int n = 1; n < (App.Current as App)._itemViewHolder.categories.Count; n++)
+            for (int n = 1; n < (App.Current as App)._itemViewHolder.Categories.Count; n++)
             {
                 if (CategoriesFlyoutSubItem.Items.ElementAt(n - 1) != null)
                 {   // If the element is already there, set the new text
-                    Category cat = (App.Current as App)._itemViewHolder.categories.ElementAt(n);
+                    Category cat = (App.Current as App)._itemViewHolder.Categories.ElementAt(n);
                     ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Text = cat.Name;
                     ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Tag = cat.Uuid;
                     ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Visibility = Visibility.Visible;
@@ -180,8 +180,8 @@ namespace UniversalSoundBoard.Components
                 {
                     var item = new ToggleMenuFlyoutItem();
                     item.Click += CategoryToggleMenuItem_Click;
-                    item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
-                    item.Tag = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Uuid;
+                    item.Text = (App.Current as App)._itemViewHolder.Categories.ElementAt(n).Name;
+                    item.Tag = (App.Current as App)._itemViewHolder.Categories.ElementAt(n).Uuid;
                     CategoriesFlyoutSubItem.Items.Add(item);
                 }
             }

@@ -49,7 +49,7 @@ namespace UniversalSoundBoard.Pages
                 FileManager.CreateCategoriesObservableCollection();
 
                 // Get all Categories and show them
-                foreach (Category cat in (App.Current as App)._itemViewHolder.categories)
+                foreach (Category cat in (App.Current as App)._itemViewHolder.Categories)
                 {
                     categories.Add(cat);
                 }
@@ -80,7 +80,7 @@ namespace UniversalSoundBoard.Pages
                 }
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+                    (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
                 });
             }
             shareOperation.ReportCompleted();
