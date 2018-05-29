@@ -55,7 +55,6 @@ namespace UniversalSoundBoard
             ExportMessage = "",
             ImportMessage = "",
             SoundboardSize = "",
-            WindowTitleMargin = new Thickness(12, 7, 0, 0),
             SearchAutoSuggestBoxVisibility = true,
             VolumeButtonVisibility = true,
             AddButtonVisibility = true,
@@ -69,7 +68,8 @@ namespace UniversalSoundBoard
             SelectedCategory = 0,
             UpgradeDataStatusText = "Preparing...",
             User = null,
-            LoginMenuItemVisibility = true
+            LoginMenuItemVisibility = true,
+            IsBackButtonEnabled = false
         };
         
         /// <summary>

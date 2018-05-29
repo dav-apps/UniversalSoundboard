@@ -37,13 +37,31 @@ namespace UniversalSoundBoard.Components
             FileManager.AdjustLayout();
             Suggestions = new List<string>();
             PlaySoundsList = new ObservableCollection<Sound>();
+            AdjustLayout();
         }
         
         private void SetDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
-        
+
+        private void AdjustLayout()
+        {
+            FileManager.AdjustLayout();
+
+            // Workaround for the weird problem with the changing position of the Search box when the volume button is invisible
+            if ((App.Current as App)._itemViewHolder.VolumeButtonVisibility)
+                SearchAutoSuggestBox.Margin = new Thickness(10, 3, 0, 0);
+            else
+                SearchAutoSuggestBox.Margin = new Thickness(10, 11, 0, 0);
+
+            // Dynamic margin of the title
+            if (Window.Current.Bounds.Width <= 640)
+                TitleStackPanel.Margin = new Thickness(-105, 0, 0, 0);
+            else
+                TitleStackPanel.Margin = new Thickness(-13, 0, 0, 0);
+        }
+
         private void InitializeLocalSettings()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -118,7 +136,7 @@ namespace UniversalSoundBoard.Components
         #region EventHandlers
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            FileManager.AdjustLayout();
+            AdjustLayout();
         }
         
         private async void NewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -187,7 +205,7 @@ namespace UniversalSoundBoard.Components
                     FileManager.LoadSoundsByName(text);
                     Suggestions = (App.Current as App)._itemViewHolder.AllSounds.Where(p => p.Name.ToLower().StartsWith(text.ToLower())).Select(p => p.Name).ToList();
                     SearchAutoSuggestBox.ItemsSource = Suggestions;
-                    FileManager.SetBackButtonVisibility(true);
+                    (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
                     (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
                 }
             }
@@ -219,7 +237,7 @@ namespace UniversalSoundBoard.Components
         
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
-            FileManager.SetBackButtonVisibility(true);
+            (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
             (App.Current as App)._itemViewHolder.SearchButtonVisibility = false;
             (App.Current as App)._itemViewHolder.SearchAutoSuggestBoxVisibility = true;
 

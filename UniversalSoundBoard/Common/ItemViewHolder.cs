@@ -41,7 +41,6 @@ namespace UniversalSoundBoard.Common
         private string _exportMessage;                              // The text describing the status of the export
         private string _importMessage;                              // The text describing the status of the import
         private string _soundboardSize;                             // The text shown on the settings page which describes the size of the soundboard
-        private Thickness _windowTitleMargin;                       // The margin of the window title at the top left of the window
         private bool _searchAutoSuggestBoxVisibility;               // If true the search box is visible, if false multi selection is on or the search button shown
         private bool _volumeButtonVisibility;                       // If true the volume button at the top is visible
         private bool _addButtonVisibility;                          // If true the Add button at the top to add sounds or a category is visible
@@ -363,17 +362,6 @@ namespace UniversalSoundBoard.Common
             {
                 _soundboardSize = value;
                 NotifyPropertyChanged("SoundboardSize");
-            }
-        }
-
-        public Thickness WindowTitleMargin
-        {
-            get { return _windowTitleMargin; }
-
-            set
-            {
-                _windowTitleMargin = value;
-                NotifyPropertyChanged("WindowTitleMargin");
             }
         }
 

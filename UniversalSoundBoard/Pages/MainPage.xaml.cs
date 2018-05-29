@@ -10,6 +10,7 @@ using Windows.UI.ViewManagement;
 using UniversalSoundBoard.DataAccess;
 using System.Threading.Tasks;
 using UniversalSoundboard.Pages;
+using System.Diagnostics;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -23,7 +24,6 @@ namespace UniversalSoundBoard.Pages
         {
             InitializeComponent();
             Loaded += MainPage_Loaded;
-            SystemNavigationManager.GetForCurrentView().BackRequested += OnBackRequested;
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             CustomiseTitleBar();
@@ -44,8 +44,15 @@ namespace UniversalSoundBoard.Pages
         
         private void SetDataContext()
         {
-            WindowTitleTextBox.DataContext = (App.Current as App)._itemViewHolder;
             SideBar.DataContext = (App.Current as App)._itemViewHolder;
+        }
+        
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (Window.Current.Bounds.Width <= 640)
+                WindowTitleTextBox.Margin = new Thickness(110, 14, 0, 0);
+            else
+                WindowTitleTextBox.Margin = new Thickness(67, 14, 0, 0);
         }
 
         public void InitializeAccountSettings()
@@ -127,11 +134,10 @@ namespace UniversalSoundBoard.Pages
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
-        
-        private void OnBackRequested(object sender, BackRequestedEventArgs e)
+
+        private void SideBar_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
         {
             FileManager.GoBack();
-            e.Handled = true;
         }
         
         private async void SideBar_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
@@ -147,7 +153,7 @@ namespace UniversalSoundBoard.Pages
                 (App.Current as App)._itemViewHolder.Title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title");
                 (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
                 (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
-                FileManager.SetBackButtonVisibility(true);
+                (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
             }
             else
             {
@@ -178,7 +184,7 @@ namespace UniversalSoundBoard.Pages
             (App.Current as App)._itemViewHolder.Page = typeof(AccountPage);
             (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
-            FileManager.SetBackButtonVisibility(true);
+            (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
         }
     }
 }

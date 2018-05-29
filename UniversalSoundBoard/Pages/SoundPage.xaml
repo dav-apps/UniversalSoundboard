@@ -31,7 +31,9 @@
     </Page.Resources>
 
     <Grid Name="ContentRoot"
-          AllowDrop="True" Drop="SoundGridView_Drop" DragOver="SoundGridView_DragOver">
+          AllowDrop="True" 
+          Drop="SoundGridView_Drop" 
+          DragOver="SoundGridView_DragOver">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -52,19 +54,21 @@
                    Margin="5,0,0,0" Visibility="{Binding ShowSoundsPivot}"
                    PivotItemLoaded="SoundsPivot_PivotItemLoaded">
                 <PivotItem x:Uid="SoundsPivotHeader">
-                    <GridView Name="SoundGridView"
-                            ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
-                            SelectionMode="{Binding SelectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
-                            ItemsSource="{Binding Sounds, Mode=TwoWay}"
-                            SizeChanged="SoundGridView_SizeChanged">
+                    <GridView   Name="SoundGridView"
+                                ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
+                                SelectionMode="{Binding SelectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
+                                ItemsSource="{Binding Sounds, Mode=TwoWay}"
+                                SizeChanged="SoundGridView_SizeChanged"
+                                Margin="0,10,0,0">
                     </GridView>
                 </PivotItem>
                 <PivotItem x:Uid="FavouritesPivotHeader">
-                    <GridView Name="FavouriteSoundGridView"
-                            ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
-                            SelectionMode="{Binding SelectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
-                            ItemsSource="{Binding FavouriteSounds, Mode=TwoWay}"
-                            SizeChanged="FavouriteSoundGridView_SizeChanged">
+                    <GridView   Name="FavouriteSoundGridView"
+                                ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
+                                SelectionMode="{Binding SelectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
+                                ItemsSource="{Binding FavouriteSounds, Mode=TwoWay}"
+                                SizeChanged="FavouriteSoundGridView_SizeChanged"
+                                Margin="0,10,0,0">
                     </GridView>
                 </PivotItem>
             </Pivot>

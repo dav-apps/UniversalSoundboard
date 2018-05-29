@@ -57,7 +57,10 @@
 
     <RelativePanel Name="ContentRoot" 
                    Margin="20,40,0,0">
-        <StackPanel Orientation="Horizontal">
+        <StackPanel Name="TitleStackPanel"
+                    Orientation="Horizontal" 
+                    RelativePanel.AlignVerticalCenterWithPanel="True"
+                    Margin="-13,0,0,0">
             <TextBlock  Name="TitleTextBlock" 
                         Style="{StaticResource TitleTextBlockStyle}"
                         Text="{Binding Title, 
@@ -88,7 +91,7 @@
         <RelativePanel RelativePanel.AlignRightWithPanel="True" 
                        Margin="0,0,10,0">
             <StackPanel Name="NormalOptionsStackPanel" 
-                        Orientation="Horizontal" 
+                        Orientation="Horizontal"
                         Visibility="{Binding NormalOptionsVisibility}">
                 <Button Name="VolumeButton" 
                         Style="{StaticResource TopButtonStyle}" 
@@ -122,7 +125,6 @@
 
                 <Button Name="AddButton" 
                         Style="{StaticResource TopButtonStyle}"
-                        RelativePanel.RightOf="VolumeButton" 
                         VerticalAlignment="Center"
                         Visibility="{Binding AddButtonVisibility}" 
                         Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large, Mode=TwoWay}"
@@ -175,15 +177,13 @@
                 </Button>
 
                 <AutoSuggestBox Name="SearchAutoSuggestBox"
-                                RelativePanel.RightOf="SelectButton"
                                 Width="200" 
-                                Canvas.ZIndex="1"
                                 x:Uid="Search" 
                                 Text="{Binding SearchQuery, Mode=TwoWay}"
-					            VerticalAlignment="Center" 
                                 Visibility="{Binding SearchAutoSuggestBoxVisibility}"
+                                VerticalAlignment="Center"
+                                Margin="10,3,0,0"
 					            QueryIcon="Find" 
-                                Margin="10,3,0,0" 
                                 Background="{x:Bind ContentRoot.Background}"
                                 TextChanged="SearchAutoSuggestBox_TextChanged" 
                                 QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted" />

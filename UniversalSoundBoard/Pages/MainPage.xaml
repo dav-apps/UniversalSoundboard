@@ -8,7 +8,8 @@
     xmlns:converters="using:UniversalSoundBoard.Converters"
     xmlns:components="using:UniversalSoundBoard.Components"
     xmlns:models="using:UniversalSoundBoard.Models"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    SizeChanged="Page_SizeChanged">
 
     <Page.Resources>
         <converters:SelectedCategoryConverter x:Name="SelectedCategoryConverter" />
@@ -49,7 +50,9 @@
                         MenuItemsSource="{Binding Categories, Mode=TwoWay}" 
                         ItemInvoked="SideBar_ItemInvoked" 
                         ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}"
-                        SelectedItem="{Binding SelectedCategory, Mode=TwoWay, Converter={StaticResource SelectedCategoryConverter}}">
+                        SelectedItem="{Binding SelectedCategory, Mode=TwoWay, Converter={StaticResource SelectedCategoryConverter}}"
+                        IsBackEnabled="{Binding IsBackButtonEnabled}"
+                        BackRequested="SideBar_BackRequested">
 
             <NavigationView.HeaderTemplate>
                 <DataTemplate>
@@ -107,11 +110,12 @@
 				              IsActive="{Binding ProgressRingIsActive, Mode=TwoWay}" />
             </Grid>
         </NavigationView>
+
         <TextBlock Name="WindowTitleTextBox" 
                    Style="{StaticResource CaptionTextBlockStyle}"
                    Text="{x:Bind appmodel:Package.Current.DisplayName}" 
                    VerticalAlignment="Top" 
                    HorizontalAlignment="Left"
-                   Margin="{Binding WindowTitleMargin}" />
+                   Margin="67,14,0,0" />
     </Grid>
 </Page>

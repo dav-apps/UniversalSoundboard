@@ -1062,35 +1062,19 @@ namespace UniversalSoundBoard.DataAccess
                 (App.Current as App)._itemViewHolder.SelectedCategory == 0 &&
                 String.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
             {       // Anything is normal, SoundPage shows All Sounds
-                SetBackButtonVisibility(false);
+                (App.Current as App)._itemViewHolder.IsBackButtonEnabled = false;
             }
             else
             {
-                SetBackButtonVisibility(true);
+                (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
             }
         }
-
-        public static void SetBackButtonVisibility(bool visible)
-        {
-            if (visible)
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
-                (App.Current as App)._itemViewHolder.WindowTitleMargin = new Thickness(60, 7, 0, 0);
-            }
-            else
-            {
-                SystemNavigationManager.GetForCurrentView().AppViewBackButtonVisibility = AppViewBackButtonVisibility.Collapsed;
-                (App.Current as App)._itemViewHolder.WindowTitleMargin = new Thickness(12, 7, 0, 0);
-            }
-        }
-
+        
         // Go to the Sounds page and show all sounds
         public static async Task ShowAllSounds()
         {
             if (AreTopButtonsNormal())
-            {
-                SetBackButtonVisibility(false);
-            }
+                (App.Current as App)._itemViewHolder.IsBackButtonEnabled = false;
             skipAutoSuggestBoxTextChanged = true;
             (App.Current as App)._itemViewHolder.SearchQuery = "";
             (App.Current as App)._itemViewHolder.SelectedCategory = 0;
@@ -1195,7 +1179,7 @@ namespace UniversalSoundBoard.DataAccess
                 (App.Current as App)._itemViewHolder.SearchQuery = "";
                 (App.Current as App)._itemViewHolder.Page = typeof(SoundPage);
                 (App.Current as App)._itemViewHolder.Title = WebUtility.HtmlDecode(category.Name);
-                SetBackButtonVisibility(true);
+                (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
                 (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Visible;
                 await LoadSoundsByCategory(category.Uuid);
                 SelectCategory(category.Uuid);
