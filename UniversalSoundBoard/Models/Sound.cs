@@ -12,7 +12,6 @@ namespace UniversalSoundBoard.Models
         public BitmapImage Image { get; set; }
         public StorageFile ImageFile { get; set; }
         public StorageFile AudioFile { get; set; }
-        public StorageFile DetailsFile { get; set; }
 
         public Sound(){}
 

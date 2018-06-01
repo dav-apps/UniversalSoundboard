@@ -10,15 +10,33 @@ namespace UniversalSoundboard.Common
     {
         public void UpdateAll()
         {
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
-            FileManager.CreateCategoriesObservableCollection();
-            FileManager.UpdateGridView();
+            
+        }
+
+        public void UpdateAllOfTable(int tableId)
+        {
+            if (tableId == FileManager.SoundFileTableId ||
+                tableId == FileManager.ImageFileTableId ||
+                tableId == FileManager.SoundTableId)
+            {
+                // Update the sounds
+                FileManager.UpdateGridView();
+            } else if (tableId == FileManager.CategoryTableId)
+            {
+                // Update the categories
+                FileManager.CreateCategoriesList();
+            }else if(tableId == FileManager.PlayingSoundTableId)
+            {
+                // Update the playing sounds
+                FileManager.CreatePlayingSoundsList();
+            }
         }
 
         public void UpdateTableObject(Guid uuid)
         {
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
-            FileManager.CreateCategoriesObservableCollection();
+            FileManager.CreateCategoriesList();
+            FileManager.CreatePlayingSoundsList();
             FileManager.UpdateGridView();
         }
     }

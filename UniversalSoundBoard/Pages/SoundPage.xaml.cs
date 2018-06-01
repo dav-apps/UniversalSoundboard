@@ -335,7 +335,7 @@ namespace UniversalSoundBoard.Pages
         {
             FileManager.DeleteCategory((App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid);
 
-            FileManager.CreateCategoriesObservableCollection();
+            FileManager.CreateCategoriesList();
             await FileManager.ShowAllSounds();
         }
         
@@ -357,7 +357,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.UpdateCategory(selectedCategory.Uuid, newName, icon);
 
             (App.Current as App)._itemViewHolder.Title = newName;
-            FileManager.CreateCategoriesObservableCollection();
+            FileManager.CreateCategoriesList();
             await FileManager.UpdateGridView();
         }
         #endregion

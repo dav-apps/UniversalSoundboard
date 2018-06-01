@@ -455,7 +455,7 @@ namespace UniversalSoundBoard.Components
             };
 
             FileManager.AddCategory(Guid.Empty, category.Name, category.Icon);
-            FileManager.CreateCategoriesObservableCollection();
+            FileManager.CreateCategoriesList();
 
             // Show new category
             await FileManager.ShowCategory((App.Current as App)._itemViewHolder.Categories.Last().Uuid);

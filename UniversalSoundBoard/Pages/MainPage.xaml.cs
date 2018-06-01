@@ -38,7 +38,7 @@ namespace UniversalSoundBoard.Pages
 
             InitializeAccountSettings();
 
-            AddSavedPlayingSounds();
+            FileManager.CreatePlayingSoundsList();
             await FileManager.ShowAllSounds();
         }
         
@@ -58,17 +58,6 @@ namespace UniversalSoundBoard.Pages
         public void InitializeAccountSettings()
         {
             (App.Current as App)._itemViewHolder.LoginMenuItemVisibility = !(App.Current as App)._itemViewHolder.User.IsLoggedIn;
-        }
-
-        private async Task AddSavedPlayingSounds()
-        {
-            foreach (PlayingSound ps in await FileManager.GetAllPlayingSounds())
-            {
-                if(ps.MediaPlayer != null)
-                {
-                    (App.Current as App)._itemViewHolder.PlayingSounds.Add(ps);
-                }
-            }
         }
         
         private void InitializeLocalSettings()

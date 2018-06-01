@@ -66,7 +66,7 @@ namespace UniversalSoundBoard.DataAccess
         // dav Keys
         //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
         public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
-        public const string LoginImplicitUrl = "https://bd17fc0a.ngrok.io/login_implicit";
+        public const string LoginImplicitUrl = "https://28a81299.ngrok.io/login_implicit";
         public const int AppId = 8;                 // Dev: 8; Prod: 
         public const int SoundFileTableId = 11;      // Dev: 11; Prod: 
         public const int ImageFileTableId = 15;      // Dev: 15; Prod: 
@@ -77,9 +77,7 @@ namespace UniversalSoundBoard.DataAccess
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
         public const string SoundTableSoundUuidPropertyName = "sound_uuid";
-        public const string SoundTableSoundExtPropertyName = "sound_ext";
         public const string SoundTableImageUuidPropertyName = "image_uuid";
-        public const string SoundTableImageExtPropertyName = "image_ext";
         public const string SoundTableCategoryUuidPropertyName = "category_uuid";
 
         public const string CategoryTableNamePropertyName = "name";
@@ -97,6 +95,7 @@ namespace UniversalSoundBoard.DataAccess
             New,
             Dav
         };
+        private static bool updatingGridView = false;
         #endregion
         
         #region Filesystem Methods
@@ -205,7 +204,7 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => {
-                CreateCategoriesObservableCollection();
+                CreateCategoriesList();
                 (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
                 (App.Current as App)._itemViewHolder.IsImporting = false;
                 await ClearCacheAsync();
@@ -315,7 +314,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
             (App.Current as App)._itemViewHolder.AreExportAndImportButtonsEnabled = true;
 
-            CreateCategoriesObservableCollection();
+            CreateCategoriesList();
             await GetAllSounds();
             await SetSoundBoardSizeTextAsync();
         }
@@ -799,7 +798,7 @@ namespace UniversalSoundBoard.DataAccess
 
             DatabaseOperations.AddCategory(uuid, name, icon);
 
-            CreateCategoriesObservableCollection();
+            CreateCategoriesList();
             return new Category(uuid, name, icon);
         }
 
@@ -829,7 +828,7 @@ namespace UniversalSoundBoard.DataAccess
         public static void UpdateCategory(Guid uuid, string name, string icon)
         {
             DatabaseOperations.UpdateCategory(uuid, name, icon);
-            CreateCategoriesObservableCollection();
+            CreateCategoriesList();
         }
 
         public static void DeleteCategory(Guid uuid)
@@ -840,7 +839,7 @@ namespace UniversalSoundBoard.DataAccess
                 return;
 
             DatabaseOperations.DeleteObject(uuid);
-            CreateCategoriesObservableCollection();
+            CreateCategoriesList();
         }
 
         public static Guid AddPlayingSound(Guid uuid, List<Sound> sounds, int current, int repetitions, bool randomly, double volume)
@@ -1132,6 +1131,8 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task UpdateGridView()
         {
+            if (updatingGridView) return;
+            updatingGridView = true;
             int selectedCategoryIndex = (App.Current as App)._itemViewHolder.SelectedCategory;
             Category selectedCategory = (App.Current as App)._itemViewHolder.Categories[selectedCategoryIndex];
 
@@ -1173,6 +1174,7 @@ namespace UniversalSoundBoard.DataAccess
                 await UpdateGridView();
             }
             ShowPlayAllButton();
+            updatingGridView = false;
         }
 
         public static async Task ShowCategory(Guid uuid)
@@ -1281,7 +1283,7 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region General Methods
-        public static void CreateCategoriesObservableCollection()
+        public static void CreateCategoriesList()
         {
             int selectedCategory = (App.Current as App)._itemViewHolder.SelectedCategory;
             (App.Current as App)._itemViewHolder.Categories.Clear();
@@ -1292,6 +1294,18 @@ namespace UniversalSoundBoard.DataAccess
                 (App.Current as App)._itemViewHolder.Categories.Add(cat);
             }
             (App.Current as App)._itemViewHolder.SelectedCategory = selectedCategory;
+        }
+
+        public static async Task CreatePlayingSoundsList()
+        {
+            foreach (PlayingSound ps in await GetAllPlayingSounds())
+            {
+                if (ps.MediaPlayer != null)
+                {
+                    if((App.Current as App)._itemViewHolder.PlayingSounds.Where(p => p.Uuid == ps.Uuid).Count() == 0)
+                        (App.Current as App)._itemViewHolder.PlayingSounds.Add(ps);
+                }
+            }
         }
 
         // When the sounds list was changed, load all sounds from the database
@@ -1422,16 +1436,17 @@ namespace UniversalSoundBoard.DataAccess
 
         public static MediaPlayer CreateMediaPlayer(List<Sound> sounds, int current)
         {
-            if (sounds.Count == 0)
-                return null;
+            if (sounds.Count == 0) return null;
+            if (sounds.Count == 1 && sounds.First().AudioFile == null) return null;
 
             MediaPlayer player = new MediaPlayer();
             MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
 
             foreach (Sound sound in sounds)
             {
-                MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(sound.AudioFile));
+                if (sound.AudioFile == null) continue;
 
+                MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(sound.AudioFile));
                 MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
                 props.Type = MediaPlaybackType.Music;
                 props.MusicProperties.Title = sound.Name;

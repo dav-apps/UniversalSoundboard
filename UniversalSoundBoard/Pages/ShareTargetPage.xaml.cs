@@ -46,7 +46,7 @@ namespace UniversalSoundBoard.Pages
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 categories = new ObservableCollection<Category>();
-                FileManager.CreateCategoriesObservableCollection();
+                FileManager.CreateCategoriesList();
 
                 // Get all Categories and show them
                 foreach (Category cat in (App.Current as App)._itemViewHolder.Categories)
@@ -124,7 +124,7 @@ namespace UniversalSoundBoard.Pages
 
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                FileManager.CreateCategoriesObservableCollection();
+                FileManager.CreateCategoriesList();
             });
         }
     }

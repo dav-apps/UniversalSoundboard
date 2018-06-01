@@ -38,8 +38,7 @@ namespace UniversalSoundBoard.DataAccess
             {
                 new Property{Name = FileManager.SoundTableNamePropertyName, Value = name},
                 new Property{Name = FileManager.SoundTableFavouritePropertyName, Value = bool.FalseString},
-                new Property{Name = FileManager.SoundTableSoundUuidPropertyName, Value = soundUuid},
-                new Property{Name = FileManager.SoundTableSoundExtPropertyName, Value = soundExt}
+                new Property{Name = FileManager.SoundTableSoundUuidPropertyName, Value = soundUuid}
             };
 
             if (!String.IsNullOrEmpty(categoryUuid))
@@ -67,12 +66,8 @@ namespace UniversalSoundBoard.DataAccess
                 soundTableObject.SetPropertyValue(FileManager.SoundTableFavouritePropertyName, favourite);
             if (!String.IsNullOrEmpty(soundUuid))
                 soundTableObject.SetPropertyValue(FileManager.SoundTableSoundUuidPropertyName, soundUuid);
-            if (!String.IsNullOrEmpty(soundExt))
-                soundTableObject.SetPropertyValue(FileManager.SoundTableSoundExtPropertyName, soundExt);
             if (!String.IsNullOrEmpty(imageUuid))
                 soundTableObject.SetPropertyValue(FileManager.SoundTableImageUuidPropertyName, imageUuid);
-            if (!String.IsNullOrEmpty(imageExt))
-                soundTableObject.SetPropertyValue(FileManager.SoundTableImageExtPropertyName, imageExt);
             if (!String.IsNullOrEmpty(categoryUuid))
                 soundTableObject.SetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName, categoryUuid);
         }
@@ -89,9 +84,17 @@ namespace UniversalSoundBoard.DataAccess
             Guid imageFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
 
             if (!Equals(soundFileUuid, Guid.Empty))
-                Dav.Database.DeleteTableObject(soundFileUuid);
+            {
+                var soundFileTableObject = Dav.Database.GetTableObject(soundFileUuid);
+                if (soundFileTableObject != null)
+                    soundFileTableObject.Delete();
+            }
             if (!Equals(soundFileUuid, Guid.Empty))
-                Dav.Database.DeleteTableObject(imageFileUuid);
+            {
+                var imageFileTableObject = Dav.Database.GetTableObject(imageFileUuid);
+                if (imageFileTableObject != null)
+                    imageFileTableObject.Delete();
+            }
 
             // Delete the sound itself
             Dav.Database.DeleteTableObject(soundTableObject);
@@ -101,8 +104,7 @@ namespace UniversalSoundBoard.DataAccess
         #region SoundFile
         public static void AddSoundFile(Guid uuid, StorageFile audioFile)
         {
-            var tableObject = new TableObject(uuid, FileManager.SoundFileTableId);
-            tableObject.SetFile(new FileInfo(audioFile.Path));
+            var tableObject = new TableObject(uuid, FileManager.SoundFileTableId, new FileInfo(audioFile.Path));
         }
 
         public static List<TableObject> GetAllSoundFiles()
@@ -114,8 +116,7 @@ namespace UniversalSoundBoard.DataAccess
         #region ImageFile
         public static void AddImageFile(Guid uuid, StorageFile imageFile)
         {
-            var tableObject = new TableObject(uuid, FileManager.ImageFileTableId);
-            tableObject.SetFile(new FileInfo(imageFile.Path));
+            var tableObject = new TableObject(uuid, FileManager.ImageFileTableId, new FileInfo(imageFile.Path));
         }
 
         public static void UpdateImageFile(Guid uuid, StorageFile imageFile)

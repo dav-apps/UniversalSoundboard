@@ -110,7 +110,7 @@ namespace UniversalSoundBoard
             ProjectInterface.TriggerAction = new UniversalSoundboard.Common.TriggerAction();
             (App.Current as App)._itemViewHolder.User = new DavUser();
 
-            FileManager.CreateCategoriesObservableCollection();
+            FileManager.CreateCategoriesList();
         }
 
         /// <summary>
