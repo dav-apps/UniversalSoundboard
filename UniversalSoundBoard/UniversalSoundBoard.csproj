@@ -23,6 +23,9 @@
     <PackageCertificateThumbprint>3C95B9966F74D00FF0B6243EADB683470DA6CED4</PackageCertificateThumbprint>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
+    <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
+    <AppInstallerUpdateFrequency>1</AppInstallerUpdateFrequency>
+    <AppInstallerCheckForUpdateFrequency>OnApplicationRun</AppInstallerCheckForUpdateFrequency>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -105,9 +108,9 @@
     </Compile>
     <Compile Include="Common\LocalDataSettings.cs" />
     <Compile Include="Common\RetrieveConstants.cs" />
+    <Compile Include="Common\TriggerAction.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Components\CustomMediaTransportControls.cs" />
-    <Compile Include="DataAccess\ApiManager.cs" />
     <Compile Include="DataAccess\DatabaseOperations.cs" />
     <Compile Include="DataAccess\FileManager.cs" />
     <Compile Include="Models\OldDatabaseModels.cs" />

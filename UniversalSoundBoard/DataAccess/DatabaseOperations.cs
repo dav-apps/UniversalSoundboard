@@ -50,7 +50,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static List<TableObject> GetAllSounds()
         {
-            return Dav.Database.GetAllTableObjects(FileManager.SoundTableId);
+            return Dav.Database.GetAllTableObjects(FileManager.SoundTableId, false);
         }
 
         public static void UpdateSound(Guid uuid, string name, string favourite, string soundUuid, string soundExt, string imageUuid, string imageExt, string categoryUuid)
@@ -107,7 +107,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static List<TableObject> GetAllSoundFiles()
         {
-            return Dav.Database.GetAllTableObjects(FileManager.SoundFileTableId);
+            return Dav.Database.GetAllTableObjects(FileManager.SoundFileTableId, false);
         }
         #endregion SoundFile
 
@@ -142,7 +142,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static List<TableObject> GetAllCategories()
         {
-            return Dav.Database.GetAllTableObjects(FileManager.CategoryTableId);
+            return Dav.Database.GetAllTableObjects(FileManager.CategoryTableId, false);
         }
 
         public static void UpdateCategory(Guid uuid, string name, string icon)
@@ -176,7 +176,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static List<TableObject> GetAllPlayingSounds()
         {
-            return Dav.Database.GetAllTableObjects(FileManager.PlayingSoundTableId);
+            return Dav.Database.GetAllTableObjects(FileManager.PlayingSoundTableId, false);
         }
 
         public static void UpdatePlayingSound(Guid uuid, List<string> soundIds, string current, string repetitions, string randomly, string volume)

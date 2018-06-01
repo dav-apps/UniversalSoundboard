@@ -107,6 +107,7 @@ namespace UniversalSoundBoard
             // Initialize Dav settings
             ProjectInterface.RetrieveConstants = new RetrieveConstants();
             ProjectInterface.LocalDataSettings = new LocalDataSettings();
+            ProjectInterface.TriggerAction = new UniversalSoundboard.Common.TriggerAction();
             (App.Current as App)._itemViewHolder.User = new DavUser();
 
             FileManager.CreateCategoriesObservableCollection();

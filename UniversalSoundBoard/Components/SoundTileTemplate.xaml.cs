@@ -169,9 +169,11 @@ namespace UniversalSoundBoard.Components
 
             for (int n = 1; n < (App.Current as App)._itemViewHolder.Categories.Count; n++)
             {
+                Category cat = (App.Current as App)._itemViewHolder.Categories.ElementAt(n);
+                if (cat.Name == null) continue;
+
                 if (CategoriesFlyoutSubItem.Items.ElementAt(n - 1) != null)
                 {   // If the element is already there, set the new text
-                    Category cat = (App.Current as App)._itemViewHolder.Categories.ElementAt(n);
                     ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Text = cat.Name;
                     ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Tag = cat.Uuid;
                     ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Visibility = Visibility.Visible;
