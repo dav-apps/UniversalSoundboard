@@ -1,4 +1,7 @@
 ﻿using System;
+using System.IO;
+using System.Threading.Tasks;
+using UniversalSoundBoard.DataAccess;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -10,8 +13,6 @@ namespace UniversalSoundBoard.Models
         public Category Category { get; set; }
         public bool Favourite { get; set; }
         public BitmapImage Image { get; set; }
-        public StorageFile ImageFile { get; set; }
-        public StorageFile AudioFile { get; set; }
 
         public Sound(){}
 
@@ -33,12 +34,19 @@ namespace UniversalSoundBoard.Models
             Favourite = favourite;
         }
 
-        public Sound(string name, Category category, StorageFile AudioFile)
+        public async Task<StorageFile> GetAudioFile()
         {
-            Name = name;
-            Category = category;
-            this.AudioFile = AudioFile;
-            Favourite = false;
+            return await FileManager.GetAudioFileOfSound(Uuid);
+        }
+
+        public Uri GetAudioUri()
+        {
+            return FileManager.GetAudioUriOfSound(Uuid);
+        }
+
+        public async Task<StorageFile> GetImageFile()
+        {
+            return await FileManager.GetImageFileOfSound(Uuid);
         }
     }
 }

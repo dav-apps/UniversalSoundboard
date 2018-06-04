@@ -19,6 +19,7 @@ using Windows.Foundation;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.Media.Streaming.Adaptive;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
@@ -66,7 +67,7 @@ namespace UniversalSoundBoard.DataAccess
         // dav Keys
         //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
         public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
-        public const string LoginImplicitUrl = "https://28a81299.ngrok.io/login_implicit";
+        public const string LoginImplicitUrl = "https://02f1c90c.ngrok.io/login_implicit";
         public const int AppId = 8;                 // Dev: 8; Prod: 
         public const int SoundFileTableId = 11;      // Dev: 11; Prod: 
         public const int ImageFileTableId = 15;      // Dev: 15; Prod: 
@@ -698,29 +699,9 @@ namespace UniversalSoundBoard.DataAccess
                 var imageFile = await GetTableObjectFile(imageFileUuid);
 
                 if (imageFile != null)
-                {
-                    sound.ImageFile = imageFile;
                     image.UriSource = new Uri(imageFile.Path);
-                }
             }
             sound.Image = image;
-
-            // Add the sound file to the sound
-            string soundFileUuidString = soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName);
-            Guid soundFileUuid = ConvertStringToGuid(soundFileUuidString);
-            if (!Equals(soundFileUuid, Guid.Empty))
-            {
-                var soundFile = await GetTableObjectFile(soundFileUuid);
-
-                if (soundFile != null)
-                    sound.AudioFile = soundFile;
-                else
-                    Debug.WriteLine("Can't find the sound file of the sound " + soundTableObject.Uuid);
-            }
-            else
-            {
-                Debug.WriteLine("Can't find the sound file of the sound " + soundTableObject.Uuid);
-            }
 
             return sound;
         }
@@ -925,7 +906,7 @@ namespace UniversalSoundBoard.DataAccess
                 bool.TryParse(randomlyString, out randomly);
 
                 // Create the media player
-                MediaPlayer player = CreateMediaPlayer(sounds, current);
+                MediaPlayer player = await CreateMediaPlayer(sounds, current);
                 player.Volume = volume;
                 player.AutoPlay = false;
                 if (player != null)
@@ -1023,7 +1004,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             DatabaseOperations.DeleteObject(uuid);
         }
-
+        
         private static async Task<StorageFile> GetTableObjectFile(Guid uuid)
         {
             var fileTableObject = DatabaseOperations.GetObject(uuid);
@@ -1041,6 +1022,58 @@ namespace UniversalSoundBoard.DataAccess
                 Debug.WriteLine(e.Message);
                 return null;
             }
+        }
+        
+        public static async Task<StorageFile> GetAudioFileOfSound(Guid soundUuid)
+        {
+            var soundFileTableObject = GetSoundFileTableObject(soundUuid);
+            if (soundFileTableObject == null) return null;
+            if (soundFileTableObject.File == null) return null;
+
+            if (File.Exists(soundFileTableObject.File.FullName))
+                return await StorageFile.GetFileFromPathAsync(soundFileTableObject.File.FullName);
+            else
+                return null;
+        }
+
+        public static async Task<StorageFile> GetImageFileOfSound(Guid soundUuid)
+        {
+            var imageFileTableObject = GetImageFileTableObject(soundUuid);
+            if (imageFileTableObject == null) return null;
+            if (imageFileTableObject.File == null) return null;
+
+            if (File.Exists(imageFileTableObject.File.FullName))
+                return await StorageFile.GetFileFromPathAsync(imageFileTableObject.File.FullName);
+            else
+                return null;
+        }
+
+        public static Uri GetAudioUriOfSound(Guid soundUuid)
+        {
+            var soundTableObject = GetSoundFileTableObject(soundUuid);
+            return soundTableObject.GetFileUri();
+        }
+
+        private static TableObject GetSoundFileTableObject(Guid soundUuid)
+        {
+            var soundTableObject = DatabaseOperations.GetObject(soundUuid);
+            if (soundTableObject == null) return null;
+            Guid soundFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName));
+            if (Equals(soundFileUuid, Guid.Empty)) return null;
+            var soundFileTableObject = DatabaseOperations.GetObject(soundFileUuid);
+            if (soundFileTableObject == null) return null;
+            return soundFileTableObject;
+        }
+
+        private static TableObject GetImageFileTableObject(Guid soundUuid)
+        {
+            var soundTableObject = DatabaseOperations.GetObject(soundUuid);
+            if (soundTableObject == null) return null;
+            Guid imageFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName));
+            if (Equals(imageFileUuid, Guid.Empty)) return null;
+            var imageFileTableObject = DatabaseOperations.GetObject(imageFileUuid);
+            if (imageFileTableObject == null) return null;
+            return imageFileTableObject;
         }
         #endregion
 
@@ -1335,7 +1368,7 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static void UpdateLiveTile()
+        public static async Task UpdateLiveTile()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             bool isLiveTileOn = false;
@@ -1358,21 +1391,19 @@ namespace UniversalSoundBoard.DataAccess
 
             List<Sound> sounds = new List<Sound>();
             // Get sound with image
-            foreach (Sound s in (App.Current as App)._itemViewHolder.AllSounds.Where(s => s.ImageFile != null))
+            foreach (Sound s in (App.Current as App)._itemViewHolder.AllSounds)
             {
-                sounds.Add(s);
+                if(await s.GetImageFile() != null)
+                    sounds.Add(s);
             }
 
             Sound sound;
-            if (sounds.Count == 0)
-            {
-                return;
-            }
-            else
-            {
-                Random random = new Random();
-                sound = sounds.ElementAt(random.Next(sounds.Count));
-            }
+            if (sounds.Count == 0) return;
+
+            Random random = new Random();
+            sound = sounds.ElementAt(random.Next(sounds.Count));
+            StorageFile imageFile = await sound.GetImageFile();
+            if (imageFile == null) return;
 
             NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
             {
@@ -1382,7 +1413,7 @@ namespace UniversalSoundBoard.DataAccess
                 {
                     PeekImage = new NotificationsExtensions.Tiles.TilePeekImage()
                     {
-                        Source = sound.ImageFile.Path
+                        Source = imageFile.Path
                     },
                     Children =
                     {
@@ -1422,41 +1453,52 @@ namespace UniversalSoundBoard.DataAccess
             float totalSize = 0;
             foreach (Sound sound in (App.Current as App)._itemViewHolder.AllSounds)
             {
-                float size;
-                size = await GetFileSizeInGBAsync(sound.AudioFile);
-                if (sound.ImageFile != null)
-                {
-                    size += await GetFileSizeInGBAsync(sound.ImageFile);
-                }
+                float size = 0;
+                var soundAudioFile = await sound.GetAudioFile();
+                if(soundAudioFile != null)
+                    size = await GetFileSizeInGBAsync(soundAudioFile);
+
+                var soundImageFile = await sound.GetImageFile();
+                if(soundImageFile != null)
+                    size += await GetFileSizeInGBAsync(soundImageFile);
+
                 totalSize += size;
             }
 
             (App.Current as App)._itemViewHolder.SoundboardSize = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SettingsSoundBoardSize") + totalSize.ToString("n2") + " GB.";
         }
 
-        public static MediaPlayer CreateMediaPlayer(List<Sound> sounds, int current)
+        public static async Task<MediaPlayer> CreateMediaPlayer(List<Sound> sounds, int current)
         {
             if (sounds.Count == 0) return null;
-            if (sounds.Count == 1 && sounds.First().AudioFile == null) return null;
 
             MediaPlayer player = new MediaPlayer();
             MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
 
             foreach (Sound sound in sounds)
             {
-                if (sound.AudioFile == null) continue;
+                // Check if the sound was downloaded
+                StorageFile audioFile = await sound.GetAudioFile();
+                MediaPlaybackItem mediaPlaybackItem;
 
-                MediaPlaybackItem mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(sound.AudioFile));
+                if (audioFile == null)
+                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(sound.GetAudioUri()));
+                else
+                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(audioFile));
+
                 MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
                 props.Type = MediaPlaybackType.Music;
                 props.MusicProperties.Title = sound.Name;
+
                 if (sound.Category != null)
                 {
                     props.MusicProperties.Artist = sound.Category.Name;
                 }
-                if (sound.ImageFile != null)
+
+                var imageFile = await sound.GetImageFile();
+                if (imageFile != null)
                 {
-                    props.Thumbnail = RandomAccessStreamReference.CreateFromFile(sound.ImageFile);
+                    props.Thumbnail = RandomAccessStreamReference.CreateFromFile(imageFile);
                 }
 
                 mediaPlaybackItem.ApplyDisplayProperties(props);

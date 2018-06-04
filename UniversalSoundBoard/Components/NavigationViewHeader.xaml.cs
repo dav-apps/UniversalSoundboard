@@ -160,10 +160,18 @@ namespace UniversalSoundBoard.Components
                 foreach (StorageFile soundFile in files)
                 {
                     int selectedCategory = (App.Current as App)._itemViewHolder.SelectedCategory;
-                    Guid categoryUuid = selectedCategory == 0 ? Guid.Empty : (App.Current as App)._itemViewHolder.Categories[selectedCategory].Uuid;
+                    Guid categoryUuid = Guid.Empty;
 
-                    Sound sound = new Sound(soundFile.DisplayName, (App.Current as App)._itemViewHolder.Categories[selectedCategory], soundFile);
-                    await FileManager.AddSound(Guid.Empty, sound.Name, categoryUuid, soundFile);
+                    try
+                    {
+                        categoryUuid = selectedCategory == 0 ? Guid.Empty : (App.Current as App)._itemViewHolder.Categories[selectedCategory].Uuid;
+                    }
+                    catch (Exception exception)
+                    {
+                        Debug.WriteLine(exception.Message);
+                    }
+
+                    await FileManager.AddSound(Guid.Empty, soundFile.DisplayName, categoryUuid, soundFile);
                     (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
                 }
 
@@ -424,8 +432,13 @@ namespace UniversalSoundBoard.Components
                 foreach (Sound sound in (App.Current as App)._itemViewHolder.SelectedSounds)
                 {
                     StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-                    StorageFile tempFile = await sound.AudioFile.CopyAsync(tempFolder, sound.Name + sound.AudioFile.FileType, NameCollisionOption.ReplaceExisting);
-                    selectedFiles.Add(tempFile);
+                    StorageFile audioFile = await sound.GetAudioFile();
+                    if(audioFile != null)
+                    {
+                        // TODO Download the file if audioFile is null
+                        StorageFile tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + audioFile.FileType, NameCollisionOption.ReplaceExisting);
+                        selectedFiles.Add(tempFile);
+                    }
                 }
                 
                 string description = loader.GetString("ShareDialog-MultipleSounds");

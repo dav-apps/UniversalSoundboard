@@ -327,8 +327,9 @@ namespace UniversalSoundBoard.Components
 
                 // Add the tile to the Start Menu
                 isPinned = await tile.RequestCreateAsync();
+                var imageFile = await Sound.GetImageFile();
 
-                if(Sound.ImageFile != null)
+                if(imageFile != null)
                 {
                     // Update the tile with the appropriate image and text
                     NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
@@ -339,7 +340,7 @@ namespace UniversalSoundBoard.Components
                         {
                             BackgroundImage = new NotificationsExtensions.Tiles.TileBackgroundImage()
                             {
-                                Source = Sound.ImageFile == null ? "ms-appx:///Assets/Images/default.png" : Sound.ImageFile.Path,
+                                Source = imageFile.Path,
                                 AlternateText = Sound.Name
                             }
                         }
@@ -376,8 +377,8 @@ namespace UniversalSoundBoard.Components
 
             // Copy file with better name into temp folder and share it
             StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            StorageFile tempFile = await Sound.AudioFile.CopyAsync(tempFolder, Sound.Name + Sound.AudioFile.FileType, NameCollisionOption.ReplaceExisting);
-            sounds.Add(tempFile);
+            //StorageFile tempFile = await Sound.AudioFile.CopyAsync(tempFolder, Sound.Name + Sound.AudioFile.FileType, NameCollisionOption.ReplaceExisting);
+            //sounds.Add(tempFile);
             
             DataRequest request = args.Request;
             request.Data.SetStorageItems(sounds);

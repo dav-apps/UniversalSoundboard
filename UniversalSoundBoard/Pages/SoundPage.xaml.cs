@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
@@ -80,12 +80,12 @@ namespace UniversalSoundBoard.Pages
             ShowPlayingSoundsList();
         }
         
-        private void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
+        private async void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var sound = (Sound)e.ClickedItem;
             if ((App.Current as App)._itemViewHolder.SelectionMode == ListViewSelectionMode.None)
             {
-                PlaySound(sound);
+                await PlaySound(sound);
             }
         }
         
@@ -194,12 +194,12 @@ namespace UniversalSoundBoard.Pages
             }
         }
         
-        public static void PlaySound(Sound sound)
+        public static async Task PlaySound(Sound sound)
         {
             List<Sound> soundList = new List<Sound>();
             soundList.Add(sound);
 
-            MediaPlayer player = FileManager.CreateMediaPlayer(soundList, 0);
+            MediaPlayer player = await FileManager.CreateMediaPlayer(soundList, 0);
             if (player == null)
                 return;
 
@@ -220,7 +220,7 @@ namespace UniversalSoundBoard.Pages
             (App.Current as App)._itemViewHolder.PlayingSounds.Add(playingSound);
         }
         
-        public static void PlaySounds(List<Sound> sounds, int repetitions, bool randomly)
+        public static async Task PlaySounds(List<Sound> sounds, int repetitions, bool randomly)
         {
             // If randomly is true, shuffle sounds
             if (randomly)
@@ -229,7 +229,7 @@ namespace UniversalSoundBoard.Pages
                 sounds = sounds.OrderBy(a => random.Next()).ToList();
             }
 
-            MediaPlayer player = FileManager.CreateMediaPlayer(sounds, 0);
+            MediaPlayer player = await FileManager.CreateMediaPlayer(sounds, 0);
             if (player == null)
                 return;
 
