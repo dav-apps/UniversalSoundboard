@@ -151,6 +151,9 @@ namespace UniversalSoundboard.Pages
         {
             (App.Current as App)._itemViewHolder.User.Logout();
             UpdateUserLayout();
+
+            // Remove the sounds that are not saved locally
+            FileManager.RemoveNotLocallySavedSounds();
         }
 
         private async void SignupButton_Click(object sender, RoutedEventArgs e)

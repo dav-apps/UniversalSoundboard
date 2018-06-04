@@ -44,9 +44,19 @@ namespace UniversalSoundBoard.Models
             return FileManager.GetAudioUriOfSound(Uuid);
         }
 
+        public async Task<MemoryStream> GetAudioStream()
+        {
+            return await FileManager.GetAudioStreamOfSound(Uuid);
+        }
+
         public async Task<StorageFile> GetImageFile()
         {
             return await FileManager.GetImageFileOfSound(Uuid);
+        }
+
+        public string GetAudioFileExtension()
+        {
+            return FileManager.GetAudioFileExtension(Uuid);
         }
     }
 }

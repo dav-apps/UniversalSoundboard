@@ -377,8 +377,16 @@ namespace UniversalSoundBoard.Components
 
             // Copy file with better name into temp folder and share it
             StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            //StorageFile tempFile = await Sound.AudioFile.CopyAsync(tempFolder, Sound.Name + Sound.AudioFile.FileType, NameCollisionOption.ReplaceExisting);
-            //sounds.Add(tempFile);
+            var audioFile = await Sound.GetAudioFile();
+            StorageFile tempFile;
+            if (audioFile == null)
+            {
+                // Get the file from the stream
+                audioFile = await StorageFile.CreateStreamedFileFromUriAsync(Sound.Uuid.ToString(), Sound.GetAudioUri(), null);
+            }
+            tempFile = await audioFile.CopyAsync(tempFolder, Sound.Name + "." + Sound.GetAudioFileExtension(), NameCollisionOption.ReplaceExisting);
+
+            sounds.Add(tempFile);
             
             DataRequest request = args.Request;
             request.Data.SetStorageItems(sounds);

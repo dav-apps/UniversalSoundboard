@@ -433,12 +433,13 @@ namespace UniversalSoundBoard.Components
                 {
                     StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
                     StorageFile audioFile = await sound.GetAudioFile();
-                    if(audioFile != null)
+                    StorageFile tempFile;
+                    if (audioFile == null)
                     {
-                        // TODO Download the file if audioFile is null
-                        StorageFile tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + audioFile.FileType, NameCollisionOption.ReplaceExisting);
-                        selectedFiles.Add(tempFile);
+                        audioFile = await StorageFile.CreateStreamedFileFromUriAsync(sound.Uuid.ToString(), sound.GetAudioUri(), null);
                     }
+                    tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + "." + sound.GetAudioFileExtension(), NameCollisionOption.ReplaceExisting);
+                    selectedFiles.Add(tempFile);
                 }
                 
                 string description = loader.GetString("ShareDialog-MultipleSounds");

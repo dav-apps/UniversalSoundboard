@@ -26,7 +26,10 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void DeleteObject(Guid uuid)
         {
-            Dav.Database.DeleteTableObject(uuid);
+            // Get the object and delete it
+            var tableObject = Dav.Database.GetTableObject(uuid);
+            if (tableObject != null)
+                tableObject.Delete();
         }
         #endregion
 

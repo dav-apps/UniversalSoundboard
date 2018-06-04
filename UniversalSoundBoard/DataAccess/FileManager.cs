@@ -1,4 +1,5 @@
-﻿using davClassLibrary.DataAccess;
+﻿using davClassLibrary;
+using davClassLibrary.DataAccess;
 using davClassLibrary.Models;
 using System;
 using System.Collections.Generic;
@@ -65,15 +66,15 @@ namespace UniversalSoundBoard.DataAccess
         public static bool skipAutoSuggestBoxTextChanged = false;
 
         // dav Keys
-        //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
-        public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
-        public const string LoginImplicitUrl = "https://02f1c90c.ngrok.io/login_implicit";
-        public const int AppId = 8;                 // Dev: 8; Prod: 
-        public const int SoundFileTableId = 11;      // Dev: 11; Prod: 
-        public const int ImageFileTableId = 15;      // Dev: 15; Prod: 
-        public const int CategoryTableId = 16;       // Dev: 16; Prod:
-        public const int SoundTableId = 17;          // Dev: 17; Prod:
-        public const int PlayingSoundTableId = 18;   // Dev: 18; Prod:
+        public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
+        //public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
+        public const string LoginImplicitUrl = "https://dav-apps.tech/login_implicit";
+        public const int AppId = 1;                 // Dev: 8; Prod: 1
+        public const int SoundFileTableId = 6;      // Dev: 11; Prod: 6
+        public const int ImageFileTableId = 7;      // Dev: 15; Prod: 7
+        public const int CategoryTableId = 8;       // Dev: 16; Prod: 8
+        public const int SoundTableId = 5;          // Dev: 17; Prod: 5
+        public const int PlayingSoundTableId = 9;   // Dev: 18; Prod: 9
 
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
@@ -89,6 +90,8 @@ namespace UniversalSoundBoard.DataAccess
         public const string PlayingSoundTableRepetitionsPropertyName = "repetitions";
         public const string PlayingSoundTableRandomlyPropertyName = "randomly";
         public const string PlayingSoundTableVolumePropertyName = "volume";
+
+        public const string TableObjectExtPropertyName = "ext";
 
         private enum DataModel
         {
@@ -174,6 +177,44 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             return dataModel;
+        }
+
+        public static void RemoveNotLocallySavedSounds()
+        {
+            // Get each sound and check if the file exists
+            foreach(var sound in (App.Current as App)._itemViewHolder.AllSounds)
+            {
+                var soundFileTableObject = GetSoundFileTableObject(sound.Uuid);
+                if(soundFileTableObject != null)
+                {
+                    if (soundFileTableObject.FileDownloaded())
+                    {
+                        continue;
+                    }
+                }
+
+                // Completely remove the sound from the database so that it won't be deleted when the user logs in again
+                var imageFileTableObject = GetImageFileTableObject(sound.Uuid);
+                var soundTableObject = DatabaseOperations.GetObject(sound.Uuid);
+
+                if (soundFileTableObject != null)
+                {
+                    Dav.Database.DeleteTableObject(soundFileTableObject);
+                    Dav.Database.DeleteTableObject(soundFileTableObject);
+                }
+                if(imageFileTableObject != null)
+                {
+                    Dav.Database.DeleteTableObject(imageFileTableObject);
+                    Dav.Database.DeleteTableObject(imageFileTableObject);
+                }
+                if(soundTableObject != null)
+                {
+                    Dav.Database.DeleteTableObject(soundTableObject);
+                    Dav.Database.DeleteTableObject(soundTableObject);
+                }
+            }
+
+            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
         #endregion
 
@@ -554,6 +595,9 @@ namespace UniversalSoundBoard.DataAccess
 
             foreach (var soundTableObject in soundsTableObjectList)
             {
+                Guid soundFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName));
+                if (DatabaseOperations.GetObject(soundFileUuid) == null) continue;
+
                 sounds.Add(await GetSound(soundTableObject.Uuid));
             }
 
@@ -880,12 +924,14 @@ namespace UniversalSoundBoard.DataAccess
                     {
                         // Delete the playing sound
                         DeletePlayingSound(obj.Uuid);
+                        continue;
                     }
                 }
                 else
                 {
                     // Delete the playing sound
                     DeletePlayingSound(obj.Uuid);
+                    continue;
                 }
 
                 // Get the properties of the table objects
@@ -907,17 +953,19 @@ namespace UniversalSoundBoard.DataAccess
 
                 // Create the media player
                 MediaPlayer player = await CreateMediaPlayer(sounds, current);
-                player.Volume = volume;
-                player.AutoPlay = false;
+                
                 if (player != null)
                 {
+                    player.Volume = volume;
+                    player.AutoPlay = false;
+
                     PlayingSound playingSound = new PlayingSound(obj.Uuid, sounds, player, repetitions, randomly, current);
                     playingSounds.Add(playingSound);
                 }
                 else
                 {
                     // Remove the PlayingSound from the DB
-                    DatabaseOperations.DeleteObject(obj.Uuid);
+                    DeletePlayingSound(obj.Uuid);
                 }
             }
             return playingSounds;
@@ -1036,6 +1084,13 @@ namespace UniversalSoundBoard.DataAccess
                 return null;
         }
 
+        public static string GetAudioFileExtension(Guid soundUuid)
+        {
+            var soundFileTableObject = GetSoundFileTableObject(soundUuid);
+            if (soundFileTableObject == null) return null;
+            return soundFileTableObject.GetPropertyValue(TableObjectExtPropertyName);
+        }
+
         public static async Task<StorageFile> GetImageFileOfSound(Guid soundUuid)
         {
             var imageFileTableObject = GetImageFileTableObject(soundUuid);
@@ -1051,7 +1106,19 @@ namespace UniversalSoundBoard.DataAccess
         public static Uri GetAudioUriOfSound(Guid soundUuid)
         {
             var soundTableObject = GetSoundFileTableObject(soundUuid);
-            return soundTableObject.GetFileUri();
+            if (soundTableObject != null)
+                return soundTableObject.GetFileUri();
+            else
+                return null;
+        }
+
+        public static async Task<MemoryStream> GetAudioStreamOfSound(Guid soundUuid)
+        {
+            var soundTableObject = GetSoundFileTableObject(soundUuid);
+            if (soundTableObject != null)
+                return await soundTableObject.GetFileStream();
+            else
+                return null;
         }
 
         private static TableObject GetSoundFileTableObject(Guid soundUuid)
@@ -1482,7 +1549,12 @@ namespace UniversalSoundBoard.DataAccess
                 MediaPlaybackItem mediaPlaybackItem;
 
                 if (audioFile == null)
-                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(sound.GetAudioUri()));
+                {
+                    Uri soundUri = sound.GetAudioUri();
+                    if (soundUri == null) continue;
+
+                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(soundUri));
+                }
                 else
                     mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(audioFile));
 
@@ -1521,7 +1593,13 @@ namespace UniversalSoundBoard.DataAccess
                 player.Volume = 1.0;
             }
 
-            mediaPlaybackList.MoveTo((uint)current);
+            if (mediaPlaybackList.Items.Count == 0)
+                return null;
+
+            if (mediaPlaybackList.Items.Count >= current + 1)
+                mediaPlaybackList.MoveTo((uint)current);
+            else
+                mediaPlaybackList.MoveTo(0);
 
             return player;
         }
