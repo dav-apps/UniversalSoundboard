@@ -71,7 +71,11 @@ namespace UniversalSoundboard.Pages
                         case WebAuthenticationStatus.Success:
                             // Get the JWT from the response string
                             string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
-                            await (App.Current as App)._itemViewHolder.User.Login(jwt);
+
+                            // Log the user in with the jwt
+                            davClassLibrary.Models.DavUser user = new davClassLibrary.Models.DavUser();
+                            await user.Login(jwt);
+                            (App.Current as App)._itemViewHolder.User = user;
                             break;
                         default:
                             Debug.WriteLine("There was an error with logging you in.");
@@ -147,7 +151,7 @@ namespace UniversalSoundboard.Pages
             await logoutContentDialog.ShowAsync();
         }
 
-        private async void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             (App.Current as App)._itemViewHolder.User.Logout();
             UpdateUserLayout();
