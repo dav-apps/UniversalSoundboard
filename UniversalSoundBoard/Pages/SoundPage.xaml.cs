@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Common;
@@ -108,14 +109,23 @@ namespace UniversalSoundBoard.Pages
                 (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
                 if (items.Any())
                 {
-                    Category category = (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory];
+                    Guid categoryUuid = Guid.Empty;
+                    try
+                    {
+                        categoryUuid = (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid;
+                    }
+                    catch(Exception ex)
+                    {
+                        Debug.WriteLine(ex.Message);
+                    }
 
                     foreach (StorageFile soundFile in items)
                     {
-                        FileManager.AddSound(Guid.Empty, soundFile.DisplayName, category.Uuid, soundFile);
-                        (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
-                        await FileManager.UpdateGridView();
+                        await FileManager.AddSound(Guid.Empty, soundFile.DisplayName, categoryUuid, soundFile);
                     }
+
+                    (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+                    await FileManager.UpdateGridView();
 
                     if ((App.Current as App)._itemViewHolder.SelectedCategory == 0)
                     {
