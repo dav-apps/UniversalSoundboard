@@ -1,6 +1,4 @@
 ﻿using davClassLibrary.Common;
-using System;
-using System.Diagnostics;
 using UniversalSoundBoard;
 using UniversalSoundBoard.DataAccess;
 
@@ -15,29 +13,35 @@ namespace UniversalSoundboard.Common
 
         public void UpdateAllOfTable(int tableId)
         {
-            if (tableId == FileManager.SoundFileTableId ||
-                tableId == FileManager.ImageFileTableId ||
+            UpdateView(tableId, false);
+        }
+
+        public void UpdateTableObject(davClassLibrary.Models.TableObject tableObject, bool fileDownloaded)
+        {
+            UpdateView(tableObject.TableId, fileDownloaded);
+        }
+
+        private void UpdateView(int tableId, bool fileDownloaded)
+        {
+            if (tableId == FileManager.ImageFileTableId || 
+                (tableId == FileManager.SoundFileTableId && !fileDownloaded) ||
                 tableId == FileManager.SoundTableId)
             {
                 // Update the sounds
+                (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
                 FileManager.UpdateGridView();
-            } else if (tableId == FileManager.CategoryTableId)
+            }
+            else if (tableId == FileManager.CategoryTableId)
             {
                 // Update the categories
                 FileManager.CreateCategoriesList();
-            }else if(tableId == FileManager.PlayingSoundTableId)
+                (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+            }
+            else if (tableId == FileManager.PlayingSoundTableId)
             {
                 // Update the playing sounds
                 FileManager.CreatePlayingSoundsList();
             }
-        }
-
-        public void UpdateTableObject(Guid uuid)
-        {
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
-            FileManager.CreateCategoriesList();
-            FileManager.CreatePlayingSoundsList();
-            FileManager.UpdateGridView();
         }
     }
 }

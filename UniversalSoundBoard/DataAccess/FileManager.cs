@@ -1267,6 +1267,8 @@ namespace UniversalSoundBoard.DataAccess
                 (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
             }
 
+            updatingGridView = false;
+
             // Check if another category was selected
             if (selectedCategoryIndex != (App.Current as App)._itemViewHolder.SelectedCategory)
             {
@@ -1274,7 +1276,6 @@ namespace UniversalSoundBoard.DataAccess
                 await UpdateGridView();
             }
             ShowPlayAllButton();
-            updatingGridView = false;
         }
 
         public static async Task ShowCategory(Guid uuid)
