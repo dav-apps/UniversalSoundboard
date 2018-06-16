@@ -129,13 +129,13 @@ namespace UniversalSoundBoard.Components
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 PlayingSound.Repetitions--;
-                FileManager.SetRepetitionsOfPlayingSound(PlayingSound.Uuid, PlayingSound.Repetitions);
+
                 if (PlayingSound.Repetitions <= 0)
-                {
                     RemovePlayingSound();
-                }
-                
-                if(PlayingSound.Repetitions >= 0 && PlayingSound.MediaPlayer != null)
+                else
+                    FileManager.SetRepetitionsOfPlayingSound(PlayingSound.Uuid, PlayingSound.Repetitions);
+
+                if (PlayingSound.Repetitions >= 0 && PlayingSound.MediaPlayer != null)
                 {
                     if (PlayingSound.Sounds.Count > 1) // Multiple Sounds in the list
                     {

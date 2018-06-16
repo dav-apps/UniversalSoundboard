@@ -1,6 +1,8 @@
 ﻿using davClassLibrary.Common;
 using UniversalSoundBoard;
 using UniversalSoundBoard.DataAccess;
+using Windows.ApplicationModel.Core;
+using Windows.UI.Core;
 
 namespace UniversalSoundboard.Common
 {
@@ -28,19 +30,25 @@ namespace UniversalSoundboard.Common
                 tableId == FileManager.SoundTableId)
             {
                 // Update the sounds
-                (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
-                FileManager.UpdateGridView();
+                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+                    FileManager.UpdateGridView();
+                });
             }
             else if (tableId == FileManager.CategoryTableId)
             {
                 // Update the categories
-                FileManager.CreateCategoriesList();
-                (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    FileManager.CreateCategoriesList();
+                    (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+                });
             }
             else if (tableId == FileManager.PlayingSoundTableId)
             {
                 // Update the playing sounds
-                FileManager.CreatePlayingSoundsList();
+                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    FileManager.CreatePlayingSoundsList();
+                });
             }
         }
     }
