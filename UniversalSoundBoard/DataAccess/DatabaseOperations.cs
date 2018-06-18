@@ -34,7 +34,7 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Sound
-        public static void AddSound(Guid uuid, string name, string soundUuid, string soundExt, string categoryUuid)
+        public static void AddSound(Guid uuid, string name, string soundUuid, string categoryUuid)
         {
             // Create TableObject with sound informations and TableObject with the Soundfile
             var properties = new List<Property>
@@ -55,7 +55,7 @@ namespace UniversalSoundBoard.DataAccess
             return Dav.Database.GetAllTableObjects(FileManager.SoundTableId, false);
         }
 
-        public static void UpdateSound(Guid uuid, string name, string favourite, string soundUuid, string soundExt, string imageUuid, string imageExt, string categoryUuid)
+        public static void UpdateSound(Guid uuid, string name, string favourite, string soundUuid, string imageUuid, string categoryUuid)
         {
             // Get the sound table object
             var soundTableObject = Dav.Database.GetTableObject(uuid);

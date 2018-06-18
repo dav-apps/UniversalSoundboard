@@ -16,11 +16,9 @@ using UniversalSoundboard.Models;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel.Core;
-using Windows.Foundation;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
-using Windows.Media.Streaming.Adaptive;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
@@ -66,15 +64,16 @@ namespace UniversalSoundBoard.DataAccess
         public static bool skipAutoSuggestBoxTextChanged = false;
 
         // dav Keys
-        public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
-        //public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
-        public const string LoginImplicitUrl = "https://dav-apps.tech/login_implicit";
-        public const int AppId = 1;                 // Dev: 8; Prod: 1
-        public const int SoundFileTableId = 6;      // Dev: 11; Prod: 6
-        public const int ImageFileTableId = 7;      // Dev: 15; Prod: 7
-        public const int CategoryTableId = 8;       // Dev: 16; Prod: 8
-        public const int SoundTableId = 5;          // Dev: 17; Prod: 5
-        public const int PlayingSoundTableId = 9;   // Dev: 18; Prod: 9
+        //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
+        public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
+        //public const string LoginImplicitUrl = "https://dav-apps.tech/login_implicit";
+        public const string LoginImplicitUrl = "https://389bda40.ngrok.io/login_implicit";
+        public const int AppId = 8;                 // Dev: 8; Prod: 1
+        public const int SoundFileTableId = 11;      // Dev: 11; Prod: 6
+        public const int ImageFileTableId = 15;      // Dev: 15; Prod: 7
+        public const int CategoryTableId = 16;       // Dev: 16; Prod: 8
+        public const int SoundTableId = 17;          // Dev: 17; Prod: 5
+        public const int PlayingSoundTableId = 18;   // Dev: 18; Prod: 9
 
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
@@ -403,13 +402,13 @@ namespace UniversalSoundBoard.DataAccess
                                 // Set the image of the sound
                                 Guid imageUuid = Guid.NewGuid();
                                 DatabaseOperations.AddImageFile(imageUuid, imageFile);
-                                DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, imageUuid.ToString(), imageFile.FileType.Replace(".", ""), null);
+                                DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, null);
                                 await imageFile.DeleteAsync();
                             }
                         }
 
                         if (soundData.Favourite)
-                            DatabaseOperations.UpdateSound(soundUuid, null, soundData.Favourite.ToString(), null, null, null, null, null);
+                            DatabaseOperations.UpdateSound(soundUuid, null, soundData.Favourite.ToString(), null, null, null);
 
                         await audioFile.DeleteAsync();
                     }
@@ -452,13 +451,13 @@ namespace UniversalSoundBoard.DataAccess
                                 // Add image
                                 Guid imageUuid = Guid.NewGuid();
                                 DatabaseOperations.AddImageFile(imageUuid, imageFile);
-                                DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, imageUuid.ToString(), imageFile.FileType.Replace(".", ""), null);
+                                DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, null);
                                 await imageFile.DeleteAsync();
                             }
                         }
 
                         if (sound.favourite)
-                            DatabaseOperations.UpdateSound(soundUuid, null, sound.favourite.ToString(), null, null, null, null, null);
+                            DatabaseOperations.UpdateSound(soundUuid, null, sound.favourite.ToString(), null, null, null);
 
                         await audioFile.DeleteAsync();
                     }
@@ -552,7 +551,7 @@ namespace UniversalSoundBoard.DataAccess
                         {
                             Guid imageUuid = Guid.NewGuid();
                             DatabaseOperations.AddImageFile(imageUuid, imageFile);
-                            DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, imageUuid.ToString(), imageFile.FileType.Replace(".", ""), null);
+                            DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, null);
 
                             // Delete the image
                             await imageFile.DeleteAsync();
@@ -562,7 +561,7 @@ namespace UniversalSoundBoard.DataAccess
 
                     if (favourite)
                     {
-                        DatabaseOperations.UpdateSound(soundUuid, null, favourite.ToString(), null, null, null, null, null);
+                        DatabaseOperations.UpdateSound(soundUuid, null, favourite.ToString(), null, null, null);
                     }
 
                     // Delete the sound and soundDetails file
@@ -688,7 +687,7 @@ namespace UniversalSoundBoard.DataAccess
             StorageFile newAudioFile = await audioFile.CopyAsync(ApplicationData.Current.LocalCacheFolder, "newSound" + audioFile.FileType, NameCollisionOption.ReplaceExisting);
 
             DatabaseOperations.AddSoundFile(soundFileUuid, newAudioFile);
-            DatabaseOperations.AddSound(uuid, name, soundFileUuid.ToString(), newAudioFile.FileType.Replace(".", ""), Equals(categoryUuid, Guid.Empty) ? null : categoryUuid.ToString());
+            DatabaseOperations.AddSound(uuid, name, soundFileUuid.ToString(), Equals(categoryUuid, Guid.Empty) ? null : categoryUuid.ToString());
 
             await ClearCacheAsync();
             return uuid;
@@ -752,19 +751,19 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void RenameSound(Guid uuid, string newName)
         {
-            DatabaseOperations.UpdateSound(uuid, newName, null, null, null, null, null, null);
+            DatabaseOperations.UpdateSound(uuid, newName, null, null, null, null);
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 
         public static void SetCategoryOfSound(Guid soundUuid, Guid categoryUuid)
         {
-            DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, null, null, categoryUuid.ToString());
+            DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, categoryUuid.ToString());
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 
         public static void SetSoundAsFavourite(Guid uuid, bool favourite)
         {
-            DatabaseOperations.UpdateSound(uuid, null, favourite.ToString(), null, null, null, null, null);
+            DatabaseOperations.UpdateSound(uuid, null, favourite.ToString(), null, null, null);
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 
@@ -773,8 +772,7 @@ namespace UniversalSoundBoard.DataAccess
             var soundTableObject = DatabaseOperations.GetObject(soundUuid);
             if (soundTableObject == null || soundTableObject.TableId != SoundTableId)
                 return;
-
-            string imageExt = file.FileType.Replace(".", "");
+            
             Guid imageUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName));
             StorageFile newImageFile = await file.CopyAsync(ApplicationData.Current.LocalCacheFolder, "newImage" + file.FileType, NameCollisionOption.ReplaceExisting);
 
@@ -783,16 +781,13 @@ namespace UniversalSoundBoard.DataAccess
                 // Create new image file
                 Guid imageFileUuid = Guid.NewGuid();
                 DatabaseOperations.AddImageFile(imageFileUuid, newImageFile);
-                DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, imageFileUuid.ToString(), imageExt, null);
             }
             else
             {
                 // Update the existing image file
                 DatabaseOperations.UpdateImageFile(imageUuid, newImageFile);
-                DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, null, imageExt, null);
             }
 
-            await ClearCacheAsync();
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 

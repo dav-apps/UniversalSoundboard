@@ -14,6 +14,7 @@
     <Page.Resources>
         <converters:SelectedCategoryConverter x:Name="SelectedCategoryConverter" />
         <converters:ReverseBoolConverter x:Name="ReverseBoolConverter" />
+        <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
 
         <Style TargetType="TextBlock" x:Key="NavBarItemIconStyle">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
@@ -81,7 +82,7 @@
                                         Visibility="{Binding LoginMenuItemVisibility, Converter={StaticResource ReverseBoolConverter}}" 
                                         Tapped="LogInMenuItem_Tapped">
                         <StackPanel Orientation="Horizontal">
-                            <PersonPicture ProfilePicture="{Binding User.Avatar}" 
+                            <PersonPicture ProfilePicture="{Binding User.Avatar, Converter={StaticResource FileToBitmapImageConverter}}" 
                                            Height="25"
                                            Width="25" 
                                            Margin="-4,0,0,0" />

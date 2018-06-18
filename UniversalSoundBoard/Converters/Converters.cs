@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
 using System.Linq;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundBoard.Converters
 {
@@ -154,6 +157,23 @@ namespace UniversalSoundBoard.Converters
                 i++;
             }
             return 0;
+        }
+    }
+
+    public class FileToBitmapImageConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            // Get FileInfo and return BitmapImage
+            FileInfo file = value as FileInfo;
+            return new BitmapImage(new Uri(file.FullName));
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            // Get BitmapImage and return FileInfo
+            var bitmapImage = value as BitmapImage;
+            return new FileInfo(bitmapImage.UriSource.AbsolutePath);
         }
     }
 }
