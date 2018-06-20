@@ -174,6 +174,10 @@ namespace UniversalSoundBoard.Pages
             (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
+
+            if (SideBar.DisplayMode == NavigationViewDisplayMode.Compact ||
+                SideBar.DisplayMode == NavigationViewDisplayMode.Minimal)
+                SideBar.IsPaneOpen = false;
         }
     }
 }
