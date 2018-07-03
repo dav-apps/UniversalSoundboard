@@ -166,6 +166,7 @@ namespace UniversalSoundBoard.Converters
         {
             // Get FileInfo and return BitmapImage
             FileInfo file = value as FileInfo;
+            if (file == null) return null;
             return new BitmapImage(new Uri(file.FullName));
         }
 

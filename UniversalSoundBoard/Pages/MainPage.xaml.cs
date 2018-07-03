@@ -8,9 +8,7 @@ using Windows.UI;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 using UniversalSoundBoard.DataAccess;
-using System.Threading.Tasks;
 using UniversalSoundboard.Pages;
-using System.Diagnostics;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -32,6 +30,8 @@ namespace UniversalSoundBoard.Pages
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             SetDataContext();
+            SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
+
             InitializeLocalSettings();
             (App.Current as App)._itemViewHolder.Page = typeof(SoundPage);
             SideBar.MenuItemsSource = (App.Current as App)._itemViewHolder.Categories;
@@ -41,12 +41,18 @@ namespace UniversalSoundBoard.Pages
             FileManager.CreatePlayingSoundsList();
             await FileManager.ShowAllSounds();
         }
-        
+
         private void SetDataContext()
         {
             SideBar.DataContext = (App.Current as App)._itemViewHolder;
         }
-        
+
+        private void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            FileManager.GoBack();
+            e.Handled = true;
+        }
+
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             if (Window.Current.Bounds.Width <= 640)

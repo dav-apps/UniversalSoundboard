@@ -194,7 +194,7 @@ namespace UniversalSoundBoard.Components
             {
                 string text = sender.Text;
 
-                if ((App.Current as App)._itemViewHolder.Page == typeof(SettingsPage))
+                if ((App.Current as App)._itemViewHolder.Page != typeof(SoundPage))
                 {
                     (App.Current as App)._itemViewHolder.Page = typeof(SoundPage);
                 }

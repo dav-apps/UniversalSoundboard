@@ -64,16 +64,16 @@ namespace UniversalSoundBoard.DataAccess
         public static bool skipAutoSuggestBoxTextChanged = false;
 
         // dav Keys
-        //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
-        public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
-        //public const string LoginImplicitUrl = "https://dav-apps.tech/login_implicit";
-        public const string LoginImplicitUrl = "https://389bda40.ngrok.io/login_implicit";
-        public const int AppId = 8;                 // Dev: 8; Prod: 1
-        public const int SoundFileTableId = 11;      // Dev: 11; Prod: 6
-        public const int ImageFileTableId = 15;      // Dev: 15; Prod: 7
-        public const int CategoryTableId = 16;       // Dev: 16; Prod: 8
-        public const int SoundTableId = 17;          // Dev: 17; Prod: 5
-        public const int PlayingSoundTableId = 18;   // Dev: 18; Prod: 9
+        public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
+        //public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
+        public const string LoginImplicitUrl = "https://dav-apps.tech/login_implicit";
+        //public const string LoginImplicitUrl = "https://f3beec64.ngrok.io/login_implicit";
+        public const int AppId = 1;                 // Dev: 8; Prod: 1
+        public const int SoundFileTableId = 6;      // Dev: 11; Prod: 6
+        public const int ImageFileTableId = 7;      // Dev: 15; Prod: 7
+        public const int CategoryTableId = 8;       // Dev: 16; Prod: 8
+        public const int SoundTableId = 5;          // Dev: 17; Prod: 5
+        public const int PlayingSoundTableId = 9;   // Dev: 18; Prod: 9
 
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
@@ -288,7 +288,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.ExportMessage = stringLoader.GetString("ExportMessage-4");
 
             // Copy the file into the destination folder
-            await zipFile.MoveAsync(destinationFolder, "UniversalSoundBoard " + DateTime.Today.ToString("dd.MM.yyyy") + ".zip", NameCollisionOption.ReplaceExisting);
+            await zipFile.MoveAsync(destinationFolder, "UniversalSoundBoard " + DateTime.Today.ToString("dd.MM.yyyy") + ".zip", NameCollisionOption.GenerateUniqueName);
 
             (App.Current as App)._itemViewHolder.ExportMessage = stringLoader.GetString("ExportImportMessage-TidyUp");
             (App.Current as App)._itemViewHolder.IsExporting = false;
@@ -402,7 +402,7 @@ namespace UniversalSoundBoard.DataAccess
                                 // Set the image of the sound
                                 Guid imageUuid = Guid.NewGuid();
                                 DatabaseOperations.AddImageFile(imageUuid, imageFile);
-                                DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, null);
+                                DatabaseOperations.UpdateSound(soundUuid, null, null, null, imageUuid.ToString(), null);
                                 await imageFile.DeleteAsync();
                             }
                         }
@@ -451,7 +451,7 @@ namespace UniversalSoundBoard.DataAccess
                                 // Add image
                                 Guid imageUuid = Guid.NewGuid();
                                 DatabaseOperations.AddImageFile(imageUuid, imageFile);
-                                DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, null);
+                                DatabaseOperations.UpdateSound(soundUuid, null, null, null, imageUuid.ToString(), null);
                                 await imageFile.DeleteAsync();
                             }
                         }
@@ -551,7 +551,7 @@ namespace UniversalSoundBoard.DataAccess
                         {
                             Guid imageUuid = Guid.NewGuid();
                             DatabaseOperations.AddImageFile(imageUuid, imageFile);
-                            DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, null);
+                            DatabaseOperations.UpdateSound(soundUuid, null, null, null, imageUuid.ToString(), null);
 
                             // Delete the image
                             await imageFile.DeleteAsync();
@@ -1212,9 +1212,9 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void ShowPlayAllButton()
         {
-            if ((App.Current as App)._itemViewHolder.Page != typeof(SoundPage)
-                || (App.Current as App)._itemViewHolder.ProgressRingIsActive
-                || (App.Current as App)._itemViewHolder.Page != typeof(SoundPage))
+            if ((App.Current as App)._itemViewHolder.Page != typeof(SoundPage) ||
+                (App.Current as App)._itemViewHolder.ProgressRingIsActive ||
+                (App.Current as App)._itemViewHolder.Sounds.Count == 0)
             {
                 (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
             }
