@@ -3,7 +3,7 @@
   <Identity Name="49427davSoftwareDevelopme.UniversalSoundBoard" Publisher="CN=34761CCA-A79E-46B8-A1BC-D17F44039844" Version="1.5.0.0" />
   <mp:PhoneIdentity PhoneProductId="0ed8f8ed-1633-468d-8f96-d7a7be9c1a54" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
-    <DisplayName>UniversalSoundBoard</DisplayName>
+    <DisplayName>UniversalSoundboard</DisplayName>
     <PublisherDisplayName>dav Apps</PublisherDisplayName>
     <Logo>Assets\Generierte Assets\StoreLogo.png</Logo>
   </Properties>
