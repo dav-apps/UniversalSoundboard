@@ -1,8 +1,10 @@
-﻿using System;
+﻿using davClassLibrary.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using UniversalSoundboard.Models;
 using UniversalSoundBoard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -39,7 +41,6 @@ namespace UniversalSoundBoard.Common
         private string _exportMessage;                              // The text describing the status of the export
         private string _importMessage;                              // The text describing the status of the import
         private string _soundboardSize;                             // The text shown on the settings page which describes the size of the soundboard
-        private Thickness _windowTitleMargin;                       // The margin of the window title at the top left of the window
         private bool _searchAutoSuggestBoxVisibility;               // If true the search box is visible, if false multi selection is on or the search button shown
         private bool _volumeButtonVisibility;                       // If true the volume button at the top is visible
         private bool _addButtonVisibility;                          // If true the Add button at the top to add sounds or a category is visible
@@ -51,456 +52,481 @@ namespace UniversalSoundBoard.Common
         private bool _topButtonsCollapsed;                          // If true the buttons at the top show only the icon, if false they show the icon and text
         private bool _areSelectButtonsEnabled;                      // If false the buttons at the top in multi selection mode are disabled
         private int _selectedCategory;                              // The index of the currently selected category in the category list
-        private string _upgradeDataStatusText;
+        private string _upgradeDataStatusText;                      // The text that is shown on the splash screen when the old data is migrated
+        private DavUser _user;                                         // The User object with username and avatar
+        private bool _loginMenuItemVisibility;                      // If true, the LoginMenuItem in the NavigationView is visible
+        private bool _isBackButtonEnabled;
 
-        public string title
+        public string Title
         {
             get { return _title; }
 
             set
             {
                 _title = value;
-                NotifyPropertyChanged("title");
+                NotifyPropertyChanged("Title");
             }
         }
 
-        public bool progressRingIsActive
+        public bool ProgressRingIsActive
         {
             get { return _progressRingIsActive; }
 
             set
             {
                 _progressRingIsActive = value;
-                NotifyPropertyChanged("progressRingIsActive");
+                NotifyPropertyChanged("ProgressRingIsActive");
             }
         }
 
-        public ObservableCollection<Sound> sounds
+        public ObservableCollection<Sound> Sounds
         {
             get { return _sounds; }
 
             set
             {
                 _sounds = value;
-                NotifyPropertyChanged("sounds");
+                NotifyPropertyChanged("Sounds");
             }
         }
 
-        public ObservableCollection<Sound> favouriteSounds
+        public ObservableCollection<Sound> FavouriteSounds
         {
             get { return _favouriteSounds; }
 
             set
             {
                 _favouriteSounds = value;
-                NotifyPropertyChanged("favouriteSounds");
+                NotifyPropertyChanged("FavouriteSounds");
             }
         }
 
-        public ObservableCollection<Sound> allSounds
+        public ObservableCollection<Sound> AllSounds
         {
             get { return _allSounds; }
 
             set
             {
                 _allSounds = value;
-                NotifyPropertyChanged("allSounds");
+                NotifyPropertyChanged("AllSounds");
             }
         }
 
-        public bool allSoundsChanged
+        public bool AllSoundsChanged
         {
             get { return _allSoundsChanged; }
 
             set
             {
                 _allSoundsChanged = value;
-                NotifyPropertyChanged("allSoundsChanged");
+                NotifyPropertyChanged("AllSoundsChanged");
             }
         }
 
-        public ObservableCollection<Category> categories
+        public ObservableCollection<Category> Categories
         {
             get { return _categories; }
 
             set
             {
                 _categories = value;
-                NotifyPropertyChanged("categories");
+                NotifyPropertyChanged("Categories");
             }
         }
 
-        public string searchQuery
+        public string SearchQuery
         {
             get { return _searchQuery; }
 
             set
             {
                 _searchQuery = value;
-                NotifyPropertyChanged("searchQuery");
+                NotifyPropertyChanged("SearchQuery");
             }
         }
 
-        public Visibility editButtonVisibility
+        public Visibility EditButtonVisibility
         {
             get { return _editButtonVisibility; }
 
             set
             {
                 _editButtonVisibility = value;
-                NotifyPropertyChanged("editButtonVisibility");
+                NotifyPropertyChanged("EditButtonVisibility");
             }
         }
 
-        public Visibility playAllButtonVisibility
+        public Visibility PlayAllButtonVisibility
         {
             get { return _playAllButtonVisibility; }
 
             set
             {
                 _playAllButtonVisibility = value;
-                NotifyPropertyChanged("playAllButtonVisibility");
+                NotifyPropertyChanged("PlayAllButtonVisibility");
             }
         }
 
-        public bool normalOptionsVisibility
+        public bool NormalOptionsVisibility
         {
             get { return _normalOptionsVisibility; }
 
             set
             {
                 _normalOptionsVisibility = value;
-                NotifyPropertyChanged("normalOptionsVisibility");
+                NotifyPropertyChanged("NormalOptionsVisibility");
             }
         }
 
-        public Type page
+        public Type Page
         {
             get { return _page; }
 
             set
             {
                 _page = value;
-                NotifyPropertyChanged("page");
+                NotifyPropertyChanged("Page");
             }
         }
 
-        public ListViewSelectionMode selectionMode
+        public ListViewSelectionMode SelectionMode
         {
             get { return _selectionMode; }
 
             set
             {
                 _selectionMode = value;
-                NotifyPropertyChanged("selectionMode");
+                NotifyPropertyChanged("SelectionMode");
             }
         }
 
-        public List<Sound> selectedSounds
+        public List<Sound> SelectedSounds
         {
             get { return _selectedSounds; }
 
             set
             {
                 _selectedSounds = value;
-                NotifyPropertyChanged("selectedSounds");
+                NotifyPropertyChanged("SelectedSounds");
             }
         }
 
-        public ObservableCollection<PlayingSound> playingSounds
+        public ObservableCollection<PlayingSound> PlayingSounds
         {
             get { return _playingSounds; }
 
             set
             {
                 _playingSounds = value;
-                NotifyPropertyChanged("playingSounds");
+                NotifyPropertyChanged("PlayingSounds");
             }
         }
 
-        public Visibility playingSoundsListVisibility
+        public Visibility PlayingSoundsListVisibility
         {
             get { return _playingSoundsListVisibility; }
 
             set
             {
                 _playingSoundsListVisibility = value;
-                NotifyPropertyChanged("playingSoundsListVisibility");
+                NotifyPropertyChanged("PlayingSoundsListVisibility");
             }
         }
 
-        public bool playOneSoundAtOnce
+        public bool PlayOneSoundAtOnce
         {
             get { return _playOneSoundAtOnce; }
 
             set
             {
                 _playOneSoundAtOnce = value;
-                NotifyPropertyChanged("playOneSoundAtOnce");
+                NotifyPropertyChanged("PlayOneSoundAtOnce");
             }
         }
 
-        public bool showCategoryIcon
+        public bool ShowCategoryIcon
         {
             get { return _showCategoryIcon; }
 
             set
             {
                 _showCategoryIcon = value;
-                NotifyPropertyChanged("showCategoryIcon");
+                NotifyPropertyChanged("ShowCategoryIcon");
             }
         }
 
-        public bool showSoundsPivot
+        public bool ShowSoundsPivot
         {
             get { return _showSoundsPivot; }
 
             set
             {
                 _showSoundsPivot = value;
-                NotifyPropertyChanged("showSoundsPivot");
+                NotifyPropertyChanged("ShowSoundsPivot");
             }
         }
 
-        public bool savePlayingSounds
+        public bool SavePlayingSounds
         {
             get { return _savePlayingSounds; }
 
             set
             {
                 _savePlayingSounds = value;
-                NotifyPropertyChanged("savePlayingSounds");
+                NotifyPropertyChanged("SavePlayingSounds");
             }
         }
 
-        public bool isExporting
+        public bool IsExporting
         {
             get { return _isExporting; }
 
             set
             {
                 _isExporting = value;
-                NotifyPropertyChanged("isExporting");
+                NotifyPropertyChanged("IsExporting");
             }
         }
 
-        public bool exported
+        public bool Exported
         {
             get { return _exported; }
 
             set
             {
                 _exported = value;
-                NotifyPropertyChanged("exported");
+                NotifyPropertyChanged("Exported");
             }
         }
 
-        public bool isImporting
+        public bool IsImporting
         {
             get { return _isImporting; }
 
             set
             {
                 _isImporting = value;
-                NotifyPropertyChanged("isImporting");
+                NotifyPropertyChanged("IsImporting");
             }
         }
 
-        public bool imported
+        public bool Imported
         {
             get { return _imported; }
 
             set
             {
                 _imported = value;
-                NotifyPropertyChanged("imported");
+                NotifyPropertyChanged("Imported");
             }
         }
 
-        public bool areExportAndImportButtonsEnabled
+        public bool AreExportAndImportButtonsEnabled
         {
             get { return _areExportAndImportButtonsEnabled; }
 
             set
             {
                 _areExportAndImportButtonsEnabled = value;
-                NotifyPropertyChanged("areExportAndImportButtonsEnabled");
+                NotifyPropertyChanged("AreExportAndImportButtonsEnabled");
             }
         }
 
-        public string exportMessage
+        public string ExportMessage
         {
             get { return _exportMessage; }
 
             set
             {
                 _exportMessage = value;
-                NotifyPropertyChanged("exportMessage");
+                NotifyPropertyChanged("ExportMessage");
             }
         }
 
-        public string importMessage
+        public string ImportMessage
         {
             get { return _importMessage; }
 
             set
             {
                 _importMessage = value;
-                NotifyPropertyChanged("importMessage");
+                NotifyPropertyChanged("ImportMessage");
             }
         }
 
-        public string soundboardSize
+        public string SoundboardSize
         {
             get { return _soundboardSize; }
 
             set
             {
                 _soundboardSize = value;
-                NotifyPropertyChanged("soundboardSize");
+                NotifyPropertyChanged("SoundboardSize");
             }
         }
 
-        public Thickness windowTitleMargin
-        {
-            get { return _windowTitleMargin; }
-
-            set
-            {
-                _windowTitleMargin = value;
-                NotifyPropertyChanged("windowTitleMargin");
-            }
-        }
-
-        public bool searchAutoSuggestBoxVisibility
+        public bool SearchAutoSuggestBoxVisibility
         {
             get { return _searchAutoSuggestBoxVisibility; }
 
             set
             {
                 _searchAutoSuggestBoxVisibility = value;
-                NotifyPropertyChanged("searchAutoSuggestBoxVisibility");
+                NotifyPropertyChanged("SearchAutoSuggestBoxVisibility");
             }
         }
 
-        public bool volumeButtonVisibility
+        public bool VolumeButtonVisibility
         {
             get { return _volumeButtonVisibility; }
 
             set
             {
                 _volumeButtonVisibility = value;
-                NotifyPropertyChanged("volumeButtonVisibility");
+                NotifyPropertyChanged("VolumeButtonVisibility");
             }
         }
 
-        public bool addButtonVisibility
+        public bool AddButtonVisibility
         {
             get { return _addButtonVisibility; }
 
             set
             {
                 _addButtonVisibility = value;
-                NotifyPropertyChanged("addButtonVisibility");
+                NotifyPropertyChanged("AddButtonVisibility");
             }
         }
 
-        public bool selectButtonVisibility
+        public bool SelectButtonVisibility
         {
             get { return _selectButtonVisibility; }
 
             set
             {
                 _selectButtonVisibility = value;
-                NotifyPropertyChanged("selectButtonVisibility");
+                NotifyPropertyChanged("SelectButtonVisibility");
             }
         }
 
-        public bool searchButtonVisibility
+        public bool SearchButtonVisibility
         {
             get { return _searchButtonVisibility; }
 
             set
             {
                 _searchButtonVisibility = value;
-                NotifyPropertyChanged("searchButtonVisibility");
+                NotifyPropertyChanged("SearchButtonVisibility");
             }
         }
 
-        public bool cancelButtonVisibility
+        public bool CancelButtonVisibility
         {
             get { return _cancelButtonVisibility; }
 
             set
             {
                 _cancelButtonVisibility = value;
-                NotifyPropertyChanged("cancelButtonVisibility");
+                NotifyPropertyChanged("CancelButtonVisibility");
             }
         }
 
-        public bool shareButtonVisibility
+        public bool ShareButtonVisibility
         {
             get { return _shareButtonVisibility; }
 
             set
             {
                 _shareButtonVisibility = value;
-                NotifyPropertyChanged("shareButtonVisibility");
+                NotifyPropertyChanged("ShareButtonVisibility");
             }
         }
 
-        public bool moreButtonVisibility
+        public bool MoreButtonVisibility
         {
             get { return _moreButtonVisibility; }
 
             set
             {
                 _moreButtonVisibility = value;
-                NotifyPropertyChanged("moreButtonVisibility");
+                NotifyPropertyChanged("MoreButtonVisibility");
             }
         }
 
-        public bool topButtonsCollapsed
+        public bool TopButtonsCollapsed
         {
             get { return _topButtonsCollapsed; }
 
             set
             {
                 _topButtonsCollapsed = value;
-                NotifyPropertyChanged("topButtonsCollapsed");
+                NotifyPropertyChanged("TopButtonsCollapsed");
             }
         }
 
-        public bool areSelectButtonsEnabled
+        public bool AreSelectButtonsEnabled
         {
             get { return _areSelectButtonsEnabled; }
 
             set
             {
                 _areSelectButtonsEnabled = value;
-                NotifyPropertyChanged("areSelectButtonsEnabled");
+                NotifyPropertyChanged("AreSelectButtonsEnabled");
             }
         }
 
-        public int selectedCategory
+        public int SelectedCategory
         {
             get { return _selectedCategory; }
 
             set
             {
                 _selectedCategory = value;
-                NotifyPropertyChanged("selectedCategory");
+                NotifyPropertyChanged("SelectedCategory");
             }
         }
 
-        public string upgradeDataStatusText
+        public string UpgradeDataStatusText
         {
             get { return _upgradeDataStatusText; }
 
             set
             {
                 _upgradeDataStatusText = value;
-                NotifyPropertyChanged("upgradeDataStatusText");
+                NotifyPropertyChanged("UpgradeDataStatusText");
+            }
+        }
+
+        public DavUser User
+        {
+            get { return _user; }
+
+            set
+            {
+                _user = value;
+                NotifyPropertyChanged("User");
+            }
+        }
+
+        public bool LoginMenuItemVisibility
+        {
+            get { return _loginMenuItemVisibility; }
+
+            set
+            {
+                _loginMenuItemVisibility = value;
+                NotifyPropertyChanged("LoginMenuItemVisibility");
+            }
+        }
+
+        public bool IsBackButtonEnabled
+        {
+            get { return _isBackButtonEnabled; }
+
+            set
+            {
+                _isBackButtonEnabled = value;
+                NotifyPropertyChanged("IsBackButtonEnabled");
             }
         }
 

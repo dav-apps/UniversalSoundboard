@@ -1,7 +1,11 @@
-﻿using System;
+﻿using davClassLibrary;
+using davClassLibrary.Common;
+using davClassLibrary.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using UniversalSoundboard.Common;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
@@ -10,10 +14,7 @@ using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
-using Windows.Foundation.Metadata;
 using Windows.Storage;
-using Windows.UI.Core;
-using Windows.UI.StartScreen;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -25,49 +26,52 @@ namespace UniversalSoundBoard
     /// </summary>
     sealed partial class App : Application
     {
-        public ItemViewHolder _itemViewHolder = new ItemViewHolder {
-            title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
-            progressRingIsActive = false,
-            sounds = new ObservableCollection<Sound>(),
-            favouriteSounds = new ObservableCollection<Sound>(),
-            allSounds = new ObservableCollection<Sound>(),
-            allSoundsChanged = true,
-            categories = new ObservableCollection<Category>(),
-            searchQuery = "",
-            editButtonVisibility = Visibility.Collapsed,
-            playAllButtonVisibility = Visibility.Collapsed,
-            selectionMode = ListViewSelectionMode.None,
-            normalOptionsVisibility = true,
-            selectedSounds = new List<Sound>(),
-            playingSounds = new ObservableCollection<PlayingSound>(),
-            playingSoundsListVisibility = Visibility.Visible,
-            playOneSoundAtOnce = FileManager.playOneSoundAtOnce,
-            showCategoryIcon = FileManager.showCategoryIcon,
-            showSoundsPivot = FileManager.showSoundsPivot,
-            savePlayingSounds = FileManager.savePlayingSounds,
-            isExporting = false,
-            exported = false,
-            isImporting = false,
-            imported = false,
-            areExportAndImportButtonsEnabled = true,
-            exportMessage = "",
-            importMessage = "",
-            soundboardSize = "",
-            windowTitleMargin = new Thickness(12, 7, 0, 0),
-            searchAutoSuggestBoxVisibility = true,
-            volumeButtonVisibility = true,
-            addButtonVisibility = true,
-            selectButtonVisibility = true,
-            searchButtonVisibility = false,
-            cancelButtonVisibility = false,
-            shareButtonVisibility = false,
-            moreButtonVisibility = true,
-            topButtonsCollapsed = false,
-            areSelectButtonsEnabled = false,
-            selectedCategory = 0,
-            upgradeDataStatusText = "Preparing..."
-        };
 
+        public ItemViewHolder _itemViewHolder = new ItemViewHolder {
+            Title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
+            ProgressRingIsActive = false,
+            Sounds = new ObservableCollection<Sound>(),
+            FavouriteSounds = new ObservableCollection<Sound>(),
+            AllSounds = new ObservableCollection<Sound>(),
+            AllSoundsChanged = true,
+            Categories = new ObservableCollection<Category>(),
+            SearchQuery = "",
+            EditButtonVisibility = Visibility.Collapsed,
+            PlayAllButtonVisibility = Visibility.Collapsed,
+            SelectionMode = ListViewSelectionMode.None,
+            NormalOptionsVisibility = true,
+            SelectedSounds = new List<Sound>(),
+            PlayingSounds = new ObservableCollection<PlayingSound>(),
+            PlayingSoundsListVisibility = Visibility.Visible,
+            PlayOneSoundAtOnce = FileManager.playOneSoundAtOnce,
+            ShowCategoryIcon = FileManager.showCategoryIcon,
+            ShowSoundsPivot = FileManager.showSoundsPivot,
+            SavePlayingSounds = FileManager.savePlayingSounds,
+            IsExporting = false,
+            Exported = false,
+            IsImporting = false,
+            Imported = false,
+            AreExportAndImportButtonsEnabled = true,
+            ExportMessage = "",
+            ImportMessage = "",
+            SoundboardSize = "",
+            SearchAutoSuggestBoxVisibility = true,
+            VolumeButtonVisibility = true,
+            AddButtonVisibility = true,
+            SelectButtonVisibility = true,
+            SearchButtonVisibility = false,
+            CancelButtonVisibility = false,
+            ShareButtonVisibility = false,
+            MoreButtonVisibility = true,
+            TopButtonsCollapsed = false,
+            AreSelectButtonsEnabled = false,
+            SelectedCategory = 0,
+            UpgradeDataStatusText = "Preparing...",
+            User = null,
+            LoginMenuItemVisibility = true,
+            IsBackButtonEnabled = false
+        };
+        
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -79,9 +83,6 @@ namespace UniversalSoundBoard
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
             InitializeComponent();
             Suspending += OnSuspending;
-
-            // Initialize Database
-            DatabaseOperations.InitializeDatabase();
 
             // Set dark theme
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -103,7 +104,13 @@ namespace UniversalSoundBoard
                 localSettings.Values["theme"] = FileManager.theme;
             }
 
-            FileManager.CreateCategoriesObservableCollection();
+            // Initialize Dav settings
+            ProjectInterface.RetrieveConstants = new RetrieveConstants();
+            ProjectInterface.LocalDataSettings = new LocalDataSettings();
+            ProjectInterface.TriggerAction = new UniversalSoundboard.Common.TriggerAction();
+            (App.Current as App)._itemViewHolder.User = new DavUser();
+
+            FileManager.CreateCategoriesList();
         }
 
         /// <summary>
@@ -148,7 +155,7 @@ namespace UniversalSoundBoard
 
             if (e.PreviousExecutionState != ApplicationExecutionState.Running)
             {
-                if(await FileManager.UsesOldDataModel())
+                if(!await FileManager.UsesDavDataModel())
                 {
                     bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
                     UpgradeDataSplashScreen upgradeDataSplashScreen = new UpgradeDataSplashScreen(e.SplashScreen, loadState);
@@ -159,11 +166,8 @@ namespace UniversalSoundBoard
             // Check if app was launched from a secondary tile
             if (!String.IsNullOrEmpty(e.Arguments))
             {
-                Sound sound = await FileManager.GetSound(e.Arguments);
-                if (sound != null)
-                    SoundPage.PlaySound(sound);
-                else
-                    await FileManager.RemoveSecondaryTileAsync(e.Arguments);
+                Guid soundUuid = FileManager.ConvertStringToGuid(e.Arguments);
+                SoundPage.PlaySound(await FileManager.GetSound(soundUuid));
             }
 
             Window.Current.Activate();

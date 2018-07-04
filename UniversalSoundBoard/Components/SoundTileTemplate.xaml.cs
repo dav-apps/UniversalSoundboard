@@ -64,9 +64,9 @@ namespace UniversalSoundBoard.Components
             // Update all lists containing sounds with the new favourite value
             List<ObservableCollection<Sound>> soundLists = new List<ObservableCollection<Sound>>
             {
-                (App.Current as App)._itemViewHolder.sounds,
-                (App.Current as App)._itemViewHolder.allSounds,
-                (App.Current as App)._itemViewHolder.favouriteSounds
+                (App.Current as App)._itemViewHolder.Sounds,
+                (App.Current as App)._itemViewHolder.AllSounds,
+                (App.Current as App)._itemViewHolder.FavouriteSounds
             };
 
             foreach (ObservableCollection<Sound> soundList in soundLists)
@@ -81,12 +81,12 @@ namespace UniversalSoundBoard.Components
             if (newFav)
             {
                 // Add to favourites
-                (App.Current as App)._itemViewHolder.favouriteSounds.Add(Sound);
+                (App.Current as App)._itemViewHolder.FavouriteSounds.Add(Sound);
             }
             else
             {
                 // Remove sound from favourites
-                (App.Current as App)._itemViewHolder.favouriteSounds.Remove(Sound);
+                (App.Current as App)._itemViewHolder.FavouriteSounds.Remove(Sound);
             }
 
             FavouriteSymbol.Visibility = newFav ? Visibility.Visible : Visibility.Collapsed;
@@ -110,10 +110,9 @@ namespace UniversalSoundBoard.Components
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                (App.Current as App)._itemViewHolder.progressRingIsActive = true;
-                await FileManager.AddImage(sound.Uuid, file);
-                (App.Current as App)._itemViewHolder.allSoundsChanged = true;
-                (App.Current as App)._itemViewHolder.progressRingIsActive = false;
+                (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
+                await FileManager.UpdateImageOfSound(sound.Uuid, file);
+                (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
                 await FileManager.UpdateGridView();
             }
         }
@@ -127,7 +126,7 @@ namespace UniversalSoundBoard.Components
         
         private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.DeleteSound(Sound.Uuid);
+            FileManager.DeleteSound(Sound.Uuid);
             // UpdateGridView nicht in deleteSound, weil es auch in einer Schleife aufgerufen wird (löschen mehrerer Sounds)
             await FileManager.UpdateGridView();
         }
@@ -154,7 +153,7 @@ namespace UniversalSoundBoard.Components
             if (moreButtonClicked == 0)
             {
                 // Add some more invisible MenuFlyoutItems
-                for (int i = 0; i < (App.Current as App)._itemViewHolder.categories.Count + 10; i++)
+                for (int i = 0; i < (App.Current as App)._itemViewHolder.Categories.Count + 10; i++)
                 {
                     ToggleMenuFlyoutItem item = new ToggleMenuFlyoutItem { Visibility = Visibility.Collapsed };
                     item.Click += CategoryToggleMenuItem_Click;
@@ -167,11 +166,13 @@ namespace UniversalSoundBoard.Components
                 item.Visibility = Visibility.Collapsed;
             }
 
-            for (int n = 1; n < (App.Current as App)._itemViewHolder.categories.Count; n++)
+            for (int n = 1; n < (App.Current as App)._itemViewHolder.Categories.Count; n++)
             {
+                Category cat = (App.Current as App)._itemViewHolder.Categories.ElementAt(n);
+                if (cat.Name == null) continue;
+
                 if (CategoriesFlyoutSubItem.Items.ElementAt(n - 1) != null)
                 {   // If the element is already there, set the new text
-                    Category cat = (App.Current as App)._itemViewHolder.categories.ElementAt(n);
                     ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Text = cat.Name;
                     ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Tag = cat.Uuid;
                     ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Visibility = Visibility.Visible;
@@ -180,8 +181,8 @@ namespace UniversalSoundBoard.Components
                 {
                     var item = new ToggleMenuFlyoutItem();
                     item.Click += CategoryToggleMenuItem_Click;
-                    item.Text = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Name;
-                    item.Tag = (App.Current as App)._itemViewHolder.categories.ElementAt(n).Uuid;
+                    item.Text = (App.Current as App)._itemViewHolder.Categories.ElementAt(n).Name;
+                    item.Tag = (App.Current as App)._itemViewHolder.Categories.ElementAt(n).Uuid;
                     CategoriesFlyoutSubItem.Items.Add(item);
                 }
             }
@@ -190,7 +191,8 @@ namespace UniversalSoundBoard.Components
         private async void CategoryToggleMenuItem_Click(object sender, RoutedEventArgs e)
         {
             var categoryObject = (ToggleMenuFlyoutItem) sender;
-            string categoryUuid = categoryObject.Tag.ToString();
+            string categoryUuidString = categoryObject.Tag.ToString();
+            Guid categoryUuid = FileManager.ConvertStringToGuid(categoryUuidString);
             FileManager.SetCategoryOfSound(Sound.Uuid, categoryUuid);
             
             UnselectAllItemsOfCategoriesFlyoutSubItem();
@@ -206,7 +208,8 @@ namespace UniversalSoundBoard.Components
             {
                 if(Sound.Category != null && item.Tag != null)
                 {
-                    if (item.Tag.ToString() == Sound.Category.Uuid)
+                    Guid tagUuid = FileManager.ConvertStringToGuid(item.Tag.ToString());
+                    if (Equals(tagUuid, Sound.Category.Uuid))
                     {
                         item.IsChecked = true;
                     }
@@ -236,7 +239,7 @@ namespace UniversalSoundBoard.Components
         private void SetPinFlyoutText()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            bool isPinned = SecondaryTile.Exists(Sound.Uuid);
+            bool isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
             PinFlyoutItem.Text = isPinned ? loader.GetString("Unpin") : loader.GetString("Pin");
         }
         
@@ -247,7 +250,7 @@ namespace UniversalSoundBoard.Components
             // Check if the sound is pinned to start
             bool isPinned = false;
             if (Sound != null)
-                isPinned = SecondaryTile.Exists(Sound.Uuid);
+                isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
 
             OptionsFlyout = new MenuFlyout();
             OptionsFlyout.Opened += Flyout_Opened;
@@ -279,13 +282,13 @@ namespace UniversalSoundBoard.Components
 
         private async void PinFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            bool isPinned = SecondaryTile.Exists(Sound.Uuid);
+            bool isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
 
             // Check if the should be pinned or unpinned
             if (isPinned)
             {
                 // Initialize a secondary tile with the same tile ID you want removed
-                SecondaryTile toBeDeleted = new SecondaryTile(Sound.Uuid);
+                SecondaryTile toBeDeleted = new SecondaryTile(Sound.Uuid.ToString());
 
                 // And then unpin the tile
                 await toBeDeleted.RequestDeleteAsync();
@@ -293,9 +296,9 @@ namespace UniversalSoundBoard.Components
             else
             {
                 // Construct the tile
-                string tileId = Sound.Uuid;
+                string tileId = Sound.Uuid.ToString();
                 string displayName = Sound.Name;
-                string arguments = Sound.Uuid;
+                string arguments = Sound.Uuid.ToString();
                 
                 SecondaryTile tile = new SecondaryTile(
                         tileId,
@@ -323,8 +326,9 @@ namespace UniversalSoundBoard.Components
 
                 // Add the tile to the Start Menu
                 isPinned = await tile.RequestCreateAsync();
+                var imageFile = await Sound.GetImageFile();
 
-                if(Sound.ImageFile != null)
+                if(imageFile != null)
                 {
                     // Update the tile with the appropriate image and text
                     NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
@@ -335,7 +339,7 @@ namespace UniversalSoundBoard.Components
                         {
                             BackgroundImage = new NotificationsExtensions.Tiles.TileBackgroundImage()
                             {
-                                Source = Sound.ImageFile == null ? "ms-appx:///Assets/Images/default.png" : Sound.ImageFile.Path,
+                                Source = imageFile.Path,
                                 AlternateText = Sound.Name
                             }
                         }
@@ -372,7 +376,15 @@ namespace UniversalSoundBoard.Components
 
             // Copy file with better name into temp folder and share it
             StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            StorageFile tempFile = await Sound.AudioFile.CopyAsync(tempFolder, Sound.Name + Sound.AudioFile.FileType, NameCollisionOption.ReplaceExisting);
+            var audioFile = await Sound.GetAudioFile();
+            StorageFile tempFile;
+            if (audioFile == null)
+            {
+                // Get the file from the stream
+                audioFile = await StorageFile.CreateStreamedFileFromUriAsync(Sound.Uuid.ToString(), Sound.GetAudioUri(), null);
+            }
+            tempFile = await audioFile.CopyAsync(tempFolder, Sound.Name + "." + Sound.GetAudioFileExtension(), NameCollisionOption.ReplaceExisting);
+
             sounds.Add(tempFile);
             
             DataRequest request = args.Request;

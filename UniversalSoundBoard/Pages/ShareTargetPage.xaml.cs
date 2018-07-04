@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
@@ -45,10 +46,10 @@ namespace UniversalSoundBoard.Pages
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 categories = new ObservableCollection<Category>();
-                FileManager.CreateCategoriesObservableCollection();
+                FileManager.CreateCategoriesList();
 
                 // Get all Categories and show them
-                foreach (Category cat in (App.Current as App)._itemViewHolder.categories)
+                foreach (Category cat in (App.Current as App)._itemViewHolder.Categories)
                 {
                     categories.Add(cat);
                 }
@@ -62,22 +63,24 @@ namespace UniversalSoundBoard.Pages
             AddCategoryButton.IsEnabled = false;
             ProgressRing.IsActive = true;
 
-            string categoryUuid = "";
+            Category category = null;
             if(CategoriesListView.SelectedIndex != 0)
             {
-                Category category = CategoriesListView.SelectedItem as Category;
-                categoryUuid = category.Uuid;
+                category = CategoriesListView.SelectedItem as Category;
             }
 
             if (items.Count > 0)
             {
                 foreach (StorageFile storagefile in items)
                 {
-                    await FileManager.AddSound(null, storagefile.DisplayName, categoryUuid, storagefile);
+                    if (storagefile.ContentType == "audio/wav" || storagefile.ContentType == "audio/mpeg")
+                    {
+                        FileManager.AddSound(Guid.Empty, storagefile.DisplayName, category.Uuid, storagefile);
+                    }
                 }
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    (App.Current as App)._itemViewHolder.allSoundsChanged = true;
+                    (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
                 });
             }
             shareOperation.ReportCompleted();
@@ -116,12 +119,12 @@ namespace UniversalSoundBoard.Pages
                 Icon = icon
             };
 
-            categories.Add(FileManager.AddCategory(null, category.Name, category.Icon));
+            categories.Add(FileManager.AddCategory(Guid.Empty, category.Name, category.Icon));
             Bindings.Update();
 
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                FileManager.CreateCategoriesObservableCollection();
+                FileManager.CreateCategoriesList();
             });
         }
     }

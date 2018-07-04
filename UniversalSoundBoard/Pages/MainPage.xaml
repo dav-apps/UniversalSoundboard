@@ -8,10 +8,13 @@
     xmlns:converters="using:UniversalSoundBoard.Converters"
     xmlns:components="using:UniversalSoundBoard.Components"
     xmlns:models="using:UniversalSoundBoard.Models"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    SizeChanged="Page_SizeChanged">
 
     <Page.Resources>
         <converters:SelectedCategoryConverter x:Name="SelectedCategoryConverter" />
+        <converters:ReverseBoolConverter x:Name="ReverseBoolConverter" />
+        <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
 
         <Style TargetType="TextBlock" x:Key="NavBarItemIconStyle">
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
@@ -45,10 +48,12 @@
     <Grid>
         <NavigationView Name="SideBar" 
                         AlwaysShowHeader="True" 
-                        MenuItemsSource="{Binding categories, Mode=TwoWay}" 
+                        MenuItemsSource="{Binding Categories, Mode=TwoWay}" 
                         ItemInvoked="SideBar_ItemInvoked" 
                         ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}"
-                        SelectedItem="{Binding selectedCategory, Mode=TwoWay, Converter={StaticResource SelectedCategoryConverter}}">
+                        SelectedItem="{Binding SelectedCategory, Mode=TwoWay, Converter={StaticResource SelectedCategoryConverter}}"
+                        IsBackEnabled="{Binding IsBackButtonEnabled}"
+                        BackRequested="SideBar_BackRequested">
 
             <NavigationView.HeaderTemplate>
                 <DataTemplate>
@@ -65,13 +70,37 @@
                 </DataTemplate>
             </NavigationView.MenuItemTemplate>
 
+            <NavigationView.PaneFooter>
+                <StackPanel>
+                    <NavigationViewItem Name="LoginMenuItem" 
+                                        x:Uid="LoginButton"
+                                        Icon="Contact" 
+                                        Tapped="LogInMenuItem_Tapped"
+                                        Visibility="{Binding LoginMenuItemVisibility}" />
+
+                    <NavigationViewItem Name="AccountMenuItem" 
+                                        Visibility="{Binding LoginMenuItemVisibility, Converter={StaticResource ReverseBoolConverter}}" 
+                                        Tapped="LogInMenuItem_Tapped">
+                        <StackPanel Orientation="Horizontal">
+                            <PersonPicture ProfilePicture="{Binding User.Avatar, Converter={StaticResource FileToBitmapImageConverter}}" 
+                                           Height="25"
+                                           Width="25" 
+                                           Margin="-4,0,0,0" />
+                            <TextBlock Text="{Binding User.Username}" 
+                                       Margin="11,0,0,0" 
+                                       VerticalAlignment="Center" />
+                        </StackPanel>
+                    </NavigationViewItem>
+                </StackPanel>
+            </NavigationView.PaneFooter>
+
             <Grid Name="ContentRoot">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <Frame Name="ContentFrame" 
-                       SourcePageType="{Binding page, Mode=TwoWay}" 
+                       SourcePageType="{Binding Page, Mode=TwoWay}" 
                        Grid.Row="0"/>
                 <ProgressRing Name="ProgressRing"                 
 				              Grid.Row="8" 
@@ -79,14 +108,15 @@
 				              HorizontalAlignment="Center" VerticalAlignment="Center"
 				              Width="50" 
 				              Height="50" 
-				              IsActive="{Binding progressRingIsActive, Mode=TwoWay}" />
+				              IsActive="{Binding ProgressRingIsActive, Mode=TwoWay}" />
             </Grid>
         </NavigationView>
+
         <TextBlock Name="WindowTitleTextBox" 
                    Style="{StaticResource CaptionTextBlockStyle}"
                    Text="{x:Bind appmodel:Package.Current.DisplayName}" 
                    VerticalAlignment="Top" 
                    HorizontalAlignment="Left"
-                   Margin="{Binding windowTitleMargin}" />
+                   Margin="67,14,0,0" />
     </Grid>
 </Page>

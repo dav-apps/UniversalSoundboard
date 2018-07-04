@@ -34,6 +34,7 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog ExportDataContentDialog;
         public static ContentDialog ImportDataContentDialog;
         public static ContentDialog PlaySoundsSuccessivelyContentDialog;
+        public static ContentDialog LogoutContentDialog;
         
 
         public static ContentDialog CreateNewCategoryContentDialog()
@@ -96,7 +97,7 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog CreateEditCategoryContentDialogAsync()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            Category currentCategory = (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory];
+            Category currentCategory = (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory];
 
             EditCategoryContentDialog = new ContentDialog
             {
@@ -158,7 +159,7 @@ namespace UniversalSoundBoard.Common
 
             DeleteCategoryContentDialog = new ContentDialog
             {
-                Title = loader.GetString("DeleteCategoryContentDialog-Title") + (App.Current as App)._itemViewHolder.categories[(App.Current as App)._itemViewHolder.selectedCategory].Name,
+                Title = loader.GetString("DeleteCategoryContentDialog-Title") + (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Name,
                 Content = loader.GetString("DeleteCategoryContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteCategoryContentDialog-PrimaryButton"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
@@ -456,6 +457,21 @@ namespace UniversalSoundBoard.Common
 
             PlaySoundsSuccessivelyContentDialog.Content = content;
             return PlaySoundsSuccessivelyContentDialog;
+        }
+
+        public static ContentDialog CreateLogoutContentDialog()
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            LogoutContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("Logout"),
+                Content = loader.GetString("Account-LogoutMessage"),
+                PrimaryButtonText = loader.GetString("Logout"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+            };
+
+            return LogoutContentDialog;
         }
     }
 }

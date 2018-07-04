@@ -221,7 +221,7 @@
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>1.4.2</value>
+    <value>1.5</value>
   </data>
   <data name="PlayingSound_CastButton.Label" xml:space="preserve">
     <value>Cast to Device</value>
@@ -409,5 +409,47 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="Unpin" xml:space="preserve">
     <value>Unpin from Start</value>
+  </data>
+  <data name="Account-UpgradeLink.Content" xml:space="preserve">
+    <value>Need more?</value>
+  </data>
+  <data name="Account-Title" xml:space="preserve">
+    <value>Your Account</value>
+  </data>
+  <data name="LoginButton.Content" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="Account-UsedStorage" xml:space="preserve">
+    <value>| GB of _ GB used</value>
+  </data>
+  <data name="Account-LogoutMessage" xml:space="preserve">
+    <value>Are you sure you want to log out?</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Log out</value>
+  </data>
+  <data name="LogoutButton.Content" xml:space="preserve">
+    <value>Log out</value>
+  </data>
+  <data name="Account-LandingText1.Text" xml:space="preserve">
+    <value>Access the same Soundboard on all your devices</value>
+  </data>
+  <data name="Account-LandingText2.Text" xml:space="preserve">
+    <value>Make sure your sounds don't get lost when you lose or reset your device</value>
+  </data>
+  <data name="Account-LandingText3.Text" xml:space="preserve">
+    <value>See your playing sounds on all your devices</value>
+  </data>
+  <data name="Account-LandingText4.Text" xml:space="preserve">
+    <value>Save your Soundboard and access it from anywhere</value>
+  </data>
+  <data name="Account-TryOut.Text" xml:space="preserve">
+    <value>Try it out for free</value>
+  </data>
+  <data name="Account-VisitWebsiteLink.Content" xml:space="preserve">
+    <value>Visit dav-apps.tech</value>
+  </data>
+  <data name="SignupButton.Content" xml:space="preserve">
+    <value>Sign up</value>
   </data>
 </root>

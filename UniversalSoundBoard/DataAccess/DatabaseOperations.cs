@@ -1,730 +1,209 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using davClassLibrary;
+using davClassLibrary.Models;
+using SQLite;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.IO;
+using UniversalSoundboard.Models;
 using UniversalSoundBoard.Models;
+using Windows.Storage;
 
 namespace UniversalSoundBoard.DataAccess
 {
     class DatabaseOperations
     {
-        private const string DatabaseName = "universalsoundboard.db";
-        private const string CategoryTableName = "Category";
-        private const string SoundTableName = "Sound";
-        private const string PlayingSoundTableName = "PlayingSound";
-        private const int currentDatabaseVersion = 0;
-
-        #region Initialization
-        public static void InitializeDatabase()
+        #region General Methods
+        public static TableObject GetObject(Guid uuid)
         {
-            SQLitePCL.raw.SetProvider(new SQLitePCL.SQLite3Provider_sqlite3());
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-
-                // Create Category table
-                CreateCategoryTable(db);
-
-                // Create Sound table
-                CreateSoundTable(db);
-
-                // Create PlayingSound table
-                CreatePlayingSoundTable(db);
-
-
-                // Check if the database is on the newest version
-                // Upgrade the database schema and version if necessary
-                // https://stackoverflow.com/questions/989558/best-practices-for-in-app-database-migration-for-sqlite
-                int databaseVersion = GetUserVersion(db);
-                if(databaseVersion != currentDatabaseVersion)
-                {
-                    if(databaseVersion == 0)
-                    {
-                        // Upgrade to version 1
-                    }
-                }
-
-                db.Close();
-            }
+            return Dav.Database.GetTableObject(uuid);
         }
 
-        private static void CreateCategoryTable(SqliteConnection db)
+        public static bool ObjectExists(Guid uuid)
         {
-            string categoryTableCommandText = "CREATE TABLE IF NOT EXISTS " + CategoryTableName +
-                                        " (id INTEGER PRIMARY KEY, " +
-                                        "uuid VARCHAR NOT NULL, " +
-                                        "name VARCHAR(100) NOT NULL, " +
-                                        "icon VARCHAR);";
-            SqliteCommand categoryTableCommand = new SqliteCommand(categoryTableCommandText, db);
-            try
-            {
-                categoryTableCommand.ExecuteReader();
-            }
-            catch (SqliteException e)
-            {
-                Debug.WriteLine("Error in create category table");
-                Debug.WriteLine(e.Message);
-            }
+            return Dav.Database.TableObjectExists(uuid);
         }
 
-        private static void CreateSoundTable(SqliteConnection db)
+        public static void DeleteObject(Guid uuid)
         {
-            string soundTableCommandText = "CREATE TABLE IF NOT EXISTS " + SoundTableName +
-                                        " (id VARCHAR PRIMARY KEY, " +
-                                        "uuid VARCHAR NOT NULL, " +
-                                        "name VARCHAR(100) NOT NULL, " +
-                                        "favourite BOOLEAN DEFAULT false, " +
-                                        "sound_ext VARCHAR NOT NULL, " +
-                                        "image_ext VARCHAR, " +
-                                        "category_id VARCHAR, " +
-                                        "FOREIGN KEY(category_id) REFERENCES categories(uuid));";
-            SqliteCommand soundTableCommand = new SqliteCommand(soundTableCommandText, db);
-            try
+            // Get the object and delete it
+            var tableObject = Dav.Database.GetTableObject(uuid);
+            if (tableObject != null)
+                tableObject.Delete();
+        }
+        #endregion
+
+        #region Sound
+        public static void AddSound(Guid uuid, string name, string soundUuid, string categoryUuid)
+        {
+            // Create TableObject with sound informations and TableObject with the Soundfile
+            var properties = new List<Property>
             {
-                soundTableCommand.ExecuteReader();
-            }
-            catch (SqliteException e)
-            {
-                Debug.WriteLine("Error in create sound table");
-                Debug.WriteLine(e.Message);
-            }
+                new Property{Name = FileManager.SoundTableNamePropertyName, Value = name},
+                new Property{Name = FileManager.SoundTableFavouritePropertyName, Value = bool.FalseString},
+                new Property{Name = FileManager.SoundTableSoundUuidPropertyName, Value = soundUuid}
+            };
+
+            if (!String.IsNullOrEmpty(categoryUuid))
+                properties.Add(new Property { Name = FileManager.SoundTableCategoryUuidPropertyName, Value = categoryUuid });
+
+            new TableObject(uuid, FileManager.SoundTableId, properties);
         }
 
-        private static void CreatePlayingSoundTable(SqliteConnection db)
+        public static List<TableObject> GetAllSounds()
         {
-            string playingSoundTableCommandText = "CREATE TABLE IF NOT EXISTS " + PlayingSoundTableName +
-                                                    " (id VARCHAR PRIMARY KEY, " +
-                                                    "uuid VARCHAR NOT NULL, " +
-                                                    "sound_ids TEXT NOT NULL, " +
-                                                    "current INTEGER DEFAULT 0, " +
-                                                    "repetitions INTEGER DEFAULT 0, " +
-                                                    "randomly BOOLEAN DEFAULT false," +
-                                                    "volume REAL DEFAULT 1);";
-            SqliteCommand playingSoundTableCommand = new SqliteCommand(playingSoundTableCommandText, db);
-            try
-            {
-                playingSoundTableCommand.ExecuteReader();
-            }
-            catch (SqliteException e)
-            {
-                Debug.WriteLine("Error in create playingSound table");
-                Debug.WriteLine(e.Message);
-            }
+            return Dav.Database.GetAllTableObjects(FileManager.SoundTableId, false);
         }
 
-        private static int GetUserVersion(SqliteConnection db)
+        public static void UpdateSound(Guid uuid, string name, string favourite, string soundUuid, string imageUuid, string categoryUuid)
         {
-            // Get the user_version
-            string userVersionCommandText = "PRAGMA user_version;";
-            SqliteCommand userVersionCommand = new SqliteCommand(userVersionCommandText, db);
-            SqliteDataReader query;
-            int userVersion = 0;
+            // Get the sound table object
+            var soundTableObject = Dav.Database.GetTableObject(uuid);
 
-            try
-            {
-                query = userVersionCommand.ExecuteReader();
+            if (soundTableObject == null) return;
+            if (soundTableObject.TableId != FileManager.SoundTableId) return;
 
-                while (query.Read())
-                {
-                    userVersion = query.GetInt32(0);
-                }
-            }
-            catch (SqliteException e)
-            {
-                Debug.WriteLine("Error in getting the user_version");
-                Debug.WriteLine(e.Message);
-            }
-
-            return userVersion;
+            if (!String.IsNullOrEmpty(name))
+                soundTableObject.SetPropertyValue(FileManager.SoundTableNamePropertyName, name);
+            if (!String.IsNullOrEmpty(favourite))
+                soundTableObject.SetPropertyValue(FileManager.SoundTableFavouritePropertyName, favourite);
+            if (!String.IsNullOrEmpty(soundUuid))
+                soundTableObject.SetPropertyValue(FileManager.SoundTableSoundUuidPropertyName, soundUuid);
+            if (!String.IsNullOrEmpty(imageUuid))
+                soundTableObject.SetPropertyValue(FileManager.SoundTableImageUuidPropertyName, imageUuid);
+            if (!String.IsNullOrEmpty(categoryUuid))
+                soundTableObject.SetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName, categoryUuid);
         }
-        # endregion
-
-        public static void AddSound(string uuid, string name, string category_id, string ext)
+        
+        public static void DeleteSound(Guid uuid)
         {
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            var soundTableObject = Dav.Database.GetTableObject(uuid);
+
+            if (soundTableObject == null) return;
+            if (soundTableObject.TableId != FileManager.SoundTableId) return;
+
+            // Delete the sound file and the image file
+            Guid soundFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
+            Guid imageFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
+
+            if (!Equals(soundFileUuid, Guid.Empty))
             {
-                db.Open();
-                SqliteCommand insertCommand = new SqliteCommand();
-                insertCommand.Connection = db;
-
-                insertCommand.CommandText = "INSERT INTO " + SoundTableName +
-                                            " (uuid, name, category_id, sound_ext, image_ext) " +
-                                            "VALUES (@Uuid, @Name, @Category_id, @SoundExt, @ImageExt);";
-
-                insertCommand.Parameters.AddWithValue("@Uuid", uuid);
-                insertCommand.Parameters.AddWithValue("@Name", name);
-
-                if (String.IsNullOrEmpty(category_id))
-                    insertCommand.Parameters.AddWithValue("@Category_id", "");
-                else
-                    insertCommand.Parameters.AddWithValue("@Category_id", category_id);
-
-                insertCommand.Parameters.AddWithValue("@SoundExt", ext);
-                insertCommand.Parameters.AddWithValue("@ImageExt", "");
-
-                try
-                {
-                    insertCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in AddSound");
-                    Debug.WriteLine(error.Message);
-                }
-                db.Close();
+                var soundFileTableObject = Dav.Database.GetTableObject(soundFileUuid);
+                if (soundFileTableObject != null)
+                    soundFileTableObject.Delete();
             }
+            if (!Equals(soundFileUuid, Guid.Empty))
+            {
+                var imageFileTableObject = Dav.Database.GetTableObject(imageFileUuid);
+                if (imageFileTableObject != null)
+                    imageFileTableObject.Delete();
+            }
+
+            // Delete the sound itself
+            Dav.Database.DeleteTableObject(soundTableObject);
+        }
+        #endregion
+
+        #region SoundFile
+        public static void AddSoundFile(Guid uuid, StorageFile audioFile)
+        {
+            var tableObject = new TableObject(uuid, FileManager.SoundFileTableId, new FileInfo(audioFile.Path));
         }
 
-        public static object GetSound(string uuid)
+        public static List<TableObject> GetAllSoundFiles()
         {
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                string selectCommandText = "SELECT * FROM " + SoundTableName + " WHERE uuid = @Uuid;";
-                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
-                selectCommand.Parameters.AddWithValue("@Uuid", uuid);
-                SqliteDataReader query;
+            return Dav.Database.GetAllTableObjects(FileManager.SoundFileTableId, false);
+        }
+        #endregion SoundFile
 
-                try
-                {
-                    query = selectCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in GetSound");
-                    Debug.WriteLine(error.Message);
-                    return null;
-                }
-
-                bool soundExists = false;
-                object obj = new object();
-                while (query.Read())
-                {
-                    uuid = query.GetString(1);
-                    string name = query.GetString(2);
-                    bool favourite = query.GetBoolean(3);
-                    string sound_ext = query.GetString(4);
-                    string image_ext = query.GetString(5);
-                    string category_id = query.GetString(6);
-
-                    obj = new
-                    {
-                        uuid,
-                        name,
-                        favourite,
-                        sound_ext,
-                        image_ext,
-                        category_id
-                    };
-                    soundExists = true;
-                }
-                if(soundExists)
-                    return obj;
-
-                db.Close();
-                return null;
-            }
+        #region ImageFile
+        public static void AddImageFile(Guid uuid, StorageFile imageFile)
+        {
+            var tableObject = new TableObject(uuid, FileManager.ImageFileTableId, new FileInfo(imageFile.Path));
         }
 
-        public static List<object> GetAllSounds()
+        public static void UpdateImageFile(Guid uuid, StorageFile imageFile)
         {
-            List<object> entries = new List<object>();
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            var imageFileTableObject = Dav.Database.GetTableObject(uuid);
+
+            if (imageFileTableObject == null) return;
+            if (imageFileTableObject.TableId != FileManager.ImageFileTableId) return;
+
+            imageFileTableObject.SetFile(new FileInfo(imageFile.Path));
+        }
+        #endregion
+
+        #region Category
+        public static void AddCategory(Guid uuid, string name, string icon)
+        {
+            List<Property> properties = new List<Property>
             {
-                db.Open();
-                string selectCommandText = "SELECT * FROM " + SoundTableName + ";";
-                
-                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
-                SqliteDataReader query;
-
-                try
-                {
-                    query = selectCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in GetAllSounds");
-                    Debug.WriteLine(error.Message);
-                    return entries;
-                }
-
-                while (query.Read())
-                {
-                    string uuid = query.GetString(1);
-                    string name = query.GetString(2);
-                    bool favourite = query.GetBoolean(3);
-                    string sound_ext = query.GetString(4);
-                    string image_ext = query.GetString(5);
-                    string category_id = query.GetString(6);
-
-                    var obj = new
-                    {
-                        uuid,
-                        name,
-                        favourite,
-                        sound_ext,
-                        image_ext,
-                        category_id
-                    };
-
-                    entries.Add(obj);
-                }
-                db.Close();
-            }
-            return entries;
+                new Property{Name = FileManager.CategoryTableNamePropertyName, Value = name},
+                new Property{Name = FileManager.CategoryTableIconPropertyName, Value = icon}
+            };
+            new TableObject(uuid, FileManager.CategoryTableId, properties);
         }
 
-        public static void UpdateSound(string uuid, string name, string category_id, string sound_ext, string image_ext, string favourite)
+        public static List<TableObject> GetAllCategories()
         {
-            using(SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                string updateCommandText = "UPDATE " + SoundTableName + " SET ";
-                SqliteCommand updateCommand = new SqliteCommand();
-                
-                if (!String.IsNullOrEmpty(name))
-                {
-                    updateCommandText += "name = @Name, ";
-                    updateCommand.Parameters.AddWithValue("@Name", name);
-                }
-                if(!String.IsNullOrEmpty(category_id))
-                {
-                    updateCommandText += "category_id = @CategoryId, ";
-                    updateCommand.Parameters.AddWithValue("@CategoryId", category_id);
-                }
-                if(!String.IsNullOrEmpty(sound_ext))
-                {
-                    updateCommandText += "sound_ext = @SoundExt, ";
-                    updateCommand.Parameters.AddWithValue("@SoundExt", sound_ext);
-                }
-                if(!String.IsNullOrEmpty(image_ext))
-                {
-                    updateCommandText += "image_ext = @ImageExt, ";
-                    updateCommand.Parameters.AddWithValue("@ImageExt", image_ext);
-                }
-                if(!String.IsNullOrEmpty(favourite))
-                {
-                    updateCommandText += "favourite = @Favourite, ";
-                    updateCommand.Parameters.AddWithValue("@Favourite", favourite.ToLower() == "true");
-                }
-                updateCommandText = updateCommandText.Remove(updateCommandText.Length - 2); // Remove the last two characters, which are ", "
-                updateCommandText += " WHERE uuid = @Uuid;";
-                updateCommand.Parameters.AddWithValue("@Uuid", uuid);
-
-                updateCommand.Connection = db;
-                updateCommand.CommandText = updateCommandText;
-                
-                try
-                {
-                    updateCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in UpdateSound");
-                    Debug.WriteLine(error.Message);
-                }
-                db.Close();
-            }
+            return Dav.Database.GetAllTableObjects(FileManager.CategoryTableId, false);
         }
 
-        public static void DeleteSound(string uuid)
+        public static void UpdateCategory(Guid uuid, string name, string icon)
         {
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
+            var categoryTableObject = Dav.Database.GetTableObject(uuid);
+
+            if (categoryTableObject == null) return;
+            if (categoryTableObject.TableId != FileManager.CategoryTableId) return;
+
+            if (!String.IsNullOrEmpty(name))
+                categoryTableObject.SetPropertyValue(FileManager.CategoryTableNamePropertyName, name);
+            if (!String.IsNullOrEmpty(icon))
+                categoryTableObject.SetPropertyValue(FileManager.CategoryTableIconPropertyName, icon);
+        }
+        #endregion
+
+        #region PlayingSound
+        public static void AddPlayingSound(Guid uuid, List<string> soundIds, int current, int repetitions, bool randomly, double volume)
+        {
+            var properties = new List<Property>
             {
-                db.Open();
-                SqliteCommand insertCommand = new SqliteCommand();
-                insertCommand.Connection = db;
+                new Property{Name = FileManager.PlayingSoundTableSoundIdsPropertyName, Value = ConvertIdListToString(soundIds)},
+                new Property{Name = FileManager.PlayingSoundTableCurrentPropertyName, Value = current.ToString()},
+                new Property{Name = FileManager.PlayingSoundTableRepetitionsPropertyName, Value = repetitions.ToString()},
+                new Property{Name = FileManager.PlayingSoundTableRandomlyPropertyName, Value = randomly.ToString()},
+                new Property{Name = FileManager.PlayingSoundTableVolumePropertyName, Value = volume.ToString()}
+            };
 
-                insertCommand.CommandText = "DELETE FROM " + SoundTableName + " WHERE uuid = @Uuid;";
-                insertCommand.Parameters.AddWithValue("@Uuid", uuid);
-
-                try
-                {
-                    insertCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in DeleteSound");
-                    Debug.WriteLine(error.Message);
-                }
-                db.Close();
-            }
+            new TableObject(uuid, FileManager.PlayingSoundTableId, properties);
         }
 
-        public static void AddCategory(string uuid, string name, string icon)
+        public static List<TableObject> GetAllPlayingSounds()
         {
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                SqliteCommand insertCommand = new SqliteCommand();
-                insertCommand.Connection = db;
-
-                insertCommand.CommandText = "INSERT INTO " + CategoryTableName +
-                                            " (uuid, name, icon) " +
-                                            "VALUES (@Uuid, @Name, @Icon);";
-
-                insertCommand.Parameters.AddWithValue("@Uuid", uuid);
-                insertCommand.Parameters.AddWithValue("@Name", name);
-                insertCommand.Parameters.AddWithValue("@Icon", icon);
-
-                try
-                {
-                    insertCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in AddCategory");
-                    Debug.WriteLine(error.Message);
-                }
-                db.Close();
-            }
+            return Dav.Database.GetAllTableObjects(FileManager.PlayingSoundTableId, false);
         }
 
-        public static Category GetCategory(string uuid)
+        public static void UpdatePlayingSound(Guid uuid, List<string> soundIds, string current, string repetitions, string randomly, string volume)
         {
-            Category category = new Category(uuid, "", "");
+            var playingSoundTableObject = Dav.Database.GetTableObject(uuid);
 
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                string selectCommandText = "SELECT * FROM " + CategoryTableName + " WHERE uuid = @Uuid;";
-                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
-                selectCommand.Parameters.AddWithValue("@Uuid", uuid);
-                SqliteDataReader query;
+            if (playingSoundTableObject == null) return;
+            if (playingSoundTableObject.TableId != FileManager.PlayingSoundTableId) return;
 
-                try
-                {
-                    query = selectCommand.ExecuteReader();
-                }
-                catch(SqliteException error)
-                {
-                    Debug.WriteLine("Error in GetCategory");
-                    Debug.WriteLine(error.Message);
-                    return null;
-                }
-
-                bool categoryExists = false;
-                while (query.Read())
-                {
-                    uuid = query.GetString(1);
-                    string name = query.GetString(2);
-                    string icon = query.GetString(3);
-
-                    category.Name = name;
-                    category.Icon = icon;
-                    categoryExists = true;
-                }
-                if (categoryExists)
-                    return category;
-
-                db.Close();
-                return null;
-            }
+            if (soundIds != null)
+                playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName, ConvertIdListToString(soundIds));
+            if (!String.IsNullOrEmpty(current))
+                playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName, current);
+            if (!String.IsNullOrEmpty(repetitions))
+                playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName, repetitions);
+            if (!String.IsNullOrEmpty(randomly))
+                playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName, randomly);
+            if (!String.IsNullOrEmpty(volume))
+                playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName, volume);
         }
+        #endregion
 
-        public static List<Category> GetCategories()
-        {
-            List<Category> entries = new List<Category>();
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                string selectCommandText = "SELECT * FROM " + CategoryTableName + ";";
-
-                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
-                SqliteDataReader query;
-                try
-                {
-                    query = selectCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in GetCategories");
-                    Debug.WriteLine(error.Message);
-                    return entries;
-                }
-
-                while (query.Read())
-                {
-                    string uuid = query.GetString(1);
-                    string name = query.GetString(2);
-                    string icon = query.GetString(3);
-
-                    entries.Add(new Category(uuid, name, icon));
-                }
-                db.Close();
-            }
-            return entries;
-        }
-
-        public static void UpdateCategory(string uuid, string name, string icon)
-        {
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                string updateCommandText = "UPDATE " + CategoryTableName +
-                                            " SET name = @Name, " +
-                                            "icon = @Icon " +
-                                            "WHERE uuid = @Uuid";
-
-                SqliteCommand updateCommand = new SqliteCommand(updateCommandText, db);
-                updateCommand.Parameters.AddWithValue("@Name", name);
-                updateCommand.Parameters.AddWithValue("@Icon", icon);
-                updateCommand.Parameters.AddWithValue("@Uuid", uuid);
-                SqliteDataReader query;
-
-                try
-                {
-                    query = updateCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in UpdateCategory");
-                    Debug.WriteLine(error.Message);
-                }
-                db.Close();
-            }
-        }
-
-        public static void DeleteCategory(string uuid)
-        {
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                SqliteCommand insertCommand = new SqliteCommand();
-                insertCommand.Connection = db;
-
-                insertCommand.CommandText = "DELETE FROM " + CategoryTableName + " WHERE uuid = @Uuid;";
-                insertCommand.Parameters.AddWithValue("@Uuid", uuid);
-
-                try
-                {
-                    insertCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in DeleteCategory");
-                    Debug.WriteLine(error.Message);
-                }
-                db.Close();
-            }
-        }
-
-        public static void AddPlayingSound(string uuid, List<string> soundIds, int current, int repetitions, bool randomly, double volume)
-        {
-            string soundIdsString = ConvertIdListToString(soundIds);
-
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                SqliteCommand insertCommand = new SqliteCommand();
-                insertCommand.Connection = db;
-
-                insertCommand.CommandText = "INSERT INTO " + PlayingSoundTableName +
-                                            " (uuid, sound_ids, current, repetitions, randomly, volume) " +
-                                            "VALUES (@Uuid, @SoundIds, @Current, @Repetitions, @Randomly, @Volume);";
-
-                insertCommand.Parameters.AddWithValue("@Uuid", uuid);
-                insertCommand.Parameters.AddWithValue("@SoundIds", soundIdsString);
-                insertCommand.Parameters.AddWithValue("@Current", current);
-                insertCommand.Parameters.AddWithValue("@Repetitions", repetitions);
-                insertCommand.Parameters.AddWithValue("@Randomly", randomly);
-                insertCommand.Parameters.AddWithValue("@Volume", volume);
-
-                try
-                {
-                    insertCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in AddPlayingSound");
-                    Debug.WriteLine(error.Message);
-                }
-                db.Close();
-            }
-        }
-
-        public static List<object> GetAllPlayingSounds()
-        {
-            List<object> entries = new List<object>();
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                string selectCommandText = "SELECT * FROM " + PlayingSoundTableName + ";";
-
-                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
-                SqliteDataReader query;
-
-                try
-                {
-                    query = selectCommand.ExecuteReader();
-                }
-                catch (SqliteException e)
-                {
-                    Debug.WriteLine("Error in GetAllPlayingSounds");
-                    Debug.WriteLine(e.Message);
-                    return entries;
-                }
-
-                while (query.Read())
-                {
-                    string uuid = query.GetString(1);
-                    string soundIds = query.GetString(2);
-                    int current = query.GetInt32(3);
-                    int repetitions = query.GetInt32(4);
-                    bool randomly = query.GetBoolean(5);
-                    double volume = query.GetDouble(6);
-
-                    var obj = new
-                    {
-                        uuid,
-                        soundIds,
-                        current,
-                        repetitions,
-                        randomly,
-                        volume
-                    };
-
-                    entries.Add(obj);
-                }
-                db.Close();
-            }
-            return entries;
-        }
-
-        public static object GetPlayingSound(string uuid)
-        {
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                string selectCommandText = "SELECT * FROM " + PlayingSoundTableName + " WHERE uuid = @Uuid;";
-                SqliteCommand selectCommand = new SqliteCommand(selectCommandText, db);
-                selectCommand.Parameters.AddWithValue("@Uuid", uuid);
-                SqliteDataReader query;
-
-                try
-                {
-                    query = selectCommand.ExecuteReader();
-                }
-                catch (SqliteException e)
-                {
-                    Debug.WriteLine("Error in GetPlayingSound");
-                    Debug.WriteLine(e.Message);
-                    return null;
-                }
-
-                bool soundExists = false;
-                object obj = new object();
-                while (query.Read())
-                {
-                    uuid = query.GetString(1);
-                    string soundIds = query.GetString(2);
-                    int current = query.GetInt32(3);
-                    int repetitions = query.GetInt32(4);
-                    bool randomly = query.GetBoolean(5);
-                    double volume = query.GetDouble(6);
-
-                    obj = new
-                    {
-                        uuid,
-                        soundIds,
-                        current,
-                        repetitions,
-                        randomly,
-                        volume
-                    };
-                    soundExists = true;
-                }
-
-                if (soundExists)
-                    return obj;
-
-                db.Close();
-                return null;
-            }
-        }
-
-        public static void UpdatePlayingSound(string uuid, List<string> soundIds, string current, string repetitions, string randomly, string volume)
-        {
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                string updateCommandText = "UPDATE " + PlayingSoundTableName + " SET ";
-                SqliteCommand updateCommand = new SqliteCommand();
-                
-                if(soundIds != null)
-                {
-                    string soundIdsString = ConvertIdListToString(soundIds);
-                    updateCommandText += "sound_ids = @SoundIds, ";
-                    updateCommand.Parameters.AddWithValue("@SoundIds", soundIdsString);
-                }
-                if(!String.IsNullOrEmpty(current))
-                {
-                    updateCommandText += "current = @Current, ";
-                    updateCommand.Parameters.AddWithValue("@Current", current);
-                }
-                if (!String.IsNullOrEmpty(repetitions))
-                {
-                    updateCommandText += "repetitions = @Repetitions, ";
-                    updateCommand.Parameters.AddWithValue("@Repetitions", repetitions);
-                }
-                if (!String.IsNullOrEmpty(randomly))
-                {
-                    updateCommandText += "randomly = @Randomly, ";
-                    updateCommand.Parameters.AddWithValue("@Randomly", randomly);
-                }
-                if (!String.IsNullOrEmpty(volume))
-                {
-                    volume = volume.Replace(',', '.');
-                    updateCommandText += "volume = @Volume, ";
-                    updateCommand.Parameters.AddWithValue("@Volume", volume);
-                }
-
-                updateCommandText = updateCommandText.Remove(updateCommandText.Length - 2);
-                updateCommandText += " WHERE uuid = @Uuid;";
-                updateCommand.Parameters.AddWithValue("@Uuid", uuid);
-
-                updateCommand.Connection = db;
-                updateCommand.CommandText = updateCommandText;
-
-                try
-                {
-                    updateCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in UpdatePlayingSound");
-                    Debug.WriteLine(error.Message);
-                }
-                db.Close();
-            }
-        }
-
-        public static void DeletePlayingSound(string uuid)
-        {
-            using (SqliteConnection db = new SqliteConnection("Filename=" + DatabaseName))
-            {
-                db.Open();
-                SqliteCommand insertCommand = new SqliteCommand();
-                insertCommand.Connection = db;
-
-                insertCommand.CommandText = "DELETE FROM " + PlayingSoundTableName + " WHERE uuid = @Uuid;";
-                insertCommand.Parameters.AddWithValue("@Uuid", uuid);
-
-                try
-                {
-                    insertCommand.ExecuteReader();
-                }
-                catch (SqliteException error)
-                {
-                    Debug.WriteLine("Error in DeletePlayingSound");
-                    Debug.WriteLine(error.Message);
-                }
-                db.Close();
-            }
-        }
-
-
-        // Other methods
+        #region Helper Methods
         private static string ConvertIdListToString(List<string> ids)
         {
             string idsString = "";
@@ -737,5 +216,59 @@ namespace UniversalSoundBoard.DataAccess
 
             return idsString;
         }
+        #endregion
+
+        #region Old Methods
+        public static List<OldSoundDatabaseModel> GetAllSoundsFromDatabaseFile(StorageFile databaseFile)
+        {
+            List<OldSoundDatabaseModel> entries = new List<OldSoundDatabaseModel>();
+
+            var db = new SQLiteConnection(databaseFile.Path);
+            string selectCommandText = "SELECT * FROM Sound;";
+
+            try
+            {
+                foreach (OldSoundDatabaseModel sound in db.Query<OldSoundDatabaseModel>(selectCommandText))
+                    entries.Add(sound);
+            }
+            catch (SQLiteException error)
+            {
+                Debug.WriteLine(error.Message);
+                return entries;
+            }
+
+            db.Close();
+            return entries;
+        }
+
+        public static List<Category> GetAllCategoriesFromDatabaseFile(StorageFile databaseFile)
+        {
+            List<Category> entries = new List<Category>();
+            var db = new SQLiteConnection(databaseFile.Path);
+
+            string selectCommandText = "SELECT * FROM Category;";
+
+            try
+            {
+                foreach (var category in db.Query<OldCategoryDatabaseModel>(selectCommandText))
+                {
+                    entries.Add(new Category
+                    {
+                        Uuid = category.uuid,
+                        Name = category.name,
+                        Icon = category.icon
+                    });
+                }
+            }
+            catch (SQLiteException error)
+            {
+                Debug.WriteLine(error.Message);
+                return entries;
+            }
+
+            db.Close();
+            return entries;
+        }
+        #endregion
     }
 }

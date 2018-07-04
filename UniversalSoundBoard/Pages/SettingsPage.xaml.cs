@@ -100,7 +100,7 @@ namespace UniversalSoundBoard.Pages
         private void SetSavePlayingSoundsToggle()
         {
             SavePlayingSoundsToggle.IsOn = (bool)localSettings.Values[FileManager.savePlayingSoundsKey];
-            SavePlayingSoundsStackPanel.Visibility = (App.Current as App)._itemViewHolder.playingSoundsListVisibility;
+            SavePlayingSoundsStackPanel.Visibility = (App.Current as App)._itemViewHolder.PlayingSoundsListVisibility;
         }
 
         private void SetToggleMessageVisibility()
@@ -132,7 +132,7 @@ namespace UniversalSoundBoard.Pages
         private void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
         {
             localSettings.Values[FileManager.playingSoundsListVisibleKey] = PlayingSoundsListToggle.IsOn;
-            (App.Current as App)._itemViewHolder.playingSoundsListVisibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+            (App.Current as App)._itemViewHolder.PlayingSoundsListVisibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
 
             SavePlayingSoundsStackPanel.Visibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
 
@@ -145,7 +145,7 @@ namespace UniversalSoundBoard.Pages
         private void PlayOneSoundAtOnceToggle_Toggled(object sender, RoutedEventArgs e)
         {
             localSettings.Values[FileManager.playOneSoundAtOnceKey] = PlayOneSoundAtOnceToggle.IsOn;
-            (App.Current as App)._itemViewHolder.playOneSoundAtOnce = PlayOneSoundAtOnceToggle.IsOn;
+            (App.Current as App)._itemViewHolder.PlayOneSoundAtOnce = PlayOneSoundAtOnceToggle.IsOn;
         }
         
         private void ThemeRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -164,19 +164,19 @@ namespace UniversalSoundBoard.Pages
         private void ShowCategoryToggle_Toggled(object sender, RoutedEventArgs e)
         {
             localSettings.Values[FileManager.showCategoryIconKey] = ShowCategoryToggle.IsOn;
-            (App.Current as App)._itemViewHolder.showCategoryIcon = ShowCategoryToggle.IsOn;
+            (App.Current as App)._itemViewHolder.ShowCategoryIcon = ShowCategoryToggle.IsOn;
         }
         
         private void ShowSoundsPivotToggle_Toggled(object sender, RoutedEventArgs e)
         {
             localSettings.Values[FileManager.showSoundsPivotKey] = ShowSoundsPivotToggle.IsOn;
-            (App.Current as App)._itemViewHolder.showSoundsPivot = ShowSoundsPivotToggle.IsOn;
+            (App.Current as App)._itemViewHolder.ShowSoundsPivot = ShowSoundsPivotToggle.IsOn;
         }
 
         private void SavePlayingSoundsToggle_Toggled(object sender, RoutedEventArgs e)
         {
             localSettings.Values[FileManager.savePlayingSoundsKey] = SavePlayingSoundsToggle.IsOn;
-            (App.Current as App)._itemViewHolder.savePlayingSounds = SavePlayingSoundsToggle.IsOn;
+            (App.Current as App)._itemViewHolder.SavePlayingSounds = SavePlayingSoundsToggle.IsOn;
 
             Task.Run(() =>
             {
@@ -206,7 +206,7 @@ namespace UniversalSoundBoard.Pages
         
         private async void ImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.ImportDataZip(ContentDialogs.ImportFile);
+            await FileManager.ImportData(ContentDialogs.ImportFile);
         }
     }
 }

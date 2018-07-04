@@ -62,7 +62,7 @@
                            FontSize="20" 
                            RelativePanel.AlignRightWithPanel="True" 
                            RelativePanel.AlignTopWithPanel="True"
-                           Visibility="{Binding showCategoryIcon}" />
+                           Visibility="{Binding ShowCategoryIcon}" />
             </RelativePanel>
 
             <RelativePanel Grid.Row="1" 

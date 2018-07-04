@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.Linq;
 using Windows.Media.Playback;
+using static UniversalSoundBoard.DataAccess.DatabaseOperations;
 
 namespace UniversalSoundBoard.Models
 {
@@ -15,7 +16,7 @@ namespace UniversalSoundBoard.Models
     
     public class PlayingSound
     {
-        public string Uuid { get; set; }
+        public Guid Uuid { get; set; }
         public Sound CurrentSound { get; set; }
         public List<Sound> Sounds { get; set; }
         public MediaPlayer MediaPlayer { get; set; }
@@ -64,7 +65,7 @@ namespace UniversalSoundBoard.Models
             Randomly = false;
         }
 
-        public PlayingSound(string uuid, List<Sound> sounds, MediaPlayer player, int repetitions, bool randomly, int current)
+        public PlayingSound(Guid uuid, List<Sound> sounds, MediaPlayer player, int repetitions, bool randomly, int current)
         {
             Uuid = uuid;
             Sounds = new List<Sound>();
@@ -96,7 +97,7 @@ namespace UniversalSoundBoard.Models
 
         public static PlayingSound GetPlayingSoundByMediaPlayer(MediaPlayer player)
         {
-            foreach(PlayingSound playingSound in (App.Current as App)._itemViewHolder.playingSounds)
+            foreach(PlayingSound playingSound in (App.Current as App)._itemViewHolder.PlayingSounds)
             {
                 if(playingSound.MediaPlayer == player)
                 {

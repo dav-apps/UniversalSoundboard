@@ -397,4 +397,46 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Unpin" xml:space="preserve">
     <value>Von Start lösen</value>
   </data>
+  <data name="Account-UpgradeLink.Content" xml:space="preserve">
+    <value>Brauchst du mehr?</value>
+  </data>
+  <data name="Account-Title" xml:space="preserve">
+    <value>Dein Account</value>
+  </data>
+  <data name="LoginButton.Content" xml:space="preserve">
+    <value>Anmelden</value>
+  </data>
+  <data name="Account-UsedStorage" xml:space="preserve">
+    <value>| GB von _ GB verwendet</value>
+  </data>
+  <data name="Account-LogoutMessage" xml:space="preserve">
+    <value>Bist du dir sicher, dass du dich abmelden möchtest?</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Abmelden</value>
+  </data>
+  <data name="LogoutButton.Content" xml:space="preserve">
+    <value>Abmelden</value>
+  </data>
+  <data name="Account-LandingText1.Text" xml:space="preserve">
+    <value>Nutze das gleiche Soundboard auf all deinen Geräten</value>
+  </data>
+  <data name="Account-LandingText2.Text" xml:space="preserve">
+    <value>Stelle sicher, dass deine Sounds nicht verloren gehen, wenn du dein Gerät verlierst oder zurücksetzt</value>
+  </data>
+  <data name="Account-LandingText3.Text" xml:space="preserve">
+    <value>Sehe, welche Sounds gerade auf deinen anderen Geräten abgespielt werden</value>
+  </data>
+  <data name="Account-LandingText4.Text" xml:space="preserve">
+    <value>Sichere dein Soundboard und greife von überall darauf zu</value>
+  </data>
+  <data name="Account-TryOut.Text" xml:space="preserve">
+    <value>Kostenlos ausprobieren</value>
+  </data>
+  <data name="Account-VisitWebsiteLink.Content" xml:space="preserve">
+    <value>Besuche dav-apps.tech</value>
+  </data>
+  <data name="SignupButton.Content" xml:space="preserve">
+    <value>Registrieren</value>
+  </data>
 </root>
