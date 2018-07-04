@@ -121,7 +121,7 @@ namespace UniversalSoundBoard.Pages
             }
             else
             {
-                (App.Current as App)._itemViewHolder.savePlayingSounds = (bool)localSettings.Values[FileManager.savePlayingSoundsKey];
+                (App.Current as App)._itemViewHolder.SavePlayingSounds = (bool)localSettings.Values[FileManager.savePlayingSoundsKey];
             }
         }
         
