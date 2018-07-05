@@ -252,9 +252,12 @@ namespace UniversalSoundBoard.DataAccess
             {
                 foreach (var category in db.Query<OldCategoryDatabaseModel>(selectCommandText))
                 {
+                    var categoryUuid = Guid.NewGuid();
+                    Guid.TryParse(category.uuid, out categoryUuid);
+
                     entries.Add(new Category
                     {
-                        Uuid = category.uuid,
+                        Uuid = categoryUuid,
                         Name = category.name,
                         Icon = category.icon
                     });

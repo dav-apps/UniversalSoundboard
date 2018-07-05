@@ -7,7 +7,7 @@ namespace UniversalSoundboard.Models
     {
         [PrimaryKey, AutoIncrement]
         public int id { get; set; }
-        public Guid uuid { get; set; }
+        public string uuid { get; set; }
         public string name { get; set; }
         public string icon { get; set; }
     }
@@ -28,7 +28,7 @@ namespace UniversalSoundboard.Models
     {
         [PrimaryKey, AutoIncrement]
         public int id { get; set; }
-        public Guid uuid { get; set; }
+        public string uuid { get; set; }
         public string sound_ids { get; set; }
         public int current { get; set; }
         public int repetitions { get; set; }
