@@ -100,7 +100,7 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             // Delete the sound itself
-            Dav.Database.DeleteTableObject(soundTableObject);
+            soundTableObject.Delete();
         }
         #endregion
 
