@@ -16,12 +16,12 @@ namespace UniversalSoundboard.Models
     {
         [PrimaryKey, AutoIncrement]
         public int id { get; set; }
-        public Guid uuid { get; set; }
+        public string uuid { get; set; }
         public string name { get; set; }
         public bool favourite { get; set; }
         public string sound_ext { get; set; }
         public string image_ext { get; set; }
-        public Guid category_id { get; set; }
+        public string category_id { get; set; }
     }
 
     public class OldPlayingSoundDatabaseModel

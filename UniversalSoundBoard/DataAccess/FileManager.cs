@@ -441,7 +441,11 @@ namespace UniversalSoundBoard.DataAccess
                     StorageFile audioFile = await soundsFolder.TryGetItemAsync(sound.uuid + "." + sound.sound_ext) as StorageFile;
                     if (audioFile != null)
                     {
-                        Guid soundUuid = await AddSound(sound.uuid, WebUtility.HtmlDecode(sound.name), sound.category_id, audioFile);
+                        Guid soundGuid = Guid.Empty;
+                        Guid.TryParse(sound.uuid, out soundGuid);
+                        Guid categoryGuid = Guid.Empty;
+                        Guid.TryParse(sound.category_id, out categoryGuid);
+                        Guid soundUuid = await AddSound(soundGuid, WebUtility.HtmlDecode(sound.name), categoryGuid, audioFile);
 
                         if (imagesFolder != null && !String.IsNullOrEmpty(sound.image_ext))
                         {
