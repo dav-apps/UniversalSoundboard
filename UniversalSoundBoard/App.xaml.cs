@@ -108,6 +108,7 @@ namespace UniversalSoundBoard
             ProjectInterface.RetrieveConstants = new RetrieveConstants();
             ProjectInterface.LocalDataSettings = new LocalDataSettings();
             ProjectInterface.TriggerAction = new UniversalSoundboard.Common.TriggerAction();
+            ProjectInterface.GeneralMethods = new GeneralMethods();
             (App.Current as App)._itemViewHolder.User = new DavUser();
 
             FileManager.CreateCategoriesList();

@@ -106,6 +106,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\GeneralMethods.cs" />
     <Compile Include="Common\LocalDataSettings.cs" />
     <Compile Include="Common\RetrieveConstants.cs" />
     <Compile Include="Common\TriggerAction.cs" />
