@@ -230,9 +230,6 @@ namespace UniversalSoundBoard
 
         protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
-            //var rootFrame = CreateRootFrame(args.PreviousExecutionState, "");
-            //Frame rootFrame = Window.Current.Content as Frame;
-
             if (args.PreviousExecutionState == ApplicationExecutionState.NotRunning)
             {
                 ShareOperation shareOperation = args.ShareOperation;

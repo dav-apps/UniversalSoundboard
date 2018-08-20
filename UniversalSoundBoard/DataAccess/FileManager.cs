@@ -67,7 +67,7 @@ namespace UniversalSoundBoard.DataAccess
         public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
         //public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
         public const string LoginImplicitUrl = "https://dav-apps.tech/login_implicit";
-        //public const string LoginImplicitUrl = "https://f3beec64.ngrok.io/login_implicit";
+        //public const string LoginImplicitUrl = "https://8579bbfd.ngrok.io/login_implicit";
         public const int AppId = 1;                 // Dev: 8; Prod: 1
         public const int SoundFileTableId = 6;      // Dev: 11; Prod: 6
         public const int ImageFileTableId = 7;      // Dev: 15; Prod: 7
@@ -785,6 +785,7 @@ namespace UniversalSoundBoard.DataAccess
                 // Create new image file
                 Guid imageFileUuid = Guid.NewGuid();
                 DatabaseOperations.AddImageFile(imageFileUuid, newImageFile);
+                DatabaseOperations.UpdateSound(soundUuid, null, null, null, imageFileUuid.ToString(), null);
             }
             else
             {

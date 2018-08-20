@@ -427,11 +427,11 @@ namespace UniversalSoundBoard.Components
                 var deferral = args.Request.GetDeferral();
                 var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
                 List<StorageFile> selectedFiles = new List<StorageFile>();
+                StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
 
                 // Copy file into the temp folder and share it
                 foreach (Sound sound in (App.Current as App)._itemViewHolder.SelectedSounds)
                 {
-                    StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
                     StorageFile audioFile = await sound.GetAudioFile();
                     StorageFile tempFile;
                     if (audioFile == null)
