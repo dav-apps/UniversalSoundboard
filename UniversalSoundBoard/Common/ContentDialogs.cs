@@ -25,6 +25,7 @@ namespace UniversalSoundBoard.Common
         public static ListView SoundsListView;
         public static ComboBox RepeatsComboBox;
         public static ObservableCollection<Sound> SoundsList;
+        public static ProgressBar downloadFileProgressBar;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -35,6 +36,7 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog ImportDataContentDialog;
         public static ContentDialog PlaySoundsSuccessivelyContentDialog;
         public static ContentDialog LogoutContentDialog;
+        public static ContentDialog DownloadFileContentDialog;
         
 
         public static ContentDialog CreateNewCategoryContentDialog()
@@ -472,6 +474,26 @@ namespace UniversalSoundBoard.Common
             };
 
             return LogoutContentDialog;
+        }
+
+        public static ContentDialog CreateDownloadFileContentDialog(string filename)
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            DownloadFileContentDialog = new ContentDialog
+            {
+                Title = string.Format(loader.GetString("DownloadFileContentDialog-Title"), filename),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+            };
+
+            StackPanel content = new StackPanel();
+            content.Margin = new Thickness(0, 30, 0, 0);
+            content.Orientation = Orientation.Vertical;
+            downloadFileProgressBar = new ProgressBar();
+            content.Children.Add(downloadFileProgressBar);
+            DownloadFileContentDialog.Content = content;
+
+            return DownloadFileContentDialog;
         }
     }
 }

@@ -58,5 +58,10 @@ namespace UniversalSoundBoard.Models
         {
             return FileManager.GetAudioFileExtension(Uuid);
         }
+
+        public void DownloadFile(Progress<int> progress)
+        {
+            FileManager.DownloadAudioFileOfSound(Uuid, progress);
+        }
     }
 }

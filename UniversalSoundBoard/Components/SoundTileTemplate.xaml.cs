@@ -27,6 +27,7 @@ namespace UniversalSoundBoard.Components
         MenuFlyoutItem SetFavouriteFlyout;
         MenuFlyoutSubItem CategoriesFlyoutSubItem;
         MenuFlyoutItem PinFlyoutItem;
+        private bool isDownloadFileContentDialogVisible = false;
 
 
         public SoundTileTemplate()
@@ -361,11 +362,47 @@ namespace UniversalSoundBoard.Components
             }
         }
 
-        private void ShareFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void ShareFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            DataTransferManager.ShowShareUI();
+            // Check if the file is available locally
+            if(await Sound.GetAudioFile() == null)
+            {
+                // Download the file and show the download dialog
+                Progress<int> progress = new Progress<int>(ShareFileDownloadProgress);
+                Sound.DownloadFile(progress);
+
+                ContentDialogs.CreateDownloadFileContentDialog(Sound.Name + "." + Sound.GetAudioFileExtension());
+                ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
+                isDownloadFileContentDialogVisible = true;
+                ContentDialogs.DownloadFileContentDialog.Closed += DownloadFileContentDialog_Closed;
+                await ContentDialogs.DownloadFileContentDialog.ShowAsync();
+            }
+            else
+            {
+                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+                dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+                DataTransferManager.ShowShareUI();
+            }
+        }
+
+        private void DownloadFileContentDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            isDownloadFileContentDialogVisible = false;
+        }
+
+        private void ShareFileDownloadProgress(int value)
+        {
+            if(value == 101 && isDownloadFileContentDialogVisible)
+            {
+                // Hide the download dialog
+                ContentDialogs.DownloadFileContentDialog.Hide();
+                isDownloadFileContentDialogVisible = false;
+
+                // Show the share dialog
+                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+                dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+                DataTransferManager.ShowShareUI();
+            }
         }
         
         private async void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
@@ -377,16 +414,11 @@ namespace UniversalSoundBoard.Components
             // Copy file with better name into temp folder and share it
             StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
             var audioFile = await Sound.GetAudioFile();
-            StorageFile tempFile;
-            if (audioFile == null)
-            {
-                // Get the file from the stream
-                audioFile = await StorageFile.CreateStreamedFileFromUriAsync(Sound.Uuid.ToString(), Sound.GetAudioUri(), null);
-            }
-            tempFile = await audioFile.CopyAsync(tempFolder, Sound.Name + "." + Sound.GetAudioFileExtension(), NameCollisionOption.ReplaceExisting);
+            if (audioFile == null) return;
 
+            StorageFile tempFile = await audioFile.CopyAsync(tempFolder, Sound.Name + "." + Sound.GetAudioFileExtension(), NameCollisionOption.ReplaceExisting);
             sounds.Add(tempFile);
-            
+
             DataRequest request = args.Request;
             request.Data.SetStorageItems(sounds);
 

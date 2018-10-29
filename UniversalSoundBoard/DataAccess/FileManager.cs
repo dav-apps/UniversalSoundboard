@@ -64,16 +64,16 @@ namespace UniversalSoundBoard.DataAccess
         public static bool skipAutoSuggestBoxTextChanged = false;
 
         // dav Keys
-        public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
-        //public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
-        public const string LoginImplicitUrl = "https://dav-apps.tech/login_implicit";
-        //public const string LoginImplicitUrl = "https://8579bbfd.ngrok.io/login_implicit";
-        public const int AppId = 1;                 // Dev: 8; Prod: 1
-        public const int SoundFileTableId = 6;      // Dev: 11; Prod: 6
-        public const int ImageFileTableId = 7;      // Dev: 15; Prod: 7
-        public const int CategoryTableId = 8;       // Dev: 16; Prod: 8
-        public const int SoundTableId = 5;          // Dev: 17; Prod: 5
-        public const int PlayingSoundTableId = 9;   // Dev: 18; Prod: 9
+        //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
+        public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
+        //public const string LoginImplicitUrl = "https://dav-apps.herokuapp.com/login_implicit";
+        public const string LoginImplicitUrl = "https://fb08143e.ngrok.io/login_implicit";
+        public const int AppId = 8;                 // Dev: 8; Prod: 1
+        public const int SoundFileTableId = 11;      // Dev: 11; Prod: 6
+        public const int ImageFileTableId = 15;      // Dev: 15; Prod: 7
+        public const int CategoryTableId = 16;       // Dev: 16; Prod: 8
+        public const int SoundTableId = 17;          // Dev: 17; Prod: 5
+        public const int PlayingSoundTableId = 18;   // Dev: 18; Prod: 9
 
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
@@ -273,7 +273,7 @@ namespace UniversalSoundBoard.DataAccess
             StorageFolder exportFolder = await GetExportFolderAsync();
             var progress = new Progress<int>(ExportProgress);
 
-            await DavDatabase.ExportData(new DirectoryInfo(exportFolder.Path), progress);
+            await DataManager.ExportData(new DirectoryInfo(exportFolder.Path), progress);
 
             (App.Current as App)._itemViewHolder.ExportMessage = stringLoader.GetString("ExportMessage-3");
 
@@ -341,7 +341,7 @@ namespace UniversalSoundBoard.DataAccess
                     await UpgradeNewDataModel(importFolder, true, progress);
                     break;
                 default:
-                    DavDatabase.ImportData(new DirectoryInfo(importFolder.Path), progress);
+                    DataManager.ImportData(new DirectoryInfo(importFolder.Path), progress);
                     break;
             }
 
@@ -1119,6 +1119,13 @@ namespace UniversalSoundBoard.DataAccess
                 return await soundTableObject.GetFileStream();
             else
                 return null;
+        }
+
+        public static void DownloadAudioFileOfSound(Guid soundUuid, Progress<int> progress)
+        {
+            var soundTableObject = GetSoundFileTableObject(soundUuid);
+            if (soundTableObject != null)
+                soundTableObject.DownloadFile(progress);
         }
 
         private static TableObject GetSoundFileTableObject(Guid soundUuid)
