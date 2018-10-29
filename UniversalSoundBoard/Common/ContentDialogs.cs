@@ -37,6 +37,7 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog PlaySoundsSuccessivelyContentDialog;
         public static ContentDialog LogoutContentDialog;
         public static ContentDialog DownloadFileContentDialog;
+        public static ContentDialog DownloadFileErrorContentDialog;
         
 
         public static ContentDialog CreateNewCategoryContentDialog()
@@ -494,6 +495,20 @@ namespace UniversalSoundBoard.Common
             DownloadFileContentDialog.Content = content;
 
             return DownloadFileContentDialog;
+        }
+
+        public static ContentDialog CreateDownloadFileErrorContentDialog()
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            DownloadFileErrorContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("DownloadFileErrorContentDialog-Title"),
+                Content = loader.GetString("DownloadFileErrorContentDialog-Message"),
+                PrimaryButtonText = loader.GetString("ContentDialog-Okay")
+            };
+
+            return DownloadFileErrorContentDialog;
         }
     }
 }
