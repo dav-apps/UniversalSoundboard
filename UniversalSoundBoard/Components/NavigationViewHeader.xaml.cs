@@ -468,12 +468,9 @@ namespace UniversalSoundBoard.Components
                 foreach (Sound sound in (App.Current as App)._itemViewHolder.SelectedSounds)
                 {
                     StorageFile audioFile = await sound.GetAudioFile();
-                    StorageFile tempFile;
-                    if (audioFile == null)
-                    {
-                        audioFile = await StorageFile.CreateStreamedFileFromUriAsync(sound.Uuid.ToString(), sound.GetAudioUri(), null);
-                    }
-                    tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + "." + sound.GetAudioFileExtension(), NameCollisionOption.ReplaceExisting);
+                    if (audioFile == null) return;
+
+                    StorageFile tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + "." + sound.GetAudioFileExtension(), NameCollisionOption.ReplaceExisting);
                     selectedFiles.Add(tempFile);
                 }
                 
