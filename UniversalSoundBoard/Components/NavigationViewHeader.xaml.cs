@@ -27,6 +27,7 @@ namespace UniversalSoundBoard.Components
         List<string> Suggestions;
         int moreButtonClicked = 0;
         private bool downloadFileWasCanceled = false;
+        private bool downloadFileThrewError = false;
 
 
         public NavigationViewHeader()
@@ -417,9 +418,10 @@ namespace UniversalSoundBoard.Components
         private async void ShareButton_Click(object sender, RoutedEventArgs e)
         {
             downloadFileWasCanceled = false;
+            downloadFileThrewError = false;
 
             // Check if all sounds are available locally
-            foreach(var sound in (App.Current as App)._itemViewHolder.SelectedSounds)
+            foreach (var sound in (App.Current as App)._itemViewHolder.SelectedSounds)
             {
                 if(await sound.GetAudioFile() == null)
                 {
@@ -434,11 +436,20 @@ namespace UniversalSoundBoard.Components
                 }
 
                 if (downloadFileWasCanceled) return;
+                if (downloadFileThrewError) break;
             }
 
-            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            DataTransferManager.ShowShareUI();
+            if (downloadFileThrewError)
+            {
+                var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
+                await errorContentDialog.ShowAsync();
+            }
+            else
+            {
+                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+                dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+                DataTransferManager.ShowShareUI();
+            }
         }
 
         private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -448,7 +459,12 @@ namespace UniversalSoundBoard.Components
 
         private void ShareFileDownloadProgress(int value)
         {
-            if(value == 101 && !downloadFileWasCanceled)
+            if(value < 0)
+            {
+                downloadFileThrewError = true;
+                ContentDialogs.DownloadFileContentDialog.Hide();
+            }
+            else if(value > 100 && !downloadFileWasCanceled)
             {
                 // Hide the download dialog
                 ContentDialogs.DownloadFileContentDialog.Hide();

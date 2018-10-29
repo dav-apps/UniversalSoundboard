@@ -14,7 +14,6 @@ using Microsoft.Toolkit.Uwp.UI.Animations;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Common;
 using Windows.UI.StartScreen;
-using System.Diagnostics;
 using Windows.UI.Notifications;
 
 namespace UniversalSoundBoard.Components
@@ -28,6 +27,7 @@ namespace UniversalSoundBoard.Components
         MenuFlyoutSubItem CategoriesFlyoutSubItem;
         MenuFlyoutItem PinFlyoutItem;
         private bool downloadFileWasCanceled = false;
+        private bool downloadFileThrewError = false;
 
 
         public SoundTileTemplate()
@@ -365,6 +365,7 @@ namespace UniversalSoundBoard.Components
         private async void ShareFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             downloadFileWasCanceled = false;
+            downloadFileThrewError = false;
 
             // Check if the file is available locally
             if (await Sound.GetAudioFile() == null)
@@ -381,9 +382,17 @@ namespace UniversalSoundBoard.Components
 
             if (downloadFileWasCanceled) return;
 
-            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            DataTransferManager.ShowShareUI();
+            if (downloadFileThrewError)
+            {
+                var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
+                await errorContentDialog.ShowAsync();
+            }
+            else
+            {
+                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+                dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+                DataTransferManager.ShowShareUI();
+            }
         }
 
         private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -393,7 +402,12 @@ namespace UniversalSoundBoard.Components
         
         private void ShareFileDownloadProgress(int value)
         {
-            if(value == 101 && !downloadFileWasCanceled)
+            if(value < 0)
+            {
+                downloadFileThrewError = true;
+                ContentDialogs.DownloadFileContentDialog.Hide();
+            }
+            else if(value > 100 && !downloadFileWasCanceled)
             {
                 // Hide the download dialog
                 ContentDialogs.DownloadFileContentDialog.Hide();
