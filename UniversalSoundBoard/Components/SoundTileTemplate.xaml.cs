@@ -27,7 +27,7 @@ namespace UniversalSoundBoard.Components
         MenuFlyoutItem SetFavouriteFlyout;
         MenuFlyoutSubItem CategoriesFlyoutSubItem;
         MenuFlyoutItem PinFlyoutItem;
-        private bool isDownloadFileContentDialogVisible = false;
+        private bool downloadFileWasCanceled = false;
 
 
         public SoundTileTemplate()
@@ -364,8 +364,10 @@ namespace UniversalSoundBoard.Components
 
         private async void ShareFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            downloadFileWasCanceled = false;
+
             // Check if the file is available locally
-            if(await Sound.GetAudioFile() == null)
+            if (await Sound.GetAudioFile() == null)
             {
                 // Download the file and show the download dialog
                 Progress<int> progress = new Progress<int>(ShareFileDownloadProgress);
@@ -373,35 +375,28 @@ namespace UniversalSoundBoard.Components
 
                 ContentDialogs.CreateDownloadFileContentDialog(Sound.Name + "." + Sound.GetAudioFileExtension());
                 ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
-                isDownloadFileContentDialogVisible = true;
-                ContentDialogs.DownloadFileContentDialog.Closed += DownloadFileContentDialog_Closed;
+                ContentDialogs.DownloadFileContentDialog.SecondaryButtonClick += DownloadFileContentDialog_SecondaryButtonClick;
                 await ContentDialogs.DownloadFileContentDialog.ShowAsync();
             }
-            else
-            {
-                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-                dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-                DataTransferManager.ShowShareUI();
-            }
+
+            if (downloadFileWasCanceled) return;
+
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            DataTransferManager.ShowShareUI();
         }
 
-        private void DownloadFileContentDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            isDownloadFileContentDialogVisible = false;
+            downloadFileWasCanceled = true;
         }
-
+        
         private void ShareFileDownloadProgress(int value)
         {
-            if(value == 101 && isDownloadFileContentDialogVisible)
+            if(value == 101 && !downloadFileWasCanceled)
             {
                 // Hide the download dialog
                 ContentDialogs.DownloadFileContentDialog.Hide();
-                isDownloadFileContentDialogVisible = false;
-
-                // Show the share dialog
-                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-                dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-                DataTransferManager.ShowShareUI();
             }
         }
         

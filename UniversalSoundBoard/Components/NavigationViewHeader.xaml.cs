@@ -26,8 +26,9 @@ namespace UniversalSoundBoard.Components
         public static ObservableCollection<Sound> PlaySoundsList;
         List<string> Suggestions;
         int moreButtonClicked = 0;
+        private bool downloadFileWasCanceled = false;
 
-        
+
         public NavigationViewHeader()
         {
             InitializeComponent();
@@ -413,11 +414,45 @@ namespace UniversalSoundBoard.Components
             FileManager.AdjustLayout();
         }
         
-        private void ShareButton_Click(object sender, RoutedEventArgs e)
+        private async void ShareButton_Click(object sender, RoutedEventArgs e)
         {
+            downloadFileWasCanceled = false;
+
+            // Check if all sounds are available locally
+            foreach(var sound in (App.Current as App)._itemViewHolder.SelectedSounds)
+            {
+                if(await sound.GetAudioFile() == null)
+                {
+                    // Download the file and show the download dialog
+                    Progress<int> progress = new Progress<int>(ShareFileDownloadProgress);
+                    sound.DownloadFile(progress);
+
+                    ContentDialogs.CreateDownloadFileContentDialog(sound.Name + "." + sound.GetAudioFileExtension());
+                    ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
+                    ContentDialogs.DownloadFileContentDialog.SecondaryButtonClick += DownloadFileContentDialog_SecondaryButtonClick;
+                    await ContentDialogs.DownloadFileContentDialog.ShowAsync();
+                }
+
+                if (downloadFileWasCanceled) return;
+            }
+
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
             DataTransferManager.ShowShareUI();
+        }
+
+        private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            downloadFileWasCanceled = true;
+        }
+
+        private void ShareFileDownloadProgress(int value)
+        {
+            if(value == 101 && !downloadFileWasCanceled)
+            {
+                // Hide the download dialog
+                ContentDialogs.DownloadFileContentDialog.Hide();
+            }
         }
         
         private async void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
