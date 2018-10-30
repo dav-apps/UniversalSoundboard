@@ -96,6 +96,7 @@ namespace UniversalSoundBoard.Components
                     MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
                     MediaPlayerElement.MediaPlayer.MediaEnded -= Player_MediaEnded;
                     MediaPlayerElement.MediaPlayer.MediaEnded += Player_MediaEnded;
+                    PlayingSound.MediaPlayer.CommandManager.PreviousReceived += MediaPlayerCommandManager_PreviousReceived;
                     ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
                     ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
                     PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
@@ -109,7 +110,18 @@ namespace UniversalSoundBoard.Components
                 }
             }
         }
-        
+
+        private void MediaPlayerCommandManager_PreviousReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPreviousReceivedEventArgs args)
+        {
+            if(PlayingSound.MediaPlayer.PlaybackSession.Position.Seconds > 5)
+            {
+                args.Handled = true;
+
+                // Move the state of the current sound to the beginning
+                PlayingSound.MediaPlayer.PlaybackSession.Position = new TimeSpan(0);
+            }
+        }
+
         private void RemovePlayingSound()
         {
             if (PlayingSound.MediaPlayer != null)
@@ -119,6 +131,7 @@ namespace UniversalSoundBoard.Components
                 ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
                 MediaPlayerElement.SetMediaPlayer(null);
                 PlayingSoundName.Text = "";
+                PlayingSound.MediaPlayer.SystemMediaTransportControls.IsEnabled = false;
                 PlayingSound.MediaPlayer = null;
             }
             SoundPage.RemovePlayingSound(PlayingSound);

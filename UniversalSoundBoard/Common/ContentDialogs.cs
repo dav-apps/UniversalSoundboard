@@ -505,7 +505,7 @@ namespace UniversalSoundBoard.Common
             {
                 Title = loader.GetString("DownloadFileErrorContentDialog-Title"),
                 Content = loader.GetString("DownloadFileErrorContentDialog-Message"),
-                PrimaryButtonText = loader.GetString("ContentDialog-Okay")
+                CloseButtonText = loader.GetString("ContentDialog-Okay")
             };
 
             return DownloadFileErrorContentDialog;
