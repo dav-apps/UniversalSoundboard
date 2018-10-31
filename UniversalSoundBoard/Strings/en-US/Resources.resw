@@ -223,10 +223,10 @@
   <data name="Version.Text" xml:space="preserve">
     <value>1.5.2</value>
   </data>
-  <data name="PlayingSound_CastButton.Label" xml:space="preserve">
+  <data name="PlayingSound_CastButton.Text" xml:space="preserve">
     <value>Cast to Device</value>
   </data>
-  <data name="PlayingSound_RepeatButton.Label" xml:space="preserve">
+  <data name="PlayingSound_RepeatButton.Text" xml:space="preserve">
     <value>Repeat</value>
   </data>
   <data name="PlayingSoundsListToggle.Header" xml:space="preserve">
@@ -463,5 +463,8 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="DownloadFileErrorContentDialog-Title" xml:space="preserve">
     <value>Fehler beim herunterladen der Datei</value>
+  </data>
+  <data name="PlayingSound_VolumeButton.Text" xml:space="preserve">
+    <value>Volume</value>
   </data>
 </root>
