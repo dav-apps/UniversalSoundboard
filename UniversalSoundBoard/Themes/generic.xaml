@@ -634,10 +634,10 @@
                                             <AppBarButton x:Name='PreviousTrackButton'
                                                 Icon='Previous'
                                                 Style='{StaticResource AppBarButtonStyle}'
-                                                MediaTransportControlsHelper.DropoutOrder='3' />
+                                                MediaTransportControlsHelper.DropoutOrder='1' />
                                             <AppBarButton x:Name='PlayPauseButton'
                                                 Style='{StaticResource AppBarButtonStyle}'
-                                                MediaTransportControlsHelper.DropoutOrder='23'>
+                                                MediaTransportControlsHelper.DropoutOrder='3'>
                                                 <AppBarButton.Icon>
                                                     <SymbolIcon x:Name='PlayPauseSymbol' Symbol='Play' />
                                                 </AppBarButton.Icon>
@@ -645,31 +645,32 @@
                                             <AppBarButton x:Name='NextTrackButton'
                                                 Icon='Next'
                                                 Style='{StaticResource AppBarButtonStyle}'
-                                                MediaTransportControlsHelper.DropoutOrder='3' />
+                                                MediaTransportControlsHelper.DropoutOrder='2' />
                                             <AppBarSeparator x:Name='RightSeparator'
                                                 Height='0'
                                                 Width ='0'
                                                 Margin='0,0' />
                                             <AppBarButton x:Name="RemoveButton"
-                                                          Style="{StaticResource AppBarButtonStyle}">
+                                                          Style="{StaticResource AppBarButtonStyle}"
+                                                          MediaTransportControlsHelper.DropoutOrder='4'>
                                                 <AppBarButton.Icon>
                                                     <FontIcon Glyph="&#xE10A;" />
                                                 </AppBarButton.Icon>
                                             </AppBarButton>
                                             <AppBarButton x:Name="MenuFlyoutButton" 
                                                           Icon="More"
-                                                          Style='{StaticResource AppBarButtonStyle}'>
+                                                          Style='{StaticResource AppBarButtonStyle}'
+                                                          MediaTransportControlsHelper.DropoutOrder='5'>
                                                 <AppBarButton.Flyout>
                                                     <MenuFlyout>
-                                                        
-                                                            <MenuFlyoutItem x:Name="CastButton"
+                                                        <MenuFlyoutItem x:Name="CastMenuFlyoutItem"
                                                                         x:Uid="PlayingSound_CastButton"
                                                                         Text="Cast">
                                                             <MenuFlyoutItem.Icon>
                                                                 <FontIcon Glyph="&#xEC15;" />
                                                             </MenuFlyoutItem.Icon>
                                                         </MenuFlyoutItem>
-                                                        <MenuFlyoutSubItem x:Name="RepeatButton"
+                                                        <MenuFlyoutSubItem x:Name="RepeatMenuFlyoutItem"
                                                                            x:Uid="PlayingSound_RepeatButton"
                                                                            Text="Repeat"
                                                                            Icon="RepeatAll">
@@ -679,13 +680,20 @@
                                                             <MenuFlyoutItem Text="10x" x:Name="Repeat_10x" />
                                                             <MenuFlyoutItem Text="∞" x:Name="Repeat_endless" />
                                                         </MenuFlyoutSubItem>
-                                                        <MenuFlyoutItem x:Name="VolumeButton"
+                                                        <MenuFlyoutItem x:Name="VolumeMenuFlyoutItem"
                                                                         x:Uid="PlayingSound_VolumeButton"
                                                                         Text="Volume"
                                                                         Icon="Volume">
-                                                            
+                                                            <MenuFlyoutItem.ContextFlyout>
+                                                                <Flyout>
+                                                                    <Slider Name="VolumeSlider" 
+						                                                    Maximum="100" 
+                                                                            Minimum="0" 
+                                                                            Width="150" />
+                                                                </Flyout>
+                                                            </MenuFlyoutItem.ContextFlyout>
                                                         </MenuFlyoutItem>
-                                                        <MenuFlyoutItem x:Name="FavouriteFlyout" 
+                                                        <MenuFlyoutItem x:Name="FavouriteMenuFlyoutItem" 
                                                                         Text="Add to Favorites"
                                                                         Icon="Favorite" />
                                                     </MenuFlyout>

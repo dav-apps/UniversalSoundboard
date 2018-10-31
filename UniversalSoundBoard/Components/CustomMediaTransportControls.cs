@@ -7,6 +7,7 @@ namespace UniversalSoundBoard.Components
     public sealed class CustomMediaTransportControls : MediaTransportControls
     {
         public event EventHandler<EventArgs> Removed;
+        public event EventHandler<EventArgs> VolumeSlider_LostFocus;
         public event EventHandler<EventArgs> FavouriteFlyout_Clicked;
         public event EventHandler<EventArgs> Repeat_1x_Clicked;
         public event EventHandler<EventArgs> Repeat_2x_Clicked;
@@ -14,6 +15,8 @@ namespace UniversalSoundBoard.Components
         public event EventHandler<EventArgs> Repeat_10x_Clicked;
         public event EventHandler<EventArgs> Repeat_endless_Clicked;
         public event EventHandler<EventArgs> CastButton_Clicked;
+        private AppBarButton MenuFlyoutButton;
+        private MenuFlyoutItem VolumeMenuFlyoutItem;
         private MenuFlyoutItem CastButton;
 
         public CustomMediaTransportControls()
@@ -26,11 +29,19 @@ namespace UniversalSoundBoard.Components
             // This is where you would get your custom button and create an event handler for its click method.
             Button RemoveButton = GetTemplateChild("RemoveButton") as Button;
             RemoveButton.Click += RemoveButton_Click;
-            
-            MenuFlyoutItem FavouriteFlyout = GetTemplateChild("FavouriteFlyout") as MenuFlyoutItem;
+
+            MenuFlyoutButton = GetTemplateChild("MenuFlyoutButton") as AppBarButton;
+
+            VolumeMenuFlyoutItem = GetTemplateChild("VolumeMenuFlyoutItem") as MenuFlyoutItem;
+            VolumeMenuFlyoutItem.Click += VolumeMenuFlyout_Click;
+
+            Slider VolumeSlider = GetTemplateChild("VolumeSlider") as Slider;
+            VolumeSlider.LostFocus += VolumeSlider_LostFocusEvent;
+
+            MenuFlyoutItem FavouriteFlyout = GetTemplateChild("FavouriteMenuFlyoutItem") as MenuFlyoutItem;
             FavouriteFlyout.Click += FavouriteFlyout_Click;
 
-            CastButton = GetTemplateChild("CastButton") as MenuFlyoutItem;
+            CastButton = GetTemplateChild("CastMenuFlyoutItem") as MenuFlyoutItem;
             CastButton.Click += CastButton_Click;
 
             MenuFlyoutItem Repeat_1x = GetTemplateChild("Repeat_1x") as MenuFlyoutItem;
@@ -47,8 +58,15 @@ namespace UniversalSoundBoard.Components
             base.OnApplyTemplate();
         }
 
+        private void VolumeMenuFlyout_Click(object sender, RoutedEventArgs e)
+        {
+            VolumeMenuFlyoutItem.ContextFlyout.ShowAt(MenuFlyoutButton);
+        }
+
         // Raise an event on the custom control when 'Removed' is clicked
         private void RemoveButton_Click(object sender, RoutedEventArgs e) => Removed?.Invoke(this, EventArgs.Empty);
+
+        private void VolumeSlider_LostFocusEvent(object sender, RoutedEventArgs e) => VolumeSlider_LostFocus?.Invoke(this, EventArgs.Empty);
 
         private void FavouriteFlyout_Click(object sender, RoutedEventArgs e) => FavouriteFlyout_Clicked?.Invoke(this, EventArgs.Empty);
 

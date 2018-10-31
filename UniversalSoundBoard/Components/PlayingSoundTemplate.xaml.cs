@@ -105,7 +105,7 @@ namespace UniversalSoundBoard.Components
 
                     // Set the text of the add to Favourites Flyout
                     FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
-                    MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteFlyout");
+                    MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteMenuFlyoutItem");
                     FavouriteFlyout.Text = PlayingSound.CurrentSound.Favourite ?
                         FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
                         FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
@@ -268,19 +268,19 @@ namespace UniversalSoundBoard.Components
             
             // Set the text of the Add to Favourites Flyout
             FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
-            AppBarButton FavouriteFlyout = (AppBarButton)transportControlsTemplateRoot.FindName("FavouriteFlyout");
+            MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteMenuFlyoutItem");
 
             if (oldFav)
             {
                 // Remove sound from favourites
                 (App.Current as App)._itemViewHolder.FavouriteSounds.Remove(currentSound);
-                FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+                FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
             }
             else
             {
                 // Add to favourites
                 (App.Current as App)._itemViewHolder.FavouriteSounds.Add(currentSound);
-                FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
+                FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
             }
 
             FileManager.SetSoundAsFavourite(currentSound.Uuid, newFav);
