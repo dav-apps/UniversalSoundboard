@@ -36,7 +36,6 @@
                                         IsNextTrackButtonVisible="True"
                                         IsPreviousTrackButtonVisible="True"
                                         Removed="CustomMediaTransportControls_Removed"
-                                        VolumeSlider_LostFocus="CustomMediaTransportControls_VolumeSlider_LostFocus"
                                         FavouriteFlyout_Clicked="CustomMediaTransportControls_FavouriteFlyout_Clicked"
                                         CastButton_Clicked="CustomMediaTransportControls_CastButton_Clicked"
                                         Repeat_1x_Clicked="CustomMediaTransportControls_Repeat_1x_Clicked"

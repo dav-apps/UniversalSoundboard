@@ -220,6 +220,10 @@ namespace UniversalSoundBoard.Components
                     FavouriteFlyout.Text = PlayingSound.CurrentSound.Favourite ?
                         (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
                         (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+
+                    // Hide or show the Previous button
+                    MediaPlayerElement.TransportControls.IsPreviousTrackButtonVisible = currentItemIndex != 0;
+                    MediaPlayerElement.TransportControls.IsNextTrackButtonVisible = currentItemIndex != PlayingSound.Sounds.Count - 1;
                 }
             });
         }
