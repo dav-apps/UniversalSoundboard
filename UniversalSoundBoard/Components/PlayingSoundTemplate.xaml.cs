@@ -7,6 +7,8 @@ using System.Threading.Tasks;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
+using Windows.Foundation;
+using Windows.Media.Casting;
 using Windows.Media.Playback;
 using Windows.UI;
 using Windows.UI.Core;
@@ -103,10 +105,10 @@ namespace UniversalSoundBoard.Components
 
                     // Set the text of the add to Favourites Flyout
                     FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
-                    AppBarButton FavouriteFlyout = (AppBarButton)transportControlsTemplateRoot.FindName("FavouriteFlyout");
-                    FavouriteFlyout.Label = PlayingSound.CurrentSound.Favourite ?
-                        FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
-                        FavouriteFlyout.Label = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+                    MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteFlyout");
+                    FavouriteFlyout.Text = PlayingSound.CurrentSound.Favourite ?
+                        FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
+                        FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
                 }
             }
         }
@@ -214,8 +216,8 @@ namespace UniversalSoundBoard.Components
 
                     // Set the text of the add to Favourites Flyout
                     FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
-                    AppBarButton FavouriteFlyout = (AppBarButton)transportControlsTemplateRoot.FindName("FavouriteFlyout");
-                    FavouriteFlyout.Label = PlayingSound.CurrentSound.Favourite ?
+                    MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteFlyout");
+                    FavouriteFlyout.Text = PlayingSound.CurrentSound.Favourite ?
                         (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
                         (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
                 }
@@ -279,7 +281,24 @@ namespace UniversalSoundBoard.Components
 
             FileManager.SetSoundAsFavourite(currentSound.Uuid, newFav);
         }
-        
+
+        private void CustomMediaTransportControls_CastButton_Clicked(object sender, EventArgs e)
+        {
+            MenuFlyoutItem castButton = sender as MenuFlyoutItem;
+            GeneralTransform transform = castButton.TransformToVisual(Window.Current.Content as UIElement);
+            Point pt = transform.TransformPoint(new Point(0, 0));
+
+            CastingDevicePicker castingPicker = new CastingDevicePicker();
+            castingPicker.CastingDeviceSelected += CastingPicker_CastingDeviceSelected;
+            castingPicker.Show(new Rect(pt.X, pt.Y, castButton.ActualWidth, castButton.ActualHeight));
+        }
+
+        private async void CastingPicker_CastingDeviceSelected(CastingDevicePicker sender, CastingDeviceSelectedEventArgs args)
+        {
+            CastingConnection connection = args.SelectedCastingDevice.CreateCastingConnection();
+            await connection.RequestStartCastingAsync(PlayingSound.MediaPlayer.GetAsCastingSource());
+        }
+
         private void CustomMediaTransportControls_Repeat_1x_Clicked(object sender, EventArgs e)
         {
             RepeatSound(1);
