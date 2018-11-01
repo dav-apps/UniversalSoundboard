@@ -454,4 +454,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PlayingSound_VolumeButton.Text" xml:space="preserve">
     <value>Lautstärke</value>
   </data>
+  <data name="Export" xml:space="preserve">
+    <value>Exportieren</value>
+  </data>
 </root>

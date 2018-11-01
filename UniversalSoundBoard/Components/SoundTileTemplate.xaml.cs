@@ -260,6 +260,8 @@ namespace UniversalSoundBoard.Components
             SetFavouriteFlyout.Click += SoundTileOptionsSetFavourite_Click;
             MenuFlyoutItem ShareFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("Share") };
             ShareFlyoutItem.Click += ShareFlyoutItem_Click;
+            MenuFlyoutItem ExportFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("Export") };
+            ExportFlyoutItem.Click += ExportFlyoutItem_Click;
             PinFlyoutItem = new MenuFlyoutItem();
             PinFlyoutItem.Text = isPinned ? loader.GetString("Unpin") : loader.GetString("Pin");
             PinFlyoutItem.Click += PinFlyoutItem_Click;
@@ -274,6 +276,7 @@ namespace UniversalSoundBoard.Components
             OptionsFlyout.Items.Add(CategoriesFlyoutSubItem);
             OptionsFlyout.Items.Add(SetFavouriteFlyout);
             OptionsFlyout.Items.Add(ShareFlyoutItem);
+            OptionsFlyout.Items.Add(ExportFlyoutItem);
             OptionsFlyout.Items.Add(PinFlyoutItem);
             OptionsFlyout.Items.Add(separator);
             OptionsFlyout.Items.Add(SetImageFlyout);
@@ -392,6 +395,53 @@ namespace UniversalSoundBoard.Components
                 DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
                 dataTransferManager.DataRequested += DataTransferManager_DataRequested;
                 DataTransferManager.ShowShareUI();
+            }
+        }
+
+        private async void ExportFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            downloadFileWasCanceled = false;
+            downloadFileThrewError = false;
+
+            // Download the file if it is not available locally
+            if (await Sound.GetAudioFile() == null)
+            {
+                // Download the file and show the download dialog
+                Progress<int> progress = new Progress<int>(ShareFileDownloadProgress);
+                Sound.DownloadFile(progress);
+
+                ContentDialogs.CreateDownloadFileContentDialog(Sound.Name + "." + Sound.GetAudioFileExtension());
+                ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
+                ContentDialogs.DownloadFileContentDialog.SecondaryButtonClick += DownloadFileContentDialog_SecondaryButtonClick;
+                await ContentDialogs.DownloadFileContentDialog.ShowAsync();
+            }
+
+            if (downloadFileWasCanceled) return;
+
+            if (downloadFileThrewError)
+            {
+                var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
+                await errorContentDialog.ShowAsync();
+            }
+            else
+            {
+                // Open a folder picker and save the file there
+                var savePicker = new Windows.Storage.Pickers.FileSavePicker();
+                savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary;
+                // Dropdown of file types the user can save the file as
+                savePicker.FileTypeChoices.Add("Audio", new List<string>() { "." + Sound.GetAudioFileExtension() });
+                // Default file name if the user does not type one in or select a file to replace
+                savePicker.SuggestedFileName = Sound.Name;
+
+                StorageFile file = await savePicker.PickSaveFileAsync();
+
+                if(file != null)
+                {
+                    CachedFileManager.DeferUpdates(file);
+                    var audioFile = await Sound.GetAudioFile();
+                    await FileIO.WriteBytesAsync(file, await FileManager.GetBytesAsync(audioFile));
+                    await CachedFileManager.CompleteUpdatesAsync(file);
+                }
             }
         }
 

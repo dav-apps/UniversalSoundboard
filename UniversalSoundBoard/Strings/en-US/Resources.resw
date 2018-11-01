@@ -467,4 +467,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PlayingSound_VolumeButton.Text" xml:space="preserve">
     <value>Volume</value>
   </data>
+  <data name="Export" xml:space="preserve">
+    <value>Export</value>
+  </data>
 </root>
