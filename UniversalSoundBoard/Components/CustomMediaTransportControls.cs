@@ -1,22 +1,26 @@
 ﻿using System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace UniversalSoundBoard.Components
 {
     public sealed class CustomMediaTransportControls : MediaTransportControls
     {
-        public event EventHandler<EventArgs> Removed;
         public event EventHandler<EventArgs> VolumeSlider_LostFocus;
+        public event EventHandler<RangeBaseValueChangedEventArgs> VolumeSlider_ValueChanged;
+        public event EventHandler<EventArgs> RemoveButton_Clicked;
         public event EventHandler<EventArgs> FavouriteFlyout_Clicked;
+        public event EventHandler<EventArgs> CastButton_Clicked;
+        public event EventHandler<EventArgs> MenuFlyoutButton_Clicked;
         public event EventHandler<EventArgs> Repeat_1x_Clicked;
         public event EventHandler<EventArgs> Repeat_2x_Clicked;
         public event EventHandler<EventArgs> Repeat_5x_Clicked;
         public event EventHandler<EventArgs> Repeat_10x_Clicked;
         public event EventHandler<EventArgs> Repeat_endless_Clicked;
-        public event EventHandler<EventArgs> CastButton_Clicked;
         private AppBarButton MenuFlyoutButton;
         private MenuFlyoutItem VolumeMenuFlyoutItem;
+        private Slider VolumeSlider2;
         private MenuFlyoutItem CastButton;
 
         public CustomMediaTransportControls()
@@ -31,12 +35,19 @@ namespace UniversalSoundBoard.Components
             RemoveButton.Click += RemoveButton_Click;
 
             MenuFlyoutButton = GetTemplateChild("MenuFlyoutButton") as AppBarButton;
+            MenuFlyoutButton.Click += MenuFlyoutButton_Click;
+
+            AppBarButton VolumeButton = GetTemplateChild("VolumeMuteButton") as AppBarButton;
 
             VolumeMenuFlyoutItem = GetTemplateChild("VolumeMenuFlyoutItem") as MenuFlyoutItem;
             VolumeMenuFlyoutItem.Click += VolumeMenuFlyout_Click;
 
             Slider VolumeSlider = GetTemplateChild("VolumeSlider") as Slider;
             VolumeSlider.LostFocus += VolumeSlider_LostFocusEvent;
+
+            VolumeSlider2 = GetTemplateChild("VolumeSlider2") as Slider;
+            VolumeSlider2.LostFocus += VolumeSlider_LostFocusEvent;
+            VolumeSlider2.ValueChanged += VolumeSlider2_ValueChanged;
 
             MenuFlyoutItem FavouriteFlyout = GetTemplateChild("FavouriteMenuFlyoutItem") as MenuFlyoutItem;
             FavouriteFlyout.Click += FavouriteFlyout_Click;
@@ -58,19 +69,33 @@ namespace UniversalSoundBoard.Components
             base.OnApplyTemplate();
         }
 
+        public void SetVolumeButtonVisibility(bool visible)
+        {
+            VolumeMenuFlyoutItem.Visibility = visible ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        public void SetVolumeSliderValue(int value)
+        {
+            VolumeSlider2.Value = value;
+        }
+
         private void VolumeMenuFlyout_Click(object sender, RoutedEventArgs e)
         {
             VolumeMenuFlyoutItem.ContextFlyout.ShowAt(MenuFlyoutButton);
         }
 
-        // Raise an event on the custom control when 'Removed' is clicked
-        private void RemoveButton_Click(object sender, RoutedEventArgs e) => Removed?.Invoke(this, EventArgs.Empty);
-
+        // Raise custom events
         private void VolumeSlider_LostFocusEvent(object sender, RoutedEventArgs e) => VolumeSlider_LostFocus?.Invoke(this, EventArgs.Empty);
+
+        private void VolumeSlider2_ValueChanged(object sender, RangeBaseValueChangedEventArgs e) => VolumeSlider_ValueChanged?.Invoke(sender, e);
+
+        private void RemoveButton_Click(object sender, RoutedEventArgs e) => RemoveButton_Clicked?.Invoke(this, EventArgs.Empty);
 
         private void FavouriteFlyout_Click(object sender, RoutedEventArgs e) => FavouriteFlyout_Clicked?.Invoke(this, EventArgs.Empty);
 
         private void CastButton_Click(object sender, RoutedEventArgs e) => CastButton_Clicked?.Invoke(CastButton, EventArgs.Empty);
+
+        private void MenuFlyoutButton_Click(object sender, RoutedEventArgs e) => MenuFlyoutButton_Clicked?.Invoke(this, EventArgs.Empty);
 
         private void Repeat_1x_Click(object sender, RoutedEventArgs e) => Repeat_1x_Clicked?.Invoke(this, EventArgs.Empty);
 

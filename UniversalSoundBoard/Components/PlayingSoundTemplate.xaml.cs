@@ -24,8 +24,9 @@ namespace UniversalSoundBoard.Components
 
         CoreDispatcher dispatcher;
         public string FavouriteFlyoutText = "Add Favorite";
+        private bool skipVolumeSliderValueChangedEvent = false;
 
-        
+
         public PlayingSoundTemplate()
         {
             InitializeComponent();
@@ -50,7 +51,7 @@ namespace UniversalSoundBoard.Components
         private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs eventArgs)
         {
             InitializePlayingSound();
-            SetMediaPlayerElementIsCompact();
+            AdjustLayout();
         }
         
         private void SetDataContext()
@@ -60,18 +61,14 @@ namespace UniversalSoundBoard.Components
         
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SetMediaPlayerElementIsCompact();
+            AdjustLayout();
         }
         
-        private void SetMediaPlayerElementIsCompact()
+        private void AdjustLayout()
         {
-            if(Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
-            {
-                MediaPlayerElement.TransportControls.IsCompact = true;
-            }else
-            {
-                MediaPlayerElement.TransportControls.IsCompact = false;
-            }
+            MediaPlayerElement.TransportControls.IsCompact = Window.Current.Bounds.Width < FileManager.mobileMaxWidth;
+            (MediaPlayerElement.TransportControls as CustomMediaTransportControls).SetVolumeButtonVisibility(Window.Current.Bounds.Width > FileManager.topButtonsCollapsedMaxWidth);
+            MediaPlayerElement.TransportControls.IsVolumeButtonVisible = Window.Current.Bounds.Width > FileManager.topButtonsCollapsedMaxWidth;
         }
         
         private void SetDarkThemeLayout()
@@ -109,6 +106,13 @@ namespace UniversalSoundBoard.Components
                     FavouriteFlyout.Text = PlayingSound.CurrentSound.Favourite ?
                         FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
                         FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+
+                    // Hide or show the Previous and Next buttons
+                    int currentItemIndex = (int)((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemIndex;
+                    MediaPlayerElement.TransportControls.IsPreviousTrackButtonVisible = currentItemIndex != 0;
+                    MediaPlayerElement.TransportControls.IsNextTrackButtonVisible = currentItemIndex != PlayingSound.Sounds.Count - 1;
+
+                    AdjustLayout();
                 }
             }
         }
@@ -216,12 +220,12 @@ namespace UniversalSoundBoard.Components
 
                     // Set the text of the add to Favourites Flyout
                     FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
-                    MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteFlyout");
+                    MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteMenuFlyoutItem");
                     FavouriteFlyout.Text = PlayingSound.CurrentSound.Favourite ?
                         (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
                         (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
 
-                    // Hide or show the Previous button
+                    // Hide or show the Previous and Next buttons
                     MediaPlayerElement.TransportControls.IsPreviousTrackButtonVisible = currentItemIndex != 0;
                     MediaPlayerElement.TransportControls.IsNextTrackButtonVisible = currentItemIndex != PlayingSound.Sounds.Count - 1;
                 }
@@ -237,11 +241,30 @@ namespace UniversalSoundBoard.Components
             }
         }
 
-        private void CustomMediaTransportControls_Removed(object sender, EventArgs e)
+        private void CustomMediaTransportControls_VolumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            if (skipVolumeSliderValueChangedEvent) return;
+            double addedValue = e.NewValue - e.OldValue;
+
+            if ((PlayingSound.MediaPlayer.Volume + addedValue / 100) > 1)
+            {
+                PlayingSound.MediaPlayer.Volume = 1;
+            }
+            else if ((PlayingSound.MediaPlayer.Volume + addedValue / 100) < 0)
+            {
+                PlayingSound.MediaPlayer.Volume = 0;
+            }
+            else
+            {
+                PlayingSound.MediaPlayer.Volume += addedValue / 100;
+            }
+        }
+
+        private void CustomMediaTransportControls_RemoveButton_Clicked(object sender, EventArgs e)
         {
             RemovePlayingSound();
         }
-        
+
         private void CustomMediaTransportControls_FavouriteFlyout_Clicked(object sender, EventArgs e)
         {
             bool oldFav = PlayingSound.CurrentSound.Favourite;
@@ -301,6 +324,14 @@ namespace UniversalSoundBoard.Components
         {
             CastingConnection connection = args.SelectedCastingDevice.CreateCastingConnection();
             await connection.RequestStartCastingAsync(PlayingSound.MediaPlayer.GetAsCastingSource());
+        }
+
+        private void CustomMediaTransportControls_MenuFlyoutButton_Clicked(object sender, EventArgs e)
+        {
+            // Update the value of the volume slider
+            skipVolumeSliderValueChangedEvent = true;
+            (MediaPlayerElement.TransportControls as CustomMediaTransportControls).SetVolumeSliderValue(Convert.ToInt32(PlayingSound.MediaPlayer.Volume * 100));
+            skipVolumeSliderValueChangedEvent = false;
         }
 
         private void CustomMediaTransportControls_Repeat_1x_Clicked(object sender, EventArgs e)
