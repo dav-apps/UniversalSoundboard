@@ -67,7 +67,7 @@ namespace UniversalSoundBoard.DataAccess
         //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
         public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
         //public const string LoginImplicitUrl = "https://dav-apps.herokuapp.com/login_implicit";
-        public const string LoginImplicitUrl = "https://bacb8c5e.ngrok.io/login_implicit";
+        public const string LoginImplicitUrl = "https://b037f4c8.ngrok.io/login_implicit";
         public const int AppId = 8;                 // Dev: 8; Prod: 1
         public const int SoundFileTableId = 11;      // Dev: 11; Prod: 6
         public const int ImageFileTableId = 15;      // Dev: 15; Prod: 7

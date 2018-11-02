@@ -33,8 +33,6 @@
                 <components:CustomMediaTransportControls IsCompact="True"
                                         IsFullWindowButtonVisible="False"
                                         IsZoomButtonVisible="False"
-                                        IsNextTrackButtonVisible="True"
-                                        IsPreviousTrackButtonVisible="True"
                                         VolumeSlider_LostFocus="CustomMediaTransportControls_VolumeSlider_LostFocus"
                                         VolumeSlider_ValueChanged="CustomMediaTransportControls_VolumeSlider_ValueChanged"
                                         RemoveButton_Clicked="CustomMediaTransportControls_RemoveButton_Clicked"

@@ -69,6 +69,21 @@ namespace UniversalSoundBoard.Components
             MediaPlayerElement.TransportControls.IsCompact = Window.Current.Bounds.Width < FileManager.mobileMaxWidth;
             (MediaPlayerElement.TransportControls as CustomMediaTransportControls).SetVolumeButtonVisibility(Window.Current.Bounds.Width > FileManager.topButtonsCollapsedMaxWidth);
             MediaPlayerElement.TransportControls.IsVolumeButtonVisible = Window.Current.Bounds.Width > FileManager.topButtonsCollapsedMaxWidth;
+
+            // Set the text of the add to Favourites Flyout
+            FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
+            MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteMenuFlyoutItem");
+            FavouriteFlyout.Text = PlayingSound.CurrentSound.Favourite ?
+                FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
+                FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+
+            // Hide or show the Previous and Next buttons
+            if(PlayingSound.MediaPlayer != null)
+            {
+                int currentItemIndex = (int)((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemIndex;
+                MediaPlayerElement.TransportControls.IsPreviousTrackButtonVisible = currentItemIndex != 0;
+                MediaPlayerElement.TransportControls.IsNextTrackButtonVisible = currentItemIndex != PlayingSound.Sounds.Count - 1;
+            }
         }
         
         private void SetDarkThemeLayout()
@@ -98,23 +113,19 @@ namespace UniversalSoundBoard.Components
                     PlayingSound.MediaPlayer.CommandManager.PreviousReceived += MediaPlayerCommandManager_PreviousReceived;
                     ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
                     ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
+                    PlayingSound.MediaPlayer.CurrentStateChanged += MediaPlayer_CurrentStateChanged;
                     PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
-
-                    // Set the text of the add to Favourites Flyout
-                    FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
-                    MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteMenuFlyoutItem");
-                    FavouriteFlyout.Text = PlayingSound.CurrentSound.Favourite ?
-                        FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
-                        FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
-
-                    // Hide or show the Previous and Next buttons
-                    int currentItemIndex = (int)((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemIndex;
-                    MediaPlayerElement.TransportControls.IsPreviousTrackButtonVisible = currentItemIndex != 0;
-                    MediaPlayerElement.TransportControls.IsNextTrackButtonVisible = currentItemIndex != PlayingSound.Sounds.Count - 1;
 
                     AdjustLayout();
                 }
             }
+        }
+
+        private async void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args)
+        {
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                AdjustLayout();
+            });
         }
 
         private void MediaPlayerCommandManager_PreviousReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPreviousReceivedEventArgs args)
@@ -218,16 +229,7 @@ namespace UniversalSoundBoard.Components
                     FileManager.SetCurrentOfPlayingSound(PlayingSound.Uuid, currentItemIndex);
                     PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
 
-                    // Set the text of the add to Favourites Flyout
-                    FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
-                    MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteMenuFlyoutItem");
-                    FavouriteFlyout.Text = PlayingSound.CurrentSound.Favourite ?
-                        (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
-                        (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
-
-                    // Hide or show the Previous and Next buttons
-                    MediaPlayerElement.TransportControls.IsPreviousTrackButtonVisible = currentItemIndex != 0;
-                    MediaPlayerElement.TransportControls.IsNextTrackButtonVisible = currentItemIndex != PlayingSound.Sounds.Count - 1;
+                    AdjustLayout();
                 }
             });
         }
