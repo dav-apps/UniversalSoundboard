@@ -15,6 +15,7 @@ using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Common;
 using Windows.UI.StartScreen;
 using Windows.UI.Notifications;
+using System.Threading.Tasks;
 
 namespace UniversalSoundBoard.Components
 {
@@ -28,6 +29,7 @@ namespace UniversalSoundBoard.Components
         MenuFlyoutItem PinFlyoutItem;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
+        private bool downloadFileIsExecuting = false;
 
 
         public SoundTileTemplate()
@@ -367,47 +369,46 @@ namespace UniversalSoundBoard.Components
 
         private async void ShareFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            downloadFileWasCanceled = false;
-            downloadFileThrewError = false;
+            if (!await DownloadFile()) return;
 
-            // Check if the file is available locally
-            if (await Sound.GetAudioFile() == null)
-            {
-                // Download the file and show the download dialog
-                Progress<int> progress = new Progress<int>(ShareFileDownloadProgress);
-                Sound.DownloadFile(progress);
-
-                ContentDialogs.CreateDownloadFileContentDialog(Sound.Name + "." + Sound.GetAudioFileExtension());
-                ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
-                ContentDialogs.DownloadFileContentDialog.SecondaryButtonClick += DownloadFileContentDialog_SecondaryButtonClick;
-                await ContentDialogs.DownloadFileContentDialog.ShowAsync();
-            }
-
-            if (downloadFileWasCanceled) return;
-
-            if (downloadFileThrewError)
-            {
-                var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
-                await errorContentDialog.ShowAsync();
-            }
-            else
-            {
-                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-                dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-                DataTransferManager.ShowShareUI();
-            }
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            DataTransferManager.ShowShareUI();
         }
 
         private async void ExportFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            downloadFileWasCanceled = false;
-            downloadFileThrewError = false;
+            if (!await DownloadFile()) return;
 
-            // Download the file if it is not available locally
-            if (await Sound.GetAudioFile() == null)
+            // Open a folder picker and save the file there
+            var savePicker = new Windows.Storage.Pickers.FileSavePicker();
+            savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary;
+            // Dropdown of file types the user can save the file as
+            savePicker.FileTypeChoices.Add("Audio", new List<string>() { "." + Sound.GetAudioFileExtension() });
+            // Default file name if the user does not type one in or select a file to replace
+            savePicker.SuggestedFileName = Sound.Name;
+
+            StorageFile file = await savePicker.PickSaveFileAsync();
+
+            if (file != null)
+            {
+                CachedFileManager.DeferUpdates(file);
+                var audioFile = await Sound.GetAudioFile();
+                await FileIO.WriteBytesAsync(file, await FileManager.GetBytesAsync(audioFile));
+                await CachedFileManager.CompleteUpdatesAsync(file);
+            }
+        }
+
+        private async Task<bool> DownloadFile()
+        {
+            var downloadStatus = Sound.GetAudioFileDownloadStatus();
+            if (downloadStatus == DownloadStatus.NoFileOrNotLoggedIn) return false;
+
+            if (downloadStatus != DownloadStatus.Downloaded)
             {
                 // Download the file and show the download dialog
-                Progress<int> progress = new Progress<int>(ShareFileDownloadProgress);
+                downloadFileIsExecuting = true;
+                Progress<int> progress = new Progress<int>(FileDownloadProgress);
                 Sound.DownloadFile(progress);
 
                 ContentDialogs.CreateDownloadFileContentDialog(Sound.Name + "." + Sound.GetAudioFileExtension());
@@ -416,48 +417,40 @@ namespace UniversalSoundBoard.Components
                 await ContentDialogs.DownloadFileContentDialog.ShowAsync();
             }
 
-            if (downloadFileWasCanceled) return;
+            if (downloadFileWasCanceled)
+            {
+                downloadFileWasCanceled = false;
+                return false;
+            }
 
             if (downloadFileThrewError)
             {
                 var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
                 await errorContentDialog.ShowAsync();
+                downloadFileThrewError = false;
+                return false;
             }
-            else
-            {
-                // Open a folder picker and save the file there
-                var savePicker = new Windows.Storage.Pickers.FileSavePicker();
-                savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary;
-                // Dropdown of file types the user can save the file as
-                savePicker.FileTypeChoices.Add("Audio", new List<string>() { "." + Sound.GetAudioFileExtension() });
-                // Default file name if the user does not type one in or select a file to replace
-                savePicker.SuggestedFileName = Sound.Name;
-
-                StorageFile file = await savePicker.PickSaveFileAsync();
-
-                if(file != null)
-                {
-                    CachedFileManager.DeferUpdates(file);
-                    var audioFile = await Sound.GetAudioFile();
-                    await FileIO.WriteBytesAsync(file, await FileManager.GetBytesAsync(audioFile));
-                    await CachedFileManager.CompleteUpdatesAsync(file);
-                }
-            }
+            return true;
         }
 
         private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             downloadFileWasCanceled = true;
+            downloadFileIsExecuting = false;
         }
         
-        private void ShareFileDownloadProgress(int value)
+        private void FileDownloadProgress(int value)
         {
-            if(value < 0)
+            if (!downloadFileIsExecuting) return;
+
+            if (value < 0)
             {
+                // There was an error
                 downloadFileThrewError = true;
+                downloadFileIsExecuting = false;
                 ContentDialogs.DownloadFileContentDialog.Hide();
             }
-            else if(value > 100 && !downloadFileWasCanceled)
+            else if (value > 100)
             {
                 // Hide the download dialog
                 ContentDialogs.DownloadFileContentDialog.Hide();

@@ -63,5 +63,18 @@ namespace UniversalSoundBoard.Models
         {
             FileManager.DownloadAudioFileOfSound(Uuid, progress);
         }
+
+        public DownloadStatus GetAudioFileDownloadStatus()
+        {
+            return FileManager.GetSoundFileDownloadStatus(Uuid);
+        }
+    }
+
+    public enum DownloadStatus
+    {
+        NoFileOrNotLoggedIn = 0,
+        NotDownloaded = 1,
+        Downloading = 2,
+        Downloaded = 3
     }
 }

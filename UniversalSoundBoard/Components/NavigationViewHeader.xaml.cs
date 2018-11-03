@@ -28,6 +28,7 @@ namespace UniversalSoundBoard.Components
         int moreButtonClicked = 0;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
+        private bool downloadFileIsExecuting = false;
 
 
         public NavigationViewHeader()
@@ -417,16 +418,31 @@ namespace UniversalSoundBoard.Components
         
         private async void ShareButton_Click(object sender, RoutedEventArgs e)
         {
-            downloadFileWasCanceled = false;
-            downloadFileThrewError = false;
+            if (!await DownloadSelectedFiles()) return;
 
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            DataTransferManager.ShowShareUI();
+        }
+
+        private async void MoreButton_ExportFlyout_Click(object sender, RoutedEventArgs e)
+        {
+            if (!await DownloadSelectedFiles()) return;
+        }
+
+        private async Task<bool> DownloadSelectedFiles()
+        {
             // Check if all sounds are available locally
             foreach (var sound in (App.Current as App)._itemViewHolder.SelectedSounds)
             {
-                if(await sound.GetAudioFile() == null)
+                var downloadStatus = sound.GetAudioFileDownloadStatus();
+                if (downloadStatus == DownloadStatus.NoFileOrNotLoggedIn) continue;
+
+                if(downloadStatus != DownloadStatus.Downloaded)
                 {
                     // Download the file and show the download dialog
-                    Progress<int> progress = new Progress<int>(ShareFileDownloadProgress);
+                    downloadFileIsExecuting = true;
+                    Progress<int> progress = new Progress<int>(FileDownloadProgress);
                     sound.DownloadFile(progress);
 
                     ContentDialogs.CreateDownloadFileContentDialog(sound.Name + "." + sound.GetAudioFileExtension());
@@ -435,7 +451,11 @@ namespace UniversalSoundBoard.Components
                     await ContentDialogs.DownloadFileContentDialog.ShowAsync();
                 }
 
-                if (downloadFileWasCanceled) return;
+                if (downloadFileWasCanceled)
+                {
+                    downloadFileWasCanceled = false;
+                    return false;
+                }
                 if (downloadFileThrewError) break;
             }
 
@@ -443,28 +463,30 @@ namespace UniversalSoundBoard.Components
             {
                 var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
                 await errorContentDialog.ShowAsync();
+                downloadFileThrewError = false;
+                return false;
             }
-            else
-            {
-                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-                dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-                DataTransferManager.ShowShareUI();
-            }
+            return true;
         }
 
         private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             downloadFileWasCanceled = true;
+            downloadFileIsExecuting = false;
         }
 
-        private void ShareFileDownloadProgress(int value)
+        private void FileDownloadProgress(int value)
         {
+            if (!downloadFileIsExecuting) return;
+
             if(value < 0)
             {
+                // There was an error
                 downloadFileThrewError = true;
+                downloadFileIsExecuting = false;
                 ContentDialogs.DownloadFileContentDialog.Hide();
             }
-            else if(value > 100 && !downloadFileWasCanceled)
+            else if(value > 100)
             {
                 // Hide the download dialog
                 ContentDialogs.DownloadFileContentDialog.Hide();
