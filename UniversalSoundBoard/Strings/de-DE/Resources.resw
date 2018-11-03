@@ -457,4 +457,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Export" xml:space="preserve">
     <value>Exportieren</value>
   </data>
+  <data name="MoreButton-Export.Text" xml:space="preserve">
+    <value>Exportieren</value>
+  </data>
 </root>

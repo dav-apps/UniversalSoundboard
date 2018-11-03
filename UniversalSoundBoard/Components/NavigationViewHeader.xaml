@@ -318,6 +318,11 @@
                                         IsEnabled="{Binding AreSelectButtonsEnabled}"
                                         Visibility="{Binding ShareButtonVisibility, Converter={StaticResource SelectOptionsInMoreButtonFlyoutVisibilityConverter}}"
                                         Click="ShareButton_Click" />
+                        <MenuFlyoutItem Name="MoreButton_ExportFlyout"
+                                        x:Uid="MoreButton-Export"
+                                        IsEnabled="{Binding AreSelectButtonsEnabled}"
+                                        Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}"
+                                        Click="MoreButton_ExportFlyout_Click" />
                         <MenuFlyoutItem Name="MoreButton_DeleteSoundsFlyout" 
                                         x:Uid="MoreButton-DeleteSounds" Click="MoreButton_DeleteSoundsFlyout_Click"
                                         Icon="Delete" 
