@@ -328,6 +328,10 @@
                                         Icon="Delete" 
                                         IsEnabled="{Binding AreSelectButtonsEnabled}"
                                         Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}" />
+                        <MenuFlyoutItem Name="MoreButton_SelectAllFlyout"
+                                        Text="Select all"
+                                        Click="MoreButton_SelectAllFlyout_Click"
+                                        Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}" />
 
                         <MenuFlyoutItem Name="MoreButton_Cancel"
                                         x:Uid="MoreButton-Cancel" 

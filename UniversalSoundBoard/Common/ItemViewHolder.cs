@@ -58,6 +58,7 @@ namespace UniversalSoundBoard.Common
         private bool _isBackButtonEnabled;                          // If the Back Button is enabled
         private bool _loadingScreenVisibility;                      // If true, the big loading screen is visible
         private string _loadingScreenMessage;                       // The text that is shown in the loading screen
+        public event EventHandler<RoutedEventArgs> SelectAllSoundsEvent;  // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
 
         public string Title
         {
@@ -552,6 +553,11 @@ namespace UniversalSoundBoard.Common
                 _loadingScreenMessage = value;
                 NotifyPropertyChanged("LoadingScreenMessage");
             }
+        }
+
+        public void TriggerSelectAllSoundsEvent(object sender, RoutedEventArgs e)
+        {
+            SelectAllSoundsEvent?.Invoke(sender, e);
         }
 
 

@@ -11,6 +11,7 @@ using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -34,11 +35,44 @@ namespace UniversalSoundBoard.Pages
         {
             SetDataContext();
             SetSoundsPivotVisibility();
+            (App.Current as App)._itemViewHolder.SelectAllSoundsEvent += _itemViewHolder_SelectAllSoundsEvent;
         }
-        
+
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             soundsPivotSelected = true;
+        }
+
+        private GridView GetVisibleGridView()
+        {
+            if (!(App.Current as App)._itemViewHolder.ShowSoundsPivot)
+                return SoundGridView2;
+            else if (SoundsPivot.SelectedIndex == 1)
+                return FavouriteSoundGridView;
+            else
+                return SoundGridView;
+        }
+
+        private void _itemViewHolder_SelectAllSoundsEvent(object sender, RoutedEventArgs e)
+        {
+            // Get the visible GridView
+            var gridView = GetVisibleGridView();
+            (App.Current as App)._itemViewHolder.SelectedSounds.Clear();
+
+            if (gridView.SelectedItems.Count == gridView.Items.Count)
+            {
+                // All items are selected, deselect all items
+                gridView.DeselectRange(new ItemIndexRange(0, (uint)gridView.Items.Count));
+            }
+            else
+            {
+                // Select all items
+                gridView.SelectAll();
+
+                // Add all sounds to the selected sounds
+                foreach (var sound in (App.Current as App)._itemViewHolder.Sounds)
+                    (App.Current as App)._itemViewHolder.SelectedSounds.Add(sound);
+            }
         }
         
         private void SetSoundsPivotVisibility()
@@ -145,23 +179,13 @@ namespace UniversalSoundBoard.Pages
             GridView selectedGridview = sender as GridView;
 
             // If no items are selected, disable multi select buttons
-            if (selectedGridview.SelectedItems.Count > 0)
-            {
-                (App.Current as App)._itemViewHolder.AreSelectButtonsEnabled = true;
-            }
-            else
-            {
-                (App.Current as App)._itemViewHolder.AreSelectButtonsEnabled = false;
-            }
+            (App.Current as App)._itemViewHolder.AreSelectButtonsEnabled = selectedGridview.SelectedItems.Count > 0;
 
             // Add new item to selectedSounds list
             if(e.AddedItems.Count == 1)
-            {
                 (App.Current as App)._itemViewHolder.SelectedSounds.Add((Sound)e.AddedItems.First());
-            }else
-            {
+            else if(e.RemovedItems.Count > 0)
                 (App.Current as App)._itemViewHolder.SelectedSounds.Remove((Sound)e.RemovedItems.First());
-            }
         }
         
         private void HandleGrid_OnManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
@@ -294,6 +318,10 @@ namespace UniversalSoundBoard.Pages
         
         private void SoundsPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
         {
+            // Deselect all items in both GridViews
+            SoundGridView.DeselectRange(new ItemIndexRange(0, (uint)SoundGridView.Items.Count));
+            FavouriteSoundGridView.DeselectRange(new ItemIndexRange(0, (uint)FavouriteSoundGridView.Items.Count));
+
             (App.Current as App)._itemViewHolder.SelectedSounds.Clear();
             soundsPivotSelected = (sender.SelectedIndex == 0);
         }

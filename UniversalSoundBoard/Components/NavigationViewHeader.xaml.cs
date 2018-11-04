@@ -423,6 +423,37 @@ namespace UniversalSoundBoard.Components
             DataTransferManager.ShowShareUI();
         }
 
+        private async void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            if ((App.Current as App)._itemViewHolder.SelectedSounds.Count > 0)
+            {
+                var deferral = args.Request.GetDeferral();
+                var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+                List<StorageFile> selectedFiles = new List<StorageFile>();
+                StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+
+                // Copy file into the temp folder and share it
+                foreach (Sound sound in (App.Current as App)._itemViewHolder.SelectedSounds)
+                {
+                    StorageFile audioFile = await sound.GetAudioFile();
+                    if (audioFile == null) return;
+
+                    StorageFile tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + "." + sound.GetAudioFileExtension(), NameCollisionOption.ReplaceExisting);
+                    selectedFiles.Add(tempFile);
+                }
+
+                string description = loader.GetString("ShareDialog-MultipleSounds");
+                if (selectedFiles.Count == 1)
+                    description = selectedFiles.First().Name;
+
+                DataRequest request = args.Request;
+                request.Data.SetStorageItems(selectedFiles);
+                request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
+                request.Data.Properties.Description = description;
+                deferral.Complete();
+            }
+        }
+
         private async void MoreButton_ExportFlyout_Click(object sender, RoutedEventArgs e)
         {
             if (!await DownloadSelectedFiles()) return;
@@ -510,36 +541,10 @@ namespace UniversalSoundBoard.Components
                 ContentDialogs.DownloadFileContentDialog.Hide();
             }
         }
-        
-        private async void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+
+        private void MoreButton_SelectAllFlyout_Click(object sender, RoutedEventArgs e)
         {
-            if((App.Current as App)._itemViewHolder.SelectedSounds.Count > 0)
-            {
-                var deferral = args.Request.GetDeferral();
-                var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-                List<StorageFile> selectedFiles = new List<StorageFile>();
-                StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-
-                // Copy file into the temp folder and share it
-                foreach (Sound sound in (App.Current as App)._itemViewHolder.SelectedSounds)
-                {
-                    StorageFile audioFile = await sound.GetAudioFile();
-                    if (audioFile == null) return;
-
-                    StorageFile tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + "." + sound.GetAudioFileExtension(), NameCollisionOption.ReplaceExisting);
-                    selectedFiles.Add(tempFile);
-                }
-                
-                string description = loader.GetString("ShareDialog-MultipleSounds");
-                if(selectedFiles.Count == 1)
-                    description = selectedFiles.First().Name;
-
-                DataRequest request = args.Request;
-                request.Data.SetStorageItems(selectedFiles);
-                request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
-                request.Data.Properties.Description = description;
-                deferral.Complete();
-            }
+            (App.Current as App)._itemViewHolder.TriggerSelectAllSoundsEvent(sender, e);
         }
         #endregion EventHandlers
 
