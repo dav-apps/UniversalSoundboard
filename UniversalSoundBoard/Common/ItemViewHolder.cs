@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-using UniversalSoundboard.Models;
 using UniversalSoundBoard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,7 +25,7 @@ namespace UniversalSoundBoard.Common
         private ObservableCollection<Sound> _favouriteSounds;       // A list of the favourite sound which are displayed when the Favourite pivot is selected
         private ObservableCollection<Sound> _allSounds;             // A list of all sounds
         private bool _allSoundsChanged;                             // If there was made change to one or multiple sounds so that a reload of the sounds is required
-        private List<Sound> _selectedSounds;                        // A list of the sounds which are selected
+        private ObservableCollection<Sound> _selectedSounds;        // A list of the sounds which are selected
         private ObservableCollection<PlayingSound> _playingSounds;  // A list of the Playing Sounds which are displayed in the right menu
         private Visibility _playingSoundsListVisibility;            // If true shows the Playing Sounds list at the right
         private bool _playOneSoundAtOnce;                           // If true plays only one sound at a time
@@ -203,7 +202,7 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public List<Sound> SelectedSounds
+        public ObservableCollection<Sound> SelectedSounds
         {
             get { return _selectedSounds; }
 

@@ -40,7 +40,7 @@ namespace UniversalSoundBoard
             PlayAllButtonVisibility = Visibility.Collapsed,
             SelectionMode = ListViewSelectionMode.None,
             NormalOptionsVisibility = true,
-            SelectedSounds = new List<Sound>(),
+            SelectedSounds = new ObservableCollection<Sound>(),
             PlayingSounds = new ObservableCollection<PlayingSound>(),
             PlayingSoundsListVisibility = Visibility.Visible,
             PlayOneSoundAtOnce = FileManager.playOneSoundAtOnce,
