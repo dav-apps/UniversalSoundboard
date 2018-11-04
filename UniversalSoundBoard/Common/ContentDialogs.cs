@@ -550,6 +550,7 @@ namespace UniversalSoundBoard.Common
             // Create StackPanel with TextBox and Folder button
             StackPanel folderStackPanel = new StackPanel();
             folderStackPanel.Orientation = Orientation.Horizontal;
+            folderStackPanel.Margin = new Thickness(0, 20, 0, 0);
 
             ExportSoundsFolderTextBox = new TextBox();
             ExportSoundsFolderTextBox.IsReadOnly = true;

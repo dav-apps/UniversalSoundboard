@@ -44,7 +44,7 @@ namespace UniversalSoundBoard.Pages
 
         private void SetDataContext()
         {
-            SideBar.DataContext = (App.Current as App)._itemViewHolder;
+            RootGrid.DataContext = (App.Current as App)._itemViewHolder;
         }
 
         private void MainPage_BackRequested(object sender, BackRequestedEventArgs e)

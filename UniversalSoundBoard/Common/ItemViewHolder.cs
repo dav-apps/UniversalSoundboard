@@ -53,9 +53,11 @@ namespace UniversalSoundBoard.Common
         private bool _areSelectButtonsEnabled;                      // If false the buttons at the top in multi selection mode are disabled
         private int _selectedCategory;                              // The index of the currently selected category in the category list
         private string _upgradeDataStatusText;                      // The text that is shown on the splash screen when the old data is migrated
-        private DavUser _user;                                         // The User object with username and avatar
+        private DavUser _user;                                      // The User object with username and avatar
         private bool _loginMenuItemVisibility;                      // If true, the LoginMenuItem in the NavigationView is visible
-        private bool _isBackButtonEnabled;
+        private bool _isBackButtonEnabled;                          // If the Back Button is enabled
+        private bool _loadingScreenVisibility;                      // If true, the big loading screen is visible
+        private string _loadingScreenMessage;                       // The text that is shown in the loading screen
 
         public string Title
         {
@@ -527,6 +529,28 @@ namespace UniversalSoundBoard.Common
             {
                 _isBackButtonEnabled = value;
                 NotifyPropertyChanged("IsBackButtonEnabled");
+            }
+        }
+
+        public bool LoadingScreenVisibility
+        {
+            get { return _loadingScreenVisibility; }
+
+            set
+            {
+                _loadingScreenVisibility = value;
+                NotifyPropertyChanged("LoadingScreenVisibility");
+            }
+        }
+
+        public string LoadingScreenMessage
+        {
+            get { return _loadingScreenMessage; }
+
+            set
+            {
+                _loadingScreenMessage = value;
+                NotifyPropertyChanged("LoadingScreenMessage");
             }
         }
 

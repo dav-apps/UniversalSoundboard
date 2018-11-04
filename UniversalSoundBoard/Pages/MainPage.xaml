@@ -8,6 +8,7 @@
     xmlns:converters="using:UniversalSoundBoard.Converters"
     xmlns:components="using:UniversalSoundBoard.Components"
     xmlns:models="using:UniversalSoundBoard.Models"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     SizeChanged="Page_SizeChanged">
 
@@ -45,7 +46,7 @@
     </Page.Resources>
 
 
-    <Grid>
+    <Grid Name="RootGrid">
         <NavigationView Name="SideBar" 
                         AlwaysShowHeader="True" 
                         MenuItemsSource="{Binding Categories, Mode=TwoWay}" 
@@ -118,5 +119,23 @@
                    VerticalAlignment="Top" 
                    HorizontalAlignment="Left"
                    Margin="67,14,0,0" />
+
+        <controls:Loading x:Name="LoadingControl" IsLoading="{Binding LoadingScreenVisibility}">
+            <controls:Loading.Background>
+                <SolidColorBrush Color="Black" 
+                                 Opacity="0.7" />
+            </controls:Loading.Background>
+            <StackPanel Orientation="Horizontal" 
+                        Padding="12">
+                <ProgressRing IsActive="True" 
+                              Margin="0,0,16,0" 
+                              Height="27" 
+                              Width="27" />
+                <TextBlock Text="{Binding LoadingScreenMessage}" 
+                           FontSize="17"
+                           VerticalAlignment="Center" 
+                           Foreground="White" />
+            </StackPanel>
+        </controls:Loading>
     </Grid>
 </Page>

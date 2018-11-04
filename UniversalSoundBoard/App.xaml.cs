@@ -69,7 +69,9 @@ namespace UniversalSoundBoard
             UpgradeDataStatusText = "Preparing...",
             User = null,
             LoginMenuItemVisibility = true,
-            IsBackButtonEnabled = false
+            IsBackButtonEnabled = false,
+            LoadingScreenVisibility = false,
+            LoadingScreenMessage = ""
         };
         
         /// <summary>
