@@ -288,7 +288,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.ExportMessage = stringLoader.GetString("ExportMessage-4");
 
             // Copy the file into the destination folder
-            await zipFile.MoveAsync(destinationFolder, "UniversalSoundBoard " + DateTime.Today.ToString("dd.MM.yyyy") + ".zip", NameCollisionOption.GenerateUniqueName);
+            await zipFile.MoveAsync(destinationFolder, "UniversalSoundboard " + DateTime.Today.ToString("dd.MM.yyyy") + ".zip", NameCollisionOption.GenerateUniqueName);
 
             (App.Current as App)._itemViewHolder.ExportMessage = stringLoader.GetString("ExportImportMessage-TidyUp");
             (App.Current as App)._itemViewHolder.IsExporting = false;
@@ -599,20 +599,40 @@ namespace UniversalSoundBoard.DataAccess
 
             if (saveAsZip)
             {
+                await ClearCacheAsync();
+                StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
+                StorageFolder exportFolder = await GetExportFolderAsync();
 
+                // Copy the selected files into the export folder
+                foreach (var sound in sounds)
+                    await CopySoundFileIntoFolder(sound, exportFolder);
+
+                // Create the zip file from the export folder
+                StorageFile zipFile = await Task.Run(async () =>
+                {
+                    string exportFilePath = Path.Combine(localCacheFolder.Path, "export.zip");
+                    ZipFile.CreateFromDirectory(exportFolder.Path, exportFilePath);
+                    return await StorageFile.GetFileFromPathAsync(exportFilePath);
+                });
+
+                // Move the zip file into the destination folder
+                await zipFile.MoveAsync(destinationFolder, "UniversalSoundboard " + DateTime.Today.ToString("dd.MM.yyyy") + ".zip", NameCollisionOption.GenerateUniqueName);
+                await ClearCacheAsync();
             }
             else
             {
                 // Copy the files directly into the folder
                 foreach(var sound in sounds)
-                {
-                    // Create a new StorageFile in the destination folder
-                    StorageFile soundFile = await destinationFolder.CreateFileAsync(sound.Name + "." + sound.GetAudioFileExtension(), CreationCollisionOption.GenerateUniqueName);
-                    await FileIO.WriteBytesAsync(soundFile, await GetBytesAsync(await sound.GetAudioFile()));
-                }
+                    await CopySoundFileIntoFolder(sound, destinationFolder);
             }
 
             (App.Current as App)._itemViewHolder.LoadingScreenVisibility = false;
+        }
+
+        private static async Task CopySoundFileIntoFolder(Sound sound, StorageFolder destinationFolder)
+        {
+            StorageFile soundFile = await destinationFolder.CreateFileAsync(sound.Name + "." + sound.GetAudioFileExtension(), CreationCollisionOption.GenerateUniqueName);
+            await FileIO.WriteBytesAsync(soundFile, await GetBytesAsync(await sound.GetAudioFile()));
         }
 
         // Load the sounds from the database and return them
