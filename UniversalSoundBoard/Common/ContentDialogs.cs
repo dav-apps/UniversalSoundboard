@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.Storage;
+using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -26,6 +27,10 @@ namespace UniversalSoundBoard.Common
         public static ComboBox RepeatsComboBox;
         public static ObservableCollection<Sound> SoundsList;
         public static ProgressBar downloadFileProgressBar;
+        public static ListView ExportSoundsListView;
+        public static TextBox ExportSoundsFolderTextBox;
+        public static CheckBox ExportSoundsAsZipCheckBox;
+        public static StorageFolder ExportSoundsFolder;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -38,6 +43,7 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog LogoutContentDialog;
         public static ContentDialog DownloadFileContentDialog;
         public static ContentDialog DownloadFileErrorContentDialog;
+        public static ContentDialog ExportSoundsContentDialog;
         
 
         public static ContentDialog CreateNewCategoryContentDialog()
@@ -307,8 +313,7 @@ namespace UniversalSoundBoard.Common
             StorageFolder folder = await folderPicker.PickSingleFolderAsync();
             if (folder != null)
             {
-                Windows.Storage.AccessCache.StorageApplicationPermissions.
-                FutureAccessList.AddOrReplace("PickedFolderToken", folder);
+                StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
 
                 // Set TextBox text and StorageFolder variable and make primary button clickable
                 ExportFolder = folder;
@@ -509,6 +514,91 @@ namespace UniversalSoundBoard.Common
             };
 
             return DownloadFileErrorContentDialog;
+        }
+
+        public static ContentDialog CreateExportSoundsContentDialog(ObservableCollection<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle)
+        {
+            SoundsList = sounds;
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            ExportSoundsContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("ExportSoundsContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("Export"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                IsPrimaryButtonEnabled = false
+            };
+
+            if (SoundsList.Count == 0)
+                ExportSoundsContentDialog.IsPrimaryButtonEnabled = false;
+
+            StackPanel content = new StackPanel();
+            content.Orientation = Orientation.Vertical;
+            
+            ExportSoundsListView = new ListView
+            {
+                ItemTemplate = itemTemplate,
+                ItemsSource = SoundsList,
+                SelectionMode = ListViewSelectionMode.None,
+                Height = 300,
+                ItemContainerStyle = listViewItemStyle,
+                CanReorderItems = true,
+                CanDrag = true,
+                AllowDrop = true
+            };
+            
+            // Create StackPanel with TextBox and Folder button
+            StackPanel folderStackPanel = new StackPanel();
+            folderStackPanel.Orientation = Orientation.Horizontal;
+
+            ExportSoundsFolderTextBox = new TextBox();
+            ExportSoundsFolderTextBox.IsReadOnly = true;
+            Button folderButton = new Button
+            {
+                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                Content = "\uE838",
+                FontSize = 18,
+                Width = 35,
+                Height = 35
+            };
+            folderButton.Tapped += ExportSoundsFolderButton_Tapped;
+
+            ExportSoundsAsZipCheckBox = new CheckBox
+            {
+                Content = loader.GetString("SaveAsZip"),
+                Margin = new Thickness(0, 20, 0, 0)
+            };
+
+
+            folderStackPanel.Children.Add(folderButton);
+            folderStackPanel.Children.Add(ExportSoundsFolderTextBox);
+            
+
+            content.Children.Add(ExportSoundsListView);
+            content.Children.Add(folderStackPanel);
+            content.Children.Add(ExportSoundsAsZipCheckBox);
+
+            ExportSoundsContentDialog.Content = content;
+            return ExportSoundsContentDialog;
+        }
+
+        private async static void ExportSoundsFolderButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            var folderPicker = new FolderPicker();
+            folderPicker.SuggestedStartLocation = PickerLocationId.Downloads;
+            folderPicker.FileTypeFilter.Add("*");
+
+            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+            if (folder != null)
+            {
+                StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
+
+                // Set TextBox text and StorageFolder variable and make primary button clickable
+                ExportSoundsFolder = folder;
+                ExportSoundsFolderTextBox.Text = folder.Path;
+                if(SoundsList.Count > 0)
+                    ExportSoundsContentDialog.IsPrimaryButtonEnabled = true;
+            }
         }
     }
 }

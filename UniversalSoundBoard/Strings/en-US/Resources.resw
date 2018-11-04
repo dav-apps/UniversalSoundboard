@@ -473,4 +473,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="MoreButton-Export.Text" xml:space="preserve">
     <value>Export</value>
   </data>
+  <data name="ExportSoundsContentDialog-Title" xml:space="preserve">
+    <value>Export sounds</value>
+  </data>
+  <data name="SaveAsZip" xml:space="preserve">
+    <value>Save as Zip file</value>
+  </data>
 </root>

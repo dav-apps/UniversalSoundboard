@@ -325,9 +325,7 @@ namespace UniversalSoundBoard.Components
         {
             PlaySoundsList.Clear();
             foreach(Sound sound in (App.Current as App)._itemViewHolder.SelectedSounds)
-            {
                 PlaySoundsList.Add(sound);
-            }
 
             var template = (DataTemplate)Resources["SoundItemTemplate"];
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
@@ -428,12 +426,32 @@ namespace UniversalSoundBoard.Components
         private async void MoreButton_ExportFlyout_Click(object sender, RoutedEventArgs e)
         {
             if (!await DownloadSelectedFiles()) return;
+            
+            ObservableCollection<Sound> sounds = new ObservableCollection<Sound>();
+            foreach (var sound in (App.Current as App)._itemViewHolder.SelectedSounds)
+                sounds.Add(sound);
+
+            var template = (DataTemplate)Resources["SoundItemTemplate"];
+            var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
+            var exportSoundsContentDialog = ContentDialogs.CreateExportSoundsContentDialog(sounds, template, listViewItemStyle);
+            exportSoundsContentDialog.PrimaryButtonClick += ExportSoundsContentDialog_PrimaryButtonClick;
+            await exportSoundsContentDialog.ShowAsync();
+        }
+
+        private async void ExportSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            List<Sound> soundsList = new List<Sound>();
+            foreach (var sound in ContentDialogs.SoundsList)
+                soundsList.Add(sound);
+
+            await FileManager.ExportSounds(soundsList, ContentDialogs.ExportSoundsAsZipCheckBox.IsChecked.Value);
         }
 
         private async Task<bool> DownloadSelectedFiles()
         {
             // Check if all sounds are available locally
-            foreach (var sound in (App.Current as App)._itemViewHolder.SelectedSounds)
+            var selectedSounds = (App.Current as App)._itemViewHolder.SelectedSounds;
+            foreach (var sound in selectedSounds)
             {
                 var downloadStatus = sound.GetAudioFileDownloadStatus();
                 if (downloadStatus == DownloadStatus.NoFileOrNotLoggedIn) continue;

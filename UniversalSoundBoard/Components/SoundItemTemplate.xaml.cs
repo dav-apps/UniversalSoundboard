@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UniversalSoundBoard.Common;
+﻿using UniversalSoundBoard.Common;
 using UniversalSoundBoard.Models;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -30,7 +29,10 @@ namespace UniversalSoundBoard.Components
 
             if(ContentDialogs.SoundsList.Count == 0)
             {
-                ContentDialogs.PlaySoundsSuccessivelyContentDialog.IsPrimaryButtonEnabled = false;
+                if (ContentDialogs.PlaySoundsSuccessivelyContentDialog != null)
+                    ContentDialogs.PlaySoundsSuccessivelyContentDialog.IsPrimaryButtonEnabled = false;
+                else if (ContentDialogs.ExportSoundsContentDialog != null)
+                    ContentDialogs.ExportSoundsContentDialog.IsPrimaryButtonEnabled = false;
             }
         }
     }

@@ -292,7 +292,7 @@ Wähle einfach die Datei aus, die beim Exportieren erstellt wurde.</value>
   <data name="ImportDataContentDialog-Text2" xml:space="preserve">
     <value>Die importierten Sounds werden zu deinem bestehenden Soundboard hinzugefügt.
 
-Du kannst die App weiterhin verwenden, aber bitte schließe die App nicht, bevor dieser Prozess vollständig abgeschlossen wurde.
+Du kannst die App weiterhin verwenden, aber bitte schließe die App nicht, bevor dieser Prozess vollständig abgeschlossen ist.
 Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboard ist.</value>
   </data>
   <data name="ImportDataContentDialog-Title" xml:space="preserve">
@@ -459,5 +459,11 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="MoreButton-Export.Text" xml:space="preserve">
     <value>Exportieren</value>
+  </data>
+  <data name="ExportSoundsContentDialog-Title" xml:space="preserve">
+    <value>Sounds exportieren</value>
+  </data>
+  <data name="SaveAsZip" xml:space="preserve">
+    <value>Als Zip-Datei speichern</value>
   </data>
 </root>
