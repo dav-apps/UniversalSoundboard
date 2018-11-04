@@ -444,7 +444,7 @@ namespace UniversalSoundBoard.Components
             foreach (var sound in ContentDialogs.SoundsList)
                 soundsList.Add(sound);
 
-            await FileManager.ExportSounds(soundsList, ContentDialogs.ExportSoundsAsZipCheckBox.IsChecked.Value);
+            await FileManager.ExportSounds(soundsList, ContentDialogs.ExportSoundsAsZipCheckBox.IsChecked.Value, ContentDialogs.ExportSoundsFolder);
         }
 
         private async Task<bool> DownloadSelectedFiles()

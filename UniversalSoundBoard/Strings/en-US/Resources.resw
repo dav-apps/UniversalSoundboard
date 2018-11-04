@@ -479,4 +479,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SaveAsZip" xml:space="preserve">
     <value>Save as Zip file</value>
   </data>
+  <data name="ExportSoundsMessage" xml:space="preserve">
+    <value>Sounds are being exported</value>
+  </data>
 </root>

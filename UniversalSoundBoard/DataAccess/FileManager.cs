@@ -67,7 +67,7 @@ namespace UniversalSoundBoard.DataAccess
         //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
         public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
         //public const string LoginImplicitUrl = "https://dav-apps.herokuapp.com/login_implicit";
-        public const string LoginImplicitUrl = "https://07c97e16.ngrok.io/login_implicit";
+        public const string LoginImplicitUrl = "https://9144ef7c.ngrok.io/login_implicit";
         public const int AppId = 8;                 // Dev: 8; Prod: 1
         public const int SoundFileTableId = 11;      // Dev: 11; Prod: 6
         public const int ImageFileTableId = 15;      // Dev: 15; Prod: 7
@@ -588,6 +588,31 @@ namespace UniversalSoundBoard.DataAccess
                 if(soundDetailsFolder != null)
                     await soundDetailsFolder.DeleteAsync();
             }
+        }
+
+        public static async Task ExportSounds(List<Sound> sounds, bool saveAsZip, StorageFolder destinationFolder)
+        {
+            // Show the loading screen
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            (App.Current as App)._itemViewHolder.LoadingScreenMessage = loader.GetString("ExportSoundsMessage");
+            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = true;
+
+            if (saveAsZip)
+            {
+
+            }
+            else
+            {
+                // Copy the files directly into the folder
+                foreach(var sound in sounds)
+                {
+                    // Create a new StorageFile in the destination folder
+                    StorageFile soundFile = await destinationFolder.CreateFileAsync(sound.Name + "." + sound.GetAudioFileExtension(), CreationCollisionOption.GenerateUniqueName);
+                    await FileIO.WriteBytesAsync(soundFile, await GetBytesAsync(await sound.GetAudioFile()));
+                }
+            }
+
+            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = false;
         }
 
         // Load the sounds from the database and return them

@@ -276,7 +276,7 @@
 Bitte wähle den Ordner, in dem dein Soundboard gespeichert werden soll.</value>
   </data>
   <data name="ExportDataContentDialog-Text2" xml:space="preserve">
-    <value>Du kannst die App weiterhin verwenden, aber bitte schließe die App nicht, bevor dieser Prozess vollständig abgeschlossen wurde.
+    <value>Du kannst die App weiterhin verwenden, aber bitte schließe die App nicht, bevor dieser Prozess vollständig abgeschlossen ist.
 Dies kann einige Zeit dauern, je nachdem wie groß dein Soundboard ist.</value>
   </data>
   <data name="ExportDataContentDialog-Title" xml:space="preserve">
@@ -465,5 +465,8 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="SaveAsZip" xml:space="preserve">
     <value>Als Zip-Datei speichern</value>
+  </data>
+  <data name="ExportSoundsMessage" xml:space="preserve">
+    <value>Sounds werden exportiert</value>
   </data>
 </root>
