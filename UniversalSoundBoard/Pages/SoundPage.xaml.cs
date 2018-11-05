@@ -21,6 +21,7 @@ namespace UniversalSoundBoard.Pages
     public sealed partial class SoundPage : Page
     {
         public static bool soundsPivotSelected = true;
+        private bool skipSoundListSelectionChangedEvent = false;
 
         
         public SoundPage()
@@ -55,6 +56,8 @@ namespace UniversalSoundBoard.Pages
 
         private void _itemViewHolder_SelectAllSoundsEvent(object sender, RoutedEventArgs e)
         {
+            skipSoundListSelectionChangedEvent = true;
+
             // Get the visible GridView
             var gridView = GetVisibleGridView();
             (App.Current as App)._itemViewHolder.SelectedSounds.Clear();
@@ -70,8 +73,29 @@ namespace UniversalSoundBoard.Pages
                 gridView.SelectAll();
 
                 // Add all sounds to the selected sounds
-                foreach (var sound in (App.Current as App)._itemViewHolder.Sounds)
-                    (App.Current as App)._itemViewHolder.SelectedSounds.Add(sound);
+                foreach (var sound in gridView.Items)
+                    (App.Current as App)._itemViewHolder.SelectedSounds.Add(sound as Sound);
+            }
+            
+            skipSoundListSelectionChangedEvent = false;
+            UpdateSelectAllFlyoutText();
+        }
+
+        private void UpdateSelectAllFlyoutText()
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            var gridView = GetVisibleGridView();
+
+            if (gridView.Items.Count == (App.Current as App)._itemViewHolder.SelectedSounds.Count
+                && gridView.Items.Count != 0)
+            {
+                (App.Current as App)._itemViewHolder.SelectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-DeselectAll");
+                (App.Current as App)._itemViewHolder.SelectAllFlyoutIcon = new SymbolIcon(Symbol.ClearSelection);
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.SelectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
+                (App.Current as App)._itemViewHolder.SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll);
             }
         }
         
@@ -176,6 +200,7 @@ namespace UniversalSoundBoard.Pages
         
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (skipSoundListSelectionChangedEvent) return;
             GridView selectedGridview = sender as GridView;
 
             // If no items are selected, disable multi select buttons
@@ -186,6 +211,8 @@ namespace UniversalSoundBoard.Pages
                 (App.Current as App)._itemViewHolder.SelectedSounds.Add((Sound)e.AddedItems.First());
             else if(e.RemovedItems.Count > 0)
                 (App.Current as App)._itemViewHolder.SelectedSounds.Remove((Sound)e.RemovedItems.First());
+
+            UpdateSelectAllFlyoutText();
         }
         
         private void HandleGrid_OnManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)

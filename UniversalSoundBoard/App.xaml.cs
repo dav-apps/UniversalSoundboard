@@ -71,7 +71,9 @@ namespace UniversalSoundBoard
             LoginMenuItemVisibility = true,
             IsBackButtonEnabled = false,
             LoadingScreenVisibility = false,
-            LoadingScreenMessage = ""
+            LoadingScreenMessage = "",
+            SelectAllFlyoutText = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("MoreButton_SelectAllFlyout-SelectAll"),
+            SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll)
         };
         
         /// <summary>

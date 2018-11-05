@@ -307,6 +307,11 @@
                         <!-- #endregion Normal Options -->
 
                         <!-- #region Selection Options -->
+                        <MenuFlyoutItem Name="MoreButton_SelectAllFlyout"
+                                        Text="{Binding SelectAllFlyoutText}"
+                                        Icon="{Binding SelectAllFlyoutIcon}"
+                                        Click="MoreButton_SelectAllFlyout_Click"
+                                        Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}" />
                         <MenuFlyoutSubItem Name="MoreButton_ChangeCategoryFlyout" 
                                            x:Uid="MoreButton-ChangeCategory" 
                                            IsEnabled="{Binding AreSelectButtonsEnabled}"
@@ -327,10 +332,6 @@
                                         x:Uid="MoreButton-DeleteSounds" Click="MoreButton_DeleteSoundsFlyout_Click"
                                         Icon="Delete" 
                                         IsEnabled="{Binding AreSelectButtonsEnabled}"
-                                        Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}" />
-                        <MenuFlyoutItem Name="MoreButton_SelectAllFlyout"
-                                        Text="Select all"
-                                        Click="MoreButton_SelectAllFlyout_Click"
                                         Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}" />
 
                         <MenuFlyoutItem Name="MoreButton_Cancel"

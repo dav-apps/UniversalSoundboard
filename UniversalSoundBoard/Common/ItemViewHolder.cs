@@ -12,52 +12,54 @@ namespace UniversalSoundBoard.Common
 {
     public class ItemViewHolder : INotifyPropertyChanged
     {
-        private string _title;                                      // Is the text of the title
-        private bool _progressRingIsActive;                         // Shows the Progress Ring if true
-        private string _searchQuery;                                // The string entered into the search box
-        private Visibility _editButtonVisibility;                   // If true shows the edit button next to the title, only when a category is selected
-        private Visibility _playAllButtonVisibility;                // If true shows the Play button next to the title, only when a category or All Sounds is selected
-        private bool _normalOptionsVisibility;                      // If true shows the normal buttons at the top, e.g. Search bar and Volume Button. If false shows the multi select buttons
-        private Type _page;                                         // The current page
-        private ListViewSelectionMode _selectionMode;               // The selection mode of the GridView. Is either ListViewSelectionMode.None or ListViewSelectionMode.Multiple
-        private ObservableCollection<Category> _categories;         // A list of all categories.
-        private ObservableCollection<Sound> _sounds;                // A list of the sounds which are displayed when the Sound pivot is selected
-        private ObservableCollection<Sound> _favouriteSounds;       // A list of the favourite sound which are displayed when the Favourite pivot is selected
-        private ObservableCollection<Sound> _allSounds;             // A list of all sounds
-        private bool _allSoundsChanged;                             // If there was made change to one or multiple sounds so that a reload of the sounds is required
-        private ObservableCollection<Sound> _selectedSounds;        // A list of the sounds which are selected
-        private ObservableCollection<PlayingSound> _playingSounds;  // A list of the Playing Sounds which are displayed in the right menu
-        private Visibility _playingSoundsListVisibility;            // If true shows the Playing Sounds list at the right
-        private bool _playOneSoundAtOnce;                           // If true plays only one sound at a time
-        private bool _showCategoryIcon;                             // If true shows the icon of the category on the sound tile
-        private bool _showSoundsPivot;                              // If true shows the pivot to select Sounds or Favourite sounds
-        private bool _savePlayingSounds;                            // If true saves the PlayingSounds and loads them when starting the app
-        private bool _isExporting;                                  // If true the soundboard is currently being exported
-        private bool _exported;                                     // If true the soundboard was exported in the app session
-        private bool _isImporting;                                  // If true a soundboard is currently being imported
-        private bool _imported;                                     // If true a soundboard was import in the app session
-        private bool _areExportAndImportButtonsEnabled;             // If true shows the export and import buttons on the settings page
-        private string _exportMessage;                              // The text describing the status of the export
-        private string _importMessage;                              // The text describing the status of the import
-        private string _soundboardSize;                             // The text shown on the settings page which describes the size of the soundboard
-        private bool _searchAutoSuggestBoxVisibility;               // If true the search box is visible, if false multi selection is on or the search button shown
-        private bool _volumeButtonVisibility;                       // If true the volume button at the top is visible
-        private bool _addButtonVisibility;                          // If true the Add button at the top to add sounds or a category is visible
-        private bool _selectButtonVisibility;                       // If true the button to switch to multi selection mode is visible
-        private bool _searchButtonVisibility;                       // If true the search button at the top is visible
-        private bool _cancelButtonVisibility;                       // If the the cancel button at the top to switch from multi selection mode to normal mode is visible
-        private bool _shareButtonVisibility;                        // If true the Share button at the top to share sounds is visible
-        private bool _moreButtonVisibility;                         // If true the More button at the top, when multi selection mode is on, is visible
-        private bool _topButtonsCollapsed;                          // If true the buttons at the top show only the icon, if false they show the icon and text
-        private bool _areSelectButtonsEnabled;                      // If false the buttons at the top in multi selection mode are disabled
-        private int _selectedCategory;                              // The index of the currently selected category in the category list
-        private string _upgradeDataStatusText;                      // The text that is shown on the splash screen when the old data is migrated
-        private DavUser _user;                                      // The User object with username and avatar
-        private bool _loginMenuItemVisibility;                      // If true, the LoginMenuItem in the NavigationView is visible
-        private bool _isBackButtonEnabled;                          // If the Back Button is enabled
-        private bool _loadingScreenVisibility;                      // If true, the big loading screen is visible
-        private string _loadingScreenMessage;                       // The text that is shown in the loading screen
-        public event EventHandler<RoutedEventArgs> SelectAllSoundsEvent;  // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
+        private string _title;                                              // Is the text of the title
+        private bool _progressRingIsActive;                                 // Shows the Progress Ring if true
+        private string _searchQuery;                                        // The string entered into the search box
+        private Visibility _editButtonVisibility;                           // If true shows the edit button next to the title, only when a category is selected
+        private Visibility _playAllButtonVisibility;                        // If true shows the Play button next to the title, only when a category or All Sounds is selected
+        private bool _normalOptionsVisibility;                              // If true shows the normal buttons at the top, e.g. Search bar and Volume Button. If false shows the multi select buttons
+        private Type _page;                                                 // The current page
+        private ListViewSelectionMode _selectionMode;                       // The selection mode of the GridView. Is either ListViewSelectionMode.None or ListViewSelectionMode.Multiple
+        private ObservableCollection<Category> _categories;                 // A list of all categories.
+        private ObservableCollection<Sound> _sounds;                        // A list of the sounds which are displayed when the Sound pivot is selected
+        private ObservableCollection<Sound> _favouriteSounds;               // A list of the favourite sound which are displayed when the Favourite pivot is selected
+        private ObservableCollection<Sound> _allSounds;                     // A list of all sounds
+        private bool _allSoundsChanged;                                     // If there was made change to one or multiple sounds so that a reload of the sounds is required
+        private ObservableCollection<Sound> _selectedSounds;                // A list of the sounds which are selected
+        private ObservableCollection<PlayingSound> _playingSounds;          // A list of the Playing Sounds which are displayed in the right menu
+        private Visibility _playingSoundsListVisibility;                    // If true shows the Playing Sounds list at the right
+        private bool _playOneSoundAtOnce;                                   // If true plays only one sound at a time
+        private bool _showCategoryIcon;                                     // If true shows the icon of the category on the sound tile
+        private bool _showSoundsPivot;                                      // If true shows the pivot to select Sounds or Favourite sounds
+        private bool _savePlayingSounds;                                    // If true saves the PlayingSounds and loads them when starting the app
+        private bool _isExporting;                                          // If true the soundboard is currently being exported
+        private bool _exported;                                             // If true the soundboard was exported in the app session
+        private bool _isImporting;                                          // If true a soundboard is currently being imported
+        private bool _imported;                                             // If true a soundboard was import in the app session
+        private bool _areExportAndImportButtonsEnabled;                     // If true shows the export and import buttons on the settings page
+        private string _exportMessage;                                      // The text describing the status of the export
+        private string _importMessage;                                      // The text describing the status of the import
+        private string _soundboardSize;                                     // The text shown on the settings page which describes the size of the soundboard
+        private bool _searchAutoSuggestBoxVisibility;                       // If true the search box is visible, if false multi selection is on or the search button shown
+        private bool _volumeButtonVisibility;                               // If true the volume button at the top is visible
+        private bool _addButtonVisibility;                                  // If true the Add button at the top to add sounds or a category is visible
+        private bool _selectButtonVisibility;                               // If true the button to switch to multi selection mode is visible
+        private bool _searchButtonVisibility;                               // If true the search button at the top is visible
+        private bool _cancelButtonVisibility;                               // If the the cancel button at the top to switch from multi selection mode to normal mode is visible
+        private bool _shareButtonVisibility;                                // If true the Share button at the top to share sounds is visible
+        private bool _moreButtonVisibility;                                 // If true the More button at the top, when multi selection mode is on, is visible
+        private bool _topButtonsCollapsed;                                  // If true the buttons at the top show only the icon, if false they show the icon and text
+        private bool _areSelectButtonsEnabled;                              // If false the buttons at the top in multi selection mode are disabled
+        private int _selectedCategory;                                      // The index of the currently selected category in the category list
+        private string _upgradeDataStatusText;                              // The text that is shown on the splash screen when the old data is migrated
+        private DavUser _user;                                              // The User object with username and avatar
+        private bool _loginMenuItemVisibility;                              // If true, the LoginMenuItem in the NavigationView is visible
+        private bool _isBackButtonEnabled;                                  // If the Back Button is enabled
+        private bool _loadingScreenVisibility;                              // If true, the big loading screen is visible
+        private string _loadingScreenMessage;                               // The text that is shown in the loading screen
+        public event EventHandler<RoutedEventArgs> SelectAllSoundsEvent;    // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
+        private string _selectAllFlyoutText;                                // The text of the Select All flyout item in the Navigation View Header
+        private SymbolIcon _selectAllFlyoutIcon;                            // The icon of the Select All flyout item in the Navigation View Header
 
         public string Title
         {
@@ -557,6 +559,28 @@ namespace UniversalSoundBoard.Common
         public void TriggerSelectAllSoundsEvent(object sender, RoutedEventArgs e)
         {
             SelectAllSoundsEvent?.Invoke(sender, e);
+        }
+
+        public string SelectAllFlyoutText
+        {
+            get { return _selectAllFlyoutText; }
+
+            set
+            {
+                _selectAllFlyoutText = value;
+                NotifyPropertyChanged("SelectAllFlyoutText");
+            }
+        }
+
+        public SymbolIcon SelectAllFlyoutIcon
+        {
+            get { return _selectAllFlyoutIcon; }
+
+            set
+            {
+                _selectAllFlyoutIcon = value;
+                NotifyPropertyChanged("SelectAllFlyoutIcon");
+            }
         }
 
 

@@ -469,4 +469,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="ExportSoundsMessage" xml:space="preserve">
     <value>Sounds werden exportiert</value>
   </data>
+  <data name="MoreButton_SelectAllFlyout-DeselectAll" xml:space="preserve">
+    <value>Alles abwählen</value>
+  </data>
+  <data name="MoreButton_SelectAllFlyout-SelectAll" xml:space="preserve">
+    <value>Alles auswählen</value>
+  </data>
 </root>
