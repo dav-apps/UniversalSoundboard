@@ -320,6 +320,9 @@
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.4.118</Version>
     </PackageReference>
+    <PackageReference Include="Websockets.Net">
+      <Version>1.0.1</Version>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\..\source\repos\davClassLibrary\davClassLibrary\davClassLibrary.csproj">
