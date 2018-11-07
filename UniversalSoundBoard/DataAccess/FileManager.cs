@@ -67,7 +67,7 @@ namespace UniversalSoundBoard.DataAccess
         //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
         public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
         //public const string LoginImplicitUrl = "https://dav-apps.herokuapp.com/login_implicit";
-        public const string LoginImplicitUrl = "https://9144ef7c.ngrok.io/login_implicit";
+        public const string LoginImplicitUrl = "https://ece88b58.ngrok.io/login_implicit";
         public const int AppId = 8;                 // Dev: 8; Prod: 1
         public const int SoundFileTableId = 11;      // Dev: 11; Prod: 6
         public const int ImageFileTableId = 15;      // Dev: 15; Prod: 7
@@ -1471,12 +1471,41 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task CreatePlayingSoundsList()
         {
-            foreach (PlayingSound ps in await GetAllPlayingSounds())
+            var allPlayingSounds = await GetAllPlayingSounds();
+            foreach (PlayingSound ps in allPlayingSounds)
             {
                 if (ps.MediaPlayer != null)
                 {
-                    if((App.Current as App)._itemViewHolder.PlayingSounds.Where(p => p.Uuid == ps.Uuid).Count() == 0)
+                    var playingSounds = (App.Current as App)._itemViewHolder.PlayingSounds.Where(p => p.Uuid == ps.Uuid);
+
+                    if (playingSounds.Count() > 0)
+                    {
+                        var playingSound = playingSounds.First();
+                        int index = (App.Current as App)._itemViewHolder.PlayingSounds.IndexOf(playingSound);
+
+                        // Update the current playing sound if it is currently not playing
+                        if (playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                        {
+                            // Replace the old playing sound
+                            (App.Current as App)._itemViewHolder.PlayingSounds.RemoveAt(index);
+                            (App.Current as App)._itemViewHolder.PlayingSounds.Insert(index, ps);
+                        }
+                    }
+                    else
+                    {
+                        // Add the new playing sound
                         (App.Current as App)._itemViewHolder.PlayingSounds.Add(ps);
+                    }
+                }
+            }
+            
+            // Remove old playing sounds
+            foreach(var ps in (App.Current as App)._itemViewHolder.PlayingSounds)
+            {
+                // Remove the playing sound from ItemViewHolder if it does not exist in the new playing sounds list
+                if (allPlayingSounds.Where(p => p.Uuid == ps.Uuid).Count() == 0)
+                {
+                    (App.Current as App)._itemViewHolder.PlayingSounds.Remove(ps);
                 }
             }
         }
