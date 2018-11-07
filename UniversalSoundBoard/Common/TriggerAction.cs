@@ -1,4 +1,5 @@
 ﻿using davClassLibrary.Common;
+using davClassLibrary.Models;
 using UniversalSoundBoard;
 using UniversalSoundBoard.DataAccess;
 using Windows.ApplicationModel.Core;
@@ -8,19 +9,19 @@ namespace UniversalSoundboard.Common
 {
     public class TriggerAction : ITriggerAction
     {
-        public void UpdateAll()
-        {
-            
-        }
-
         public void UpdateAllOfTable(int tableId)
         {
             UpdateView(tableId, false);
         }
 
-        public void UpdateTableObject(davClassLibrary.Models.TableObject tableObject, bool fileDownloaded)
+        public void UpdateTableObject(TableObject tableObject, bool fileDownloaded)
         {
             UpdateView(tableObject.TableId, fileDownloaded);
+        }
+
+        public void DeleteTableObject(TableObject tableObject)
+        {
+            UpdateView(tableObject.TableId, false);
         }
 
         private void UpdateView(int tableId, bool fileDownloaded)
