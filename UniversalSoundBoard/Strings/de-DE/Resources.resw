@@ -475,4 +475,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="MoreButton_SelectAllFlyout-SelectAll" xml:space="preserve">
     <value>Alles auswählen</value>
   </data>
+  <data name="Github-Link.Content" xml:space="preserve">
+    <value>UniversalSoundboard auf GitHub</value>
+  </data>
+  <data name="PrivacyPolicy-Link.Content" xml:space="preserve">
+    <value>Datenschutzerklärung</value>
+  </data>
+  <data name="USBForAndroid-Link.Content" xml:space="preserve">
+    <value>UniversalSoundboard für Android</value>
+  </data>
 </root>

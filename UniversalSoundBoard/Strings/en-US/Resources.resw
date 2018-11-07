@@ -488,4 +488,13 @@ This may take some time, depending on how large the import file is.</value>
   <data name="MoreButton_SelectAllFlyout-SelectAll" xml:space="preserve">
     <value>Select all</value>
   </data>
+  <data name="Github-Link.Content" xml:space="preserve">
+    <value>UniversalSoundboard on GitHub</value>
+  </data>
+  <data name="PrivacyPolicy-Link.Content" xml:space="preserve">
+    <value>Privacy Policy</value>
+  </data>
+  <data name="USBForAndroid-Link.Content" xml:space="preserve">
+    <value>Get UniversalSoundboard for Android</value>
+  </data>
 </root>
