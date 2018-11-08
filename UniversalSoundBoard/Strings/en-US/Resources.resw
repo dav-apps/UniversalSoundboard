@@ -221,7 +221,7 @@
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>1.5.2</value>
+    <value>1.6</value>
   </data>
   <data name="PlayingSound_CastButton.Text" xml:space="preserve">
     <value>Cast to Device</value>
