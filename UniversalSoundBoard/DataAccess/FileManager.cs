@@ -92,6 +92,15 @@ namespace UniversalSoundBoard.DataAccess
 
         public const string TableObjectExtPropertyName = "ext";
 
+        public static List<string> allowedFileTypes = new List<string>
+        {
+            ".mp3",
+            ".wav",
+            ".ogg",
+            ".wma",
+            ".flac"
+        };
+
         private enum DataModel
         {
             Old,

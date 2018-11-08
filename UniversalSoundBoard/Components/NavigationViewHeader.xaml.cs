@@ -150,8 +150,8 @@ namespace UniversalSoundBoard.Components
                 ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
                 SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary
             };
-            picker.FileTypeFilter.Add(".mp3");
-            picker.FileTypeFilter.Add(".wav");
+            foreach (var fileType in FileManager.allowedFileTypes)
+                picker.FileTypeFilter.Add(fileType);
 
             var files = await picker.PickMultipleFilesAsync();
             (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
