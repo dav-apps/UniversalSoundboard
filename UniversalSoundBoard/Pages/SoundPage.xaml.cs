@@ -148,54 +148,80 @@ namespace UniversalSoundBoard.Pages
             }
         }
         
-        private void SoundGridView_DragOver(object sender, DragEventArgs e)
+        private async void SoundGridView_DragOver(object sender, DragEventArgs e)
         {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            var deferral = e.GetDeferral();
             e.AcceptedOperation = DataPackageOperation.Copy;
 
-            e.DragUIOverride.Caption = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Drop");
             e.DragUIOverride.IsCaptionVisible = true;
             e.DragUIOverride.IsContentVisible = true;
             e.DragUIOverride.IsGlyphVisible = true;
+            
+            // If the file types of all items are not supported, update the Caption
+            bool fileTypesSupported = false;
+
+            var storageItems = await e.DataView.GetStorageItemsAsync();
+            foreach (var item in storageItems)
+            {
+                if (!item.IsOfType(StorageItemTypes.File)) continue;
+                if (!FileManager.allowedFileTypes.Contains((item as StorageFile).FileType)) continue;
+                fileTypesSupported = true;
+            }
+
+            if (!fileTypesSupported)
+                e.DragUIOverride.Caption = loader.GetString("Drop-FileTypeNotSupported");
+            else
+                e.DragUIOverride.Caption = loader.GetString("Drop");
+
+            deferral.Complete();
         }
         
         private async void SoundGridView_Drop(object sender, DragEventArgs e)
         {
-            if (e.DataView.Contains(StandardDataFormats.StorageItems))
+            if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
+
+            var items = await e.DataView.GetStorageItemsAsync();
+            if (!items.Any()) return;
+            bool fileTypesSupported = false;
+
+            // Check if the file types are supported
+            foreach (var storageItem in items)
             {
-                var items = await e.DataView.GetStorageItemsAsync();
-
-                (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
-                if (items.Any())
-                {
-                    Guid categoryUuid = Guid.Empty;
-                    try
-                    {
-                        categoryUuid = (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid;
-                    }
-                    catch(Exception ex)
-                    {
-                        Debug.WriteLine(ex.Message);
-                    }
-
-                    foreach (StorageFile soundFile in items)
-                    {
-                        await FileManager.AddSound(Guid.Empty, soundFile.DisplayName, categoryUuid, soundFile);
-                    }
-
-                    (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
-                    await FileManager.UpdateGridView();
-
-                    if ((App.Current as App)._itemViewHolder.SelectedCategory == 0)
-                    {
-                        await FileManager.ShowAllSounds();
-                    }
-                    else
-                    {
-                        await FileManager.ShowCategory((App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid);
-                    }
-                }
-                (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
+                if (!storageItem.IsOfType(StorageItemTypes.File)) continue;
+                if (!FileManager.allowedFileTypes.Contains((storageItem as StorageFile).FileType)) continue;
+                fileTypesSupported = true;
             }
+
+            if (!fileTypesSupported) return;
+
+            (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
+
+            Guid categoryUuid = Guid.Empty;
+            try
+            {
+                categoryUuid = (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.Message);
+            }
+
+            foreach (StorageFile soundFile in items)
+            {
+                if (FileManager.allowedFileTypes.Contains(soundFile.FileType))
+                    await FileManager.AddSound(Guid.Empty, soundFile.DisplayName, categoryUuid, soundFile);
+            }
+
+                (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+            await FileManager.UpdateGridView();
+
+            if ((App.Current as App)._itemViewHolder.SelectedCategory == 0)
+                await FileManager.ShowAllSounds();
+            else
+                await FileManager.ShowCategory((App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid);
+
+            (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
         }
         
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)

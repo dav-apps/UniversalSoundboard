@@ -157,7 +157,7 @@
     <value>Sounds löschen</value>
   </data>
   <data name="Drop" xml:space="preserve">
-    <value>Fallen lassen, um einen neuen Sound hinzuzufügen</value>
+    <value>Fallen lassen, um neue Sounds hinzuzufügen</value>
   </data>
   <data name="EditCategoryContentDialog-PrimaryButton" xml:space="preserve">
     <value>Speichern</value>
@@ -483,5 +483,8 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="USBForAndroid-Link.Content" xml:space="preserve">
     <value>UniversalSoundboard für Android</value>
+  </data>
+  <data name="Drop-FileTypeNotSupported" xml:space="preserve">
+    <value>Dieser Dateityp wird nicht unterstützt</value>
   </data>
 </root>

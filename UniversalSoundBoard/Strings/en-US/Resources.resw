@@ -161,7 +161,7 @@
     <comment>Löschen von mehreren Sounds</comment>
   </data>
   <data name="Drop" xml:space="preserve">
-    <value>Drop to create a custom sound and tile</value>
+    <value>Drop to add new sounds</value>
     <comment>Wenn man Sounddatei ins Fenster zieht</comment>
   </data>
   <data name="EditCategoryContentDialog-PrimaryButton" xml:space="preserve">
@@ -496,5 +496,8 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="USBForAndroid-Link.Content" xml:space="preserve">
     <value>Get UniversalSoundboard for Android</value>
+  </data>
+  <data name="Drop-FileTypeNotSupported" xml:space="preserve">
+    <value>This file type is not supported</value>
   </data>
 </root>
