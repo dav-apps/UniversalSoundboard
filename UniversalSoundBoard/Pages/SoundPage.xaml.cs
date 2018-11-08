@@ -97,6 +97,8 @@ namespace UniversalSoundBoard.Pages
                 (App.Current as App)._itemViewHolder.SelectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
                 (App.Current as App)._itemViewHolder.SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll);
             }
+
+            (App.Current as App)._itemViewHolder.AreSelectButtonsEnabled = gridView.SelectedItems.Count > 0;
         }
         
         private void SetSoundsPivotVisibility()
