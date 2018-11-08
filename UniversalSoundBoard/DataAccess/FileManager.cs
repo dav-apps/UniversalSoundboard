@@ -63,17 +63,40 @@ namespace UniversalSoundBoard.DataAccess
 
         public static bool skipAutoSuggestBoxTextChanged = false;
 
+        public static DavEnvironment Environment = DavEnvironment.Development;
+
         // dav Keys
-        //public const string ApiKey = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
-        public const string ApiKey = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
-        //public const string LoginImplicitUrl = "https://dav-apps.herokuapp.com/login_implicit";
-        public const string LoginImplicitUrl = "https://ece88b58.ngrok.io/login_implicit";
-        public const int AppId = 8;                 // Dev: 8; Prod: 1
-        public const int SoundFileTableId = 11;      // Dev: 11; Prod: 6
-        public const int ImageFileTableId = 15;      // Dev: 15; Prod: 7
-        public const int CategoryTableId = 16;       // Dev: 16; Prod: 8
-        public const int SoundTableId = 17;          // Dev: 17; Prod: 5
-        public const int PlayingSoundTableId = 18;   // Dev: 18; Prod: 9
+        private const string ApiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
+        public const string ApiKeyDevelopment = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
+        public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
+
+        private const string LoginImplicitUrlProduction = "https://dav-apps.herokuapp.com/login_implicit";
+        private const string LoginImplicitUrlDevelopment = "https://afed3f3f.ngrok.io/login_implicit";
+        public static string LoginImplicitUrl => Environment == DavEnvironment.Production ? LoginImplicitUrlProduction : LoginImplicitUrlDevelopment;
+
+        private const int AppIdProduction = 1;                 // Dev: 8; Prod: 1
+        private const int AppIdDevelopment = 8;
+        public static int AppId => Environment == DavEnvironment.Production ? AppIdProduction : AppIdDevelopment;
+
+        private const int SoundFileTableIdProduction = 6;      // Dev: 11; Prod: 6
+        private const int SoundFileTableIdDevelopment = 11;
+        public static int SoundFileTableId => Environment == DavEnvironment.Production ? SoundFileTableIdProduction : SoundFileTableIdDevelopment;
+
+        private const int ImageFileTableIdProduction = 7;      // Dev: 15; Prod: 7
+        private const int ImageFileTableIdDevelopment = 15;
+        public static int ImageFileTableId => Environment == DavEnvironment.Production ? ImageFileTableIdProduction : ImageFileTableIdDevelopment;
+
+        private const int CategoryTableIdProduction = 8;       // Dev: 16; Prod: 8
+        private const int CategoryTableIdDevelopment = 16;
+        public static int CategoryTableId => Environment == DavEnvironment.Production ? CategoryTableIdProduction : CategoryTableIdDevelopment;
+
+        private const int SoundTableIdProduction = 5;          // Dev: 17; Prod: 5
+        private const int SoundTableIdDevelopment = 17;
+        public static int SoundTableId => Environment == DavEnvironment.Production ? SoundTableIdProduction : SoundTableIdDevelopment;
+
+        private const int PlayingSoundTableIdProduction = 9;   // Dev: 18; Prod: 9
+        private const int PlayingSoundTableIdDevelopment = 18;
+        public static int PlayingSoundTableId => Environment == DavEnvironment.Production ? PlayingSoundTableIdProduction : PlayingSoundTableIdDevelopment;
 
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
