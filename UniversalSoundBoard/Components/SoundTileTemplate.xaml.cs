@@ -21,7 +21,7 @@ namespace UniversalSoundBoard.Components
 {
     public sealed partial class SoundTileTemplate : UserControl
     {
-        public Sound Sound { get { return DataContext as Sound; } }
+        public Sound Sound { get => DataContext as Sound; }
         int moreButtonClicked = 0;
         MenuFlyout OptionsFlyout;
         MenuFlyoutItem SetFavouriteFlyout;
@@ -36,17 +36,17 @@ namespace UniversalSoundBoard.Components
         {
             InitializeComponent();
             Loaded += SoundTileTemplate_Loaded;
-            DataContextChanged += (s, e) => Bindings.Update(); // <-- only working with x:Bind !!!
+            DataContextChanged += (s, e) => Bindings.Update();
             SetDarkThemeLayout();
             SetDataContext();
             CreateFlyout();
         }
-        
+
         void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
         {
             CreateCategoriesFlyout();
         }
-        
+
         private void SetDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
