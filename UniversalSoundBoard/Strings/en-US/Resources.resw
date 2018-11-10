@@ -122,7 +122,7 @@
     <comment>Text im Flyout des +-Button</comment>
   </data>
   <data name="AddButton-Sound.Text" xml:space="preserve">
-    <value>Add Sound</value>
+    <value>Add Sounds</value>
     <comment>Text im Flyout des +-Button</comment>
   </data>
   <data name="AllSounds" xml:space="preserve">
@@ -499,5 +499,14 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="Drop-FileTypeNotSupported" xml:space="preserve">
     <value>This file type is not supported</value>
+  </data>
+  <data name="AddSoundsMessage" xml:space="preserve">
+    <value>Sounds are added</value>
+  </data>
+  <data name="DeleteSoundMessage" xml:space="preserve">
+    <value>Sound is deleted</value>
+  </data>
+  <data name="DeleteSoundsMessage" xml:space="preserve">
+    <value>Sounds are deleted</value>
   </data>
 </root>

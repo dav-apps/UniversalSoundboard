@@ -154,7 +154,8 @@ namespace UniversalSoundBoard.Components
                 picker.FileTypeFilter.Add(fileType);
 
             var files = await picker.PickMultipleFilesAsync();
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
+            (App.Current as App)._itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AddSoundsMessage");
+            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = true;
             AddButton.IsEnabled = false;
 
             if (files.Any())
@@ -181,7 +182,7 @@ namespace UniversalSoundBoard.Components
                 await FileManager.UpdateGridView();
             }
             AddButton.IsEnabled = true;
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
+            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = false;
         }
         
         private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -605,20 +606,20 @@ namespace UniversalSoundBoard.Components
         
         private async void DeleteSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
+            (App.Current as App)._itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("DeleteSoundsMessage");
+            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = true;
 
             // Delete Sounds
             List<Guid> soundUuids = new List<Guid>();
             for (int i = 0; i < (App.Current as App)._itemViewHolder.SelectedSounds.Count; i++)
-            {
                 soundUuids.Add((App.Current as App)._itemViewHolder.SelectedSounds.ElementAt(i).Uuid);
-            }
+
             if (soundUuids.Count != 0)
-                FileManager.DeleteSounds(soundUuids);
+                await FileManager.DeleteSoundsAsync(soundUuids);
 
             // Clear selected sounds list
             (App.Current as App)._itemViewHolder.SelectedSounds.Clear();
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
+            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = false;
 
             await FileManager.UpdateGridView();
         }

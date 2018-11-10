@@ -129,7 +129,8 @@ namespace UniversalSoundBoard.Components
         
         private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            FileManager.DeleteSound(Sound.Uuid);
+            await FileManager.DeleteSoundAsync(Sound.Uuid);
+
             // UpdateGridView nicht in deleteSound, weil es auch in einer Schleife aufgerufen wird (löschen mehrerer Sounds)
             await FileManager.UpdateGridView();
         }

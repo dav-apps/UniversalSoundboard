@@ -121,7 +121,7 @@
     <value>Kategorie hinzufügen</value>
   </data>
   <data name="AddButton-Sound.Text" xml:space="preserve">
-    <value>Sound hinzufügen</value>
+    <value>Sounds hinzufügen</value>
   </data>
   <data name="AllSounds" xml:space="preserve">
     <value>Alle Sounds</value>
@@ -486,5 +486,14 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="Drop-FileTypeNotSupported" xml:space="preserve">
     <value>Dieser Dateityp wird nicht unterstützt</value>
+  </data>
+  <data name="AddSoundsMessage" xml:space="preserve">
+    <value>Sounds werden hinzugefügt</value>
+  </data>
+  <data name="DeleteSoundMessage" xml:space="preserve">
+    <value>Sound wird gelöscht</value>
+  </data>
+  <data name="DeleteSoundsMessage" xml:space="preserve">
+    <value>Sounds werden gelöscht</value>
   </data>
 </root>

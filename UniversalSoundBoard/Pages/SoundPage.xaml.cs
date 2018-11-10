@@ -196,8 +196,9 @@ namespace UniversalSoundBoard.Pages
             }
 
             if (!fileTypesSupported) return;
-
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
+            
+            (App.Current as App)._itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AddSoundsMessage");
+            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = true;
 
             Guid categoryUuid = Guid.Empty;
             try
@@ -215,7 +216,7 @@ namespace UniversalSoundBoard.Pages
                     await FileManager.AddSound(Guid.Empty, soundFile.DisplayName, categoryUuid, soundFile);
             }
 
-                (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
             await FileManager.UpdateGridView();
 
             if ((App.Current as App)._itemViewHolder.SelectedCategory == 0)
@@ -223,7 +224,7 @@ namespace UniversalSoundBoard.Pages
             else
                 await FileManager.ShowCategory((App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid);
 
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
+            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = false;
         }
         
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -366,6 +367,7 @@ namespace UniversalSoundBoard.Pages
             for (int i = 0; i < removedPlayingSounds.Count; i++)
             {
                 removedPlayingSounds[i].MediaPlayer.Pause();
+                removedPlayingSounds[i].MediaPlayer.SystemMediaTransportControls.IsEnabled = false;
                 removedPlayingSounds[i].MediaPlayer = null;
                 RemovePlayingSound(removedPlayingSounds[i]);
             }
