@@ -63,7 +63,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static bool skipAutoSuggestBoxTextChanged = false;
 
-        public static DavEnvironment Environment = DavEnvironment.Development;
+        public static DavEnvironment Environment = DavEnvironment.Production;
 
         // dav Keys
         private const string ApiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
@@ -71,7 +71,7 @@ namespace UniversalSoundBoard.DataAccess
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
         private const string LoginImplicitUrlProduction = "https://dav-apps.herokuapp.com/login_implicit";
-        private const string LoginImplicitUrlDevelopment = "https://afed3f3f.ngrok.io/login_implicit";
+        private const string LoginImplicitUrlDevelopment = "https://6ac62dba.ngrok.io/login_implicit";
         public static string LoginImplicitUrl => Environment == DavEnvironment.Production ? LoginImplicitUrlProduction : LoginImplicitUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 8; Prod: 1
@@ -872,20 +872,18 @@ namespace UniversalSoundBoard.DataAccess
 
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
-
-        public static void DeleteSound(Guid uuid)
+        
+        public static async Task DeleteSoundAsync(Guid uuid)
         {
             // Find the sound and image file and delete them
-            DatabaseOperations.DeleteSound(uuid);
+            await Task.Run(() => DatabaseOperations.DeleteSound(uuid));
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
-
-        public static void DeleteSounds(List<Guid> sounds)
+        
+        public static async Task DeleteSoundsAsync(List<Guid> sounds)
         {
             foreach (Guid uuid in sounds)
-            {
-                DatabaseOperations.DeleteSound(uuid);
-            }
+                await Task.Run(() => DatabaseOperations.DeleteSound(uuid));
 
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
