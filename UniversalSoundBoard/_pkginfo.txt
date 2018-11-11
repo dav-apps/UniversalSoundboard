@@ -1,1 +1,1 @@
-C:\Users\dav20\Documents\Visual Studio 2017\Projects\UniversalSoundBoard\UniversalSoundBoard\bin\ARM\Release\Upload\UniversalSoundBoard_1.5.2.0\UniversalSoundBoard_1.5.2.0_x86_x64_arm.appxbundle
+C:\Users\dav20\Documents\Visual Studio 2017\Projects\UniversalSoundBoard\UniversalSoundBoard\bin\ARM\Release\Upload\UniversalSoundBoard_1.6.0.0\UniversalSoundBoard_1.6.0.0_x86_x64_arm.appxbundle
