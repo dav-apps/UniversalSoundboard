@@ -155,12 +155,13 @@ namespace UniversalSoundBoard.Components
                 picker.FileTypeFilter.Add(fileType);
 
             var files = await picker.PickMultipleFilesAsync();
-            (App.Current as App)._itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AddSoundsMessage");
-            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = true;
-            AddButton.IsEnabled = false;
 
             if (files.Any())
             {
+                (App.Current as App)._itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AddSoundsMessage");
+                (App.Current as App)._itemViewHolder.LoadingScreenVisibility = true;
+                AddButton.IsEnabled = false;
+
                 // Application now has read/write access to the picked file(s)
                 foreach (StorageFile soundFile in files)
                 {
