@@ -25,7 +25,7 @@ namespace UniversalSoundBoard.Components
         bool skipVolumeSliderValueChangedEvent = false;
         public static ObservableCollection<Sound> PlaySoundsList;
         private List<string> Suggestions;
-        private List<StorageFile> selectedFiles;
+        private List<StorageFile> selectedFiles = new List<StorageFile>();
         int moreButtonClicked = 0;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
@@ -422,14 +422,18 @@ namespace UniversalSoundBoard.Components
             if (!await DownloadSelectedFiles()) return;
 
             // Copy the files into the temp folder
-            selectedFiles = new List<StorageFile>();
+            selectedFiles.Clear();
             StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
             foreach (Sound sound in (App.Current as App)._itemViewHolder.SelectedSounds)
             {
                 StorageFile audioFile = await sound.GetAudioFile();
                 if (audioFile == null) return;
+                string ext = sound.GetAudioFileExtension();
 
-                StorageFile tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + "." + sound.GetAudioFileExtension(), NameCollisionOption.ReplaceExisting);
+                if (string.IsNullOrEmpty(ext))
+                    ext = "mp3";
+
+                StorageFile tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + "." + ext, NameCollisionOption.ReplaceExisting);
                 selectedFiles.Add(tempFile);
             }
 
@@ -440,18 +444,17 @@ namespace UniversalSoundBoard.Components
 
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
-            if (selectedFiles.Count > 0)
-            {
-                var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-                string description = loader.GetString("ShareDialog-MultipleSounds");
-                if (selectedFiles.Count == 1)
-                    description = selectedFiles.First().Name;
+            if (selectedFiles.Count == 0) return;
 
-                DataRequest request = args.Request;
-                request.Data.SetStorageItems(selectedFiles);
-                request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
-                request.Data.Properties.Description = description;
-            }
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            string description = loader.GetString("ShareDialog-MultipleSounds");
+            if (selectedFiles.Count == 1)
+                description = selectedFiles.First().Name;
+
+            DataRequest request = args.Request;
+            request.Data.SetStorageItems(selectedFiles);
+            request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
+            request.Data.Properties.Description = description;
         }
 
         private async void MoreButton_ExportFlyout_Click(object sender, RoutedEventArgs e)

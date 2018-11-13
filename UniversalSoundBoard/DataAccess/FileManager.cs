@@ -63,7 +63,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static bool skipAutoSuggestBoxTextChanged = false;
 
-        public static DavEnvironment Environment = DavEnvironment.Production;
+        public static DavEnvironment Environment = DavEnvironment.Development;
 
         // dav Keys
         private const string ApiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
@@ -663,7 +663,12 @@ namespace UniversalSoundBoard.DataAccess
 
         private static async Task CopySoundFileIntoFolder(Sound sound, StorageFolder destinationFolder)
         {
-            StorageFile soundFile = await destinationFolder.CreateFileAsync(sound.Name + "." + sound.GetAudioFileExtension(), CreationCollisionOption.GenerateUniqueName);
+            string ext = sound.GetAudioFileExtension();
+
+            if (string.IsNullOrEmpty(ext))
+                ext = "mp3";
+
+            StorageFile soundFile = await destinationFolder.CreateFileAsync(sound.Name + "." + ext, CreationCollisionOption.GenerateUniqueName);
             await FileIO.WriteBytesAsync(soundFile, await GetBytesAsync(await sound.GetAudioFile()));
         }
 

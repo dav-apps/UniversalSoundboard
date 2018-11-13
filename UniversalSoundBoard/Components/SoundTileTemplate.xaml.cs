@@ -30,6 +30,7 @@ namespace UniversalSoundBoard.Components
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
         private bool downloadFileIsExecuting = false;
+        private List<StorageFile> soundFiles = new List<StorageFile>();
 
 
         public SoundTileTemplate()
@@ -372,6 +373,19 @@ namespace UniversalSoundBoard.Components
         {
             if (!await DownloadFile()) return;
 
+            // Copy the file into the temp folder
+            soundFiles.Clear();
+            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+            var audioFile = await Sound.GetAudioFile();
+            if (audioFile == null) return;
+            string ext = Sound.GetAudioFileExtension();
+
+            if (string.IsNullOrEmpty(ext))
+                ext = "mp3";
+
+            StorageFile tempFile = await audioFile.CopyAsync(tempFolder, Sound.Name + "." + ext, NameCollisionOption.ReplaceExisting);
+            soundFiles.Add(tempFile);
+            
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
             DataTransferManager.ShowShareUI();
@@ -384,8 +398,14 @@ namespace UniversalSoundBoard.Components
             // Open a folder picker and save the file there
             var savePicker = new Windows.Storage.Pickers.FileSavePicker();
             savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary;
+
+            string ext = Sound.GetAudioFileExtension();
+
+            if (string.IsNullOrEmpty(ext))
+                ext = "mp3";
+
             // Dropdown of file types the user can save the file as
-            savePicker.FileTypeChoices.Add("Audio", new List<string>() { "." + Sound.GetAudioFileExtension() });
+            savePicker.FileTypeChoices.Add("Audio", new List<string>() { "." + ext });
             // Default file name if the user does not type one in or select a file to replace
             savePicker.SuggestedFileName = Sound.Name;
 
@@ -458,26 +478,15 @@ namespace UniversalSoundBoard.Components
             }
         }
         
-        private async void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
-            var deferral = args.Request.GetDeferral();
+            if (soundFiles.Count == 0) return;
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            List<StorageFile> sounds = new List<StorageFile>();
-
-            // Copy file with better name into temp folder and share it
-            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            var audioFile = await Sound.GetAudioFile();
-            if (audioFile == null) return;
-
-            StorageFile tempFile = await audioFile.CopyAsync(tempFolder, Sound.Name + "." + Sound.GetAudioFileExtension(), NameCollisionOption.ReplaceExisting);
-            sounds.Add(tempFile);
-
+            
             DataRequest request = args.Request;
-            request.Data.SetStorageItems(sounds);
-
+            request.Data.SetStorageItems(soundFiles);
             request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
-            request.Data.Properties.Description = sounds.First().Name;
-            deferral.Complete();
+            request.Data.Properties.Description = soundFiles.First().Name;
         }
         
         private void Flyout_Opened(object sender, object e)
