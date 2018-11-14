@@ -16,7 +16,14 @@ namespace UniversalSoundboard.Common
 
         public void UpdateTableObject(TableObject tableObject, bool fileDownloaded)
         {
-            UpdateView(tableObject.TableId, fileDownloaded);
+            if (tableObject.TableId == FileManager.PlayingSoundTableId)
+            {
+                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+                    FileManager.UpdatePlayingSoundListItem(tableObject.Uuid);
+                });
+            }
+            else
+                UpdateView(tableObject.TableId, fileDownloaded);
         }
 
         public void DeleteTableObject(TableObject tableObject)

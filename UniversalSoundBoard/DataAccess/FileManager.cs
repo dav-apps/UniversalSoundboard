@@ -71,7 +71,7 @@ namespace UniversalSoundBoard.DataAccess
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
         private const string LoginImplicitUrlProduction = "https://dav-apps.herokuapp.com/login_implicit";
-        private const string LoginImplicitUrlDevelopment = "https://6ac62dba.ngrok.io/login_implicit";
+        private const string LoginImplicitUrlDevelopment = "https://835299b2.ngrok.io/login_implicit";
         public static string LoginImplicitUrl => Environment == DavEnvironment.Production ? LoginImplicitUrlProduction : LoginImplicitUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 8; Prod: 1
@@ -981,74 +981,90 @@ namespace UniversalSoundBoard.DataAccess
 
             foreach (var obj in playingSoundObjects)
             {
-                List<Sound> sounds = new List<Sound>();
-                string soundIds = obj.GetPropertyValue(PlayingSoundTableSoundIdsPropertyName);
-
-                // Get the sounds
-                if (!String.IsNullOrEmpty(soundIds))
-                {
-                    foreach (string uuidString in soundIds.Split(","))
-                    {
-                        // Convert the uuid string into a Guid
-                        Guid uuid = ConvertStringToGuid(uuidString);
-
-                        if (!Equals(uuid, Guid.Empty))
-                        {
-                            var sound = await GetSound(uuid);
-                            if (sound != null)
-                                sounds.Add(sound);
-                        }
-                    }
-
-                    if(sounds.Count == 0)
-                    {
-                        // Delete the playing sound
-                        DeletePlayingSound(obj.Uuid);
-                        continue;
-                    }
-                }
-                else
-                {
-                    // Delete the playing sound
-                    DeletePlayingSound(obj.Uuid);
-                    continue;
-                }
-
-                // Get the properties of the table objects
-                int current = 0;
-                string currentString = obj.GetPropertyValue(PlayingSoundTableCurrentPropertyName);
-                int.TryParse(currentString, out current);
-
-                double volume = 1.0;
-                string volumeString = obj.GetPropertyValue(PlayingSoundTableVolumePropertyName);
-                double.TryParse(volumeString, out volume);
-
-                int repetitions = 1;
-                string repetitionsString = obj.GetPropertyValue(PlayingSoundTableRepetitionsPropertyName);
-                int.TryParse(repetitionsString, out repetitions);
-
-                bool randomly = false;
-                string randomlyString = obj.GetPropertyValue(PlayingSoundTableRandomlyPropertyName);
-                bool.TryParse(randomlyString, out randomly);
-
-                // Create the media player
-                MediaPlayer player = await CreateMediaPlayer(sounds, current);
-                
-                if (player != null)
-                {
-                    player.Volume = volume;
-                    player.AutoPlay = false;
-
-                    PlayingSound playingSound = new PlayingSound(obj.Uuid, sounds, player, repetitions, randomly, current);
-                    playingSounds.Add(playingSound);
-                }
-                else
-                {
-                    // Remove the PlayingSound from the DB
-                    DeletePlayingSound(obj.Uuid);
-                }
+                var playingSound = await ConvertTableObjectToPlayingSound(obj);
+                if (playingSound != null) playingSounds.Add(playingSound);
             }
             return playingSounds;
+        }
+
+        public static async Task<PlayingSound> GetPlayingSound(Guid uuid)
+        {
+            var tableObject = DatabaseOperations.GetObject(uuid);
+            if (tableObject == null) return null;
+            if (tableObject.TableId != PlayingSoundTableId) return null;
+
+            return await ConvertTableObjectToPlayingSound(tableObject);
+        }
+
+        private static async Task<PlayingSound> ConvertTableObjectToPlayingSound(TableObject tableObject)
+        {
+            List<Sound> sounds = new List<Sound>();
+            string soundIds = tableObject.GetPropertyValue(PlayingSoundTableSoundIdsPropertyName);
+
+            // Get the sounds
+            if (!String.IsNullOrEmpty(soundIds))
+            {
+                foreach (string uuidString in soundIds.Split(","))
+                {
+                    // Convert the uuid string into a Guid
+                    Guid uuid = ConvertStringToGuid(uuidString);
+
+                    if (!Equals(uuid, Guid.Empty))
+                    {
+                        var sound = await GetSound(uuid);
+                        if (sound != null)
+                            sounds.Add(sound);
+                    }
+                }
+
+                if (sounds.Count == 0)
+                {
+                    // Delete the playing sound
+                    DeletePlayingSound(tableObject.Uuid);
+                    return null;
+                }
+            }
+            else
+            {
+                // Delete the playing sound
+                DeletePlayingSound(tableObject.Uuid);
+                return null;
+            }
+
+            // Get the properties of the table objects
+            int current = 0;
+            string currentString = tableObject.GetPropertyValue(PlayingSoundTableCurrentPropertyName);
+            int.TryParse(currentString, out current);
+
+            double volume = 1.0;
+            string volumeString = tableObject.GetPropertyValue(PlayingSoundTableVolumePropertyName);
+            double.TryParse(volumeString, out volume);
+
+            int repetitions = 1;
+            string repetitionsString = tableObject.GetPropertyValue(PlayingSoundTableRepetitionsPropertyName);
+            int.TryParse(repetitionsString, out repetitions);
+
+            bool randomly = false;
+            string randomlyString = tableObject.GetPropertyValue(PlayingSoundTableRandomlyPropertyName);
+            bool.TryParse(randomlyString, out randomly);
+
+            // Create the media player
+            MediaPlayer player = await CreateMediaPlayer(sounds, current);
+
+            if (player != null)
+            {
+                player.Volume = volume;
+                player.AutoPlay = false;
+
+                PlayingSound playingSound = new PlayingSound(tableObject.Uuid, sounds, player, repetitions, randomly, current);
+                return playingSound;
+            }
+            else
+            {
+                // Remove the PlayingSound from the DB
+                DeletePlayingSound(tableObject.Uuid);
+                return null;
+            }
         }
 
         public static void AddOrRemoveAllPlayingSounds()
@@ -1504,6 +1520,22 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.SelectedCategory = selectedCategory;
         }
 
+        public static async Task UpdatePlayingSoundListItem(Guid uuid)
+        {
+            var playingSound = await GetPlayingSound(uuid);
+            if (playingSound == null) return;
+
+            var currentPlayingSoundList = (App.Current as App)._itemViewHolder.PlayingSounds.Where(p => p.Uuid == playingSound.Uuid);
+            if (currentPlayingSoundList.Count() == 0) return;
+            var currentPlayingSound = currentPlayingSoundList.First();
+            if (currentPlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing) return;
+            int index = (App.Current as App)._itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
+
+            // Replace the playing sound
+            (App.Current as App)._itemViewHolder.PlayingSounds.RemoveAt(index);
+            (App.Current as App)._itemViewHolder.PlayingSounds.Insert(index, playingSound);
+        }
+
         public static async Task CreatePlayingSoundsList()
         {
             var allPlayingSounds = await GetAllPlayingSounds();
@@ -1511,19 +1543,37 @@ namespace UniversalSoundBoard.DataAccess
             {
                 if (ps.MediaPlayer != null)
                 {
-                    var playingSounds = (App.Current as App)._itemViewHolder.PlayingSounds.Where(p => p.Uuid == ps.Uuid);
+                    var currentPlayingSoundList = (App.Current as App)._itemViewHolder.PlayingSounds.Where(p => p.Uuid == ps.Uuid);
 
-                    if (playingSounds.Count() > 0)
+                    if (currentPlayingSoundList.Count() > 0)
                     {
-                        var playingSound = playingSounds.First();
-                        int index = (App.Current as App)._itemViewHolder.PlayingSounds.IndexOf(playingSound);
+                        var currentPlayingSound = currentPlayingSoundList.First();
+                        int index = (App.Current as App)._itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
 
                         // Update the current playing sound if it is currently not playing
-                        if (playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                        if (currentPlayingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
                         {
-                            // Replace the old playing sound
-                            (App.Current as App)._itemViewHolder.PlayingSounds.RemoveAt(index);
-                            (App.Current as App)._itemViewHolder.PlayingSounds.Insert(index, ps);
+                            // Check if the playing sound changed
+                            bool soundWasUpdated = false;
+
+                            soundWasUpdated = currentPlayingSound.Randomly != ps.Randomly ||
+                                                currentPlayingSound.Repetitions != ps.Repetitions ||
+                                                currentPlayingSound.Sounds.Count != ps.Sounds.Count;
+
+                            if (currentPlayingSound.MediaPlayer != null && ps.MediaPlayer != null && !soundWasUpdated)
+                            {
+                                soundWasUpdated = currentPlayingSound.MediaPlayer.Volume != ps.MediaPlayer.Volume;
+                                Debug.WriteLine("Volume");
+                            }
+
+                            if (soundWasUpdated)
+                            {
+                                // Replace the playing sound
+                                (App.Current as App)._itemViewHolder.PlayingSounds.RemoveAt(index);
+                                (App.Current as App)._itemViewHolder.PlayingSounds.Insert(index, ps);
+                            }
+
+                            Debug.WriteLine(soundWasUpdated);
                         }
                     }
                     else
