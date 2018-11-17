@@ -81,8 +81,9 @@ namespace UniversalSoundBoard.Components
             if(PlayingSound.MediaPlayer != null)
             {
                 int currentItemIndex = (int)((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemIndex;
-                MediaPlayerElement.TransportControls.IsPreviousTrackButtonVisible = currentItemIndex != 0;
-                MediaPlayerElement.TransportControls.IsNextTrackButtonVisible = currentItemIndex != PlayingSound.Sounds.Count - 1;
+                (MediaPlayerElement.TransportControls as CustomMediaTransportControls).NextButtonShouldBeVisible = currentItemIndex != PlayingSound.Sounds.Count - 1;
+                (MediaPlayerElement.TransportControls as CustomMediaTransportControls).PreviousButtonShouldBeVisible = currentItemIndex != 0;
+                (MediaPlayerElement.TransportControls as CustomMediaTransportControls).AdjustLayout();
             }
         }
         

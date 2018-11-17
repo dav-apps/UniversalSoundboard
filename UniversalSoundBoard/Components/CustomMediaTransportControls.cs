@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -22,6 +23,11 @@ namespace UniversalSoundBoard.Components
         private MenuFlyoutItem VolumeMenuFlyoutItem;
         private Slider VolumeSlider2;
         private MenuFlyoutItem CastButton;
+        private AppBarButton VolumeMuteButton;
+        private StackPanel MediaControlsStackPanel;
+        private StackPanel OptionsStackPanel;
+        public bool NextButtonShouldBeVisible = false;
+        public bool PreviousButtonShouldBeVisible = false;
 
         public CustomMediaTransportControls()
         {
@@ -37,7 +43,7 @@ namespace UniversalSoundBoard.Components
             MenuFlyoutButton = GetTemplateChild("MenuFlyoutButton") as AppBarButton;
             MenuFlyoutButton.Click += MenuFlyoutButton_Click;
 
-            AppBarButton VolumeButton = GetTemplateChild("VolumeMuteButton") as AppBarButton;
+            VolumeMuteButton = GetTemplateChild("VolumeMuteButton") as AppBarButton;
 
             VolumeMenuFlyoutItem = GetTemplateChild("VolumeMenuFlyoutItem") as MenuFlyoutItem;
             VolumeMenuFlyoutItem.Click += VolumeMenuFlyout_Click;
@@ -66,6 +72,9 @@ namespace UniversalSoundBoard.Components
             MenuFlyoutItem Repeat_endless = GetTemplateChild("Repeat_endless") as MenuFlyoutItem;
             Repeat_endless.Click += Repeat_endless_Click;
 
+            MediaControlsStackPanel = GetTemplateChild("MediaControlsStackPanel") as StackPanel;
+            OptionsStackPanel = GetTemplateChild("OptionsStackPanel") as StackPanel;
+
             base.OnApplyTemplate();
         }
 
@@ -82,6 +91,75 @@ namespace UniversalSoundBoard.Components
         private void VolumeMenuFlyout_Click(object sender, RoutedEventArgs e)
         {
             VolumeMenuFlyoutItem.ContextFlyout.ShowAt(MenuFlyoutButton);
+        }
+
+        public void AdjustLayout()
+        {
+            if (IsCompact)
+            {
+                IsNextTrackButtonVisible = NextButtonShouldBeVisible;
+                IsPreviousTrackButtonVisible = PreviousButtonShouldBeVisible;
+                return;
+            }
+            var width = base.ActualWidth;
+
+            if(NextButtonShouldBeVisible && PreviousButtonShouldBeVisible)
+            {
+                if (width < 192)
+                {
+                    // Hide both buttons
+                    IsNextTrackButtonVisible = false;
+                    IsPreviousTrackButtonVisible = false;
+                }
+                else if (width < 240)
+                {
+                    // Hide the next button and show the previous button
+                    IsNextTrackButtonVisible = false;
+                    IsPreviousTrackButtonVisible = true;
+                }
+                else
+                {
+                    // Show both buttons
+                    IsNextTrackButtonVisible = true;
+                    IsPreviousTrackButtonVisible = true;
+                }
+            }
+            else if(NextButtonShouldBeVisible && !PreviousButtonShouldBeVisible)
+            {
+                if(width < 191)
+                {
+                    // Hide both buttons
+                    IsNextTrackButtonVisible = false;
+                    IsPreviousTrackButtonVisible = false;
+                }
+                else
+                {
+                    // Show the next button and hide the previous button
+                    IsNextTrackButtonVisible = true;
+                    IsPreviousTrackButtonVisible = false;
+                }
+            }
+            else if(!NextButtonShouldBeVisible && PreviousButtonShouldBeVisible)
+            {
+                if(width < 191)
+                {
+                    // Hide both buttons
+                    IsNextTrackButtonVisible = false;
+                    IsPreviousTrackButtonVisible = false;
+                }
+                else
+                {
+                    // Show the previous button and hide the next button
+                    IsNextTrackButtonVisible = false;
+                    IsPreviousTrackButtonVisible = true;
+                }
+            }
+            else
+            {
+                // Hide both buttons
+                IsNextTrackButtonVisible = false;
+                IsPreviousTrackButtonVisible = false;
+            }
         }
 
         // Raise custom events
