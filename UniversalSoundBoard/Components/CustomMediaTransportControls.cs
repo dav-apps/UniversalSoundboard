@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -99,9 +98,13 @@ namespace UniversalSoundBoard.Components
             {
                 IsNextTrackButtonVisible = NextButtonShouldBeVisible;
                 IsPreviousTrackButtonVisible = PreviousButtonShouldBeVisible;
+
+                // Reset the margins
+                MediaControlsStackPanel.Margin = new Thickness(0);
+                OptionsStackPanel.Margin = new Thickness(0);
                 return;
             }
-            var width = base.ActualWidth;
+            var width = ActualWidth;
 
             if(NextButtonShouldBeVisible && PreviousButtonShouldBeVisible)
             {
@@ -159,6 +162,37 @@ namespace UniversalSoundBoard.Components
                 // Hide both buttons
                 IsNextTrackButtonVisible = false;
                 IsPreviousTrackButtonVisible = false;
+            }
+
+            // Calculate the width of the buttons; the ActualWidth property is not reliable
+            double buttonWidth = 48;
+            
+            // Calculate the width of the MediaControlsStackPanel
+            double mediaControlsStackPanelWidth = buttonWidth;      // The Play/Pause button is always visible
+            if (IsNextTrackButtonVisible)
+                mediaControlsStackPanelWidth += buttonWidth;
+            if (IsPreviousTrackButtonVisible)
+                mediaControlsStackPanelWidth += buttonWidth;
+
+            // Calculate the width of the OptionsStackPanel
+            double optionsStackPanelWidth = buttonWidth * 2;        // The options button and the remove button are both always visible
+
+            // Set the margins
+            if(VolumeMuteButton.Visibility == Visibility.Collapsed)
+            {
+                // Set only the margin of the Options
+                // (Width of MediaControls) + (Margin) + (Width of OptionsStackPanel) = Width of base
+                double margin = width - optionsStackPanelWidth - mediaControlsStackPanelWidth;
+                MediaControlsStackPanel.Margin = new Thickness(0);
+                OptionsStackPanel.Margin = new Thickness(margin, 0, 0, 0);
+            }
+            else
+            {
+                // Set the margin of the controls and the options
+                // (Width of VolumeButton) + (Margin / 2) + (Width of MediaControlsStackPanel) + (Margin / 2) + (Width of OptionsStackPanel) = Width of base
+                double margin = width - buttonWidth - mediaControlsStackPanelWidth - optionsStackPanelWidth;
+                MediaControlsStackPanel.Margin = new Thickness(margin / 2, 0, 0, 0);
+                OptionsStackPanel.Margin = new Thickness(margin / 2, 0, 0, 0);
             }
         }
 

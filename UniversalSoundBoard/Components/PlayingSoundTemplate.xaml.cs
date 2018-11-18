@@ -72,6 +72,8 @@ namespace UniversalSoundBoard.Components
 
             // Set the text of the add to Favourites Flyout
             FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
+
+            if (PlayingSound == null) return;
             MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteMenuFlyoutItem");
             FavouriteFlyout.Text = PlayingSound.CurrentSound.Favourite ?
                 FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
