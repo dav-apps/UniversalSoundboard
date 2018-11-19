@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
@@ -18,7 +17,7 @@ namespace UniversalSoundBoard.Pages
     {
         ShareOperation shareOperation;
         ObservableCollection<Category> categories;
-        List<StorageFile> items;
+        List<StorageFile> items = new List<StorageFile>();
         CoreDispatcher dispatcher;
 
 
@@ -33,14 +32,12 @@ namespace UniversalSoundBoard.Pages
             dispatcher = MainPage.dispatcher == null ? CoreWindow.GetForCurrentThread().Dispatcher : MainPage.dispatcher;
 
             shareOperation = e.Parameter as ShareOperation;
-            items = new List<StorageFile>();
 
+            items.Clear();
             foreach (StorageFile file in await shareOperation.Data.GetStorageItemsAsync())
-            {
                 items.Add(file);
-            }
         }
-        
+
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -50,32 +47,31 @@ namespace UniversalSoundBoard.Pages
 
                 // Get all Categories and show them
                 foreach (Category cat in (App.Current as App)._itemViewHolder.Categories)
-                {
                     categories.Add(cat);
-                }
             });
             Bindings.Update();
+
+            (App.Current as App)._itemViewHolder.Categories.CollectionChanged += Categories_CollectionChanged;
         }
-        
+
         private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
             AddButton.IsEnabled = false;
             AddCategoryButton.IsEnabled = false;
-            ProgressRing.IsActive = true;
+            LoadingControl.IsLoading = true;
+            LoadingControlMessageTextBlock.Text = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AddSoundsMessage");
 
-            Category category = null;
-            if(CategoriesListView.SelectedIndex != 0)
-            {
-                category = CategoriesListView.SelectedItem as Category;
-            }
-
+            Guid categoryUuid = Guid.Empty;
+            if (CategoriesListView.SelectedIndex != 0)
+                categoryUuid = (CategoriesListView.SelectedItem as Category).Uuid;
+            
             if (items.Count > 0)
             {
                 foreach (StorageFile storagefile in items)
                 {
-                    if (storagefile.ContentType == "audio/wav" || storagefile.ContentType == "audio/mpeg")
+                    if (FileManager.allowedFileTypes.Contains(storagefile.FileType))
                     {
-                        FileManager.AddSound(Guid.Empty, storagefile.DisplayName, category.Uuid, storagefile);
+                        await FileManager.AddSound(Guid.Empty, storagefile.DisplayName, categoryUuid, storagefile);
                     }
                 }
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -83,22 +79,34 @@ namespace UniversalSoundBoard.Pages
                     (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
                 });
             }
-            shareOperation.ReportCompleted();
 
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 await FileManager.UpdateGridView();
             });
+            
+            (App.Current as App)._itemViewHolder.Categories.CollectionChanged -= Categories_CollectionChanged;
+
+            shareOperation.ReportCompleted();
         }
         
         private void CategoriesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (!ProgressRing.IsActive)
-            {
-                AddButton.IsEnabled = true;
-            }
+            AddButton.IsEnabled = true;
         }
-        
+
+        private async void Categories_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                IEnumerable<Category> newCategoriesObservableCollection = (IEnumerable<Category>)sender;
+                List<Category> newCategories = new List<Category>(newCategoriesObservableCollection);
+                categories.Clear();
+                foreach (var c in newCategories)
+                    categories.Add(c);
+            });
+        }
+
         private async void AddCategoryButton_Click(object sender, RoutedEventArgs e)
         {
             // Show new Category ContentDialog
@@ -118,13 +126,10 @@ namespace UniversalSoundBoard.Pages
                 Name = ContentDialogs.NewCategoryTextBox.Text,
                 Icon = icon
             };
-
-            categories.Add(FileManager.AddCategory(Guid.Empty, category.Name, category.Icon));
-            Bindings.Update();
-
+            
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                FileManager.CreateCategoriesList();
+                FileManager.AddCategory(Guid.Empty, category.Name, category.Icon);
             });
         }
     }

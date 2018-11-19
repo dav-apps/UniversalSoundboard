@@ -5,59 +5,77 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:UniversalSoundBoard.Models"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
-    <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <StackPanel>
-            <TextBlock Name="SelectCategoryTextBlock" 
+    <Grid>
+        <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+            <StackPanel>
+                <TextBlock Name="SelectCategoryTextBlock" 
                        x:Uid="ShareTarget-SelectCategoryTextBlock"
                        Grid.Row="0"
                        Margin="12,5,0,10"/>
 
-            <ListView Name="CategoriesListView" 
+                <ListView Name="CategoriesListView" 
                       Grid.Row="1"
                       SelectionChanged="CategoriesListView_SelectionChanged"
                       ItemsSource="{x:Bind categories}">
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:Category">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="*" />
-                            </Grid.ColumnDefinitions>
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Category">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="Auto" />
+                                    <ColumnDefinition Width="*" />
+                                </Grid.ColumnDefinitions>
 
-                            <TextBlock Name="CategoryIconTextBlock" 
+                                <TextBlock Name="CategoryIconTextBlock" 
                                        Grid.Column="0"
                                        Text="{x:Bind Icon}"
                                        FontFamily="Segoe MDL2 Assets"
                                        VerticalAlignment="Center" 
                                        Margin="0,3,10,0" />
-                            <TextBlock Name="CategoryNameTextBlock" 
+                                <TextBlock Name="CategoryNameTextBlock" 
                                        Text="{x:Bind Name}" 
                                        Grid.Column="1"
                                        VerticalAlignment="Center" />
-                        </Grid>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+                            </Grid>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
 
-            <StackPanel Orientation="Horizontal"
-                        Margin="10,10,0,0">
-                <Button Name="AddButton" 
-                        x:Uid="ShareTarget-AddButton" 
-                        Grid.Row="2"
-                        IsEnabled="False"
-                        Click="AddButton_Click"/>
+                <StackPanel Orientation="Horizontal"
+                            Margin="10,10,0,0">
+                    <Button Name="AddButton" 
+                            x:Uid="ShareTarget-AddButton" 
+                            Grid.Row="2"
+                            IsEnabled="False"
+                            Click="AddButton_Click"/>
 
-                <ProgressRing Name="ProgressRing" 
-                              IsActive="False"
-                              Margin="10,0,10,0" />
-
-                <Button Name="AddCategoryButton" 
-                        x:Uid="ShareTarget-AddCategoryButton"
-                        Click="AddCategoryButton_Click"/>
+                    <Button Name="AddCategoryButton" 
+                            x:Uid="ShareTarget-AddCategoryButton"
+                            Margin="20,0,0,0"
+                            Click="AddCategoryButton_Click"/>
+                </StackPanel>
             </StackPanel>
-        </StackPanel>
-    </ScrollViewer>
+        </ScrollViewer>
+
+        <controls:Loading x:Name="LoadingControl">
+            <controls:Loading.Background>
+                <SolidColorBrush Color="Black" 
+                                     Opacity="0.7" />
+            </controls:Loading.Background>
+            <StackPanel Orientation="Horizontal" 
+                        Padding="12">
+                <ProgressRing IsActive="True" 
+                                Margin="0,0,16,0" 
+                                Height="27" 
+                                Width="27" />
+                <TextBlock Name="LoadingControlMessageTextBlock"
+                            FontSize="17"
+                            VerticalAlignment="Center" 
+                            Foreground="White" />
+            </StackPanel>
+        </controls:Loading>
+    </Grid>
 </Page>
