@@ -32,5 +32,14 @@ namespace UniversalSoundboard.Common
                 FileManager.ImageFileTableId
             };
         }
+
+        public List<int> GetParallelTableIds()
+        {
+            return new List<int>
+            {
+                FileManager.SoundTableId,
+                FileManager.SoundFileTableId
+            };
+        }
     }
 }

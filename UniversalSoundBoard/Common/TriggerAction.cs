@@ -11,7 +11,7 @@ namespace UniversalSoundboard.Common
     {
         public void UpdateAllOfTable(int tableId)
         {
-            UpdateView(tableId, false);
+            UpdateView(tableId);
         }
 
         public void UpdateTableObject(TableObject tableObject, bool fileDownloaded)
@@ -22,20 +22,16 @@ namespace UniversalSoundboard.Common
                     FileManager.UpdatePlayingSoundListItem(tableObject.Uuid);
                 });
             }
-            else
-                UpdateView(tableObject.TableId, fileDownloaded);
         }
 
         public void DeleteTableObject(TableObject tableObject)
         {
-            UpdateView(tableObject.TableId, false);
+            UpdateView(tableObject.TableId);
         }
 
-        private void UpdateView(int tableId, bool fileDownloaded)
+        private void UpdateView(int tableId)
         {
-            if (tableId == FileManager.ImageFileTableId || 
-                (tableId == FileManager.SoundFileTableId && !fileDownloaded) ||
-                tableId == FileManager.SoundTableId)
+            if (tableId == FileManager.ImageFileTableId || tableId == FileManager.SoundFileTableId)
             {
                 // Update the sounds
                 CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
