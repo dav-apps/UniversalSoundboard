@@ -70,8 +70,8 @@ namespace UniversalSoundBoard.DataAccess
         public const string ApiKeyDevelopment = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
-        private const string LoginImplicitUrlProduction = "https://dav-apps.herokuapp.com/login_implicit";
-        private const string LoginImplicitUrlDevelopment = "https://835299b2.ngrok.io/login_implicit";
+        private const string LoginImplicitUrlProduction = "https://dav-apps.tech/login_implicit";
+        private const string LoginImplicitUrlDevelopment = "https://03145d5b.ngrok.io/login_implicit";
         public static string LoginImplicitUrl => Environment == DavEnvironment.Production ? LoginImplicitUrlProduction : LoginImplicitUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 8; Prod: 1
