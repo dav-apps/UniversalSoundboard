@@ -102,8 +102,8 @@ namespace UniversalSoundboard.Pages
             {
                 string message = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Account-UsedStorage");
 
-                double usedStorageGB = Math.Round((App.Current as App)._itemViewHolder.User.UsedStorage / 1000.0 / 1000.0 / 1000.0, 1);
-                double totalStorageGB = Math.Round((App.Current as App)._itemViewHolder.User.TotalStorage / 1000.0 / 1000.0 / 1000.0, 1);
+                double usedStorageGB = Math.Round((App.Current as App)._itemViewHolder.User.UsedStorage / 1000000000.0, 1);
+                double totalStorageGB = Math.Round((App.Current as App)._itemViewHolder.User.TotalStorage / 1000000000.0, 1);
 
                 double percentage = usedStorageGB / totalStorageGB * 100;
 
