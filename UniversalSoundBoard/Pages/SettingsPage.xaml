@@ -70,7 +70,7 @@
                                 <TextBlock x:Uid="Version" 
                                            IsTextSelectionEnabled="True" />
                             </StackPanel>
-                            <TextBlock Text="Copyright © 2018 by dav" />
+                            <TextBlock Text="Copyright © 2019 by dav" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
