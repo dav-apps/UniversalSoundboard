@@ -9,6 +9,7 @@ using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
@@ -29,6 +30,7 @@ namespace UniversalSoundBoard.Pages
             InitializeComponent();
             Loaded += SoundPage_Loaded;
 
+            SetThemeColors();
             ShowPlayingSoundsList();
         }
         
@@ -42,6 +44,18 @@ namespace UniversalSoundBoard.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             soundsPivotSelected = true;
+        }
+
+        private void SetThemeColors()
+        {
+            Color appThemeColor = FileManager.GetApplicationThemeColor();
+
+            DrawerContent.Background = new AcrylicBrush
+            {
+                TintOpacity = 0.85,
+                TintColor = appThemeColor,
+                BackgroundSource = AcrylicBackgroundSource.HostBackdrop
+            };
         }
 
         private GridView GetVisibleGridView()

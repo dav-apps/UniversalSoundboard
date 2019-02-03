@@ -146,13 +146,13 @@ namespace UniversalSoundBoard.Pages
             // Set the acrylic background of the sidebar
             Application.Current.Resources["NavigationViewExpandedPaneBackground"] = new AcrylicBrush
             {
-                TintOpacity = 0.5,
+                TintOpacity = 0.6,
                 BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
                 TintColor = appThemeColor
             };
 
             // Set the background of the MediaTransportControls
-            (Application.Current.Resources["MediaTransportControlsPanelBackground"] as SolidColorBrush).Color = appThemeColor;
+            (Application.Current.Resources["MediaTransportControlsPanelBackground"] as SolidColorBrush).Color = Colors.Transparent;
         }
 
         private void SideBar_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)

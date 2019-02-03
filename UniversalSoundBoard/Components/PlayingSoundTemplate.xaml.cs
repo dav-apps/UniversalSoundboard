@@ -89,7 +89,7 @@ namespace UniversalSoundBoard.Components
         
         private void SetDarkThemeLayout()
         {
-            ContentRoot.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
+            ContentRoot.Background = new SolidColorBrush(Colors.Transparent);
         }
         
         private void RepeatSound(int repetitions)
