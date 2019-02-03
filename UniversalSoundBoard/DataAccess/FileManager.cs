@@ -22,6 +22,7 @@ using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
@@ -1801,6 +1802,11 @@ namespace UniversalSoundBoard.DataAccess
             var soundDetailsFolder = await localStorageFolder.TryGetItemAsync("soundDetails");
 
             return soundsFolder == null && imagesFolder == null && soundDetailsFolder == null;
+        }
+
+        public static Color GetApplicationThemeColor()
+        {
+            return (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? ((Color)Application.Current.Resources["DarkThemeBackgroundColor"]) : ((Color)Application.Current.Resources["LightThemeBackgroundColor"]);
         }
         #endregion
 
