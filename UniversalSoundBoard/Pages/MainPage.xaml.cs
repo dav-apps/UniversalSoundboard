@@ -9,6 +9,7 @@ using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundboard.Pages;
+using Windows.UI.Xaml.Media;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -25,6 +26,7 @@ namespace UniversalSoundBoard.Pages
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             CustomiseTitleBar();
+            SetDarkThemeLayout();
         }
         
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -132,6 +134,25 @@ namespace UniversalSoundBoard.Pages
             titleBar.ButtonForegroundColor = ((App.Current as App).RequestedTheme == ApplicationTheme.Dark) ? Colors.White : Colors.Black;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+        }
+
+        private void SetDarkThemeLayout()
+        {
+            Color appThemeColor = FileManager.GetApplicationThemeColor();
+
+            // Set the background of the sidebar
+            SideBar.Background = new SolidColorBrush(appThemeColor);
+
+            // Set the acrylic background of the sidebar
+            Application.Current.Resources["NavigationViewExpandedPaneBackground"] = new AcrylicBrush
+            {
+                TintOpacity = 0.5,
+                BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
+                TintColor = appThemeColor
+            };
+
+            // Set the background of the MediaTransportControls
+            (Application.Current.Resources["MediaTransportControlsPanelBackground"] as SolidColorBrush).Color = appThemeColor;
         }
 
         private void SideBar_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
