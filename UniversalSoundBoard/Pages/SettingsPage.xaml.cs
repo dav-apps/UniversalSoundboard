@@ -5,9 +5,11 @@ using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundBoard.Pages
@@ -41,6 +43,7 @@ namespace UniversalSoundBoard.Pages
         
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
+            SetDarkThemeLayout();
             SetLiveTileToggle();
             SetPlayingSoundsListVisibilityToggle();
             SetPlayOneSoundAtOnceToggle();
@@ -49,7 +52,16 @@ namespace UniversalSoundBoard.Pages
             SetThemeRadioButton();
             SetSavePlayingSoundsToggle();
         }
-        
+
+        private void SetDarkThemeLayout()
+        {
+            SolidColorBrush appThemeColorBrush = new SolidColorBrush(FileManager.GetApplicationThemeColor());
+            ContentRoot.Background = appThemeColorBrush;
+            SettingsGeneralStackPanel.Background = appThemeColorBrush;
+            SettingsDesignStackPanel.Background = appThemeColorBrush;
+            SettingsDataStackPanel.Background = appThemeColorBrush;
+        }
+
         private void SetLiveTileToggle()
         {
             LiveTileToggle.IsOn = (bool)localSettings.Values[FileManager.liveTileKey];

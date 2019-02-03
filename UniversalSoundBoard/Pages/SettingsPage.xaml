@@ -27,7 +27,7 @@
         <Pivot Name="SettingsPivot" Grid.Row="1">
             <PivotItem x:Uid="SettingsPivot-General">
                 <ScrollViewer>
-                    <StackPanel Style="{StaticResource SettingsContentStyle}">
+                    <StackPanel Name="SettingsGeneralStackPanel" Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch Name="PlayOneSoundAtOnceToggle" 
                                           x:Uid="PlayOneSoundAtOnceToggle" 
@@ -77,7 +77,7 @@
             </PivotItem>
             <PivotItem x:Uid="SettingsPivot-Design">
                 <ScrollViewer>
-                    <StackPanel Style="{StaticResource SettingsContentStyle}">
+                    <StackPanel Name="SettingsDesignStackPanel" Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch Name="LiveTileToggle" 
                                           Header="Live Tile" 
@@ -121,7 +121,7 @@
             </PivotItem>
             <PivotItem x:Uid="SettingsPivot-Data">
                 <ScrollViewer>
-                    <StackPanel Style="{StaticResource SettingsContentStyle}">
+                    <StackPanel Name="SettingsDataStackPanel" Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <StackPanel Orientation="Horizontal">
                                 <Button Name="ImportDataButton" 

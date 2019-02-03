@@ -34,11 +34,12 @@ namespace UniversalSoundboard.Pages
 
         private void SetDarkThemeLayout()
         {
-            if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
-            {
-                LoginButton.Background = new SolidColorBrush(Colors.DimGray);
-                SignupButton.Background = new SolidColorBrush(Colors.DimGray);
-            }
+            Color appThemeColor = FileManager.GetApplicationThemeColor();
+            Color buttonColor = (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? Colors.DimGray : Colors.White;
+
+            LoginButton.Background = new SolidColorBrush(buttonColor);
+            SignupButton.Background = new SolidColorBrush(buttonColor);
+            ContentRoot.Background = new SolidColorBrush(appThemeColor);
         }
 
         private void UpdateUserLayout()

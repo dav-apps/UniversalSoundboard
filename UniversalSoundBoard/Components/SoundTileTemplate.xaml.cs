@@ -55,10 +55,7 @@ namespace UniversalSoundBoard.Components
         
         private void SetDarkThemeLayout()
         {
-            if((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
-            {
-                ContentRoot.Background = new SolidColorBrush(Colors.Black);
-            }
+            ContentRoot.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
         }
         
         private void SoundTileOptionsSetFavourite_Click(object sender, RoutedEventArgs e)
