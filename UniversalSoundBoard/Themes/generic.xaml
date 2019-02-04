@@ -605,7 +605,7 @@
                                          Grid.Row="1"
                                          Visibility="Collapsed">
                                     <AppBarButton x:Name="PlayPauseButtonOnLeft"
-                                                 Margin="0"
+                                                 Margin="0,5,0,0"
                                                  VerticalAlignment="Center"
                                                  Style="{StaticResource AppBarButtonStyle}">
                                         <AppBarButton.Icon>
@@ -617,7 +617,7 @@
                                 <!-- Custom controls start here -->
                                 <Border x:Name="MediaTransportControls_Command_Border"
                                          Grid.Column="1"
-                                         Grid.Row="2">
+                                         Grid.Row="2" Margin="0,5,0,0">
 
                                     <RelativePanel x:Name="MediaControlsCommandBar">
                                         <AppBarButton x:Name='VolumeMuteButton'
