@@ -48,7 +48,6 @@
 
     <Grid Name="RootGrid">
         <NavigationView Name="SideBar" 
-                        AlwaysShowHeader="True" 
                         MenuItemsSource="{Binding Categories, Mode=TwoWay}" 
                         ItemInvoked="SideBar_ItemInvoked" 
                         ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}"
