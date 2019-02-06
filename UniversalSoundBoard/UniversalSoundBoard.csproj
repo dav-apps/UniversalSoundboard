@@ -127,9 +127,6 @@
     <Compile Include="Models\Data.cs" />
     <Compile Include="Models\Sound.cs" />
     <Compile Include="Models\SoundDetails.cs" />
-    <Compile Include="Components\NavigationViewHeader.xaml.cs">
-      <DependentUpon>NavigationViewHeader.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\PlayingSoundTemplate.xaml.cs">
       <DependentUpon>PlayingSoundTemplate.xaml</DependentUpon>
     </Compile>
@@ -237,10 +234,6 @@
     <Page Include="Pages\MainPage.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
-    </Page>
-    <Page Include="Components\NavigationViewHeader.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\PlayingSoundTemplate.xaml">
       <SubType>Designer</SubType>
