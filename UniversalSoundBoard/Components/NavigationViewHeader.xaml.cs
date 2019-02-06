@@ -22,33 +22,35 @@ namespace UniversalSoundBoard.Components
 {
     public sealed partial class NavigationViewHeader : UserControl
     {
-        bool skipVolumeSliderValueChangedEvent = false;
-        public static ObservableCollection<Sound> PlaySoundsList;
-        private List<string> Suggestions;
-        private List<StorageFile> selectedFiles = new List<StorageFile>();
-        int moreButtonClicked = 0;
-        private bool downloadFileWasCanceled = false;
-        private bool downloadFileThrewError = false;
-        private bool downloadFileIsExecuting = false;
-
+        /*
+        bool skipVolumeSliderValueChangedEvent = false;           //
+        public static ObservableCollection<Sound> PlaySoundsList; //
+        private List<string> Suggestions;                         //
+        private List<StorageFile> selectedFiles = new List<StorageFile>();  //
+        int moreButtonClicked = 0;      //
+        private bool downloadFileWasCanceled = false;       //
+        private bool downloadFileThrewError = false;        //
+        private bool downloadFileIsExecuting = false;           //
+        */
 
         public NavigationViewHeader()
         {
             InitializeComponent();
-            SetDataContext();
-            InitializeLocalSettings();
-            SetDarkThemeLayout();
-            FileManager.AdjustLayout();
-            Suggestions = new List<string>();
-            PlaySoundsList = new ObservableCollection<Sound>();
-            AdjustLayout();
+            //SetDataContext();
+            //InitializeLocalSettings();
+            //SetDarkThemeLayout();
+            //FileManager.AdjustLayout();
+            //Suggestions = new List<string>();
+            //PlaySoundsList = new ObservableCollection<Sound>();
+            //AdjustLayout();
         }
-        
+        /*
         private void SetDataContext()
         {
             ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
         }
-
+        */
+        /*
         private void AdjustLayout()
         {
             FileManager.AdjustLayout();
@@ -65,7 +67,8 @@ namespace UniversalSoundBoard.Components
             else
                 TitleStackPanel.Margin = new Thickness(-13, 0, 0, 0);
         }
-
+        */
+        /*
         private void InitializeLocalSettings()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -77,7 +80,8 @@ namespace UniversalSoundBoard.Components
             VolumeSlider.Value = volume;
             VolumeSlider2.Value = volume;
         }
-        
+        */
+        /*
         private void SetDarkThemeLayout()
         {
             if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
@@ -90,7 +94,8 @@ namespace UniversalSoundBoard.Components
                 CancelButton.Background = new SolidColorBrush(Colors.DimGray);
             }
         }
-        
+        */
+        /*
         private void CreateCategoriesFlyout()
         {
             if (moreButtonClicked == 0)
@@ -136,13 +141,15 @@ namespace UniversalSoundBoard.Components
                 }
             }
         }
-
+        */
         #region EventHandlers
+        /*
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             AdjustLayout();
         }
-        
+        */
+        /*
         private async void NewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             // Open file explorer
@@ -186,14 +193,16 @@ namespace UniversalSoundBoard.Components
             AddButton.IsEnabled = true;
             (App.Current as App)._itemViewHolder.LoadingScreenVisibility = false;
         }
-        
+        */
+        /*
         private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog();
             newCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
             await newCategoryContentDialog.ShowAsync();
         }
-        
+        */
+        /*
         private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             if (!FileManager.skipAutoSuggestBoxTextChanged)
@@ -225,7 +234,8 @@ namespace UniversalSoundBoard.Components
             }
             FileManager.skipAutoSuggestBoxTextChanged = false;
         }
-        
+        */
+        /*
         private void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             if ((App.Current as App)._itemViewHolder.Page != typeof(SoundPage))
@@ -248,7 +258,8 @@ namespace UniversalSoundBoard.Components
 
             FileManager.CheckBackButtonVisibility();
         }
-        
+        */
+        /*
         private void SearchButton_Click(object sender, RoutedEventArgs e)
         {
             (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
@@ -260,7 +271,8 @@ namespace UniversalSoundBoard.Components
                 () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
                     () => SearchAutoSuggestBox.Focus(FocusState.Programmatic)));
         }
-        
+        */
+        /*
         private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             var volumeSlider = sender as Slider;
@@ -300,7 +312,8 @@ namespace UniversalSoundBoard.Components
                 VolumeSlider.Value = newValue;
             skipVolumeSliderValueChangedEvent = false;
         }
-
+        */
+        /*
         private void VolumeSlider_LostFocus(object sender, RoutedEventArgs e)
         {
             // Save the new volume of all playing sounds
@@ -309,21 +322,24 @@ namespace UniversalSoundBoard.Components
                 FileManager.SetVolumeOfPlayingSound(playingSound.Uuid, playingSound.MediaPlayer.Volume);
             }
         }
-
+        */
+        /*
         private async void CategoryEditButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var editCategoryContentDialog = ContentDialogs.CreateEditCategoryContentDialogAsync();
             editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
             await editCategoryContentDialog.ShowAsync();
         }
-        
+        */
+        /*
         private async void CategoryDeleteButton_Tapped(object sender, TappedRoutedEventArgs e)
         {
             var deleteCategoryContentDialog = ContentDialogs.CreateDeleteCategoryContentDialogAsync();
             deleteCategoryContentDialog.PrimaryButtonClick += DeleteCategoryContentDialog_PrimaryButtonClick;
             await deleteCategoryContentDialog.ShowAsync();
         }
-        
+        */
+        /*
         private async void PlaySoundsSuccessivelyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             PlaySoundsList.Clear();
@@ -333,10 +349,11 @@ namespace UniversalSoundBoard.Components
             var template = (DataTemplate)Resources["SoundItemTemplate"];
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
             var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(PlaySoundsList, template, listViewItemStyle);
-            playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
+            //playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
             await playSoundsSuccessivelyContentDialog.ShowAsync();
         }
-        
+        */
+        /*
         private async void CategoryPlayAllButton_Click(object sender, RoutedEventArgs e)
         {
             PlaySoundsList.Clear();
@@ -362,7 +379,8 @@ namespace UniversalSoundBoard.Components
             playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
             await playSoundsSuccessivelyContentDialog.ShowAsync();
         }
-        
+        */
+        /*
         private void PlaySoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.PlayOneSoundAtOnce;
@@ -373,25 +391,28 @@ namespace UniversalSoundBoard.Components
             }
             (App.Current as App)._itemViewHolder.PlayOneSoundAtOnce = oldPlayOneSoundAtOnce;
         }
-        
+        */
+        /*
         private void CancelButton_Click(object sender, RoutedEventArgs e)
         {
             FileManager.SwitchSelectionMode();
         }
-        
+        */
+        /*
         private void MoreButton_Click(object sender, RoutedEventArgs e)
         {
             CreateCategoriesFlyout();
             moreButtonClicked++;
         }
-        
+        */
+        /*
         private async void MoreButton_DeleteSoundsFlyout_Click(object sender, RoutedEventArgs e)
         {
             var deleteSoundsContentDialog = ContentDialogs.CreateDeleteSoundsContentDialogAsync();
             deleteSoundsContentDialog.PrimaryButtonClick += DeleteSoundsContentDialog_PrimaryButtonClick;
             await deleteSoundsContentDialog.ShowAsync();
         }
-        
+        */
         private async void MoreButton_ChangeCategory_Click(object sender, RoutedEventArgs e)
         {
             var selectedItem = (MenuFlyoutItem)sender;
@@ -405,18 +426,20 @@ namespace UniversalSoundBoard.Components
             }
             await FileManager.UpdateGridView();
         }
-        
+        /*
         private void VolumeFlyout_Click(object sender, RoutedEventArgs e)
         {
             VolumeFlyout.ContextFlyout.ShowAt(MoreButton);
         }
-        
+        */
+        /*
         private void SelectButton_Click(object sender, RoutedEventArgs e)
         {
             FileManager.SwitchSelectionMode();
             FileManager.AdjustLayout();
         }
-        
+        */
+        /*
         private async void ShareButton_Click(object sender, RoutedEventArgs e)
         {
             if (!await DownloadSelectedFiles()) return;
@@ -441,7 +464,8 @@ namespace UniversalSoundBoard.Components
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
             DataTransferManager.ShowShareUI();
         }
-
+        */
+        /*
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
             if (selectedFiles.Count == 0) return;
@@ -456,7 +480,8 @@ namespace UniversalSoundBoard.Components
             request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
             request.Data.Properties.Description = description;
         }
-
+        */
+        /*
         private async void MoreButton_ExportFlyout_Click(object sender, RoutedEventArgs e)
         {
             if (!await DownloadSelectedFiles()) return;
@@ -471,7 +496,8 @@ namespace UniversalSoundBoard.Components
             exportSoundsContentDialog.PrimaryButtonClick += ExportSoundsContentDialog_PrimaryButtonClick;
             await exportSoundsContentDialog.ShowAsync();
         }
-
+        */
+        /*
         private async void ExportSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             List<Sound> soundsList = new List<Sound>();
@@ -480,7 +506,8 @@ namespace UniversalSoundBoard.Components
 
             await FileManager.ExportSounds(soundsList, ContentDialogs.ExportSoundsAsZipCheckBox.IsChecked.Value, ContentDialogs.ExportSoundsFolder);
         }
-
+        */
+        /*
         private async Task<bool> DownloadSelectedFiles()
         {
             // Check if all sounds are available locally
@@ -520,13 +547,15 @@ namespace UniversalSoundBoard.Components
             }
             return true;
         }
-
+        */
+        /*
         private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             downloadFileWasCanceled = true;
             downloadFileIsExecuting = false;
         }
-
+        */
+        /*
         private void FileDownloadProgress(int value)
         {
             if (!downloadFileIsExecuting) return;
@@ -544,14 +573,17 @@ namespace UniversalSoundBoard.Components
                 ContentDialogs.DownloadFileContentDialog.Hide();
             }
         }
-
+        */
+        /*
         private void MoreButton_SelectAllFlyout_Click(object sender, RoutedEventArgs e)
         {
             (App.Current as App)._itemViewHolder.TriggerSelectAllSoundsEvent(sender, e);
         }
+        */
         #endregion EventHandlers
 
         #region ContentDialogs
+        /*
         private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get combobox value
@@ -570,7 +602,8 @@ namespace UniversalSoundBoard.Components
             // Show new category
             await FileManager.ShowCategory((App.Current as App)._itemViewHolder.Categories.Last().Uuid);
         }
-        
+        */
+        /*
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get categories List and save with new value
@@ -589,7 +622,8 @@ namespace UniversalSoundBoard.Components
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
             await FileManager.UpdateGridView();
         }
-        
+        */
+        /*
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             try
@@ -605,7 +639,8 @@ namespace UniversalSoundBoard.Components
             // Reload page
             await FileManager.ShowAllSounds();
         }
-        
+        */
+        /*
         private async void DeleteSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             (App.Current as App)._itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("DeleteSoundsMessage");
@@ -625,7 +660,8 @@ namespace UniversalSoundBoard.Components
 
             await FileManager.UpdateGridView();
         }
-        
+        */
+        /*
         private void PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             List<Sound> sounds = ContentDialogs.SoundsList.ToList();
@@ -638,6 +674,7 @@ namespace UniversalSoundBoard.Components
 
             SoundPage.PlaySounds(sounds, rounds, randomly);
         }
+        */
         #endregion ContentDialogs
     }
 }

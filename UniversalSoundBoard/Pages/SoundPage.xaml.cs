@@ -48,14 +48,7 @@ namespace UniversalSoundBoard.Pages
 
         private void SetThemeColors()
         {
-            Color appThemeColor = FileManager.GetApplicationThemeColor();
-
-            DrawerContent.Background = new AcrylicBrush
-            {
-                TintOpacity = 0.85,
-                TintColor = appThemeColor,
-                BackgroundSource = AcrylicBackgroundSource.HostBackdrop
-            };
+            DrawerContent.Background = (AcrylicBrush)Application.Current.Resources["PlayingSoundsBarAcrylicBrush"];
         }
 
         private GridView GetVisibleGridView()
@@ -153,6 +146,9 @@ namespace UniversalSoundBoard.Pages
         private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             ShowPlayingSoundsList();
+
+            // Update the value of ItemViewHolder.PlayingSoundBarWidth
+            (App.Current as App)._itemViewHolder.PlayingSoundsBarWidth = DrawerContent.ActualWidth;
         }
         
         private async void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)

@@ -164,16 +164,17 @@ namespace UniversalSoundBoard.Pages
         {
             Color appThemeColor = FileManager.GetApplicationThemeColor();
 
-            // Set the background of the sidebar
-            SideBar.Background = new SolidColorBrush(appThemeColor);
+            // Set the tint color of the SideBarAcrylicBrush
+            (Application.Current.Resources["SideBarAcrylicBrush"] as AcrylicBrush).TintColor = appThemeColor;
+
+            // Set the tint color of the PlayingSoundsBarAcrylicBrush
+            (Application.Current.Resources["PlayingSoundsBarAcrylicBrush"] as AcrylicBrush).TintColor = appThemeColor;
 
             // Set the acrylic background of the sidebar
-            Application.Current.Resources["NavigationViewExpandedPaneBackground"] = new AcrylicBrush
-            {
-                TintOpacity = 0.6,
-                BackgroundSource = AcrylicBackgroundSource.HostBackdrop,
-                TintColor = appThemeColor
-            };
+            Application.Current.Resources["NavigationViewExpandedPaneBackground"] = (AcrylicBrush) Application.Current.Resources["SideBarAcrylicBrush"];
+
+            // Set the background of the sidebar content
+            SideBar.Background = new SolidColorBrush(appThemeColor);
 
             // Set the background of the MediaTransportControls
             (Application.Current.Resources["MediaTransportControlsPanelBackground"] as SolidColorBrush).Color = Colors.Transparent;
@@ -186,6 +187,9 @@ namespace UniversalSoundBoard.Pages
             PlaySoundsButton.Background = buttonBrush;
             MoreButton.Background = buttonBrush;
             CancelButton.Background = buttonBrush;
+
+            // Set the acrylic background of the PlayingSoundsBar in the NavigationViewHeader
+            NavigationViewHeaderAcrylicBackgroundStackPanel.Background = (AcrylicBrush)Application.Current.Resources["PlayingSoundsBarAcrylicBrush"];
         }
 
         private void AdjustLayout()
@@ -208,6 +212,8 @@ namespace UniversalSoundBoard.Pages
                 TitleStackPanel.Margin = new Thickness(17, 0, 0, 0);
                 WindowTitleTextBox.Margin = new Thickness(57, 8, 0, 0);
             }
+
+            //NavigationViewHeaderAcrylicBackgroundStackPanel.Width = (App.Current as App)._itemViewHolder.PlayingSoundsBarWidth;
         }
 
         #region EventHandlers

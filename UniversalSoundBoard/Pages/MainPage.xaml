@@ -120,13 +120,18 @@
                 </StackPanel>
             </NavigationView.PaneFooter>
 
-            <Grid Name="NavigationViewHeader">
+            <Grid Name="ContentRoot">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="66" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <RelativePanel>
+                <RelativePanel Name="NavigationViewHeader">
+                    <StackPanel Name="NavigationViewHeaderAcrylicBackgroundStackPanel"
+                                Width="{Binding PlayingSoundsBarWidth}"
+                                Height="66"
+                                RelativePanel.AlignRightWithPanel="True" />
+
                     <StackPanel Name="TitleStackPanel" 
                                 Margin="17,0,0,0"
                                 RelativePanel.AlignBottomWithPanel="True" 
@@ -158,7 +163,10 @@
                                 Click="CategoryPlayAllButton_Click" />
                     </StackPanel>
 
-                    <RelativePanel RelativePanel.AlignRightWithPanel="True" Margin="0,0,10,0">
+                    <RelativePanel Name="OptionsRelativePanel"
+                                   Margin="0,35,10,0"
+                                   RelativePanel.AlignRightWithPanel="True"
+                                   RelativePanel.AlignBottomWithPanel="True">
                         <StackPanel Name="NormalOptionsStackPanel"
                                     Orientation="Horizontal"
                                     Visibility="{Binding NormalOptionsVisibility}">
@@ -167,7 +175,7 @@
                                     VerticalAlignment="Center"
                                     Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}"
                                     Visibility="{Binding VolumeButtonVisibility}" 
-                                    Background="{x:Bind NavigationViewHeader.Background}">
+                                    Background="{x:Bind ContentRoot.Background}">
                                 <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                     <TextBlock Text="&#xE767;" 
                                                FontFamily="Segoe MDL2 Assets" />
@@ -197,7 +205,7 @@
                                     VerticalAlignment="Center"
                                     Visibility="{Binding AddButtonVisibility}"
                                     Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large, Mode=TwoWay}"
-                                    Background="{x:Bind NavigationViewHeader.Background}">
+                                    Background="{x:Bind ContentRoot.Background}">
                                 <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                     <TextBlock Text="&#xE109;" 
                                                FontFamily="Segoe MDL2 Assets" />
@@ -230,7 +238,7 @@
                                     Height="50" 
                                     Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}" 
                                     FontSize="17" 
-                                    Background="{x:Bind NavigationViewHeader.Background}" 
+                                    Background="{x:Bind ContentRoot.Background}" 
                                     Click="SelectButton_Click">
                                 <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                     <TextBlock Text="&#xE133;" 
@@ -253,7 +261,7 @@
                                             VerticalAlignment="Center"
                                             Margin="10,3,0,0"
 					                        QueryIcon="Find" 
-                                            Background="{x:Bind NavigationViewHeader.Background}"
+                                            Background="{x:Bind ContentRoot.Background}"
                                             TextChanged="SearchAutoSuggestBox_TextChanged" 
                                             QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted" />
 
@@ -262,7 +270,7 @@
                                     RelativePanel.RightOf="SearchAutoSuggestBox"
                                     Content="&#xE094;" 
                                     Width="50"
-                                    Background="{x:Bind NavigationViewHeader.Background}"
+                                    Background="{x:Bind ContentRoot.Background}"
                                     Visibility="{Binding SearchButtonVisibility}"
                                     Click="SearchButton_Click">
                                 <ToolTipService.ToolTip>
@@ -281,7 +289,7 @@
                                     Width="100"
 					                FontFamily="Segoe UI"
 				                    x:Uid="CancelButton"
-                                    Background="{x:Bind NavigationViewHeader.Background}"
+                                    Background="{x:Bind ContentRoot.Background}"
                                     Visibility="{Binding CancelButtonVisibility}"
 				                    Click="CancelButton_Click">
                             </Button>
@@ -294,7 +302,7 @@
                                     Height="50" 
                                     Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=small}" 
                                     FontSize="17" 
-                                    Background="{x:Bind NavigationViewHeader.Background}" 
+                                    Background="{x:Bind ContentRoot.Background}" 
                                     Click="ShareButton_Click">
                                 <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                     <TextBlock Text="&#xE72D;" 
@@ -314,8 +322,8 @@
                                     Style="{StaticResource TopButtonStyle}"
 				                    Content="&#xE768;" 
                                     Width="50" 
-                                    Background="{x:Bind NavigationViewHeader.Background}">
-                                
+                                    Background="{x:Bind ContentRoot.Background}">
+
                                 <Button.Flyout>
                                     <MenuFlyout Placement="Bottom">
                                         <MenuFlyoutItem Name="PlaySoundsSimultaneouslyFlyoutItem" 
@@ -335,7 +343,7 @@
                                 Content="&#xE10C;"
                                 Width="50" 
                                 Visibility="{Binding MoreButtonVisibility}"
-                                Background="{x:Bind NavigationViewHeader.Background}"
+                                Background="{x:Bind ContentRoot.Background}"
                                 Click="MoreButton_Click">
                             <Button.Flyout>
                                 <MenuFlyout Placement="Bottom">
