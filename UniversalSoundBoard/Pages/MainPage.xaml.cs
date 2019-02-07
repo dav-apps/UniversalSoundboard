@@ -195,21 +195,22 @@ namespace UniversalSoundBoard.Pages
         private void AdjustLayout()
         {
             FileManager.AdjustLayout();
+
             // Workaround for the weird problem with the changing position of the Search box when the volume button is invisible
             if ((App.Current as App)._itemViewHolder.VolumeButtonVisibility)
-                SearchAutoSuggestBox.Margin = new Thickness(10, 3, 0, 0);
+                SearchAutoSuggestBox.Margin = new Thickness(3, 0, 3, 0);
             else
-                SearchAutoSuggestBox.Margin = new Thickness(10, 11, 0, 0);
-
+                SearchAutoSuggestBox.Margin = new Thickness(3, 8, 3, 0);
+            
             // Set the margin of the title and the App name when the NavigationView disappears completely
             if (Window.Current.Bounds.Width <= 640)
             {
-                TitleStackPanel.Margin = new Thickness(104, 0, 0, 0);
+                TitleStackPanel.Margin = new Thickness(104, 0, 0, 3);
                 WindowTitleTextBox.Margin = new Thickness(17, 8, 0, 0);
             }
             else
             {
-                TitleStackPanel.Margin = new Thickness(17, 0, 0, 0);
+                TitleStackPanel.Margin = new Thickness(17, 0, 0, 3);
                 WindowTitleTextBox.Margin = new Thickness(57, 8, 0, 0);
             }
 

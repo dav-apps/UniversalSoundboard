@@ -59,9 +59,11 @@
         </Style>
 
         <Style TargetType="Button" x:Key="TopButtonStyle">
-            <Setter Property="Height" Value="45" />
-            <Setter Property="Width" Value="45" />
+            <Setter Property="Height" Value="48" />
+            <Setter Property="Width" Value="48" />
+            <Setter Property="Margin" Value="3,0,3,0" />
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="FontSize" Value="15" />
             <Setter Property="Background" Value="{StaticResource LightThemeButtonColor}" />
         </Style>
 
@@ -71,8 +73,13 @@
             <Setter Property="VerticalAlignment" Value="Center" />
         </Style>
 
+        <Style TargetType="TextBlock" x:Key="TopButtonInnerIconStyle">
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+        </Style>
+
         <Style TargetType="TextBlock" x:Key="TopButtonInnerTextStyle">
-            <Setter Property="Margin" Value="10,-4,0,0" />
+            <Setter Property="Margin" Value="11,-2,0,0" />
             <Setter Property="FontFamily" Value="Segoe UI" />
         </Style>
     </Page.Resources>
@@ -122,18 +129,18 @@
 
             <Grid Name="ContentRoot">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="66" />
+                    <RowDefinition Height="80" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <RelativePanel Name="NavigationViewHeader">
                     <StackPanel Name="NavigationViewHeaderAcrylicBackgroundStackPanel"
                                 Width="{Binding PlayingSoundsBarWidth}"
-                                Height="66"
+                                Height="80"
                                 RelativePanel.AlignRightWithPanel="True" />
 
                     <StackPanel Name="TitleStackPanel" 
-                                Margin="17,0,0,0"
+                                Margin="17,0,0,13"
                                 RelativePanel.AlignBottomWithPanel="True" 
                                 RelativePanel.AlignLeftWithPanel="True"
                                 Orientation="Horizontal">
@@ -150,7 +157,7 @@
                                     Margin="15,0,0,0"
                                     Visibility="{Binding EditButtonVisibility}"
 						            Tapped="CategoryDeleteButton_Tapped" />
-                        <Button Name="CategoryPlayAllButton" 
+                        <Button Name="CategoryPlayAllButton"
                                 Style="{StaticResource PlayAllButtonStyle}"
                                 Content="&#xEDB5;" 
                                 FontFamily="Segoe MDL2 Assets" 
@@ -164,7 +171,7 @@
                     </StackPanel>
 
                     <RelativePanel Name="OptionsRelativePanel"
-                                   Margin="0,35,10,0"
+                                   Margin="0,0,10,3"
                                    RelativePanel.AlignRightWithPanel="True"
                                    RelativePanel.AlignBottomWithPanel="True">
                         <StackPanel Name="NormalOptionsStackPanel"
@@ -177,8 +184,8 @@
                                     Visibility="{Binding VolumeButtonVisibility}" 
                                     Background="{x:Bind ContentRoot.Background}">
                                 <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
-                                    <TextBlock Text="&#xE767;" 
-                                               FontFamily="Segoe MDL2 Assets" />
+                                    <TextBlock Style="{StaticResource TopButtonInnerIconStyle}"
+                                               Text="&#xE767;" />
                                     <TextBlock x:Uid="VolumeButton" 
                                                Style="{StaticResource TopButtonInnerTextStyle}"
                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}" />
@@ -207,8 +214,8 @@
                                     Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large, Mode=TwoWay}"
                                     Background="{x:Bind ContentRoot.Background}">
                                 <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
-                                    <TextBlock Text="&#xE109;" 
-                                               FontFamily="Segoe MDL2 Assets" />
+                                    <TextBlock Style="{StaticResource TopButtonInnerIconStyle}"
+                                               Text="&#xE109;" />
                                     <TextBlock x:Uid="AddButton" 
                                                Style="{StaticResource TopButtonInnerTextStyle}"
                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}" />
@@ -235,14 +242,12 @@
                                     VerticalAlignment="Center"
                                     RelativePanel.RightOf="AddButton" 
                                     Visibility="{Binding SelectButtonVisibility}"
-                                    Height="50" 
                                     Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}" 
-                                    FontSize="17" 
                                     Background="{x:Bind ContentRoot.Background}" 
                                     Click="SelectButton_Click">
                                 <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
-                                    <TextBlock Text="&#xE133;" 
-                                               FontFamily="Segoe MDL2 Assets" />
+                                    <TextBlock Style="{StaticResource TopButtonInnerIconStyle}"
+                                               Text="&#xE133;" />
                                     <TextBlock x:Uid="SelectButton" 
                                                Style="{StaticResource TopButtonInnerTextStyle}"
                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}"/>
@@ -259,8 +264,8 @@
                                             Text="{Binding SearchQuery, Mode=TwoWay}"
                                             Visibility="{Binding SearchAutoSuggestBoxVisibility}"
                                             VerticalAlignment="Center"
-                                            Margin="10,3,0,0"
 					                        QueryIcon="Find" 
+                                            Margin="3,0,3,0"
                                             Background="{x:Bind ContentRoot.Background}"
                                             TextChanged="SearchAutoSuggestBox_TextChanged" 
                                             QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted" />
@@ -269,7 +274,6 @@
                                     Style="{StaticResource TopButtonStyle}"
                                     RelativePanel.RightOf="SearchAutoSuggestBox"
                                     Content="&#xE094;" 
-                                    Width="50"
                                     Background="{x:Bind ContentRoot.Background}"
                                     Visibility="{Binding SearchButtonVisibility}"
                                     Click="SearchButton_Click">
@@ -285,7 +289,6 @@
                                     Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}">
                             <Button Name="CancelButton" 
                                     Style="{StaticResource TopButtonStyle}"
-				                    Height="50" 
                                     Width="100"
 					                FontFamily="Segoe UI"
 				                    x:Uid="CancelButton"
@@ -299,14 +302,12 @@
                                     VerticalAlignment="Center"
                                     Visibility="{Binding ShareButtonVisibility}" 
                                     IsEnabled="{Binding AreSelectButtonsEnabled}"
-                                    Height="50" 
                                     Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=small}" 
-                                    FontSize="17" 
                                     Background="{x:Bind ContentRoot.Background}" 
                                     Click="ShareButton_Click">
                                 <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
-                                    <TextBlock Text="&#xE72D;" 
-                                               FontFamily="Segoe MDL2 Assets" />
+                                    <TextBlock Style="{StaticResource TopButtonInnerIconStyle}"
+                                               Text="&#xE72D;" />
                                     <TextBlock x:Uid="ShareButton" 
                                                Style="{StaticResource TopButtonInnerTextStyle}"
                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}"/>
@@ -321,7 +322,6 @@
                                     IsEnabled="{Binding AreSelectButtonsEnabled}" 
                                     Style="{StaticResource TopButtonStyle}"
 				                    Content="&#xE768;" 
-                                    Width="50" 
                                     Background="{x:Bind ContentRoot.Background}">
 
                                 <Button.Flyout>
@@ -341,7 +341,7 @@
                                 Style="{StaticResource TopButtonStyle}"
                                 RelativePanel.RightOf="SelectOptionsStackPanel"
                                 Content="&#xE10C;"
-                                Width="50" 
+                                Margin="3,0,0,0"
                                 Visibility="{Binding MoreButtonVisibility}"
                                 Background="{x:Bind ContentRoot.Background}"
                                 Click="MoreButton_Click">
@@ -421,7 +421,7 @@
                     </RelativePanel>
                 </RelativePanel>
 
-                <Frame Name="ContentFrame" 
+                <Frame Name="ContentFrame"
                        SourcePageType="{Binding Page, Mode=TwoWay}" 
                        Grid.Row="1"/>
             </Grid>
