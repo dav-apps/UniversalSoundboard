@@ -53,7 +53,7 @@
             <Pivot x:Name="SoundsPivot" Grid.Row="0"
                    Margin="5,0,0,0" Visibility="{Binding ShowSoundsPivot}"
                    PivotItemLoaded="SoundsPivot_PivotItemLoaded">
-                <PivotItem x:Uid="SoundsPivotHeader">
+                <PivotItem x:Uid="SoundsPivotHeader" Margin="0,0,0,0">
                     <GridView   Name="SoundGridView"
                                 ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
                                 SelectionMode="{Binding SelectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
@@ -62,7 +62,7 @@
                                 Margin="0,10,0,0">
                     </GridView>
                 </PivotItem>
-                <PivotItem x:Uid="FavouritesPivotHeader">
+                <PivotItem x:Uid="FavouritesPivotHeader" Margin="0,0,0,0">
                     <GridView   Name="FavouriteSoundGridView"
                                 ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
                                 SelectionMode="{Binding SelectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
@@ -73,7 +73,7 @@
                 </PivotItem>
             </Pivot>
 
-            <GridView Name="SoundGridView2" Grid.Row="0" Visibility="Collapsed" Margin="5,0,0,0"
+            <GridView Name="SoundGridView2" Grid.Row="0" Visibility="Collapsed" Margin="5,10,0,0"
                     ItemClick="SoundGridView_ItemClick" animations:ReorderGridAnimation.Duration="150"
                     SelectionMode="{Binding SelectionMode}" SelectionChanged="SoundGridView_SelectionChanged"
                     ItemsSource="{Binding Sounds, Mode=TwoWay}"
