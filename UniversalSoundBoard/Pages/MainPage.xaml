@@ -18,6 +18,7 @@
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
         <converters:CutTitleConverter x:Name="CutTitleConverter" />
         <converters:CollapsedButtonsWidthConverter x:Name="CollapsedButtonsWidthConverter" />
+        <converters:PlayingSoundsBarVisibilityConverter x:Key="PlayingSoundsBarVisibilityConverter" />
 
         <converters:ValueConverterGroup x:Name="NormalOptionsInMoreButtonFlyoutVisibilityConverter">
             <converters:ReverseBoolConverter />
@@ -137,6 +138,7 @@
                     <StackPanel Name="NavigationViewHeaderAcrylicBackgroundStackPanel"
                                 Width="{Binding PlayingSoundsBarWidth}"
                                 Height="80"
+                                Visibility="{Binding Page, Converter={StaticResource PlayingSoundsBarVisibilityConverter}}"
                                 RelativePanel.AlignRightWithPanel="True" />
 
                     <StackPanel Name="TitleStackPanel" 

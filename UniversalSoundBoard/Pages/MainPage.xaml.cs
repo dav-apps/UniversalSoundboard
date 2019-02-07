@@ -213,8 +213,6 @@ namespace UniversalSoundBoard.Pages
                 TitleStackPanel.Margin = new Thickness(17, 0, 0, 3);
                 WindowTitleTextBox.Margin = new Thickness(57, 8, 0, 0);
             }
-
-            //NavigationViewHeaderAcrylicBackgroundStackPanel.Width = (App.Current as App)._itemViewHolder.PlayingSoundsBarWidth;
         }
 
         #region EventHandlers
