@@ -73,7 +73,8 @@ namespace UniversalSoundBoard
             LoadingScreenVisibility = false,
             LoadingScreenMessage = "",
             SelectAllFlyoutText = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("MoreButton_SelectAllFlyout-SelectAll"),
-            SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll)
+            SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll),
+            ShowAcrylicBackground = true
         };
         
         /// <summary>

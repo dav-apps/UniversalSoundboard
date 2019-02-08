@@ -42,6 +42,7 @@ namespace UniversalSoundBoard.DataAccess
         public const string showSoundsPivotKey = "showSoundsPivot";
         public const string savePlayingSoundsKey = "savePlayingSounds";
         public const string themeKey = "theme";
+        public const string showAcrylicBackgroundKey = "showAcrylicBackground";
         public const string davKey = "dav";
 
         // Variables for defaults
@@ -53,6 +54,7 @@ namespace UniversalSoundBoard.DataAccess
         public const bool showCategoryIcon = true;
         public const bool showSoundsPivot = true;
         public const bool savePlayingSounds = true;
+        public const bool showAcrylicBackground = true;
         public const int mobileMaxWidth = 550;
         public const int tabletMaxWidth = 650;
         public const int topButtonsCollapsedMaxWidth = 1400;

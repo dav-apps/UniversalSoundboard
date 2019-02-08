@@ -60,7 +60,8 @@ namespace UniversalSoundBoard.Common
         public event EventHandler<RoutedEventArgs> SelectAllSoundsEvent;    // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
         private string _selectAllFlyoutText;                                // The text of the Select All flyout item in the Navigation View Header
         private SymbolIcon _selectAllFlyoutIcon;                            // The icon of the Select All flyout item in the Navigation View Header
-        private double _playingSoundsBarWidth;                                  // Holds the width of the right playing sound bar to update the width of the acrylic background in the NavigationViewHeader
+        private double _playingSoundsBarWidth;                              // Holds the width of the right playing sound bar to update the width of the acrylic background in the NavigationViewHeader
+        private bool _showAcrylicBackground;                                // If true the acrylic background is visible
 
         public string Title
         {
@@ -592,6 +593,17 @@ namespace UniversalSoundBoard.Common
             {
                 _playingSoundsBarWidth = value;
                 NotifyPropertyChanged("PlayingSoundsBarWidth");
+            }
+        }
+
+        public bool ShowAcrylicBackground
+        {
+            get => _showAcrylicBackground;
+
+            set
+            {
+                _showAcrylicBackground = value;
+                NotifyPropertyChanged("ShowAcrylicBackground");
             }
         }
 

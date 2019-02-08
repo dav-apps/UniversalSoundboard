@@ -142,6 +142,16 @@ namespace UniversalSoundBoard.Pages
                 (App.Current as App)._itemViewHolder.SavePlayingSounds = (bool)localSettings.Values[FileManager.savePlayingSoundsKey];
             }
 
+            if(localSettings.Values[FileManager.showAcrylicBackgroundKey] == null)
+            {
+                localSettings.Values[FileManager.showAcrylicBackgroundKey] = FileManager.showAcrylicBackground;
+                (App.Current as App)._itemViewHolder.ShowAcrylicBackground = FileManager.showAcrylicBackground;
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.ShowAcrylicBackground = (bool)localSettings.Values[FileManager.showAcrylicBackgroundKey];
+            }
+
             if (localSettings.Values["volume"] == null)
             {
                 localSettings.Values["volume"] = FileManager.volume;
