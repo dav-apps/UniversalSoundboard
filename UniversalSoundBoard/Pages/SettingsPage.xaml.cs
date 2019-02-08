@@ -48,6 +48,7 @@ namespace UniversalSoundBoard.Pages
             SetPlayingSoundsListVisibilityToggle();
             SetPlayOneSoundAtOnceToggle();
             SetShowCategoryIconToggle();
+            SetShowAcrylicBackgroundToggle();
             SetShowSoundsPivotToggle();
             SetThemeRadioButton();
             SetSavePlayingSoundsToggle();
@@ -80,6 +81,11 @@ namespace UniversalSoundBoard.Pages
         private void SetShowCategoryIconToggle()
         {
             ShowCategoryToggle.IsOn = (bool)localSettings.Values[FileManager.showCategoryIconKey];
+        }
+
+        private void SetShowAcrylicBackgroundToggle()
+        {
+            ShowAcrylicBackgroundToggle.IsOn = (bool)localSettings.Values[FileManager.showAcrylicBackgroundKey];
         }
         
         private void SetShowSoundsPivotToggle()
@@ -178,7 +184,13 @@ namespace UniversalSoundBoard.Pages
             localSettings.Values[FileManager.showCategoryIconKey] = ShowCategoryToggle.IsOn;
             (App.Current as App)._itemViewHolder.ShowCategoryIcon = ShowCategoryToggle.IsOn;
         }
-        
+
+        private void ShowAcrylicBackgroundToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            localSettings.Values[FileManager.showAcrylicBackgroundKey] = ShowAcrylicBackgroundToggle.IsOn;
+            (App.Current as App)._itemViewHolder.ShowAcrylicBackground = ShowAcrylicBackgroundToggle.IsOn;
+        }
+
         private void ShowSoundsPivotToggle_Toggled(object sender, RoutedEventArgs e)
         {
             localSettings.Values[FileManager.showSoundsPivotKey] = ShowSoundsPivotToggle.IsOn;

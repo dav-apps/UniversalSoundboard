@@ -99,6 +99,13 @@
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                            <ToggleSwitch Name="ShowAcrylicBackgroundToggle"
+                                          x:Uid="SettingsEntry-ShowAcrylicBackground"
+                                          Header="Show acrylic Background"
+                                          Toggled="ShowAcrylicBackgroundToggle_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <TextBlock x:Uid="SettingsEntry-Theme" 
                                        FontSize="16" 
                                        Margin="0,0,0,5" />
