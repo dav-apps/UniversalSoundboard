@@ -34,26 +34,6 @@
             <components:SoundItemTemplate />
         </DataTemplate>
 
-        <Style TargetType="TextBlock" x:Key="NavBarItemIconStyle">
-            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
-            <Setter Property="FontSize" Value="23" />
-            <Setter Property="Margin" Value="-3,0,0,0" />
-        </Style>
-        <Style TargetType="TextBlock" x:Key="NavBarItemTextStyle">
-            <Setter Property="Margin" Value="20,0,0,0" />
-            <Setter Property="FontSize" Value="17" />
-        </Style>
-
-        <Style TargetType="TextBlock" x:Key="NavBarSettingItemIconStyle">
-            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
-            <Setter Property="FontSize" Value="25" />
-            <Setter Property="Margin" Value="0,0,0,0" />
-        </Style>
-        <Style TargetType="TextBlock" x:Key="NavBarSettingItemTextStyle">
-            <Setter Property="Margin" Value="24,0,0,0" />
-            <Setter Property="FontSize" Value="20" />
-        </Style>
-
         <!-- NavigationViewHeader styles -->
         <Style TargetType="ListViewItem" x:Key="ListViewItemStyle">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
@@ -97,10 +77,11 @@
             
             <NavigationView.MenuItemTemplate>
                 <DataTemplate x:DataType="models:Category">
-                    <StackPanel Orientation="Horizontal">
-                        <TextBlock Text="{x:Bind Icon}" Style="{StaticResource NavBarItemIconStyle}"/>
-                        <TextBlock Text="{x:Bind Name}" Style="{StaticResource NavBarItemTextStyle}"/>
-                    </StackPanel>
+                    <NavigationViewItem Content="{x:Bind Name}" Tag="{x:Bind Uuid}">
+                        <NavigationViewItem.Icon>
+                            <FontIcon Glyph="{x:Bind Icon}" />
+                        </NavigationViewItem.Icon>
+                    </NavigationViewItem>
                 </DataTemplate>
             </NavigationView.MenuItemTemplate>
 
@@ -117,11 +98,11 @@
                                         Tapped="LogInMenuItem_Tapped">
                         <StackPanel Orientation="Horizontal">
                             <PersonPicture ProfilePicture="{Binding User.Avatar, Converter={StaticResource FileToBitmapImageConverter}}" 
-                                           Height="25"
-                                           Width="25" 
-                                           Margin="-4,0,0,0" />
+                                           Height="23"
+                                           Width="23" 
+                                           Margin="-6,0,0,0" />
                             <TextBlock Text="{Binding User.Username}" 
-                                       Margin="11,0,0,0" 
+                                       Margin="15,0,0,0" 
                                        VerticalAlignment="Center" />
                         </StackPanel>
                     </NavigationViewItem>

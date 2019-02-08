@@ -239,23 +239,16 @@ namespace UniversalSoundBoard.Pages
             else
             {
                 // Find the selected category in the categories list and set selectedCategory
-                var category = (Category)args.InvokedItem;
-                for(int i = 0; i < (App.Current as App)._itemViewHolder.Categories.Count(); i++)
-                {
+                var category = (Category)sender.SelectedItem;
+
+                for (int i = 0; i < (App.Current as App)._itemViewHolder.Categories.Count(); i++)
                     if ((App.Current as App)._itemViewHolder.Categories[i].Uuid == category.Uuid)
-                    {
                         (App.Current as App)._itemViewHolder.SelectedCategory = i;
-                    }
-                }
 
                 if ((App.Current as App)._itemViewHolder.SelectedCategory == 0)
-                {
                     await FileManager.ShowAllSounds();
-                }
                 else
-                {
                     await FileManager.ShowCategory(category.Uuid);
-                }
             }
         }
 
