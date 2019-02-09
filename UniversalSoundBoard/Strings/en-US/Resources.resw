@@ -204,8 +204,8 @@
   <data name="Settings-Title" xml:space="preserve">
     <value>Settings</value>
   </data>
-  <data name="SoundTile-Category" xml:space="preserve">
-    <value>Category</value>
+  <data name="SoundTile-SetCategory" xml:space="preserve">
+    <value>Set Category</value>
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="SoundTile-ChangeImage" xml:space="preserve">
@@ -511,5 +511,11 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
     <value>Show acrylic background</value>
+  </data>
+  <data name="ContentDialog-Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="SetCategoryContentDialog-Title" xml:space="preserve">
+    <value>Set categories: {0}</value>
   </data>
 </root>

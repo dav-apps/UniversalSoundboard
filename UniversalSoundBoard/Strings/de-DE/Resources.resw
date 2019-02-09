@@ -198,8 +198,8 @@
   <data name="Settings-Title" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
-  <data name="SoundTile-Category" xml:space="preserve">
-    <value>Kategorie</value>
+  <data name="SoundTile-SetCategory" xml:space="preserve">
+    <value>Kategorie ändern</value>
   </data>
   <data name="SoundTile-ChangeImage" xml:space="preserve">
     <value>Bild wechseln</value>
@@ -498,5 +498,11 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
     <value>Zeige transparenten Hintergrund</value>
+  </data>
+  <data name="ContentDialog-Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="SetCategoryContentDialog-Title" xml:space="preserve">
+    <value>Kategorien ändern: {0}</value>
   </data>
 </root>

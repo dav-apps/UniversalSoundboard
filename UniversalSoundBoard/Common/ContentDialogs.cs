@@ -31,6 +31,8 @@ namespace UniversalSoundBoard.Common
         public static TextBox ExportSoundsFolderTextBox;
         public static CheckBox ExportSoundsAsZipCheckBox;
         public static StorageFolder ExportSoundsFolder;
+        public static ListView CategoriesListView;
+        public static Dictionary<Guid, bool> SelectedCategories;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -44,6 +46,7 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog DownloadFileContentDialog;
         public static ContentDialog DownloadFileErrorContentDialog;
         public static ContentDialog ExportSoundsContentDialog;
+        public static ContentDialog SetCategoryContentDialog;
         
 
         public static ContentDialog CreateNewCategoryContentDialog()
@@ -416,8 +419,10 @@ namespace UniversalSoundBoard.Common
             if (SoundsList.Count == 0)
                 PlaySoundsSuccessivelyContentDialog.IsPrimaryButtonEnabled = false;
 
-            StackPanel content = new StackPanel();
-            content.Orientation = Orientation.Vertical;
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
 
             SoundsListView = new ListView
             {
@@ -600,6 +605,50 @@ namespace UniversalSoundBoard.Common
                 if(SoundsList.Count > 0)
                     ExportSoundsContentDialog.IsPrimaryButtonEnabled = true;
             }
+        }
+
+        public static ContentDialog CreateSetCategoryContentDialog(Sound sound, DataTemplate itemTemplate)
+        {
+            // Get all categories
+            var categories = new List<Category>();
+            SelectedCategories = new Dictionary<Guid, bool>();
+
+            int i = 0;
+            foreach (var category in (App.Current as App)._itemViewHolder.Categories)
+            {
+                if (i++ == 0) continue;
+
+                categories.Add(category);
+                var soundCategory = sound.Categories.Find(c => c.Uuid == category.Uuid);
+                SelectedCategories[category.Uuid] = soundCategory != null;
+            }
+
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            SetCategoryContentDialog = new ContentDialog
+            {
+                Title = String.Format(loader.GetString("SetCategoryContentDialog-Title"), sound.Name),
+                PrimaryButtonText = loader.GetString("ContentDialog-Save"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+            };
+
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+            
+            CategoriesListView = new ListView
+            {
+                ItemTemplate = itemTemplate,
+                ItemsSource = categories,
+                SelectionMode = ListViewSelectionMode.None,
+                Height = 300
+            };
+
+            content.Children.Add(CategoriesListView);
+
+            SetCategoryContentDialog.Content = content;
+            return SetCategoryContentDialog;
         }
     }
 }
