@@ -389,6 +389,7 @@ namespace UniversalSoundBoard.DataAccess
 
             CreateCategoriesList();
             await GetAllSounds();
+            await CreatePlayingSoundsList();
             await SetSoundBoardSizeTextAsync();
         }
 
@@ -1561,10 +1562,7 @@ namespace UniversalSoundBoard.DataAccess
                                                 currentPlayingSound.Sounds.Count != ps.Sounds.Count;
 
                             if (currentPlayingSound.MediaPlayer != null && ps.MediaPlayer != null && !soundWasUpdated)
-                            {
                                 soundWasUpdated = currentPlayingSound.MediaPlayer.Volume != ps.MediaPlayer.Volume;
-                                Debug.WriteLine("Volume");
-                            }
 
                             if (soundWasUpdated)
                             {
@@ -1572,8 +1570,6 @@ namespace UniversalSoundBoard.DataAccess
                                 (App.Current as App)._itemViewHolder.PlayingSounds.RemoveAt(index);
                                 (App.Current as App)._itemViewHolder.PlayingSounds.Insert(index, ps);
                             }
-
-                            Debug.WriteLine(soundWasUpdated);
                         }
                     }
                     else
