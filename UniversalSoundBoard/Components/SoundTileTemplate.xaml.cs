@@ -5,7 +5,6 @@ using System.Linq;
 using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.Storage;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
@@ -25,7 +24,7 @@ namespace UniversalSoundBoard.Components
         int moreButtonClicked = 0;
         MenuFlyout OptionsFlyout;
         MenuFlyoutItem SetFavouriteFlyout;
-        MenuFlyoutSubItem CategoriesFlyoutSubItem;
+        MenuFlyoutItem SetCategoryFlyoutItem;
         MenuFlyoutItem PinFlyoutItem;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
@@ -36,16 +35,10 @@ namespace UniversalSoundBoard.Components
         public SoundTileTemplate()
         {
             InitializeComponent();
-            Loaded += SoundTileTemplate_Loaded;
             DataContextChanged += (s, e) => Bindings.Update();
             SetDarkThemeLayout();
             SetDataContext();
             CreateFlyout();
-        }
-
-        void SoundTileTemplate_Loaded(object sender, RoutedEventArgs e)
-        {
-            CreateCategoriesFlyout();
         }
 
         private void SetDataContext()
@@ -57,7 +50,26 @@ namespace UniversalSoundBoard.Components
         {
             ContentRoot.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
         }
-        
+
+        private async void SoundTileOptionsSetCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var itemTemplate = (DataTemplate)Resources["SetCategoryItemTemplate"];
+            var SetCategoryContentDialog = ContentDialogs.CreateSetCategoryContentDialog(Sound, itemTemplate);
+            SetCategoryContentDialog.PrimaryButtonClick += SetCategoryContentDialog_PrimaryButtonClick;
+            await SetCategoryContentDialog.ShowAsync();
+        }
+
+        private async void SetCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Get the selected categories from the SelectedCategories Dictionary in ContentDialogs
+            List<Guid> categoryUuids = new List<Guid>();
+            foreach (var entry in ContentDialogs.SelectedCategories)
+                if (entry.Value) categoryUuids.Add(entry.Key);
+            
+            FileManager.SetCategoriesOfSound(Sound.Uuid, categoryUuids);
+            await FileManager.UpdateGridView();
+        }
+
         private void SoundTileOptionsSetFavourite_Click(object sender, RoutedEventArgs e)
         {
             bool newFav = !Sound.Favourite;
@@ -150,84 +162,6 @@ namespace UniversalSoundBoard.Components
             }
         }
         
-        private void CreateCategoriesFlyout()
-        {
-            if (moreButtonClicked == 0)
-            {
-                // Add some more invisible MenuFlyoutItems
-                for (int i = 0; i < (App.Current as App)._itemViewHolder.Categories.Count + 10; i++)
-                {
-                    ToggleMenuFlyoutItem item = new ToggleMenuFlyoutItem { Visibility = Visibility.Collapsed };
-                    item.Click += CategoryToggleMenuItem_Click;
-                    CategoriesFlyoutSubItem.Items.Add(item);
-                }
-            }
-
-            foreach (MenuFlyoutItem item in CategoriesFlyoutSubItem.Items)
-            {   // Make each item invisible
-                item.Visibility = Visibility.Collapsed;
-            }
-
-            for (int n = 1; n < (App.Current as App)._itemViewHolder.Categories.Count; n++)
-            {
-                Category cat = (App.Current as App)._itemViewHolder.Categories.ElementAt(n);
-                if (cat.Name == null) continue;
-
-                if (CategoriesFlyoutSubItem.Items.ElementAt(n - 1) != null)
-                {   // If the element is already there, set the new text
-                    ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Text = cat.Name;
-                    ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Tag = cat.Uuid;
-                    ((MenuFlyoutItem)CategoriesFlyoutSubItem.Items.ElementAt(n - 1)).Visibility = Visibility.Visible;
-                }
-                else
-                {
-                    var item = new ToggleMenuFlyoutItem();
-                    item.Click += CategoryToggleMenuItem_Click;
-                    item.Text = (App.Current as App)._itemViewHolder.Categories.ElementAt(n).Name;
-                    item.Tag = (App.Current as App)._itemViewHolder.Categories.ElementAt(n).Uuid;
-                    CategoriesFlyoutSubItem.Items.Add(item);
-                }
-            }
-        }
-        
-        private async void CategoryToggleMenuItem_Click(object sender, RoutedEventArgs e)
-        {
-            var categoryObject = (ToggleMenuFlyoutItem) sender;
-            string categoryUuidString = categoryObject.Tag.ToString();
-            Guid categoryUuid = FileManager.ConvertStringToGuid(categoryUuidString);
-            FileManager.SetCategoryOfSound(Sound.Uuid, categoryUuid);
-            
-            UnselectAllItemsOfCategoriesFlyoutSubItem();
-            categoryObject.IsChecked = true;
-
-            await FileManager.UpdateGridView();
-        }
-        
-        private void SelectRightCategory()
-        {
-            UnselectAllItemsOfCategoriesFlyoutSubItem();
-            foreach (ToggleMenuFlyoutItem item in CategoriesFlyoutSubItem.Items)
-            {
-                if(Sound.Category != null && item.Tag != null)
-                {
-                    Guid tagUuid = FileManager.ConvertStringToGuid(item.Tag.ToString());
-                    if (Equals(tagUuid, Sound.Category.Uuid))
-                    {
-                        item.IsChecked = true;
-                    }
-                }
-            }
-        }
-        
-        private void UnselectAllItemsOfCategoriesFlyoutSubItem()
-        {
-            // Clear MenuItems and select selected item
-            for (int i = 0; i < CategoriesFlyoutSubItem.Items.Count; i++)
-            {
-                (CategoriesFlyoutSubItem.Items[i] as ToggleMenuFlyoutItem).IsChecked = false;
-            }
-        }
-        
         private void SetFavouritesMenuItemText()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -256,7 +190,8 @@ namespace UniversalSoundBoard.Components
 
             OptionsFlyout = new MenuFlyout();
             OptionsFlyout.Opened += Flyout_Opened;
-            CategoriesFlyoutSubItem = new MenuFlyoutSubItem { Text = loader.GetString("SoundTile-Category") };
+            SetCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("SoundTile-SetCategory") };
+            SetCategoryFlyoutItem.Click += SoundTileOptionsSetCategoryFlyoutItem_Click;
             SetFavouriteFlyout = new MenuFlyoutItem();
             SetFavouriteFlyout.Click += SoundTileOptionsSetFavourite_Click;
             MenuFlyoutItem ShareFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("Share") };
@@ -274,7 +209,7 @@ namespace UniversalSoundBoard.Components
             MenuFlyoutItem DeleteFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-Delete") };
             DeleteFlyout.Click += SoundTileOptionsDelete_Click;
 
-            OptionsFlyout.Items.Add(CategoriesFlyoutSubItem);
+            OptionsFlyout.Items.Add(SetCategoryFlyoutItem);
             OptionsFlyout.Items.Add(SetFavouriteFlyout);
             OptionsFlyout.Items.Add(ShareFlyoutItem);
             OptionsFlyout.Items.Add(ExportFlyoutItem);
@@ -488,8 +423,6 @@ namespace UniversalSoundBoard.Components
         
         private void Flyout_Opened(object sender, object e)
         {
-            CreateCategoriesFlyout();
-            SelectRightCategory();
             SetFavouritesMenuItemText();
             SetPinFlyoutText();
 
