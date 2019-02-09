@@ -30,7 +30,6 @@ namespace UniversalSoundBoard.Pages
             InitializeComponent();
             Loaded += SoundPage_Loaded;
 
-            SetThemeColors();
             ShowPlayingSoundsList();
         }
         
@@ -44,11 +43,6 @@ namespace UniversalSoundBoard.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             soundsPivotSelected = true;
-        }
-
-        private void SetThemeColors()
-        {
-            DrawerContent.Background = (AcrylicBrush)Application.Current.Resources["PlayingSoundsBarAcrylicBrush"];
         }
 
         private GridView GetVisibleGridView()

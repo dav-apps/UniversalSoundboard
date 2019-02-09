@@ -43,8 +43,9 @@ namespace UniversalSoundBoard.Pages
             PlaySoundsList = new ObservableCollection<Sound>();
             Suggestions = new List<string>();
 
+            InitializeLocalSettings();
             CustomiseTitleBar();
-            SetDarkThemeLayout();
+            InitializeLayout();
             AdjustLayout();
         }
         
@@ -52,8 +53,7 @@ namespace UniversalSoundBoard.Pages
         {
             SetDataContext();
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
-
-            InitializeLocalSettings();
+            
             (App.Current as App)._itemViewHolder.Page = typeof(SoundPage);
             SideBar.MenuItemsSource = (App.Current as App)._itemViewHolder.Categories;
 
@@ -62,7 +62,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.CreatePlayingSoundsList();
             await FileManager.ShowAllSounds();
         }
-        
+
         private void SetDataContext()
         {
             RootGrid.DataContext = (App.Current as App)._itemViewHolder;
@@ -170,36 +170,17 @@ namespace UniversalSoundBoard.Pages
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
 
-        private void SetDarkThemeLayout()
+        private void InitializeLayout()
         {
             Color appThemeColor = FileManager.GetApplicationThemeColor();
-
-            // Set the tint color of the SideBarAcrylicBrush
-            (Application.Current.Resources["SideBarAcrylicBrush"] as AcrylicBrush).TintColor = appThemeColor;
-
-            // Set the tint color of the PlayingSoundsBarAcrylicBrush
-            (Application.Current.Resources["PlayingSoundsBarAcrylicBrush"] as AcrylicBrush).TintColor = appThemeColor;
-
-            // Set the acrylic background of the sidebar
-            Application.Current.Resources["NavigationViewExpandedPaneBackground"] = (AcrylicBrush) Application.Current.Resources["SideBarAcrylicBrush"];
 
             // Set the background of the sidebar content
             SideBar.Background = new SolidColorBrush(appThemeColor);
 
-            // Set the background of the MediaTransportControls
-            (Application.Current.Resources["MediaTransportControlsPanelBackground"] as SolidColorBrush).Color = Colors.Transparent;
+            // Initialize the Acrylic background of the SideBar
+            Application.Current.Resources["NavigationViewExpandedPaneBackground"] = new AcrylicBrush();
 
-            // Set the colors of the NavigationViewHeader elements
-            SolidColorBrush buttonBrush = new SolidColorBrush((App.Current as App).RequestedTheme == ApplicationTheme.Dark ? Colors.DimGray : Colors.White);
-            VolumeButton.Background = buttonBrush;
-            AddButton.Background = buttonBrush;
-            SearchButton.Background = buttonBrush;
-            PlaySoundsButton.Background = buttonBrush;
-            MoreButton.Background = buttonBrush;
-            CancelButton.Background = buttonBrush;
-
-            // Set the acrylic background of the PlayingSoundsBar in the NavigationViewHeader
-            NavigationViewHeaderAcrylicBackgroundStackPanel.Background = (AcrylicBrush)Application.Current.Resources["PlayingSoundsBarAcrylicBrush"];
+            FileManager.UpdateLayoutColors();
         }
 
         private void AdjustLayout()

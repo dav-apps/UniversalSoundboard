@@ -189,6 +189,9 @@ namespace UniversalSoundBoard.Pages
         {
             localSettings.Values[FileManager.showAcrylicBackgroundKey] = ShowAcrylicBackgroundToggle.IsOn;
             (App.Current as App)._itemViewHolder.ShowAcrylicBackground = ShowAcrylicBackgroundToggle.IsOn;
+
+            // Update the UI
+            FileManager.UpdateLayoutColors();
         }
 
         private void ShowSoundsPivotToggle_Toggled(object sender, RoutedEventArgs e)

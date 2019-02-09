@@ -27,6 +27,7 @@ using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundBoard.DataAccess
@@ -65,6 +66,15 @@ namespace UniversalSoundBoard.DataAccess
         public const int hideSearchBoxMaxWidth = 700;
 
         public static bool skipAutoSuggestBoxTextChanged = false;
+
+        // Colors for the background of PlayingSoundsBar and SideBar
+        private static double sideBarAcrylicBackgroundTintOpacity = 0.6;
+        private static double playingSoundsBarAcrylicBackgroundTintOpacity = 0.85;
+        private static Color sideBarLightBackgroundColor = Color.FromArgb(255, 245, 245, 245);            // #f5f5f5
+        private static Color sideBarDarkBackgroundColor = Color.FromArgb(255, 29, 34, 49);                // #1d2231
+        private static Color playingSoundsBarLightBackgroundColor = Color.FromArgb(255, 253, 253, 253);   // #fdfdfd
+        private static Color playingSoundsBarDarkBackgroundColor = Color.FromArgb(255, 15, 20, 35);       // #0f1423
+
 
         public static DavEnvironment Environment = DavEnvironment.Production;
 
@@ -1506,6 +1516,47 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             CheckBackButtonVisibility();
+        }
+
+        public static void UpdateLayoutColors()
+        {
+            // Set the background of the SideBar and the PlayingSoundsBar
+            if ((App.Current as App)._itemViewHolder.ShowAcrylicBackground)
+            {   // If the acrylic background is enabled
+                Color appThemeColor = GetApplicationThemeColor();
+
+                // Add the transparency effect
+                (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).BackgroundSource = AcrylicBackgroundSource.HostBackdrop;
+                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.HostBackdrop;
+
+                // Set the default tint opacity
+                (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintOpacity = sideBarAcrylicBackgroundTintOpacity;
+                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintOpacity = playingSoundsBarAcrylicBackgroundTintOpacity;
+
+                // Set the tint color
+                (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintColor = appThemeColor;
+                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = appThemeColor;
+            }
+            else if ((App.Current as App).RequestedTheme == ApplicationTheme.Light)
+            {   // If the acrylic background is disabled and the theme is Light
+                // Remove the transparency effect
+                (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).BackgroundSource = AcrylicBackgroundSource.Backdrop;
+                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.Backdrop;
+
+                // Set the background color
+                (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintColor = sideBarLightBackgroundColor;
+                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = playingSoundsBarLightBackgroundColor;
+            }
+            else
+            {   // If the acrylic background is disabled and the theme is dark
+                // Remove the transparency effect
+                (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).BackgroundSource = AcrylicBackgroundSource.Backdrop;
+                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.Backdrop;
+
+                // Set the background color
+                (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintColor = sideBarDarkBackgroundColor;
+                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = playingSoundsBarDarkBackgroundColor;
+            }
         }
         #endregion
 

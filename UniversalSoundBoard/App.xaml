@@ -8,13 +8,7 @@
         <SolidColorBrush x:Key="DarkThemeButtonColor" Color="DimGray" />
         <Color x:Key="DarkThemeBackgroundColor">#0d1221</Color>
         <Color x:Key="LightThemeBackgroundColor">White</Color>
-        <AcrylicBrush x:Key="SideBarAcrylicBrush"
-                      BackgroundSource="HostBackdrop"
-                      TintOpacity="0.6" />
-        <AcrylicBrush x:Key="PlayingSoundsBarAcrylicBrush" 
-                      BackgroundSource="HostBackdrop"
-                      TintOpacity="0.85" />
-
+        
         <!-- The button style for the Play All Button to look like the SymbolIcons -->
         <Style TargetType="Button" x:Key="PlayAllButtonStyle">
             <Setter Property="Template">
@@ -38,5 +32,8 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Override the background of the MediaTransportControls -->
+        <SolidColorBrush x:Key="MediaTransportControlsPanelBackground" Color="Transparent" />
     </Application.Resources>
 </Application>
