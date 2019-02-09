@@ -194,4 +194,25 @@ namespace UniversalSoundBoard.Converters
             throw new NotImplementedException();
         }
     }
+
+    public class CategoryIconsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value == null) return "";
+
+            List<Category> categories = value as List<Category>;
+            string icons = "";
+
+            foreach(var category in categories)
+                icons += category.Icon;
+
+            return icons;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
