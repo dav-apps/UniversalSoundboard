@@ -509,4 +509,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="DeleteSoundsMessage" xml:space="preserve">
     <value>Sounds are deleted</value>
   </data>
+  <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
+    <value>Show acrylic background</value>
+  </data>
 </root>

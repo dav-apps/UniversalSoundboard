@@ -496,4 +496,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="DeleteSoundsMessage" xml:space="preserve">
     <value>Sounds werden gelöscht</value>
   </data>
+  <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
+    <value>Zeige transparenten Hintergrund</value>
+  </data>
 </root>
