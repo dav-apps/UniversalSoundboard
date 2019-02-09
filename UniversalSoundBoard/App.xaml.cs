@@ -1,8 +1,6 @@
-﻿using davClassLibrary;
-using davClassLibrary.Common;
+﻿using davClassLibrary.Common;
 using davClassLibrary.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using UniversalSoundboard.Common;
@@ -74,7 +72,8 @@ namespace UniversalSoundBoard
             LoadingScreenMessage = "",
             SelectAllFlyoutText = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("MoreButton_SelectAllFlyout-SelectAll"),
             SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll),
-            ShowAcrylicBackground = true
+            ShowAcrylicBackground = true,
+            PlayingSoundsBarAcrylicBackgroundBrush = new Windows.UI.Xaml.Media.AcrylicBrush()
         };
         
         /// <summary>

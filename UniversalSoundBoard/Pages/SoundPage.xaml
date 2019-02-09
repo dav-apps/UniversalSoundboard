@@ -117,7 +117,8 @@
         <Grid Name="DrawerContent" 
               Grid.Row="0" 
               Grid.Column="1" 
-              Grid.RowSpan="2">
+              Grid.RowSpan="2"
+              Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
             <ListView Name="PlayingSoundsListView" ItemsSource="{Binding PlayingSounds}" SelectionMode="None">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">

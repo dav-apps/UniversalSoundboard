@@ -120,6 +120,7 @@
                                 Width="{Binding PlayingSoundsBarWidth}"
                                 Height="80"
                                 Visibility="{Binding Page, Converter={StaticResource PlayingSoundsBarVisibilityConverter}}"
+                                Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}"
                                 RelativePanel.AlignRightWithPanel="True" />
 
                     <StackPanel Name="TitleStackPanel" 
