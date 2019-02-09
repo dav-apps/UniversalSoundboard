@@ -734,13 +734,14 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
             foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
             {
-                if (sound.Category != null)
+                foreach(var category in sound.Categories)
                 {
-                    if (sound.Category.Uuid == uuid)
+                    if (category.Uuid == uuid)
                     {
                         (App.Current as App)._itemViewHolder.Sounds.Add(sound);
                         if (sound.Favourite)
                             (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
+                        break;
                     }
                 }
             }
@@ -816,13 +817,15 @@ namespace UniversalSoundBoard.DataAccess
 
             // Get the categories
             var categoryUuidsString = soundTableObject.GetPropertyValue(SoundTableCategoryUuidPropertyName);
-            Guid categoryUuid = Guid.Empty;
+            sound.Categories = new List<Category>();
             if (!String.IsNullOrEmpty(categoryUuidsString))
             {
-                string[] categoryUuids = categoryUuidsString.Split(",");
-                if(categoryUuids.Length > 0)
-                    if (Guid.TryParse(categoryUuids.First(), out categoryUuid))
-                        sound.Category = GetCategory(categoryUuid);
+                foreach(var cUuidString in categoryUuidsString.Split(","))
+                {
+                    var cUuid = ConvertStringToGuid(cUuidString);
+                    if(cUuid != null)
+                        sound.Categories.Add(GetCategory(cUuid));
+                }
             }
 
             // Get Image for Sound
@@ -1799,10 +1802,7 @@ namespace UniversalSoundBoard.DataAccess
                 props.Type = MediaPlaybackType.Music;
                 props.MusicProperties.Title = sound.Name;
 
-                if (sound.Category != null)
-                {
-                    props.MusicProperties.Artist = sound.Category.Name;
-                }
+                props.MusicProperties.Artist = sound.Categories.First().Name;
 
                 var imageFile = await sound.GetImageFile();
                 if (imageFile != null)

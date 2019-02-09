@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using UniversalSoundBoard.DataAccess;
@@ -10,20 +11,24 @@ namespace UniversalSoundBoard.Models
     public class Sound{
         public Guid Uuid { get; }
         public string Name { get; set; }
-        public Category Category { get; set; }
+        public List<Category> Categories { get; set; }
         public bool Favourite { get; set; }
         public BitmapImage Image { get; set; }
 
-        public Sound(){}
+        public Sound()
+        {
+            Categories = new List<Category>();
+        }
 
         public Sound(Guid uuid)
         {
             Uuid = uuid;
+            Categories = new List<Category>();
         }
 
-        public Sound(string name, Category category){
+        public Sound(string name, List<Category> categories){
             Name = name;
-            Category = category;
+            Categories = categories;
             Favourite = false;
         }
 
