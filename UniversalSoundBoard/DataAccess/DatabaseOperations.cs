@@ -55,7 +55,7 @@ namespace UniversalSoundBoard.DataAccess
             return Dav.Database.GetAllTableObjects(FileManager.SoundTableId, false);
         }
 
-        public static void UpdateSound(Guid uuid, string name, string favourite, string soundUuid, string imageUuid, string categoryUuid)
+        public static void UpdateSound(Guid uuid, string name, string favourite, string soundUuid, string imageUuid, List<string> categoryUuids)
         {
             // Get the sound table object
             var soundTableObject = Dav.Database.GetTableObject(uuid);
@@ -71,8 +71,8 @@ namespace UniversalSoundBoard.DataAccess
                 soundTableObject.SetPropertyValue(FileManager.SoundTableSoundUuidPropertyName, soundUuid);
             if (!String.IsNullOrEmpty(imageUuid))
                 soundTableObject.SetPropertyValue(FileManager.SoundTableImageUuidPropertyName, imageUuid);
-            if (!String.IsNullOrEmpty(categoryUuid))
-                soundTableObject.SetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName, categoryUuid);
+            if (categoryUuids != null)
+                soundTableObject.SetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName, ConvertIdListToString(categoryUuids));
         }
         
         public static void DeleteSound(Guid uuid)
@@ -206,6 +206,8 @@ namespace UniversalSoundBoard.DataAccess
         #region Helper Methods
         private static string ConvertIdListToString(List<string> ids)
         {
+            if (ids.Count == 0) return "";
+
             string idsString = "";
             foreach (string id in ids)
             {

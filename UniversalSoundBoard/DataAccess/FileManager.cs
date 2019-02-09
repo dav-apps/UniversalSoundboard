@@ -858,9 +858,13 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 
-        public static void SetCategoryOfSound(Guid soundUuid, Guid categoryUuid)
+        public static void SetCategoriesOfSound(Guid soundUuid, List<Guid> categoryUuids)
         {
-            DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, categoryUuid.ToString());
+            List<string> categoryUuidsString = new List<string>();
+            foreach (var uuid in categoryUuids)
+                categoryUuidsString.Add(uuid.ToString());
+
+            DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, categoryUuidsString);
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 
