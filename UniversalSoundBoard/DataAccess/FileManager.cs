@@ -800,15 +800,15 @@ namespace UniversalSoundBoard.DataAccess
                 sound.Favourite = favourite;
             }
 
-            // Get the category
-            var categoryUuidString = soundTableObject.GetPropertyValue(SoundTableCategoryUuidPropertyName);
+            // Get the categories
+            var categoryUuidsString = soundTableObject.GetPropertyValue(SoundTableCategoryUuidPropertyName);
             Guid categoryUuid = Guid.Empty;
-            if (!String.IsNullOrEmpty(categoryUuidString))
+            if (!String.IsNullOrEmpty(categoryUuidsString))
             {
-                if (Guid.TryParse(categoryUuidString, out categoryUuid))
-                {
-                    sound.Category = GetCategory(categoryUuid);
-                }
+                string[] categoryUuids = categoryUuidsString.Split(",");
+                if(categoryUuids.Length > 0)
+                    if (Guid.TryParse(categoryUuids.First(), out categoryUuid))
+                        sound.Category = GetCategory(categoryUuid);
             }
 
             // Get Image for Sound
