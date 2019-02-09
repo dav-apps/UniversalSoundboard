@@ -402,6 +402,7 @@ namespace UniversalSoundBoard.DataAccess
 
             CreateCategoriesList();
             await GetAllSounds();
+            await CreatePlayingSoundsList();
             await SetSoundBoardSizeTextAsync();
         }
 
@@ -813,15 +814,15 @@ namespace UniversalSoundBoard.DataAccess
                 sound.Favourite = favourite;
             }
 
-            // Get the category
-            var categoryUuidString = soundTableObject.GetPropertyValue(SoundTableCategoryUuidPropertyName);
+            // Get the categories
+            var categoryUuidsString = soundTableObject.GetPropertyValue(SoundTableCategoryUuidPropertyName);
             Guid categoryUuid = Guid.Empty;
-            if (!String.IsNullOrEmpty(categoryUuidString))
+            if (!String.IsNullOrEmpty(categoryUuidsString))
             {
-                if (Guid.TryParse(categoryUuidString, out categoryUuid))
-                {
-                    sound.Category = GetCategory(categoryUuid);
-                }
+                string[] categoryUuids = categoryUuidsString.Split(",");
+                if(categoryUuids.Length > 0)
+                    if (Guid.TryParse(categoryUuids.First(), out categoryUuid))
+                        sound.Category = GetCategory(categoryUuid);
             }
 
             // Get Image for Sound
@@ -1615,10 +1616,7 @@ namespace UniversalSoundBoard.DataAccess
                                                 currentPlayingSound.Sounds.Count != ps.Sounds.Count;
 
                             if (currentPlayingSound.MediaPlayer != null && ps.MediaPlayer != null && !soundWasUpdated)
-                            {
                                 soundWasUpdated = currentPlayingSound.MediaPlayer.Volume != ps.MediaPlayer.Volume;
-                                Debug.WriteLine("Volume");
-                            }
 
                             if (soundWasUpdated)
                             {
@@ -1626,8 +1624,6 @@ namespace UniversalSoundBoard.DataAccess
                                 (App.Current as App)._itemViewHolder.PlayingSounds.RemoveAt(index);
                                 (App.Current as App)._itemViewHolder.PlayingSounds.Insert(index, ps);
                             }
-
-                            Debug.WriteLine(soundWasUpdated);
                         }
                     }
                     else
