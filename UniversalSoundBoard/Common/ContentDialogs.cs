@@ -607,8 +607,10 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public static ContentDialog CreateSetCategoryContentDialog(Sound sound, DataTemplate itemTemplate)
+        public static ContentDialog CreateSetCategoryContentDialog(List<Sound> sounds, DataTemplate itemTemplate)
         {
+            if (sounds.Count == 0) return null;
+
             // Get all categories
             var categories = new List<Category>();
             SelectedCategories = new Dictionary<Guid, bool>();
@@ -619,15 +621,23 @@ namespace UniversalSoundBoard.Common
                 if (i++ == 0) continue;
 
                 categories.Add(category);
-                var soundCategory = sound.Categories.Find(c => c.Uuid == category.Uuid);
-                SelectedCategories[category.Uuid] = soundCategory != null;
-            }
 
+                // Check if all sounds belong to this category and if so, select the category
+                SelectedCategories[category.Uuid] = sounds.TrueForAll(s =>
+                {
+                    return s.Categories.Exists(c => c.Uuid == category.Uuid);
+                });
+            }
+            
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            string title = String.Format(loader.GetString("SetCategoryForMultipleSoundsContentDialog-Title"), sounds.Count);
+            if (sounds.Count == 1)
+                title = String.Format(loader.GetString("SetCategoryContentDialog-Title"), sounds[0].Name);
 
             SetCategoryContentDialog = new ContentDialog
             {
-                Title = String.Format(loader.GetString("SetCategoryContentDialog-Title"), sound.Name),
+                Title = title,
                 PrimaryButtonText = loader.GetString("ContentDialog-Save"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
             };
@@ -636,7 +646,7 @@ namespace UniversalSoundBoard.Common
             {
                 Orientation = Orientation.Vertical
             };
-            
+
             CategoriesListView = new ListView
             {
                 ItemTemplate = itemTemplate,
