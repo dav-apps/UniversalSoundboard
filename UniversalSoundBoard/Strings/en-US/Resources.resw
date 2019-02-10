@@ -173,8 +173,8 @@
   <data name="CancelButton.Content" xml:space="preserve">
     <value>Cancel</value>
   </data>
-  <data name="MoreButton-ChangeCategory.Text" xml:space="preserve">
-    <value>Change category</value>
+  <data name="MoreButton-SetCategory.Text" xml:space="preserve">
+    <value>Set categories</value>
   </data>
   <data name="MoreButton-DeleteSounds.Text" xml:space="preserve">
     <value>Delete</value>
@@ -205,7 +205,7 @@
     <value>Settings</value>
   </data>
   <data name="SoundTile-SetCategory" xml:space="preserve">
-    <value>Set Category</value>
+    <value>Set Categories</value>
     <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="SoundTile-ChangeImage" xml:space="preserve">
@@ -251,7 +251,7 @@
     <value>Sounds</value>
   </data>
   <data name="SettingsEntry-ShowCategoryIcon.Header" xml:space="preserve">
-    <value>Show Icon of the Category of the sound</value>
+    <value>Show the icons of the categories on the sound</value>
   </data>
   <data name="SettingsPivot-Data.Header" xml:space="preserve">
     <value>Data</value>
@@ -517,5 +517,8 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="SetCategoryContentDialog-Title" xml:space="preserve">
     <value>Set categories: {0}</value>
+  </data>
+  <data name="SetCategoryForMultipleSoundsContentDialog-Title" xml:space="preserve">
+    <value>Set categories for {0} sounds</value>
   </data>
 </root>

@@ -168,8 +168,8 @@
   <data name="CancelButton.Content" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
-  <data name="MoreButton-ChangeCategory.Text" xml:space="preserve">
-    <value>Kategorie ändern</value>
+  <data name="MoreButton-SetCategory.Text" xml:space="preserve">
+    <value>Kategorien festlegen</value>
   </data>
   <data name="MoreButton-DeleteSounds.Text" xml:space="preserve">
     <value>Löschen</value>
@@ -199,7 +199,7 @@
     <value>Einstellungen</value>
   </data>
   <data name="SoundTile-SetCategory" xml:space="preserve">
-    <value>Kategorie ändern</value>
+    <value>Kategorien festlegen</value>
   </data>
   <data name="SoundTile-ChangeImage" xml:space="preserve">
     <value>Bild wechseln</value>
@@ -238,7 +238,7 @@
     <value>Sounds</value>
   </data>
   <data name="SettingsEntry-ShowCategoryIcon.Header" xml:space="preserve">
-    <value>Icon der Kategorie an Sounds anzeigen</value>
+    <value>Icons der Kategorien an Sounds anzeigen</value>
   </data>
   <data name="SettingsPivot-Data.Header" xml:space="preserve">
     <value>Daten</value>
@@ -503,6 +503,9 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>Speichern</value>
   </data>
   <data name="SetCategoryContentDialog-Title" xml:space="preserve">
-    <value>Kategorien ändern: {0}</value>
+    <value>Kategorien festlegen: {0}</value>
+  </data>
+  <data name="SetCategoryForMultipleSoundsContentDialog-Title" xml:space="preserve">
+    <value>Kategorien für {0} Sounds festlegen</value>
   </data>
 </root>
