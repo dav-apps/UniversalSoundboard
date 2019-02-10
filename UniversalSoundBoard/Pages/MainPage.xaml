@@ -7,6 +7,7 @@
     xmlns:appmodel="using:Windows.ApplicationModel"
     xmlns:converters="using:UniversalSoundBoard.Converters"
     xmlns:components="using:UniversalSoundBoard.Components"
+    xmlns:components1="using:UniversalSoundboard.Components"
     xmlns:models="using:UniversalSoundBoard.Models"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     mc:Ignorable="d"
@@ -32,6 +33,10 @@
 
         <DataTemplate x:Key="SoundItemTemplate" x:DataType="models:Sound">
             <components:SoundItemTemplate />
+        </DataTemplate>
+
+        <DataTemplate x:Key="SetCategoryItemTemplate" x:DataType="models:Category">
+            <components1:SetCategoryItemTemplate />
         </DataTemplate>
 
         <!-- NavigationViewHeader styles -->
@@ -327,8 +332,7 @@
                                 Content="&#xE10C;"
                                 Margin="3,0,0,0"
                                 Visibility="{Binding MoreButtonVisibility}"
-                                Background="{x:Bind ContentRoot.Background}"
-                                Click="MoreButton_Click">
+                                Background="{x:Bind ContentRoot.Background}">
                             <Button.Flyout>
                                 <MenuFlyout Placement="Bottom">
                                     <!-- #region Normal Options -->
@@ -372,11 +376,11 @@
                                                     Icon="{Binding SelectAllFlyoutIcon}"
                                                     Click="MoreButton_SelectAllFlyout_Click"
                                                     Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}" />
-                                    <MenuFlyoutSubItem Name="MoreButton_ChangeCategoryFlyout" 
-                                                       x:Uid="MoreButton-ChangeCategory" 
-                                                       IsEnabled="{Binding AreSelectButtonsEnabled}"
-                                                       Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}">
-                                    </MenuFlyoutSubItem>
+                                    <MenuFlyoutItem Name="MoreButton_ChangeCategoryFlyout" 
+                                                    x:Uid="MoreButton-SetCategory" 
+                                                    IsEnabled="{Binding AreSelectButtonsEnabled}"
+                                                    Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}"
+                                                    Click="MoreButton_SetCategory_Click" />
                                     <MenuFlyoutItem Name="MoreButton_ShareFlyout" 
                                                     x:Uid="MoreButton-Share" 
                                                     Icon="Share"
