@@ -29,7 +29,6 @@ namespace UniversalSoundBoard.Pages
         private bool downloadFileIsExecuting = false;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
-        int moreButtonClicked = 0;
         public static ObservableCollection<Sound> PlaySoundsList;
         private List<string> Suggestions;
         private List<StorageFile> selectedFiles = new List<StorageFile>();
@@ -538,23 +537,29 @@ namespace UniversalSoundBoard.Pages
             await playSoundsSuccessivelyContentDialog.ShowAsync();
         }
 
-        private void MoreButton_Click(object sender, RoutedEventArgs e)
+        private async void MoreButton_SetCategory_Click(object sender, RoutedEventArgs e)
         {
-            CreateCategoriesFlyout();
-            moreButtonClicked++;
+            // Show the Set Category content dialog for multiple sounds
+            List<Sound> selectedSounds = new List<Sound>();
+            foreach (var sound in (App.Current as App)._itemViewHolder.SelectedSounds)
+                selectedSounds.Add(sound);
+
+            var itemTemplate = (DataTemplate)Resources["SetCategoryItemTemplate"];
+            var SetCategoryContentDialog = ContentDialogs.CreateSetCategoryContentDialog(selectedSounds, itemTemplate);
+            SetCategoryContentDialog.PrimaryButtonClick += SetCategoryContentDialog_PrimaryButtonClick;
+            await SetCategoryContentDialog.ShowAsync();
         }
 
-        private async void MoreButton_ChangeCategory_Click(object sender, RoutedEventArgs e)
+        private async void SetCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var selectedItem = (MenuFlyoutItem)sender;
-            string uuidString = selectedItem.Tag.ToString();
-            Guid uuid = FileManager.ConvertStringToGuid(uuidString);
+            // Get the selected categories from the SelectedCategories Dictionary in ContentDialogs
+            List<Guid> categoryUuids = new List<Guid>();
+            foreach (var entry in ContentDialogs.SelectedCategories)
+                if (entry.Value) categoryUuids.Add(entry.Key);
 
-            foreach (Sound sound in (App.Current as App)._itemViewHolder.SelectedSounds)
-            {
-                // Set the category of the sound
-                FileManager.SetCategoryOfSound(sound.Uuid, uuid);
-            }
+            foreach(var sound in (App.Current as App)._itemViewHolder.SelectedSounds)
+                FileManager.SetCategoriesOfSound(sound.Uuid, categoryUuids);
+
             await FileManager.UpdateGridView();
         }
 
@@ -750,52 +755,6 @@ namespace UniversalSoundBoard.Pages
             {
                 // Hide the download dialog
                 ContentDialogs.DownloadFileContentDialog.Hide();
-            }
-        }
-
-        private void CreateCategoriesFlyout()
-        {
-            if (moreButtonClicked == 0)
-            {
-                // Add some more invisible MenuFlyoutItems
-                for (int i = 0; i < (App.Current as App)._itemViewHolder.Categories.Count + 10; i++)
-                {
-                    MenuFlyoutItem item = new MenuFlyoutItem { Visibility = Visibility.Collapsed };
-                    item.Click += MoreButton_ChangeCategory_Click;
-                    MoreButton_ChangeCategoryFlyout.Items.Add(item);
-                }
-            }
-
-            foreach (MenuFlyoutItem item in MoreButton_ChangeCategoryFlyout.Items)
-            {   // Make each item invisible
-                item.Visibility = Visibility.Collapsed;
-            }
-
-            for (int n = 1; n < (App.Current as App)._itemViewHolder.Categories.Count; n++)
-            {
-                if (MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1) != null)
-                {   // If the element is already there, set the new text
-                    Category cat = (App.Current as App)._itemViewHolder.Categories.ElementAt(n);
-                    FontIcon icon = new FontIcon();
-                    icon.Glyph = cat.Icon;
-
-                    ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Text = cat.Name;
-                    ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Tag = cat.Uuid;
-                    ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Visibility = Visibility.Visible;
-                    ((MenuFlyoutItem)MoreButton_ChangeCategoryFlyout.Items.ElementAt(n - 1)).Icon = icon;
-                }
-                else
-                {
-                    var item = new MenuFlyoutItem();
-                    FontIcon icon = new FontIcon();
-                    icon.Glyph = (App.Current as App)._itemViewHolder.Categories.ElementAt(n).Icon;
-
-                    item.Click += MoreButton_ChangeCategory_Click;
-                    item.Text = (App.Current as App)._itemViewHolder.Categories.ElementAt(n).Name;
-                    item.Tag = (App.Current as App)._itemViewHolder.Categories.ElementAt(n).Uuid;
-                    item.Icon = icon;
-                    MoreButton_ChangeCategoryFlyout.Items.Add(item);
-                }
             }
         }
     }

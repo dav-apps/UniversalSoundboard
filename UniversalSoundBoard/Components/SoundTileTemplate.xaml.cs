@@ -21,7 +21,6 @@ namespace UniversalSoundBoard.Components
     public sealed partial class SoundTileTemplate : UserControl
     {
         public Sound Sound { get => DataContext as Sound; }
-        int moreButtonClicked = 0;
         MenuFlyout OptionsFlyout;
         MenuFlyoutItem SetFavouriteFlyout;
         MenuFlyoutItem SetCategoryFlyoutItem;
@@ -54,7 +53,8 @@ namespace UniversalSoundBoard.Components
         private async void SoundTileOptionsSetCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var itemTemplate = (DataTemplate)Resources["SetCategoryItemTemplate"];
-            var SetCategoryContentDialog = ContentDialogs.CreateSetCategoryContentDialog(Sound, itemTemplate);
+            List<Sound> soundsList = new List<Sound> { Sound };
+            var SetCategoryContentDialog = ContentDialogs.CreateSetCategoryContentDialog(soundsList, itemTemplate);
             SetCategoryContentDialog.PrimaryButtonClick += SetCategoryContentDialog_PrimaryButtonClick;
             await SetCategoryContentDialog.ShowAsync();
         }
@@ -425,8 +425,6 @@ namespace UniversalSoundBoard.Components
         {
             SetFavouritesMenuItemText();
             SetPinFlyoutText();
-
-            moreButtonClicked++;
         }
         
         private void ContentRoot_RightTapped(object sender, RightTappedRoutedEventArgs e)
