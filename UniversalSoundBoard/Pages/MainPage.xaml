@@ -116,14 +116,14 @@
 
             <Grid Name="ContentRoot">
                 <Grid.RowDefinitions>
-                    <RowDefinition Height="80" />
+                    <RowDefinition Height="85" />
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
                 <RelativePanel Name="NavigationViewHeader">
                     <StackPanel Name="NavigationViewHeaderAcrylicBackgroundStackPanel"
                                 Width="{Binding PlayingSoundsBarWidth}"
-                                Height="80"
+                                Height="85"
                                 Visibility="{Binding Page, Converter={StaticResource PlayingSoundsBarVisibilityConverter}}"
                                 Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}"
                                 RelativePanel.AlignRightWithPanel="True" />
