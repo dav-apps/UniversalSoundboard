@@ -47,6 +47,7 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog DownloadFileErrorContentDialog;
         public static ContentDialog ExportSoundsContentDialog;
         public static ContentDialog SetCategoryContentDialog;
+        public static ContentDialog CategoryOrderContentDialog;
         
 
         public static ContentDialog CreateNewCategoryContentDialog()
@@ -432,7 +433,6 @@ namespace UniversalSoundBoard.Common
                 Height = 300,
                 ItemContainerStyle = listViewItemStyle,
                 CanReorderItems = true,
-                CanDrag = true,
                 AllowDrop = true
             };
 
@@ -537,9 +537,11 @@ namespace UniversalSoundBoard.Common
             if (SoundsList.Count == 0)
                 ExportSoundsContentDialog.IsPrimaryButtonEnabled = false;
 
-            StackPanel content = new StackPanel();
-            content.Orientation = Orientation.Vertical;
-            
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
             ExportSoundsListView = new ListView
             {
                 ItemTemplate = itemTemplate,
@@ -548,7 +550,6 @@ namespace UniversalSoundBoard.Common
                 Height = 300,
                 ItemContainerStyle = listViewItemStyle,
                 CanReorderItems = true,
-                CanDrag = true,
                 AllowDrop = true
             };
             
@@ -668,6 +669,47 @@ namespace UniversalSoundBoard.Common
 
             SetCategoryContentDialog.Content = content;
             return SetCategoryContentDialog;
+        }
+
+        public static ContentDialog CreateCategoryOrderContentDialog(DataTemplate itemTemplate)
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            // Get all categories
+            ObservableCollection<Category> categories = new ObservableCollection<Category>();
+
+            int i = 0;
+            foreach (var category in (App.Current as App)._itemViewHolder.Categories)
+            {
+                if (i++ == 0) continue;
+                categories.Add(category);
+            }
+
+            CategoryOrderContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("CategoryOrderContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("ContentDialog-Okay")
+            };
+
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
+            CategoriesListView = new ListView
+            {
+                ItemTemplate = itemTemplate,
+                ItemsSource = categories,
+                SelectionMode = ListViewSelectionMode.None,
+                Height = 300,
+                CanReorderItems = true,
+                CanDragItems = true,
+                AllowDrop = true
+            };
+
+            content.Children.Add(CategoriesListView);
+            CategoryOrderContentDialog.Content = content;
+            return CategoryOrderContentDialog;
         }
     }
 }
