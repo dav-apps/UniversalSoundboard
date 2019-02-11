@@ -456,13 +456,13 @@ This may take some time, depending on how large the import file is.</value>
     <value>Downloading file {0}...</value>
   </data>
   <data name="ContentDialog-Okay" xml:space="preserve">
-    <value>OK</value>
+    <value>Okay</value>
   </data>
   <data name="DownloadFileErrorContentDialog-Message" xml:space="preserve">
-    <value>Bitte überprüfe deine Internetverbindung und versuche es erneut.</value>
+    <value>Please check your internet connection and try again.</value>
   </data>
   <data name="DownloadFileErrorContentDialog-Title" xml:space="preserve">
-    <value>Fehler beim herunterladen der Datei</value>
+    <value>Error while downloading the file</value>
   </data>
   <data name="PlayingSound_VolumeButton.Text" xml:space="preserve">
     <value>Volume</value>
@@ -523,5 +523,11 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="SetCategoryContentDialog-NoCategoriesText" xml:space="preserve">
     <value>Add your first category by clicking the Plus-Button.</value>
+  </data>
+  <data name="SettingsEntry-ChangeCategoryOrderButton.Content" xml:space="preserve">
+    <value>Change the order of the categories</value>
+  </data>
+  <data name="CategoryOrderContentDialog-Title" xml:space="preserve">
+    <value>Change the order of the categories</value>
   </data>
 </root>
