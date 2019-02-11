@@ -508,4 +508,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SetCategoryForMultipleSoundsContentDialog-Title" xml:space="preserve">
     <value>Kategorien für {0} Sounds festlegen</value>
   </data>
+  <data name="SetCategoryContentDialog-NoCategoriesText" xml:space="preserve">
+    <value>Es gibt keine Kategorien. Füge zuerst welche hinzu.</value>
+  </data>
 </root>

@@ -521,4 +521,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SetCategoryForMultipleSoundsContentDialog-Title" xml:space="preserve">
     <value>Set categories for {0} sounds</value>
   </data>
+  <data name="SetCategoryContentDialog-NoCategoriesText" xml:space="preserve">
+    <value>Add your first category by clicking the Plus-Button.</value>
+  </data>
 </root>
