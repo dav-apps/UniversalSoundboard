@@ -114,7 +114,7 @@
     <Compile Include="Components\SetCategoryItemTemplate.xaml.cs">
       <DependentUpon>SetCategoryItemTemplate.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Converters\Converters.cs" />
+    <Compile Include="Common\Converters.cs" />
     <Compile Include="Components\CustomMediaTransportControls.cs" />
     <Compile Include="DataAccess\DatabaseOperations.cs" />
     <Compile Include="DataAccess\FileManager.cs" />
