@@ -824,7 +824,11 @@ namespace UniversalSoundBoard.DataAccess
                 {
                     var cUuid = ConvertStringToGuid(cUuidString);
                     if(cUuid != null)
-                        sound.Categories.Add(GetCategory(cUuid));
+                    {
+                        var category = GetCategory(cUuid);
+                        if(category != null)
+                            sound.Categories.Add(category);
+                    }
                 }
             }
 
