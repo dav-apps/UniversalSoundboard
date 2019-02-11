@@ -1806,7 +1806,8 @@ namespace UniversalSoundBoard.DataAccess
                 props.Type = MediaPlaybackType.Music;
                 props.MusicProperties.Title = sound.Name;
 
-                props.MusicProperties.Artist = sound.Categories.First().Name;
+                if(sound.Categories.Count > 0)
+                    props.MusicProperties.Artist = sound.Categories.First().Name;
 
                 var imageFile = await sound.GetImageFile();
                 if (imageFile != null)
