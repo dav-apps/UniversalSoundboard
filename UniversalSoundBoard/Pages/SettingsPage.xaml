@@ -4,10 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:UniversalSoundBoard.Models"
+    xmlns:components="using:UniversalSoundboard.Components"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
     <Page.Resources>
+        <DataTemplate x:Key="CategoryOrderItemTemplate" x:DataType="models:Category">
+            <components:CategoryOrderItemTemplate />
+        </DataTemplate>
+        
         <Style TargetType="StackPanel" x:Key="SettingsContentStyle">
             <Setter Property="Orientation" Value="Vertical" />
             <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
@@ -48,6 +54,14 @@
                                           x:Uid="SettingsEntry-SavePlayingSounds"
                                           Header="Save playing sounds"
                                           Toggled="SavePlayingSoundsToggle_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel Name="ChangeCategoryOrderStackPanel"
+                                    Style="{StaticResource SettingsEntryStyle}">
+                            <Button Name="ChangeCategoryOrderButton"
+                                    x:Uid="SettingsEntry-ChangeCategoryOrderButton"
+                                    Content="Change the order of the categories"
+                                    Click="ChangeCategoryOrderButton_Click" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">

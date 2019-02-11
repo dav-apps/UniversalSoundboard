@@ -211,6 +211,20 @@ namespace UniversalSoundBoard.Pages
             });
         }
 
+        private async void ChangeCategoryOrderButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Show the CategoryOrderContentDialog
+            var itemTemplate = (DataTemplate)Resources["CategoryOrderItemTemplate"];
+            var CategoryOrderContentDialog = ContentDialogs.CreateCategoryOrderContentDialog(itemTemplate);
+            CategoryOrderContentDialog.PrimaryButtonClick += CategoryOrderContentDialog_PrimaryButtonClick;
+            await CategoryOrderContentDialog.ShowAsync();
+        }
+
+        private void CategoryOrderContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            
+        }
+
         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)
         {
             var ExportDataContentDialog = ContentDialogs.CreateExportDataContentDialog();
