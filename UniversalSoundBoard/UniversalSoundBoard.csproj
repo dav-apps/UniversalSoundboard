@@ -111,6 +111,9 @@
     <Compile Include="Common\LocalDataSettings.cs" />
     <Compile Include="Common\RetrieveConstants.cs" />
     <Compile Include="Common\TriggerAction.cs" />
+    <Compile Include="Components\CategoryOrderItemTemplate.xaml.cs">
+      <DependentUpon>CategoryOrderItemTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\SetCategoryItemTemplate.xaml.cs">
       <DependentUpon>SetCategoryItemTemplate.xaml</DependentUpon>
     </Compile>
@@ -230,6 +233,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Components\CategoryOrderItemTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\SetCategoryItemTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
