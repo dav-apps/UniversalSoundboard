@@ -156,6 +156,8 @@ namespace UniversalSoundBoard.Pages
         
         private async void SoundGridView_DragOver(object sender, DragEventArgs e)
         {
+            if (!e.DataView.Contains("FileName")) return;
+
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
             var deferral = e.GetDeferral();
             e.AcceptedOperation = DataPackageOperation.Copy;
