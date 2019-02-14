@@ -1001,36 +1001,35 @@ namespace UniversalSoundBoard.DataAccess
                 List<Guid> uuids = new List<Guid>();
                 List<Category> sortedCategories = new List<Category>();
 
-                // Go through each category and check if it has a property
+                List<Category> newCategories = new List<Category>();
                 foreach (var category in categories)
+                    newCategories.Add(category);
+
+                foreach(var property in categoryOrderTableObject.Properties)
                 {
-                    // Get the property of the category
-                    var property = categoryOrderTableObject.Properties.Find(p => p.Value == category.Uuid.ToString());
-                    if (property != null)
-                    {
-                        // Add the uuid at the correct position
-                        int position = int.Parse(property.Name);
-                        try
-                        {
-                            sortedCategories.Insert(position, category);
-                            uuids.Insert(position, category.Uuid);
-                        }
-                        catch (ArgumentOutOfRangeException e)
-                        {
-                            sortedCategories.Add(category);
-                            uuids.Add(category.Uuid);
-                        }
-                    }
-                    else
-                    {
-                        // Add the uuid at the end
-                        sortedCategories.Add(category);
-                        uuids.Add(category.Uuid);
-                    }
+                    int index = -1;
+                    if (!int.TryParse(property.Name, out index)) continue;
+
+                    // Get the category from the list
+                    Guid categoryUuid = ConvertStringToGuid(property.Value);
+                    if (categoryUuid == null) continue;
+
+                    var category = categories.Find(c => c.Uuid == categoryUuid);
+                    if (category == null) continue;
+
+                    sortedCategories.Add(category);
+                    uuids.Add(category.Uuid);
+                    newCategories.Remove(category);
+                }
+
+                // Add the new categories at the end
+                foreach(var category in newCategories)
+                {
+                    sortedCategories.Add(category);
+                    uuids.Add(category.Uuid);
                 }
 
                 DatabaseOperations.SetOrder(CategoryOrderType, uuids);
-
                 return sortedCategories;
             }
             else

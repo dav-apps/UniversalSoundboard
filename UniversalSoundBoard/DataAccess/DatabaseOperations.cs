@@ -236,6 +236,22 @@ namespace UniversalSoundBoard.DataAccess
                     tableObject.SetPropertyValue(i.ToString(), uuid.ToString());
                     i++;
                 }
+
+                // Remove old properties
+                List<string> removedProperties = new List<string>();
+                foreach(var property in tableObject.Properties)
+                {
+                    // Remove the property if it is outside of the uuids range
+                    int propertyIndex = 0;
+                    if (int.TryParse(property.Name, out propertyIndex) && propertyIndex >= uuids.Count)
+                    {
+                        // Remove the property
+                        removedProperties.Add(property.Name);
+                    }
+                }
+
+                for (int j = 0; j < removedProperties.Count; j++)
+                    tableObject.RemoveProperty(removedProperties[j]);
             }
         }
 
