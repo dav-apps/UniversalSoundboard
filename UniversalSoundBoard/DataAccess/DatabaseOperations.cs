@@ -232,7 +232,10 @@ namespace UniversalSoundBoard.DataAccess
                 // Update the existing object
                 int i = 0;
                 foreach(var uuid in uuids)
+                {
                     tableObject.SetPropertyValue(i.ToString(), uuid.ToString());
+                    i++;
+                }
             }
         }
 

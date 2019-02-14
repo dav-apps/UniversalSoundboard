@@ -951,72 +951,6 @@ namespace UniversalSoundBoard.DataAccess
             return SortCategoriesList(categoriesList);
         }
 
-        private static List<Category> SortCategoriesList(List<Category> categories)
-        {
-            // Get the order table objects
-            var tableObjects = DatabaseOperations.GetAllOrders();
-
-            // Check if the order table object with the type of category (0) exists
-            TableObject categoryOrderTableObject = null;
-            foreach(var obj in tableObjects)
-            {
-                if(obj.GetPropertyValue(OrderTableTypePropertyName) == CategoryOrderType)
-                {
-                    categoryOrderTableObject = obj;
-                    break;
-                }
-            }
-            
-            if (categoryOrderTableObject != null)
-            {
-                List<Guid> uuids = new List<Guid>();
-                List<Category> sortedCategories = new List<Category>();
-                
-                // Go through each category and check if it has a property
-                foreach(var category in categories)
-                {
-                    // Get the property of the category
-                    var property = categoryOrderTableObject.Properties.Find(p => p.Value == category.Uuid.ToString());
-                    if(property != null)
-                    {
-                        // Add the uuid at the correct position
-                        int position = int.Parse(property.Name);
-                        try
-                        {
-                            sortedCategories.Insert(position, category);
-                            uuids.Insert(position, category.Uuid);
-                        }
-                        catch(ArgumentOutOfRangeException e)
-                        {
-                            sortedCategories.Add(category);
-                            uuids.Add(category.Uuid);
-                        }
-                    }
-                    else
-                    {
-                        // Add the uuid at the end
-                        sortedCategories.Add(category);
-                        uuids.Add(category.Uuid);
-                    }
-                }
-                
-                DatabaseOperations.SetOrder(CategoryOrderType, uuids);
-                
-                return sortedCategories;
-            }
-            else
-            {
-                // Create the category order table object with the current order
-                List<Guid> uuids = new List<Guid>();
-
-                foreach(var category in categories)
-                    uuids.Add(category.Uuid);
-
-                DatabaseOperations.SetOrder(CategoryOrderType, uuids);
-                return categories;
-            }
-        }
-
         private static Category GetCategory(Guid uuid)
         {
             var categoryTableObject = DatabaseOperations.GetObject(uuid);
@@ -1044,6 +978,77 @@ namespace UniversalSoundBoard.DataAccess
 
             DatabaseOperations.DeleteObject(uuid);
             CreateCategoriesList();
+        }
+
+        private static List<Category> SortCategoriesList(List<Category> categories)
+        {
+            // Get the order table objects
+            var tableObjects = DatabaseOperations.GetAllOrders();
+
+            // Check if the order table object with the type of category (0) exists
+            TableObject categoryOrderTableObject = null;
+            foreach (var obj in tableObjects)
+            {
+                if (obj.GetPropertyValue(OrderTableTypePropertyName) == CategoryOrderType)
+                {
+                    categoryOrderTableObject = obj;
+                    break;
+                }
+            }
+
+            if (categoryOrderTableObject != null)
+            {
+                List<Guid> uuids = new List<Guid>();
+                List<Category> sortedCategories = new List<Category>();
+
+                // Go through each category and check if it has a property
+                foreach (var category in categories)
+                {
+                    // Get the property of the category
+                    var property = categoryOrderTableObject.Properties.Find(p => p.Value == category.Uuid.ToString());
+                    if (property != null)
+                    {
+                        // Add the uuid at the correct position
+                        int position = int.Parse(property.Name);
+                        try
+                        {
+                            sortedCategories.Insert(position, category);
+                            uuids.Insert(position, category.Uuid);
+                        }
+                        catch (ArgumentOutOfRangeException e)
+                        {
+                            sortedCategories.Add(category);
+                            uuids.Add(category.Uuid);
+                        }
+                    }
+                    else
+                    {
+                        // Add the uuid at the end
+                        sortedCategories.Add(category);
+                        uuids.Add(category.Uuid);
+                    }
+                }
+
+                DatabaseOperations.SetOrder(CategoryOrderType, uuids);
+
+                return sortedCategories;
+            }
+            else
+            {
+                // Create the category order table object with the current order
+                List<Guid> uuids = new List<Guid>();
+
+                foreach (var category in categories)
+                    uuids.Add(category.Uuid);
+
+                DatabaseOperations.SetOrder(CategoryOrderType, uuids);
+                return categories;
+            }
+        }
+
+        public static void SetCategoryOrder(List<Guid> uuids)
+        {
+            DatabaseOperations.SetOrder(CategoryOrderType, uuids);
         }
 
         public static Guid AddPlayingSound(Guid uuid, List<Sound> sounds, int current, int repetitions, bool randomly, double volume)
