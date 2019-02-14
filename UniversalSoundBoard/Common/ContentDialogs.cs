@@ -707,7 +707,17 @@ namespace UniversalSoundBoard.Common
                 AllowDrop = true
             };
 
-            content.Children.Add(CategoriesListView);
+            if(categories.Count > 0)
+                content.Children.Add(CategoriesListView);
+            else
+            {
+                TextBlock noCategoriesTextBlock = new TextBlock
+                {
+                    Text = loader.GetString("SetCategoryContentDialog-NoCategoriesText")
+                };
+                content.Children.Add(noCategoriesTextBlock);
+            }
+
             CategoryOrderContentDialog.Content = content;
             return CategoryOrderContentDialog;
         }
