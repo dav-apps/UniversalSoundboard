@@ -111,6 +111,10 @@ namespace UniversalSoundBoard.DataAccess
         private const int PlayingSoundTableIdDevelopment = 18;
         public static int PlayingSoundTableId => Environment == DavEnvironment.Production ? PlayingSoundTableIdProduction : PlayingSoundTableIdDevelopment;
 
+        private const int OrderTableIdProduction = -1;  // TODO
+        private const int OrderTableIdDevelopment = -1;
+        public static int OrderTableId => Environment == DavEnvironment.Production ? OrderTableIdProduction : OrderTableIdDevelopment;
+
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
         public const string SoundTableSoundUuidPropertyName = "sound_uuid";
@@ -126,7 +130,11 @@ namespace UniversalSoundBoard.DataAccess
         public const string PlayingSoundTableRandomlyPropertyName = "randomly";
         public const string PlayingSoundTableVolumePropertyName = "volume";
 
+        public const string OrderTableTypePropertyName = "type";
+
         public const string TableObjectExtPropertyName = "ext";
+        public const string CategoryOrderType = "0";
+        public const string SoundOrderType = "1";
 
         public static List<string> allowedFileTypes = new List<string>
         {
@@ -940,7 +948,73 @@ namespace UniversalSoundBoard.DataAccess
             foreach (var categoryTableObject in categoriesTableObjectList)
                 categoriesList.Add(GetCategory(categoryTableObject.Uuid));
 
-            return categoriesList;
+            return SortCategoriesList(categoriesList);
+        }
+
+        private static List<Category> SortCategoriesList(List<Category> categories)
+        {
+            // Get the order table objects
+            var tableObjects = DatabaseOperations.GetAllOrders();
+
+            // Check if the order table object with the type of category (0) exists
+            TableObject categoryOrderTableObject = null;
+            foreach(var obj in tableObjects)
+            {
+                if(obj.GetPropertyValue(OrderTableTypePropertyName) == CategoryOrderType)
+                {
+                    categoryOrderTableObject = obj;
+                    break;
+                }
+            }
+            
+            if (categoryOrderTableObject != null)
+            {
+                List<Guid> uuids = new List<Guid>();
+                List<Category> sortedCategories = new List<Category>();
+                
+                // Go through each category and check if it has a property
+                foreach(var category in categories)
+                {
+                    // Get the property of the category
+                    var property = categoryOrderTableObject.Properties.Find(p => p.Value == category.Uuid.ToString());
+                    if(property != null)
+                    {
+                        // Add the uuid at the correct position
+                        int position = int.Parse(property.Name);
+                        try
+                        {
+                            sortedCategories.Insert(position, category);
+                            uuids.Insert(position, category.Uuid);
+                        }
+                        catch(ArgumentOutOfRangeException e)
+                        {
+                            sortedCategories.Add(category);
+                            uuids.Add(category.Uuid);
+                        }
+                    }
+                    else
+                    {
+                        // Add the uuid at the end
+                        sortedCategories.Add(category);
+                        uuids.Add(category.Uuid);
+                    }
+                }
+                
+                DatabaseOperations.SetOrder(CategoryOrderType, uuids);
+                
+                return sortedCategories;
+            }
+            else
+            {
+                // Create the category order table object with the current order
+                List<Guid> uuids = new List<Guid>();
+
+                foreach(var category in categories)
+                    uuids.Add(category.Uuid);
+
+                DatabaseOperations.SetOrder(CategoryOrderType, uuids);
+                return categories;
+            }
         }
 
         private static Category GetCategory(Guid uuid)
