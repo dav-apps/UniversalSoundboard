@@ -203,6 +203,45 @@ namespace UniversalSoundBoard.DataAccess
         }
         #endregion
 
+        #region Order
+        public static void SetOrder(string type, List<Guid> uuids)
+        {
+            // Check if the order already exists
+            List<TableObject> tableObjects = GetAllOrders();
+            TableObject tableObject = tableObjects.Find(obj => obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) == type);
+
+            if (tableObject == null)
+            {
+                // Create a new table object
+                List<Property> properties = new List<Property>();
+
+                // Set the type property
+                properties.Add(new Property { Name = FileManager.OrderTableTypePropertyName, Value = type });
+
+                int i = 0;
+                foreach (var uuid in uuids)
+                {
+                    properties.Add(new Property { Name = i.ToString(), Value = uuid.ToString() });
+                    i++;
+                }
+
+                new TableObject(Guid.NewGuid(), FileManager.OrderTableId, properties);
+            }
+            else
+            {
+                // Update the existing object
+                int i = 0;
+                foreach(var uuid in uuids)
+                    tableObject.SetPropertyValue(i.ToString(), uuid.ToString());
+            }
+        }
+
+        public static List<TableObject> GetAllOrders()
+        {
+            return Dav.Database.GetAllTableObjects(FileManager.OrderTableId, false);
+        }
+        #endregion
+
         #region Helper Methods
         private static string ConvertIdListToString(List<string> ids)
         {
