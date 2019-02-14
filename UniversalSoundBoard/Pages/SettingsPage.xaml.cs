@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Models;
 using Windows.Storage;
-using Windows.UI;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -222,7 +220,14 @@ namespace UniversalSoundBoard.Pages
 
         private void CategoryOrderContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            
+            // Save the new order of the categories
+            List<Guid> uuids = new List<Guid>();
+
+            foreach(var category in ContentDialogs.CategoryOrderList)
+                uuids.Add(category.Uuid);
+
+            FileManager.SetCategoryOrder(uuids);
+            FileManager.CreateCategoriesList();
         }
 
         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)

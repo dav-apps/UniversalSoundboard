@@ -33,6 +33,7 @@ namespace UniversalSoundBoard.Common
         public static StorageFolder ExportSoundsFolder;
         public static ListView CategoriesListView;
         public static Dictionary<Guid, bool> SelectedCategories;
+        public static ObservableCollection<Category> CategoryOrderList;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -676,13 +677,13 @@ namespace UniversalSoundBoard.Common
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 
             // Get all categories
-            ObservableCollection<Category> categories = new ObservableCollection<Category>();
+            CategoryOrderList = new ObservableCollection<Category>();
 
             int i = 0;
             foreach (var category in (App.Current as App)._itemViewHolder.Categories)
             {
                 if (i++ == 0) continue;
-                categories.Add(category);
+                CategoryOrderList.Add(category);
             }
 
             CategoryOrderContentDialog = new ContentDialog
@@ -699,7 +700,7 @@ namespace UniversalSoundBoard.Common
             CategoriesListView = new ListView
             {
                 ItemTemplate = itemTemplate,
-                ItemsSource = categories,
+                ItemsSource = CategoryOrderList,
                 SelectionMode = ListViewSelectionMode.None,
                 Height = 300,
                 CanReorderItems = true,
@@ -707,7 +708,7 @@ namespace UniversalSoundBoard.Common
                 AllowDrop = true
             };
 
-            if(categories.Count > 0)
+            if(CategoryOrderList.Count > 0)
                 content.Children.Add(CategoriesListView);
             else
             {
