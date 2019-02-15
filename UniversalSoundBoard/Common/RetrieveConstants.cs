@@ -25,6 +25,7 @@ namespace UniversalSoundboard.Common
         {
             return new List<int>
             {
+                FileManager.OrderTableId,
                 FileManager.CategoryTableId,
                 FileManager.SoundTableId,
                 FileManager.SoundFileTableId,
