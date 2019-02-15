@@ -76,7 +76,7 @@ namespace UniversalSoundBoard.DataAccess
         private static Color playingSoundsBarDarkBackgroundColor = Color.FromArgb(255, 15, 20, 35);       // #0f1423
 
 
-        public static DavEnvironment Environment = DavEnvironment.Production;
+        public static DavEnvironment Environment = DavEnvironment.Development;
 
         // dav Keys
         private const string ApiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
@@ -84,7 +84,7 @@ namespace UniversalSoundBoard.DataAccess
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
         private const string LoginImplicitUrlProduction = "https://dav-apps.tech/login_implicit";
-        private const string LoginImplicitUrlDevelopment = "https://8a102870.ngrok.io/login_implicit";
+        private const string LoginImplicitUrlDevelopment = "https://1c85f323.ngrok.io/login_implicit";
         public static string LoginImplicitUrl => Environment == DavEnvironment.Production ? LoginImplicitUrlProduction : LoginImplicitUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 8; Prod: 1
@@ -111,8 +111,8 @@ namespace UniversalSoundBoard.DataAccess
         private const int PlayingSoundTableIdDevelopment = 18;
         public static int PlayingSoundTableId => Environment == DavEnvironment.Production ? PlayingSoundTableIdProduction : PlayingSoundTableIdDevelopment;
 
-        private const int OrderTableIdProduction = -1;  // TODO
-        private const int OrderTableIdDevelopment = -1;
+        private const int OrderTableIdProduction = -1;  // Dev: 27
+        private const int OrderTableIdDevelopment = 27;
         public static int OrderTableId => Environment == DavEnvironment.Production ? OrderTableIdProduction : OrderTableIdDevelopment;
 
         public const string SoundTableNamePropertyName = "name";
@@ -986,18 +986,11 @@ namespace UniversalSoundBoard.DataAccess
             var tableObjects = DatabaseOperations.GetAllOrders();
 
             // Check if the order table object with the type of category (0) exists
-            TableObject categoryOrderTableObject = null;
-            foreach (var obj in tableObjects)
-            {
-                if (obj.GetPropertyValue(OrderTableTypePropertyName) == CategoryOrderType)
-                {
-                    categoryOrderTableObject = obj;
-                    break;
-                }
-            }
+            var categoryOrderTableObjects = tableObjects.FindAll(obj => obj.GetPropertyValue(OrderTableTypePropertyName) == CategoryOrderType);
 
-            if (categoryOrderTableObject != null)
+            if (categoryOrderTableObjects.Count > 0)
             {
+                var lastOrderTableObject = categoryOrderTableObjects.Last();
                 List<Guid> uuids = new List<Guid>();
                 List<Category> sortedCategories = new List<Category>();
 
@@ -1005,15 +998,15 @@ namespace UniversalSoundBoard.DataAccess
                 foreach (var category in categories)
                     newCategories.Add(category);
 
-                foreach(var property in categoryOrderTableObject.Properties)
+                foreach(var property in lastOrderTableObject.Properties)
                 {
                     int index = -1;
                     if (!int.TryParse(property.Name, out index)) continue;
 
-                    // Get the category from the list
                     Guid categoryUuid = ConvertStringToGuid(property.Value);
                     if (categoryUuid == null) continue;
 
+                    // Get the category from the list
                     var category = categories.Find(c => c.Uuid == categoryUuid);
                     if (category == null) continue;
 
@@ -1023,10 +1016,44 @@ namespace UniversalSoundBoard.DataAccess
                 }
 
                 // Add the new categories at the end
-                foreach(var category in newCategories)
+                foreach (var category in newCategories)
                 {
                     sortedCategories.Add(category);
                     uuids.Add(category.Uuid);
+                }
+
+                // If there are multiple order objects, merge them
+                while (categoryOrderTableObjects.Count > 1)
+                {
+                    // Merge the first order object into the last one
+                    var firstOrderTableObject = categoryOrderTableObjects.First();
+
+                    // Go through each uuid of the order object
+                    foreach (var property in firstOrderTableObject.Properties)
+                    {
+                        // Make sure the property is an index of the order
+                        int index = -1;
+                        if (!int.TryParse(property.Name, out index)) continue;
+
+                        Guid categoryUuid = ConvertStringToGuid(property.Value);
+                        if (categoryUuid == null) continue;
+
+                        //  Check if the uuid already exist in the first order object
+                        if (uuids.Contains(categoryUuid)) continue;
+
+                        // Get the category from the list
+                        var category = categories.Find(c => c.Uuid == categoryUuid);
+                        if (category == null) continue;
+
+                        // Add the property to uuids and sortedCategories
+                        sortedCategories.Add(category);
+                        uuids.Add(category.Uuid);
+                        newCategories.Remove(category);
+                    }
+
+                    // Delete the object and remove it from the list
+                    firstOrderTableObject.Delete();
+                    categoryOrderTableObjects.Remove(firstOrderTableObject);
                 }
 
                 DatabaseOperations.SetOrder(CategoryOrderType, uuids);
