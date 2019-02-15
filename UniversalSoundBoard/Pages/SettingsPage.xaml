@@ -21,7 +21,7 @@
         </Style>
 
         <Style TargetType="StackPanel" x:Key="SettingsEntryStyle">
-            <Setter Property="Margin" Value="5" />
+            <Setter Property="Margin" Value="-10,5,0,5" />
         </Style>
     </Page.Resources>
 
@@ -30,7 +30,9 @@
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
-        <Pivot Name="SettingsPivot" Grid.Row="1">
+        <Pivot Name="SettingsPivot" 
+               Grid.Row="1"
+               Margin="6,0,0,0">
             <PivotItem x:Uid="SettingsPivot-General">
                 <ScrollViewer>
                     <StackPanel Name="SettingsGeneralStackPanel" Style="{StaticResource SettingsContentStyle}">
@@ -58,7 +60,7 @@
 
                         <StackPanel Name="ChangeCategoryOrderStackPanel"
                                     Style="{StaticResource SettingsEntryStyle}"
-                                    Margin="5,10,5,5">
+                                    Margin="-10,10,5,5">
                             <Button Name="ChangeCategoryOrderButton"
                                     x:Uid="SettingsEntry-ChangeCategoryOrderButton"
                                     Content="Change the order of the categories"
@@ -66,7 +68,7 @@
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}"
-                                    Margin="5,15,5,5">
+                                    Margin="-10,15,5,5">
                             <HyperlinkButton x:Uid="PrivacyPolicy-Link"
                                              NavigateUri="http://dav-apps.tech/privacy" />
 
@@ -145,7 +147,7 @@
             <PivotItem x:Uid="SettingsPivot-Data">
                 <ScrollViewer>
                     <StackPanel Name="SettingsDataStackPanel" Style="{StaticResource SettingsContentStyle}">
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                        <StackPanel Margin="-10,5,0,0">
                             <StackPanel Orientation="Horizontal">
                                 <Button Name="ImportDataButton" 
                                         x:Uid="SettingsEntry-ImportDataButton" 
@@ -170,7 +172,7 @@
                             </StackPanel>
                         </StackPanel>
                         
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                        <StackPanel Margin="-10,5,0,5">
                             <StackPanel Orientation="Horizontal">
                                 <Button Name="ExportDataButton" 
                                         x:Uid="SettingsEntry-ExportDataButton" 
@@ -196,7 +198,7 @@
                         </StackPanel>
                         
                         <StackPanel Style="{StaticResource SettingsEntryStyle}" 
-                                    Margin="5,20,5,5">
+                                    Margin="-10,15,5,5">
                             <TextBlock Name="SoundBoardSizeTextBlock" 
                                        Text="{Binding SoundboardSize}" />
                         </StackPanel>
