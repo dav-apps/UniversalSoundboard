@@ -214,7 +214,7 @@ namespace UniversalSoundBoard.DataAccess
             {
                 // Create a new table object
                 List<Property> properties = new List<Property>();
-
+                
                 // Set the type property
                 properties.Add(new Property { Name = FileManager.OrderTableTypePropertyName, Value = type });
 
@@ -231,11 +231,13 @@ namespace UniversalSoundBoard.DataAccess
             {
                 // Update the existing object
                 int i = 0;
+                Dictionary<string, string> newProperties = new Dictionary<string, string>();
                 foreach(var uuid in uuids)
                 {
-                    tableObject.SetPropertyValue(i.ToString(), uuid.ToString());
+                    newProperties.Add(i.ToString(), uuid.ToString());
                     i++;
                 }
+                tableObject.SetPropertyValues(newProperties);
 
                 // Remove old properties
                 List<string> removedProperties = new List<string>();
