@@ -57,14 +57,16 @@
                         </StackPanel>
 
                         <StackPanel Name="ChangeCategoryOrderStackPanel"
-                                    Style="{StaticResource SettingsEntryStyle}">
+                                    Style="{StaticResource SettingsEntryStyle}"
+                                    Margin="5,10,5,5">
                             <Button Name="ChangeCategoryOrderButton"
                                     x:Uid="SettingsEntry-ChangeCategoryOrderButton"
                                     Content="Change the order of the categories"
                                     Click="ChangeCategoryOrderButton_Click" />
                         </StackPanel>
 
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}"
+                                    Margin="5,15,5,5">
                             <HyperlinkButton x:Uid="PrivacyPolicy-Link"
                                              NavigateUri="http://dav-apps.tech/privacy" />
 
