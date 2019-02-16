@@ -36,6 +36,7 @@ namespace UniversalSoundBoard.DataAccess
     {
         #region Variables
         // Variables for the localSettings keys
+        public const string davKey = "dav";
         public const string playingSoundsListVisibleKey = "playingSoundsListVisible";
         public const string playOneSoundAtOnceKey = "playOneSoundAtOnce";
         public const string liveTileKey = "liveTile";
@@ -44,18 +45,23 @@ namespace UniversalSoundBoard.DataAccess
         public const string savePlayingSoundsKey = "savePlayingSounds";
         public const string themeKey = "theme";
         public const string showAcrylicBackgroundKey = "showAcrylicBackground";
-        public const string davKey = "dav";
+        public const string soundOrderKey = "soundOrder";
+        public const string soundOrderReversedKey = "soundOrderReversed";
 
         // Variables for defaults
-        public const double volume = 1.0;
-        public const bool liveTile = true;
-        public const bool playingSoundsListVisible = true;
-        public const bool playOneSoundAtOnce = false;
-        public const string theme = "system";
-        public const bool showCategoryIcon = true;
-        public const bool showSoundsPivot = true;
-        public const bool savePlayingSounds = true;
-        public const bool showAcrylicBackground = true;
+        public const double volumeDefault = 1.0;
+        public const bool liveTileDefault = true;
+        public const bool playingSoundsListVisibleDefault = true;
+        public const bool playOneSoundAtOnceDefault = false;
+        public const string themeDefault = "system";
+        public const bool showCategoryIconDefault = true;
+        public const bool showSoundsPivotDefault = true;
+        public const bool savePlayingSoundsDefault = true;
+        public const bool showAcrylicBackgroundDefault = true;
+        public const SoundOrder soundOrderDefault = SoundOrder.Custom;
+        public const bool soundOrderReversedDefault = false;
+        
+        // Design constants
         public const int mobileMaxWidth = 550;
         public const int tabletMaxWidth = 650;
         public const int topButtonsCollapsedMaxWidth = 1400;
@@ -64,8 +70,6 @@ namespace UniversalSoundBoard.DataAccess
         public const int moveAddButtonMaxWidth = 800;
         public const int moveVolumeButtonMaxWidth = 750;
         public const int hideSearchBoxMaxWidth = 700;
-
-        public static bool skipAutoSuggestBoxTextChanged = false;
 
         // Colors for the background of PlayingSoundsBar and SideBar
         private static double sideBarAcrylicBackgroundTintOpacity = 0.6;
@@ -115,6 +119,7 @@ namespace UniversalSoundBoard.DataAccess
         private const int OrderTableIdDevelopment = 27;
         public static int OrderTableId => Environment == DavEnvironment.Production ? OrderTableIdProduction : OrderTableIdDevelopment;
 
+        // Table property names
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
         public const string SoundTableSoundUuidPropertyName = "sound_uuid";
@@ -134,6 +139,7 @@ namespace UniversalSoundBoard.DataAccess
         public const string OrderTableCategoryPropertyName = "category";
         public const string OrderTableFavouritePropertyName = "favs";
 
+        // Other constants
         public const string TableObjectExtPropertyName = "ext";
         public const string CategoryOrderType = "0";
         public const string SoundOrderType = "1";
@@ -153,6 +159,15 @@ namespace UniversalSoundBoard.DataAccess
             New,
             Dav
         };
+
+        public enum SoundOrder
+        {
+            Custom = 0,
+            Name = 1,
+            CreationDate = 2
+        };
+
+        internal static bool skipAutoSuggestBoxTextChanged = false;
         private static bool updatingGridView = false;
         internal static bool syncFinished = false;
         #endregion
@@ -1932,8 +1947,8 @@ namespace UniversalSoundBoard.DataAccess
 
             if (localSettings.Values["liveTile"] == null)
             {
-                localSettings.Values["liveTile"] = liveTile;
-                isLiveTileOn = liveTile;
+                localSettings.Values["liveTile"] = liveTileDefault;
+                isLiveTileOn = liveTileDefault;
             }
             else
             {

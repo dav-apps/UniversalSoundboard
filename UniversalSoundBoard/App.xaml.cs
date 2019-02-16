@@ -41,10 +41,10 @@ namespace UniversalSoundBoard
             SelectedSounds = new ObservableCollection<Sound>(),
             PlayingSounds = new ObservableCollection<PlayingSound>(),
             PlayingSoundsListVisibility = Visibility.Visible,
-            PlayOneSoundAtOnce = FileManager.playOneSoundAtOnce,
-            ShowCategoryIcon = FileManager.showCategoryIcon,
-            ShowSoundsPivot = FileManager.showSoundsPivot,
-            SavePlayingSounds = FileManager.savePlayingSounds,
+            PlayOneSoundAtOnce = FileManager.playOneSoundAtOnceDefault,
+            ShowCategoryIcon = FileManager.showCategoryIconDefault,
+            ShowSoundsPivot = FileManager.showSoundsPivotDefault,
+            SavePlayingSounds = FileManager.savePlayingSoundsDefault,
             IsExporting = false,
             Exported = false,
             IsImporting = false,
@@ -73,7 +73,9 @@ namespace UniversalSoundBoard
             SelectAllFlyoutText = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("MoreButton_SelectAllFlyout-SelectAll"),
             SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll),
             ShowAcrylicBackground = true,
-            PlayingSoundsBarAcrylicBackgroundBrush = new Windows.UI.Xaml.Media.AcrylicBrush()
+            PlayingSoundsBarAcrylicBackgroundBrush = new Windows.UI.Xaml.Media.AcrylicBrush(),
+            SoundOrder = FileManager.soundOrderDefault,
+            SoundOrderReversed = FileManager.soundOrderReversedDefault
         };
         
         /// <summary>
@@ -105,7 +107,7 @@ namespace UniversalSoundBoard
             }
             else
             {
-                localSettings.Values["theme"] = FileManager.theme;
+                localSettings.Values["theme"] = FileManager.themeDefault;
             }
 
             // Init Websocket
