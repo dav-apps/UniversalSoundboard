@@ -23,6 +23,7 @@ namespace UniversalSoundBoard.Pages
     {
         public static bool soundsPivotSelected = true;
         private bool skipSoundListSelectionChangedEvent = false;
+        private bool isDragging = false;
 
         
         public SoundPage()
@@ -38,6 +39,8 @@ namespace UniversalSoundBoard.Pages
             SetDataContext();
             SetSoundsPivotVisibility();
             (App.Current as App)._itemViewHolder.SelectAllSoundsEvent += _itemViewHolder_SelectAllSoundsEvent;
+            (App.Current as App)._itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
+            (App.Current as App)._itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -80,6 +83,49 @@ namespace UniversalSoundBoard.Pages
             
             skipSoundListSelectionChangedEvent = false;
             UpdateSelectAllFlyoutText();
+        }
+
+        private void ItemViewHolder_Sounds_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+                isDragging = true;
+
+            if((e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add || 
+                e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move) && 
+                isDragging)
+            {
+                UpdateSoundOrder(false);
+                isDragging = false;
+            }
+        }
+
+        private void ItemViewHolder_FavouriteSounds_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
+                isDragging = true;
+
+            if ((e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add ||
+                e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Move) && 
+                isDragging)
+            {
+                UpdateSoundOrder(true);
+                isDragging = false;
+            }
+        }
+
+        private void UpdateSoundOrder(bool showFavourites)
+        {
+            // Get the current category uuid
+            int selectedCategoryIndex = (App.Current as App)._itemViewHolder.SelectedCategory;
+            if (selectedCategoryIndex >= (App.Current as App)._itemViewHolder.Categories.Count) return;
+            Guid currentCategoryUuid = selectedCategoryIndex == 0 ? Guid.Empty : (App.Current as App)._itemViewHolder.Categories[selectedCategoryIndex].Uuid;
+
+            // Get the uuids of the sounds
+            List<Guid> uuids = new List<Guid>();
+            foreach (var sound in showFavourites ? (App.Current as App)._itemViewHolder.FavouriteSounds : (App.Current as App)._itemViewHolder.Sounds)
+                uuids.Add(sound.Uuid);
+
+            DatabaseOperations.SetSoundOrder(currentCategoryUuid, showFavourites, uuids);
         }
 
         private void UpdateSelectAllFlyoutText()
