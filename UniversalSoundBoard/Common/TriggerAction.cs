@@ -29,6 +29,11 @@ namespace UniversalSoundboard.Common
             UpdateView(tableObject.TableId);
         }
 
+        public void SyncFinished()
+        {
+            FileManager.syncFinished = true;
+        }
+
         private void UpdateView(int tableId)
         {
             if (tableId == FileManager.ImageFileTableId || tableId == FileManager.SoundFileTableId)

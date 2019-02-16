@@ -312,6 +312,21 @@ namespace UniversalSoundBoard.DataAccess
                     i++;
                 }
                 tableObject.SetPropertyValues(newProperties);
+                
+                bool removeNonExistentSounds = !(App.Current as App)._itemViewHolder.User.IsLoggedIn ||
+                                                ((App.Current as App)._itemViewHolder.User.IsLoggedIn && FileManager.syncFinished);
+
+                if (removeNonExistentSounds)
+                {
+                    // Remove the properties that are outside of the uuids range
+                    List<string> removedProperties = new List<string>();
+                    foreach (var property in tableObject.Properties)
+                        if (int.TryParse(property.Name, out int propertyIndex) && propertyIndex >= uuids.Count)
+                            removedProperties.Add(property.Name);
+
+                    for (int j = 0; j < removedProperties.Count; j++)
+                        tableObject.RemoveProperty(removedProperties[j]);
+                }
             }
         }
         #endregion
