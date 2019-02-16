@@ -88,8 +88,8 @@ namespace UniversalSoundBoard.Pages
             var localSettings = ApplicationData.Current.LocalSettings;
             if (localSettings.Values[FileManager.playingSoundsListVisibleKey] == null)
             {
-                localSettings.Values[FileManager.playingSoundsListVisibleKey] = FileManager.playingSoundsListVisible;
-                (App.Current as App)._itemViewHolder.PlayingSoundsListVisibility = FileManager.playingSoundsListVisible ? Visibility.Visible : Visibility.Collapsed;
+                localSettings.Values[FileManager.playingSoundsListVisibleKey] = FileManager.playingSoundsListVisibleDefault;
+                (App.Current as App)._itemViewHolder.PlayingSoundsListVisibility = FileManager.playingSoundsListVisibleDefault ? Visibility.Visible : Visibility.Collapsed;
             }
             else
             {
@@ -98,8 +98,8 @@ namespace UniversalSoundBoard.Pages
 
             if (localSettings.Values[FileManager.playOneSoundAtOnceKey] == null)
             {
-                localSettings.Values[FileManager.playOneSoundAtOnceKey] = FileManager.playOneSoundAtOnce;
-                (App.Current as App)._itemViewHolder.PlayOneSoundAtOnce = FileManager.playOneSoundAtOnce;
+                localSettings.Values[FileManager.playOneSoundAtOnceKey] = FileManager.playOneSoundAtOnceDefault;
+                (App.Current as App)._itemViewHolder.PlayOneSoundAtOnce = FileManager.playOneSoundAtOnceDefault;
             }
             else
             {
@@ -108,13 +108,13 @@ namespace UniversalSoundBoard.Pages
 
             if (localSettings.Values[FileManager.liveTileKey] == null)
             {
-                localSettings.Values[FileManager.liveTileKey] = FileManager.liveTile;
+                localSettings.Values[FileManager.liveTileKey] = FileManager.liveTileDefault;
             }
 
             if (localSettings.Values[FileManager.showCategoryIconKey] == null)
             {
-                localSettings.Values[FileManager.showCategoryIconKey] = FileManager.showCategoryIcon;
-                (App.Current as App)._itemViewHolder.ShowCategoryIcon = FileManager.showCategoryIcon;
+                localSettings.Values[FileManager.showCategoryIconKey] = FileManager.showCategoryIconDefault;
+                (App.Current as App)._itemViewHolder.ShowCategoryIcon = FileManager.showCategoryIconDefault;
             }
             else
             {
@@ -123,8 +123,8 @@ namespace UniversalSoundBoard.Pages
 
             if (localSettings.Values[FileManager.showSoundsPivotKey] == null)
             {
-                localSettings.Values[FileManager.showSoundsPivotKey] = FileManager.showSoundsPivot;
-                (App.Current as App)._itemViewHolder.ShowSoundsPivot = FileManager.showSoundsPivot;
+                localSettings.Values[FileManager.showSoundsPivotKey] = FileManager.showSoundsPivotDefault;
+                (App.Current as App)._itemViewHolder.ShowSoundsPivot = FileManager.showSoundsPivotDefault;
             }
             else
             {
@@ -133,31 +133,51 @@ namespace UniversalSoundBoard.Pages
 
             if(localSettings.Values[FileManager.savePlayingSoundsKey] == null)
             {
-                localSettings.Values[FileManager.savePlayingSoundsKey] = FileManager.savePlayingSounds;
-                (App.Current as App)._itemViewHolder.SavePlayingSounds = FileManager.savePlayingSounds;
+                localSettings.Values[FileManager.savePlayingSoundsKey] = FileManager.savePlayingSoundsDefault;
+                (App.Current as App)._itemViewHolder.SavePlayingSounds = FileManager.savePlayingSoundsDefault;
             }
             else
             {
                 (App.Current as App)._itemViewHolder.SavePlayingSounds = (bool)localSettings.Values[FileManager.savePlayingSoundsKey];
             }
 
-            if(localSettings.Values[FileManager.showAcrylicBackgroundKey] == null)
+            if (localSettings.Values["volume"] == null)
             {
-                localSettings.Values[FileManager.showAcrylicBackgroundKey] = FileManager.showAcrylicBackground;
-                (App.Current as App)._itemViewHolder.ShowAcrylicBackground = FileManager.showAcrylicBackground;
+                localSettings.Values["volume"] = FileManager.volumeDefault;
+            }
+            double volume = (double)localSettings.Values["volume"] * 100;
+            VolumeSlider.Value = volume;
+            VolumeSlider2.Value = volume;
+
+            if (localSettings.Values[FileManager.showAcrylicBackgroundKey] == null)
+            {
+                localSettings.Values[FileManager.showAcrylicBackgroundKey] = FileManager.showAcrylicBackgroundDefault;
+                (App.Current as App)._itemViewHolder.ShowAcrylicBackground = FileManager.showAcrylicBackgroundDefault;
             }
             else
             {
                 (App.Current as App)._itemViewHolder.ShowAcrylicBackground = (bool)localSettings.Values[FileManager.showAcrylicBackgroundKey];
             }
 
-            if (localSettings.Values["volume"] == null)
+            if(localSettings.Values[FileManager.soundOrderKey] == null)
             {
-                localSettings.Values["volume"] = FileManager.volume;
+                localSettings.Values[FileManager.soundOrderKey] = (int)FileManager.soundOrderDefault;
+                (App.Current as App)._itemViewHolder.SoundOrder = FileManager.soundOrderDefault;
             }
-            double volume = (double)localSettings.Values["volume"] * 100;
-            VolumeSlider.Value = volume;
-            VolumeSlider2.Value = volume;
+            else
+            {
+                (App.Current as App)._itemViewHolder.SoundOrder = (FileManager.SoundOrder)localSettings.Values[FileManager.soundOrderKey];
+            }
+
+            if(localSettings.Values[FileManager.soundOrderReversedKey] == null)
+            {
+                localSettings.Values[FileManager.soundOrderReversedKey] = FileManager.soundOrderReversedDefault;
+                (App.Current as App)._itemViewHolder.SoundOrderReversed = FileManager.soundOrderReversedDefault;
+            }
+            else
+            {
+                (App.Current as App)._itemViewHolder.SoundOrderReversed = (bool)localSettings.Values[FileManager.soundOrderReversedKey];
+            }
         }
         
         private void CustomiseTitleBar()
