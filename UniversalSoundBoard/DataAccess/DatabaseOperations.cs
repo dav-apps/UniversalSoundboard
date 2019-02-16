@@ -83,18 +83,18 @@ namespace UniversalSoundBoard.DataAccess
             if (soundTableObject.TableId != FileManager.SoundTableId) return;
 
             // Delete the sound file and the image file
-            Guid soundFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
-            Guid imageFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
+            Guid? soundFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
+            Guid? imageFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
 
-            if (!Equals(soundFileUuid, Guid.Empty))
+            if (soundFileUuid.HasValue && !Equals(soundFileUuid, Guid.Empty))
             {
-                var soundFileTableObject = Dav.Database.GetTableObject(soundFileUuid);
+                var soundFileTableObject = Dav.Database.GetTableObject(soundFileUuid.Value);
                 if (soundFileTableObject != null)
                     soundFileTableObject.Delete();
             }
-            if (!Equals(soundFileUuid, Guid.Empty))
+            if (imageFileUuid.HasValue && !Equals(imageFileUuid, Guid.Empty))
             {
-                var imageFileTableObject = Dav.Database.GetTableObject(imageFileUuid);
+                var imageFileTableObject = Dav.Database.GetTableObject(imageFileUuid.Value);
                 if (imageFileTableObject != null)
                     imageFileTableObject.Delete();
             }
@@ -204,19 +204,27 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Order
-        public static void SetOrder(string type, List<Guid> uuids)
+        public static List<TableObject> GetAllOrders()
+        {
+            return Dav.Database.GetAllTableObjects(FileManager.OrderTableId, false);
+        }
+        #endregion
+
+        #region CategoryOrder
+        public static void SetCategoryOrder(List<Guid> uuids)
         {
             // Check if the order already exists
             List<TableObject> tableObjects = GetAllOrders();
-            TableObject tableObject = tableObjects.Find(obj => obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) == type);
+            TableObject tableObject = tableObjects.Find(obj => obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) == FileManager.CategoryOrderType);
 
             if (tableObject == null)
             {
                 // Create a new table object
-                List<Property> properties = new List<Property>();
-                
-                // Set the type property
-                properties.Add(new Property { Name = FileManager.OrderTableTypePropertyName, Value = type });
+                List<Property> properties = new List<Property>
+                {
+                    // Set the type property
+                    new Property { Name = FileManager.OrderTableTypePropertyName, Value = FileManager.CategoryOrderType }
+                };
 
                 int i = 0;
                 foreach (var uuid in uuids)
@@ -239,27 +247,72 @@ namespace UniversalSoundBoard.DataAccess
                 }
                 tableObject.SetPropertyValues(newProperties);
 
-                // Remove old properties
+                // Remove the properties that are outside of the uuids range
                 List<string> removedProperties = new List<string>();
                 foreach(var property in tableObject.Properties)
-                {
-                    // Remove the property if it is outside of the uuids range
-                    int propertyIndex = 0;
-                    if (int.TryParse(property.Name, out propertyIndex) && propertyIndex >= uuids.Count)
-                    {
-                        // Remove the property
+                    if (int.TryParse(property.Name, out int propertyIndex) && propertyIndex >= uuids.Count)
                         removedProperties.Add(property.Name);
-                    }
-                }
 
                 for (int j = 0; j < removedProperties.Count; j++)
                     tableObject.RemoveProperty(removedProperties[j]);
             }
         }
+        #endregion
 
-        public static List<TableObject> GetAllOrders()
+        #region SoundOrder
+        public static void SetSoundOrder(Guid categoryUuid, bool favourite, List<Guid> uuids)
         {
-            return Dav.Database.GetAllTableObjects(FileManager.OrderTableId, false);
+            // Check if the order object already exists
+            List<TableObject> tableObjects = GetAllOrders();
+            TableObject tableObject = tableObjects.Find((TableObject obj) => {
+                // Check if the object is of type Sound
+                if (obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) != FileManager.SoundOrderType) return false;
+
+                // Check if the object has the right category uuid
+                string categoryUuidString = obj.GetPropertyValue(FileManager.OrderTableCategoryPropertyName);
+                Guid? cUuid = FileManager.ConvertStringToGuid(categoryUuidString);
+                if (!cUuid.HasValue) return false;
+
+                string favString = obj.GetPropertyValue(FileManager.OrderTableFavouritePropertyName);
+                bool.TryParse(favString, out bool fav);
+
+                return Equals(categoryUuid, cUuid) && favourite == fav;
+            });
+
+            if(tableObject == null)
+            {
+                // Create a new table object
+                List<Property> properties = new List<Property>
+                {
+                    // Set the type property
+                    new Property { Name = FileManager.OrderTableTypePropertyName, Value = FileManager.SoundOrderType },
+                    // Set the category property
+                    new Property { Name = FileManager.OrderTableCategoryPropertyName, Value = categoryUuid.ToString() },
+                    // Set the favourite property
+                    new Property { Name = FileManager.OrderTableFavouritePropertyName, Value = favourite.ToString() }
+                };
+
+                int i = 0;
+                foreach (var uuid in uuids)
+                {
+                    properties.Add(new Property { Name = i.ToString(), Value = uuid.ToString() });
+                    i++;
+                }
+
+                new TableObject(Guid.NewGuid(), FileManager.OrderTableId, properties);
+            }
+            else
+            {
+                // Update the existing object
+                int i = 0;
+                Dictionary<string, string> newProperties = new Dictionary<string, string>();
+                foreach (var uuid in uuids)
+                {
+                    newProperties.Add(i.ToString(), uuid.ToString());
+                    i++;
+                }
+                tableObject.SetPropertyValues(newProperties);
+            }
         }
         #endregion
 
