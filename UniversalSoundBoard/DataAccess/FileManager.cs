@@ -84,7 +84,7 @@ namespace UniversalSoundBoard.DataAccess
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
         private const string LoginImplicitUrlProduction = "https://dav-apps.tech/login_implicit";
-        private const string LoginImplicitUrlDevelopment = "https://1c85f323.ngrok.io/login_implicit";
+        private const string LoginImplicitUrlDevelopment = "https://ddfa41c1.ngrok.io/login_implicit";
         public static string LoginImplicitUrl => Environment == DavEnvironment.Production ? LoginImplicitUrlProduction : LoginImplicitUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 8; Prod: 1
@@ -132,7 +132,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public const string OrderTableTypePropertyName = "type";
         public const string OrderTableCategoryPropertyName = "category";
-        public const string OrderTableFavouritePropertyName = "favourite";
+        public const string OrderTableFavouritePropertyName = "favs";
 
         public const string TableObjectExtPropertyName = "ext";
         public const string CategoryOrderType = "0";
@@ -154,6 +154,7 @@ namespace UniversalSoundBoard.DataAccess
             Dav
         };
         private static bool updatingGridView = false;
+        internal static bool syncFinished = false;
         #endregion
         
         #region Filesystem Methods
@@ -746,24 +747,33 @@ namespace UniversalSoundBoard.DataAccess
         public static async Task LoadSoundsByCategory(Guid uuid)
         {
             (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
-
             await UpdateAllSoundsList();
 
-            (App.Current as App)._itemViewHolder.Sounds.Clear();
-            (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
+            List<Sound> sounds = new List<Sound>();
+            List<Sound> favouriteSounds = new List<Sound>();
+
             foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
             {
                 foreach(var category in sound.Categories)
                 {
                     if (category.Uuid == uuid)
                     {
-                        (App.Current as App)._itemViewHolder.Sounds.Add(sound);
+                        sounds.Add(sound);
                         if (sound.Favourite)
-                            (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
+                            favouriteSounds.Add(sound);
                         break;
                     }
                 }
             }
+
+            (App.Current as App)._itemViewHolder.Sounds.Clear();
+            (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
+
+            foreach (var sound in SortSoundsList(sounds, uuid, false))
+                (App.Current as App)._itemViewHolder.Sounds.Add(sound);
+
+            foreach (var sound in SortSoundsList(favouriteSounds, uuid, true))
+                (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
 
             ShowPlayAllButton();
         }
@@ -963,6 +973,9 @@ namespace UniversalSoundBoard.DataAccess
             if(soundOrderTableObjects.Count > 0)
             {
                 bool saveNewOrder = false;
+                // Remove sounds from the order when [the user is not logged in] or [the user is logged in and the sounds are synced]
+                bool removeNonExistentSounds = !(App.Current as App)._itemViewHolder.User.IsLoggedIn ||
+                                                ((App.Current as App)._itemViewHolder.User.IsLoggedIn && syncFinished);
                 var lastOrderTableObject = soundOrderTableObjects.Last();
                 List<Guid> uuids = new List<Guid>();
                 List<Sound> sortedSounds = new List<Sound>();
@@ -978,12 +991,19 @@ namespace UniversalSoundBoard.DataAccess
 
                     Guid? soundUuid = ConvertStringToGuid(property.Value);
                     if (!soundUuid.HasValue) continue;
-                    uuids.Add(soundUuid.Value);
+                    if(!removeNonExistentSounds)
+                        uuids.Add(soundUuid.Value);
 
                     // Get the sound from the list
                     var sound = sounds.Find(s => s.Uuid == soundUuid);
-                    if (sound == null) continue;
+                    if (sound == null)
+                    {
+                        if (removeNonExistentSounds) saveNewOrder = true;
+                        continue;
+                    }
 
+                    if (removeNonExistentSounds)
+                        uuids.Add(soundUuid.Value);
                     sortedSounds.Add(sound);
                     newSounds.Remove(sound);
                 }
@@ -1013,7 +1033,7 @@ namespace UniversalSoundBoard.DataAccess
                         Guid? soundUuid = ConvertStringToGuid(property.Value);
                         if (!soundUuid.HasValue) continue;
 
-                        //  Check if the uuid already exist in the first order object
+                        //  Check if the uuid already exists in the first order object
                         if (uuids.Contains(soundUuid.Value)) continue;
                         uuids.Add(soundUuid.Value);
 
