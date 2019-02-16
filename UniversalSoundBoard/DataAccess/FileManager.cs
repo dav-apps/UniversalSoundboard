@@ -131,6 +131,8 @@ namespace UniversalSoundBoard.DataAccess
         public const string PlayingSoundTableVolumePropertyName = "volume";
 
         public const string OrderTableTypePropertyName = "type";
+        public const string OrderTableCategoryPropertyName = "category";
+        public const string OrderTableFavouritePropertyName = "favourite";
 
         public const string TableObjectExtPropertyName = "ext";
         public const string CategoryOrderType = "0";
@@ -443,8 +445,8 @@ namespace UniversalSoundBoard.DataAccess
                 {
                     if (await soundsFolder.TryGetItemAsync(soundData.Uuid + "." + soundData.SoundExt) is StorageFile audioFile)
                     {
-                        Guid soundUuid = ConvertStringToGuid(soundData.Uuid);
-                        Guid categoryUuid = ConvertStringToGuid(soundData.CategoryId);
+                        Guid soundUuid = ConvertStringToGuid(soundData.Uuid).GetValueOrDefault();
+                        Guid categoryUuid = ConvertStringToGuid(soundData.CategoryId).GetValueOrDefault();
 
                         soundUuid = await AddSound(soundUuid, WebUtility.HtmlDecode(soundData.Name), categoryUuid, audioFile);
 
@@ -702,8 +704,8 @@ namespace UniversalSoundBoard.DataAccess
 
             foreach (var soundTableObject in soundsTableObjectList)
             {
-                Guid soundFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName));
-                if (DatabaseOperations.GetObject(soundFileUuid) == null) continue;
+                Guid? soundFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName));
+                if (DatabaseOperations.GetObject(soundFileUuid.GetValueOrDefault()) == null) continue;
 
                 sounds.Add(await GetSound(soundTableObject.Uuid));
             }
@@ -717,16 +719,25 @@ namespace UniversalSoundBoard.DataAccess
         {
             await UpdateAllSoundsList();
 
+            List<Sound> sounds = new List<Sound>();
+            List<Sound> favouriteSounds = new List<Sound>();
+
+            foreach(var sound in (App.Current as App)._itemViewHolder.AllSounds)
+            {
+                sounds.Add(sound);
+
+                if (sound.Favourite)
+                    favouriteSounds.Add(sound);
+            }
+            
             (App.Current as App)._itemViewHolder.Sounds.Clear();
             (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
 
-            foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
-            {
+            foreach (var sound in SortSoundsList(sounds, Guid.Empty, false))
                 (App.Current as App)._itemViewHolder.Sounds.Add(sound);
 
-                if (sound.Favourite)
-                    (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
-            }
+            foreach (var sound in SortSoundsList(favouriteSounds, Guid.Empty, true))
+                (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
 
             return (App.Current as App)._itemViewHolder.Sounds.ToList();
         }
@@ -830,10 +841,10 @@ namespace UniversalSoundBoard.DataAccess
             {
                 foreach(var cUuidString in categoryUuidsString.Split(","))
                 {
-                    var cUuid = ConvertStringToGuid(cUuidString);
-                    if(cUuid != null)
+                    Guid? cUuid = ConvertStringToGuid(cUuidString);
+                    if(cUuid.HasValue)
                     {
-                        var category = GetCategory(cUuid);
+                        var category = GetCategory(cUuid.Value);
                         if(category != null)
                             sound.Categories.Add(category);
                     }
@@ -851,10 +862,10 @@ namespace UniversalSoundBoard.DataAccess
             image.UriSource = defaultImageUri;
 
             string imageFileUuidString = soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName);
-            Guid imageFileUuid = ConvertStringToGuid(imageFileUuidString);
-            if (!Equals(imageFileUuid, Guid.Empty))
+            Guid? imageFileUuid = ConvertStringToGuid(imageFileUuidString);
+            if (imageFileUuid.HasValue && !Equals(imageFileUuid, Guid.Empty))
             {
-                var imageFile = await GetTableObjectFile(imageFileUuid);
+                var imageFile = await GetTableObjectFile(imageFileUuid.Value);
 
                 if (imageFile != null)
                     image.UriSource = new Uri(imageFile.Path);
@@ -892,10 +903,10 @@ namespace UniversalSoundBoard.DataAccess
             if (soundTableObject == null || soundTableObject.TableId != SoundTableId)
                 return;
             
-            Guid imageUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName));
+            Guid? imageUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName));
             StorageFile newImageFile = await file.CopyAsync(ApplicationData.Current.LocalCacheFolder, "newImage" + file.FileType, NameCollisionOption.ReplaceExisting);
 
-            if (Equals(imageUuid, Guid.Empty))
+            if (!imageUuid.HasValue || Equals(imageUuid, Guid.Empty))
             {
                 // Create new image file
                 Guid imageFileUuid = Guid.NewGuid();
@@ -905,7 +916,7 @@ namespace UniversalSoundBoard.DataAccess
             else
             {
                 // Update the existing image file
-                DatabaseOperations.UpdateImageFile(imageUuid, newImageFile);
+                DatabaseOperations.UpdateImageFile(imageUuid.Value, newImageFile);
             }
 
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
@@ -924,6 +935,115 @@ namespace UniversalSoundBoard.DataAccess
                 await Task.Run(() => DatabaseOperations.DeleteSound(uuid));
 
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+        }
+
+        public static List<Sound> SortSoundsList(List<Sound> sounds, Guid categoryUuid, bool favourite)
+        {
+            // Get the order table objects
+            var tableObjects = DatabaseOperations.GetAllOrders();
+
+            // Get the order objects with the type Sound (1), the right category uuid and the same favourite
+            var soundOrderTableObjects = tableObjects.FindAll((TableObject obj) =>
+            {
+                // Check if the object is of type Sound
+                if (obj.GetPropertyValue(OrderTableTypePropertyName) != SoundOrderType) return false;
+
+                // Check if the object has the right category uuid
+                string categoryUuidString = obj.GetPropertyValue(OrderTableCategoryPropertyName);
+                Guid? cUuid = ConvertStringToGuid(categoryUuidString);
+                if (!cUuid.HasValue) return false;
+
+                string favString = obj.GetPropertyValue(OrderTableFavouritePropertyName);
+                bool fav = false;
+                bool.TryParse(favString, out fav);
+
+                return Equals(categoryUuid, cUuid) && favourite == fav;
+            });
+
+            if(soundOrderTableObjects.Count > 0)
+            {
+                bool saveNewOrder = false;
+                var lastOrderTableObject = soundOrderTableObjects.Last();
+                List<Guid> uuids = new List<Guid>();
+                List<Sound> sortedSounds = new List<Sound>();
+
+                // Add the sounds, that are not in the order, at the end
+                List<Sound> newSounds = new List<Sound>();
+                foreach (var sound in sounds)
+                    newSounds.Add(sound);
+
+                foreach(var property in lastOrderTableObject.Properties)
+                {
+                    if (!int.TryParse(property.Name, out int index)) continue;
+
+                    Guid? soundUuid = ConvertStringToGuid(property.Value);
+                    if (!soundUuid.HasValue) continue;
+                    uuids.Add(soundUuid.Value);
+
+                    // Get the sound from the list
+                    var sound = sounds.Find(s => s.Uuid == soundUuid);
+                    if (sound == null) continue;
+
+                    sortedSounds.Add(sound);
+                    newSounds.Remove(sound);
+                }
+
+                // Add the new sounds at the end
+                foreach(var sound in newSounds)
+                {
+                    sortedSounds.Add(sound);
+                    uuids.Add(sound.Uuid);
+                    saveNewOrder = true;
+                }
+
+                // If there are multiple order objects, merge them
+                while(soundOrderTableObjects.Count > 1)
+                {
+                    saveNewOrder = true;
+
+                    // Merge the first order object into the last one
+                    var firstOrderTableObject = soundOrderTableObjects.First();
+
+                    // Go through each uuid of the order object
+                    foreach(var property in firstOrderTableObject.Properties)
+                    {
+                        // Make sure the property is an index of the order
+                        if (!int.TryParse(property.Name, out int index)) continue;
+
+                        Guid? soundUuid = ConvertStringToGuid(property.Value);
+                        if (!soundUuid.HasValue) continue;
+
+                        //  Check if the uuid already exist in the first order object
+                        if (uuids.Contains(soundUuid.Value)) continue;
+                        uuids.Add(soundUuid.Value);
+
+                        // Get the sound from the list
+                        var sound = sounds.Find(s => s.Uuid == soundUuid);
+                        if (sound == null) continue;
+
+                        sortedSounds.Add(sound);
+                    }
+
+                    // Delete the object and remove it from the list
+                    firstOrderTableObject.Delete();
+                    soundOrderTableObjects.Remove(firstOrderTableObject);
+                }
+
+                if (saveNewOrder)
+                    DatabaseOperations.SetSoundOrder(categoryUuid, favourite, uuids);
+                return sortedSounds;
+            }
+            else
+            {
+                // Create the sound order table object with the current order
+                List<Guid> uuids = new List<Guid>();
+
+                foreach (var sound in sounds)
+                    uuids.Add(sound.Uuid);
+
+                DatabaseOperations.SetSoundOrder(categoryUuid, favourite, uuids);
+                return sounds;
+            }
         }
 
         public static Category AddCategory(Guid uuid, string name, string icon)
@@ -1000,11 +1120,10 @@ namespace UniversalSoundBoard.DataAccess
 
                 foreach(var property in lastOrderTableObject.Properties)
                 {
-                    int index = -1;
-                    if (!int.TryParse(property.Name, out index)) continue;
+                    if (!int.TryParse(property.Name, out int index)) continue;
 
-                    Guid categoryUuid = ConvertStringToGuid(property.Value);
-                    if (categoryUuid == null) continue;
+                    Guid? categoryUuid = ConvertStringToGuid(property.Value);
+                    if (!categoryUuid.HasValue) continue;
 
                     // Get the category from the list
                     var category = categories.Find(c => c.Uuid == categoryUuid);
@@ -1032,14 +1151,13 @@ namespace UniversalSoundBoard.DataAccess
                     foreach (var property in firstOrderTableObject.Properties)
                     {
                         // Make sure the property is an index of the order
-                        int index = -1;
-                        if (!int.TryParse(property.Name, out index)) continue;
+                        if (!int.TryParse(property.Name, out int index)) continue;
 
-                        Guid categoryUuid = ConvertStringToGuid(property.Value);
-                        if (categoryUuid == null) continue;
+                        Guid? categoryUuid = ConvertStringToGuid(property.Value);
+                        if (!categoryUuid.HasValue) continue;
 
                         //  Check if the uuid already exist in the first order object
-                        if (uuids.Contains(categoryUuid)) continue;
+                        if (uuids.Contains(categoryUuid.Value)) continue;
 
                         // Get the category from the list
                         var category = categories.Find(c => c.Uuid == categoryUuid);
@@ -1048,7 +1166,6 @@ namespace UniversalSoundBoard.DataAccess
                         // Add the property to uuids and sortedCategories
                         sortedCategories.Add(category);
                         uuids.Add(category.Uuid);
-                        newCategories.Remove(category);
                     }
 
                     // Delete the object and remove it from the list
@@ -1056,7 +1173,7 @@ namespace UniversalSoundBoard.DataAccess
                     categoryOrderTableObjects.Remove(firstOrderTableObject);
                 }
 
-                DatabaseOperations.SetOrder(CategoryOrderType, uuids);
+                DatabaseOperations.SetCategoryOrder(uuids);
                 return sortedCategories;
             }
             else
@@ -1067,14 +1184,14 @@ namespace UniversalSoundBoard.DataAccess
                 foreach (var category in categories)
                     uuids.Add(category.Uuid);
 
-                DatabaseOperations.SetOrder(CategoryOrderType, uuids);
+                DatabaseOperations.SetCategoryOrder(uuids);
                 return categories;
             }
         }
 
         public static void SetCategoryOrder(List<Guid> uuids)
         {
-            DatabaseOperations.SetOrder(CategoryOrderType, uuids);
+            DatabaseOperations.SetCategoryOrder(uuids);
         }
 
         public static Guid AddPlayingSound(Guid uuid, List<Sound> sounds, int current, int repetitions, bool randomly, double volume)
@@ -1137,7 +1254,7 @@ namespace UniversalSoundBoard.DataAccess
                 foreach (string uuidString in soundIds.Split(","))
                 {
                     // Convert the uuid string into a Guid
-                    Guid uuid = ConvertStringToGuid(uuidString);
+                    Guid uuid = ConvertStringToGuid(uuidString) ?? Guid.Empty;
 
                     if (!Equals(uuid, Guid.Empty))
                     {
@@ -1378,7 +1495,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             var soundTableObject = DatabaseOperations.GetObject(soundUuid);
             if (soundTableObject == null) return null;
-            Guid soundFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName));
+            Guid soundFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName)) ?? Guid.Empty;
             if (Equals(soundFileUuid, Guid.Empty)) return null;
             var soundFileTableObject = DatabaseOperations.GetObject(soundFileUuid);
             if (soundFileTableObject == null) return null;
@@ -1389,7 +1506,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             var soundTableObject = DatabaseOperations.GetObject(soundUuid);
             if (soundTableObject == null) return null;
-            Guid imageFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName));
+            Guid imageFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName)) ?? Guid.Empty;
             if (Equals(imageFileUuid, Guid.Empty)) return null;
             var imageFileTableObject = DatabaseOperations.GetObject(imageFileUuid);
             if (imageFileTableObject == null) return null;
@@ -2076,10 +2193,10 @@ namespace UniversalSoundBoard.DataAccess
             return Icons;
         }
 
-        public static Guid ConvertStringToGuid(string uuidString)
+        public static Guid? ConvertStringToGuid(string uuidString)
         {
             Guid uuid = Guid.Empty;
-            Guid.TryParse(uuidString, out uuid);
+            if (!Guid.TryParse(uuidString, out uuid)) return null;
             return uuid;
         }
 
