@@ -22,9 +22,9 @@ namespace UniversalSoundBoard.Common
         private Type _page;                                                 // The current page
         private ListViewSelectionMode _selectionMode;                       // The selection mode of the GridView. Is either ListViewSelectionMode.None or ListViewSelectionMode.Multiple
         private ObservableCollection<Category> _categories;                 // A list of all categories.
-        private ObservableCollection<Sound> _sounds;                        // A list of the sounds which are displayed when the Sound pivot is selected
-        private ObservableCollection<Sound> _favouriteSounds;               // A list of the favourite sound which are displayed when the Favourite pivot is selected
-        private ObservableCollection<Sound> _allSounds;                     // A list of all sounds
+        private ObservableCollection<Sound> _sounds;                        // A list of the sounds which are displayed when the Sound pivot is selected, sorted by the selected sort option
+        private ObservableCollection<Sound> _favouriteSounds;               // A list of the favourite sound which are displayed when the Favourite pivot is selected, sorted by the selected sort option
+        private ObservableCollection<Sound> _allSounds;                     // A list of all sounds, unsorted
         private bool _allSoundsChanged;                                     // If there was made change to one or multiple sounds so that a reload of the sounds is required
         private ObservableCollection<Sound> _selectedSounds;                // A list of the sounds which are selected
         private ObservableCollection<PlayingSound> _playingSounds;          // A list of the Playing Sounds which are displayed in the right menu

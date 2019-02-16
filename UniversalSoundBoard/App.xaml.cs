@@ -174,8 +174,9 @@ namespace UniversalSoundBoard
             // Check if app was launched from a secondary tile
             if (!String.IsNullOrEmpty(e.Arguments))
             {
-                Guid soundUuid = FileManager.ConvertStringToGuid(e.Arguments);
-                SoundPage.PlaySound(await FileManager.GetSound(soundUuid));
+                Guid? soundUuid = FileManager.ConvertStringToGuid(e.Arguments);
+                if(soundUuid.HasValue)
+                    SoundPage.PlaySound(await FileManager.GetSound(soundUuid.Value));
             }
 
             Window.Current.Activate();
