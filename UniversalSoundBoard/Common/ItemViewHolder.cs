@@ -1,6 +1,5 @@
 ﻿using davClassLibrary.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -8,6 +7,7 @@ using UniversalSoundBoard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using static UniversalSoundBoard.DataAccess.FileManager;
 
 namespace UniversalSoundBoard.Common
 {
@@ -64,6 +64,8 @@ namespace UniversalSoundBoard.Common
         private double _playingSoundsBarWidth;                              // Holds the width of the right playing sound bar to update the width of the acrylic background in the NavigationViewHeader
         private bool _showAcrylicBackground;                                // If true the acrylic background is visible
         private AcrylicBrush _playingSoundsBarAcrylicBackgroundBrush;       // This represents the background of the PlayingSoundsBar
+        private SoundOrder _soundOrder;                                     // The selected sound order in the settings
+        private bool _soundOrderReversed;                                   // If the sound order is descending (false) or ascending (true)
 
         public string Title
         {
@@ -620,6 +622,27 @@ namespace UniversalSoundBoard.Common
             }
         }
 
+        public SoundOrder SoundOrder
+        {
+            get => _soundOrder;
+
+            set
+            {
+                _soundOrder = value;
+                NotifyPropertyChanged("SoundOrder");
+            }
+        }
+
+        public bool SoundOrderReversed
+        {
+            get => _soundOrderReversed;
+
+            set
+            {
+                _soundOrderReversed = value;
+                NotifyPropertyChanged("SoundOrderReversed");
+            }
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;
