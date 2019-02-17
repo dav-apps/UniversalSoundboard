@@ -745,15 +745,32 @@ namespace UniversalSoundBoard.DataAccess
                 if (sound.Favourite)
                     favouriteSounds.Add(sound);
             }
+
+            if((App.Current as App)._itemViewHolder.SoundOrderReversed)
+            {
+                sounds.Reverse();
+                favouriteSounds.Reverse();
+            }
             
             (App.Current as App)._itemViewHolder.Sounds.Clear();
             (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
 
-            foreach (var sound in SortSoundsList(sounds, Guid.Empty, false))
+            // Sort the sounds
+            foreach (var sound in SortSoundsList(sounds,
+                                                (App.Current as App)._itemViewHolder.SoundOrder,
+                                                (App.Current as App)._itemViewHolder.SoundOrderReversed,
+                                                Guid.Empty,
+                                                false)){
                 (App.Current as App)._itemViewHolder.Sounds.Add(sound);
+            }
 
-            foreach (var sound in SortSoundsList(favouriteSounds, Guid.Empty, true))
+            foreach (var sound in SortSoundsList(favouriteSounds,
+                                                (App.Current as App)._itemViewHolder.SoundOrder,
+                                                (App.Current as App)._itemViewHolder.SoundOrderReversed,
+                                                Guid.Empty,
+                                                true)){
                 (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
+            }
 
             return (App.Current as App)._itemViewHolder.Sounds.ToList();
         }
@@ -784,13 +801,59 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.Sounds.Clear();
             (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
 
-            foreach (var sound in SortSoundsList(sounds, uuid, false))
+            // Sort the sounds
+            foreach (var sound in SortSoundsList(sounds, 
+                                                (App.Current as App)._itemViewHolder.SoundOrder, 
+                                                (App.Current as App)._itemViewHolder.SoundOrderReversed, 
+                                                uuid,
+                                                false)){
                 (App.Current as App)._itemViewHolder.Sounds.Add(sound);
+            }
 
-            foreach (var sound in SortSoundsList(favouriteSounds, uuid, true))
+            foreach (var sound in SortSoundsList(favouriteSounds,
+                                                (App.Current as App)._itemViewHolder.SoundOrder,
+                                                (App.Current as App)._itemViewHolder.SoundOrderReversed,
+                                                uuid,
+                                                true)){
                 (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
+            }
 
             ShowPlayAllButton();
+        }
+
+        private static List<Sound> SortSoundsList(List<Sound> sounds, SoundOrder order, bool reversed, Guid categoryUuid, bool favourite)
+        {
+            List<Sound> sortedSounds = new List<Sound>();
+
+            switch (order)
+            {
+                case SoundOrder.Name:
+                    sounds.Sort((x, y) => string.Compare(x.Name, y.Name));
+
+                    foreach (var sound in sounds)
+                        sortedSounds.Add(sound);
+
+                    if (reversed)
+                        sortedSounds.Reverse();
+
+                    break;
+                case SoundOrder.CreationDate:
+                    foreach (var sound in sounds)
+                        sortedSounds.Add(sound);
+
+                    if (reversed)
+                        sortedSounds.Reverse();
+
+                    break;
+                default:
+                    // Custom order
+                    foreach (var sound in SortSoundsListByCustomOrder(sounds, categoryUuid, favourite))
+                        sortedSounds.Add(sound);
+
+                    break;
+            }
+
+            return sortedSounds;
         }
 
         // Get the sounds by the name from the all sounds list
@@ -962,7 +1025,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 
-        public static List<Sound> SortSoundsList(List<Sound> sounds, Guid categoryUuid, bool favourite)
+        public static List<Sound> SortSoundsListByCustomOrder(List<Sound> sounds, Guid categoryUuid, bool favourite)
         {
             // Get the order table objects
             var tableObjects = DatabaseOperations.GetAllOrders();
@@ -1207,7 +1270,7 @@ namespace UniversalSoundBoard.DataAccess
                     firstOrderTableObject.Delete();
                     categoryOrderTableObjects.Remove(firstOrderTableObject);
                 }
-
+                
                 DatabaseOperations.SetCategoryOrder(uuids);
                 return sortedCategories;
             }
