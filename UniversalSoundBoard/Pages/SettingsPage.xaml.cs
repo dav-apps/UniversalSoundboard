@@ -16,16 +16,14 @@ namespace UniversalSoundBoard.Pages
     {
         static string themeAtBeginning;
         ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
-
+        bool initialized = false;
 
         public SettingsPage()
         {
             InitializeComponent();
 
             if(String.IsNullOrEmpty(themeAtBeginning))
-            {
                 themeAtBeginning = (string)localSettings.Values[FileManager.themeKey];
-            }
         }
         
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -50,6 +48,9 @@ namespace UniversalSoundBoard.Pages
             SetShowSoundsPivotToggle();
             SetThemeRadioButton();
             SetSavePlayingSoundsToggle();
+            SetSoundOrderComboBox();
+            SetSoundOrderReversedComboBox();
+            initialized = true;
         }
 
         private void SetDarkThemeLayout()
@@ -88,7 +89,6 @@ namespace UniversalSoundBoard.Pages
         
         private void SetShowSoundsPivotToggle()
         {
-            var localSettings = ApplicationData.Current.LocalSettings;
             ShowSoundsPivotToggle.IsOn = (bool)localSettings.Values[FileManager.showSoundsPivotKey];
         }
 
@@ -119,34 +119,38 @@ namespace UniversalSoundBoard.Pages
             SavePlayingSoundsStackPanel.Visibility = (App.Current as App)._itemViewHolder.PlayingSoundsListVisibility;
         }
 
+        private void SetSoundOrderComboBox()
+        {
+            SoundOrderComboBox.SelectedIndex = (int)localSettings.Values[FileManager.soundOrderKey];
+        }
+
+        private void SetSoundOrderReversedComboBox()
+        {
+            SoundOrderReversedComboBox.SelectedIndex = (bool)localSettings.Values[FileManager.soundOrderReversedKey] ? 1 : 0;
+
+            // Disable the combo box if custom sound order is selected
+            if ((App.Current as App)._itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom)
+                SoundOrderReversedComboBox.IsEnabled = false;
+        }
+
         private void SetToggleMessageVisibility()
         {
-            if (themeAtBeginning != (string)localSettings.Values[FileManager.themeKey])
-            {
-                ThemeChangeMessageTextBlock.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                ThemeChangeMessageTextBlock.Visibility = Visibility.Collapsed;
-            }
+            ThemeChangeMessageTextBlock.Visibility = themeAtBeginning != (string)localSettings.Values[FileManager.themeKey] ? Visibility.Visible : Visibility.Collapsed;
         }
         
         private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
         {
-            // Create a simple setting
+            if (!initialized) return;
             localSettings.Values[FileManager.liveTileKey] = LiveTileToggle.IsOn;
             if (!LiveTileToggle.IsOn)
-            {
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-            }
             else
-            {
                 FileManager.UpdateLiveTile();
-            }
         }
         
         private void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!initialized) return;
             localSettings.Values[FileManager.playingSoundsListVisibleKey] = PlayingSoundsListToggle.IsOn;
             (App.Current as App)._itemViewHolder.PlayingSoundsListVisibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
 
@@ -160,12 +164,14 @@ namespace UniversalSoundBoard.Pages
         
         private void PlayOneSoundAtOnceToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!initialized) return;
             localSettings.Values[FileManager.playOneSoundAtOnceKey] = PlayOneSoundAtOnceToggle.IsOn;
             (App.Current as App)._itemViewHolder.PlayOneSoundAtOnce = PlayOneSoundAtOnceToggle.IsOn;
         }
         
         private void ThemeRadioButton_Checked(object sender, RoutedEventArgs e)
         {
+            if (!initialized) return;
             RadioButton radioButton = sender as RadioButton;
             if(radioButton == LightThemeRadioButton)
                 localSettings.Values[FileManager.themeKey] = "light";
@@ -179,12 +185,14 @@ namespace UniversalSoundBoard.Pages
         
         private void ShowCategoryToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!initialized) return;
             localSettings.Values[FileManager.showCategoryIconKey] = ShowCategoryToggle.IsOn;
             (App.Current as App)._itemViewHolder.ShowCategoryIcon = ShowCategoryToggle.IsOn;
         }
 
         private void ShowAcrylicBackgroundToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!initialized) return;
             localSettings.Values[FileManager.showAcrylicBackgroundKey] = ShowAcrylicBackgroundToggle.IsOn;
             (App.Current as App)._itemViewHolder.ShowAcrylicBackground = ShowAcrylicBackgroundToggle.IsOn;
 
@@ -194,12 +202,14 @@ namespace UniversalSoundBoard.Pages
 
         private void ShowSoundsPivotToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!initialized) return;
             localSettings.Values[FileManager.showSoundsPivotKey] = ShowSoundsPivotToggle.IsOn;
             (App.Current as App)._itemViewHolder.ShowSoundsPivot = ShowSoundsPivotToggle.IsOn;
         }
 
         private void SavePlayingSoundsToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!initialized) return;
             localSettings.Values[FileManager.savePlayingSoundsKey] = SavePlayingSoundsToggle.IsOn;
             (App.Current as App)._itemViewHolder.SavePlayingSounds = SavePlayingSoundsToggle.IsOn;
 
@@ -228,6 +238,22 @@ namespace UniversalSoundBoard.Pages
 
             FileManager.SetCategoryOrder(uuids);
             FileManager.CreateCategoriesList();
+        }
+
+        private void SoundOrderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!initialized) return;
+            localSettings.Values[FileManager.soundOrderKey] = SoundOrderComboBox.SelectedIndex;
+            (App.Current as App)._itemViewHolder.SoundOrder = (FileManager.SoundOrder)SoundOrderComboBox.SelectedIndex;
+
+            SoundOrderReversedComboBox.IsEnabled = (App.Current as App)._itemViewHolder.SoundOrder != FileManager.SoundOrder.Custom;
+        }
+
+        private void SoundOrderReversedComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!initialized) return;
+            localSettings.Values[FileManager.soundOrderReversedKey] = SoundOrderReversedComboBox.SelectedIndex != 0;
+            (App.Current as App)._itemViewHolder.SoundOrderReversed = SoundOrderReversedComboBox.SelectedIndex != 0;
         }
 
         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)
