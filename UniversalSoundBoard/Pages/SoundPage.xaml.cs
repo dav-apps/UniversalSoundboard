@@ -46,6 +46,7 @@ namespace UniversalSoundBoard.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             soundsPivotSelected = true;
+            SetGridViewsReorderItems();
         }
 
         private GridView GetVisibleGridView()
@@ -56,6 +57,18 @@ namespace UniversalSoundBoard.Pages
                 return FavouriteSoundGridView;
             else
                 return SoundGridView;
+        }
+
+        private void SetGridViewsReorderItems()
+        {
+            bool canReorderItems = (App.Current as App)._itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom;
+
+            SoundGridView.CanReorderItems = canReorderItems;
+            SoundGridView.AllowDrop = canReorderItems;
+            SoundGridView2.CanReorderItems = canReorderItems;
+            SoundGridView2.AllowDrop = canReorderItems;
+            FavouriteSoundGridView.CanReorderItems = canReorderItems;
+            FavouriteSoundGridView.AllowDrop = canReorderItems;
         }
 
         private void _itemViewHolder_SelectAllSoundsEvent(object sender, RoutedEventArgs e)
@@ -125,7 +138,7 @@ namespace UniversalSoundBoard.Pages
             foreach (var sound in showFavourites ? (App.Current as App)._itemViewHolder.FavouriteSounds : (App.Current as App)._itemViewHolder.Sounds)
                 uuids.Add(sound.Uuid);
 
-            DatabaseOperations.SetSoundOrder(currentCategoryUuid, showFavourites, uuids);
+            Task.Run(() => DatabaseOperations.SetSoundOrder(currentCategoryUuid, showFavourites, uuids));
         }
 
         private void UpdateSelectAllFlyoutText()
