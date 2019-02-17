@@ -427,7 +427,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.AreExportAndImportButtonsEnabled = true;
 
             CreateCategoriesList();
-            await GetAllSounds();
+            await LoadAllSounds();
             await CreatePlayingSoundsList();
             await SetSoundBoardSizeTextAsync();
         }
@@ -730,8 +730,24 @@ namespace UniversalSoundBoard.DataAccess
             return sounds;
         }
 
+        // When the sounds list was changed, load all sounds from the database
+        private static async Task UpdateAllSoundsList()
+        {
+            (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
+            if ((App.Current as App)._itemViewHolder.AllSoundsChanged)
+            {
+                (App.Current as App)._itemViewHolder.AllSounds.Clear();
+                foreach (Sound sound in await GetSavedSounds())
+                {
+                    (App.Current as App)._itemViewHolder.AllSounds.Add(sound);
+                }
+                UpdateLiveTile();
+            }
+            (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
+        }
+
         // Load all sounds into the sounds list
-        public static async Task<List<Sound>> GetAllSounds()
+        public static async Task LoadAllSounds()
         {
             await UpdateAllSoundsList();
 
@@ -771,8 +787,6 @@ namespace UniversalSoundBoard.DataAccess
                                                 true)){
                 (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
             }
-
-            return (App.Current as App)._itemViewHolder.Sounds.ToList();
         }
 
         // Get the sounds of the category from the all sounds list
@@ -819,41 +833,6 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             ShowPlayAllButton();
-        }
-
-        private static List<Sound> SortSoundsList(List<Sound> sounds, SoundOrder order, bool reversed, Guid categoryUuid, bool favourite)
-        {
-            List<Sound> sortedSounds = new List<Sound>();
-
-            switch (order)
-            {
-                case SoundOrder.Name:
-                    sounds.Sort((x, y) => string.Compare(x.Name, y.Name));
-
-                    foreach (var sound in sounds)
-                        sortedSounds.Add(sound);
-
-                    if (reversed)
-                        sortedSounds.Reverse();
-
-                    break;
-                case SoundOrder.CreationDate:
-                    foreach (var sound in sounds)
-                        sortedSounds.Add(sound);
-
-                    if (reversed)
-                        sortedSounds.Reverse();
-
-                    break;
-                default:
-                    // Custom order
-                    foreach (var sound in SortSoundsListByCustomOrder(sounds, categoryUuid, favourite))
-                        sortedSounds.Add(sound);
-
-                    break;
-            }
-
-            return sortedSounds;
         }
 
         // Get the sounds by the name from the all sounds list
@@ -1042,8 +1021,7 @@ namespace UniversalSoundBoard.DataAccess
                 if (!cUuid.HasValue) return false;
 
                 string favString = obj.GetPropertyValue(OrderTableFavouritePropertyName);
-                bool fav = false;
-                bool.TryParse(favString, out fav);
+                bool.TryParse(favString, out bool fav);
 
                 return Equals(categoryUuid, cUuid) && favourite == fav;
             });
@@ -1656,7 +1634,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
             (App.Current as App)._itemViewHolder.Title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
             (App.Current as App)._itemViewHolder.Page = typeof(SoundPage);
-            await GetAllSounds();
+            await LoadAllSounds();
             ShowPlayAllButton();
             skipAutoSuggestBoxTextChanged = false;
         }
@@ -1710,7 +1688,7 @@ namespace UniversalSoundBoard.DataAccess
                 {
                     if (selectedCategoryIndex == 0)
                     {
-                        await GetAllSounds();
+                        await LoadAllSounds();
                         (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
                     }
                     else if ((App.Current as App)._itemViewHolder.Page != typeof(SoundPage))
@@ -1731,7 +1709,7 @@ namespace UniversalSoundBoard.DataAccess
             }
             else
             {
-                await GetAllSounds();
+                await LoadAllSounds();
                 (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
             }
 
@@ -1976,22 +1954,6 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        // When the sounds list was changed, load all sounds from the database
-        private static async Task UpdateAllSoundsList()
-        {
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
-            if ((App.Current as App)._itemViewHolder.AllSoundsChanged)
-            {
-                (App.Current as App)._itemViewHolder.AllSounds.Clear();
-                foreach (Sound sound in await GetSavedSounds())
-                {
-                    (App.Current as App)._itemViewHolder.AllSounds.Add(sound);
-                }
-                UpdateLiveTile();
-            }
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
-        }
-
         public static void SelectCategory(Guid uuid)
         {
             for (int i = 0; i < (App.Current as App)._itemViewHolder.Categories.Count(); i++)
@@ -2001,6 +1963,41 @@ namespace UniversalSoundBoard.DataAccess
                     (App.Current as App)._itemViewHolder.SelectedCategory = i;
                 }
             }
+        }
+
+        private static List<Sound> SortSoundsList(List<Sound> sounds, SoundOrder order, bool reversed, Guid categoryUuid, bool favourite)
+        {
+            List<Sound> sortedSounds = new List<Sound>();
+
+            switch (order)
+            {
+                case SoundOrder.Name:
+                    sounds.Sort((x, y) => string.Compare(x.Name, y.Name));
+
+                    foreach (var sound in sounds)
+                        sortedSounds.Add(sound);
+
+                    if (reversed)
+                        sortedSounds.Reverse();
+
+                    break;
+                case SoundOrder.CreationDate:
+                    foreach (var sound in sounds)
+                        sortedSounds.Add(sound);
+
+                    if (reversed)
+                        sortedSounds.Reverse();
+
+                    break;
+                default:
+                    // Custom order
+                    foreach (var sound in SortSoundsListByCustomOrder(sounds, categoryUuid, favourite))
+                        sortedSounds.Add(sound);
+
+                    break;
+            }
+
+            return sortedSounds;
         }
 
         public static async Task UpdateLiveTile()
