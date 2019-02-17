@@ -437,7 +437,7 @@ namespace UniversalSoundBoard.Pages
                     (App.Current as App)._itemViewHolder.Title = text;
                     (App.Current as App)._itemViewHolder.SearchQuery = text;
                     (App.Current as App)._itemViewHolder.SelectedCategory = 0;
-                    FileManager.LoadSoundsByName(text);
+                    await FileManager.LoadSoundsByName(text);
                     Suggestions = (App.Current as App)._itemViewHolder.AllSounds.Where(p => p.Name.ToLower().StartsWith(text.ToLower())).Select(p => p.Name).ToList();
                     SearchAutoSuggestBox.ItemsSource = Suggestions;
                     (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
@@ -447,7 +447,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.skipAutoSuggestBoxTextChanged = false;
         }
 
-        private void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        private async void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
             if ((App.Current as App)._itemViewHolder.Page != typeof(SoundPage))
             {
@@ -464,7 +464,7 @@ namespace UniversalSoundBoard.Pages
                 (App.Current as App)._itemViewHolder.Title = text;
                 (App.Current as App)._itemViewHolder.SearchQuery = text;
                 (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
-                FileManager.LoadSoundsByName(text);
+                await FileManager.LoadSoundsByName(text);
             }
 
             FileManager.CheckBackButtonVisibility();
@@ -533,13 +533,13 @@ namespace UniversalSoundBoard.Pages
             downloadFileIsExecuting = false;
         }
 
-        private void PlaySoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void PlaySoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             bool oldPlayOneSoundAtOnce = (App.Current as App)._itemViewHolder.PlayOneSoundAtOnce;
             (App.Current as App)._itemViewHolder.PlayOneSoundAtOnce = false;
             foreach (Sound sound in (App.Current as App)._itemViewHolder.SelectedSounds)
             {
-                SoundPage.PlaySound(sound);
+                await SoundPage.PlaySound(sound);
             }
             (App.Current as App)._itemViewHolder.PlayOneSoundAtOnce = oldPlayOneSoundAtOnce;
         }
@@ -658,7 +658,7 @@ namespace UniversalSoundBoard.Pages
             await FileManager.ShowAllSounds();
         }
 
-        private void PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             List<Sound> sounds = ContentDialogs.SoundsList.ToList();
             bool randomly = (bool)ContentDialogs.RandomCheckBox.IsChecked;
@@ -668,7 +668,7 @@ namespace UniversalSoundBoard.Pages
                 int.TryParse(ContentDialogs.RepeatsComboBox.SelectedValue.ToString(), out rounds);
             }
 
-            SoundPage.PlaySounds(sounds, rounds, randomly);
+            await SoundPage.PlaySounds(sounds, rounds, randomly);
         }
 
         private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
