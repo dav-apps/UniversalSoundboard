@@ -1822,7 +1822,7 @@ namespace UniversalSoundBoard.DataAccess
                 else
                 {   // If SoundPage shows Category or search results
                     // Top Buttons are normal, but page shows Category or search results
-                    Task.Run(ShowAllSounds);
+                    ShowAllSounds().Wait();
                 }
             }
 

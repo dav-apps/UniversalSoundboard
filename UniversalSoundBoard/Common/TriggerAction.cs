@@ -4,8 +4,6 @@ using UniversalSoundBoard;
 using UniversalSoundBoard.DataAccess;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
-using System;
-using System.Threading.Tasks;
 
 namespace UniversalSoundboard.Common
 {
@@ -13,23 +11,23 @@ namespace UniversalSoundboard.Common
     {
         public void UpdateAllOfTable(int tableId)
         {
-            UpdateView(tableId).Wait();
+            UpdateView(tableId);
         }
 
         public void UpdateTableObject(TableObject tableObject, bool fileDownloaded)
         {
             if (tableObject.TableId == FileManager.PlayingSoundTableId)
             {
-                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    await FileManager.UpdatePlayingSoundListItem(tableObject.Uuid);
-                }).AsTask().Wait();
+                    FileManager.UpdatePlayingSoundListItem(tableObject.Uuid);
+                });
             }
         }
 
         public void DeleteTableObject(TableObject tableObject)
         {
-            UpdateView(tableObject.TableId).Wait();
+            UpdateView(tableObject.TableId);
         }
 
         public void SyncFinished()
@@ -37,21 +35,21 @@ namespace UniversalSoundboard.Common
             FileManager.syncFinished = true;
         }
 
-        private async Task UpdateView(int tableId)
+        private void UpdateView(int tableId)
         {
             if (tableId == FileManager.ImageFileTableId || tableId == FileManager.SoundFileTableId)
             {
                 // Update the sounds
-                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
-                    await FileManager.UpdateGridView();
+                    FileManager.UpdateGridView();
                 });
             }
             else if (tableId == FileManager.CategoryTableId)
             {
                 // Update the categories
-                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     FileManager.CreateCategoriesList();
                     (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
@@ -60,9 +58,9 @@ namespace UniversalSoundboard.Common
             else if (tableId == FileManager.PlayingSoundTableId)
             {
                 // Update the playing sounds
-                await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    await FileManager.CreatePlayingSoundsList();
+                    FileManager.CreatePlayingSoundsList();
                 });
             }
         }
