@@ -58,7 +58,7 @@ namespace UniversalSoundBoard.Pages
 
             InitializeAccountSettings();
 
-            FileManager.CreatePlayingSoundsList();
+            await FileManager.CreatePlayingSoundsList();
             await FileManager.ShowAllSounds();
         }
 

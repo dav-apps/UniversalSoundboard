@@ -88,7 +88,7 @@ namespace UniversalSoundBoard.DataAccess
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
         private const string LoginImplicitUrlProduction = "https://dav-apps.tech/login_implicit";
-        private const string LoginImplicitUrlDevelopment = "https://ddfa41c1.ngrok.io/login_implicit";
+        private const string LoginImplicitUrlDevelopment = "https://388be8f3.ngrok.io/login_implicit";
         public static string LoginImplicitUrl => Environment == DavEnvironment.Production ? LoginImplicitUrlProduction : LoginImplicitUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 8; Prod: 1
@@ -325,9 +325,10 @@ namespace UniversalSoundBoard.DataAccess
 
         private static void UpgradeDataProgress(int value)
         {
-            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
+            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
                 (App.Current as App)._itemViewHolder.UpgradeDataStatusText = value + " %";
-            });
+            }).AsTask().Wait();
         }
 
         public static async Task ExportData(StorageFolder destinationFolder)
@@ -741,7 +742,7 @@ namespace UniversalSoundBoard.DataAccess
                 {
                     (App.Current as App)._itemViewHolder.AllSounds.Add(sound);
                 }
-                UpdateLiveTile();
+                await UpdateLiveTile();
             }
             (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
         }
@@ -1811,7 +1812,7 @@ namespace UniversalSoundBoard.DataAccess
                     (App.Current as App)._itemViewHolder.SelectedCategory = 0;
                     (App.Current as App)._itemViewHolder.Title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
                     (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
-                    ShowAllSounds();
+                    Task.Run(ShowAllSounds);
                 }
                 else if ((App.Current as App)._itemViewHolder.SelectedCategory == 0 &&
                         String.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
@@ -1821,7 +1822,7 @@ namespace UniversalSoundBoard.DataAccess
                 else
                 {   // If SoundPage shows Category or search results
                     // Top Buttons are normal, but page shows Category or search results
-                    ShowAllSounds();
+                    Task.Run(ShowAllSounds);
                 }
             }
 

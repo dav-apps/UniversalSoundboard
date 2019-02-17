@@ -178,7 +178,7 @@ namespace UniversalSoundBoard
             {
                 Guid? soundUuid = FileManager.ConvertStringToGuid(e.Arguments);
                 if(soundUuid.HasValue)
-                    SoundPage.PlaySound(await FileManager.GetSound(soundUuid.Value));
+                    await SoundPage.PlaySound(await FileManager.GetSound(soundUuid.Value));
             }
 
             Window.Current.Activate();

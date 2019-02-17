@@ -138,7 +138,7 @@ namespace UniversalSoundBoard.Converters
             try
             {
                 return (App.Current as App)._itemViewHolder.Categories[index];
-            }catch(Exception e)
+            }catch
             {
                 return (App.Current as App)._itemViewHolder.Categories[0];
             }

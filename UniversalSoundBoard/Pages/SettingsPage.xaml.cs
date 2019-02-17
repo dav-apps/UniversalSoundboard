@@ -145,7 +145,7 @@ namespace UniversalSoundBoard.Pages
             if (!LiveTileToggle.IsOn)
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();
             else
-                FileManager.UpdateLiveTile();
+                Task.Run(FileManager.UpdateLiveTile);
         }
         
         private void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
