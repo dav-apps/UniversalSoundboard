@@ -517,4 +517,22 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SettingsEntry-ChangeCategoryOrderButton.Content" xml:space="preserve">
     <value>Reihenfolge der Kategorien ändern</value>
   </data>
+  <data name="SettingsEntry-SoundOrderComboBox-CreationDate.Content" xml:space="preserve">
+    <value>Erstelldatum</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderComboBox-Custom.Content" xml:space="preserve">
+    <value>Benutzerdefiniert</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderComboBox-Name.Content" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderHeaderTextBlock.Text" xml:space="preserve">
+    <value>Sortiere Sounds nach</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderReversedComboBox-Ascending.Content" xml:space="preserve">
+    <value>Aufsteigend</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderReversedComboBox-Descending.Content" xml:space="preserve">
+    <value>Absteigend</value>
+  </data>
 </root>

@@ -530,4 +530,22 @@ This may take some time, depending on how large the import file is.</value>
   <data name="CategoryOrderContentDialog-Title" xml:space="preserve">
     <value>Change the order of the categories</value>
   </data>
+  <data name="SettingsEntry-SoundOrderComboBox-CreationDate.Content" xml:space="preserve">
+    <value>Creation Date</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderComboBox-Custom.Content" xml:space="preserve">
+    <value>Custom</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderComboBox-Name.Content" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderHeaderTextBlock.Text" xml:space="preserve">
+    <value>Sort sounds by</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderReversedComboBox-Ascending.Content" xml:space="preserve">
+    <value>Ascending</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderReversedComboBox-Descending.Content" xml:space="preserve">
+    <value>Descending</value>
+  </data>
 </root>
