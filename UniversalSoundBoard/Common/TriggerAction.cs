@@ -37,32 +37,26 @@ namespace UniversalSoundboard.Common
 
         private void UpdateView(int tableId)
         {
-            if (tableId == FileManager.ImageFileTableId || tableId == FileManager.SoundFileTableId)
+            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                // Update the sounds
-                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                if (tableId == FileManager.ImageFileTableId || tableId == FileManager.SoundFileTableId)
                 {
+                    // Update the sounds
                     (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
                     FileManager.UpdateGridView();
-                });
-            }
-            else if (tableId == FileManager.CategoryTableId)
-            {
-                // Update the categories
-                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                }
+                else if (tableId == FileManager.CategoryTableId)
                 {
+                    // Update the categories
                     FileManager.CreateCategoriesList();
                     (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
-                });
-            }
-            else if (tableId == FileManager.PlayingSoundTableId)
-            {
-                // Update the playing sounds
-                CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                }
+                else if (tableId == FileManager.PlayingSoundTableId)
                 {
+                    // Update the playing sounds
                     FileManager.CreatePlayingSoundsList();
-                });
-            }
+                }
+            });
         }
     }
 }

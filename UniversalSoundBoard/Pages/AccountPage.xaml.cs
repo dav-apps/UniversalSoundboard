@@ -87,13 +87,11 @@ namespace UniversalSoundboard.Pages
                 {
                     Debug.WriteLine("Can't connect to the server");
                     Debug.WriteLine(e);
-                    // TODO Show error message
                 }
             }
             else
             {
                 Debug.WriteLine("No internet connection");
-                // TODO Show error message
             }
         }
 
