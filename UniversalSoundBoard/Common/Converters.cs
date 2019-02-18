@@ -204,8 +204,8 @@ namespace UniversalSoundBoard.Converters
             List<Category> categories = value as List<Category>;
             string icons = "";
 
-            foreach(var category in categories)
-                icons += category.Icon;
+            foreach (var category in categories)
+                icons += category.Icon + " ";
 
             return icons;
         }

@@ -16,7 +16,8 @@ namespace UniversalSoundboard.Components
 
         private void UserControl_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
-            SetCheckboxState();
+            if(Category != null)
+                SetCheckboxState();
         }
 
         private void SetCheckboxState()

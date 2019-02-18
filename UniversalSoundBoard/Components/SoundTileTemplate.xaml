@@ -54,7 +54,7 @@
         <Grid Name="SoundTileGrid" 
               RelativePanel.AlignTopWithPanel="True">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
