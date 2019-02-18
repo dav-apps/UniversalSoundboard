@@ -80,7 +80,7 @@ namespace UniversalSoundBoard.DataAccess
         private static Color playingSoundsBarDarkBackgroundColor = Color.FromArgb(255, 15, 20, 35);       // #0f1423
 
 
-        public static DavEnvironment Environment = DavEnvironment.Development;
+        public static DavEnvironment Environment = DavEnvironment.Production;
 
         // dav Keys
         private const string ApiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
@@ -88,7 +88,7 @@ namespace UniversalSoundBoard.DataAccess
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
         private const string LoginImplicitUrlProduction = "https://dav-apps.tech/login_implicit";
-        private const string LoginImplicitUrlDevelopment = "https://388be8f3.ngrok.io/login_implicit";
+        private const string LoginImplicitUrlDevelopment = "https://89e877d0.ngrok.io/login_implicit";
         public static string LoginImplicitUrl => Environment == DavEnvironment.Production ? LoginImplicitUrlProduction : LoginImplicitUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 8; Prod: 1
@@ -115,7 +115,7 @@ namespace UniversalSoundBoard.DataAccess
         private const int PlayingSoundTableIdDevelopment = 18;
         public static int PlayingSoundTableId => Environment == DavEnvironment.Production ? PlayingSoundTableIdProduction : PlayingSoundTableIdDevelopment;
 
-        private const int OrderTableIdProduction = -1;  // Dev: 27
+        private const int OrderTableIdProduction = 12;  // Dev: 27; Prod: 12
         private const int OrderTableIdDevelopment = 27;
         public static int OrderTableId => Environment == DavEnvironment.Production ? OrderTableIdProduction : OrderTableIdDevelopment;
 
@@ -413,7 +413,7 @@ namespace UniversalSoundBoard.DataAccess
                     await UpgradeNewDataModel(importFolder, true, progress);
                     break;
                 default:
-                    DataManager.ImportData(new DirectoryInfo(importFolder.Path), progress);
+                    await Task.Run(() => DataManager.ImportData(new DirectoryInfo(importFolder.Path), progress));
                     break;
             }
 
@@ -1009,7 +1009,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             // Get the order table objects
             var tableObjects = DatabaseOperations.GetAllOrders();
-
+            
             // Get the order objects with the type Sound (1), the right category uuid and the same favourite
             var soundOrderTableObjects = tableObjects.FindAll((TableObject obj) =>
             {
@@ -1048,6 +1048,15 @@ namespace UniversalSoundBoard.DataAccess
 
                     Guid? soundUuid = ConvertStringToGuid(property.Value);
                     if (!soundUuid.HasValue) continue;
+
+                    // Check if this uuid is already in the uuids list
+                    if (uuids.Contains(soundUuid.Value))
+                    {
+                        if (removeNonExistentSounds)
+                            saveNewOrder = true;
+                        continue;
+                    }
+
                     if(!removeNonExistentSounds)
                         uuids.Add(soundUuid.Value);
 
@@ -1166,14 +1175,27 @@ namespace UniversalSoundBoard.DataAccess
             CreateCategoriesList();
         }
 
-        public static void DeleteCategory(Guid uuid)
+        public static void DeleteCategory(Guid categoryUuid)
         {
-            var categoryTableObject = DatabaseOperations.GetObject(uuid);
+            var categoryTableObject = DatabaseOperations.GetObject(categoryUuid);
 
             if (categoryTableObject == null || categoryTableObject.TableId != CategoryTableId)
                 return;
 
-            DatabaseOperations.DeleteObject(uuid);
+            DatabaseOperations.DeleteObject(categoryUuid);
+
+            // Delete the SoundOrder table objects of all deleted categories
+            var tableObjects = DatabaseOperations.GetAllOrders();
+            foreach(var tableObject in tableObjects)
+            {
+                if (tableObject.GetPropertyValue(OrderTableTypePropertyName) != SoundOrderType) continue;
+                Guid cUuid = ConvertStringToGuid(tableObject.GetPropertyValue(OrderTableCategoryPropertyName)) ?? Guid.Empty;
+                if (cUuid == Guid.Empty) continue;
+                
+                if (!DatabaseOperations.ObjectExists(cUuid))
+                    tableObject.Delete();
+            }
+
             CreateCategoriesList();
         }
 
@@ -1201,6 +1223,10 @@ namespace UniversalSoundBoard.DataAccess
 
                     Guid? categoryUuid = ConvertStringToGuid(property.Value);
                     if (!categoryUuid.HasValue) continue;
+
+                    // Check if this uuid is already in the uuids list
+                    if (uuids.Contains(categoryUuid.Value))
+                        continue;
 
                     // Get the category from the list
                     var category = categories.Find(c => c.Uuid == categoryUuid);
