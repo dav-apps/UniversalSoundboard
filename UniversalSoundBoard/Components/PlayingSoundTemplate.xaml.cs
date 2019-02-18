@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
-using System.Threading.Tasks;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
@@ -91,10 +89,7 @@ namespace UniversalSoundBoard.Components
         
         private void SetDarkThemeLayout()
         {
-            if((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
-            {
-                ContentRoot.Background = new SolidColorBrush(Colors.Black);
-            }
+            ContentRoot.Background = new SolidColorBrush(Colors.Transparent);
         }
         
         private void RepeatSound(int repetitions)

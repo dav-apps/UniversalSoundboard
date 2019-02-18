@@ -78,7 +78,7 @@ namespace UniversalSoundBoard.Models
             {
                 CurrentSound = sounds[current];
             }
-            catch(Exception e)
+            catch
             {
                 if(sounds.Count != 0)
                 {

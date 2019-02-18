@@ -55,7 +55,7 @@ namespace UniversalSoundBoard.DataAccess
             return Dav.Database.GetAllTableObjects(FileManager.SoundTableId, false);
         }
 
-        public static void UpdateSound(Guid uuid, string name, string favourite, string soundUuid, string imageUuid, string categoryUuid)
+        public static void UpdateSound(Guid uuid, string name, string favourite, string soundUuid, string imageUuid, List<string> categoryUuids)
         {
             // Get the sound table object
             var soundTableObject = Dav.Database.GetTableObject(uuid);
@@ -71,8 +71,8 @@ namespace UniversalSoundBoard.DataAccess
                 soundTableObject.SetPropertyValue(FileManager.SoundTableSoundUuidPropertyName, soundUuid);
             if (!String.IsNullOrEmpty(imageUuid))
                 soundTableObject.SetPropertyValue(FileManager.SoundTableImageUuidPropertyName, imageUuid);
-            if (!String.IsNullOrEmpty(categoryUuid))
-                soundTableObject.SetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName, categoryUuid);
+            if (categoryUuids != null)
+                soundTableObject.SetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName, ConvertIdListToString(categoryUuids));
         }
         
         public static void DeleteSound(Guid uuid)
@@ -83,18 +83,18 @@ namespace UniversalSoundBoard.DataAccess
             if (soundTableObject.TableId != FileManager.SoundTableId) return;
 
             // Delete the sound file and the image file
-            Guid soundFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
-            Guid imageFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
+            Guid? soundFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
+            Guid? imageFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
 
-            if (!Equals(soundFileUuid, Guid.Empty))
+            if (soundFileUuid.HasValue && !Equals(soundFileUuid, Guid.Empty))
             {
-                var soundFileTableObject = Dav.Database.GetTableObject(soundFileUuid);
+                var soundFileTableObject = Dav.Database.GetTableObject(soundFileUuid.Value);
                 if (soundFileTableObject != null)
                     soundFileTableObject.Delete();
             }
-            if (!Equals(soundFileUuid, Guid.Empty))
+            if (imageFileUuid.HasValue && !Equals(imageFileUuid, Guid.Empty))
             {
-                var imageFileTableObject = Dav.Database.GetTableObject(imageFileUuid);
+                var imageFileTableObject = Dav.Database.GetTableObject(imageFileUuid.Value);
                 if (imageFileTableObject != null)
                     imageFileTableObject.Delete();
             }
@@ -203,9 +203,139 @@ namespace UniversalSoundBoard.DataAccess
         }
         #endregion
 
+        #region Order
+        public static List<TableObject> GetAllOrders()
+        {
+            return Dav.Database.GetAllTableObjects(FileManager.OrderTableId, false);
+        }
+        #endregion
+
+        #region CategoryOrder
+        public static void SetCategoryOrder(List<Guid> uuids)
+        {
+            // Check if the order already exists
+            List<TableObject> tableObjects = GetAllOrders();
+            TableObject tableObject = tableObjects.Find(obj => obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) == FileManager.CategoryOrderType);
+
+            if (tableObject == null)
+            {
+                // Create a new table object
+                List<Property> properties = new List<Property>
+                {
+                    // Set the type property
+                    new Property { Name = FileManager.OrderTableTypePropertyName, Value = FileManager.CategoryOrderType }
+                };
+
+                int i = 0;
+                foreach (var uuid in uuids)
+                {
+                    properties.Add(new Property { Name = i.ToString(), Value = uuid.ToString() });
+                    i++;
+                }
+
+                new TableObject(Guid.NewGuid(), FileManager.OrderTableId, properties);
+            }
+            else
+            {
+                // Update the existing object
+                int i = 0;
+                Dictionary<string, string> newProperties = new Dictionary<string, string>();
+                foreach(var uuid in uuids)
+                {
+                    newProperties.Add(i.ToString(), uuid.ToString());
+                    i++;
+                }
+                tableObject.SetPropertyValues(newProperties);
+
+                // Remove the properties that are outside of the uuids range
+                List<string> removedProperties = new List<string>();
+                foreach(var property in tableObject.Properties)
+                    if (int.TryParse(property.Name, out int propertyIndex) && propertyIndex >= uuids.Count)
+                        removedProperties.Add(property.Name);
+
+                for (int j = 0; j < removedProperties.Count; j++)
+                    tableObject.RemoveProperty(removedProperties[j]);
+            }
+        }
+        #endregion
+
+        #region SoundOrder
+        public static void SetSoundOrder(Guid categoryUuid, bool favourite, List<Guid> uuids)
+        {
+            // Check if the order object already exists
+            List<TableObject> tableObjects = GetAllOrders();
+            TableObject tableObject = tableObjects.Find((TableObject obj) => {
+                // Check if the object is of type Sound
+                if (obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) != FileManager.SoundOrderType) return false;
+
+                // Check if the object has the right category uuid
+                string categoryUuidString = obj.GetPropertyValue(FileManager.OrderTableCategoryPropertyName);
+                Guid? cUuid = FileManager.ConvertStringToGuid(categoryUuidString);
+                if (!cUuid.HasValue) return false;
+
+                string favString = obj.GetPropertyValue(FileManager.OrderTableFavouritePropertyName);
+                bool.TryParse(favString, out bool fav);
+
+                return Equals(categoryUuid, cUuid) && favourite == fav;
+            });
+
+            if(tableObject == null)
+            {
+                // Create a new table object
+                List<Property> properties = new List<Property>
+                {
+                    // Set the type property
+                    new Property { Name = FileManager.OrderTableTypePropertyName, Value = FileManager.SoundOrderType },
+                    // Set the category property
+                    new Property { Name = FileManager.OrderTableCategoryPropertyName, Value = categoryUuid.ToString() },
+                    // Set the favourite property
+                    new Property { Name = FileManager.OrderTableFavouritePropertyName, Value = favourite.ToString() }
+                };
+
+                int i = 0;
+                foreach (var uuid in uuids)
+                {
+                    properties.Add(new Property { Name = i.ToString(), Value = uuid.ToString() });
+                    i++;
+                }
+
+                new TableObject(Guid.NewGuid(), FileManager.OrderTableId, properties);
+            }
+            else
+            {
+                // Update the existing object
+                int i = 0;
+                Dictionary<string, string> newProperties = new Dictionary<string, string>();
+                foreach (var uuid in uuids)
+                {
+                    newProperties.Add(i.ToString(), uuid.ToString());
+                    i++;
+                }
+                tableObject.SetPropertyValues(newProperties);
+                
+                bool removeNonExistentSounds = !(App.Current as App)._itemViewHolder.User.IsLoggedIn ||
+                                                ((App.Current as App)._itemViewHolder.User.IsLoggedIn && FileManager.syncFinished);
+
+                if (removeNonExistentSounds)
+                {
+                    // Remove the properties that are outside of the uuids range
+                    List<string> removedProperties = new List<string>();
+                    foreach (var property in tableObject.Properties)
+                        if (int.TryParse(property.Name, out int propertyIndex) && propertyIndex >= uuids.Count)
+                            removedProperties.Add(property.Name);
+
+                    for (int j = 0; j < removedProperties.Count; j++)
+                        tableObject.RemoveProperty(removedProperties[j]);
+                }
+            }
+        }
+        #endregion
+
         #region Helper Methods
         private static string ConvertIdListToString(List<string> ids)
         {
+            if (ids.Count == 0) return "";
+
             string idsString = "";
             foreach (string id in ids)
             {

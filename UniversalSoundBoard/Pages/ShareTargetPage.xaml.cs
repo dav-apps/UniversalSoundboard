@@ -9,6 +9,7 @@ using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundBoard.Pages
@@ -25,6 +26,7 @@ namespace UniversalSoundBoard.Pages
         {
             InitializeComponent();
             DataContextChanged += (s, e) => Bindings.Update();
+            SetDarkThemeLayout();
         }
         
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -52,6 +54,11 @@ namespace UniversalSoundBoard.Pages
             Bindings.Update();
 
             (App.Current as App)._itemViewHolder.Categories.CollectionChanged += Categories_CollectionChanged;
+        }
+
+        private void SetDarkThemeLayout()
+        {
+            ContentRoot.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
         }
 
         private async void AddButton_Click(object sender, RoutedEventArgs e)

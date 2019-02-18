@@ -31,6 +31,9 @@ namespace UniversalSoundBoard.Common
         public static TextBox ExportSoundsFolderTextBox;
         public static CheckBox ExportSoundsAsZipCheckBox;
         public static StorageFolder ExportSoundsFolder;
+        public static ListView CategoriesListView;
+        public static Dictionary<Guid, bool> SelectedCategories;
+        public static ObservableCollection<Category> CategoryOrderList;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -44,6 +47,8 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog DownloadFileContentDialog;
         public static ContentDialog DownloadFileErrorContentDialog;
         public static ContentDialog ExportSoundsContentDialog;
+        public static ContentDialog SetCategoryContentDialog;
+        public static ContentDialog CategoryOrderContentDialog;
         
 
         public static ContentDialog CreateNewCategoryContentDialog()
@@ -416,8 +421,10 @@ namespace UniversalSoundBoard.Common
             if (SoundsList.Count == 0)
                 PlaySoundsSuccessivelyContentDialog.IsPrimaryButtonEnabled = false;
 
-            StackPanel content = new StackPanel();
-            content.Orientation = Orientation.Vertical;
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
 
             SoundsListView = new ListView
             {
@@ -427,12 +434,12 @@ namespace UniversalSoundBoard.Common
                 Height = 300,
                 ItemContainerStyle = listViewItemStyle,
                 CanReorderItems = true,
-                CanDrag = true,
                 AllowDrop = true
             };
 
             RepeatsComboBox = new ComboBox();
             RepeatsComboBox.Margin = new Thickness(0, 10, 0, 0);
+            RepeatsComboBox.IsEditable = true;
             RepeatsComboBox.Items.Add("1");
             RepeatsComboBox.Items.Add("2");
             RepeatsComboBox.Items.Add("3");
@@ -452,6 +459,7 @@ namespace UniversalSoundBoard.Common
             RepeatsComboBox.Items.Add("100");
             RepeatsComboBox.Items.Add("∞");
             RepeatsComboBox.SelectedIndex = 0;
+            RepeatsComboBox.TextSubmitted += RepeatsComboBox_TextSubmitted;
 
             RandomCheckBox = new CheckBox
             {
@@ -465,6 +473,13 @@ namespace UniversalSoundBoard.Common
 
             PlaySoundsSuccessivelyContentDialog.Content = content;
             return PlaySoundsSuccessivelyContentDialog;
+        }
+
+        private static void RepeatsComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
+        {
+            if (args.Text == "∞") return;
+            if (!int.TryParse(args.Text, out int value) || value <= 0)
+                RepeatsComboBox.Text = "1";
         }
 
         public static ContentDialog CreateLogoutContentDialog()
@@ -532,9 +547,11 @@ namespace UniversalSoundBoard.Common
             if (SoundsList.Count == 0)
                 ExportSoundsContentDialog.IsPrimaryButtonEnabled = false;
 
-            StackPanel content = new StackPanel();
-            content.Orientation = Orientation.Vertical;
-            
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
             ExportSoundsListView = new ListView
             {
                 ItemTemplate = itemTemplate,
@@ -543,7 +560,6 @@ namespace UniversalSoundBoard.Common
                 Height = 300,
                 ItemContainerStyle = listViewItemStyle,
                 CanReorderItems = true,
-                CanDrag = true,
                 AllowDrop = true
             };
             
@@ -600,6 +616,120 @@ namespace UniversalSoundBoard.Common
                 if(SoundsList.Count > 0)
                     ExportSoundsContentDialog.IsPrimaryButtonEnabled = true;
             }
+        }
+
+        public static ContentDialog CreateSetCategoryContentDialog(List<Sound> sounds, DataTemplate itemTemplate)
+        {
+            if (sounds.Count == 0) return null;
+
+            // Get all categories
+            var categories = new List<Category>();
+            SelectedCategories = new Dictionary<Guid, bool>();
+
+            int i = 0;
+            foreach (var category in (App.Current as App)._itemViewHolder.Categories)
+            {
+                if (i++ == 0) continue;
+
+                categories.Add(category);
+
+                // Check if all sounds belong to this category and if so, select the category
+                SelectedCategories[category.Uuid] = sounds.TrueForAll(s =>
+                {
+                    return s.Categories.Exists(c => c.Uuid == category.Uuid);
+                });
+            }
+            
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            string title = String.Format(loader.GetString("SetCategoryForMultipleSoundsContentDialog-Title"), sounds.Count);
+            if (sounds.Count == 1)
+                title = String.Format(loader.GetString("SetCategoryContentDialog-Title"), sounds[0].Name);
+
+            SetCategoryContentDialog = new ContentDialog
+            {
+                Title = title,
+                PrimaryButtonText = loader.GetString("ContentDialog-Save"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+            };
+
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
+            CategoriesListView = new ListView
+            {
+                ItemTemplate = itemTemplate,
+                ItemsSource = categories,
+                SelectionMode = ListViewSelectionMode.None,
+                Height = 300
+            };
+
+            if(categories.Count > 0)
+                content.Children.Add(CategoriesListView);
+            else
+            {
+                TextBlock noCategoriesTextBlock = new TextBlock
+                {
+                    Text = loader.GetString("SetCategoryContentDialog-NoCategoriesText")
+                };
+                content.Children.Add(noCategoriesTextBlock);
+            }
+
+            SetCategoryContentDialog.Content = content;
+            return SetCategoryContentDialog;
+        }
+
+        public static ContentDialog CreateCategoryOrderContentDialog(DataTemplate itemTemplate)
+        {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+
+            // Get all categories
+            CategoryOrderList = new ObservableCollection<Category>();
+
+            int i = 0;
+            foreach (var category in (App.Current as App)._itemViewHolder.Categories)
+            {
+                if (i++ == 0) continue;
+                CategoryOrderList.Add(category);
+            }
+
+            CategoryOrderContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("CategoryOrderContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("ContentDialog-Okay")
+            };
+
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
+            CategoriesListView = new ListView
+            {
+                ItemTemplate = itemTemplate,
+                ItemsSource = CategoryOrderList,
+                SelectionMode = ListViewSelectionMode.None,
+                Height = 300,
+                CanReorderItems = true,
+                CanDragItems = true,
+                AllowDrop = true
+            };
+
+            if(CategoryOrderList.Count > 0)
+                content.Children.Add(CategoriesListView);
+            else
+            {
+                TextBlock noCategoriesTextBlock = new TextBlock
+                {
+                    Text = loader.GetString("SetCategoryContentDialog-NoCategoriesText")
+                };
+                content.Children.Add(noCategoriesTextBlock);
+            }
+
+            CategoryOrderContentDialog.Content = content;
+            return CategoryOrderContentDialog;
         }
     }
 }

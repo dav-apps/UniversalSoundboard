@@ -1,8 +1,6 @@
-﻿using davClassLibrary;
-using davClassLibrary.Common;
+﻿using davClassLibrary.Common;
 using davClassLibrary.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using UniversalSoundboard.Common;
@@ -43,10 +41,10 @@ namespace UniversalSoundBoard
             SelectedSounds = new ObservableCollection<Sound>(),
             PlayingSounds = new ObservableCollection<PlayingSound>(),
             PlayingSoundsListVisibility = Visibility.Visible,
-            PlayOneSoundAtOnce = FileManager.playOneSoundAtOnce,
-            ShowCategoryIcon = FileManager.showCategoryIcon,
-            ShowSoundsPivot = FileManager.showSoundsPivot,
-            SavePlayingSounds = FileManager.savePlayingSounds,
+            PlayOneSoundAtOnce = FileManager.playOneSoundAtOnceDefault,
+            ShowCategoryIcon = FileManager.showCategoryIconDefault,
+            ShowSoundsPivot = FileManager.showSoundsPivotDefault,
+            SavePlayingSounds = FileManager.savePlayingSoundsDefault,
             IsExporting = false,
             Exported = false,
             IsImporting = false,
@@ -73,7 +71,11 @@ namespace UniversalSoundBoard
             LoadingScreenVisibility = false,
             LoadingScreenMessage = "",
             SelectAllFlyoutText = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("MoreButton_SelectAllFlyout-SelectAll"),
-            SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll)
+            SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll),
+            ShowAcrylicBackground = true,
+            PlayingSoundsBarAcrylicBackgroundBrush = new Windows.UI.Xaml.Media.AcrylicBrush(),
+            SoundOrder = FileManager.soundOrderDefault,
+            SoundOrderReversed = FileManager.soundOrderReversedDefault
         };
         
         /// <summary>
@@ -105,7 +107,7 @@ namespace UniversalSoundBoard
             }
             else
             {
-                localSettings.Values["theme"] = FileManager.theme;
+                localSettings.Values["theme"] = FileManager.themeDefault;
             }
 
             // Init Websocket
@@ -174,8 +176,9 @@ namespace UniversalSoundBoard
             // Check if app was launched from a secondary tile
             if (!String.IsNullOrEmpty(e.Arguments))
             {
-                Guid soundUuid = FileManager.ConvertStringToGuid(e.Arguments);
-                SoundPage.PlaySound(await FileManager.GetSound(soundUuid));
+                Guid? soundUuid = FileManager.ConvertStringToGuid(e.Arguments);
+                if(soundUuid.HasValue)
+                    await SoundPage.PlaySound(await FileManager.GetSound(soundUuid.Value));
             }
 
             Window.Current.Activate();

@@ -10,7 +10,7 @@
     Loaded="Page_Loaded">
 
     <Grid>
-        <ScrollViewer Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+        <ScrollViewer Name="ContentRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <StackPanel>
                 <TextBlock Name="SelectCategoryTextBlock" 
                        x:Uid="ShareTarget-SelectCategoryTextBlock"

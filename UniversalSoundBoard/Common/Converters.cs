@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
+using UniversalSoundBoard.Pages;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media.Imaging;
@@ -63,9 +63,9 @@ namespace UniversalSoundBoard.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             if((string)parameter == "small")
-                return (bool)value ? 50 : 100;
+                return (bool)value ? 48 : 100;
             else
-                return (bool)value ? 50 : 140;
+                return (bool)value ? 48 : 140;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -138,7 +138,7 @@ namespace UniversalSoundBoard.Converters
             try
             {
                 return (App.Current as App)._itemViewHolder.Categories[index];
-            }catch(Exception e)
+            }catch
             {
                 return (App.Current as App)._itemViewHolder.Categories[0];
             }
@@ -175,6 +175,44 @@ namespace UniversalSoundBoard.Converters
             // Get BitmapImage and return FileInfo
             var bitmapImage = value as BitmapImage;
             return new FileInfo(bitmapImage.UriSource.AbsolutePath);
+        }
+    }
+
+    public class PlayingSoundsBarVisibilityConverter : IValueConverter
+    {
+        // This is bound to the acrylic background StackPanel in the NavigationViewHeader
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var playingSoundsBarVisibility = (App.Current as App)._itemViewHolder.PlayingSoundsListVisibility;
+            var page = (App.Current as App)._itemViewHolder.Page;
+            
+            return playingSoundsBarVisibility == Visibility.Visible && page == typeof(SoundPage);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class CategoryIconsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if (value == null) return "";
+
+            List<Category> categories = value as List<Category>;
+            string icons = "";
+
+            foreach (var category in categories)
+                icons += category.Icon + " ";
+
+            return icons;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
         }
     }
 }

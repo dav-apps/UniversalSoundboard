@@ -168,8 +168,8 @@
   <data name="CancelButton.Content" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
-  <data name="MoreButton-ChangeCategory.Text" xml:space="preserve">
-    <value>Kategorie ändern</value>
+  <data name="MoreButton-SetCategory.Text" xml:space="preserve">
+    <value>Kategorien festlegen</value>
   </data>
   <data name="MoreButton-DeleteSounds.Text" xml:space="preserve">
     <value>Löschen</value>
@@ -198,8 +198,8 @@
   <data name="Settings-Title" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
-  <data name="SoundTile-Category" xml:space="preserve">
-    <value>Kategorie</value>
+  <data name="SoundTile-SetCategory" xml:space="preserve">
+    <value>Kategorien festlegen</value>
   </data>
   <data name="SoundTile-ChangeImage" xml:space="preserve">
     <value>Bild wechseln</value>
@@ -238,7 +238,7 @@
     <value>Sounds</value>
   </data>
   <data name="SettingsEntry-ShowCategoryIcon.Header" xml:space="preserve">
-    <value>Icon der Kategorie an Sounds anzeigen</value>
+    <value>Icons der Kategorien an Sounds anzeigen</value>
   </data>
   <data name="SettingsPivot-Data.Header" xml:space="preserve">
     <value>Daten</value>
@@ -443,13 +443,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>{0} herunterladen...</value>
   </data>
   <data name="ContentDialog-Okay" xml:space="preserve">
-    <value>Okay</value>
+    <value>Fertig</value>
   </data>
   <data name="DownloadFileErrorContentDialog-Message" xml:space="preserve">
-    <value>Please check your internet connection and try again.</value>
+    <value>Bitte überprüfe deine Internetverbindung und versuche es erneut.</value>
   </data>
   <data name="DownloadFileErrorContentDialog-Title" xml:space="preserve">
-    <value>Error while downloading the file</value>
+    <value>Fehler beim herunterladen der Datei</value>
   </data>
   <data name="PlayingSound_VolumeButton.Text" xml:space="preserve">
     <value>Lautstärke</value>
@@ -495,5 +495,44 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="DeleteSoundsMessage" xml:space="preserve">
     <value>Sounds werden gelöscht</value>
+  </data>
+  <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
+    <value>Zeige transparenten Hintergrund</value>
+  </data>
+  <data name="ContentDialog-Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="SetCategoryContentDialog-Title" xml:space="preserve">
+    <value>Kategorien festlegen: {0}</value>
+  </data>
+  <data name="SetCategoryForMultipleSoundsContentDialog-Title" xml:space="preserve">
+    <value>Kategorien für {0} Sounds festlegen</value>
+  </data>
+  <data name="SetCategoryContentDialog-NoCategoriesText" xml:space="preserve">
+    <value>Es gibt keine Kategorien. Füge zuerst welche hinzu.</value>
+  </data>
+  <data name="CategoryOrderContentDialog-Title" xml:space="preserve">
+    <value>Reihenfolge der Kategorien ändern</value>
+  </data>
+  <data name="SettingsEntry-ChangeCategoryOrderButton.Content" xml:space="preserve">
+    <value>Reihenfolge der Kategorien ändern</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderComboBox-CreationDate.Content" xml:space="preserve">
+    <value>Erstelldatum</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderComboBox-Custom.Content" xml:space="preserve">
+    <value>Benutzerdefiniert</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderComboBox-Name.Content" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderHeaderTextBlock.Text" xml:space="preserve">
+    <value>Sortiere Sounds nach</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderReversedComboBox-Ascending.Content" xml:space="preserve">
+    <value>Aufsteigend</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderReversedComboBox-Descending.Content" xml:space="preserve">
+    <value>Absteigend</value>
   </data>
 </root>

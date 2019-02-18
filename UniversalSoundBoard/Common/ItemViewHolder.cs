@@ -1,12 +1,13 @@
 ﻿using davClassLibrary.Models;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using UniversalSoundBoard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
+using static UniversalSoundBoard.DataAccess.FileManager;
 
 namespace UniversalSoundBoard.Common
 {
@@ -21,9 +22,9 @@ namespace UniversalSoundBoard.Common
         private Type _page;                                                 // The current page
         private ListViewSelectionMode _selectionMode;                       // The selection mode of the GridView. Is either ListViewSelectionMode.None or ListViewSelectionMode.Multiple
         private ObservableCollection<Category> _categories;                 // A list of all categories.
-        private ObservableCollection<Sound> _sounds;                        // A list of the sounds which are displayed when the Sound pivot is selected
-        private ObservableCollection<Sound> _favouriteSounds;               // A list of the favourite sound which are displayed when the Favourite pivot is selected
-        private ObservableCollection<Sound> _allSounds;                     // A list of all sounds
+        private ObservableCollection<Sound> _sounds;                        // A list of the sounds which are displayed when the Sound pivot is selected, sorted by the selected sort option
+        private ObservableCollection<Sound> _favouriteSounds;               // A list of the favourite sound which are displayed when the Favourite pivot is selected, sorted by the selected sort option
+        private ObservableCollection<Sound> _allSounds;                     // A list of all sounds, unsorted
         private bool _allSoundsChanged;                                     // If there was made change to one or multiple sounds so that a reload of the sounds is required
         private ObservableCollection<Sound> _selectedSounds;                // A list of the sounds which are selected
         private ObservableCollection<PlayingSound> _playingSounds;          // A list of the Playing Sounds which are displayed in the right menu
@@ -60,10 +61,15 @@ namespace UniversalSoundBoard.Common
         public event EventHandler<RoutedEventArgs> SelectAllSoundsEvent;    // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
         private string _selectAllFlyoutText;                                // The text of the Select All flyout item in the Navigation View Header
         private SymbolIcon _selectAllFlyoutIcon;                            // The icon of the Select All flyout item in the Navigation View Header
+        private double _playingSoundsBarWidth;                              // Holds the width of the right playing sound bar to update the width of the acrylic background in the NavigationViewHeader
+        private bool _showAcrylicBackground;                                // If true the acrylic background is visible
+        private AcrylicBrush _playingSoundsBarAcrylicBackgroundBrush;       // This represents the background of the PlayingSoundsBar
+        private SoundOrder _soundOrder;                                     // The selected sound order in the settings
+        private bool _soundOrderReversed;                                   // If the sound order is descending (false) or ascending (true)
 
         public string Title
         {
-            get { return _title; }
+            get => _title;
 
             set
             {
@@ -74,7 +80,7 @@ namespace UniversalSoundBoard.Common
 
         public bool ProgressRingIsActive
         {
-            get { return _progressRingIsActive; }
+            get => _progressRingIsActive;
 
             set
             {
@@ -85,7 +91,7 @@ namespace UniversalSoundBoard.Common
 
         public ObservableCollection<Sound> Sounds
         {
-            get { return _sounds; }
+            get => _sounds;
 
             set
             {
@@ -96,7 +102,7 @@ namespace UniversalSoundBoard.Common
 
         public ObservableCollection<Sound> FavouriteSounds
         {
-            get { return _favouriteSounds; }
+            get => _favouriteSounds;
 
             set
             {
@@ -107,7 +113,7 @@ namespace UniversalSoundBoard.Common
 
         public ObservableCollection<Sound> AllSounds
         {
-            get { return _allSounds; }
+            get => _allSounds;
 
             set
             {
@@ -118,7 +124,7 @@ namespace UniversalSoundBoard.Common
 
         public bool AllSoundsChanged
         {
-            get { return _allSoundsChanged; }
+            get => _allSoundsChanged;
 
             set
             {
@@ -129,7 +135,7 @@ namespace UniversalSoundBoard.Common
 
         public ObservableCollection<Category> Categories
         {
-            get { return _categories; }
+            get => _categories;
 
             set
             {
@@ -140,7 +146,7 @@ namespace UniversalSoundBoard.Common
 
         public string SearchQuery
         {
-            get { return _searchQuery; }
+            get => _searchQuery;
 
             set
             {
@@ -151,7 +157,7 @@ namespace UniversalSoundBoard.Common
 
         public Visibility EditButtonVisibility
         {
-            get { return _editButtonVisibility; }
+            get => _editButtonVisibility;
 
             set
             {
@@ -162,7 +168,7 @@ namespace UniversalSoundBoard.Common
 
         public Visibility PlayAllButtonVisibility
         {
-            get { return _playAllButtonVisibility; }
+            get => _playAllButtonVisibility;
 
             set
             {
@@ -173,7 +179,7 @@ namespace UniversalSoundBoard.Common
 
         public bool NormalOptionsVisibility
         {
-            get { return _normalOptionsVisibility; }
+            get => _normalOptionsVisibility;
 
             set
             {
@@ -184,7 +190,7 @@ namespace UniversalSoundBoard.Common
 
         public Type Page
         {
-            get { return _page; }
+            get => _page;
 
             set
             {
@@ -195,7 +201,7 @@ namespace UniversalSoundBoard.Common
 
         public ListViewSelectionMode SelectionMode
         {
-            get { return _selectionMode; }
+            get => _selectionMode;
 
             set
             {
@@ -206,7 +212,7 @@ namespace UniversalSoundBoard.Common
 
         public ObservableCollection<Sound> SelectedSounds
         {
-            get { return _selectedSounds; }
+            get => _selectedSounds;
 
             set
             {
@@ -217,7 +223,7 @@ namespace UniversalSoundBoard.Common
 
         public ObservableCollection<PlayingSound> PlayingSounds
         {
-            get { return _playingSounds; }
+            get => _playingSounds;
 
             set
             {
@@ -228,7 +234,7 @@ namespace UniversalSoundBoard.Common
 
         public Visibility PlayingSoundsListVisibility
         {
-            get { return _playingSoundsListVisibility; }
+            get => _playingSoundsListVisibility;
 
             set
             {
@@ -239,7 +245,7 @@ namespace UniversalSoundBoard.Common
 
         public bool PlayOneSoundAtOnce
         {
-            get { return _playOneSoundAtOnce; }
+            get => _playOneSoundAtOnce;
 
             set
             {
@@ -250,7 +256,7 @@ namespace UniversalSoundBoard.Common
 
         public bool ShowCategoryIcon
         {
-            get { return _showCategoryIcon; }
+            get => _showCategoryIcon;
 
             set
             {
@@ -261,7 +267,7 @@ namespace UniversalSoundBoard.Common
 
         public bool ShowSoundsPivot
         {
-            get { return _showSoundsPivot; }
+            get => _showSoundsPivot;
 
             set
             {
@@ -272,7 +278,7 @@ namespace UniversalSoundBoard.Common
 
         public bool SavePlayingSounds
         {
-            get { return _savePlayingSounds; }
+            get => _savePlayingSounds;
 
             set
             {
@@ -283,7 +289,7 @@ namespace UniversalSoundBoard.Common
 
         public bool IsExporting
         {
-            get { return _isExporting; }
+            get => _isExporting;
 
             set
             {
@@ -294,7 +300,7 @@ namespace UniversalSoundBoard.Common
 
         public bool Exported
         {
-            get { return _exported; }
+            get => _exported;
 
             set
             {
@@ -305,7 +311,7 @@ namespace UniversalSoundBoard.Common
 
         public bool IsImporting
         {
-            get { return _isImporting; }
+            get => _isImporting;
 
             set
             {
@@ -316,7 +322,7 @@ namespace UniversalSoundBoard.Common
 
         public bool Imported
         {
-            get { return _imported; }
+            get => _imported;
 
             set
             {
@@ -327,7 +333,7 @@ namespace UniversalSoundBoard.Common
 
         public bool AreExportAndImportButtonsEnabled
         {
-            get { return _areExportAndImportButtonsEnabled; }
+            get => _areExportAndImportButtonsEnabled;
 
             set
             {
@@ -338,7 +344,7 @@ namespace UniversalSoundBoard.Common
 
         public string ExportMessage
         {
-            get { return _exportMessage; }
+            get => _exportMessage;
 
             set
             {
@@ -349,7 +355,7 @@ namespace UniversalSoundBoard.Common
 
         public string ImportMessage
         {
-            get { return _importMessage; }
+            get => _importMessage;
 
             set
             {
@@ -360,7 +366,7 @@ namespace UniversalSoundBoard.Common
 
         public string SoundboardSize
         {
-            get { return _soundboardSize; }
+            get => _soundboardSize;
 
             set
             {
@@ -371,7 +377,7 @@ namespace UniversalSoundBoard.Common
 
         public bool SearchAutoSuggestBoxVisibility
         {
-            get { return _searchAutoSuggestBoxVisibility; }
+            get => _searchAutoSuggestBoxVisibility;
 
             set
             {
@@ -382,7 +388,7 @@ namespace UniversalSoundBoard.Common
 
         public bool VolumeButtonVisibility
         {
-            get { return _volumeButtonVisibility; }
+            get => _volumeButtonVisibility;
 
             set
             {
@@ -393,7 +399,7 @@ namespace UniversalSoundBoard.Common
 
         public bool AddButtonVisibility
         {
-            get { return _addButtonVisibility; }
+            get => _addButtonVisibility;
 
             set
             {
@@ -404,7 +410,7 @@ namespace UniversalSoundBoard.Common
 
         public bool SelectButtonVisibility
         {
-            get { return _selectButtonVisibility; }
+            get => _selectButtonVisibility;
 
             set
             {
@@ -415,7 +421,7 @@ namespace UniversalSoundBoard.Common
 
         public bool SearchButtonVisibility
         {
-            get { return _searchButtonVisibility; }
+            get => _searchButtonVisibility;
 
             set
             {
@@ -426,7 +432,7 @@ namespace UniversalSoundBoard.Common
 
         public bool CancelButtonVisibility
         {
-            get { return _cancelButtonVisibility; }
+            get => _cancelButtonVisibility;
 
             set
             {
@@ -437,7 +443,7 @@ namespace UniversalSoundBoard.Common
 
         public bool ShareButtonVisibility
         {
-            get { return _shareButtonVisibility; }
+            get => _shareButtonVisibility;
 
             set
             {
@@ -448,7 +454,7 @@ namespace UniversalSoundBoard.Common
 
         public bool MoreButtonVisibility
         {
-            get { return _moreButtonVisibility; }
+            get => _moreButtonVisibility;
 
             set
             {
@@ -459,7 +465,7 @@ namespace UniversalSoundBoard.Common
 
         public bool TopButtonsCollapsed
         {
-            get { return _topButtonsCollapsed; }
+            get => _topButtonsCollapsed;
 
             set
             {
@@ -470,7 +476,7 @@ namespace UniversalSoundBoard.Common
 
         public bool AreSelectButtonsEnabled
         {
-            get { return _areSelectButtonsEnabled; }
+            get => _areSelectButtonsEnabled;
 
             set
             {
@@ -481,7 +487,7 @@ namespace UniversalSoundBoard.Common
 
         public int SelectedCategory
         {
-            get { return _selectedCategory; }
+            get => _selectedCategory;
 
             set
             {
@@ -492,7 +498,7 @@ namespace UniversalSoundBoard.Common
 
         public string UpgradeDataStatusText
         {
-            get { return _upgradeDataStatusText; }
+            get => _upgradeDataStatusText;
 
             set
             {
@@ -503,7 +509,7 @@ namespace UniversalSoundBoard.Common
 
         public DavUser User
         {
-            get { return _user; }
+            get => _user;
 
             set
             {
@@ -514,7 +520,7 @@ namespace UniversalSoundBoard.Common
 
         public bool LoginMenuItemVisibility
         {
-            get { return _loginMenuItemVisibility; }
+            get => _loginMenuItemVisibility;
 
             set
             {
@@ -525,7 +531,7 @@ namespace UniversalSoundBoard.Common
 
         public bool IsBackButtonEnabled
         {
-            get { return _isBackButtonEnabled; }
+            get => _isBackButtonEnabled;
 
             set
             {
@@ -536,7 +542,7 @@ namespace UniversalSoundBoard.Common
 
         public bool LoadingScreenVisibility
         {
-            get { return _loadingScreenVisibility; }
+            get => _loadingScreenVisibility;
 
             set
             {
@@ -547,7 +553,7 @@ namespace UniversalSoundBoard.Common
 
         public string LoadingScreenMessage
         {
-            get { return _loadingScreenMessage; }
+            get => _loadingScreenMessage;
 
             set
             {
@@ -563,7 +569,7 @@ namespace UniversalSoundBoard.Common
 
         public string SelectAllFlyoutText
         {
-            get { return _selectAllFlyoutText; }
+            get => _selectAllFlyoutText;
 
             set
             {
@@ -574,7 +580,7 @@ namespace UniversalSoundBoard.Common
 
         public SymbolIcon SelectAllFlyoutIcon
         {
-            get { return _selectAllFlyoutIcon; }
+            get => _selectAllFlyoutIcon;
 
             set
             {
@@ -583,6 +589,60 @@ namespace UniversalSoundBoard.Common
             }
         }
 
+        public double PlayingSoundsBarWidth
+        {
+            get => _playingSoundsBarWidth;
+
+            set
+            {
+                _playingSoundsBarWidth = value;
+                NotifyPropertyChanged("PlayingSoundsBarWidth");
+            }
+        }
+
+        public bool ShowAcrylicBackground
+        {
+            get => _showAcrylicBackground;
+
+            set
+            {
+                _showAcrylicBackground = value;
+                NotifyPropertyChanged("ShowAcrylicBackground");
+            }
+        }
+
+        public AcrylicBrush PlayingSoundsBarAcrylicBackgroundBrush
+        {
+            get => _playingSoundsBarAcrylicBackgroundBrush;
+
+            set
+            {
+                _playingSoundsBarAcrylicBackgroundBrush = value;
+                NotifyPropertyChanged("PlayingSoundsBarAcrylicBackgroundBrush");
+            }
+        }
+
+        public SoundOrder SoundOrder
+        {
+            get => _soundOrder;
+
+            set
+            {
+                _soundOrder = value;
+                NotifyPropertyChanged("SoundOrder");
+            }
+        }
+
+        public bool SoundOrderReversed
+        {
+            get => _soundOrderReversed;
+
+            set
+            {
+                _soundOrderReversed = value;
+                NotifyPropertyChanged("SoundOrderReversed");
+            }
+        }
 
 
         public event PropertyChangedEventHandler PropertyChanged;

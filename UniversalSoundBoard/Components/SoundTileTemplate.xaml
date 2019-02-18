@@ -4,9 +4,20 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:UniversalSoundBoard.Converters"
+    xmlns:models="using:UniversalSoundBoard.Models"
+    xmlns:components="using:UniversalSoundboard.Components"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400">
+
+    <UserControl.Resources>
+        <converters:CategoryIconsConverter x:Key="CategoryIconsConverter" />
+
+        <DataTemplate x:Key="SetCategoryItemTemplate" x:DataType="models:Category">
+            <components:SetCategoryItemTemplate />
+        </DataTemplate>
+    </UserControl.Resources>
 
     <RelativePanel Name="ContentRoot" 
                    Background="White"
@@ -43,7 +54,7 @@
         <Grid Name="SoundTileGrid" 
               RelativePanel.AlignTopWithPanel="True">
             <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
+                <RowDefinition Height="20" />
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
@@ -57,7 +68,7 @@
                             RelativePanel.AlignLeftWithPanel="True" 
                             RelativePanel.AlignTopWithPanel="True" />
                 <TextBlock Name="CategoryIconSymbol" 
-                           Text="{x:Bind Sound.Category.Icon, FallbackValue='', TargetNullValue=''}"
+                           Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}}"
                            FontFamily="Segoe MDL2 Assets" 
                            FontSize="20" 
                            RelativePanel.AlignRightWithPanel="True" 
