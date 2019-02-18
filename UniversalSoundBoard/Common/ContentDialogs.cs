@@ -439,6 +439,7 @@ namespace UniversalSoundBoard.Common
 
             RepeatsComboBox = new ComboBox();
             RepeatsComboBox.Margin = new Thickness(0, 10, 0, 0);
+            RepeatsComboBox.IsEditable = true;
             RepeatsComboBox.Items.Add("1");
             RepeatsComboBox.Items.Add("2");
             RepeatsComboBox.Items.Add("3");
@@ -458,6 +459,7 @@ namespace UniversalSoundBoard.Common
             RepeatsComboBox.Items.Add("100");
             RepeatsComboBox.Items.Add("∞");
             RepeatsComboBox.SelectedIndex = 0;
+            RepeatsComboBox.TextSubmitted += RepeatsComboBox_TextSubmitted;
 
             RandomCheckBox = new CheckBox
             {
@@ -471,6 +473,13 @@ namespace UniversalSoundBoard.Common
 
             PlaySoundsSuccessivelyContentDialog.Content = content;
             return PlaySoundsSuccessivelyContentDialog;
+        }
+
+        private static void RepeatsComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
+        {
+            if (args.Text == "∞") return;
+            if (!int.TryParse(args.Text, out int value) || value <= 0)
+                RepeatsComboBox.Text = "1";
         }
 
         public static ContentDialog CreateLogoutContentDialog()
