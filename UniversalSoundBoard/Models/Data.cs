@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.Linq;
 using Windows.Media.Playback;
-using static UniversalSoundBoard.DataAccess.DatabaseOperations;
 
 namespace UniversalSoundBoard.Models
 {
@@ -45,9 +43,8 @@ namespace UniversalSoundBoard.Models
         {
             Sounds = new List<Sound>();
             foreach (Sound sound in sounds)
-            {
                 Sounds.Add(sound);
-            }
+
             CurrentSound = sounds.First();
             MediaPlayer = player;
             Repetitions = 0;
@@ -56,8 +53,10 @@ namespace UniversalSoundBoard.Models
 
         public PlayingSound(Sound sound, MediaPlayer player, int repetitions)
         {
-            Sounds = new List<Sound>();
-            Sounds.Add(sound);
+            Sounds = new List<Sound>
+            {
+                sound
+            };
 
             CurrentSound = sound;
             MediaPlayer = player;
@@ -70,9 +69,7 @@ namespace UniversalSoundBoard.Models
             Uuid = uuid;
             Sounds = new List<Sound>();
             foreach (Sound sound in sounds)
-            {
                 Sounds.Add(sound);
-            }
 
             try
             {
@@ -81,9 +78,7 @@ namespace UniversalSoundBoard.Models
             catch
             {
                 if(sounds.Count != 0)
-                {
                     CurrentSound = sounds[0];
-                }
             }
             MediaPlayer = player;
             Repetitions = repetitions;
@@ -98,12 +93,9 @@ namespace UniversalSoundBoard.Models
         public static PlayingSound GetPlayingSoundByMediaPlayer(MediaPlayer player)
         {
             foreach(PlayingSound playingSound in (App.Current as App)._itemViewHolder.PlayingSounds)
-            {
-                if(playingSound.MediaPlayer == player)
-                {
+                if (playingSound.MediaPlayer == player)
                     return playingSound;
-                }
-            }
+
             return null;
         }
     }

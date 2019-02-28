@@ -12,7 +12,7 @@ namespace UniversalSoundBoard.Models
         public string Category { get; set; }
         public bool Favourite { get; set; }
 
-        public async Task ReadSoundDetailsFile(StorageFile file)
+        public async Task ReadSoundDetailsFileAsync(StorageFile file)
         {
             // Read file
             string soundDetailsText = await FileIO.ReadTextAsync(file);

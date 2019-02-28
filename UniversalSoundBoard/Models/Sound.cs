@@ -39,39 +39,39 @@ namespace UniversalSoundBoard.Models
             Favourite = favourite;
         }
 
-        public async Task<StorageFile> GetAudioFile()
+        public async Task<StorageFile> GetAudioFileAsync()
         {
-            return await FileManager.GetAudioFileOfSound(Uuid);
+            return await FileManager.GetAudioFileOfSoundAsync(Uuid);
         }
 
-        public Uri GetAudioUri()
+        public async Task<Uri> GetAudioUriAsync()
         {
-            return FileManager.GetAudioUriOfSound(Uuid);
+            return await FileManager.GetAudioUriOfSoundAsync(Uuid);
         }
 
-        public async Task<MemoryStream> GetAudioStream()
+        public async Task<MemoryStream> GetAudioStreamAsync()
         {
-            return await FileManager.GetAudioStreamOfSound(Uuid);
+            return await FileManager.GetAudioStreamOfSoundAsync(Uuid);
         }
 
-        public async Task<StorageFile> GetImageFile()
+        public async Task<StorageFile> GetImageFileAsync()
         {
-            return await FileManager.GetImageFileOfSound(Uuid);
+            return await FileManager.GetImageFileOfSoundAsync(Uuid);
         }
 
-        public string GetAudioFileExtension()
+        public async Task<string> GetAudioFileExtensionAsync()
         {
-            return FileManager.GetAudioFileExtension(Uuid);
+            return await FileManager.GetAudioFileExtensionAsync(Uuid);
         }
 
-        public void DownloadFile(Progress<int> progress)
+        public async Task DownloadFileAsync(Progress<int> progress)
         {
-            FileManager.DownloadAudioFileOfSound(Uuid, progress);
+            await FileManager.DownloadAudioFileOfSoundAsync(Uuid, progress);
         }
 
-        public DownloadStatus GetAudioFileDownloadStatus()
+        public async Task<DownloadStatus> GetAudioFileDownloadStatusAsync()
         {
-            return FileManager.GetSoundFileDownloadStatus(Uuid);
+            return await FileManager.GetSoundFileDownloadStatusAsync(Uuid);
         }
     }
 
