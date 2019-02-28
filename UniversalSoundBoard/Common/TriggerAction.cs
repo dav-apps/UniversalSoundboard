@@ -20,7 +20,7 @@ namespace UniversalSoundboard.Common
             {
                 CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    FileManager.UpdatePlayingSoundListItem(tableObject.Uuid);
+                    FileManager.UpdatePlayingSoundListItemAsync(tableObject.Uuid);
                 });
             }
         }
@@ -43,18 +43,18 @@ namespace UniversalSoundboard.Common
                 {
                     // Update the sounds
                     (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
-                    FileManager.UpdateGridView();
+                    FileManager.UpdateGridViewAsync();
                 }
                 else if (tableId == FileManager.CategoryTableId)
                 {
                     // Update the categories
-                    FileManager.CreateCategoriesList();
+                    FileManager.CreateCategoriesListAsync();
                     (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
                 }
                 else if (tableId == FileManager.PlayingSoundTableId)
                 {
                     // Update the playing sounds
-                    FileManager.CreatePlayingSoundsList();
+                    FileManager.CreatePlayingSoundsListAsync();
                 }
             });
         }

@@ -22,14 +22,10 @@ namespace UniversalSoundboard.Common
                     return value.ToString();
                 }
                 else
-                {
                     return null;
-                }
             }
             else
-            {
                 return null;
-            }
         }
 
         public void SetValue(string key, string value)
@@ -43,14 +39,7 @@ namespace UniversalSoundboard.Common
         private ApplicationDataCompositeValue GetComposite()
         {
             var composite = (ApplicationDataCompositeValue)localSettings.Values[FileManager.davKey];
-            if(composite == null)
-            {
-                return new ApplicationDataCompositeValue();
-            }
-            else
-            {
-                return composite;
-            }
+            return composite ?? new ApplicationDataCompositeValue();
         }
 
         private void SetComposite(ApplicationDataCompositeValue composite)

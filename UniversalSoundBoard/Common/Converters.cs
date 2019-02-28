@@ -29,7 +29,7 @@ namespace UniversalSoundBoard.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             string newTitle = (string)value;
-            if (String.IsNullOrEmpty(newTitle))
+            if (string.IsNullOrEmpty(newTitle))
                 return "";
 
             double width = Window.Current.Bounds.Width;
@@ -135,13 +135,12 @@ namespace UniversalSoundBoard.Converters
             // Get the index and return the category from the categories list at the index
             int index = (int) value;
 
-            try
-            {
+            if((App.Current as App)._itemViewHolder.Categories.Count > index)
                 return (App.Current as App)._itemViewHolder.Categories[index];
-            }catch
-            {
+            else if((App.Current as App)._itemViewHolder.Categories.Count == 0)
+                return null;
+            else
                 return (App.Current as App)._itemViewHolder.Categories[0];
-            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

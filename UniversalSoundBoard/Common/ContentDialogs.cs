@@ -98,14 +98,7 @@ namespace UniversalSoundBoard.Common
 
         private static void NewCategoryContentDialogTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (NewCategoryTextBox.Text.Length < 3)
-            {
-                NewCategoryContentDialog.IsPrimaryButtonEnabled = false;
-            }
-            else
-            {
-                NewCategoryContentDialog.IsPrimaryButtonEnabled = true;
-            }
+            NewCategoryContentDialog.IsPrimaryButtonEnabled = NewCategoryTextBox.Text.Length >= 3;
         }
 
         public static ContentDialog CreateEditCategoryContentDialogAsync()
@@ -157,14 +150,7 @@ namespace UniversalSoundBoard.Common
 
         private static void EditCategoryTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (EditCategoryTextBox.Text.Length < 3)
-            {
-                EditCategoryContentDialog.IsPrimaryButtonEnabled = false;
-            }
-            else
-            {
-                EditCategoryContentDialog.IsPrimaryButtonEnabled = true;
-            }
+            EditCategoryContentDialog.IsPrimaryButtonEnabled = EditCategoryTextBox.Text.Length >= 3;
         }
 
         public static ContentDialog CreateDeleteCategoryContentDialogAsync()
@@ -211,14 +197,7 @@ namespace UniversalSoundBoard.Common
 
         private static void RenameSoundTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            if (RenameSoundTextBox.Text.Length < 3)
-            {
-                RenameSoundContentDialog.IsPrimaryButtonEnabled = false;
-            }
-            else
-            {
-                RenameSoundContentDialog.IsPrimaryButtonEnabled = true;
-            }
+            RenameSoundContentDialog.IsPrimaryButtonEnabled = RenameSoundTextBox.Text.Length >= 3;
         }
 
         public static ContentDialog CreateDeleteSoundContentDialog(string soundName)
@@ -263,8 +242,10 @@ namespace UniversalSoundBoard.Common
                 IsPrimaryButtonEnabled = false
             };
 
-            StackPanel content = new StackPanel();
-            content.Orientation = Orientation.Vertical;
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
 
             TextBlock contentText = new TextBlock
             {
@@ -272,7 +253,6 @@ namespace UniversalSoundBoard.Common
                 TextWrapping = TextWrapping.WrapWholeWords,
                 Text = loader.GetString("ExportDataContentDialog-Text1")
             };
-
 
             // Create StackPanel with TextBox and Folder button
             StackPanel folderStackPanel = new StackPanel();
@@ -294,10 +274,12 @@ namespace UniversalSoundBoard.Common
             folderStackPanel.Children.Add(ExportFolderTextBox);
 
 
-            TextBlock contentText2 = new TextBlock();
-            contentText2.Margin = new Thickness(0, 30, 0, 0);
-            contentText2.TextWrapping = TextWrapping.WrapWholeWords;
-            contentText2.Text = loader.GetString("ExportDataContentDialog-Text2");
+            TextBlock contentText2 = new TextBlock
+            {
+                Margin = new Thickness(0, 30, 0, 0),
+                TextWrapping = TextWrapping.WrapWholeWords,
+                Text = loader.GetString("ExportDataContentDialog-Text2")
+            };
 
 
             content.Children.Add(contentText);
@@ -311,8 +293,10 @@ namespace UniversalSoundBoard.Common
 
         private static async void ExportFolderButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            var folderPicker = new FolderPicker();
-            folderPicker.SuggestedStartLocation = PickerLocationId.Downloads;
+            var folderPicker = new FolderPicker
+            {
+                SuggestedStartLocation = PickerLocationId.Downloads
+            };
             folderPicker.FileTypeFilter.Add("*");
 
             StorageFolder folder = await folderPicker.PickSingleFolderAsync();
@@ -339,8 +323,10 @@ namespace UniversalSoundBoard.Common
                 IsPrimaryButtonEnabled = false
             };
 
-            StackPanel content = new StackPanel();
-            content.Orientation = Orientation.Vertical;
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
 
             TextBlock contentText = new TextBlock
             {
@@ -351,11 +337,15 @@ namespace UniversalSoundBoard.Common
 
 
             // Create StackPanel with TextBox and Folder button
-            StackPanel folderStackPanel = new StackPanel();
-            folderStackPanel.Orientation = Orientation.Horizontal;
+            StackPanel folderStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
 
-            ImportFolderTextBox = new TextBox();
-            ImportFolderTextBox.IsReadOnly = true;
+            ImportFolderTextBox = new TextBox
+            {
+                IsReadOnly = true
+            };
             Button folderButton = new Button
             {
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
@@ -437,9 +427,11 @@ namespace UniversalSoundBoard.Common
                 AllowDrop = true
             };
 
-            RepeatsComboBox = new ComboBox();
-            RepeatsComboBox.Margin = new Thickness(0, 10, 0, 0);
-            RepeatsComboBox.IsEditable = true;
+            RepeatsComboBox = new ComboBox
+            {
+                Margin = new Thickness(0, 10, 0, 0),
+                IsEditable = true
+            };
             RepeatsComboBox.Items.Add("1");
             RepeatsComboBox.Items.Add("2");
             RepeatsComboBox.Items.Add("3");
@@ -642,9 +634,9 @@ namespace UniversalSoundBoard.Common
             
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 
-            string title = String.Format(loader.GetString("SetCategoryForMultipleSoundsContentDialog-Title"), sounds.Count);
+            string title = string.Format(loader.GetString("SetCategoryForMultipleSoundsContentDialog-Title"), sounds.Count);
             if (sounds.Count == 1)
-                title = String.Format(loader.GetString("SetCategoryContentDialog-Title"), sounds[0].Name);
+                title = string.Format(loader.GetString("SetCategoryContentDialog-Title"), sounds[0].Name);
 
             SetCategoryContentDialog = new ContentDialog
             {
