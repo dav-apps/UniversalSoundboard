@@ -66,7 +66,7 @@ namespace UniversalSoundBoard.Pages
             dismissed = true;
 
             // Complete app setup operations here...
-            await FileManager.MigrateData();
+            await FileManager.MigrateDataAsync();
 
             DismissExtendedSplash();
         }
@@ -74,8 +74,11 @@ namespace UniversalSoundBoard.Pages
         async void DismissExtendedSplash()
         {
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                rootFrame = new Frame();
-                rootFrame.Content = new MainPage(); Window.Current.Content = rootFrame;
+                rootFrame = new Frame
+                {
+                    Content = new MainPage()
+                };
+                Window.Current.Content = rootFrame;
             });
         }
 

@@ -31,7 +31,7 @@ namespace UniversalSoundBoard.Pages
         
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
-            dispatcher = MainPage.dispatcher == null ? CoreWindow.GetForCurrentThread().Dispatcher : MainPage.dispatcher;
+            dispatcher = MainPage.dispatcher ?? CoreWindow.GetForCurrentThread().Dispatcher;
 
             shareOperation = e.Parameter as ShareOperation;
 
@@ -42,10 +42,10 @@ namespace UniversalSoundBoard.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 categories = new ObservableCollection<Category>();
-                FileManager.CreateCategoriesList();
+                await FileManager.CreateCategoriesListAsync();
 
                 // Get all Categories and show them
                 foreach (Category cat in (App.Current as App)._itemViewHolder.Categories)
@@ -78,7 +78,7 @@ namespace UniversalSoundBoard.Pages
                 {
                     if (FileManager.allowedFileTypes.Contains(storagefile.FileType))
                     {
-                        await FileManager.AddSound(Guid.Empty, storagefile.DisplayName, categoryUuid, storagefile);
+                        await FileManager.AddSoundAsync(Guid.Empty, storagefile.DisplayName, categoryUuid, storagefile);
                     }
                 }
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -89,7 +89,7 @@ namespace UniversalSoundBoard.Pages
 
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                await FileManager.UpdateGridView();
+                await FileManager.UpdateGridViewAsync();
             });
             
             (App.Current as App)._itemViewHolder.Categories.CollectionChanged -= Categories_CollectionChanged;
@@ -134,9 +134,9 @@ namespace UniversalSoundBoard.Pages
                 Icon = icon
             };
             
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
-                FileManager.AddCategory(Guid.Empty, category.Name, category.Icon);
+                await FileManager.AddCategoryAsync(Guid.Empty, category.Name, category.Icon);
             });
         }
     }

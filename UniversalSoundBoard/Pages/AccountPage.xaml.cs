@@ -52,9 +52,7 @@ namespace UniversalSoundboard.Pages
                 (App.Current as App)._itemViewHolder.LoginMenuItemVisibility = false;
             }
             else
-            {
                 (App.Current as App)._itemViewHolder.LoginMenuItemVisibility = true;
-            }
         }
 
         public static async Task Login()
@@ -150,13 +148,13 @@ namespace UniversalSoundboard.Pages
             await logoutContentDialog.ShowAsync();
         }
 
-        private void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             (App.Current as App)._itemViewHolder.User.Logout();
             UpdateUserLayout();
 
             // Remove the sounds that are not saved locally
-            FileManager.RemoveNotLocallySavedSounds();
+            await FileManager.RemoveNotLocallySavedSoundsAsync();
         }
 
         private async void SignupButton_Click(object sender, RoutedEventArgs e)

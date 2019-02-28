@@ -22,7 +22,7 @@ namespace UniversalSoundBoard.Pages
         {
             InitializeComponent();
 
-            if(String.IsNullOrEmpty(themeAtBeginning))
+            if(string.IsNullOrEmpty(themeAtBeginning))
                 themeAtBeginning = (string)localSettings.Values[FileManager.themeKey];
         }
         
@@ -145,10 +145,10 @@ namespace UniversalSoundBoard.Pages
             if (!LiveTileToggle.IsOn)
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();
             else
-                Task.Run(FileManager.UpdateLiveTile);
+                Task.Run(FileManager.UpdateLiveTileAsync);
         }
         
-        private void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
+        private async void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
             localSettings.Values[FileManager.playingSoundsListVisibleKey] = PlayingSoundsListToggle.IsOn;
@@ -156,10 +156,7 @@ namespace UniversalSoundBoard.Pages
 
             SavePlayingSoundsStackPanel.Visibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
 
-            Task.Run(() =>
-            {
-                FileManager.AddOrRemoveAllPlayingSounds();
-            });
+            await FileManager.AddOrRemoveAllPlayingSoundsAsync();
         }
         
         private void PlayOneSoundAtOnceToggle_Toggled(object sender, RoutedEventArgs e)
@@ -195,7 +192,7 @@ namespace UniversalSoundBoard.Pages
             if (!initialized) return;
             localSettings.Values[FileManager.showAcrylicBackgroundKey] = ShowAcrylicBackgroundToggle.IsOn;
             (App.Current as App)._itemViewHolder.ShowAcrylicBackground = ShowAcrylicBackgroundToggle.IsOn;
-
+            
             // Update the UI
             FileManager.UpdateLayoutColors();
         }
@@ -207,16 +204,13 @@ namespace UniversalSoundBoard.Pages
             (App.Current as App)._itemViewHolder.ShowSoundsPivot = ShowSoundsPivotToggle.IsOn;
         }
 
-        private void SavePlayingSoundsToggle_Toggled(object sender, RoutedEventArgs e)
+        private async void SavePlayingSoundsToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
             localSettings.Values[FileManager.savePlayingSoundsKey] = SavePlayingSoundsToggle.IsOn;
             (App.Current as App)._itemViewHolder.SavePlayingSounds = SavePlayingSoundsToggle.IsOn;
 
-            Task.Run(() =>
-            {
-                FileManager.AddOrRemoveAllPlayingSounds();
-            });
+            await FileManager.AddOrRemoveAllPlayingSoundsAsync();
         }
 
         private async void ChangeCategoryOrderButton_Click(object sender, RoutedEventArgs e)
@@ -228,7 +222,7 @@ namespace UniversalSoundBoard.Pages
             await CategoryOrderContentDialog.ShowAsync();
         }
 
-        private void CategoryOrderContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void CategoryOrderContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Save the new order of the categories
             List<Guid> uuids = new List<Guid>();
@@ -236,8 +230,8 @@ namespace UniversalSoundBoard.Pages
             foreach(var category in ContentDialogs.CategoryOrderList)
                 uuids.Add(category.Uuid);
 
-            FileManager.SetCategoryOrder(uuids);
-            FileManager.CreateCategoriesList();
+            await FileManager.SetCategoryOrderAsync(uuids);
+            await FileManager.CreateCategoriesListAsync();
         }
 
         private void SoundOrderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -266,7 +260,7 @@ namespace UniversalSoundBoard.Pages
         
         private async void ExportDataContentDialog_PrimaryButtonClickAsync(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.ExportData(ContentDialogs.ExportFolder);
+            await FileManager.ExportDataAsync(ContentDialogs.ExportFolder);
         }
         
         private async void ImportDataButton_Click(object sender, RoutedEventArgs e)
@@ -278,7 +272,7 @@ namespace UniversalSoundBoard.Pages
         
         private async void ImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.ImportData(ContentDialogs.ImportFile);
+            await FileManager.ImportDataAsync(ContentDialogs.ImportFile);
         }
     }
 }
