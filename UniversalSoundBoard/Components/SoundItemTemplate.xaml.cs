@@ -9,8 +9,7 @@ namespace UniversalSoundBoard.Components
 {
     public sealed partial class SoundItemTemplate : UserControl
     {
-        public Sound Sound { get { return this.DataContext as Sound; } }
-
+        public Sound Sound { get { return DataContext as Sound; } }
         
         public SoundItemTemplate()
         {

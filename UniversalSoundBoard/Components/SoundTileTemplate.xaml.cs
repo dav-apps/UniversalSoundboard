@@ -66,11 +66,11 @@ namespace UniversalSoundBoard.Components
             foreach (var entry in ContentDialogs.SelectedCategories)
                 if (entry.Value) categoryUuids.Add(entry.Key);
             
-            FileManager.SetCategoriesOfSound(Sound.Uuid, categoryUuids);
-            await FileManager.UpdateGridView();
+            await FileManager.SetCategoriesOfSoundAsync(Sound.Uuid, categoryUuids);
+            await FileManager.UpdateGridViewAsync();
         }
 
-        private void SoundTileOptionsSetFavourite_Click(object sender, RoutedEventArgs e)
+        private async void SoundTileOptionsSetFavourite_Click(object sender, RoutedEventArgs e)
         {
             bool newFav = !Sound.Favourite;
 
@@ -86,9 +86,7 @@ namespace UniversalSoundBoard.Components
             {
                 var sounds = soundList.Where(s => s.Uuid == Sound.Uuid);
                 if (sounds.Count() > 0)
-                {
                     sounds.First().Favourite = newFav;
-                }
             }
 
             if (newFav)
@@ -104,7 +102,7 @@ namespace UniversalSoundBoard.Components
 
             FavouriteSymbol.Visibility = newFav ? Visibility.Visible : Visibility.Collapsed;
             SetFavouritesMenuItemText();
-            FileManager.SetSoundAsFavourite(Sound.Uuid, newFav);
+            await FileManager.SetSoundAsFavouriteAsync(Sound.Uuid, newFav);
         }
         
         private async void SoundTileOptionsSetImage_Click(object sender, RoutedEventArgs e)
@@ -124,9 +122,9 @@ namespace UniversalSoundBoard.Components
             {
                 // Application now has read/write access to the picked file
                 (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
-                await FileManager.UpdateImageOfSound(sound.Uuid, file);
+                await FileManager.UpdateImageOfSoundAsync(sound.Uuid, file);
                 (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
-                await FileManager.UpdateGridView();
+                await FileManager.UpdateGridViewAsync();
             }
         }
         
@@ -142,7 +140,7 @@ namespace UniversalSoundBoard.Components
             await FileManager.DeleteSoundAsync(Sound.Uuid);
 
             // UpdateGridView nicht in deleteSound, weil es auch in einer Schleife aufgerufen wird (löschen mehrerer Sounds)
-            await FileManager.UpdateGridView();
+            await FileManager.UpdateGridViewAsync();
         }
         
         private async void SoundTileOptionsRename_Click(object sender, RoutedEventArgs e)
@@ -157,8 +155,8 @@ namespace UniversalSoundBoard.Components
             // Save new name
             if(ContentDialogs.RenameSoundTextBox.Text != Sound.Name)
             {
-                FileManager.RenameSound(Sound.Uuid, ContentDialogs.RenameSoundTextBox.Text);
-                await FileManager.UpdateGridView();
+                await FileManager.RenameSoundAsync(Sound.Uuid, ContentDialogs.RenameSoundTextBox.Text);
+                await FileManager.UpdateGridViewAsync();
             }
         }
         
@@ -266,7 +264,7 @@ namespace UniversalSoundBoard.Components
 
                 // Add the tile to the Start Menu
                 isPinned = await tile.RequestCreateAsync();
-                var imageFile = await Sound.GetImageFile();
+                var imageFile = await Sound.GetImageFileAsync();
 
                 if(imageFile != null)
                 {
@@ -308,9 +306,9 @@ namespace UniversalSoundBoard.Components
             // Copy the file into the temp folder
             soundFiles.Clear();
             StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            var audioFile = await Sound.GetAudioFile();
+            var audioFile = await Sound.GetAudioFileAsync();
             if (audioFile == null) return;
-            string ext = Sound.GetAudioFileExtension();
+            string ext = await Sound.GetAudioFileExtensionAsync();
 
             if (string.IsNullOrEmpty(ext))
                 ext = "mp3";
@@ -328,10 +326,12 @@ namespace UniversalSoundBoard.Components
             if (!await DownloadFile()) return;
 
             // Open a folder picker and save the file there
-            var savePicker = new Windows.Storage.Pickers.FileSavePicker();
-            savePicker.SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary;
+            var savePicker = new Windows.Storage.Pickers.FileSavePicker
+            {
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary
+            };
 
-            string ext = Sound.GetAudioFileExtension();
+            string ext = await Sound.GetAudioFileExtensionAsync();
 
             if (string.IsNullOrEmpty(ext))
                 ext = "mp3";
@@ -346,7 +346,7 @@ namespace UniversalSoundBoard.Components
             if (file != null)
             {
                 CachedFileManager.DeferUpdates(file);
-                var audioFile = await Sound.GetAudioFile();
+                var audioFile = await Sound.GetAudioFileAsync();
                 await FileIO.WriteBytesAsync(file, await FileManager.GetBytesAsync(audioFile));
                 await CachedFileManager.CompleteUpdatesAsync(file);
             }
@@ -354,7 +354,7 @@ namespace UniversalSoundBoard.Components
 
         private async Task<bool> DownloadFile()
         {
-            var downloadStatus = Sound.GetAudioFileDownloadStatus();
+            var downloadStatus = await Sound.GetAudioFileDownloadStatusAsync();
             if (downloadStatus == DownloadStatus.NoFileOrNotLoggedIn) return false;
 
             if (downloadStatus != DownloadStatus.Downloaded)
@@ -362,9 +362,9 @@ namespace UniversalSoundBoard.Components
                 // Download the file and show the download dialog
                 downloadFileIsExecuting = true;
                 Progress<int> progress = new Progress<int>(FileDownloadProgress);
-                Sound.DownloadFile(progress);
+                await Sound.DownloadFileAsync(progress);
 
-                ContentDialogs.CreateDownloadFileContentDialog(Sound.Name + "." + Sound.GetAudioFileExtension());
+                ContentDialogs.CreateDownloadFileContentDialog(Sound.Name + "." + Sound.GetAudioFileExtensionAsync());
                 ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
                 ContentDialogs.DownloadFileContentDialog.SecondaryButtonClick += DownloadFileContentDialog_SecondaryButtonClick;
                 await ContentDialogs.DownloadFileContentDialog.ShowAsync();

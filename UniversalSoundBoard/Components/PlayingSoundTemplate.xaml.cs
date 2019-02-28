@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
@@ -92,11 +93,12 @@ namespace UniversalSoundBoard.Components
             ContentRoot.Background = new SolidColorBrush(Colors.Transparent);
         }
         
-        private void RepeatSound(int repetitions)
+        private async Task RepeatSoundAsync(int repetitions)
         {
             int newRepetitions = repetitions + 1;
             PlayingSound.Repetitions = newRepetitions;
-            FileManager.SetRepetitionsOfPlayingSound(PlayingSound.Uuid, newRepetitions);
+            
+            await FileManager.SetRepetitionsOfPlayingSoundAsync(PlayingSound.Uuid, newRepetitions);
         }
         
         private void InitializePlayingSound()
@@ -137,7 +139,7 @@ namespace UniversalSoundBoard.Components
             }
         }
 
-        private void RemovePlayingSound()
+        private async Task RemovePlayingSoundAsync()
         {
             if (PlayingSound.MediaPlayer != null)
             {
@@ -149,19 +151,19 @@ namespace UniversalSoundBoard.Components
                 PlayingSound.MediaPlayer.SystemMediaTransportControls.IsEnabled = false;
                 PlayingSound.MediaPlayer = null;
             }
-            SoundPage.RemovePlayingSound(PlayingSound);
+            await SoundPage.RemovePlayingSoundAsync(PlayingSound);
         }
         
         private async void Player_MediaEnded(MediaPlayer sender, object args)
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 PlayingSound.Repetitions--;
 
                 if (PlayingSound.Repetitions <= 0)
-                    RemovePlayingSound();
+                    await RemovePlayingSoundAsync();
                 else
-                    FileManager.SetRepetitionsOfPlayingSound(PlayingSound.Uuid, PlayingSound.Repetitions);
+                    await FileManager.SetRepetitionsOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Repetitions);
 
                 if (PlayingSound.Repetitions >= 0 && PlayingSound.MediaPlayer != null)
                 {
@@ -205,11 +207,11 @@ namespace UniversalSoundBoard.Components
                                 PlayingSound.Sounds.Add(item);
 
                             // Update PlayingSound in the Database
-                            FileManager.SetSoundsListOfPlayingSound(PlayingSound.Uuid, newSoundsList);
+                            await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, newSoundsList);
                         }
 
                         ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveTo(0);
-                        FileManager.SetCurrentOfPlayingSound(PlayingSound.Uuid, 0);
+                        await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, 0);
                     }
                     PlayingSound.MediaPlayer.Play();
                 }
@@ -218,13 +220,13 @@ namespace UniversalSoundBoard.Components
         
         private async void PlayingSoundTemplate_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 if(PlayingSound.Sounds.Count > 1 && sender.CurrentItemIndex < PlayingSound.Sounds.Count)
                 {
                     int currentItemIndex = (int)sender.CurrentItemIndex;
                     PlayingSound.CurrentSound = PlayingSound.Sounds.ElementAt(currentItemIndex);
-                    FileManager.SetCurrentOfPlayingSound(PlayingSound.Uuid, currentItemIndex);
+                    await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, currentItemIndex);
                     PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
 
                     AdjustLayout();
@@ -232,12 +234,12 @@ namespace UniversalSoundBoard.Components
             });
         }
 
-        private void CustomMediaTransportControls_VolumeSlider_LostFocus(object sender, EventArgs e)
+        private async void CustomMediaTransportControls_VolumeSlider_LostFocus(object sender, EventArgs e)
         {
             if (MediaPlayerElement.MediaPlayer != null)
             {
                 // Save new Volume
-                FileManager.SetVolumeOfPlayingSound(PlayingSound.Uuid, MediaPlayerElement.MediaPlayer.Volume);
+                await FileManager.SetVolumeOfPlayingSoundAsync(PlayingSound.Uuid, MediaPlayerElement.MediaPlayer.Volume);
             }
         }
 
@@ -260,12 +262,12 @@ namespace UniversalSoundBoard.Components
             }
         }
 
-        private void CustomMediaTransportControls_RemoveButton_Clicked(object sender, EventArgs e)
+        private async void CustomMediaTransportControls_RemoveButton_Clicked(object sender, EventArgs e)
         {
-            RemovePlayingSound();
+            await RemovePlayingSoundAsync();
         }
 
-        private void CustomMediaTransportControls_FavouriteFlyout_Clicked(object sender, EventArgs e)
+        private async void CustomMediaTransportControls_FavouriteFlyout_Clicked(object sender, EventArgs e)
         {
             bool oldFav = PlayingSound.CurrentSound.Favourite;
             bool newFav = !PlayingSound.CurrentSound.Favourite;
@@ -283,9 +285,7 @@ namespace UniversalSoundBoard.Components
             {
                 var sounds = soundList.Where(s => s.Uuid == currentSound.Uuid);
                 if (sounds.Count() > 0)
-                {
                     sounds.First().Favourite = newFav;
-                }
             }
 
             
@@ -306,7 +306,7 @@ namespace UniversalSoundBoard.Components
                 FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
             }
 
-            FileManager.SetSoundAsFavourite(currentSound.Uuid, newFav);
+            await FileManager.SetSoundAsFavouriteAsync(currentSound.Uuid, newFav);
         }
 
         private void CustomMediaTransportControls_CastButton_Clicked(object sender, EventArgs e)
@@ -334,29 +334,29 @@ namespace UniversalSoundBoard.Components
             skipVolumeSliderValueChangedEvent = false;
         }
 
-        private void CustomMediaTransportControls_Repeat_1x_Clicked(object sender, EventArgs e)
+        private async void CustomMediaTransportControls_Repeat_1x_Clicked(object sender, EventArgs e)
         {
-            RepeatSound(1);
+            await RepeatSoundAsync(1);
         }
         
-        private void CustomMediaTransportControls_Repeat_2x_Clicked(object sender, EventArgs e)
+        private async void CustomMediaTransportControls_Repeat_2x_Clicked(object sender, EventArgs e)
         {
-            RepeatSound(2);
+            await RepeatSoundAsync(2);
         }
         
-        private void CustomMediaTransportControls_Repeat_5x_Clicked(object sender, EventArgs e)
+        private async void CustomMediaTransportControls_Repeat_5x_Clicked(object sender, EventArgs e)
         {
-            RepeatSound(5);
+            await RepeatSoundAsync(5);
         }
         
-        private void CustomMediaTransportControls_Repeat_10x_Clicked(object sender, EventArgs e)
+        private async void CustomMediaTransportControls_Repeat_10x_Clicked(object sender, EventArgs e)
         {
-            RepeatSound(10);
+            await RepeatSoundAsync(10);
         }
         
-        private void CustomMediaTransportControls_Repeat_endless_Clicked(object sender, EventArgs e)
+        private async void CustomMediaTransportControls_Repeat_endless_Clicked(object sender, EventArgs e)
         {
-            RepeatSound(int.MaxValue);
+            await RepeatSoundAsync(int.MaxValue);
         }
     }
 }
