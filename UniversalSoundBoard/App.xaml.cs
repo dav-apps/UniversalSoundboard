@@ -119,8 +119,6 @@ namespace UniversalSoundBoard
             ProjectInterface.TriggerAction = new UniversalSoundboard.Common.TriggerAction();
             ProjectInterface.GeneralMethods = new GeneralMethods();
             (App.Current as App)._itemViewHolder.User = new DavUser();
-
-            FileManager.CreateCategoriesList();
         }
 
         /// <summary>
@@ -165,7 +163,7 @@ namespace UniversalSoundBoard
 
             if (e.PreviousExecutionState != ApplicationExecutionState.Running)
             {
-                if(!await FileManager.UsesDavDataModel())
+                if(!await FileManager.UsesDavDataModelAsync())
                 {
                     bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
                     UpgradeDataSplashScreen upgradeDataSplashScreen = new UpgradeDataSplashScreen(e.SplashScreen, loadState);
@@ -178,7 +176,7 @@ namespace UniversalSoundBoard
             {
                 Guid? soundUuid = FileManager.ConvertStringToGuid(e.Arguments);
                 if(soundUuid.HasValue)
-                    await SoundPage.PlaySound(await FileManager.GetSound(soundUuid.Value));
+                    await SoundPage.PlaySoundAsync(await FileManager.GetSoundAsync(soundUuid.Value));
             }
 
             Window.Current.Activate();
