@@ -179,13 +179,9 @@ namespace UniversalSoundBoard.DataAccess
             string exportFolderName = "export";
 
             if (await localFolder.TryGetItemAsync(exportFolderName) == null)
-            {
                 return await localFolder.CreateFolderAsync(exportFolderName);
-            }
             else
-            {
                 return await localFolder.GetFolderAsync(exportFolderName);
-            }
         }
 
         private async static Task<StorageFolder> GetImportFolderAsync()
@@ -193,16 +189,10 @@ namespace UniversalSoundBoard.DataAccess
             StorageFolder localDataFolder = ApplicationData.Current.LocalCacheFolder;
             string importFolderName = "import";
 
-            StorageFolder importFolder;
             if (await localDataFolder.TryGetItemAsync(importFolderName) == null)
-            {
-                importFolder = await localDataFolder.CreateFolderAsync(importFolderName);
-            }
+                return await localDataFolder.CreateFolderAsync(importFolderName);
             else
-            {
-                importFolder = await localDataFolder.GetFolderAsync(importFolderName);
-            }
-            return importFolder;
+                return await localDataFolder.GetFolderAsync(importFolderName);
         }
 
         public static string GetDavDataPath()
@@ -219,12 +209,10 @@ namespace UniversalSoundBoard.DataAccess
 
             StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
             foreach (var item in await cacheFolder.GetItemsAsync())
-            {
                 await item.DeleteAsync();
-            }
         }
 
-        private static async Task<DataModel> GetDataModel(StorageFolder root)
+        private static async Task<DataModel> GetDataModelAsync(StorageFolder root)
         {
             // Old format: Archive has a soundDetails and a data folder
             // New format: Archive has the folders sounds, images and a data.json file
@@ -249,38 +237,33 @@ namespace UniversalSoundBoard.DataAccess
             return dataModel;
         }
 
-        public static void RemoveNotLocallySavedSounds()
+        public static async Task RemoveNotLocallySavedSoundsAsync()
         {
             // Get each sound and check if the file exists
             foreach(var sound in (App.Current as App)._itemViewHolder.AllSounds)
             {
-                var soundFileTableObject = GetSoundFileTableObject(sound.Uuid);
-                if(soundFileTableObject != null)
-                {
-                    if (soundFileTableObject.FileDownloaded())
-                    {
-                        continue;
-                    }
-                }
+                var soundFileTableObject = await GetSoundFileTableObjectAsync(sound.Uuid);
+                if(soundFileTableObject != null && soundFileTableObject.FileDownloaded())
+                    continue;
 
                 // Completely remove the sound from the database so that it won't be deleted when the user logs in again
-                var imageFileTableObject = GetImageFileTableObject(sound.Uuid);
-                var soundTableObject = DatabaseOperations.GetObject(sound.Uuid);
+                var imageFileTableObject = await GetImageFileTableObjectAsync(sound.Uuid);
+                var soundTableObject = await DatabaseOperations.GetObjectAsync(sound.Uuid);
 
                 if (soundFileTableObject != null)
                 {
-                    Dav.Database.DeleteTableObject(soundFileTableObject);
-                    Dav.Database.DeleteTableObject(soundFileTableObject);
+                    await Dav.Database.DeleteTableObjectAsync(soundFileTableObject);
+                    await Dav.Database.DeleteTableObjectAsync(soundFileTableObject);
                 }
                 if(imageFileTableObject != null)
                 {
-                    Dav.Database.DeleteTableObject(imageFileTableObject);
-                    Dav.Database.DeleteTableObject(imageFileTableObject);
+                    await Dav.Database.DeleteTableObjectAsync(imageFileTableObject);
+                    await Dav.Database.DeleteTableObjectAsync(imageFileTableObject);
                 }
                 if(soundTableObject != null)
                 {
-                    Dav.Database.DeleteTableObject(soundTableObject);
-                    Dav.Database.DeleteTableObject(soundTableObject);
+                    await Dav.Database.DeleteTableObjectAsync(soundTableObject);
+                    await Dav.Database.DeleteTableObjectAsync(soundTableObject);
                 }
             }
 
@@ -289,9 +272,9 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Database Methods
-        public static async Task MigrateData()
+        public static async Task MigrateDataAsync()
         {
-            if (await UsesDavDataModel())
+            if (await UsesDavDataModelAsync())
                 return;
 
             StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
@@ -303,20 +286,16 @@ namespace UniversalSoundBoard.DataAccess
             });
 
             // Check if the data model is new or old
-            DataModel dataModel = await GetDataModel(localDataFolder);
+            DataModel dataModel = await GetDataModelAsync(localDataFolder);
             Progress<int> progress = new Progress<int>(UpgradeDataProgress);
 
             if(dataModel == DataModel.Old)
-            {
-                await UpgradeOldDataModel(localDataFolder, false, progress);
-            }
+                await UpgradeOldDataModelAsync(localDataFolder, false, progress);
             else if(dataModel == DataModel.New)
-            {
-                await UpgradeNewDataModel(localDataFolder, false, progress);
-            }
+                await UpgradeNewDataModelAsync(localDataFolder, false, progress);
 
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => {
-                CreateCategoriesList();
+                await CreateCategoriesListAsync();
                 (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
                 (App.Current as App)._itemViewHolder.IsImporting = false;
                 await ClearCacheAsync();
@@ -325,13 +304,13 @@ namespace UniversalSoundBoard.DataAccess
 
         private static void UpgradeDataProgress(int value)
         {
-            CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            var x = CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 (App.Current as App)._itemViewHolder.UpgradeDataStatusText = value + " %";
-            }).AsTask().Wait();
+            });
         }
 
-        public static async Task ExportData(StorageFolder destinationFolder)
+        public static async Task ExportDataAsync(StorageFolder destinationFolder)
         {
             await ClearCacheAsync();
 
@@ -377,7 +356,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.ExportMessage = value + " %";
         }
 
-        public static async Task ImportData(StorageFile zipFile)
+        public static async Task ImportDataAsync(StorageFile zipFile)
         {
             var stringLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
             (App.Current as App)._itemViewHolder.ImportMessage = stringLoader.GetString("ImportMessage-1");
@@ -401,16 +380,16 @@ namespace UniversalSoundBoard.DataAccess
                 ZipFile.ExtractToDirectory(newZipFile.Path, importFolder.Path);
             });
 
-            DataModel dataModel = await GetDataModel(importFolder);
+            DataModel dataModel = await GetDataModelAsync(importFolder);
             Progress<int> progress = new Progress<int>(ImportProgress);
 
             switch (dataModel)
             {
                 case DataModel.Old:
-                    await UpgradeOldDataModel(importFolder, true, progress);
+                    await UpgradeOldDataModelAsync(importFolder, true, progress);
                     break;
                 case DataModel.New:
-                    await UpgradeNewDataModel(importFolder, true, progress);
+                    await UpgradeNewDataModelAsync(importFolder, true, progress);
                     break;
                 default:
                     await Task.Run(() => DataManager.ImportData(new DirectoryInfo(importFolder.Path), progress));
@@ -427,9 +406,9 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
             (App.Current as App)._itemViewHolder.AreExportAndImportButtonsEnabled = true;
 
-            CreateCategoriesList();
-            await LoadAllSounds();
-            await CreatePlayingSoundsList();
+            await CreateCategoriesListAsync();
+            await LoadAllSoundsAsync();
+            await CreatePlayingSoundsListAsync();
             await SetSoundBoardSizeTextAsync();
         }
 
@@ -438,7 +417,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.ImportMessage = value + " %";
         }
 
-        private static async Task UpgradeNewDataModel(StorageFolder root, bool import, IProgress<int> progress)
+        private static async Task UpgradeNewDataModelAsync(StorageFolder root, bool import, IProgress<int> progress)
         {
             // New data format
             StorageFolder soundsFolder = await root.TryGetItemAsync("sounds") as StorageFolder;
@@ -449,10 +428,10 @@ namespace UniversalSoundBoard.DataAccess
             if (import && dataFile != null)
             {
                 // Get the data from the data file
-                NewData newData = await GetDataFromFile(dataFile);
+                NewData newData = await GetDataFromFileAsync(dataFile);
 
                 foreach (Category category in newData.Categories)
-                    DatabaseOperations.AddCategory(category.Uuid, category.Name, category.Icon);
+                    await DatabaseOperations.AddCategoryAsync(category.Uuid, category.Name, category.Icon);
 
                 if (soundsFolder == null) return;
                 int i = 0;
@@ -465,7 +444,7 @@ namespace UniversalSoundBoard.DataAccess
                         Guid soundUuid = ConvertStringToGuid(soundData.Uuid).GetValueOrDefault();
                         Guid categoryUuid = ConvertStringToGuid(soundData.CategoryId).GetValueOrDefault();
 
-                        soundUuid = await AddSound(soundUuid, WebUtility.HtmlDecode(soundData.Name), categoryUuid, audioFile);
+                        soundUuid = await AddSoundAsync(soundUuid, WebUtility.HtmlDecode(soundData.Name), categoryUuid, audioFile);
 
                         if (imagesFolder != null)
                         {
@@ -474,14 +453,14 @@ namespace UniversalSoundBoard.DataAccess
                             {
                                 // Set the image of the sound
                                 Guid imageUuid = Guid.NewGuid();
-                                DatabaseOperations.AddImageFile(imageUuid, imageFile);
-                                DatabaseOperations.UpdateSound(soundUuid, null, null, null, imageUuid.ToString(), null);
+                                await DatabaseOperations.AddImageFileAsync(imageUuid, imageFile);
+                                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, imageUuid.ToString(), null);
                                 await imageFile.DeleteAsync();
                             }
                         }
 
                         if (soundData.Favourite)
-                            DatabaseOperations.UpdateSound(soundUuid, null, soundData.Favourite.ToString(), null, null, null);
+                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, soundData.Favourite.ToString(), null, null, null);
 
                         await audioFile.DeleteAsync();
                     }
@@ -498,8 +477,8 @@ namespace UniversalSoundBoard.DataAccess
 
                 foreach (var category in categories)
                 {
-                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                        AddCategory(category.Uuid, category.Name, category.Icon);
+                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => {
+                        await AddCategoryAsync(category.Uuid, category.Name, category.Icon);
                     });
                 }
 
@@ -518,23 +497,23 @@ namespace UniversalSoundBoard.DataAccess
                         Guid.TryParse(sound.uuid, out soundGuid);
                         Guid categoryGuid = Guid.Empty;
                         Guid.TryParse(sound.category_id, out categoryGuid);
-                        Guid soundUuid = await AddSound(soundGuid, WebUtility.HtmlDecode(sound.name), categoryGuid, audioFile);
+                        Guid soundUuid = await AddSoundAsync(soundGuid, WebUtility.HtmlDecode(sound.name), categoryGuid, audioFile);
 
-                        if (imagesFolder != null && !String.IsNullOrEmpty(sound.image_ext))
+                        if (imagesFolder != null && !string.IsNullOrEmpty(sound.image_ext))
                         {
                             StorageFile imageFile = await imagesFolder.TryGetItemAsync(sound.uuid + "." + sound.image_ext) as StorageFile;
                             if (imageFile != null)
                             {
                                 // Add image
                                 Guid imageUuid = Guid.NewGuid();
-                                DatabaseOperations.AddImageFile(imageUuid, imageFile);
-                                DatabaseOperations.UpdateSound(soundUuid, null, null, null, imageUuid.ToString(), null);
+                                await DatabaseOperations.AddImageFileAsync(imageUuid, imageFile);
+                                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, imageUuid.ToString(), null);
                                 await imageFile.DeleteAsync();
                             }
                         }
 
                         if (sound.favourite)
-                            DatabaseOperations.UpdateSound(soundUuid, null, sound.favourite.ToString(), null, null, null);
+                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, sound.favourite.ToString(), null, null, null);
 
                         await audioFile.DeleteAsync();
                     }
@@ -554,7 +533,7 @@ namespace UniversalSoundBoard.DataAccess
                 await dataFile.DeleteAsync();
         }
 
-        private static async Task UpgradeOldDataModel(StorageFolder root, bool import, IProgress<int> progress)
+        private static async Task UpgradeOldDataModelAsync(StorageFolder root, bool import, IProgress<int> progress)
         {
             // Old data format
             StorageFolder soundDetailsFolder = await root.TryGetItemAsync("soundDetails") as StorageFolder;   // root/soundDetails
@@ -568,7 +547,7 @@ namespace UniversalSoundBoard.DataAccess
             if (dataFile != null)
             {
                 foreach (Category cat in await GetCategoriesListAsync(dataFile))
-                    DatabaseOperations.AddCategory(Guid.NewGuid(), cat.Name, cat.Icon);
+                    await DatabaseOperations.AddCategoryAsync(Guid.NewGuid(), cat.Name, cat.Icon);
 
                 await dataFile.DeleteAsync();
             }
@@ -599,16 +578,16 @@ namespace UniversalSoundBoard.DataAccess
                         if (soundDetailsFile != null)
                         {
                             SoundDetails soundDetails = new SoundDetails();
-                            await soundDetails.ReadSoundDetailsFile(soundDetailsFile);
+                            await soundDetails.ReadSoundDetailsFileAsync(soundDetailsFile);
                             categoryName = soundDetails.Category;
                             favourite = soundDetails.Favourite;
                         }
                     }
 
                     // Find the category of the sound
-                    if (!String.IsNullOrEmpty(categoryName))
+                    if (!string.IsNullOrEmpty(categoryName))
                     {
-                        foreach (Category category in GetAllCategories())
+                        foreach (Category category in await GetAllCategoriesAsync())
                         {
                             if (category.Name == categoryName)
                             {
@@ -619,7 +598,7 @@ namespace UniversalSoundBoard.DataAccess
                     }
 
                     // Save the sound
-                    soundUuid = await AddSound(Guid.Empty, name, categoryUuid, file);
+                    soundUuid = await AddSoundAsync(Guid.Empty, name, categoryUuid, file);
 
                     // Get the image file of the sound
                     foreach (StorageFile imageFile in await imagesFolder.GetFilesAsync())
@@ -627,8 +606,8 @@ namespace UniversalSoundBoard.DataAccess
                         if (name == imageFile.DisplayName)
                         {
                             Guid imageUuid = Guid.NewGuid();
-                            DatabaseOperations.AddImageFile(imageUuid, imageFile);
-                            DatabaseOperations.UpdateSound(soundUuid, null, null, null, imageUuid.ToString(), null);
+                            await DatabaseOperations.AddImageFileAsync(imageUuid, imageFile);
+                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, imageUuid.ToString(), null);
 
                             // Delete the image
                             await imageFile.DeleteAsync();
@@ -637,9 +616,7 @@ namespace UniversalSoundBoard.DataAccess
                     }
 
                     if (favourite)
-                    {
-                        DatabaseOperations.UpdateSound(soundUuid, null, favourite.ToString(), null, null, null);
-                    }
+                        await DatabaseOperations.UpdateSoundAsync(soundUuid, null, favourite.ToString(), null, null, null);
 
                     // Delete the sound and soundDetails file
                     if (soundDetailsFile != null)
@@ -663,7 +640,7 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static async Task ExportSounds(List<Sound> sounds, bool saveAsZip, StorageFolder destinationFolder)
+        public static async Task ExportSoundsAsync(List<Sound> sounds, bool saveAsZip, StorageFolder destinationFolder)
         {
             // Show the loading screen
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -678,7 +655,7 @@ namespace UniversalSoundBoard.DataAccess
 
                 // Copy the selected files into the export folder
                 foreach (var sound in sounds)
-                    await CopySoundFileIntoFolder(sound, exportFolder);
+                    await CopySoundFileIntoFolderAsync(sound, exportFolder);
 
                 // Create the zip file from the export folder
                 StorageFile zipFile = await Task.Run(async () =>
@@ -696,35 +673,35 @@ namespace UniversalSoundBoard.DataAccess
             {
                 // Copy the files directly into the folder
                 foreach(var sound in sounds)
-                    await CopySoundFileIntoFolder(sound, destinationFolder);
+                    await CopySoundFileIntoFolderAsync(sound, destinationFolder);
             }
 
             (App.Current as App)._itemViewHolder.LoadingScreenVisibility = false;
         }
 
-        private static async Task CopySoundFileIntoFolder(Sound sound, StorageFolder destinationFolder)
+        private static async Task CopySoundFileIntoFolderAsync(Sound sound, StorageFolder destinationFolder)
         {
-            string ext = sound.GetAudioFileExtension();
+            string ext = await sound.GetAudioFileExtensionAsync();
 
             if (string.IsNullOrEmpty(ext))
                 ext = "mp3";
 
             StorageFile soundFile = await destinationFolder.CreateFileAsync(sound.Name + "." + ext, CreationCollisionOption.GenerateUniqueName);
-            await FileIO.WriteBytesAsync(soundFile, await GetBytesAsync(await sound.GetAudioFile()));
+            await FileIO.WriteBytesAsync(soundFile, await GetBytesAsync(await sound.GetAudioFileAsync()));
         }
 
         // Load the sounds from the database and return them
-        private static async Task<List<Sound>> GetSavedSounds()
+        private static async Task<List<Sound>> GetSavedSoundsAsync()
         {
-            List<TableObject> soundsTableObjectList = DatabaseOperations.GetAllSounds();
+            List<TableObject> soundsTableObjectList = await DatabaseOperations.GetAllSoundsAsync();
             List<Sound> sounds = new List<Sound>();
 
             foreach (var soundTableObject in soundsTableObjectList)
             {
                 Guid? soundFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName));
-                if (DatabaseOperations.GetObject(soundFileUuid.GetValueOrDefault()) == null) continue;
+                if (DatabaseOperations.GetObjectAsync(soundFileUuid.GetValueOrDefault()) == null) continue;
 
-                sounds.Add(await GetSound(soundTableObject.Uuid));
+                sounds.Add(await GetSoundAsync(soundTableObject.Uuid));
             }
 
             (App.Current as App)._itemViewHolder.AllSoundsChanged = false;
@@ -732,25 +709,25 @@ namespace UniversalSoundBoard.DataAccess
         }
 
         // When the sounds list was changed, load all sounds from the database
-        private static async Task UpdateAllSoundsList()
+        private static async Task UpdateAllSoundsListAsync()
         {
             (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
             if ((App.Current as App)._itemViewHolder.AllSoundsChanged)
             {
                 (App.Current as App)._itemViewHolder.AllSounds.Clear();
-                foreach (Sound sound in await GetSavedSounds())
+                foreach (Sound sound in await GetSavedSoundsAsync())
                 {
                     (App.Current as App)._itemViewHolder.AllSounds.Add(sound);
                 }
-                await UpdateLiveTile();
+                await UpdateLiveTileAsync();
             }
             (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
         }
 
         // Load all sounds into the sounds list
-        public static async Task LoadAllSounds()
+        public static async Task LoadAllSoundsAsync()
         {
-            await UpdateAllSoundsList();
+            await UpdateAllSoundsListAsync();
 
             List<Sound> sounds = new List<Sound>();
             List<Sound> favouriteSounds = new List<Sound>();
@@ -773,7 +750,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
 
             // Sort the sounds
-            foreach (var sound in SortSoundsList(sounds,
+            foreach (var sound in await SortSoundsListAsync(sounds,
                                                 (App.Current as App)._itemViewHolder.SoundOrder,
                                                 (App.Current as App)._itemViewHolder.SoundOrderReversed,
                                                 Guid.Empty,
@@ -781,7 +758,7 @@ namespace UniversalSoundBoard.DataAccess
                 (App.Current as App)._itemViewHolder.Sounds.Add(sound);
             }
 
-            foreach (var sound in SortSoundsList(favouriteSounds,
+            foreach (var sound in await SortSoundsListAsync(favouriteSounds,
                                                 (App.Current as App)._itemViewHolder.SoundOrder,
                                                 (App.Current as App)._itemViewHolder.SoundOrderReversed,
                                                 Guid.Empty,
@@ -791,10 +768,10 @@ namespace UniversalSoundBoard.DataAccess
         }
 
         // Get the sounds of the category from the all sounds list
-        public static async Task LoadSoundsByCategory(Guid uuid)
+        public static async Task LoadSoundsByCategoryAsync(Guid uuid)
         {
             (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
-            await UpdateAllSoundsList();
+            await UpdateAllSoundsListAsync();
 
             List<Sound> sounds = new List<Sound>();
             List<Sound> favouriteSounds = new List<Sound>();
@@ -817,7 +794,7 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
 
             // Sort the sounds
-            foreach (var sound in SortSoundsList(sounds, 
+            foreach (var sound in await SortSoundsListAsync(sounds, 
                                                 (App.Current as App)._itemViewHolder.SoundOrder, 
                                                 (App.Current as App)._itemViewHolder.SoundOrderReversed, 
                                                 uuid,
@@ -825,7 +802,7 @@ namespace UniversalSoundBoard.DataAccess
                 (App.Current as App)._itemViewHolder.Sounds.Add(sound);
             }
 
-            foreach (var sound in SortSoundsList(favouriteSounds,
+            foreach (var sound in await SortSoundsListAsync(favouriteSounds,
                                                 (App.Current as App)._itemViewHolder.SoundOrder,
                                                 (App.Current as App)._itemViewHolder.SoundOrderReversed,
                                                 uuid,
@@ -837,11 +814,11 @@ namespace UniversalSoundBoard.DataAccess
         }
 
         // Get the sounds by the name from the all sounds list
-        public static async Task LoadSoundsByName(string name)
+        public static async Task LoadSoundsByNameAsync(string name)
         {
             (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
 
-            await UpdateAllSoundsList();
+            await UpdateAllSoundsListAsync();
 
             (App.Current as App)._itemViewHolder.Sounds.Clear();
             (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
@@ -851,21 +828,19 @@ namespace UniversalSoundBoard.DataAccess
                 {
                     (App.Current as App)._itemViewHolder.Sounds.Add(sound);
                     if (sound.Favourite)
-                    {
                         (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
-                    }
                 }
             }
 
             ShowPlayAllButton();
         }
 
-        public static async Task<Guid> AddSound(Guid uuid, string name, Guid categoryUuid, StorageFile audioFile)
+        public static async Task<Guid> AddSoundAsync(Guid uuid, string name, Guid categoryUuid, StorageFile audioFile)
         {
             // Generate a new uuid if necessary
             if (Equals(uuid, Guid.Empty))
                 uuid = Guid.NewGuid();
-            else if (DatabaseOperations.GetObject(uuid) != null)
+            else if (DatabaseOperations.GetObjectAsync(uuid) != null)
                 return uuid;
 
             // Generate a uuid for the soundFile
@@ -874,16 +849,16 @@ namespace UniversalSoundBoard.DataAccess
             // Copy the file into the local app folder
             StorageFile newAudioFile = await audioFile.CopyAsync(ApplicationData.Current.LocalCacheFolder, "newSound" + audioFile.FileType, NameCollisionOption.ReplaceExisting);
 
-            DatabaseOperations.AddSoundFile(soundFileUuid, newAudioFile);
-            DatabaseOperations.AddSound(uuid, name, soundFileUuid.ToString(), Equals(categoryUuid, Guid.Empty) ? null : categoryUuid.ToString());
+            await DatabaseOperations.AddSoundFileAsync(soundFileUuid, newAudioFile);
+            await DatabaseOperations.AddSoundAsync(uuid, name, soundFileUuid.ToString(), Equals(categoryUuid, Guid.Empty) ? null : categoryUuid.ToString());
 
             await ClearCacheAsync();
             return uuid;
         }
 
-        public static async Task<Sound> GetSound(Guid uuid)
+        public static async Task<Sound> GetSoundAsync(Guid uuid)
         {
-            var soundTableObject = DatabaseOperations.GetObject(uuid);
+            var soundTableObject = await DatabaseOperations.GetObjectAsync(uuid);
 
             if (soundTableObject == null || soundTableObject.TableId != SoundTableId)
                 return null;
@@ -896,7 +871,7 @@ namespace UniversalSoundBoard.DataAccess
             // Get favourite
             var favouriteString = soundTableObject.GetPropertyValue(SoundTableFavouritePropertyName);
             bool favourite = false;
-            if (!String.IsNullOrEmpty(favouriteString))
+            if (!string.IsNullOrEmpty(favouriteString))
             {
                 bool.TryParse(favouriteString, out favourite);
                 sound.Favourite = favourite;
@@ -905,14 +880,14 @@ namespace UniversalSoundBoard.DataAccess
             // Get the categories
             var categoryUuidsString = soundTableObject.GetPropertyValue(SoundTableCategoryUuidPropertyName);
             sound.Categories = new List<Category>();
-            if (!String.IsNullOrEmpty(categoryUuidsString))
+            if (!string.IsNullOrEmpty(categoryUuidsString))
             {
                 foreach(var cUuidString in categoryUuidsString.Split(","))
                 {
                     Guid? cUuid = ConvertStringToGuid(cUuidString);
                     if(cUuid.HasValue)
                     {
-                        var category = GetCategory(cUuid.Value);
+                        var category = await GetCategoryAsync(cUuid.Value);
                         if(category != null)
                             sound.Categories.Add(category);
                     }
@@ -933,7 +908,7 @@ namespace UniversalSoundBoard.DataAccess
             Guid? imageFileUuid = ConvertStringToGuid(imageFileUuidString);
             if (imageFileUuid.HasValue && !Equals(imageFileUuid, Guid.Empty))
             {
-                var imageFile = await GetTableObjectFile(imageFileUuid.Value);
+                var imageFile = await GetTableObjectFileAsync(imageFileUuid.Value);
 
                 if (imageFile != null)
                     image.UriSource = new Uri(imageFile.Path);
@@ -943,31 +918,31 @@ namespace UniversalSoundBoard.DataAccess
             return sound;
         }
 
-        public static void RenameSound(Guid uuid, string newName)
+        public static async Task RenameSoundAsync(Guid uuid, string newName)
         {
-            DatabaseOperations.UpdateSound(uuid, newName, null, null, null, null);
+            await DatabaseOperations.UpdateSoundAsync(uuid, newName, null, null, null, null);
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 
-        public static void SetCategoriesOfSound(Guid soundUuid, List<Guid> categoryUuids)
+        public static async Task SetCategoriesOfSoundAsync(Guid soundUuid, List<Guid> categoryUuids)
         {
             List<string> categoryUuidsString = new List<string>();
             foreach (var uuid in categoryUuids)
                 categoryUuidsString.Add(uuid.ToString());
 
-            DatabaseOperations.UpdateSound(soundUuid, null, null, null, null, categoryUuidsString);
+            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, categoryUuidsString);
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 
-        public static void SetSoundAsFavourite(Guid uuid, bool favourite)
+        public static async Task SetSoundAsFavouriteAsync(Guid uuid, bool favourite)
         {
-            DatabaseOperations.UpdateSound(uuid, null, favourite.ToString(), null, null, null);
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, favourite.ToString(), null, null, null);
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 
-        public static async Task UpdateImageOfSound(Guid soundUuid, StorageFile file)
+        public static async Task UpdateImageOfSoundAsync(Guid soundUuid, StorageFile file)
         {
-            var soundTableObject = DatabaseOperations.GetObject(soundUuid);
+            var soundTableObject = await DatabaseOperations.GetObjectAsync(soundUuid);
             if (soundTableObject == null || soundTableObject.TableId != SoundTableId)
                 return;
             
@@ -978,13 +953,13 @@ namespace UniversalSoundBoard.DataAccess
             {
                 // Create new image file
                 Guid imageFileUuid = Guid.NewGuid();
-                DatabaseOperations.AddImageFile(imageFileUuid, newImageFile);
-                DatabaseOperations.UpdateSound(soundUuid, null, null, null, imageFileUuid.ToString(), null);
+                await DatabaseOperations.AddImageFileAsync(imageFileUuid, newImageFile);
+                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, imageFileUuid.ToString(), null);
             }
             else
             {
                 // Update the existing image file
-                DatabaseOperations.UpdateImageFile(imageUuid.Value, newImageFile);
+                await DatabaseOperations.UpdateImageFileAsync(imageUuid.Value, newImageFile);
             }
 
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
@@ -992,23 +967,22 @@ namespace UniversalSoundBoard.DataAccess
         
         public static async Task DeleteSoundAsync(Guid uuid)
         {
-            // Find the sound and image file and delete them
-            await Task.Run(() => DatabaseOperations.DeleteSound(uuid));
+            await DatabaseOperations.DeleteSoundAsync(uuid);
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
         
         public static async Task DeleteSoundsAsync(List<Guid> sounds)
         {
             foreach (Guid uuid in sounds)
-                await Task.Run(() => DatabaseOperations.DeleteSound(uuid));
+                await DatabaseOperations.DeleteSoundAsync(uuid);
 
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 
-        public static List<Sound> SortSoundsListByCustomOrder(List<Sound> sounds, Guid categoryUuid, bool favourite)
+        public static async Task<List<Sound>> SortSoundsListByCustomOrderAsync(List<Sound> sounds, Guid categoryUuid, bool favourite)
         {
             // Get the order table objects
-            var tableObjects = DatabaseOperations.GetAllOrders();
+            var tableObjects = await DatabaseOperations.GetAllOrdersAsync();
             
             // Get the order objects with the type Sound (1), the right category uuid and the same favourite
             var soundOrderTableObjects = tableObjects.FindAll((TableObject obj) =>
@@ -1111,12 +1085,12 @@ namespace UniversalSoundBoard.DataAccess
                     }
 
                     // Delete the object and remove it from the list
-                    firstOrderTableObject.Delete();
+                    await firstOrderTableObject.Delete();
                     soundOrderTableObjects.Remove(firstOrderTableObject);
                 }
 
                 if (saveNewOrder)
-                    DatabaseOperations.SetSoundOrder(categoryUuid, favourite, uuids);
+                    await DatabaseOperations.SetSoundOrderAsync(categoryUuid, favourite, uuids);
                 return sortedSounds;
             }
             else
@@ -1127,39 +1101,39 @@ namespace UniversalSoundBoard.DataAccess
                 foreach (var sound in sounds)
                     uuids.Add(sound.Uuid);
 
-                DatabaseOperations.SetSoundOrder(categoryUuid, favourite, uuids);
+                await DatabaseOperations.SetSoundOrderAsync(categoryUuid, favourite, uuids);
                 return sounds;
             }
         }
 
-        public static Category AddCategory(Guid uuid, string name, string icon)
+        public static async Task<Category> AddCategoryAsync(Guid uuid, string name, string icon)
         {
             if (Equals(uuid, Guid.Empty))
                 uuid = Guid.NewGuid();
 
-            if (DatabaseOperations.GetObject(uuid) != null)
+            if (DatabaseOperations.GetObjectAsync(uuid) != null)
                 return null;
 
-            DatabaseOperations.AddCategory(uuid, name, icon);
+            await DatabaseOperations.AddCategoryAsync(uuid, name, icon);
 
-            CreateCategoriesList();
+            await CreateCategoriesListAsync();
             return new Category(uuid, name, icon);
         }
 
-        private static List<Category> GetAllCategories()
+        private static async Task<List<Category>> GetAllCategoriesAsync()
         {
-            List<TableObject> categoriesTableObjectList = DatabaseOperations.GetAllCategories();
+            List<TableObject> categoriesTableObjectList = await DatabaseOperations.GetAllCategoriesAsync();
             List<Category> categoriesList = new List<Category>();
 
             foreach (var categoryTableObject in categoriesTableObjectList)
-                categoriesList.Add(GetCategory(categoryTableObject.Uuid));
+                categoriesList.Add(await GetCategoryAsync(categoryTableObject.Uuid));
 
-            return SortCategoriesList(categoriesList);
+            return await SortCategoriesListAsync(categoriesList);
         }
 
-        private static Category GetCategory(Guid uuid)
+        private static async Task<Category> GetCategoryAsync(Guid uuid)
         {
-            var categoryTableObject = DatabaseOperations.GetObject(uuid);
+            var categoryTableObject = await DatabaseOperations.GetObjectAsync(uuid);
 
             if (categoryTableObject == null || categoryTableObject.TableId != CategoryTableId)
                 return null;
@@ -1169,40 +1143,40 @@ namespace UniversalSoundBoard.DataAccess
                                 categoryTableObject.GetPropertyValue(CategoryTableIconPropertyName));
         }
 
-        public static void UpdateCategory(Guid uuid, string name, string icon)
+        public static async Task UpdateCategoryAsync(Guid uuid, string name, string icon)
         {
-            DatabaseOperations.UpdateCategory(uuid, name, icon);
-            CreateCategoriesList();
+            await DatabaseOperations.UpdateCategoryAsync(uuid, name, icon);
+            await CreateCategoriesListAsync();
         }
 
-        public static void DeleteCategory(Guid categoryUuid)
+        public static async Task DeleteCategoryAsync(Guid categoryUuid)
         {
-            var categoryTableObject = DatabaseOperations.GetObject(categoryUuid);
+            var categoryTableObject = await DatabaseOperations.GetObjectAsync(categoryUuid);
 
             if (categoryTableObject == null || categoryTableObject.TableId != CategoryTableId)
                 return;
 
-            DatabaseOperations.DeleteObject(categoryUuid);
+            await DatabaseOperations.DeleteObjectAsync(categoryUuid);
 
             // Delete the SoundOrder table objects of all deleted categories
-            var tableObjects = DatabaseOperations.GetAllOrders();
+            var tableObjects = await DatabaseOperations.GetAllOrdersAsync();
             foreach(var tableObject in tableObjects)
             {
                 if (tableObject.GetPropertyValue(OrderTableTypePropertyName) != SoundOrderType) continue;
                 Guid cUuid = ConvertStringToGuid(tableObject.GetPropertyValue(OrderTableCategoryPropertyName)) ?? Guid.Empty;
                 if (cUuid == Guid.Empty) continue;
                 
-                if (!DatabaseOperations.ObjectExists(cUuid))
-                    tableObject.Delete();
+                if (!await DatabaseOperations.ObjectExistsAsync(cUuid))
+                    await tableObject.Delete();
             }
 
-            CreateCategoriesList();
+            await CreateCategoriesListAsync();
         }
 
-        private static List<Category> SortCategoriesList(List<Category> categories)
+        private static async Task<List<Category>> SortCategoriesListAsync(List<Category> categories)
         {
             // Get the order table objects
-            var tableObjects = DatabaseOperations.GetAllOrders();
+            var tableObjects = await DatabaseOperations.GetAllOrdersAsync();
 
             // Check if the order table object with the type of category (0) exists
             var categoryOrderTableObjects = tableObjects.FindAll(obj => obj.GetPropertyValue(OrderTableTypePropertyName) == CategoryOrderType);
@@ -1272,11 +1246,11 @@ namespace UniversalSoundBoard.DataAccess
                     }
 
                     // Delete the object and remove it from the list
-                    firstOrderTableObject.Delete();
+                    await firstOrderTableObject.Delete();
                     categoryOrderTableObjects.Remove(firstOrderTableObject);
                 }
                 
-                DatabaseOperations.SetCategoryOrder(uuids);
+                await DatabaseOperations.SetCategoryOrderAsync(uuids);
                 return sortedCategories;
             }
             else
@@ -1287,22 +1261,22 @@ namespace UniversalSoundBoard.DataAccess
                 foreach (var category in categories)
                     uuids.Add(category.Uuid);
 
-                DatabaseOperations.SetCategoryOrder(uuids);
+                await DatabaseOperations.SetCategoryOrderAsync(uuids);
                 return categories;
             }
         }
 
-        public static void SetCategoryOrder(List<Guid> uuids)
+        public static async Task SetCategoryOrderAsync(List<Guid> uuids)
         {
-            DatabaseOperations.SetCategoryOrder(uuids);
+            await DatabaseOperations.SetCategoryOrderAsync(uuids);
         }
 
-        public static Guid AddPlayingSound(Guid uuid, List<Sound> sounds, int current, int repetitions, bool randomly, double volume)
+        public static async Task<Guid> AddPlayingSoundAsync(Guid uuid, List<Sound> sounds, int current, int repetitions, bool randomly, double volume)
         {
             if (Equals(uuid, Guid.Empty))
                 uuid = Guid.NewGuid();
 
-            if (DatabaseOperations.ObjectExists(uuid)) return uuid;
+            if (await DatabaseOperations.ObjectExistsAsync(uuid)) return uuid;
 
             if (!(App.Current as App)._itemViewHolder.SavePlayingSounds ||
                 (App.Current as App)._itemViewHolder.PlayingSoundsListVisibility != Visibility.Visible)
@@ -1319,40 +1293,40 @@ namespace UniversalSoundBoard.DataAccess
                 soundIds.Add(sound.Uuid.ToString());
             }
 
-            DatabaseOperations.AddPlayingSound(uuid, soundIds, current, repetitions, randomly, volume);
+            await DatabaseOperations.AddPlayingSoundAsync(uuid, soundIds, current, repetitions, randomly, volume);
 
             return uuid;
         }
 
-        public static async Task<List<PlayingSound>> GetAllPlayingSounds()
+        public static async Task<List<PlayingSound>> GetAllPlayingSoundsAsync()
         {
-            List<TableObject> playingSoundObjects = DatabaseOperations.GetAllPlayingSounds();
+            List<TableObject> playingSoundObjects = await DatabaseOperations.GetAllPlayingSoundsAsync();
             List<PlayingSound> playingSounds = new List<PlayingSound>();
 
             foreach (var obj in playingSoundObjects)
             {
-                var playingSound = await ConvertTableObjectToPlayingSound(obj);
+                var playingSound = await ConvertTableObjectToPlayingSoundAsync(obj);
                 if (playingSound != null) playingSounds.Add(playingSound);
             }
             return playingSounds;
         }
 
-        public static async Task<PlayingSound> GetPlayingSound(Guid uuid)
+        public static async Task<PlayingSound> GetPlayingSoundAsync(Guid uuid)
         {
-            var tableObject = DatabaseOperations.GetObject(uuid);
+            var tableObject = await DatabaseOperations.GetObjectAsync(uuid);
             if (tableObject == null) return null;
             if (tableObject.TableId != PlayingSoundTableId) return null;
 
-            return await ConvertTableObjectToPlayingSound(tableObject);
+            return await ConvertTableObjectToPlayingSoundAsync(tableObject);
         }
 
-        private static async Task<PlayingSound> ConvertTableObjectToPlayingSound(TableObject tableObject)
+        private static async Task<PlayingSound> ConvertTableObjectToPlayingSoundAsync(TableObject tableObject)
         {
             List<Sound> sounds = new List<Sound>();
             string soundIds = tableObject.GetPropertyValue(PlayingSoundTableSoundIdsPropertyName);
 
             // Get the sounds
-            if (!String.IsNullOrEmpty(soundIds))
+            if (!string.IsNullOrEmpty(soundIds))
             {
                 foreach (string uuidString in soundIds.Split(","))
                 {
@@ -1361,7 +1335,7 @@ namespace UniversalSoundBoard.DataAccess
 
                     if (!Equals(uuid, Guid.Empty))
                     {
-                        var sound = await GetSound(uuid);
+                        var sound = await GetSoundAsync(uuid);
                         if (sound != null)
                             sounds.Add(sound);
                     }
@@ -1370,36 +1344,32 @@ namespace UniversalSoundBoard.DataAccess
                 if (sounds.Count == 0)
                 {
                     // Delete the playing sound
-                    DeletePlayingSound(tableObject.Uuid);
+                    await DeletePlayingSoundAsync(tableObject.Uuid);
                     return null;
                 }
             }
             else
             {
                 // Delete the playing sound
-                DeletePlayingSound(tableObject.Uuid);
+                await DeletePlayingSoundAsync(tableObject.Uuid);
                 return null;
             }
 
             // Get the properties of the table objects
-            int current = 0;
             string currentString = tableObject.GetPropertyValue(PlayingSoundTableCurrentPropertyName);
-            int.TryParse(currentString, out current);
+            int.TryParse(currentString, out int current);
 
-            double volume = 1.0;
             string volumeString = tableObject.GetPropertyValue(PlayingSoundTableVolumePropertyName);
-            double.TryParse(volumeString, out volume);
+            double.TryParse(volumeString, out double volume);
 
-            int repetitions = 1;
             string repetitionsString = tableObject.GetPropertyValue(PlayingSoundTableRepetitionsPropertyName);
-            int.TryParse(repetitionsString, out repetitions);
+            int.TryParse(repetitionsString, out int repetitions);
 
-            bool randomly = false;
             string randomlyString = tableObject.GetPropertyValue(PlayingSoundTableRandomlyPropertyName);
-            bool.TryParse(randomlyString, out randomly);
+            bool.TryParse(randomlyString, out bool randomly);
 
             // Create the media player
-            MediaPlayer player = await CreateMediaPlayer(sounds, current);
+            MediaPlayer player = await CreateMediaPlayerAsync(sounds, current);
 
             if (player != null)
             {
@@ -1412,12 +1382,12 @@ namespace UniversalSoundBoard.DataAccess
             else
             {
                 // Remove the PlayingSound from the DB
-                DeletePlayingSound(tableObject.Uuid);
+                await DeletePlayingSoundAsync(tableObject.Uuid);
                 return null;
             }
         }
 
-        public static void AddOrRemoveAllPlayingSounds()
+        public static async Task AddOrRemoveAllPlayingSoundsAsync()
         {
             // Check the settings if all playingSounds should be removed or added
             bool savePlayingSounds = true;
@@ -1439,69 +1409,65 @@ namespace UniversalSoundBoard.DataAccess
                 if (savePlayingSounds)
                 {
                     // Check, if the playingSound is already saved
-                    if (DatabaseOperations.GetObject(ps.Uuid) == null)
+                    if (await DatabaseOperations.GetObjectAsync(ps.Uuid) == null)
                     {
                         // Add the playingSound
                         List<string> soundIds = new List<string>();
                         foreach (Sound sound in ps.Sounds)
-                        {
                             soundIds.Add(sound.Uuid.ToString());
-                        }
 
-                        DatabaseOperations.AddPlayingSound(ps.Uuid, soundIds, ((int)((MediaPlaybackList)ps.MediaPlayer.Source).CurrentItemIndex), ps.Repetitions, ps.Randomly, ps.MediaPlayer.Volume);
+                        await DatabaseOperations.AddPlayingSoundAsync(ps.Uuid, soundIds, ((int)((MediaPlaybackList)ps.MediaPlayer.Source).CurrentItemIndex), ps.Repetitions, ps.Randomly, ps.MediaPlayer.Volume);
                     }
                 }
                 else
                 {
                     // Check, if the playingSound is saved
-                    if (DatabaseOperations.GetObject(ps.Uuid) != null)
+                    if (await DatabaseOperations.GetObjectAsync(ps.Uuid) != null)
                     {
                         // Remove the playingSound
-                        DatabaseOperations.DeleteObject(ps.Uuid);
+                        await DatabaseOperations.DeleteObjectAsync(ps.Uuid);
                     }
                 }
             }
         }
 
-        public static void SetCurrentOfPlayingSound(Guid uuid, int current)
+        public static async Task SetCurrentOfPlayingSoundAsync(Guid uuid, int current)
         {
-            DatabaseOperations.UpdatePlayingSound(uuid, null, current.ToString(), null, null, null);
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, current.ToString(), null, null, null);
         }
 
-        public static void SetRepetitionsOfPlayingSound(Guid uuid, int repetitions)
+        public static async Task SetRepetitionsOfPlayingSoundAsync(Guid uuid, int repetitions)
         {
-            DatabaseOperations.UpdatePlayingSound(uuid, null, null, repetitions.ToString(), null, null);
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, repetitions.ToString(), null, null);
         }
 
-        public static void SetSoundsListOfPlayingSound(Guid uuid, List<Sound> sounds)
+        public static async Task SetSoundsListOfPlayingSoundAsync(Guid uuid, List<Sound> sounds)
         {
             List<string> soundIds = new List<string>();
             foreach (Sound sound in sounds)
-            {
                 soundIds.Add(sound.Uuid.ToString());
-            }
 
-            DatabaseOperations.UpdatePlayingSound(uuid, soundIds, null, null, null, null);
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, soundIds, null, null, null, null);
         }
 
-        public static void SetVolumeOfPlayingSound(Guid uuid, double volume)
+        public static async Task SetVolumeOfPlayingSoundAsync(Guid uuid, double volume)
         {
             if (volume >= 1)
                 volume = 1;
             else if (volume <= 0)
                 volume = 0;
 
-            DatabaseOperations.UpdatePlayingSound(uuid, null, null, null, null, volume.ToString());
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, volume.ToString());
         }
 
-        public static void DeletePlayingSound(Guid uuid)
+        public static async Task DeletePlayingSoundAsync(Guid uuid)
         {
-            DatabaseOperations.DeleteObject(uuid);
+            await DatabaseOperations.DeleteObjectAsync(uuid);
         }
         
-        private static async Task<StorageFile> GetTableObjectFile(Guid uuid)
+        private static async Task<StorageFile> GetTableObjectFileAsync(Guid uuid)
         {
-            var fileTableObject = DatabaseOperations.GetObject(uuid);
+            var fileTableObject = await DatabaseOperations.GetObjectAsync(uuid);
 
             if (fileTableObject == null) return null;
             if (!fileTableObject.IsFile) return null;
@@ -1518,9 +1484,9 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
         
-        public static async Task<StorageFile> GetAudioFileOfSound(Guid soundUuid)
+        public static async Task<StorageFile> GetAudioFileOfSoundAsync(Guid soundUuid)
         {
-            var soundFileTableObject = GetSoundFileTableObject(soundUuid);
+            var soundFileTableObject = await GetSoundFileTableObjectAsync(soundUuid);
             if (soundFileTableObject == null) return null;
             if (soundFileTableObject.File == null) return null;
 
@@ -1530,16 +1496,16 @@ namespace UniversalSoundBoard.DataAccess
                 return null;
         }
 
-        public static string GetAudioFileExtension(Guid soundUuid)
+        public static async Task<string> GetAudioFileExtensionAsync(Guid soundUuid)
         {
-            var soundFileTableObject = GetSoundFileTableObject(soundUuid);
+            var soundFileTableObject = await GetSoundFileTableObjectAsync(soundUuid);
             if (soundFileTableObject == null) return null;
             return soundFileTableObject.GetPropertyValue(TableObjectExtPropertyName);
         }
 
-        public static async Task<StorageFile> GetImageFileOfSound(Guid soundUuid)
+        public static async Task<StorageFile> GetImageFileOfSoundAsync(Guid soundUuid)
         {
-            var imageFileTableObject = GetImageFileTableObject(soundUuid);
+            var imageFileTableObject = await GetImageFileTableObjectAsync(soundUuid);
             if (imageFileTableObject == null) return null;
             if (imageFileTableObject.File == null) return null;
 
@@ -1549,34 +1515,34 @@ namespace UniversalSoundBoard.DataAccess
                 return null;
         }
 
-        public static Uri GetAudioUriOfSound(Guid soundUuid)
+        public static async Task<Uri> GetAudioUriOfSoundAsync(Guid soundUuid)
         {
-            var soundTableObject = GetSoundFileTableObject(soundUuid);
+            var soundTableObject = await GetSoundFileTableObjectAsync(soundUuid);
             if (soundTableObject != null)
                 return soundTableObject.GetFileUri();
             else
                 return null;
         }
 
-        public static async Task<MemoryStream> GetAudioStreamOfSound(Guid soundUuid)
+        public static async Task<MemoryStream> GetAudioStreamOfSoundAsync(Guid soundUuid)
         {
-            var soundTableObject = GetSoundFileTableObject(soundUuid);
+            var soundTableObject = await GetSoundFileTableObjectAsync(soundUuid);
             if (soundTableObject != null)
                 return await soundTableObject.GetFileStream();
             else
                 return null;
         }
 
-        public static void DownloadAudioFileOfSound(Guid soundUuid, Progress<int> progress)
+        public static async Task DownloadAudioFileOfSoundAsync(Guid soundUuid, Progress<int> progress)
         {
-            var soundTableObject = GetSoundFileTableObject(soundUuid);
+            var soundTableObject = await GetSoundFileTableObjectAsync(soundUuid);
             if (soundTableObject != null)
                 soundTableObject.DownloadFile(progress);
         }
         
-        public static DownloadStatus GetSoundFileDownloadStatus(Guid soundUuid)
+        public static async Task<DownloadStatus> GetSoundFileDownloadStatusAsync(Guid soundUuid)
         {
-            var soundTableObject = GetSoundFileTableObject(soundUuid);
+            var soundTableObject = await GetSoundFileTableObjectAsync(soundUuid);
             if (soundTableObject != null)
             {
                 switch (soundTableObject.DownloadStatus)
@@ -1594,24 +1560,24 @@ namespace UniversalSoundBoard.DataAccess
             return DownloadStatus.NoFileOrNotLoggedIn;
         }
 
-        private static TableObject GetSoundFileTableObject(Guid soundUuid)
+        private static async Task<TableObject> GetSoundFileTableObjectAsync(Guid soundUuid)
         {
-            var soundTableObject = DatabaseOperations.GetObject(soundUuid);
+            var soundTableObject = await DatabaseOperations.GetObjectAsync(soundUuid);
             if (soundTableObject == null) return null;
             Guid soundFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName)) ?? Guid.Empty;
             if (Equals(soundFileUuid, Guid.Empty)) return null;
-            var soundFileTableObject = DatabaseOperations.GetObject(soundFileUuid);
+            var soundFileTableObject = await DatabaseOperations.GetObjectAsync(soundFileUuid);
             if (soundFileTableObject == null) return null;
             return soundFileTableObject;
         }
 
-        private static TableObject GetImageFileTableObject(Guid soundUuid)
+        private static async Task<TableObject> GetImageFileTableObjectAsync(Guid soundUuid)
         {
-            var soundTableObject = DatabaseOperations.GetObject(soundUuid);
+            var soundTableObject = await DatabaseOperations.GetObjectAsync(soundUuid);
             if (soundTableObject == null) return null;
             Guid imageFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName)) ?? Guid.Empty;
             if (Equals(imageFileUuid, Guid.Empty)) return null;
-            var imageFileTableObject = DatabaseOperations.GetObject(imageFileUuid);
+            var imageFileTableObject = await DatabaseOperations.GetObjectAsync(imageFileUuid);
             if (imageFileTableObject == null) return null;
             return imageFileTableObject;
         }
@@ -1620,38 +1586,21 @@ namespace UniversalSoundBoard.DataAccess
         #region UI Methods
         public static bool AreTopButtonsNormal()
         {
-            if ((App.Current as App)._itemViewHolder.NormalOptionsVisibility)
-            {
-                if ((App.Current as App)._itemViewHolder.SearchAutoSuggestBoxVisibility && Window.Current.Bounds.Width >= hideSearchBoxMaxWidth)
-                {
-                    return true;
-                }
-
-                if ((App.Current as App)._itemViewHolder.SearchButtonVisibility && Window.Current.Bounds.Width < hideSearchBoxMaxWidth)
-                {
-                    return true;
-                }
-            }
-
-            return false;
+            return (App.Current as App)._itemViewHolder.NormalOptionsVisibility
+                    && (((App.Current as App)._itemViewHolder.SearchAutoSuggestBoxVisibility && Window.Current.Bounds.Width >= hideSearchBoxMaxWidth)
+                        || ((App.Current as App)._itemViewHolder.SearchButtonVisibility && Window.Current.Bounds.Width < hideSearchBoxMaxWidth));
         }
 
         public static void CheckBackButtonVisibility()
         {
-            if (AreTopButtonsNormal() &&
-                (App.Current as App)._itemViewHolder.SelectedCategory == 0 &&
-                String.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
-            {       // Anything is normal, SoundPage shows All Sounds
-                (App.Current as App)._itemViewHolder.IsBackButtonEnabled = false;
-            }
-            else
-            {
-                (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
-            }
+            // Is false if SoundPage shows All Sounds and button are normal
+            (App.Current as App)._itemViewHolder.IsBackButtonEnabled = !(AreTopButtonsNormal()
+                                                                        && (App.Current as App)._itemViewHolder.SelectedCategory == 0
+                                                                        && string.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery));
         }
         
         // Go to the Sounds page and show all sounds
-        public static async Task ShowAllSounds()
+        public static async Task ShowAllSoundsAsync()
         {
             if (AreTopButtonsNormal())
                 (App.Current as App)._itemViewHolder.IsBackButtonEnabled = false;
@@ -1659,9 +1608,9 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.SearchQuery = "";
             (App.Current as App)._itemViewHolder.SelectedCategory = 0;
             (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
-            (App.Current as App)._itemViewHolder.Title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+            (App.Current as App)._itemViewHolder.Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds");
             (App.Current as App)._itemViewHolder.Page = typeof(SoundPage);
-            await LoadAllSounds();
+            await LoadAllSoundsAsync();
             ShowPlayAllButton();
             skipAutoSuggestBoxTextChanged = false;
         }
@@ -1670,16 +1619,15 @@ namespace UniversalSoundBoard.DataAccess
         {
             double width = Window.Current.Bounds.Width;
 
-            (App.Current as App)._itemViewHolder.TopButtonsCollapsed = (width < topButtonsCollapsedMaxWidth);
+            (App.Current as App)._itemViewHolder.TopButtonsCollapsed = width < topButtonsCollapsedMaxWidth;
             (App.Current as App)._itemViewHolder.SelectButtonVisibility = !(width < moveSelectButtonMaxWidth);
             (App.Current as App)._itemViewHolder.AddButtonVisibility = !(width < moveAddButtonMaxWidth);
             (App.Current as App)._itemViewHolder.VolumeButtonVisibility = !(width < moveVolumeButtonMaxWidth);
             (App.Current as App)._itemViewHolder.ShareButtonVisibility = !(width < moveAddButtonMaxWidth);
             (App.Current as App)._itemViewHolder.CancelButtonVisibility = !(width < hideSearchBoxMaxWidth);
-            (App.Current as App)._itemViewHolder.MoreButtonVisibility = (width < moveSelectButtonMaxWidth
-                                                                        || !(App.Current as App)._itemViewHolder.NormalOptionsVisibility);
+            (App.Current as App)._itemViewHolder.MoreButtonVisibility = width < moveSelectButtonMaxWidth || !(App.Current as App)._itemViewHolder.NormalOptionsVisibility;
 
-            if (String.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
+            if (string.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
             {
                 (App.Current as App)._itemViewHolder.SearchAutoSuggestBoxVisibility = !(width < hideSearchBoxMaxWidth);
                 (App.Current as App)._itemViewHolder.SearchButtonVisibility = (width < hideSearchBoxMaxWidth);
@@ -1702,7 +1650,7 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static async Task UpdateGridView()
+        public static async Task UpdateGridViewAsync()
         {
             if (updatingGridView) return;
             updatingGridView = true;
@@ -1715,7 +1663,7 @@ namespace UniversalSoundBoard.DataAccess
                 {
                     if (selectedCategoryIndex == 0)
                     {
-                        await LoadAllSounds();
+                        await LoadAllSoundsAsync();
                         (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
                     }
                     else if ((App.Current as App)._itemViewHolder.Page != typeof(SoundPage))
@@ -1724,19 +1672,19 @@ namespace UniversalSoundBoard.DataAccess
                     }
                     else
                     {
-                        await LoadSoundsByCategory(selectedCategory.Uuid);
+                        await LoadSoundsByCategoryAsync(selectedCategory.Uuid);
                         (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Visible;
                     }
                 }
                 else
                 {
                     (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
-                    await LoadSoundsByName((App.Current as App)._itemViewHolder.SearchQuery);
+                    await LoadSoundsByNameAsync((App.Current as App)._itemViewHolder.SearchQuery);
                 }
             }
             else
             {
-                await LoadAllSounds();
+                await LoadAllSoundsAsync();
                 (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
             }
 
@@ -1746,14 +1694,14 @@ namespace UniversalSoundBoard.DataAccess
             if (selectedCategoryIndex != (App.Current as App)._itemViewHolder.SelectedCategory)
             {
                 // Update UI
-                await UpdateGridView();
+                await UpdateGridViewAsync();
             }
             ShowPlayAllButton();
         }
 
-        public static async Task ShowCategory(Guid uuid)
+        public static async Task ShowCategoryAsync(Guid uuid)
         {
-            var categoryTableObject = DatabaseOperations.GetObject(uuid);
+            var categoryTableObject = await DatabaseOperations.GetObjectAsync(uuid);
 
             if (categoryTableObject != null && categoryTableObject.TableId == CategoryTableId)
             {
@@ -1765,13 +1713,11 @@ namespace UniversalSoundBoard.DataAccess
                 (App.Current as App)._itemViewHolder.Title = WebUtility.HtmlDecode(category.Name);
                 (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
                 (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Visible;
-                await LoadSoundsByCategory(category.Uuid);
+                await LoadSoundsByCategoryAsync(category.Uuid);
                 SelectCategory(category.Uuid);
             }
             else
-            {
-                await ShowAllSounds();
-            }
+                await ShowAllSoundsAsync();
         }
 
         public static void ResetSearchArea()
@@ -1802,7 +1748,7 @@ namespace UniversalSoundBoard.DataAccess
                 (App.Current as App)._itemViewHolder.NormalOptionsVisibility = true;
                 (App.Current as App)._itemViewHolder.AreSelectButtonsEnabled = true;
 
-                if (!String.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
+                if (!string.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
                 {
                     (App.Current as App)._itemViewHolder.SearchAutoSuggestBoxVisibility = true;
                     (App.Current as App)._itemViewHolder.SearchButtonVisibility = false;
@@ -1814,16 +1760,12 @@ namespace UniversalSoundBoard.DataAccess
         public static void ResetTopButtons()
         {
             if ((App.Current as App)._itemViewHolder.SelectionMode != ListViewSelectionMode.None)
-            {
                 SwitchSelectionMode();
-            }
             else
-            {
                 ResetSearchArea();
-            }
         }
 
-        public static void GoBack()
+        public static async Task GoBackAsync()
         {
             if (!AreTopButtonsNormal())
             {
@@ -1836,19 +1778,19 @@ namespace UniversalSoundBoard.DataAccess
                     // Go to All sounds page
                     (App.Current as App)._itemViewHolder.Page = typeof(SoundPage);
                     (App.Current as App)._itemViewHolder.SelectedCategory = 0;
-                    (App.Current as App)._itemViewHolder.Title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds");
+                    (App.Current as App)._itemViewHolder.Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds");
                     (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
-                    Task.Run(ShowAllSounds);
+                    await ShowAllSoundsAsync();
                 }
                 else if ((App.Current as App)._itemViewHolder.SelectedCategory == 0 &&
-                        String.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
+                        string.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
                 {   // If SoundPage shows AllSounds
 
                 }
                 else
                 {   // If SoundPage shows Category or search results
                     // Top Buttons are normal, but page shows Category or search results
-                    ShowAllSounds().Wait();
+                    await ShowAllSoundsAsync();
                 }
             }
 
@@ -1898,22 +1840,20 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region General Methods
-        public static void CreateCategoriesList()
+        public static async Task CreateCategoriesListAsync()
         {
             int selectedCategory = (App.Current as App)._itemViewHolder.SelectedCategory;
             (App.Current as App)._itemViewHolder.Categories.Clear();
             (App.Current as App)._itemViewHolder.Categories.Add(new Category(Guid.Empty, (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), "\uE10F"));
 
-            foreach (Category cat in GetAllCategories())
-            {
+            foreach (Category cat in await GetAllCategoriesAsync())
                 (App.Current as App)._itemViewHolder.Categories.Add(cat);
-            }
             (App.Current as App)._itemViewHolder.SelectedCategory = selectedCategory;
         }
 
-        public static async Task UpdatePlayingSoundListItem(Guid uuid)
+        public static async Task UpdatePlayingSoundListItemAsync(Guid uuid)
         {
-            var playingSound = await GetPlayingSound(uuid);
+            var playingSound = await GetPlayingSoundAsync(uuid);
             if (playingSound == null) return;
 
             var currentPlayingSoundList = (App.Current as App)._itemViewHolder.PlayingSounds.Where(p => p.Uuid == playingSound.Uuid);
@@ -1927,9 +1867,9 @@ namespace UniversalSoundBoard.DataAccess
             (App.Current as App)._itemViewHolder.PlayingSounds.Insert(index, playingSound);
         }
 
-        public static async Task CreatePlayingSoundsList()
+        public static async Task CreatePlayingSoundsListAsync()
         {
-            var allPlayingSounds = await GetAllPlayingSounds();
+            var allPlayingSounds = await GetAllPlayingSoundsAsync();
             foreach (PlayingSound ps in allPlayingSounds)
             {
                 if (ps.MediaPlayer != null)
@@ -1975,24 +1915,18 @@ namespace UniversalSoundBoard.DataAccess
             {
                 // Remove the playing sound from ItemViewHolder if it does not exist in the new playing sounds list
                 if (allPlayingSounds.Where(p => p.Uuid == ps.Uuid).Count() == 0)
-                {
                     (App.Current as App)._itemViewHolder.PlayingSounds.Remove(ps);
-                }
             }
         }
 
         public static void SelectCategory(Guid uuid)
         {
             for (int i = 0; i < (App.Current as App)._itemViewHolder.Categories.Count(); i++)
-            {
                 if (Equals((App.Current as App)._itemViewHolder.Categories[i].Uuid, uuid))
-                {
                     (App.Current as App)._itemViewHolder.SelectedCategory = i;
-                }
-            }
         }
 
-        private static List<Sound> SortSoundsList(List<Sound> sounds, SoundOrder order, bool reversed, Guid categoryUuid, bool favourite)
+        private static async Task<List<Sound>> SortSoundsListAsync(List<Sound> sounds, SoundOrder order, bool reversed, Guid categoryUuid, bool favourite)
         {
             List<Sound> sortedSounds = new List<Sound>();
 
@@ -2018,7 +1952,7 @@ namespace UniversalSoundBoard.DataAccess
                     break;
                 default:
                     // Custom order
-                    foreach (var sound in SortSoundsListByCustomOrder(sounds, categoryUuid, favourite))
+                    foreach (var sound in await SortSoundsListByCustomOrderAsync(sounds, categoryUuid, favourite))
                         sortedSounds.Add(sound);
 
                     break;
@@ -2027,7 +1961,7 @@ namespace UniversalSoundBoard.DataAccess
             return sortedSounds;
         }
 
-        public static async Task UpdateLiveTile()
+        public static async Task UpdateLiveTileAsync()
         {
             var localSettings = ApplicationData.Current.LocalSettings;
             bool isLiveTileOn = false;
@@ -2052,7 +1986,7 @@ namespace UniversalSoundBoard.DataAccess
             // Get sound with image
             foreach (Sound s in (App.Current as App)._itemViewHolder.AllSounds)
             {
-                if(await s.GetImageFile() != null)
+                if(await s.GetImageFileAsync() != null)
                     sounds.Add(s);
             }
 
@@ -2061,7 +1995,7 @@ namespace UniversalSoundBoard.DataAccess
 
             Random random = new Random();
             sound = sounds.ElementAt(random.Next(sounds.Count));
-            StorageFile imageFile = await sound.GetImageFile();
+            StorageFile imageFile = await sound.GetImageFileAsync();
             if (imageFile == null) return;
 
             NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
@@ -2097,7 +2031,8 @@ namespace UniversalSoundBoard.DataAccess
 
             // Create the tile notification
             var notification = new TileNotification(content.GetXml());
-            // And send the notification
+
+            // Send the notification
             TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
         }
 
@@ -2113,21 +2048,21 @@ namespace UniversalSoundBoard.DataAccess
             foreach (Sound sound in (App.Current as App)._itemViewHolder.AllSounds)
             {
                 float size = 0;
-                var soundAudioFile = await sound.GetAudioFile();
+                var soundAudioFile = await sound.GetAudioFileAsync();
                 if(soundAudioFile != null)
                     size = await GetFileSizeInGBAsync(soundAudioFile);
 
-                var soundImageFile = await sound.GetImageFile();
+                var soundImageFile = await sound.GetImageFileAsync();
                 if(soundImageFile != null)
                     size += await GetFileSizeInGBAsync(soundImageFile);
 
                 totalSize += size;
             }
 
-            (App.Current as App)._itemViewHolder.SoundboardSize = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SettingsSoundBoardSize") + totalSize.ToString("n2") + " GB.";
+            (App.Current as App)._itemViewHolder.SoundboardSize = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("SettingsSoundBoardSize") + totalSize.ToString("n2") + " GB.";
         }
 
-        public static async Task<MediaPlayer> CreateMediaPlayer(List<Sound> sounds, int current)
+        public static async Task<MediaPlayer> CreateMediaPlayerAsync(List<Sound> sounds, int current)
         {
             if (sounds.Count == 0) return null;
 
@@ -2137,12 +2072,12 @@ namespace UniversalSoundBoard.DataAccess
             foreach (Sound sound in sounds)
             {
                 // Check if the sound was downloaded
-                StorageFile audioFile = await sound.GetAudioFile();
+                StorageFile audioFile = await sound.GetAudioFileAsync();
                 MediaPlaybackItem mediaPlaybackItem;
 
                 if (audioFile == null)
                 {
-                    Uri soundUri = sound.GetAudioUri();
+                    Uri soundUri = await sound.GetAudioUriAsync();
                     if (soundUri == null) continue;
 
                     mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(soundUri));
@@ -2157,11 +2092,9 @@ namespace UniversalSoundBoard.DataAccess
                 if(sound.Categories.Count > 0)
                     props.MusicProperties.Artist = sound.Categories.First().Name;
 
-                var imageFile = await sound.GetImageFile();
+                var imageFile = await sound.GetImageFileAsync();
                 if (imageFile != null)
-                {
                     props.Thumbnail = RandomAccessStreamReference.CreateFromFile(imageFile);
-                }
 
                 mediaPlaybackItem.ApplyDisplayProperties(props);
 
@@ -2194,7 +2127,7 @@ namespace UniversalSoundBoard.DataAccess
             return player;
         }
 
-        public static async Task<bool> UsesDavDataModel()
+        public static async Task<bool> UsesDavDataModelAsync()
         {
             StorageFolder localStorageFolder = ApplicationData.Current.LocalFolder;
 
@@ -2225,7 +2158,7 @@ namespace UniversalSoundBoard.DataAccess
             foreach (char c in text)
             {
                 if (c > 127) // special chars
-                    sb.Append(String.Format("&#{0};", (int)c));
+                    sb.Append(string.Format("&#{0};", (int)c));
                 else
                     sb.Append(c);
             }
@@ -2359,7 +2292,7 @@ namespace UniversalSoundBoard.DataAccess
             return categoriesList;
         }
 
-        public static async Task WriteFile(StorageFile file, Object objectToWrite)
+        public static async Task WriteFileAsync(StorageFile file, object objectToWrite)
         {
             DataContractJsonSerializer js = new DataContractJsonSerializer(objectToWrite.GetType());
             MemoryStream ms = new MemoryStream();
@@ -2372,7 +2305,7 @@ namespace UniversalSoundBoard.DataAccess
             await FileIO.WriteTextAsync(file, data);
         }
 
-        public static async Task<NewData> GetDataFromFile(StorageFile dataFile)
+        public static async Task<NewData> GetDataFromFileAsync(StorageFile dataFile)
         {
             string data = await FileIO.ReadTextAsync(dataFile);
 
