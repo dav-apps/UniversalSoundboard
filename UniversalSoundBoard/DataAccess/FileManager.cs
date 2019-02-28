@@ -167,11 +167,24 @@ namespace UniversalSoundBoard.DataAccess
             CreationDate = 2
         };
 
+        // Local variables
         internal static bool skipAutoSuggestBoxTextChanged = false;
         private static bool updatingGridView = false;
         internal static bool syncFinished = false;
+
+        // Save the custom order of the sounds in all categories to load them faster
+        private static Dictionary<Guid, List<Guid>> CustomSoundOrder = new Dictionary<Guid, List<Guid>>();
+        private static Dictionary<Guid, List<Guid>> CustomFavouriteSoundOrder = new Dictionary<Guid, List<Guid>>();
+
+        // If true LoadSelectedSounds is currently running
+        private static bool isLoadingSelectedCategory = false;
+
+        // Set this when calling LoadAllSounds, LoadSoundsByCategory or LoadSoundsByName
+        // Is either a uuid (category), Guid.Empty (all sounds) or null (search)
+        private static Guid? selectedCategory = Guid.Empty;
+        private static string searchQuery = "";
         #endregion
-        
+
         #region Filesystem Methods
         private static async Task<StorageFolder> GetExportFolderAsync()
         {
@@ -708,131 +721,201 @@ namespace UniversalSoundBoard.DataAccess
             return sounds;
         }
 
+        // Load all sounds into the sounds list
+        public static async Task LoadAllSoundsAsync()
+        {
+            selectedCategory = Guid.Empty;
+            await LoadSelectedCategory();
+        }
+
+        public static async Task LoadSoundsByCategoryAsync(Guid uuid)
+        {
+            selectedCategory = uuid;
+            await LoadSelectedCategory();
+        }
+
+        // Copy the sounds by the name from the all sounds list into the Sounds list which is bound to the GridView
+        public static async Task LoadSoundsByNameAsync(string name)
+        {
+            selectedCategory = null;
+            searchQuery = name;
+            await LoadSelectedCategory();
+        }
+
+        private static async Task LoadSelectedCategory()
+        {
+            if (isLoadingSelectedCategory) return;
+            isLoadingSelectedCategory = true;
+
+            Guid? selectedCategoryAtBeginning = selectedCategory;
+            (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
+            (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
+            await UpdateAllSoundsListAsync();
+
+            (App.Current as App)._itemViewHolder.Sounds.Clear();
+            (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
+            List<Sound> sounds = new List<Sound>();
+            List<Sound> favouriteSounds = new List<Sound>();
+
+            if (selectedCategoryAtBeginning == Guid.Empty)
+            {
+                // Load all sounds
+                foreach (var sound in GetAllSounds(false))
+                    sounds.Add(sound);
+
+                foreach (var sound in GetAllSounds(true))
+                    favouriteSounds.Add(sound);
+
+                // Sort the sounds
+                foreach (var sound in SortSoundsList(sounds,
+                                                    (App.Current as App)._itemViewHolder.SoundOrder,
+                                                    (App.Current as App)._itemViewHolder.SoundOrderReversed,
+                                                    Guid.Empty,
+                                                    false)){
+                    (App.Current as App)._itemViewHolder.Sounds.Add(sound);
+                }
+
+                foreach (var sound in SortSoundsList(favouriteSounds,
+                                                    (App.Current as App)._itemViewHolder.SoundOrder,
+                                                    (App.Current as App)._itemViewHolder.SoundOrderReversed,
+                                                    Guid.Empty,
+                                                    true)){
+                    (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
+                }
+            }
+            else if(selectedCategoryAtBeginning == null)
+            {
+                // Load sounds by name
+                foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
+                {
+                    if (sound.Name.ToLower().Contains(searchQuery.ToLower()))
+                    {
+                        (App.Current as App)._itemViewHolder.Sounds.Add(sound);
+                        if (sound.Favourite)
+                            (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
+                    }
+                }
+            }
+            else
+            {
+                // Load sounds by category
+                foreach (var sound in GetSoundsByCategory(selectedCategoryAtBeginning.Value, false))
+                    sounds.Add(sound);
+
+                foreach (var sound in GetSoundsByCategory(selectedCategoryAtBeginning.Value, true))
+                    favouriteSounds.Add(sound);
+
+                // Sort the sounds
+                foreach (var sound in SortSoundsList(sounds,
+                                                    (App.Current as App)._itemViewHolder.SoundOrder,
+                                                    (App.Current as App)._itemViewHolder.SoundOrderReversed,
+                                                    selectedCategoryAtBeginning.Value,
+                                                    false)){
+                    (App.Current as App)._itemViewHolder.Sounds.Add(sound);
+                }
+
+                foreach (var sound in SortSoundsList(favouriteSounds,
+                                                    (App.Current as App)._itemViewHolder.SoundOrder,
+                                                    (App.Current as App)._itemViewHolder.SoundOrderReversed,
+                                                    selectedCategoryAtBeginning.Value,
+                                                    true)){
+                    (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
+                }
+            }
+
+            isLoadingSelectedCategory = false;
+
+            // If the selection changed, load the new selected category
+            if (selectedCategoryAtBeginning != selectedCategory)
+                await LoadSelectedCategory();
+
+            ShowPlayAllButton();
+            (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
+        }
+
         // When the sounds list was changed, load all sounds from the database
         private static async Task UpdateAllSoundsListAsync()
         {
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
             if ((App.Current as App)._itemViewHolder.AllSoundsChanged)
             {
                 (App.Current as App)._itemViewHolder.AllSounds.Clear();
                 foreach (Sound sound in await GetSavedSoundsAsync())
-                {
                     (App.Current as App)._itemViewHolder.AllSounds.Add(sound);
-                }
+
                 await UpdateLiveTileAsync();
+                await LoadCustomSoundOrderAsync();
             }
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
         }
 
-        // Load all sounds into the sounds list
-        public static async Task LoadAllSoundsAsync()
+        // Create the lists in the Custom Sound order Dictionaries
+        private static async Task LoadCustomSoundOrderAsync()
         {
-            await UpdateAllSoundsListAsync();
+            if ((App.Current as App)._itemViewHolder.SoundOrder != SoundOrder.Custom) return;
 
+            // Create an entry for each category in the Dictionary and save the sound order there
+            foreach(var category in (App.Current as App)._itemViewHolder.Categories)
+            {
+                if(category.Uuid == Guid.Empty)
+                {
+                    // All Sounds
+                    List<Sound> allSounds = GetAllSounds(false);
+                    List<Sound> allFavouriteSounds = GetAllSounds(true);
+
+                    CustomSoundOrder[Guid.Empty] = new List<Guid>();
+                    CustomFavouriteSoundOrder[Guid.Empty] = new List<Guid>();
+
+                    // Add all sounds to the dictionary
+                    foreach (var sound in await SortSoundsListByCustomOrderAsync(allSounds, Guid.Empty, false))
+                        CustomSoundOrder[Guid.Empty].Add(sound.Uuid);
+
+                    foreach (var sound in await SortSoundsListByCustomOrderAsync(allFavouriteSounds, Guid.Empty, true))
+                        CustomFavouriteSoundOrder[Guid.Empty].Add(sound.Uuid);
+                }
+                else
+                {
+                    List<Sound> sounds = GetSoundsByCategory(category.Uuid, false);
+                    List<Sound> favouriteSounds = GetSoundsByCategory(category.Uuid, true);
+
+                    CustomSoundOrder[category.Uuid] = new List<Guid>();
+                    CustomFavouriteSoundOrder[category.Uuid] = new List<Guid>();
+
+                    // Add the sounds to the dictionary
+                    foreach (var sound in await SortSoundsListByCustomOrderAsync(sounds, category.Uuid, false))
+                        CustomSoundOrder[category.Uuid].Add(sound.Uuid);
+
+                    foreach (var sound in await SortSoundsListByCustomOrderAsync(favouriteSounds, category.Uuid, true))
+                        CustomFavouriteSoundOrder[category.Uuid].Add(sound.Uuid);
+                }
+            }
+        }
+
+        // Get all sounds from the all sounds list
+        private static List<Sound> GetAllSounds(bool favourites)
+        {
             List<Sound> sounds = new List<Sound>();
-            List<Sound> favouriteSounds = new List<Sound>();
 
-            foreach(var sound in (App.Current as App)._itemViewHolder.AllSounds)
+            foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
             {
-                sounds.Add(sound);
-
-                if (sound.Favourite)
-                    favouriteSounds.Add(sound);
+                if (!favourites || (favourites && sound.Favourite))
+                    sounds.Add(sound);
             }
 
-            if((App.Current as App)._itemViewHolder.SoundOrderReversed)
-            {
-                sounds.Reverse();
-                favouriteSounds.Reverse();
-            }
-            
-            (App.Current as App)._itemViewHolder.Sounds.Clear();
-            (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
-
-            // Sort the sounds
-            foreach (var sound in await SortSoundsListAsync(sounds,
-                                                (App.Current as App)._itemViewHolder.SoundOrder,
-                                                (App.Current as App)._itemViewHolder.SoundOrderReversed,
-                                                Guid.Empty,
-                                                false)){
-                (App.Current as App)._itemViewHolder.Sounds.Add(sound);
-            }
-
-            foreach (var sound in await SortSoundsListAsync(favouriteSounds,
-                                                (App.Current as App)._itemViewHolder.SoundOrder,
-                                                (App.Current as App)._itemViewHolder.SoundOrderReversed,
-                                                Guid.Empty,
-                                                true)){
-                (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
-            }
+            return sounds;
         }
 
         // Get the sounds of the category from the all sounds list
-        public static async Task LoadSoundsByCategoryAsync(Guid uuid)
+        private static List<Sound> GetSoundsByCategory(Guid categoryUuid, bool favourites)
         {
-            (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
-            await UpdateAllSoundsListAsync();
-
             List<Sound> sounds = new List<Sound>();
-            List<Sound> favouriteSounds = new List<Sound>();
 
             foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
             {
-                foreach(var category in sound.Categories)
-                {
-                    if (category.Uuid == uuid)
-                    {
-                        sounds.Add(sound);
-                        if (sound.Favourite)
-                            favouriteSounds.Add(sound);
-                        break;
-                    }
-                }
+                // Check if the sound belongs to the category
+                if (sound.Categories.Exists(c => c.Uuid == categoryUuid) && (!favourites || (favourites && sound.Favourite)))
+                    sounds.Add(sound);
             }
 
-            (App.Current as App)._itemViewHolder.Sounds.Clear();
-            (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
-
-            // Sort the sounds
-            foreach (var sound in await SortSoundsListAsync(sounds, 
-                                                (App.Current as App)._itemViewHolder.SoundOrder, 
-                                                (App.Current as App)._itemViewHolder.SoundOrderReversed, 
-                                                uuid,
-                                                false)){
-                (App.Current as App)._itemViewHolder.Sounds.Add(sound);
-            }
-
-            foreach (var sound in await SortSoundsListAsync(favouriteSounds,
-                                                (App.Current as App)._itemViewHolder.SoundOrder,
-                                                (App.Current as App)._itemViewHolder.SoundOrderReversed,
-                                                uuid,
-                                                true)){
-                (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
-            }
-
-            ShowPlayAllButton();
-        }
-
-        // Get the sounds by the name from the all sounds list
-        public static async Task LoadSoundsByNameAsync(string name)
-        {
-            (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
-
-            await UpdateAllSoundsListAsync();
-
-            (App.Current as App)._itemViewHolder.Sounds.Clear();
-            (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
-            foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
-            {
-                if (sound.Name.ToLower().Contains(name.ToLower()))
-                {
-                    (App.Current as App)._itemViewHolder.Sounds.Add(sound);
-                    if (sound.Favourite)
-                        (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
-                }
-            }
-
-            ShowPlayAllButton();
+            return sounds;
         }
 
         public static async Task<Guid> AddSoundAsync(Guid uuid, string name, Guid categoryUuid, StorageFile audioFile)
@@ -1844,7 +1927,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             int selectedCategory = (App.Current as App)._itemViewHolder.SelectedCategory;
             (App.Current as App)._itemViewHolder.Categories.Clear();
-            (App.Current as App)._itemViewHolder.Categories.Add(new Category(Guid.Empty, (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"), "\uE10F"));
+            (App.Current as App)._itemViewHolder.Categories.Add(new Category(Guid.Empty, new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds"), "\uE10F"));
 
             foreach (Category cat in await GetAllCategoriesAsync())
                 (App.Current as App)._itemViewHolder.Categories.Add(cat);
@@ -1926,7 +2009,7 @@ namespace UniversalSoundBoard.DataAccess
                     (App.Current as App)._itemViewHolder.SelectedCategory = i;
         }
 
-        private static async Task<List<Sound>> SortSoundsListAsync(List<Sound> sounds, SoundOrder order, bool reversed, Guid categoryUuid, bool favourite)
+        private static List<Sound> SortSoundsList(List<Sound> sounds, SoundOrder order, bool reversed, Guid categoryUuid, bool favourite)
         {
             List<Sound> sortedSounds = new List<Sound>();
 
@@ -1952,10 +2035,40 @@ namespace UniversalSoundBoard.DataAccess
                     break;
                 default:
                     // Custom order
-                    foreach (var sound in await SortSoundsListByCustomOrderAsync(sounds, categoryUuid, favourite))
+                    foreach (var sound in SortSoundsByCustomOrder(sounds, categoryUuid, favourite))
                         sortedSounds.Add(sound);
 
                     break;
+            }
+
+            return sortedSounds;
+        }
+
+        private static List<Sound> SortSoundsByCustomOrder(List<Sound> sounds, Guid categoryUuid, bool favourites)
+        {
+            List<Sound> sortedSounds = new List<Sound>();
+
+            if (favourites)
+            {
+                if (!CustomFavouriteSoundOrder.ContainsKey(categoryUuid)) return sounds;
+
+                foreach (var uuid in CustomFavouriteSoundOrder[categoryUuid])
+                {
+                    var sound = sounds.Find(s => s.Uuid == uuid);
+                    if (sound != null)
+                        sortedSounds.Add(sound);
+                }
+            }
+            else
+            {
+                if (!CustomSoundOrder.ContainsKey(categoryUuid)) return sounds;
+
+                foreach (var uuid in CustomSoundOrder[categoryUuid])
+                {
+                    var sound = sounds.Find(s => s.Uuid == uuid);
+                    if (sound != null)
+                        sortedSounds.Add(sound);
+                }
             }
 
             return sortedSounds;
