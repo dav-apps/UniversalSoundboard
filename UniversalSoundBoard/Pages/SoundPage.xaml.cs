@@ -45,7 +45,9 @@ namespace UniversalSoundBoard.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             soundsPivotSelected = true;
-            SetGridViewsReorderItems();
+
+            bool canReorderItems = (App.Current as App)._itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom;
+            SetGridViewsReorderItems(canReorderItems);
         }
 
         private GridView GetVisibleGridView()
@@ -58,16 +60,14 @@ namespace UniversalSoundBoard.Pages
                 return SoundGridView;
         }
 
-        private void SetGridViewsReorderItems()
+        private void SetGridViewsReorderItems(bool value)
         {
-            bool canReorderItems = (App.Current as App)._itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom;
-
-            SoundGridView.CanReorderItems = canReorderItems;
-            SoundGridView.AllowDrop = canReorderItems;
-            SoundGridView2.CanReorderItems = canReorderItems;
-            SoundGridView2.AllowDrop = canReorderItems;
-            FavouriteSoundGridView.CanReorderItems = canReorderItems;
-            FavouriteSoundGridView.AllowDrop = canReorderItems;
+            SoundGridView.CanReorderItems = value;
+            SoundGridView.AllowDrop = value;
+            SoundGridView2.CanReorderItems = value;
+            SoundGridView2.AllowDrop = value;
+            FavouriteSoundGridView.CanReorderItems = value;
+            FavouriteSoundGridView.AllowDrop = value;
         }
 
         private void _itemViewHolder_SelectAllSoundsEvent(object sender, RoutedEventArgs e)
@@ -99,6 +99,12 @@ namespace UniversalSoundBoard.Pages
 
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
+            bool canReorderItems = !(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add
+                                    && !string.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery));
+
+            // Enable or disable the ability to drag sounds
+            SetGridViewsReorderItems(canReorderItems);
+
             if (e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Remove)
                 isDragging = true;
 

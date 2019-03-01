@@ -617,11 +617,11 @@ namespace UniversalSoundBoard.Common
             // Get all categories
             var categories = new List<Category>();
             SelectedCategories = new Dictionary<Guid, bool>();
-
-            int i = 0;
+            
+            int i = -1;
             foreach (var category in (App.Current as App)._itemViewHolder.Categories)
             {
-                if (i++ == 0) continue;
+                if (++i == 0) continue;
 
                 categories.Add(category);
 
