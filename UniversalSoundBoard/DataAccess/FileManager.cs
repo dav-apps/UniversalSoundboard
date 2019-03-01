@@ -891,6 +891,27 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
+        // Is called when the user changes the order of the sounds by dragging
+        public static void UpdateCustomSoundOrder(Guid categoryUuid, bool favourites, List<Guid> uuids)
+        {
+            if (favourites)
+            {
+                if (!CustomFavouriteSoundOrder.ContainsKey(categoryUuid))
+                    return;
+
+                CustomFavouriteSoundOrder[categoryUuid].Clear();
+                CustomFavouriteSoundOrder[categoryUuid] = uuids;
+            }
+            else
+            {
+                if (!CustomSoundOrder.ContainsKey(categoryUuid))
+                    return;
+
+                CustomSoundOrder[categoryUuid].Clear();
+                CustomSoundOrder[categoryUuid] = uuids;
+            }
+        }
+
         // Get all sounds from the all sounds list
         private static List<Sound> GetAllSounds(bool favourites)
         {

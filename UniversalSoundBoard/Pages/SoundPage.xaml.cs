@@ -144,6 +144,7 @@ namespace UniversalSoundBoard.Pages
                 uuids.Add(sound.Uuid);
 
             await DatabaseOperations.SetSoundOrderAsync(currentCategoryUuid, showFavourites, uuids);
+            FileManager.UpdateCustomSoundOrder(currentCategoryUuid, showFavourites, uuids);
         }
 
         private void UpdateSelectAllFlyoutText()
