@@ -2223,7 +2223,7 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             player.Source = mediaPlaybackList;
-            player.AutoPlay = true;
+            player.AutoPlay = false;
 
             // Set volume
             var localSettings = ApplicationData.Current.LocalSettings;

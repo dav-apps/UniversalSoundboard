@@ -367,6 +367,7 @@ namespace UniversalSoundBoard.Pages
                 Uuid = await FileManager.AddPlayingSoundAsync(Guid.Empty, soundList, 0, 0, false, player.Volume)
             };
             (App.Current as App)._itemViewHolder.PlayingSounds.Add(playingSound);
+            playingSound.MediaPlayer.Play();
         }
         
         public static async Task PlaySoundsAsync(List<Sound> sounds, int repetitions, bool randomly)
@@ -397,6 +398,7 @@ namespace UniversalSoundBoard.Pages
                 Uuid = await FileManager.AddPlayingSoundAsync(Guid.Empty, sounds, 0, repetitions, false, player.Volume)
             };
             (App.Current as App)._itemViewHolder.PlayingSounds.Add(playingSound);
+            playingSound.MediaPlayer.Play();
         }
         
         public static async Task RemovePlayingSoundAsync(PlayingSound playingSound)
