@@ -2180,7 +2180,7 @@ namespace UniversalSoundBoard.DataAccess
                 totalSize += size;
             }
 
-            (App.Current as App)._itemViewHolder.SoundboardSize = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("SettingsSoundBoardSize") + totalSize.ToString("n2") + " GB.";
+            (App.Current as App)._itemViewHolder.SoundboardSize = string.Format(new Windows.ApplicationModel.Resources.ResourceLoader().GetString("SettingsSoundBoardSize"), totalSize.ToString("n2") + " GB");
         }
 
         public static async Task<MediaPlayer> CreateMediaPlayerAsync(List<Sound> sounds, int current)

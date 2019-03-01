@@ -97,7 +97,7 @@ namespace UniversalSoundboard.Pages
         {
             if((App.Current as App)._itemViewHolder.User.TotalStorage > 0)
             {
-                string message = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Account-UsedStorage");
+                string message = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("Account-UsedStorage");
 
                 double usedStorageGB = Math.Round((App.Current as App)._itemViewHolder.User.UsedStorage / 1000000000.0, 1);
                 double totalStorageGB = Math.Round((App.Current as App)._itemViewHolder.User.TotalStorage / 1000000000.0, 1);
@@ -105,10 +105,7 @@ namespace UniversalSoundboard.Pages
                 double percentage = usedStorageGB / totalStorageGB * 100;
 
                 StorageProgressBar.Value = percentage;
-                message = message.Replace("|", usedStorageGB.ToString());
-                message = message.Replace("_", totalStorageGB.ToString());
-
-                StorageTextBlock.Text = message;
+                StorageTextBlock.Text = string.Format(message, usedStorageGB.ToString(), totalStorageGB.ToString());
 
                 if (totalStorageGB < 50)
                     UpgradeLink.Visibility = Visibility.Visible;

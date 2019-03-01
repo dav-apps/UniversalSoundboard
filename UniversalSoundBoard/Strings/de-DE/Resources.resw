@@ -250,7 +250,7 @@
     <value>Allgemein</value>
   </data>
   <data name="SettingsSoundBoardSize" xml:space="preserve">
-    <value>Die Größe deines Soundboards beträgt </value>
+    <value>Die Größe deines Soundboards beträgt {0}.</value>
   </data>
   <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
     <value>Favoriten anzeigen</value>
@@ -407,7 +407,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>Anmelden</value>
   </data>
   <data name="Account-UsedStorage" xml:space="preserve">
-    <value>| GB von _ GB verwendet</value>
+    <value>{0} GB von {1} GB verwendet</value>
   </data>
   <data name="Account-LogoutMessage" xml:space="preserve">
     <value>Bist du dir sicher, dass du dich abmelden möchtest?</value>

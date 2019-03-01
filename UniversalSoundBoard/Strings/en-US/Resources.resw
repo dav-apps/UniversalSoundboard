@@ -263,7 +263,7 @@
     <value>General</value>
   </data>
   <data name="SettingsSoundBoardSize" xml:space="preserve">
-    <value>The size of your Soundboard is </value>
+    <value>The size of your Soundboard is {0}.</value>
   </data>
   <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
     <value>Show Favourites tab</value>
@@ -420,7 +420,7 @@ This may take some time, depending on how large the import file is.</value>
     <value>Log in</value>
   </data>
   <data name="Account-UsedStorage" xml:space="preserve">
-    <value>| GB of _ GB used</value>
+    <value>{0} GB of {1} GB used</value>
   </data>
   <data name="Account-LogoutMessage" xml:space="preserve">
     <value>Are you sure you want to log out?</value>
