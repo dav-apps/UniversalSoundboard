@@ -241,6 +241,8 @@ namespace UniversalSoundBoard.Pages
             (App.Current as App)._itemViewHolder.SoundOrder = (FileManager.SoundOrder)SoundOrderComboBox.SelectedIndex;
 
             SoundOrderReversedComboBox.IsEnabled = (App.Current as App)._itemViewHolder.SoundOrder != FileManager.SoundOrder.Custom;
+            if ((App.Current as App)._itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom)
+                (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
         }
 
         private void SoundOrderReversedComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

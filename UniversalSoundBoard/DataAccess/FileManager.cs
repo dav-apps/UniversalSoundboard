@@ -843,7 +843,9 @@ namespace UniversalSoundBoard.DataAccess
                     (App.Current as App)._itemViewHolder.AllSounds.Add(sound);
 
                 await UpdateLiveTileAsync();
-                await LoadCustomSoundOrderAsync();
+
+                if((App.Current as App)._itemViewHolder.SoundOrder == SoundOrder.Custom)
+                    await LoadCustomSoundOrderAsync();
             }
         }
 
@@ -1210,7 +1212,7 @@ namespace UniversalSoundBoard.DataAccess
 
             foreach (var categoryTableObject in categoriesTableObjectList)
                 categoriesList.Add(await GetCategoryAsync(categoryTableObject.Uuid));
-
+            
             return await SortCategoriesListAsync(categoriesList);
         }
 
@@ -1926,6 +1928,7 @@ namespace UniversalSoundBoard.DataAccess
         public static async Task CreateCategoriesListAsync()
         {
             int selectedCategory = (App.Current as App)._itemViewHolder.SelectedCategory;
+            
             (App.Current as App)._itemViewHolder.Categories.Clear();
             (App.Current as App)._itemViewHolder.Categories.Add(new Category(Guid.Empty, new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds"), "\uE10F"));
 
@@ -2157,8 +2160,13 @@ namespace UniversalSoundBoard.DataAccess
                 await SetSoundBoardSizeTextAsync();
             }
 
+            // Copy AllSounds
+            List<Sound> allSounds = new List<Sound>();
+            foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
+                allSounds.Add(sound);
+
             float totalSize = 0;
-            foreach (Sound sound in (App.Current as App)._itemViewHolder.AllSounds)
+            foreach (Sound sound in allSounds)
             {
                 float size = 0;
                 var soundAudioFile = await sound.GetAudioFileAsync();
