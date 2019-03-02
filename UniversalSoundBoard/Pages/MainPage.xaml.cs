@@ -47,7 +47,7 @@ namespace UniversalSoundBoard.Pages
             InitializeLayout();
             AdjustLayout();
         }
-        
+
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             SetDataContext();
@@ -58,7 +58,7 @@ namespace UniversalSoundBoard.Pages
 
             InitializeAccountSettings();
 
-            var a = FileManager.CreateCategoriesListAsync();
+            await FileManager.CreateCategoriesListAsync();
             var b = FileManager.ShowAllSoundsAsync();
             var c = FileManager.CreatePlayingSoundsListAsync();
 
@@ -244,7 +244,7 @@ namespace UniversalSoundBoard.Pages
             if (args.IsSettingsInvoked == true)
             {
                 (App.Current as App)._itemViewHolder.Page = typeof(SettingsPage);
-                (App.Current as App)._itemViewHolder.Title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Settings-Title");
+                (App.Current as App)._itemViewHolder.Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("Settings-Title");
                 (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
                 (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
                 (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;

@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading.Tasks;
 using UniversalSoundBoard.DataAccess;
 using Windows.Storage;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundBoard.Models
@@ -52,6 +53,17 @@ namespace UniversalSoundBoard.Models
         public async Task<MemoryStream> GetAudioStreamAsync()
         {
             return await FileManager.GetAudioStreamOfSoundAsync(Uuid);
+        }
+
+        public bool HasImageFile()
+        {
+            Uri defaultImageUri;
+            if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
+                defaultImageUri = new Uri("ms-appx:///Assets/Images/default-dark.png", UriKind.Absolute);
+            else
+                defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
+
+            return Image.UriSource != defaultImageUri;
         }
 
         public async Task<StorageFile> GetImageFileAsync()

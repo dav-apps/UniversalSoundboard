@@ -24,7 +24,6 @@ namespace UniversalSoundBoard
     /// </summary>
     sealed partial class App : Application
     {
-
         public ItemViewHolder _itemViewHolder = new ItemViewHolder {
             Title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
             ProgressRingIsActive = false,
