@@ -234,7 +234,7 @@ namespace UniversalSoundBoard.DataAccess
                     i++;
                 }
 
-                new TableObject(Guid.NewGuid(), FileManager.OrderTableId, properties);
+                await TableObject.Create(Guid.NewGuid(), FileManager.OrderTableId, properties);
             }
             else
             {
@@ -300,7 +300,7 @@ namespace UniversalSoundBoard.DataAccess
                     i++;
                 }
 
-                new TableObject(Guid.NewGuid(), FileManager.OrderTableId, properties);
+                await TableObject.Create(Guid.NewGuid(), FileManager.OrderTableId, properties);
             }
             else
             {

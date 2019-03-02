@@ -712,7 +712,7 @@ namespace UniversalSoundBoard.DataAccess
             foreach (var soundTableObject in soundsTableObjectList)
             {
                 Guid? soundFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName));
-                if (DatabaseOperations.GetObjectAsync(soundFileUuid.GetValueOrDefault()) == null) continue;
+                if (await DatabaseOperations.GetObjectAsync(soundFileUuid.GetValueOrDefault()) == null) continue;
 
                 sounds.Add(await GetSoundAsync(soundTableObject.Uuid));
             }
@@ -829,8 +829,8 @@ namespace UniversalSoundBoard.DataAccess
             if (selectedCategoryAtBeginning != selectedCategory)
                 await LoadSelectedCategory();
 
-            ShowPlayAllButton();
             (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
+            ShowPlayAllButton();
         }
 
         // When the sounds list was changed, load all sounds from the database
@@ -984,6 +984,8 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             // Get the categories
+            var categories = (App.Current as App)._itemViewHolder.Categories.ToList();
+
             var categoryUuidsString = soundTableObject.GetPropertyValue(SoundTableCategoryUuidPropertyName);
             sound.Categories = new List<Category>();
             if (!string.IsNullOrEmpty(categoryUuidsString))
@@ -993,7 +995,7 @@ namespace UniversalSoundBoard.DataAccess
                     Guid? cUuid = ConvertStringToGuid(cUuidString);
                     if(cUuid.HasValue)
                     {
-                        var category = await GetCategoryAsync(cUuid.Value);
+                        var category = categories.Find(c => c.Uuid == cUuid.Value);
                         if(category != null)
                             sound.Categories.Add(category);
                     }
@@ -1248,7 +1250,7 @@ namespace UniversalSoundBoard.DataAccess
                                 categoryTableObject.GetPropertyValue(CategoryTableNamePropertyName),
                                 categoryTableObject.GetPropertyValue(CategoryTableIconPropertyName));
         }
-
+        
         public static async Task UpdateCategoryAsync(Guid uuid, string name, string icon)
         {
             await DatabaseOperations.UpdateCategoryAsync(uuid, name, icon);
@@ -1395,9 +1397,7 @@ namespace UniversalSoundBoard.DataAccess
 
             List<string> soundIds = new List<string>();
             foreach (Sound sound in sounds)
-            {
                 soundIds.Add(sound.Uuid.ToString());
-            }
 
             await DatabaseOperations.AddPlayingSoundAsync(uuid, soundIds, current, repetitions, randomly, volume);
 
@@ -2120,19 +2120,25 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             List<Sound> sounds = new List<Sound>();
-            // Get sound with image
+
+            // Sort the sounds randomly
+            Random random = new Random();
+            sounds = (App.Current as App)._itemViewHolder.AllSounds.OrderBy(s => random.Next()).ToList();
+            Sound soundWithImage = null;
+
+            // Find the first sound with an image an use that for the live tile
             foreach (Sound s in (App.Current as App)._itemViewHolder.AllSounds)
             {
-                if(await s.GetImageFileAsync() != null)
-                    sounds.Add(s);
+                if (s.HasImageFile())
+                {
+                    soundWithImage = s;
+                    break;
+                }
             }
 
-            Sound sound;
-            if (sounds.Count == 0) return;
+            if (soundWithImage == null) return;
 
-            Random random = new Random();
-            sound = sounds.ElementAt(random.Next(sounds.Count));
-            StorageFile imageFile = await sound.GetImageFileAsync();
+            StorageFile imageFile = await soundWithImage.GetImageFileAsync();
             if (imageFile == null) return;
 
             NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
@@ -2149,7 +2155,7 @@ namespace UniversalSoundBoard.DataAccess
                     {
                         new NotificationsExtensions.AdaptiveText()
                         {
-                            Text = sound.Name
+                            Text = soundWithImage.Name
                         }
                     },
                     TextStacking = NotificationsExtensions.Tiles.TileTextStacking.Center
