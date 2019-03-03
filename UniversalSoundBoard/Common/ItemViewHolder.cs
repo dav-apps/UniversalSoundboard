@@ -22,6 +22,7 @@ namespace UniversalSoundBoard.Common
         private Type _page;                                                 // The current page
         private ListViewSelectionMode _selectionMode;                       // The selection mode of the GridView. Is either ListViewSelectionMode.None or ListViewSelectionMode.Multiple
         private ObservableCollection<Category> _categories;                 // A list of all categories.
+        public event EventHandler CategoriesUpdated;                       // Is triggered when all categories were loaded into the Categories ObservableCollection
         private ObservableCollection<Sound> _sounds;                        // A list of the sounds which are displayed when the Sound pivot is selected, sorted by the selected sort option
         private ObservableCollection<Sound> _favouriteSounds;               // A list of the favourite sound which are displayed when the Favourite pivot is selected, sorted by the selected sort option
         private ObservableCollection<Sound> _allSounds;                     // A list of all sounds, unsorted
@@ -142,6 +143,11 @@ namespace UniversalSoundBoard.Common
                 _categories = value;
                 NotifyPropertyChanged("Categories");
             }
+        }
+
+        public void TriggerCategoriesUpdatedEvent(object sender, EventArgs e)
+        {
+            CategoriesUpdated?.Invoke(sender, e);
         }
 
         public string SearchQuery
