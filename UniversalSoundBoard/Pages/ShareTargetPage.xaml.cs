@@ -20,45 +20,48 @@ namespace UniversalSoundBoard.Pages
         ObservableCollection<Category> categories;
         List<StorageFile> items = new List<StorageFile>();
         CoreDispatcher dispatcher;
-
+        CoreDispatcher currentDispatcher;
 
         public ShareTargetPage()
         {
             InitializeComponent();
             DataContextChanged += (s, e) => Bindings.Update();
             SetDarkThemeLayout();
+
+            categories = new ObservableCollection<Category>();
+            (App.Current as App)._itemViewHolder.CategoriesUpdated += ItemViewHolder_CategoriesUpdated;
         }
-        
+
         protected async override void OnNavigatedTo(NavigationEventArgs e)
         {
             dispatcher = MainPage.dispatcher ?? CoreWindow.GetForCurrentThread().Dispatcher;
-
+            currentDispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
             shareOperation = e.Parameter as ShareOperation;
 
+            // Get the shared files
             items.Clear();
             foreach (StorageFile file in await shareOperation.Data.GetStorageItemsAsync())
                 items.Add(file);
-        }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            {
-                categories = new ObservableCollection<Category>();
-                await FileManager.CreateCategoriesListAsync();
-
-                // Get all Categories and show them
-                foreach (Category cat in (App.Current as App)._itemViewHolder.Categories)
-                    categories.Add(cat);
-            });
-            Bindings.Update();
-
-            (App.Current as App)._itemViewHolder.Categories.CollectionChanged += Categories_CollectionChanged;
+            // Update the categories list
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await FileManager.CreateCategoriesListAsync());
         }
 
         private void SetDarkThemeLayout()
         {
             ContentRoot.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
+        }
+
+        private void UpdateCategories()
+        {
+            // Get all Categories and show them
+            categories.Clear();
+            int i = -1;
+            foreach (Category cat in (App.Current as App)._itemViewHolder.Categories)
+                if (++i != 0)
+                    categories.Add(cat);
+
+            Bindings.Update();
         }
 
         private async void AddButton_Click(object sender, RoutedEventArgs e)
@@ -68,9 +71,12 @@ namespace UniversalSoundBoard.Pages
             LoadingControl.IsLoading = true;
             LoadingControlMessageTextBlock.Text = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AddSoundsMessage");
 
-            Guid categoryUuid = Guid.Empty;
-            if (CategoriesListView.SelectedIndex != 0)
-                categoryUuid = (CategoriesListView.SelectedItem as Category).Uuid;
+            List<Guid> categoryUuids = new List<Guid>();
+            foreach(var item in CategoriesListView.SelectedItems)
+            {
+                var category = (Category)item;
+                categoryUuids.Add(category.Uuid);
+            }
             
             if (items.Count > 0)
             {
@@ -78,7 +84,7 @@ namespace UniversalSoundBoard.Pages
                 {
                     if (FileManager.allowedFileTypes.Contains(storagefile.FileType))
                     {
-                        await FileManager.AddSoundAsync(Guid.Empty, storagefile.DisplayName, categoryUuid, storagefile);
+                        await FileManager.AddSoundAsync(Guid.Empty, storagefile.DisplayName, categoryUuids, storagefile);
                     }
                 }
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -91,29 +97,10 @@ namespace UniversalSoundBoard.Pages
             {
                 await FileManager.UpdateGridViewAsync();
             });
-            
-            (App.Current as App)._itemViewHolder.Categories.CollectionChanged -= Categories_CollectionChanged;
 
             shareOperation.ReportCompleted();
         }
         
-        private void CategoriesListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            AddButton.IsEnabled = true;
-        }
-
-        private async void Categories_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
-        {
-            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                IEnumerable<Category> newCategoriesObservableCollection = (IEnumerable<Category>)sender;
-                List<Category> newCategories = new List<Category>(newCategoriesObservableCollection);
-                categories.Clear();
-                foreach (var c in newCategories)
-                    categories.Add(c);
-            });
-        }
-
         private async void AddCategoryButton_Click(object sender, RoutedEventArgs e)
         {
             // Show new Category ContentDialog
@@ -134,10 +121,12 @@ namespace UniversalSoundBoard.Pages
                 Icon = icon
             };
             
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            {
-                await FileManager.AddCategoryAsync(Guid.Empty, category.Name, category.Icon);
-            });
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await FileManager.AddCategoryAsync(Guid.Empty, category.Name, category.Icon));
+        }
+
+        private async void ItemViewHolder_CategoriesUpdated(object sender, EventArgs e)
+        {
+            await currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, UpdateCategories);
         }
     }
 }
