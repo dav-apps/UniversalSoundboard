@@ -268,20 +268,24 @@ namespace UniversalSoundBoard.Pages
             
             (App.Current as App)._itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AddSoundsMessage");
             (App.Current as App)._itemViewHolder.LoadingScreenVisibility = true;
+            
+            List<Guid> categoryUuids = new List<Guid>();
 
-            Guid categoryUuid = Guid.Empty;
-            try
+            if((App.Current as App)._itemViewHolder.SelectedCategory != 0)
             {
-                categoryUuid = (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid;
-            }
-            catch (Exception ex)
-            {
-                Debug.WriteLine(ex.Message);
+                try
+                {
+                    categoryUuids.Add((App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid);
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine(ex.Message);
+                }
             }
 
             foreach (StorageFile soundFile in items)
                 if (FileManager.allowedFileTypes.Contains(soundFile.FileType))
-                    await FileManager.AddSoundAsync(Guid.Empty, soundFile.DisplayName, categoryUuid, soundFile);
+                    await FileManager.AddSoundAsync(Guid.Empty, soundFile.DisplayName, categoryUuids, soundFile);
 
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
             await FileManager.UpdateGridViewAsync();

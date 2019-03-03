@@ -379,18 +379,21 @@ namespace UniversalSoundBoard.Pages
                 foreach (StorageFile soundFile in files)
                 {
                     int selectedCategory = (App.Current as App)._itemViewHolder.SelectedCategory;
-                    Guid categoryUuid = Guid.Empty;
+                    List<Guid> categoryUuids = new List<Guid>();
 
-                    try
+                    if(selectedCategory != 0)
                     {
-                        categoryUuid = selectedCategory == 0 ? Guid.Empty : (App.Current as App)._itemViewHolder.Categories[selectedCategory].Uuid;
-                    }
-                    catch (Exception exception)
-                    {
-                        Debug.WriteLine(exception.Message);
+                        try
+                        {
+                            categoryUuids.Add((App.Current as App)._itemViewHolder.Categories[selectedCategory].Uuid);
+                        }
+                        catch (Exception exception)
+                        {
+                            Debug.WriteLine(exception.Message);
+                        }
                     }
 
-                    await FileManager.AddSoundAsync(Guid.Empty, soundFile.DisplayName, categoryUuid, soundFile);
+                    await FileManager.AddSoundAsync(Guid.Empty, soundFile.DisplayName, categoryUuids, soundFile);
                     (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
                 }
 
@@ -670,7 +673,6 @@ namespace UniversalSoundBoard.Pages
             };
 
             await FileManager.AddCategoryAsync(Guid.Empty, category.Name, category.Icon);
-            await FileManager.CreateCategoriesListAsync();
 
             // Show new category
             await FileManager.ShowCategoryAsync((App.Current as App)._itemViewHolder.Categories.Last().Uuid);
