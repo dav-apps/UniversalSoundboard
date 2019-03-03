@@ -73,7 +73,7 @@ namespace UniversalSoundboard.Pages
 
                             // Log the user in with the jwt
                             davClassLibrary.Models.DavUser user = new davClassLibrary.Models.DavUser();
-                            await user.Login(jwt);
+                            await user.LoginAsync(jwt);
                             (App.Current as App)._itemViewHolder.User = user;
                             break;
                         default:

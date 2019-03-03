@@ -337,7 +337,7 @@ namespace UniversalSoundBoard.DataAccess
             StorageFolder exportFolder = await GetExportFolderAsync();
             var progress = new Progress<int>(ExportProgress);
 
-            await DataManager.ExportData(new DirectoryInfo(exportFolder.Path), progress);
+            await DataManager.ExportDataAsync(new DirectoryInfo(exportFolder.Path), progress);
 
             (App.Current as App)._itemViewHolder.ExportMessage = stringLoader.GetString("ExportMessage-3");
 
@@ -405,7 +405,7 @@ namespace UniversalSoundBoard.DataAccess
                     await UpgradeNewDataModelAsync(importFolder, true, progress);
                     break;
                 default:
-                    await Task.Run(() => DataManager.ImportData(new DirectoryInfo(importFolder.Path), progress));
+                    await Task.Run(() => DataManager.ImportDataAsync(new DirectoryInfo(importFolder.Path), progress));
                     break;
             }
 
@@ -1193,7 +1193,7 @@ namespace UniversalSoundBoard.DataAccess
                     }
 
                     // Delete the object and remove it from the list
-                    await firstOrderTableObject.Delete();
+                    await firstOrderTableObject.DeleteAsync();
                     soundOrderTableObjects.Remove(firstOrderTableObject);
                 }
 
@@ -1275,7 +1275,7 @@ namespace UniversalSoundBoard.DataAccess
                 if (cUuid == Guid.Empty) continue;
                 
                 if (!await DatabaseOperations.ObjectExistsAsync(cUuid))
-                    await tableObject.Delete();
+                    await tableObject.DeleteAsync();
             }
 
             await CreateCategoriesListAsync();
@@ -1354,7 +1354,7 @@ namespace UniversalSoundBoard.DataAccess
                     }
 
                     // Delete the object and remove it from the list
-                    await firstOrderTableObject.Delete();
+                    await firstOrderTableObject.DeleteAsync();
                     categoryOrderTableObjects.Remove(firstOrderTableObject);
                 }
                 
@@ -1634,7 +1634,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             var soundTableObject = await GetSoundFileTableObjectAsync(soundUuid);
             if (soundTableObject != null)
-                return await soundTableObject.GetFileStream();
+                return await soundTableObject.GetFileStreamAsync();
             else
                 return null;
         }

@@ -62,7 +62,7 @@ namespace UniversalSoundBoard.Pages
             var b = FileManager.ShowAllSoundsAsync();
             var c = FileManager.CreatePlayingSoundsListAsync();
 
-            await (App.Current as App)._itemViewHolder.User.Init();
+            await (App.Current as App)._itemViewHolder.User.InitAsync();
         }
 
         private void SetDataContext()

@@ -30,7 +30,7 @@ namespace UniversalSoundBoard.DataAccess
             // Get the object and delete it
             var tableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (tableObject != null)
-                await tableObject.Delete();
+                await tableObject.DeleteAsync();
         }
         #endregion
 
@@ -48,7 +48,7 @@ namespace UniversalSoundBoard.DataAccess
             if (!string.IsNullOrEmpty(categoryUuid))
                 properties.Add(new Property { Name = FileManager.SoundTableCategoryUuidPropertyName, Value = categoryUuid });
 
-            await TableObject.Create(uuid, FileManager.SoundTableId, properties);
+            await TableObject.CreateAsync(uuid, FileManager.SoundTableId, properties);
         }
 
         public static async Task<List<TableObject>> GetAllSoundsAsync()
@@ -65,15 +65,15 @@ namespace UniversalSoundBoard.DataAccess
             if (soundTableObject.TableId != FileManager.SoundTableId) return;
 
             if (!string.IsNullOrEmpty(name))
-                await soundTableObject.SetPropertyValue(FileManager.SoundTableNamePropertyName, name);
+                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableNamePropertyName, name);
             if (!string.IsNullOrEmpty(favourite))
-                await soundTableObject.SetPropertyValue(FileManager.SoundTableFavouritePropertyName, favourite);
+                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableFavouritePropertyName, favourite);
             if (!string.IsNullOrEmpty(soundUuid))
-                await soundTableObject.SetPropertyValue(FileManager.SoundTableSoundUuidPropertyName, soundUuid);
+                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableSoundUuidPropertyName, soundUuid);
             if (!string.IsNullOrEmpty(imageUuid))
-                await soundTableObject.SetPropertyValue(FileManager.SoundTableImageUuidPropertyName, imageUuid);
+                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableImageUuidPropertyName, imageUuid);
             if (categoryUuids != null)
-                await soundTableObject.SetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName, ConvertIdListToString(categoryUuids));
+                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableCategoryUuidPropertyName, ConvertIdListToString(categoryUuids));
         }
         
         public static async Task DeleteSoundAsync(Guid uuid)
@@ -91,24 +91,24 @@ namespace UniversalSoundBoard.DataAccess
             {
                 var soundFileTableObject = await Dav.Database.GetTableObjectAsync(soundFileUuid.Value);
                 if (soundFileTableObject != null)
-                    await soundFileTableObject.Delete();
+                    await soundFileTableObject.DeleteAsync();
             }
             if (imageFileUuid.HasValue && !Equals(imageFileUuid, Guid.Empty))
             {
                 var imageFileTableObject = await Dav.Database.GetTableObjectAsync(imageFileUuid.Value);
                 if (imageFileTableObject != null)
-                    await imageFileTableObject.Delete();
+                    await imageFileTableObject.DeleteAsync();
             }
 
             // Delete the sound itself
-            await soundTableObject.Delete();
+            await soundTableObject.DeleteAsync();
         }
         #endregion
 
         #region SoundFile
         public static async Task AddSoundFileAsync(Guid uuid, StorageFile audioFile)
         {
-            await TableObject.Create(uuid, FileManager.SoundFileTableId, new FileInfo(audioFile.Path));
+            await TableObject.CreateAsync(uuid, FileManager.SoundFileTableId, new FileInfo(audioFile.Path));
         }
 
         public static async Task<List<TableObject>> GetAllSoundFilesAsync()
@@ -120,7 +120,7 @@ namespace UniversalSoundBoard.DataAccess
         #region ImageFile
         public static async Task AddImageFileAsync(Guid uuid, StorageFile imageFile)
         {
-            await TableObject.Create(uuid, FileManager.ImageFileTableId, new FileInfo(imageFile.Path));
+            await TableObject.CreateAsync(uuid, FileManager.ImageFileTableId, new FileInfo(imageFile.Path));
         }
 
         public static async Task UpdateImageFileAsync(Guid uuid, StorageFile imageFile)
@@ -130,7 +130,7 @@ namespace UniversalSoundBoard.DataAccess
             if (imageFileTableObject == null) return;
             if (imageFileTableObject.TableId != FileManager.ImageFileTableId) return;
 
-            await imageFileTableObject.SetFile(new FileInfo(imageFile.Path));
+            await imageFileTableObject.SetFileAsync(new FileInfo(imageFile.Path));
         }
         #endregion
 
@@ -142,7 +142,7 @@ namespace UniversalSoundBoard.DataAccess
                 new Property{Name = FileManager.CategoryTableNamePropertyName, Value = name},
                 new Property{Name = FileManager.CategoryTableIconPropertyName, Value = icon}
             };
-            await TableObject.Create(uuid, FileManager.CategoryTableId, properties);
+            await TableObject.CreateAsync(uuid, FileManager.CategoryTableId, properties);
         }
 
         public static async Task<List<TableObject>> GetAllCategoriesAsync()
@@ -158,9 +158,9 @@ namespace UniversalSoundBoard.DataAccess
             if (categoryTableObject.TableId != FileManager.CategoryTableId) return;
 
             if (!string.IsNullOrEmpty(name))
-                await categoryTableObject.SetPropertyValue(FileManager.CategoryTableNamePropertyName, name);
+                await categoryTableObject.SetPropertyValueAsync(FileManager.CategoryTableNamePropertyName, name);
             if (!string.IsNullOrEmpty(icon))
-                await categoryTableObject.SetPropertyValue(FileManager.CategoryTableIconPropertyName, icon);
+                await categoryTableObject.SetPropertyValueAsync(FileManager.CategoryTableIconPropertyName, icon);
         }
         #endregion
 
@@ -176,7 +176,7 @@ namespace UniversalSoundBoard.DataAccess
                 new Property{Name = FileManager.PlayingSoundTableVolumePropertyName, Value = volume.ToString()}
             };
 
-            await TableObject.Create(uuid, FileManager.PlayingSoundTableId, properties);
+            await TableObject.CreateAsync(uuid, FileManager.PlayingSoundTableId, properties);
         }
 
         public static async Task<List<TableObject>> GetAllPlayingSoundsAsync()
@@ -192,15 +192,15 @@ namespace UniversalSoundBoard.DataAccess
             if (playingSoundTableObject.TableId != FileManager.PlayingSoundTableId) return;
 
             if (soundIds != null)
-                await playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName, ConvertIdListToString(soundIds));
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableSoundIdsPropertyName, ConvertIdListToString(soundIds));
             if (!string.IsNullOrEmpty(current))
-                await playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName, current);
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableCurrentPropertyName, current);
             if (!string.IsNullOrEmpty(repetitions))
-                await playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName, repetitions);
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableRepetitionsPropertyName, repetitions);
             if (!string.IsNullOrEmpty(randomly))
-                await playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName, randomly);
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableRandomlyPropertyName, randomly);
             if (!string.IsNullOrEmpty(volume))
-                await playingSoundTableObject.SetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName, volume);
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableVolumePropertyName, volume);
         }
         #endregion
 
@@ -234,7 +234,7 @@ namespace UniversalSoundBoard.DataAccess
                     i++;
                 }
 
-                await TableObject.Create(Guid.NewGuid(), FileManager.OrderTableId, properties);
+                await TableObject.CreateAsync(Guid.NewGuid(), FileManager.OrderTableId, properties);
             }
             else
             {
@@ -246,7 +246,7 @@ namespace UniversalSoundBoard.DataAccess
                     newProperties.Add(i.ToString(), uuid.ToString());
                     i++;
                 }
-                await tableObject.SetPropertyValues(newProperties);
+                await tableObject.SetPropertyValuesAsync(newProperties);
 
                 // Remove the properties that are outside of the uuids range
                 List<string> removedProperties = new List<string>();
@@ -255,7 +255,7 @@ namespace UniversalSoundBoard.DataAccess
                         removedProperties.Add(property.Name);
 
                 for (int j = 0; j < removedProperties.Count; j++)
-                    await tableObject.RemoveProperty(removedProperties[j]);
+                    await tableObject.RemovePropertyAsync(removedProperties[j]);
             }
         }
         #endregion
@@ -300,7 +300,7 @@ namespace UniversalSoundBoard.DataAccess
                     i++;
                 }
 
-                await TableObject.Create(Guid.NewGuid(), FileManager.OrderTableId, properties);
+                await TableObject.CreateAsync(Guid.NewGuid(), FileManager.OrderTableId, properties);
             }
             else
             {
@@ -312,7 +312,7 @@ namespace UniversalSoundBoard.DataAccess
                     newProperties.Add(i.ToString(), uuid.ToString());
                     i++;
                 }
-                await tableObject.SetPropertyValues(newProperties);
+                await tableObject.SetPropertyValuesAsync(newProperties);
                 
                 bool removeNonExistentSounds = !(App.Current as App)._itemViewHolder.User.IsLoggedIn ||
                                                 ((App.Current as App)._itemViewHolder.User.IsLoggedIn && FileManager.syncFinished);
@@ -326,7 +326,7 @@ namespace UniversalSoundBoard.DataAccess
                             removedProperties.Add(property.Name);
 
                     for (int j = 0; j < removedProperties.Count; j++)
-                        await tableObject.RemoveProperty(removedProperties[j]);
+                        await tableObject.RemovePropertyAsync(removedProperties[j]);
                 }
             }
         }
