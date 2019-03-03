@@ -80,7 +80,7 @@ namespace UniversalSoundBoard.DataAccess
         private static Color playingSoundsBarDarkBackgroundColor = Color.FromArgb(255, 15, 20, 35);       // #0f1423
 
 
-        public static DavEnvironment Environment = DavEnvironment.Development;
+        public static DavEnvironment Environment = DavEnvironment.Production;
 
         // dav Keys
         private const string ApiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
@@ -88,7 +88,7 @@ namespace UniversalSoundBoard.DataAccess
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
         private const string LoginImplicitUrlProduction = "https://dav-apps.tech/login_implicit";
-        private const string LoginImplicitUrlDevelopment = "https://c10fead2.ngrok.io/login_implicit";
+        private const string LoginImplicitUrlDevelopment = "https://f92f0acb.ngrok.io/login_implicit";
         public static string LoginImplicitUrl => Environment == DavEnvironment.Production ? LoginImplicitUrlProduction : LoginImplicitUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 8; Prod: 1
