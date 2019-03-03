@@ -289,12 +289,7 @@ namespace UniversalSoundBoard.Pages
 
             (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
             await FileManager.UpdateGridViewAsync();
-
-            if ((App.Current as App)._itemViewHolder.SelectedCategory == 0)
-                await FileManager.ShowAllSoundsAsync();
-            else
-                await FileManager.ShowCategoryAsync((App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid);
-
+            
             (App.Current as App)._itemViewHolder.LoadingScreenVisibility = false;
         }
         
