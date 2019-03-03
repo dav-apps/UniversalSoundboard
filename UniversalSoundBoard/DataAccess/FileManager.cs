@@ -455,9 +455,12 @@ namespace UniversalSoundBoard.DataAccess
                     if (await soundsFolder.TryGetItemAsync(soundData.Uuid + "." + soundData.SoundExt) is StorageFile audioFile)
                     {
                         Guid soundUuid = ConvertStringToGuid(soundData.Uuid).GetValueOrDefault();
-                        Guid categoryUuid = ConvertStringToGuid(soundData.CategoryId).GetValueOrDefault();
+                        List<Guid> categoryUuids = new List<Guid>();
+                        Guid? categoryUuid = ConvertStringToGuid(soundData.CategoryId);
+                        if (categoryUuid.HasValue)
+                            categoryUuids.Add(categoryUuid.Value);
 
-                        soundUuid = await AddSoundAsync(soundUuid, WebUtility.HtmlDecode(soundData.Name), categoryUuid, audioFile);
+                        soundUuid = await AddSoundAsync(soundUuid, WebUtility.HtmlDecode(soundData.Name), categoryUuids, audioFile);
 
                         if (imagesFolder != null)
                         {
@@ -508,9 +511,12 @@ namespace UniversalSoundBoard.DataAccess
                     {
                         Guid soundGuid = Guid.Empty;
                         Guid.TryParse(sound.uuid, out soundGuid);
-                        Guid categoryGuid = Guid.Empty;
-                        Guid.TryParse(sound.category_id, out categoryGuid);
-                        Guid soundUuid = await AddSoundAsync(soundGuid, WebUtility.HtmlDecode(sound.name), categoryGuid, audioFile);
+                        List<Guid> categoryUuids = new List<Guid>();
+                        Guid? categoryUuid = ConvertStringToGuid(sound.category_id);
+                        if (categoryUuid.HasValue)
+                            categoryUuids.Add(categoryUuid.Value);
+
+                        Guid soundUuid = await AddSoundAsync(soundGuid, WebUtility.HtmlDecode(sound.name), categoryUuids, audioFile);
 
                         if (imagesFolder != null && !string.IsNullOrEmpty(sound.image_ext))
                         {
@@ -581,7 +587,7 @@ namespace UniversalSoundBoard.DataAccess
                     string name = file.DisplayName;
                     Guid soundUuid = Guid.Empty;
                     string categoryName = null;
-                    Guid categoryUuid = Guid.Empty;
+                    List<Guid> categoryUuids = new List<Guid>();
                     bool favourite = false;
 
                     // Get the soundDetails file of the sound and get favourite and category information
@@ -604,14 +610,14 @@ namespace UniversalSoundBoard.DataAccess
                         {
                             if (category.Name == categoryName)
                             {
-                                categoryUuid = category.Uuid;
+                                categoryUuids.Add(category.Uuid);
                                 break;
                             }
                         }
                     }
 
                     // Save the sound
-                    soundUuid = await AddSoundAsync(Guid.Empty, name, categoryUuid, file);
+                    soundUuid = await AddSoundAsync(Guid.Empty, name, categoryUuids, file);
 
                     // Get the image file of the sound
                     foreach (StorageFile imageFile in await imagesFolder.GetFilesAsync())
@@ -941,7 +947,7 @@ namespace UniversalSoundBoard.DataAccess
             return sounds;
         }
 
-        public static async Task<Guid> AddSoundAsync(Guid uuid, string name, Guid categoryUuid, StorageFile audioFile)
+        public static async Task<Guid> AddSoundAsync(Guid uuid, string name, List<Guid> categoryUuids, StorageFile audioFile)
         {
             // Generate a new uuid if necessary
             if (Equals(uuid, Guid.Empty))
@@ -955,8 +961,13 @@ namespace UniversalSoundBoard.DataAccess
             // Copy the file into the local app folder
             StorageFile newAudioFile = await audioFile.CopyAsync(ApplicationData.Current.LocalCacheFolder, "newSound" + audioFile.FileType, NameCollisionOption.ReplaceExisting);
 
+            // Create the categories list
+            List<string> categories = new List<string>();
+            foreach (var cUuid in categoryUuids)
+                categories.Add(cUuid.ToString());
+
             await DatabaseOperations.AddSoundFileAsync(soundFileUuid, newAudioFile);
-            await DatabaseOperations.AddSoundAsync(uuid, name, soundFileUuid.ToString(), Equals(categoryUuid, Guid.Empty) ? null : categoryUuid.ToString());
+            await DatabaseOperations.AddSoundAsync(uuid, name, soundFileUuid.ToString(), categories);
 
             await ClearCacheAsync();
             return uuid;
@@ -1219,7 +1230,7 @@ namespace UniversalSoundBoard.DataAccess
             if (Equals(uuid, Guid.Empty))
                 uuid = Guid.NewGuid();
 
-            if (DatabaseOperations.GetObjectAsync(uuid) != null)
+            if (await DatabaseOperations.GetObjectAsync(uuid) != null)
                 return null;
 
             await DatabaseOperations.AddCategoryAsync(uuid, name, icon);
@@ -1228,7 +1239,7 @@ namespace UniversalSoundBoard.DataAccess
             return new Category(uuid, name, icon);
         }
 
-        private static async Task<List<Category>> GetAllCategoriesAsync()
+        internal static async Task<List<Category>> GetAllCategoriesAsync()
         {
             List<TableObject> categoriesTableObjectList = await DatabaseOperations.GetAllCategoriesAsync();
             List<Category> categoriesList = new List<Category>();
@@ -1956,6 +1967,8 @@ namespace UniversalSoundBoard.DataAccess
             foreach (Category cat in await GetAllCategoriesAsync())
                 (App.Current as App)._itemViewHolder.Categories.Add(cat);
             (App.Current as App)._itemViewHolder.SelectedCategory = selectedCategory;
+
+            (App.Current as App)._itemViewHolder.TriggerCategoriesUpdatedEvent((App.Current as App)._itemViewHolder.Categories, null);
         }
 
         public static async Task UpdatePlayingSoundListItemAsync(Guid uuid)
