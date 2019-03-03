@@ -6,8 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:UniversalSoundBoard.Models"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    mc:Ignorable="d"
-    Loaded="Page_Loaded">
+    mc:Ignorable="d">
 
     <Grid>
         <ScrollViewer Name="ContentRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
@@ -19,8 +18,9 @@
 
                 <ListView Name="CategoriesListView" 
                       Grid.Row="1"
-                      SelectionChanged="CategoriesListView_SelectionChanged"
-                      ItemsSource="{x:Bind categories}">
+                      ItemsSource="{x:Bind categories}"
+                      SelectionMode="Multiple"
+                      IsMultiSelectCheckBoxEnabled="False">
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:Category">
                             <Grid>
@@ -45,11 +45,10 @@
                 </ListView>
 
                 <StackPanel Orientation="Horizontal"
-                            Margin="10,10,0,0">
+                            Margin="10,10,0,10">
                     <Button Name="AddButton" 
                             x:Uid="ShareTarget-AddButton" 
                             Grid.Row="2"
-                            IsEnabled="False"
                             Click="AddButton_Click"/>
 
                     <Button Name="AddCategoryButton" 
