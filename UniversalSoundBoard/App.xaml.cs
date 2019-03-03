@@ -164,14 +164,14 @@ namespace UniversalSoundBoard
             {
                 if(!await FileManager.UsesDavDataModelAsync())
                 {
-                    bool loadState = (e.PreviousExecutionState == ApplicationExecutionState.Terminated);
+                    bool loadState = e.PreviousExecutionState == ApplicationExecutionState.Terminated;
                     UpgradeDataSplashScreen upgradeDataSplashScreen = new UpgradeDataSplashScreen(e.SplashScreen, loadState);
                     Window.Current.Content = upgradeDataSplashScreen;
                 }
             }
             
             // Check if app was launched from a secondary tile
-            if (!String.IsNullOrEmpty(e.Arguments))
+            if (!string.IsNullOrEmpty(e.Arguments))
             {
                 Guid? soundUuid = FileManager.ConvertStringToGuid(e.Arguments);
                 if(soundUuid.HasValue)

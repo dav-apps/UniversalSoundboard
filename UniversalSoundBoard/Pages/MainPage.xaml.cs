@@ -255,8 +255,10 @@ namespace UniversalSoundBoard.Pages
                 var category = (Category)sender.SelectedItem;
                 int newSelectedCategory = (App.Current as App)._itemViewHolder.Categories.ToList().FindIndex(c => c.Uuid == category.Uuid);
 
-                if (newSelectedCategory == (App.Current as App)._itemViewHolder.SelectedCategory)
+                if (newSelectedCategory == (App.Current as App)._itemViewHolder.SelectedCategory
+                    && (App.Current as App)._itemViewHolder.Page == typeof(SoundPage))
                     return;
+
                 (App.Current as App)._itemViewHolder.SelectedCategory = newSelectedCategory;
 
                 if ((App.Current as App)._itemViewHolder.SelectedCategory == 0)
