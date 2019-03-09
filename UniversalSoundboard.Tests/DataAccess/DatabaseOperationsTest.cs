@@ -3,6 +3,7 @@ using davClassLibrary.Common;
 using davClassLibrary.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniversalSoundboard.Tests.Common;
 using UniversalSoundBoard.DataAccess;
@@ -111,6 +112,58 @@ namespace UniversalSoundboard.Tests.DataAccess
             var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(tableObject.Uuid);
             Assert.IsNotNull(tableObjectFromDatabase);
             Assert.AreEqual(TableObject.TableObjectUploadStatus.Deleted, tableObjectFromDatabase.UploadStatus);
+        }
+        #endregion
+
+        #region AddSound
+        [TestMethod]
+        public async Task AddSoundShouldCreateSoundObjectWithTheCorrectProperties()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            string soundFileUuid = Guid.NewGuid().ToString();
+            List<string> categoryUuids = new List<string>
+            {
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString()
+            };
+            string name = "Phoenix Objection";
+
+            // Act
+            await DatabaseOperations.AddSoundAsync(uuid, name, soundFileUuid, categoryUuids);
+
+            // Assert
+            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.AreEqual(Guid.Parse(soundFileUuid), Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
+            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(false, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+
+            int i = 0;
+            string[] tableObjectCategoryUuids = tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(",");
+            foreach(var categoryUuid in categoryUuids)
+            {
+                Assert.AreEqual(Guid.Parse(categoryUuid), Guid.Parse(tableObjectCategoryUuids[i]));
+                i++;
+            }
+        }
+
+        [TestMethod]
+        public async Task AddSoundShouldCreateSoundObjectWithoutCategories()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            string soundFileUuid = Guid.NewGuid().ToString();
+            string name = "Godot Objection";
+
+            // Act
+            await DatabaseOperations.AddSoundAsync(uuid, name, soundFileUuid, null);
+
+            // Assert
+            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.AreEqual(Guid.Parse(soundFileUuid), Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
+            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(false, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName));
         }
         #endregion
     }
