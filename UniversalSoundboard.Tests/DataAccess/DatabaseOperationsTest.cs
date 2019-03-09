@@ -1,4 +1,5 @@
-﻿using davClassLibrary.Common;
+﻿using davClassLibrary;
+using davClassLibrary.Common;
 using davClassLibrary.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
@@ -76,6 +77,40 @@ namespace UniversalSoundboard.Tests.DataAccess
 
             // Assert
             Assert.IsFalse(exists);
+        }
+        #endregion
+
+        #region DeleteObject
+        [TestMethod]
+        public async Task DeleteObjectShouldDeleteTheObjectImmediatelyIfTheUserIsNotLoggedIn()
+        {
+            // Arrange
+            int tableId = 21;
+            var tableObject = await TableObject.CreateAsync(tableId);
+
+            // Act
+            await DatabaseOperations.DeleteObjectAsync(tableObject.Uuid);
+
+            // Assert
+            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(tableObject.Uuid);
+            Assert.IsNull(tableObjectFromDatabase);
+        }
+
+        [TestMethod]
+        public async Task DeleteObjectShouldSetTheUploadStatusToDeletedIfTheUserIsLoggedIn()
+        {
+            // Arrange
+            ProjectInterface.LocalDataSettings.SetValue(Dav.jwtKey, Constants.Jwt);
+            int tableId = 21;
+            var tableObject = await TableObject.CreateAsync(tableId);
+
+            // Act
+            await DatabaseOperations.DeleteObjectAsync(tableObject.Uuid);
+
+            // Assert
+            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(tableObject.Uuid);
+            Assert.IsNotNull(tableObjectFromDatabase);
+            Assert.AreEqual(TableObject.TableObjectUploadStatus.Deleted, tableObjectFromDatabase.UploadStatus);
         }
         #endregion
     }

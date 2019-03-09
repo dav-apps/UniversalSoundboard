@@ -123,6 +123,7 @@
     <Compile Include="Common\LocalDataSettings.cs" />
     <Compile Include="Common\RetrieveConstants.cs" />
     <Compile Include="Common\TriggerAction.cs" />
+    <Compile Include="Constants.cs" />
     <Compile Include="DataAccess\DatabaseOperationsTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UnitTestApp.xaml.cs">
