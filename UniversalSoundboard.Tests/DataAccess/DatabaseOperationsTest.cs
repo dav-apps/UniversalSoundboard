@@ -250,5 +250,179 @@ namespace UniversalSoundboard.Tests.DataAccess
             Assert.AreEqual(0, sounds.Count);
         }
         #endregion
+
+        #region UpdateSound
+        [TestMethod]
+        public async Task UpdateSoundShouldUpdateAllValuesOfTheSound()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            var oldSoundFileUuid = Guid.NewGuid();
+            var newSoundFileUuid = Guid.NewGuid();
+            string oldName = "Phoenix Objection";
+            string newName = "Godot Objection";
+            var imageFileUuid = Guid.NewGuid();
+            bool newFavourite = true;
+            List<string> oldCategoryUuids = new List<string>
+            {
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString()
+            };
+            List<string> newCategoryUuids = new List<string>
+            {
+                Guid.NewGuid().ToString()
+            };
+
+            // Create the sound
+            await DatabaseOperations.AddSoundAsync(uuid, oldName, oldSoundFileUuid.ToString(), oldCategoryUuids);
+
+            // Act
+            await DatabaseOperations.UpdateSoundAsync(uuid, newName, newFavourite.ToString(), newSoundFileUuid.ToString(), imageFileUuid.ToString(), newCategoryUuids);
+
+            // Assert
+            var tableObjectFromDatabase = await DatabaseOperations.GetObjectAsync(uuid);
+            Assert.AreEqual(newSoundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
+            Assert.AreEqual(newName, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(imageFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName)));
+            Assert.AreEqual(newFavourite, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.AreEqual(newCategoryUuids[0], tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName));
+        }
+
+        [TestMethod]
+        public async Task UpdateSoundShouldUpdateTheNameOfTheSound()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            string oldName = "Phoenix Hold it";
+            string newName = "Godot Objection";
+            var soundFileUuid = Guid.NewGuid();
+
+            // Create the sound
+            await DatabaseOperations.AddSoundAsync(uuid, oldName, soundFileUuid.ToString(), null);
+
+            // Act
+            await DatabaseOperations.UpdateSoundAsync(uuid, newName, null, null, null, null);
+
+            // Assert
+            var tableObjectFromDatabase = await DatabaseOperations.GetObjectAsync(uuid);
+            Assert.AreEqual(newName, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(soundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
+            Assert.IsFalse(bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
+            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName));
+        }
+
+        [TestMethod]
+        public async Task UpdateSoundShouldUpdateTheFavouriteOfTheSound()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            string name = "Phoenix Objection";
+            bool newFavourite = true;
+            var soundFileUuid = Guid.NewGuid();
+
+            // Create the sound
+            await DatabaseOperations.AddSoundAsync(uuid, name, soundFileUuid.ToString(), null);
+
+            // Act
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, newFavourite.ToString(), null, null, null);
+
+            // Assert
+            var tableObjectFromDatabase = await DatabaseOperations.GetObjectAsync(uuid);
+            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(soundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
+            Assert.AreEqual(newFavourite, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
+            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName));
+        }
+
+        [TestMethod]
+        public async Task UpdateSoundShouldUpdateTheSoundFileUuidOfTheSound()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            string name = "Phoenix Objection";
+            var oldSoundFileUuid = Guid.NewGuid();
+            var newSoundFileUuid = Guid.NewGuid();
+
+            // Create the sound
+            await DatabaseOperations.AddSoundAsync(uuid, name, oldSoundFileUuid.ToString(), null);
+
+            // Act
+            await DatabaseOperations.UpdateSoundAsync(uuid, null,null, newSoundFileUuid.ToString(), null, null);
+
+            // Assert
+            var tableObjectFromDatabase = await DatabaseOperations.GetObjectAsync(uuid);
+            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(newSoundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
+            Assert.IsFalse(bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
+            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName));
+        }
+
+        [TestMethod]
+        public async Task UpdateSoundShouldUpdateTheImageUuidOfTheSound()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            string name = "Phoenix Objection";
+            var soundFileUuid = Guid.NewGuid();
+            var newImageUuid = Guid.NewGuid();
+
+            // Create the sound
+            await DatabaseOperations.AddSoundAsync(uuid, name, soundFileUuid.ToString(), null);
+
+            // Act
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, newImageUuid.ToString(), null);
+
+            // Assert
+            var tableObjectFromDatabase = await DatabaseOperations.GetObjectAsync(uuid);
+            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(soundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
+            Assert.IsFalse(bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.AreEqual(newImageUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName)));
+            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName));
+        }
+
+        [TestMethod]
+        public async Task UpdateSoundShouldUpdateTheCategoryUuidsOfTheSound()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            string name = "Phoenix Objection";
+            var soundFileUuid = Guid.NewGuid();
+            List<string> oldCategories = new List<string>
+            {
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString()
+            };
+            List<string> newCategories = new List<string>
+            {
+                Guid.NewGuid().ToString(),
+                Guid.NewGuid().ToString()
+            };
+
+            // Create the sound
+            await DatabaseOperations.AddSoundAsync(uuid, name, soundFileUuid.ToString(), oldCategories);
+
+            // Act
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, null, newCategories);
+
+            // Assert
+            var tableObjectFromDatabase = await DatabaseOperations.GetObjectAsync(uuid);
+            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(soundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
+            Assert.IsFalse(bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
+
+            int i = 0;
+            string[] categoryUuids = tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(",");
+            foreach (var categoryUuid in newCategories)
+            {
+                Assert.AreEqual(Guid.Parse(categoryUuid), Guid.Parse(categoryUuids[i]));
+                i++;
+            }
+        }
+        #endregion
     }
 }
