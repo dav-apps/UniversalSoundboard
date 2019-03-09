@@ -12,7 +12,7 @@ using Windows.Storage;
 
 namespace UniversalSoundBoard.DataAccess
 {
-    class DatabaseOperations
+    public class DatabaseOperations
     {
         #region General Methods
         public static async Task<TableObject> GetObjectAsync(Guid uuid)
