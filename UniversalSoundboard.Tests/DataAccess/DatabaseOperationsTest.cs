@@ -2,9 +2,6 @@
 using davClassLibrary.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundboard.Tests.Common;
 using UniversalSoundBoard.DataAccess;
@@ -18,6 +15,9 @@ namespace UniversalSoundboard.Tests.DataAccess
         public static void Setup(TestContext context)
         {
             ProjectInterface.RetrieveConstants = new RetrieveConstants();
+            ProjectInterface.GeneralMethods = new GeneralMethods();
+            ProjectInterface.LocalDataSettings = new LocalDataSettings();
+            ProjectInterface.TriggerAction = new TriggerAction();
         }
 
         #region GetObject
