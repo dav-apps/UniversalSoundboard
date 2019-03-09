@@ -49,5 +49,34 @@ namespace UniversalSoundboard.Tests.DataAccess
             Assert.IsNull(tableObjectFromDatabase);
         }
         #endregion
+
+        #region ObjectExists
+        [TestMethod]
+        public async Task ObjectExistsShouldReturnTrueIfTheObjectExists()
+        {
+            // Arrange
+            int tableId = 34;
+            var tableObject = await TableObject.CreateAsync(tableId);
+
+            // Act
+            bool exists = await DatabaseOperations.ObjectExistsAsync(tableObject.Uuid);
+
+            // Assert
+            Assert.IsTrue(exists);
+        }
+
+        [TestMethod]
+        public async Task ObjectExistsShouldReturnFalseIfTheObjectDoesNotExist()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+
+            // Act
+            bool exists = await DatabaseOperations.ObjectExistsAsync(uuid);
+
+            // Assert
+            Assert.IsFalse(exists);
+        }
+        #endregion
     }
 }
