@@ -131,7 +131,7 @@ namespace UniversalSoundboard.Tests.DataAccess
 
         #region AddSound
         [TestMethod]
-        public async Task AddSoundShouldCreateSoundObjectWithTheCorrectProperties()
+        public async Task AddSoundShouldCreateTheSoundObjectWithTheCorrectProperties()
         {
             // Arrange
             var uuid = Guid.NewGuid();
@@ -163,7 +163,7 @@ namespace UniversalSoundboard.Tests.DataAccess
         }
 
         [TestMethod]
-        public async Task AddSoundShouldCreateSoundObjectWithoutCategories()
+        public async Task AddSoundShouldCreateTheSoundObjectWithoutCategories()
         {
             // Arrange
             var uuid = Guid.NewGuid();
@@ -506,6 +506,134 @@ namespace UniversalSoundboard.Tests.DataAccess
 
             var imageFileFromDatabase = await Dav.Database.GetTableObjectAsync(imageFileUuid);
             Assert.IsNull(imageFileFromDatabase);
+        }
+        #endregion
+
+        #region AddCategory
+        [TestMethod]
+        public async Task AddCategoryShouldCreateTheCategoryObjectWithTheCorrectProperties()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            string name = "Testcategory";
+            string icon = "icon";
+
+            // Act
+            await DatabaseOperations.AddCategoryAsync(uuid, name, icon);
+
+            // Assert
+            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.AreEqual(FileManager.CategoryTableId, tableObjectFromDatabase.TableId);
+            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(icon, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
+        }
+        #endregion
+
+        #region GetAllCategories
+        [TestMethod]
+        public async Task GetAllCategoriesShouldReturnAllCategories()
+        {
+            // Arrange
+            var firstUuid = Guid.NewGuid();
+            var secondUuid = Guid.NewGuid();
+            string firstName = "FirstName";
+            string secondName = "SecondName";
+            string firstIcon = "FirstIcon";
+            string secondIcon = "SecondIcon";
+
+            // Create the categories
+            await DatabaseOperations.AddCategoryAsync(firstUuid, firstName, firstIcon);
+            await DatabaseOperations.AddCategoryAsync(secondUuid, secondName, secondIcon);
+
+            // Act
+            List<TableObject> categories = await DatabaseOperations.GetAllCategoriesAsync();
+
+            // Assert
+            Assert.AreEqual(2, categories.Count);
+
+            Assert.AreEqual(firstUuid, categories[0].Uuid);
+            Assert.AreEqual(firstName, categories[0].GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(firstIcon, categories[0].GetPropertyValue(FileManager.CategoryTableIconPropertyName));
+
+            Assert.AreEqual(secondUuid, categories[1].Uuid);
+            Assert.AreEqual(secondName, categories[1].GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(secondIcon, categories[1].GetPropertyValue(FileManager.CategoryTableIconPropertyName));
+        }
+
+        [TestMethod]
+        public async Task GetAllCategoriesShouldReturnEmptyListIfThereAreNoCategories()
+        {
+            // Act
+            List<TableObject> categories = await DatabaseOperations.GetAllCategoriesAsync();
+
+            // Assert
+            Assert.AreEqual(0, categories.Count);
+        }
+        #endregion
+
+        #region UpdateCategory
+        [TestMethod]
+        public async Task UpdateCategoryShouldUpdateAllValuesOfTheCategory()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            var oldName = "TestCategory";
+            var newName = "UpdatedCategory";
+            var oldIcon = "icon";
+            var newIcon = "updatedIcon";
+
+            // Create the category
+            await DatabaseOperations.AddCategoryAsync(uuid, oldName, oldIcon);
+
+            // Act
+            await DatabaseOperations.UpdateCategoryAsync(uuid, newName, newIcon);
+
+            // Assert
+            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.AreEqual(newName, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(newIcon, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
+        }
+
+        [TestMethod]
+        public async Task UpdateCategoryShouldUpdateTheNameOfTheCategory()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            var oldName = "Test category";
+            var newName = "Updated category";
+            var icon = "icon";
+
+            // Create the category
+            await DatabaseOperations.AddCategoryAsync(uuid, oldName, icon);
+
+            // Act
+            await DatabaseOperations.UpdateCategoryAsync(uuid, newName, null);
+
+            // Assert
+            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.AreEqual(newName, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(icon, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
+        }
+
+        [TestMethod]
+        public async Task UpdateCategoryShouldUpdateTheIconOfTheCategory()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            var name = "TestCategory";
+            var oldIcon = "icon";
+            var newIcon = "updated icon";
+
+            // Create the category
+            await DatabaseOperations.AddCategoryAsync(uuid, name, oldIcon);
+
+            // Act
+            await DatabaseOperations.UpdateCategoryAsync(uuid, null, newIcon);
+
+            // Assert
+            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(newIcon, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
         }
         #endregion
     }
