@@ -14,6 +14,7 @@ namespace UniversalSoundboard.Tests.DataAccess
     [TestClass][DoNotParallelize]
     public class DatabaseOperationsTest
     {
+        #region Init
         [ClassInitialize]
         public static void ClassInit(TestContext context)
         {
@@ -35,6 +36,7 @@ namespace UniversalSoundboard.Tests.DataAccess
             var database = new davClassLibrary.DataAccess.DavDatabase();
             await database.DropAsync();
         }
+        #endregion
 
         #region GetObject
         [TestMethod]
@@ -1018,6 +1020,112 @@ namespace UniversalSoundboard.Tests.DataAccess
 
             // Assert
             Assert.AreEqual(0, orders.Count);
+        }
+        #endregion
+
+        #region SetCategoryOrder
+        [TestMethod]
+        public async Task SetCategoryOrderShouldCreateNewOrderWithTheCorrectProperties()
+        {
+            // Arrange
+            List<Guid> uuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+
+            // Act
+            await DatabaseOperations.SetCategoryOrderAsync(uuids);
+
+            // Assert
+            var tableObjects = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, tableObjects.Count);
+            var categoryOrderTableObject = tableObjects.Find(obj => obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) == FileManager.CategoryOrderType);
+            Assert.IsNotNull(categoryOrderTableObject);
+            Assert.AreEqual(uuids.Count + 1, categoryOrderTableObject.Properties.Count);
+            
+            for(int i = 0; i < uuids.Count; i++)
+            {
+                string value = categoryOrderTableObject.GetPropertyValue(i.ToString());
+                Assert.AreEqual(uuids[i], Guid.Parse(value));
+            }
+        }
+
+        [TestMethod]
+        public async Task SetCategoryOrderShouldUpdateTheExistingOrderWithTheCorrectProperties()
+        {
+            // Arrange
+            List<Guid> oldUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+            List<Guid> newUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+
+            // Create the category order
+            await DatabaseOperations.SetCategoryOrderAsync(oldUuids);
+
+            // Act
+            await DatabaseOperations.SetCategoryOrderAsync(newUuids);
+
+            // Assert
+            var tableObjects = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, tableObjects.Count);
+            var categoryOrderTableObject = tableObjects.Find(obj => obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) == FileManager.CategoryOrderType);
+            Assert.IsNotNull(categoryOrderTableObject);
+            Assert.AreEqual(newUuids.Count + 1, categoryOrderTableObject.Properties.Count);
+
+            for (int i = 0; i < newUuids.Count; i++)
+            {
+                string value = categoryOrderTableObject.GetPropertyValue(i.ToString());
+                Assert.AreEqual(newUuids[i], Guid.Parse(value));
+            }
+        }
+
+        [TestMethod]
+        public async Task SetCategoryOrderShouldUpdateTheExistingOrderAndRemoveTheRedundantUuids()
+        {
+            // Arrange
+            List<Guid> oldUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+            List<Guid> newUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+
+            // Create the category order
+            await DatabaseOperations.SetCategoryOrderAsync(oldUuids);
+
+            // Act
+            await DatabaseOperations.SetCategoryOrderAsync(newUuids);
+
+            // Assert
+            var tableObjects = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, tableObjects.Count);
+            var categoryOrderTableObject = tableObjects.Find(obj => obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) == FileManager.CategoryOrderType);
+            Assert.IsNotNull(categoryOrderTableObject);
+            Assert.AreEqual(newUuids.Count + 1, categoryOrderTableObject.Properties.Count);
+
+            for (int i = 0; i < newUuids.Count; i++)
+            {
+                string value = categoryOrderTableObject.GetPropertyValue(i.ToString());
+                Assert.AreEqual(newUuids[i], Guid.Parse(value));
+            }
         }
         #endregion
     }
