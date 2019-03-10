@@ -990,5 +990,35 @@ namespace UniversalSoundboard.Tests.DataAccess
             }
         }
         #endregion
+
+        #region GetAllOrders
+        [TestMethod]
+        public async Task GetAllOrdersShouldReturnAllOrders()
+        {
+            // Arrange
+            var firstUuid = Guid.NewGuid();
+            var secondUuid = Guid.NewGuid();
+
+            // Create the orders
+            await TableObject.CreateAsync(firstUuid, FileManager.OrderTableId);
+            await TableObject.CreateAsync(secondUuid, FileManager.OrderTableId);
+
+            // Act
+            List<TableObject> orders = await DatabaseOperations.GetAllOrdersAsync();
+
+            // Assert
+            Assert.AreEqual(2, orders.Count);
+        }
+
+        [TestMethod]
+        public async Task GetAllOrdersShouldReturnEmptyListIfThereAreNoOrders()
+        {
+            // Act
+            List<TableObject> orders = await DatabaseOperations.GetAllOrdersAsync();
+
+            // Assert
+            Assert.AreEqual(0, orders.Count);
+        }
+        #endregion
     }
 }
