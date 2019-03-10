@@ -951,7 +951,7 @@ namespace UniversalSoundBoard.DataAccess
             // Generate a new uuid if necessary
             if (Equals(uuid, Guid.Empty))
                 uuid = Guid.NewGuid();
-            else if (DatabaseOperations.GetObjectAsync(uuid) != null)
+            else if (await DatabaseOperations.GetObjectAsync(uuid) != null)
                 return uuid;
 
             // Generate a uuid for the soundFile

@@ -148,6 +148,7 @@ namespace UniversalSoundboard.Tests.DataAccess
 
             // Assert
             var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.AreEqual(FileManager.SoundTableId, tableObjectFromDatabase.TableId);
             Assert.AreEqual(Guid.Parse(soundFileUuid), Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
             Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
             Assert.AreEqual(false, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
@@ -174,6 +175,7 @@ namespace UniversalSoundboard.Tests.DataAccess
 
             // Assert
             var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.AreEqual(FileManager.SoundTableId, tableObjectFromDatabase.TableId);
             Assert.AreEqual(Guid.Parse(soundFileUuid), Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
             Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
             Assert.AreEqual(false, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
@@ -422,6 +424,88 @@ namespace UniversalSoundboard.Tests.DataAccess
                 Assert.AreEqual(Guid.Parse(categoryUuid), Guid.Parse(categoryUuids[i]));
                 i++;
             }
+        }
+        #endregion
+
+        #region DeleteSound
+        [TestMethod]
+        public async Task DeleteSoundShouldDeleteTheSound()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            string name = "Phoenix Objection";
+
+            // Create the sound
+            await DatabaseOperations.AddSoundAsync(uuid, name, Guid.NewGuid().ToString(), null);
+
+            // Act
+            await DatabaseOperations.DeleteSoundAsync(uuid);
+
+            // Assert
+            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.IsNull(tableObjectFromDatabase);
+        }
+
+        [TestMethod]
+        public async Task DeleteSoundShouldDeleteTheSoundAndTheSoundFile()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            var soundFileUuid = Guid.NewGuid();
+            string name = "Phoenix Objection";
+            List<string> categoryUuids = new List<string>
+            {
+                Guid.NewGuid().ToString()
+            };
+
+            // Create the sound
+            await DatabaseOperations.AddSoundAsync(uuid, name, soundFileUuid.ToString(), categoryUuids);
+
+            // Create the sound file table object
+            await TableObject.CreateAsync(soundFileUuid, FileManager.SoundFileTableId);
+
+            // Act
+            await DatabaseOperations.DeleteSoundAsync(uuid);
+
+            // Assert
+            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.IsNull(tableObjectFromDatabase);
+
+            var soundFileTableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(soundFileUuid);
+            Assert.IsNull(soundFileTableObjectFromDatabase);
+        }
+
+        [TestMethod]
+        public async Task DeleteSoundShouldDeleteTheSoundTheSoundFileAndTheImageFile()
+        {
+            // Arrange
+            var uuid = Guid.NewGuid();
+            var soundFileUuid = Guid.NewGuid();
+            var imageFileUuid = Guid.NewGuid();
+            string name = "Phoenix Objection";
+
+            // Create the sound
+            await DatabaseOperations.AddSoundAsync(uuid, name, soundFileUuid.ToString(), null);
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, imageFileUuid.ToString(), null);
+
+            // Create the sound file table object
+            await TableObject.CreateAsync(soundFileUuid, FileManager.SoundFileTableId);
+
+            // Create the image file table object
+            await TableObject.CreateAsync(imageFileUuid, FileManager.ImageFileTableId);
+
+            // Act
+            await DatabaseOperations.DeleteSoundAsync(uuid);
+
+            // Assert
+            var soundFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.IsNull(soundFromDatabase);
+
+            var soundFileFromDatabase = await Dav.Database.GetTableObjectAsync(soundFileUuid);
+            Assert.IsNull(soundFileFromDatabase);
+
+            var imageFileFromDatabase = await Dav.Database.GetTableObjectAsync(imageFileUuid);
+            Assert.IsNull(imageFileFromDatabase);
         }
         #endregion
     }
