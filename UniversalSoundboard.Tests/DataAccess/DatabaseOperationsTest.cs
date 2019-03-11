@@ -22,6 +22,8 @@ namespace UniversalSoundboard.Tests.DataAccess
             ProjectInterface.GeneralMethods = new GeneralMethods();
             ProjectInterface.LocalDataSettings = new LocalDataSettings();
             ProjectInterface.TriggerAction = new TriggerAction();
+
+            FileManager.itemViewHolder = new UniversalSoundBoard.Common.ItemViewHolder();
         }
 
         [TestInitialize]
@@ -1124,6 +1126,195 @@ namespace UniversalSoundboard.Tests.DataAccess
             for (int i = 0; i < newUuids.Count; i++)
             {
                 string value = categoryOrderTableObject.GetPropertyValue(i.ToString());
+                Assert.AreEqual(newUuids[i], Guid.Parse(value));
+            }
+        }
+        #endregion
+
+        #region SetSoundOrder
+        [TestMethod]
+        public async Task SetSoundOrderShouldCreateNewOrderForTheCategory()
+        {
+            // Arrange
+            var firstCategoryUuid = Guid.NewGuid();
+            var secondCategoryUuid = Guid.NewGuid();
+
+            List<Guid> firstCategoryUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+            List<Guid> secondCategoryUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+
+            // Create the first sound order
+            await DatabaseOperations.SetSoundOrderAsync(firstCategoryUuid, false, firstCategoryUuids);
+            var orders = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, orders.Count);
+            
+            // Create the second sound order
+            await DatabaseOperations.SetSoundOrderAsync(secondCategoryUuid, false, secondCategoryUuids);
+            orders = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(2, orders.Count);
+
+            // Test the first sound order
+            Assert.AreEqual(FileManager.SoundOrderType, orders[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(firstCategoryUuid, Guid.Parse(orders[0].GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
+            Assert.IsFalse(bool.Parse(orders[0].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
+
+            for (int i = 0; i < firstCategoryUuids.Count; i++)
+            {
+                string value = orders[0].GetPropertyValue(i.ToString());
+                Assert.AreEqual(firstCategoryUuids[i], Guid.Parse(value));
+            }
+
+            // Test the second sound order
+            Assert.AreEqual(FileManager.SoundOrderType, orders[1].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(secondCategoryUuid, Guid.Parse(orders[1].GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
+            Assert.IsFalse(bool.Parse(orders[1].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
+
+            for (int i = 0; i < secondCategoryUuids.Count; i++)
+            {
+                string value = orders[1].GetPropertyValue(i.ToString());
+                Assert.AreEqual(secondCategoryUuids[i], Guid.Parse(value));
+            }
+        }
+
+        [TestMethod]
+        public async Task SetSoundOrderShouldCreateNewOrderForTheFavouritesOfTheCategory()
+        {
+            // Arrange
+            var categoryUuid = Guid.NewGuid();
+
+            List<Guid> normalUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+            List<Guid> favouriteUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+
+            // Create the normal sound order
+            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, false, normalUuids);
+            var orders = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, orders.Count);
+
+            // Create the favourites sound order
+            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, true, favouriteUuids);
+            orders = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(2, orders.Count);
+
+            // Test the normal sound order
+            Assert.AreEqual(FileManager.SoundOrderType, orders[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(categoryUuid, Guid.Parse(orders[0].GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
+            Assert.IsFalse(bool.Parse(orders[0].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
+
+            for (int i = 0; i < normalUuids.Count; i++)
+            {
+                string value = orders[0].GetPropertyValue(i.ToString());
+                Assert.AreEqual(normalUuids[i], Guid.Parse(value));
+            }
+
+            // Test the favourites sound order
+            Assert.AreEqual(FileManager.SoundOrderType, orders[1].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(categoryUuid, Guid.Parse(orders[1].GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
+            Assert.IsTrue(bool.Parse(orders[1].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
+
+            for (int i = 0; i < favouriteUuids.Count; i++)
+            {
+                string value = orders[1].GetPropertyValue(i.ToString());
+                Assert.AreEqual(favouriteUuids[i], Guid.Parse(value));
+            }
+        }
+
+        [TestMethod]
+        public async Task SetSoundOrderShouldUpdateTheExistingOrderWithTheCorrectProperties()
+        {
+            // Arrange
+            var categoryUuid = Guid.NewGuid();
+            List<Guid> oldUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+            List<Guid> newUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+
+            // Create the sound order
+            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, false, oldUuids);
+            var orders = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, orders.Count);
+
+            // Act
+            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, false, newUuids);
+
+            // Assert
+            orders = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, orders.Count);
+
+            Assert.AreEqual(FileManager.SoundOrderType, orders[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(categoryUuid, Guid.Parse(orders[0].GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
+            Assert.IsFalse(bool.Parse(orders[0].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
+
+            for (int i = 0; i < newUuids.Count; i++)
+            {
+                string value = orders[0].GetPropertyValue(i.ToString());
+                Assert.AreEqual(newUuids[i], Guid.Parse(value));
+            }
+        }
+
+        [TestMethod]
+        public async Task SetSoundOrderShouldUpdateTheExistingOrderAndRemoveTheRedundantUuids()
+        {
+            // Arrange
+            var categoryUuid = Guid.NewGuid();
+            List<Guid> oldUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+            List<Guid> newUuids = new List<Guid>
+            {
+                Guid.NewGuid(),
+                Guid.NewGuid()
+            };
+
+            // Create the sound order
+            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, false, oldUuids);
+            var orders = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, orders.Count);
+
+            // Act
+            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, false, newUuids);
+
+            // Assert
+            orders = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, orders.Count);
+
+            var soundOrderTableObject = orders[0];
+            Assert.AreEqual(newUuids.Count + 3, soundOrderTableObject.Properties.Count);
+            Assert.AreEqual(FileManager.SoundOrderType, soundOrderTableObject.GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(categoryUuid, Guid.Parse(soundOrderTableObject.GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
+            Assert.IsFalse(bool.Parse(soundOrderTableObject.GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
+
+            for (int i = 0; i < newUuids.Count; i++)
+            {
+                string value = soundOrderTableObject.GetPropertyValue(i.ToString());
                 Assert.AreEqual(newUuids[i], Guid.Parse(value));
             }
         }
