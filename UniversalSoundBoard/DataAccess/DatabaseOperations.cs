@@ -46,7 +46,7 @@ namespace UniversalSoundBoard.DataAccess
             };
 
             if (categoryUuids != null)
-                properties.Add(new Property { Name = FileManager.SoundTableCategoryUuidPropertyName, Value = ConvertIdListToString(categoryUuids) });
+                properties.Add(new Property { Name = FileManager.SoundTableCategoryUuidPropertyName, Value = string.Join(",", categoryUuids) });
 
             await TableObject.CreateAsync(uuid, FileManager.SoundTableId, properties);
         }
@@ -73,7 +73,7 @@ namespace UniversalSoundBoard.DataAccess
             if (!string.IsNullOrEmpty(imageUuid))
                 await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableImageUuidPropertyName, imageUuid);
             if (categoryUuids != null)
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableCategoryUuidPropertyName, ConvertIdListToString(categoryUuids));
+                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableCategoryUuidPropertyName, string.Join(",", categoryUuids));
         }
         
         public static async Task DeleteSoundAsync(Guid uuid)
@@ -169,7 +169,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             var properties = new List<Property>
             {
-                new Property{Name = FileManager.PlayingSoundTableSoundIdsPropertyName, Value = ConvertIdListToString(soundIds)},
+                new Property{Name = FileManager.PlayingSoundTableSoundIdsPropertyName, Value = string.Join(",", soundIds)},
                 new Property{Name = FileManager.PlayingSoundTableCurrentPropertyName, Value = current.ToString()},
                 new Property{Name = FileManager.PlayingSoundTableRepetitionsPropertyName, Value = repetitions.ToString()},
                 new Property{Name = FileManager.PlayingSoundTableRandomlyPropertyName, Value = randomly.ToString()},
@@ -192,7 +192,7 @@ namespace UniversalSoundBoard.DataAccess
             if (playingSoundTableObject.TableId != FileManager.PlayingSoundTableId) return;
 
             if (soundIds != null)
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableSoundIdsPropertyName, ConvertIdListToString(soundIds));
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableSoundIdsPropertyName, string.Join(",", soundIds));
             if (!string.IsNullOrEmpty(current))
                 await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableCurrentPropertyName, current);
             if (!string.IsNullOrEmpty(repetitions))
@@ -331,24 +331,7 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
         #endregion
-
-        #region Helper Methods
-        private static string ConvertIdListToString(List<string> ids)
-        {
-            if (ids.Count == 0) return "";
-
-            string idsString = "";
-            foreach (string id in ids)
-            {
-                idsString += id + ",";
-            }
-            // Remove the last character, which is a ,
-            idsString = idsString.Remove(idsString.Length - 1);
-
-            return idsString;
-        }
-        #endregion
-
+        
         #region Old Methods
         public static List<OldSoundDatabaseModel> GetAllSoundsFromDatabaseFile(StorageFile databaseFile)
         {
