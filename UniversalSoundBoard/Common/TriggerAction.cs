@@ -1,6 +1,5 @@
 ﻿using davClassLibrary.Common;
 using davClassLibrary.Models;
-using UniversalSoundBoard;
 using UniversalSoundBoard.DataAccess;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
@@ -42,14 +41,14 @@ namespace UniversalSoundboard.Common
                 if (tableId == FileManager.ImageFileTableId || tableId == FileManager.SoundFileTableId)
                 {
                     // Update the sounds
-                    (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+                    FileManager.itemViewHolder.AllSoundsChanged = true;
                     FileManager.UpdateGridViewAsync();
                 }
                 else if (tableId == FileManager.CategoryTableId)
                 {
                     // Update the categories
                     FileManager.CreateCategoriesListAsync();
-                    (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+                    FileManager.itemViewHolder.AllSoundsChanged = true;
                 }
                 else if (tableId == FileManager.PlayingSoundTableId)
                 {

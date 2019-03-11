@@ -104,7 +104,7 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog CreateEditCategoryContentDialogAsync()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            Category currentCategory = (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory];
+            Category currentCategory = FileManager.itemViewHolder.Categories[FileManager.itemViewHolder.SelectedCategory];
 
             EditCategoryContentDialog = new ContentDialog
             {
@@ -159,7 +159,7 @@ namespace UniversalSoundBoard.Common
 
             DeleteCategoryContentDialog = new ContentDialog
             {
-                Title = loader.GetString("DeleteCategoryContentDialog-Title") + (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Name,
+                Title = loader.GetString("DeleteCategoryContentDialog-Title") + FileManager.itemViewHolder.Categories[FileManager.itemViewHolder.SelectedCategory].Name,
                 Content = loader.GetString("DeleteCategoryContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteCategoryContentDialog-PrimaryButton"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
@@ -619,7 +619,7 @@ namespace UniversalSoundBoard.Common
             SelectedCategories = new Dictionary<Guid, bool>();
             
             int i = -1;
-            foreach (var category in (App.Current as App)._itemViewHolder.Categories)
+            foreach (var category in FileManager.itemViewHolder.Categories)
             {
                 if (++i == 0) continue;
 
@@ -681,7 +681,7 @@ namespace UniversalSoundBoard.Common
             CategoryOrderList = new ObservableCollection<Category>();
 
             int i = 0;
-            foreach (var category in (App.Current as App)._itemViewHolder.Categories)
+            foreach (var category in FileManager.itemViewHolder.Categories)
             {
                 if (i++ == 0) continue;
                 CategoryOrderList.Add(category);

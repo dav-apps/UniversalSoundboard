@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using UniversalSoundBoard.DataAccess;
 using Windows.Media.Playback;
 
 namespace UniversalSoundBoard.Models
@@ -92,7 +93,7 @@ namespace UniversalSoundBoard.Models
 
         public static PlayingSound GetPlayingSoundByMediaPlayer(MediaPlayer player)
         {
-            foreach(PlayingSound playingSound in (App.Current as App)._itemViewHolder.PlayingSounds)
+            foreach(PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
                 if (playingSound.MediaPlayer == player)
                     return playingSound;
 

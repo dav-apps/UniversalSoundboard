@@ -54,7 +54,7 @@ namespace UniversalSoundBoard.Converters
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
-            return (App.Current as App)._itemViewHolder.Title;
+            return FileManager.itemViewHolder.Title;
         }
     }
 
@@ -92,7 +92,7 @@ namespace UniversalSoundBoard.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             // Make more button normal options flyout entries invisible if select options are visible
-            return (App.Current as App)._itemViewHolder.NormalOptionsVisibility ? (bool)value : false;
+            return FileManager.itemViewHolder.NormalOptionsVisibility ? (bool)value : false;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -106,7 +106,7 @@ namespace UniversalSoundBoard.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             // Make more button select options flyout entries invisible if normal options are visible
-            return (App.Current as App)._itemViewHolder.NormalOptionsVisibility ? false : (bool)value;
+            return FileManager.itemViewHolder.NormalOptionsVisibility ? false : (bool)value;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -135,12 +135,12 @@ namespace UniversalSoundBoard.Converters
             // Get the index and return the category from the categories list at the index
             int index = (int) value;
 
-            if((App.Current as App)._itemViewHolder.Categories.Count > index)
-                return (App.Current as App)._itemViewHolder.Categories[index];
-            else if((App.Current as App)._itemViewHolder.Categories.Count == 0)
+            if(FileManager.itemViewHolder.Categories.Count > index)
+                return FileManager.itemViewHolder.Categories[index];
+            else if(FileManager.itemViewHolder.Categories.Count == 0)
                 return null;
             else
-                return (App.Current as App)._itemViewHolder.Categories[0];
+                return FileManager.itemViewHolder.Categories[0];
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -149,7 +149,7 @@ namespace UniversalSoundBoard.Converters
             var category = value as Category;
 
             int i = 0;
-            foreach(Category cat in (App.Current as App)._itemViewHolder.Categories)
+            foreach(Category cat in FileManager.itemViewHolder.Categories)
             {
                 if (cat == category)
                     return i;
@@ -182,8 +182,8 @@ namespace UniversalSoundBoard.Converters
         // This is bound to the acrylic background StackPanel in the NavigationViewHeader
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var playingSoundsBarVisibility = (App.Current as App)._itemViewHolder.PlayingSoundsListVisibility;
-            var page = (App.Current as App)._itemViewHolder.Page;
+            var playingSoundsBarVisibility = FileManager.itemViewHolder.PlayingSoundsListVisibility;
+            var page = FileManager.itemViewHolder.Page;
             
             return playingSoundsBarVisibility == Visibility.Visible && page == typeof(SoundPage);
         }

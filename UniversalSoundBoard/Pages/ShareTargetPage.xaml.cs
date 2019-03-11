@@ -29,7 +29,7 @@ namespace UniversalSoundBoard.Pages
             SetDarkThemeLayout();
 
             categories = new ObservableCollection<Category>();
-            (App.Current as App)._itemViewHolder.CategoriesUpdated += ItemViewHolder_CategoriesUpdated;
+            FileManager.itemViewHolder.CategoriesUpdated += ItemViewHolder_CategoriesUpdated;
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -57,7 +57,7 @@ namespace UniversalSoundBoard.Pages
             // Get all Categories and show them
             categories.Clear();
             int i = -1;
-            foreach (Category cat in (App.Current as App)._itemViewHolder.Categories)
+            foreach (Category cat in FileManager.itemViewHolder.Categories)
                 if (++i != 0)
                     categories.Add(cat);
 
@@ -89,7 +89,7 @@ namespace UniversalSoundBoard.Pages
                 }
                 await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+                    FileManager.itemViewHolder.AllSoundsChanged = true;
                 });
             }
 

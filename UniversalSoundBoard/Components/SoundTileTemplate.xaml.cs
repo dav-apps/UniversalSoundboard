@@ -42,7 +42,7 @@ namespace UniversalSoundBoard.Components
 
         private void SetDataContext()
         {
-            ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+            ContentRoot.DataContext = FileManager.itemViewHolder;
         }
         
         private void SetDarkThemeLayout()
@@ -77,9 +77,9 @@ namespace UniversalSoundBoard.Components
             // Update all lists containing sounds with the new favourite value
             List<ObservableCollection<Sound>> soundLists = new List<ObservableCollection<Sound>>
             {
-                (App.Current as App)._itemViewHolder.Sounds,
-                (App.Current as App)._itemViewHolder.AllSounds,
-                (App.Current as App)._itemViewHolder.FavouriteSounds
+                FileManager.itemViewHolder.Sounds,
+                FileManager.itemViewHolder.AllSounds,
+                FileManager.itemViewHolder.FavouriteSounds
             };
 
             foreach (ObservableCollection<Sound> soundList in soundLists)
@@ -92,12 +92,12 @@ namespace UniversalSoundBoard.Components
             if (newFav)
             {
                 // Add to favourites
-                (App.Current as App)._itemViewHolder.FavouriteSounds.Add(Sound);
+                FileManager.itemViewHolder.FavouriteSounds.Add(Sound);
             }
             else
             {
                 // Remove sound from favourites
-                (App.Current as App)._itemViewHolder.FavouriteSounds.Remove(Sound);
+                FileManager.itemViewHolder.FavouriteSounds.Remove(Sound);
             }
 
             FavouriteSymbol.Visibility = newFav ? Visibility.Visible : Visibility.Collapsed;
@@ -121,9 +121,9 @@ namespace UniversalSoundBoard.Components
             if (file != null)
             {
                 // Application now has read/write access to the picked file
-                (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
+                FileManager.itemViewHolder.ProgressRingIsActive = true;
                 await FileManager.UpdateImageOfSoundAsync(sound.Uuid, file);
-                (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
+                FileManager.itemViewHolder.ProgressRingIsActive = false;
                 await FileManager.UpdateGridViewAsync();
             }
         }

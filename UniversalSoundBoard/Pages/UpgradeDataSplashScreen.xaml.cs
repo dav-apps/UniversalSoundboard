@@ -46,7 +46,7 @@ namespace UniversalSoundBoard.Pages
 
         private void SetDataContext()
         {
-            ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+            ContentRoot.DataContext = FileManager.itemViewHolder;
         }
 
         private void Page_OnResize(object sender, WindowSizeChangedEventArgs e)

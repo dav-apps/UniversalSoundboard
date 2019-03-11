@@ -29,7 +29,7 @@ namespace UniversalSoundboard.Pages
 
         private void SetDataContext()
         {
-            ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+            ContentRoot.DataContext = FileManager.itemViewHolder;
         }
 
         private void SetDarkThemeLayout()
@@ -46,13 +46,13 @@ namespace UniversalSoundboard.Pages
         {
             ShowLoggedInContent();
 
-            if ((App.Current as App)._itemViewHolder.User.IsLoggedIn)
+            if (FileManager.itemViewHolder.User.IsLoggedIn)
             {
                 SetUsedStorageTextBlock();
-                (App.Current as App)._itemViewHolder.LoginMenuItemVisibility = false;
+                FileManager.itemViewHolder.LoginMenuItemVisibility = false;
             }
             else
-                (App.Current as App)._itemViewHolder.LoginMenuItemVisibility = true;
+                FileManager.itemViewHolder.LoginMenuItemVisibility = true;
         }
 
         public static async Task Login()
@@ -74,7 +74,7 @@ namespace UniversalSoundboard.Pages
                             // Log the user in with the jwt
                             davClassLibrary.Models.DavUser user = new davClassLibrary.Models.DavUser();
                             await user.LoginAsync(jwt);
-                            (App.Current as App)._itemViewHolder.User = user;
+                            FileManager.itemViewHolder.User = user;
                             break;
                         default:
                             Debug.WriteLine("There was an error with logging you in.");
@@ -95,12 +95,12 @@ namespace UniversalSoundboard.Pages
 
         private void SetUsedStorageTextBlock()
         {
-            if((App.Current as App)._itemViewHolder.User.TotalStorage > 0)
+            if(FileManager.itemViewHolder.User.TotalStorage > 0)
             {
                 string message = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("Account-UsedStorage");
 
-                double usedStorageGB = Math.Round((App.Current as App)._itemViewHolder.User.UsedStorage / 1000000000.0, 1);
-                double totalStorageGB = Math.Round((App.Current as App)._itemViewHolder.User.TotalStorage / 1000000000.0, 1);
+                double usedStorageGB = Math.Round(FileManager.itemViewHolder.User.UsedStorage / 1000000000.0, 1);
+                double totalStorageGB = Math.Round(FileManager.itemViewHolder.User.TotalStorage / 1000000000.0, 1);
 
                 double percentage = usedStorageGB / totalStorageGB * 100;
 
@@ -114,7 +114,7 @@ namespace UniversalSoundboard.Pages
         
         private void ShowLoggedInContent()
         {
-            if ((App.Current as App)._itemViewHolder.User.IsLoggedIn)
+            if (FileManager.itemViewHolder.User.IsLoggedIn)
             {
                 LoggedInContent.Visibility = Visibility.Visible;
                 LoggedOutContent.Visibility = Visibility.Collapsed;
@@ -147,7 +147,7 @@ namespace UniversalSoundboard.Pages
 
         private async void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            (App.Current as App)._itemViewHolder.User.Logout();
+            FileManager.itemViewHolder.User.Logout();
             UpdateUserLayout();
 
             // Remove the sounds that are not saved locally

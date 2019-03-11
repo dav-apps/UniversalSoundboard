@@ -35,9 +35,9 @@ namespace UniversalSoundBoard.Pages
         {
             SetDataContext();
             SetSoundsPivotVisibility();
-            (App.Current as App)._itemViewHolder.SelectAllSoundsEvent += _itemViewHolder_SelectAllSoundsEvent;
-            (App.Current as App)._itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
-            (App.Current as App)._itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
+            FileManager.itemViewHolder.SelectAllSoundsEvent += _itemViewHolder_SelectAllSoundsEvent;
+            FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
+            FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
 
             await ShowPlayingSoundsListAsync();
         }
@@ -46,13 +46,13 @@ namespace UniversalSoundBoard.Pages
         {
             soundsPivotSelected = true;
 
-            bool canReorderItems = (App.Current as App)._itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom;
+            bool canReorderItems = FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom;
             SetGridViewsReorderItems(canReorderItems);
         }
 
         private GridView GetVisibleGridView()
         {
-            if (!(App.Current as App)._itemViewHolder.ShowSoundsPivot)
+            if (!FileManager.itemViewHolder.ShowSoundsPivot)
                 return SoundGridView2;
             else if (SoundsPivot.SelectedIndex == 1)
                 return FavouriteSoundGridView;
@@ -76,7 +76,7 @@ namespace UniversalSoundBoard.Pages
 
             // Get the visible GridView
             var gridView = GetVisibleGridView();
-            (App.Current as App)._itemViewHolder.SelectedSounds.Clear();
+            FileManager.itemViewHolder.SelectedSounds.Clear();
 
             if (gridView.SelectedItems.Count == gridView.Items.Count)
             {
@@ -90,7 +90,7 @@ namespace UniversalSoundBoard.Pages
 
                 // Add all sounds to the selected sounds
                 foreach (var sound in gridView.Items)
-                    (App.Current as App)._itemViewHolder.SelectedSounds.Add(sound as Sound);
+                    FileManager.itemViewHolder.SelectedSounds.Add(sound as Sound);
             }
             
             skipSoundListSelectionChangedEvent = false;
@@ -100,7 +100,7 @@ namespace UniversalSoundBoard.Pages
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
             bool canReorderItems = !(e.Action == System.Collections.Specialized.NotifyCollectionChangedAction.Add
-                                    && !string.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery));
+                                    && !string.IsNullOrEmpty(FileManager.itemViewHolder.SearchQuery));
 
             // Enable or disable the ability to drag sounds
             SetGridViewsReorderItems(canReorderItems);
@@ -134,13 +134,13 @@ namespace UniversalSoundBoard.Pages
         private async Task UpdateSoundOrder(bool showFavourites)
         {
             // Get the current category uuid
-            int selectedCategoryIndex = (App.Current as App)._itemViewHolder.SelectedCategory;
-            if (selectedCategoryIndex >= (App.Current as App)._itemViewHolder.Categories.Count) return;
-            Guid currentCategoryUuid = selectedCategoryIndex == 0 ? Guid.Empty : (App.Current as App)._itemViewHolder.Categories[selectedCategoryIndex].Uuid;
+            int selectedCategoryIndex = FileManager.itemViewHolder.SelectedCategory;
+            if (selectedCategoryIndex >= FileManager.itemViewHolder.Categories.Count) return;
+            Guid currentCategoryUuid = selectedCategoryIndex == 0 ? Guid.Empty : FileManager.itemViewHolder.Categories[selectedCategoryIndex].Uuid;
 
             // Get the uuids of the sounds
             List<Guid> uuids = new List<Guid>();
-            foreach (var sound in showFavourites ? (App.Current as App)._itemViewHolder.FavouriteSounds : (App.Current as App)._itemViewHolder.Sounds)
+            foreach (var sound in showFavourites ? FileManager.itemViewHolder.FavouriteSounds : FileManager.itemViewHolder.Sounds)
                 uuids.Add(sound.Uuid);
 
             await DatabaseOperations.SetSoundOrderAsync(currentCategoryUuid, showFavourites, uuids);
@@ -152,34 +152,34 @@ namespace UniversalSoundBoard.Pages
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
             var gridView = GetVisibleGridView();
 
-            if (gridView.Items.Count == (App.Current as App)._itemViewHolder.SelectedSounds.Count
+            if (gridView.Items.Count == FileManager.itemViewHolder.SelectedSounds.Count
                 && gridView.Items.Count != 0)
             {
-                (App.Current as App)._itemViewHolder.SelectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-DeselectAll");
-                (App.Current as App)._itemViewHolder.SelectAllFlyoutIcon = new SymbolIcon(Symbol.ClearSelection);
+                FileManager.itemViewHolder.SelectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-DeselectAll");
+                FileManager.itemViewHolder.SelectAllFlyoutIcon = new SymbolIcon(Symbol.ClearSelection);
             }
             else
             {
-                (App.Current as App)._itemViewHolder.SelectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
-                (App.Current as App)._itemViewHolder.SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll);
+                FileManager.itemViewHolder.SelectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
+                FileManager.itemViewHolder.SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll);
             }
 
-            (App.Current as App)._itemViewHolder.AreSelectButtonsEnabled = gridView.SelectedItems.Count > 0;
+            FileManager.itemViewHolder.AreSelectButtonsEnabled = gridView.SelectedItems.Count > 0;
         }
         
         private void SetSoundsPivotVisibility()
         {
-            SoundGridView2.Visibility = (App.Current as App)._itemViewHolder.ShowSoundsPivot ? Visibility.Collapsed : Visibility.Visible;
+            SoundGridView2.Visibility = FileManager.itemViewHolder.ShowSoundsPivot ? Visibility.Collapsed : Visibility.Visible;
         }
         
         private void SetDataContext()
         {
-            ContentRoot.DataContext = (App.Current as App)._itemViewHolder;
+            ContentRoot.DataContext = FileManager.itemViewHolder;
         }
         
         private async Task ShowPlayingSoundsListAsync()
         {
-            if ((App.Current as App)._itemViewHolder.PlayingSoundsListVisibility == Visibility.Visible)
+            if (FileManager.itemViewHolder.PlayingSoundsListVisibility == Visibility.Visible)
             {
                 // Remove unused PlayingSounds
                 await RemoveUnusedSoundsAsync();
@@ -207,13 +207,13 @@ namespace UniversalSoundBoard.Pages
             await ShowPlayingSoundsListAsync();
 
             // Update the value of ItemViewHolder.PlayingSoundBarWidth
-            (App.Current as App)._itemViewHolder.PlayingSoundsBarWidth = DrawerContent.ActualWidth;
+            FileManager.itemViewHolder.PlayingSoundsBarWidth = DrawerContent.ActualWidth;
         }
         
         private async void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var sound = (Sound)e.ClickedItem;
-            if ((App.Current as App)._itemViewHolder.SelectionMode == ListViewSelectionMode.None)
+            if (FileManager.itemViewHolder.SelectionMode == ListViewSelectionMode.None)
                 await PlaySoundAsync(sound);
         }
         
@@ -266,16 +266,16 @@ namespace UniversalSoundBoard.Pages
 
             if (!fileTypesSupported) return;
             
-            (App.Current as App)._itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AddSoundsMessage");
-            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = true;
+            FileManager.itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AddSoundsMessage");
+            FileManager.itemViewHolder.LoadingScreenVisibility = true;
             
             List<Guid> categoryUuids = new List<Guid>();
 
-            if((App.Current as App)._itemViewHolder.SelectedCategory != 0)
+            if(FileManager.itemViewHolder.SelectedCategory != 0)
             {
                 try
                 {
-                    categoryUuids.Add((App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid);
+                    categoryUuids.Add(FileManager.itemViewHolder.Categories[FileManager.itemViewHolder.SelectedCategory].Uuid);
                 }
                 catch (Exception ex)
                 {
@@ -287,10 +287,10 @@ namespace UniversalSoundBoard.Pages
                 if (FileManager.allowedFileTypes.Contains(soundFile.FileType))
                     await FileManager.AddSoundAsync(Guid.Empty, soundFile.DisplayName, categoryUuids, soundFile);
 
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+            FileManager.itemViewHolder.AllSoundsChanged = true;
             await FileManager.UpdateGridViewAsync();
             
-            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = false;
+            FileManager.itemViewHolder.LoadingScreenVisibility = false;
         }
         
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -299,13 +299,13 @@ namespace UniversalSoundBoard.Pages
             GridView selectedGridview = sender as GridView;
 
             // If no items are selected, disable multi select buttons
-            (App.Current as App)._itemViewHolder.AreSelectButtonsEnabled = selectedGridview.SelectedItems.Count > 0;
+            FileManager.itemViewHolder.AreSelectButtonsEnabled = selectedGridview.SelectedItems.Count > 0;
 
             // Add new item to selectedSounds list
             if(e.AddedItems.Count == 1)
-                (App.Current as App)._itemViewHolder.SelectedSounds.Add((Sound)e.AddedItems.First());
+                FileManager.itemViewHolder.SelectedSounds.Add((Sound)e.AddedItems.First());
             else if(e.RemovedItems.Count > 0)
-                (App.Current as App)._itemViewHolder.SelectedSounds.Remove((Sound)e.RemovedItems.First());
+                FileManager.itemViewHolder.SelectedSounds.Remove((Sound)e.RemovedItems.First());
 
             UpdateSelectAllFlyoutText();
         }
@@ -353,10 +353,10 @@ namespace UniversalSoundBoard.Pages
                 return;
 
             // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
-            if ((App.Current as App)._itemViewHolder.PlayOneSoundAtOnce)
+            if (FileManager.itemViewHolder.PlayOneSoundAtOnce)
             {
                 List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
-                foreach (PlayingSound pSound in (App.Current as App)._itemViewHolder.PlayingSounds)
+                foreach (PlayingSound pSound in FileManager.itemViewHolder.PlayingSounds)
                     removedPlayingSounds.Add(pSound);
 
                 await RemoveSoundsFromPlayingSoundsListAsync(removedPlayingSounds);
@@ -366,7 +366,7 @@ namespace UniversalSoundBoard.Pages
             {
                 Uuid = await FileManager.AddPlayingSoundAsync(Guid.Empty, soundList, 0, 0, false, player.Volume)
             };
-            (App.Current as App)._itemViewHolder.PlayingSounds.Add(playingSound);
+            FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
             playingSound.MediaPlayer.Play();
         }
         
@@ -384,10 +384,10 @@ namespace UniversalSoundBoard.Pages
                 return;
 
             // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
-            if ((App.Current as App)._itemViewHolder.PlayOneSoundAtOnce)
+            if (FileManager.itemViewHolder.PlayOneSoundAtOnce)
             {
                 List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
-                foreach (PlayingSound pSound in (App.Current as App)._itemViewHolder.PlayingSounds)
+                foreach (PlayingSound pSound in FileManager.itemViewHolder.PlayingSounds)
                     removedPlayingSounds.Add(pSound);
 
                 await RemoveSoundsFromPlayingSoundsListAsync(removedPlayingSounds);
@@ -397,20 +397,20 @@ namespace UniversalSoundBoard.Pages
             {
                 Uuid = await FileManager.AddPlayingSoundAsync(Guid.Empty, sounds, 0, repetitions, false, player.Volume)
             };
-            (App.Current as App)._itemViewHolder.PlayingSounds.Add(playingSound);
+            FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
             playingSound.MediaPlayer.Play();
         }
         
         public static async Task RemovePlayingSoundAsync(PlayingSound playingSound)
         {
             await FileManager.DeletePlayingSoundAsync(playingSound.Uuid);
-            (App.Current as App)._itemViewHolder.PlayingSounds.Remove(playingSound);
+            FileManager.itemViewHolder.PlayingSounds.Remove(playingSound);
         }
         
         private static async Task RemoveUnusedSoundsAsync()
         {
             List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
-            foreach (PlayingSound playingSound in (App.Current as App)._itemViewHolder.PlayingSounds)
+            foreach (PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
             {
                 if (playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing &&
                     playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Paused && 
@@ -440,7 +440,7 @@ namespace UniversalSoundBoard.Pages
             SoundGridView.DeselectRange(new ItemIndexRange(0, (uint)SoundGridView.Items.Count));
             FavouriteSoundGridView.DeselectRange(new ItemIndexRange(0, (uint)FavouriteSoundGridView.Items.Count));
 
-            (App.Current as App)._itemViewHolder.SelectedSounds.Clear();
+            FileManager.itemViewHolder.SelectedSounds.Clear();
             soundsPivotSelected = (sender.SelectedIndex == 0);
         }
         
@@ -486,7 +486,7 @@ namespace UniversalSoundBoard.Pages
         
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.DeleteCategoryAsync((App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory].Uuid);
+            await FileManager.DeleteCategoryAsync(FileManager.itemViewHolder.Categories[FileManager.itemViewHolder.SelectedCategory].Uuid);
 
             await FileManager.CreateCategoriesListAsync();
             await FileManager.ShowAllSoundsAsync();
@@ -506,10 +506,10 @@ namespace UniversalSoundBoard.Pages
             string icon = typeItem.Content.ToString();
             string newName = ContentDialogs.EditCategoryTextBox.Text;
             
-            Category selectedCategory = (App.Current as App)._itemViewHolder.Categories[(App.Current as App)._itemViewHolder.SelectedCategory];
+            Category selectedCategory = FileManager.itemViewHolder.Categories[FileManager.itemViewHolder.SelectedCategory];
             await FileManager.UpdateCategoryAsync(selectedCategory.Uuid, newName, icon);
 
-            (App.Current as App)._itemViewHolder.Title = newName;
+            FileManager.itemViewHolder.Title = newName;
             await FileManager.CreateCategoriesListAsync();
             await FileManager.UpdateGridViewAsync();
         }
