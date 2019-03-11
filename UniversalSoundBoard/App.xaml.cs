@@ -15,6 +15,7 @@ using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundBoard
@@ -24,59 +25,6 @@ namespace UniversalSoundBoard
     /// </summary>
     sealed partial class App : Application
     {
-        public ItemViewHolder _itemViewHolder = new ItemViewHolder {
-            Title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("AllSounds"),
-            ProgressRingIsActive = false,
-            Sounds = new ObservableCollection<Sound>(),
-            FavouriteSounds = new ObservableCollection<Sound>(),
-            AllSounds = new ObservableCollection<Sound>(),
-            AllSoundsChanged = true,
-            Categories = new ObservableCollection<Category>(),
-            SearchQuery = "",
-            EditButtonVisibility = Visibility.Collapsed,
-            PlayAllButtonVisibility = Visibility.Collapsed,
-            SelectionMode = ListViewSelectionMode.None,
-            NormalOptionsVisibility = true,
-            SelectedSounds = new ObservableCollection<Sound>(),
-            PlayingSounds = new ObservableCollection<PlayingSound>(),
-            PlayingSoundsListVisibility = Visibility.Visible,
-            PlayOneSoundAtOnce = FileManager.playOneSoundAtOnceDefault,
-            ShowCategoryIcon = FileManager.showCategoryIconDefault,
-            ShowSoundsPivot = FileManager.showSoundsPivotDefault,
-            SavePlayingSounds = FileManager.savePlayingSoundsDefault,
-            IsExporting = false,
-            Exported = false,
-            IsImporting = false,
-            Imported = false,
-            AreExportAndImportButtonsEnabled = true,
-            ExportMessage = "",
-            ImportMessage = "",
-            SoundboardSize = "",
-            SearchAutoSuggestBoxVisibility = true,
-            VolumeButtonVisibility = true,
-            AddButtonVisibility = true,
-            SelectButtonVisibility = true,
-            SearchButtonVisibility = false,
-            CancelButtonVisibility = false,
-            ShareButtonVisibility = false,
-            MoreButtonVisibility = true,
-            TopButtonsCollapsed = false,
-            AreSelectButtonsEnabled = false,
-            SelectedCategory = 0,
-            UpgradeDataStatusText = "Preparing...",
-            User = null,
-            LoginMenuItemVisibility = true,
-            IsBackButtonEnabled = false,
-            LoadingScreenVisibility = false,
-            LoadingScreenMessage = "",
-            SelectAllFlyoutText = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("MoreButton_SelectAllFlyout-SelectAll"),
-            SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll),
-            ShowAcrylicBackground = true,
-            PlayingSoundsBarAcrylicBackgroundBrush = new Windows.UI.Xaml.Media.AcrylicBrush(),
-            SoundOrder = FileManager.soundOrderDefault,
-            SoundOrderReversed = FileManager.soundOrderReversedDefault
-        };
-        
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -88,6 +36,61 @@ namespace UniversalSoundBoard
                 Microsoft.ApplicationInsights.WindowsCollectors.Session);
             InitializeComponent();
             Suspending += OnSuspending;
+
+            // Init itemViewHolder
+            FileManager.itemViewHolder = new ItemViewHolder
+            {
+                Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds"),
+                ProgressRingIsActive = false,
+                Sounds = new ObservableCollection<Sound>(),
+                FavouriteSounds = new ObservableCollection<Sound>(),
+                AllSounds = new ObservableCollection<Sound>(),
+                AllSoundsChanged = true,
+                Categories = new ObservableCollection<Category>(),
+                SearchQuery = "",
+                EditButtonVisibility = Visibility.Collapsed,
+                PlayAllButtonVisibility = Visibility.Collapsed,
+                SelectionMode = ListViewSelectionMode.None,
+                NormalOptionsVisibility = true,
+                SelectedSounds = new ObservableCollection<Sound>(),
+                PlayingSounds = new ObservableCollection<PlayingSound>(),
+                PlayingSoundsListVisibility = Visibility.Visible,
+                PlayOneSoundAtOnce = FileManager.playOneSoundAtOnceDefault,
+                ShowCategoryIcon = FileManager.showCategoryIconDefault,
+                ShowSoundsPivot = FileManager.showSoundsPivotDefault,
+                SavePlayingSounds = FileManager.savePlayingSoundsDefault,
+                IsExporting = false,
+                Exported = false,
+                IsImporting = false,
+                Imported = false,
+                AreExportAndImportButtonsEnabled = true,
+                ExportMessage = "",
+                ImportMessage = "",
+                SoundboardSize = "",
+                SearchAutoSuggestBoxVisibility = true,
+                VolumeButtonVisibility = true,
+                AddButtonVisibility = true,
+                SelectButtonVisibility = true,
+                SearchButtonVisibility = false,
+                CancelButtonVisibility = false,
+                ShareButtonVisibility = false,
+                MoreButtonVisibility = true,
+                TopButtonsCollapsed = false,
+                AreSelectButtonsEnabled = false,
+                SelectedCategory = 0,
+                UpgradeDataStatusText = "Preparing...",
+                User = null,
+                LoginMenuItemVisibility = true,
+                IsBackButtonEnabled = false,
+                LoadingScreenVisibility = false,
+                LoadingScreenMessage = "",
+                SelectAllFlyoutText = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("MoreButton_SelectAllFlyout-SelectAll"),
+                SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll),
+                ShowAcrylicBackground = true,
+                PlayingSoundsBarAcrylicBackgroundBrush = new AcrylicBrush(),
+                SoundOrder = FileManager.soundOrderDefault,
+                SoundOrderReversed = FileManager.soundOrderReversedDefault
+            };
 
             // Set dark theme
             var localSettings = ApplicationData.Current.LocalSettings;
@@ -117,7 +120,7 @@ namespace UniversalSoundBoard
             ProjectInterface.LocalDataSettings = new LocalDataSettings();
             ProjectInterface.TriggerAction = new UniversalSoundboard.Common.TriggerAction();
             ProjectInterface.GeneralMethods = new GeneralMethods();
-            (App.Current as App)._itemViewHolder.User = new DavUser();
+            FileManager.itemViewHolder.User = new DavUser();
         }
 
         /// <summary>

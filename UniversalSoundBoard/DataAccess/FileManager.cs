@@ -13,6 +13,7 @@ using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundboard.Models;
+using UniversalSoundBoard.Common;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel.Core;
@@ -79,7 +80,7 @@ namespace UniversalSoundBoard.DataAccess
         private static Color playingSoundsBarLightBackgroundColor = Color.FromArgb(255, 253, 253, 253);   // #fdfdfd
         private static Color playingSoundsBarDarkBackgroundColor = Color.FromArgb(255, 15, 20, 35);       // #0f1423
 
-
+        public static ItemViewHolder itemViewHolder;
         public static DavEnvironment Environment = DavEnvironment.Production;
 
         // dav Keys
@@ -217,7 +218,7 @@ namespace UniversalSoundBoard.DataAccess
 
         private static async Task ClearCacheAsync()
         {
-            if ((App.Current as App)._itemViewHolder.IsExporting || (App.Current as App)._itemViewHolder.IsImporting)
+            if (itemViewHolder.IsExporting || itemViewHolder.IsImporting)
                 return;
 
             StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
@@ -253,7 +254,7 @@ namespace UniversalSoundBoard.DataAccess
         public static async Task RemoveNotLocallySavedSoundsAsync()
         {
             // Get each sound and check if the file exists
-            foreach(var sound in (App.Current as App)._itemViewHolder.AllSounds)
+            foreach(var sound in itemViewHolder.AllSounds)
             {
                 var soundFileTableObject = await GetSoundFileTableObjectAsync(sound.Uuid);
                 if(soundFileTableObject != null && soundFileTableObject.FileDownloaded())
@@ -280,7 +281,7 @@ namespace UniversalSoundBoard.DataAccess
                 }
             }
 
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+            itemViewHolder.AllSoundsChanged = true;
         }
         #endregion
 
@@ -293,8 +294,8 @@ namespace UniversalSoundBoard.DataAccess
             StorageFolder localDataFolder = ApplicationData.Current.LocalFolder;
 
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                (App.Current as App)._itemViewHolder.IsImporting = true;
-                (App.Current as App)._itemViewHolder.UpgradeDataStatusText =
+                itemViewHolder.IsImporting = true;
+                itemViewHolder.UpgradeDataStatusText =
                                     new Windows.ApplicationModel.Resources.ResourceLoader().GetString("UpgradeDataStatusMessage-Preparing");
             });
 
@@ -308,8 +309,8 @@ namespace UniversalSoundBoard.DataAccess
                 await UpgradeNewDataModelAsync(localDataFolder, false, progress);
 
             await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => {
-                (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
-                (App.Current as App)._itemViewHolder.IsImporting = false;
+                itemViewHolder.AllSoundsChanged = true;
+                itemViewHolder.IsImporting = false;
                 await ClearCacheAsync();
             });
         }
@@ -318,7 +319,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             var x = CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                (App.Current as App)._itemViewHolder.UpgradeDataStatusText = value + " %";
+                itemViewHolder.UpgradeDataStatusText = value + " %";
             });
         }
 
@@ -327,10 +328,10 @@ namespace UniversalSoundBoard.DataAccess
             await ClearCacheAsync();
 
             var stringLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            (App.Current as App)._itemViewHolder.Exported = false;
-            (App.Current as App)._itemViewHolder.Imported = false;
-            (App.Current as App)._itemViewHolder.IsExporting = true;
-            (App.Current as App)._itemViewHolder.AreExportAndImportButtonsEnabled = false;
+            itemViewHolder.Exported = false;
+            itemViewHolder.Imported = false;
+            itemViewHolder.IsExporting = true;
+            itemViewHolder.AreExportAndImportButtonsEnabled = false;
 
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
             StorageFolder exportFolder = await GetExportFolderAsync();
@@ -338,7 +339,7 @@ namespace UniversalSoundBoard.DataAccess
 
             await DataManager.ExportDataAsync(new DirectoryInfo(exportFolder.Path), progress);
 
-            (App.Current as App)._itemViewHolder.ExportMessage = stringLoader.GetString("ExportMessage-3");
+            itemViewHolder.ExportMessage = stringLoader.GetString("ExportMessage-3");
 
             // Create the zip file
             StorageFile zipFile = await Task.Run(async () =>
@@ -348,38 +349,38 @@ namespace UniversalSoundBoard.DataAccess
                 return await StorageFile.GetFileFromPathAsync(exportFilePath);
             });
 
-            (App.Current as App)._itemViewHolder.ExportMessage = stringLoader.GetString("ExportMessage-4");
+            itemViewHolder.ExportMessage = stringLoader.GetString("ExportMessage-4");
 
             // Copy the file into the destination folder
             await zipFile.MoveAsync(destinationFolder, "UniversalSoundboard " + DateTime.Today.ToString("dd.MM.yyyy") + ".zip", NameCollisionOption.GenerateUniqueName);
 
-            (App.Current as App)._itemViewHolder.ExportMessage = stringLoader.GetString("ExportImportMessage-TidyUp");
-            (App.Current as App)._itemViewHolder.IsExporting = false;
+            itemViewHolder.ExportMessage = stringLoader.GetString("ExportImportMessage-TidyUp");
+            itemViewHolder.IsExporting = false;
 
             await ClearCacheAsync();
 
-            (App.Current as App)._itemViewHolder.ExportMessage = "";
-            (App.Current as App)._itemViewHolder.Exported = true;
-            (App.Current as App)._itemViewHolder.AreExportAndImportButtonsEnabled = true;
+            itemViewHolder.ExportMessage = "";
+            itemViewHolder.Exported = true;
+            itemViewHolder.AreExportAndImportButtonsEnabled = true;
         }
 
         private static void ExportProgress(int value)
         {
-            (App.Current as App)._itemViewHolder.ExportMessage = value + " %";
+            itemViewHolder.ExportMessage = value + " %";
         }
 
         public static async Task ImportDataAsync(StorageFile zipFile)
         {
             var stringLoader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            (App.Current as App)._itemViewHolder.ImportMessage = stringLoader.GetString("ImportMessage-1");
+            itemViewHolder.ImportMessage = stringLoader.GetString("ImportMessage-1");
 
             await ClearCacheAsync();
 
             // Extract the file into the local cache folder
-            (App.Current as App)._itemViewHolder.IsImporting = true;
-            (App.Current as App)._itemViewHolder.Exported = false;
-            (App.Current as App)._itemViewHolder.Imported = false;
-            (App.Current as App)._itemViewHolder.AreExportAndImportButtonsEnabled = false;
+            itemViewHolder.IsImporting = true;
+            itemViewHolder.Exported = false;
+            itemViewHolder.Imported = false;
+            itemViewHolder.AreExportAndImportButtonsEnabled = false;
 
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
             StorageFolder importFolder = await GetImportFolderAsync();
@@ -408,15 +409,15 @@ namespace UniversalSoundBoard.DataAccess
                     break;
             }
 
-            (App.Current as App)._itemViewHolder.ImportMessage = stringLoader.GetString("ExportImportMessage-TidyUp"); // TidyUp
-            (App.Current as App)._itemViewHolder.IsImporting = false;
+            itemViewHolder.ImportMessage = stringLoader.GetString("ExportImportMessage-TidyUp"); // TidyUp
+            itemViewHolder.IsImporting = false;
 
             await ClearCacheAsync();
 
-            (App.Current as App)._itemViewHolder.ImportMessage = "";
-            (App.Current as App)._itemViewHolder.Imported = true;
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
-            (App.Current as App)._itemViewHolder.AreExportAndImportButtonsEnabled = true;
+            itemViewHolder.ImportMessage = "";
+            itemViewHolder.Imported = true;
+            itemViewHolder.AllSoundsChanged = true;
+            itemViewHolder.AreExportAndImportButtonsEnabled = true;
 
             await CreateCategoriesListAsync();
             await LoadAllSoundsAsync();
@@ -426,7 +427,7 @@ namespace UniversalSoundBoard.DataAccess
 
         private static void ImportProgress(int value)
         {
-            (App.Current as App)._itemViewHolder.ImportMessage = value + " %";
+            itemViewHolder.ImportMessage = value + " %";
         }
 
         private static async Task UpgradeNewDataModelAsync(StorageFolder root, bool import, IProgress<int> progress)
@@ -662,8 +663,8 @@ namespace UniversalSoundBoard.DataAccess
         {
             // Show the loading screen
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            (App.Current as App)._itemViewHolder.LoadingScreenMessage = loader.GetString("ExportSoundsMessage");
-            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = true;
+            itemViewHolder.LoadingScreenMessage = loader.GetString("ExportSoundsMessage");
+            itemViewHolder.LoadingScreenVisibility = true;
 
             if (saveAsZip)
             {
@@ -694,7 +695,7 @@ namespace UniversalSoundBoard.DataAccess
                     await CopySoundFileIntoFolderAsync(sound, destinationFolder);
             }
 
-            (App.Current as App)._itemViewHolder.LoadingScreenVisibility = false;
+            itemViewHolder.LoadingScreenVisibility = false;
         }
 
         private static async Task CopySoundFileIntoFolderAsync(Sound sound, StorageFolder destinationFolder)
@@ -722,7 +723,7 @@ namespace UniversalSoundBoard.DataAccess
                 sounds.Add(await GetSoundAsync(soundTableObject.Uuid));
             }
 
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = false;
+            itemViewHolder.AllSoundsChanged = false;
             return sounds;
         }
 
@@ -753,12 +754,12 @@ namespace UniversalSoundBoard.DataAccess
             isLoadingSelectedCategory = true;
 
             Guid? selectedCategoryAtBeginning = selectedCategory;
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = true;
-            (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
+            itemViewHolder.ProgressRingIsActive = true;
+            itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
             await UpdateAllSoundsListAsync();
 
-            (App.Current as App)._itemViewHolder.Sounds.Clear();
-            (App.Current as App)._itemViewHolder.FavouriteSounds.Clear();
+            itemViewHolder.Sounds.Clear();
+            itemViewHolder.FavouriteSounds.Clear();
             List<Sound> sounds = new List<Sound>();
             List<Sound> favouriteSounds = new List<Sound>();
 
@@ -773,31 +774,31 @@ namespace UniversalSoundBoard.DataAccess
 
                 // Sort the sounds
                 foreach (var sound in SortSoundsList(sounds,
-                                                    (App.Current as App)._itemViewHolder.SoundOrder,
-                                                    (App.Current as App)._itemViewHolder.SoundOrderReversed,
+                                                    itemViewHolder.SoundOrder,
+                                                    itemViewHolder.SoundOrderReversed,
                                                     Guid.Empty,
                                                     false)){
-                    (App.Current as App)._itemViewHolder.Sounds.Add(sound);
+                    itemViewHolder.Sounds.Add(sound);
                 }
 
                 foreach (var sound in SortSoundsList(favouriteSounds,
-                                                    (App.Current as App)._itemViewHolder.SoundOrder,
-                                                    (App.Current as App)._itemViewHolder.SoundOrderReversed,
+                                                    itemViewHolder.SoundOrder,
+                                                    itemViewHolder.SoundOrderReversed,
                                                     Guid.Empty,
                                                     true)){
-                    (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
+                    itemViewHolder.FavouriteSounds.Add(sound);
                 }
             }
             else if(selectedCategoryAtBeginning == null)
             {
                 // Load sounds by name
-                foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
+                foreach (var sound in itemViewHolder.AllSounds)
                 {
                     if (sound.Name.ToLower().Contains(searchQuery.ToLower()))
                     {
-                        (App.Current as App)._itemViewHolder.Sounds.Add(sound);
+                        itemViewHolder.Sounds.Add(sound);
                         if (sound.Favourite)
-                            (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
+                            itemViewHolder.FavouriteSounds.Add(sound);
                     }
                 }
             }
@@ -812,19 +813,19 @@ namespace UniversalSoundBoard.DataAccess
 
                 // Sort the sounds
                 foreach (var sound in SortSoundsList(sounds,
-                                                    (App.Current as App)._itemViewHolder.SoundOrder,
-                                                    (App.Current as App)._itemViewHolder.SoundOrderReversed,
+                                                    itemViewHolder.SoundOrder,
+                                                    itemViewHolder.SoundOrderReversed,
                                                     selectedCategoryAtBeginning.Value,
                                                     false)){
-                    (App.Current as App)._itemViewHolder.Sounds.Add(sound);
+                    itemViewHolder.Sounds.Add(sound);
                 }
 
                 foreach (var sound in SortSoundsList(favouriteSounds,
-                                                    (App.Current as App)._itemViewHolder.SoundOrder,
-                                                    (App.Current as App)._itemViewHolder.SoundOrderReversed,
+                                                    itemViewHolder.SoundOrder,
+                                                    itemViewHolder.SoundOrderReversed,
                                                     selectedCategoryAtBeginning.Value,
                                                     true)){
-                    (App.Current as App)._itemViewHolder.FavouriteSounds.Add(sound);
+                    itemViewHolder.FavouriteSounds.Add(sound);
                 }
             }
 
@@ -834,22 +835,22 @@ namespace UniversalSoundBoard.DataAccess
             if (selectedCategoryAtBeginning != selectedCategory)
                 await LoadSelectedCategory();
 
-            (App.Current as App)._itemViewHolder.ProgressRingIsActive = false;
+            itemViewHolder.ProgressRingIsActive = false;
             ShowPlayAllButton();
         }
 
         // When the sounds list was changed, load all sounds from the database
         private static async Task UpdateAllSoundsListAsync()
         {
-            if ((App.Current as App)._itemViewHolder.AllSoundsChanged)
+            if (itemViewHolder.AllSoundsChanged)
             {
-                (App.Current as App)._itemViewHolder.AllSounds.Clear();
+                itemViewHolder.AllSounds.Clear();
                 foreach (Sound sound in await GetSavedSoundsAsync())
-                    (App.Current as App)._itemViewHolder.AllSounds.Add(sound);
+                    itemViewHolder.AllSounds.Add(sound);
 
                 await UpdateLiveTileAsync();
 
-                if((App.Current as App)._itemViewHolder.SoundOrder == SoundOrder.Custom)
+                if(itemViewHolder.SoundOrder == SoundOrder.Custom)
                     await LoadCustomSoundOrderAsync();
             }
         }
@@ -857,10 +858,10 @@ namespace UniversalSoundBoard.DataAccess
         // Create the lists in the Custom Sound order Dictionaries
         private static async Task LoadCustomSoundOrderAsync()
         {
-            if ((App.Current as App)._itemViewHolder.SoundOrder != SoundOrder.Custom) return;
+            if (itemViewHolder.SoundOrder != SoundOrder.Custom) return;
 
             // Create an entry for each category in the Dictionary and save the sound order there
-            foreach(var category in (App.Current as App)._itemViewHolder.Categories)
+            foreach(var category in itemViewHolder.Categories)
             {
                 if(category.Uuid == Guid.Empty)
                 {
@@ -922,7 +923,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             List<Sound> sounds = new List<Sound>();
 
-            foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
+            foreach (var sound in itemViewHolder.AllSounds)
             {
                 if (!favourites || (favourites && sound.Favourite))
                     sounds.Add(sound);
@@ -936,7 +937,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             List<Sound> sounds = new List<Sound>();
 
-            foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
+            foreach (var sound in itemViewHolder.AllSounds)
             {
                 // Check if the sound belongs to the category
                 if (sound.Categories.Exists(c => c.Uuid == categoryUuid) && (!favourites || (favourites && sound.Favourite)))
@@ -994,7 +995,7 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             // Get the categories
-            var categories = (App.Current as App)._itemViewHolder.Categories.ToList();
+            var categories = itemViewHolder.Categories.ToList();
 
             var categoryUuidsString = soundTableObject.GetPropertyValue(SoundTableCategoryUuidPropertyName);
             sound.Categories = new List<Category>();
@@ -1039,7 +1040,7 @@ namespace UniversalSoundBoard.DataAccess
         public static async Task RenameSoundAsync(Guid uuid, string newName)
         {
             await DatabaseOperations.UpdateSoundAsync(uuid, newName, null, null, null, null);
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+            itemViewHolder.AllSoundsChanged = true;
         }
 
         public static async Task SetCategoriesOfSoundAsync(Guid soundUuid, List<Guid> categoryUuids)
@@ -1049,13 +1050,13 @@ namespace UniversalSoundBoard.DataAccess
                 categoryUuidsString.Add(uuid.ToString());
 
             await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, categoryUuidsString);
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+            itemViewHolder.AllSoundsChanged = true;
         }
 
         public static async Task SetSoundAsFavouriteAsync(Guid uuid, bool favourite)
         {
             await DatabaseOperations.UpdateSoundAsync(uuid, null, favourite.ToString(), null, null, null);
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+            itemViewHolder.AllSoundsChanged = true;
         }
 
         public static async Task UpdateImageOfSoundAsync(Guid soundUuid, StorageFile file)
@@ -1080,13 +1081,13 @@ namespace UniversalSoundBoard.DataAccess
                 await DatabaseOperations.UpdateImageFileAsync(imageUuid.Value, newImageFile);
             }
 
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+            itemViewHolder.AllSoundsChanged = true;
         }
         
         public static async Task DeleteSoundAsync(Guid uuid)
         {
             await DatabaseOperations.DeleteSoundAsync(uuid);
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+            itemViewHolder.AllSoundsChanged = true;
         }
         
         public static async Task DeleteSoundsAsync(List<Guid> sounds)
@@ -1094,7 +1095,7 @@ namespace UniversalSoundBoard.DataAccess
             foreach (Guid uuid in sounds)
                 await DatabaseOperations.DeleteSoundAsync(uuid);
 
-            (App.Current as App)._itemViewHolder.AllSoundsChanged = true;
+            itemViewHolder.AllSoundsChanged = true;
         }
 
         public static async Task<List<Sound>> SortSoundsListByCustomOrderAsync(List<Sound> sounds, Guid categoryUuid, bool favourite)
@@ -1123,8 +1124,8 @@ namespace UniversalSoundBoard.DataAccess
             {
                 bool saveNewOrder = false;
                 // Remove sounds from the order when [the user is not logged in] or [the user is logged in and the sounds are synced]
-                bool removeNonExistentSounds = !(App.Current as App)._itemViewHolder.User.IsLoggedIn ||
-                                                ((App.Current as App)._itemViewHolder.User.IsLoggedIn && syncFinished);
+                bool removeNonExistentSounds = !itemViewHolder.User.IsLoggedIn ||
+                                                (itemViewHolder.User.IsLoggedIn && syncFinished);
                 var lastOrderTableObject = soundOrderTableObjects.Last();
                 List<Guid> uuids = new List<Guid>();
                 List<Sound> sortedSounds = new List<Sound>();
@@ -1396,8 +1397,8 @@ namespace UniversalSoundBoard.DataAccess
 
             if (await DatabaseOperations.ObjectExistsAsync(uuid)) return uuid;
 
-            if (!(App.Current as App)._itemViewHolder.SavePlayingSounds ||
-                (App.Current as App)._itemViewHolder.PlayingSoundsListVisibility != Visibility.Visible)
+            if (!itemViewHolder.SavePlayingSounds ||
+                itemViewHolder.PlayingSoundsListVisibility != Visibility.Visible)
                 return uuid;
 
             if (volume >= 1)
@@ -1520,7 +1521,7 @@ namespace UniversalSoundBoard.DataAccess
 
             savePlayingSounds = savePlayingSounds && playingSoundListVisible;
 
-            foreach (PlayingSound ps in (App.Current as App)._itemViewHolder.PlayingSounds)
+            foreach (PlayingSound ps in itemViewHolder.PlayingSounds)
             {
                 if (savePlayingSounds)
                 {
@@ -1702,30 +1703,30 @@ namespace UniversalSoundBoard.DataAccess
         #region UI Methods
         public static bool AreTopButtonsNormal()
         {
-            return (App.Current as App)._itemViewHolder.NormalOptionsVisibility
-                    && (((App.Current as App)._itemViewHolder.SearchAutoSuggestBoxVisibility && Window.Current.Bounds.Width >= hideSearchBoxMaxWidth)
-                        || ((App.Current as App)._itemViewHolder.SearchButtonVisibility && Window.Current.Bounds.Width < hideSearchBoxMaxWidth));
+            return itemViewHolder.NormalOptionsVisibility
+                    && ((itemViewHolder.SearchAutoSuggestBoxVisibility && Window.Current.Bounds.Width >= hideSearchBoxMaxWidth)
+                        || (itemViewHolder.SearchButtonVisibility && Window.Current.Bounds.Width < hideSearchBoxMaxWidth));
         }
 
         public static void CheckBackButtonVisibility()
         {
             // Is false if SoundPage shows All Sounds and button are normal
-            (App.Current as App)._itemViewHolder.IsBackButtonEnabled = !(AreTopButtonsNormal()
-                                                                        && (App.Current as App)._itemViewHolder.SelectedCategory == 0
-                                                                        && string.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery));
+            itemViewHolder.IsBackButtonEnabled = !(AreTopButtonsNormal()
+                                                                        && itemViewHolder.SelectedCategory == 0
+                                                                        && string.IsNullOrEmpty(itemViewHolder.SearchQuery));
         }
         
         // Go to the Sounds page and show all sounds
         public static async Task ShowAllSoundsAsync()
         {
             if (AreTopButtonsNormal())
-                (App.Current as App)._itemViewHolder.IsBackButtonEnabled = false;
+                itemViewHolder.IsBackButtonEnabled = false;
             skipAutoSuggestBoxTextChanged = true;
-            (App.Current as App)._itemViewHolder.SearchQuery = "";
-            (App.Current as App)._itemViewHolder.SelectedCategory = 0;
-            (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
-            (App.Current as App)._itemViewHolder.Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds");
-            (App.Current as App)._itemViewHolder.Page = typeof(SoundPage);
+            itemViewHolder.SearchQuery = "";
+            itemViewHolder.SelectedCategory = 0;
+            itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
+            itemViewHolder.Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds");
+            itemViewHolder.Page = typeof(SoundPage);
             await LoadAllSoundsAsync();
             ShowPlayAllButton();
             skipAutoSuggestBoxTextChanged = false;
@@ -1735,18 +1736,18 @@ namespace UniversalSoundBoard.DataAccess
         {
             double width = Window.Current.Bounds.Width;
 
-            (App.Current as App)._itemViewHolder.TopButtonsCollapsed = width < topButtonsCollapsedMaxWidth;
-            (App.Current as App)._itemViewHolder.SelectButtonVisibility = !(width < moveSelectButtonMaxWidth);
-            (App.Current as App)._itemViewHolder.AddButtonVisibility = !(width < moveAddButtonMaxWidth);
-            (App.Current as App)._itemViewHolder.VolumeButtonVisibility = !(width < moveVolumeButtonMaxWidth);
-            (App.Current as App)._itemViewHolder.ShareButtonVisibility = !(width < moveAddButtonMaxWidth);
-            (App.Current as App)._itemViewHolder.CancelButtonVisibility = !(width < hideSearchBoxMaxWidth);
-            (App.Current as App)._itemViewHolder.MoreButtonVisibility = width < moveSelectButtonMaxWidth || !(App.Current as App)._itemViewHolder.NormalOptionsVisibility;
+            itemViewHolder.TopButtonsCollapsed = width < topButtonsCollapsedMaxWidth;
+            itemViewHolder.SelectButtonVisibility = !(width < moveSelectButtonMaxWidth);
+            itemViewHolder.AddButtonVisibility = !(width < moveAddButtonMaxWidth);
+            itemViewHolder.VolumeButtonVisibility = !(width < moveVolumeButtonMaxWidth);
+            itemViewHolder.ShareButtonVisibility = !(width < moveAddButtonMaxWidth);
+            itemViewHolder.CancelButtonVisibility = !(width < hideSearchBoxMaxWidth);
+            itemViewHolder.MoreButtonVisibility = width < moveSelectButtonMaxWidth || !itemViewHolder.NormalOptionsVisibility;
 
-            if (string.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
+            if (string.IsNullOrEmpty(itemViewHolder.SearchQuery))
             {
-                (App.Current as App)._itemViewHolder.SearchAutoSuggestBoxVisibility = !(width < hideSearchBoxMaxWidth);
-                (App.Current as App)._itemViewHolder.SearchButtonVisibility = (width < hideSearchBoxMaxWidth);
+                itemViewHolder.SearchAutoSuggestBoxVisibility = !(width < hideSearchBoxMaxWidth);
+                itemViewHolder.SearchButtonVisibility = (width < hideSearchBoxMaxWidth);
             }
 
             CheckBackButtonVisibility();
@@ -1754,15 +1755,15 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void ShowPlayAllButton()
         {
-            if ((App.Current as App)._itemViewHolder.Page != typeof(SoundPage) ||
-                (App.Current as App)._itemViewHolder.ProgressRingIsActive ||
-                (App.Current as App)._itemViewHolder.Sounds.Count == 0)
+            if (itemViewHolder.Page != typeof(SoundPage) ||
+                itemViewHolder.ProgressRingIsActive ||
+                itemViewHolder.Sounds.Count == 0)
             {
-                (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
+                itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
             }
             else
             {
-                (App.Current as App)._itemViewHolder.PlayAllButtonVisibility = Visibility.Visible;
+                itemViewHolder.PlayAllButtonVisibility = Visibility.Visible;
             }
         }
 
@@ -1770,44 +1771,44 @@ namespace UniversalSoundBoard.DataAccess
         {
             if (updatingGridView) return;
             updatingGridView = true;
-            int selectedCategoryIndex = (App.Current as App)._itemViewHolder.SelectedCategory;
-            Category selectedCategory = (App.Current as App)._itemViewHolder.Categories[selectedCategoryIndex];
+            int selectedCategoryIndex = itemViewHolder.SelectedCategory;
+            Category selectedCategory = itemViewHolder.Categories[selectedCategoryIndex];
 
             if (selectedCategory != null)
             {
-                if ((App.Current as App)._itemViewHolder.SearchQuery == "")
+                if (itemViewHolder.SearchQuery == "")
                 {
                     if (selectedCategoryIndex == 0)
                     {
                         await LoadAllSoundsAsync();
-                        (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
+                        itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
                     }
-                    else if ((App.Current as App)._itemViewHolder.Page != typeof(SoundPage))
+                    else if (itemViewHolder.Page != typeof(SoundPage))
                     {
-                        (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
+                        itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
                     }
                     else
                     {
                         await LoadSoundsByCategoryAsync(selectedCategory.Uuid);
-                        (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Visible;
+                        itemViewHolder.EditButtonVisibility = Visibility.Visible;
                     }
                 }
                 else
                 {
-                    (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
-                    await LoadSoundsByNameAsync((App.Current as App)._itemViewHolder.SearchQuery);
+                    itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
+                    await LoadSoundsByNameAsync(itemViewHolder.SearchQuery);
                 }
             }
             else
             {
                 await LoadAllSoundsAsync();
-                (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
+                itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
             }
 
             updatingGridView = false;
 
             // Check if another category was selected
-            if (selectedCategoryIndex != (App.Current as App)._itemViewHolder.SelectedCategory)
+            if (selectedCategoryIndex != itemViewHolder.SelectedCategory)
             {
                 // Update UI
                 await UpdateGridViewAsync();
@@ -1824,11 +1825,11 @@ namespace UniversalSoundBoard.DataAccess
                 Category category = new Category(categoryTableObject.Uuid, categoryTableObject.GetPropertyValue(CategoryTableNamePropertyName), categoryTableObject.GetPropertyValue(CategoryTableIconPropertyName));
 
                 skipAutoSuggestBoxTextChanged = true;
-                (App.Current as App)._itemViewHolder.SearchQuery = "";
-                (App.Current as App)._itemViewHolder.Page = typeof(SoundPage);
-                (App.Current as App)._itemViewHolder.Title = WebUtility.HtmlDecode(category.Name);
-                (App.Current as App)._itemViewHolder.IsBackButtonEnabled = true;
-                (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Visible;
+                itemViewHolder.SearchQuery = "";
+                itemViewHolder.Page = typeof(SoundPage);
+                itemViewHolder.Title = WebUtility.HtmlDecode(category.Name);
+                itemViewHolder.IsBackButtonEnabled = true;
+                itemViewHolder.EditButtonVisibility = Visibility.Visible;
                 await LoadSoundsByCategoryAsync(category.Uuid);
                 SelectCategory(category.Uuid);
             }
@@ -1843,31 +1844,31 @@ namespace UniversalSoundBoard.DataAccess
             if (Window.Current.Bounds.Width < hideSearchBoxMaxWidth)
             {
                 // Clear text and show buttons
-                (App.Current as App)._itemViewHolder.SearchAutoSuggestBoxVisibility = false;
-                (App.Current as App)._itemViewHolder.SearchButtonVisibility = true;
+                itemViewHolder.SearchAutoSuggestBoxVisibility = false;
+                itemViewHolder.SearchButtonVisibility = true;
             }
             AdjustLayout();
         }
 
         public static void SwitchSelectionMode()
         {
-            if ((App.Current as App)._itemViewHolder.SelectionMode == ListViewSelectionMode.None)
+            if (itemViewHolder.SelectionMode == ListViewSelectionMode.None)
             {   // If Normal view
-                (App.Current as App)._itemViewHolder.SelectionMode = ListViewSelectionMode.Multiple;
-                (App.Current as App)._itemViewHolder.NormalOptionsVisibility = false;
-                (App.Current as App)._itemViewHolder.AreSelectButtonsEnabled = false;
+                itemViewHolder.SelectionMode = ListViewSelectionMode.Multiple;
+                itemViewHolder.NormalOptionsVisibility = false;
+                itemViewHolder.AreSelectButtonsEnabled = false;
             }
             else
             {   // If selection view
-                (App.Current as App)._itemViewHolder.SelectionMode = ListViewSelectionMode.None;
-                (App.Current as App)._itemViewHolder.SelectedSounds.Clear();
-                (App.Current as App)._itemViewHolder.NormalOptionsVisibility = true;
-                (App.Current as App)._itemViewHolder.AreSelectButtonsEnabled = true;
+                itemViewHolder.SelectionMode = ListViewSelectionMode.None;
+                itemViewHolder.SelectedSounds.Clear();
+                itemViewHolder.NormalOptionsVisibility = true;
+                itemViewHolder.AreSelectButtonsEnabled = true;
 
-                if (!string.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
+                if (!string.IsNullOrEmpty(itemViewHolder.SearchQuery))
                 {
-                    (App.Current as App)._itemViewHolder.SearchAutoSuggestBoxVisibility = true;
-                    (App.Current as App)._itemViewHolder.SearchButtonVisibility = false;
+                    itemViewHolder.SearchAutoSuggestBoxVisibility = true;
+                    itemViewHolder.SearchButtonVisibility = false;
                 }
             }
             AdjustLayout();
@@ -1875,7 +1876,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void ResetTopButtons()
         {
-            if ((App.Current as App)._itemViewHolder.SelectionMode != ListViewSelectionMode.None)
+            if (itemViewHolder.SelectionMode != ListViewSelectionMode.None)
                 SwitchSelectionMode();
             else
                 ResetSearchArea();
@@ -1889,17 +1890,17 @@ namespace UniversalSoundBoard.DataAccess
             }
             else
             {
-                if ((App.Current as App)._itemViewHolder.Page != typeof(SoundPage))
+                if (itemViewHolder.Page != typeof(SoundPage))
                 {   // If Settings Page or AccountPage is visible
                     // Go to All sounds page
-                    (App.Current as App)._itemViewHolder.Page = typeof(SoundPage);
-                    (App.Current as App)._itemViewHolder.SelectedCategory = 0;
-                    (App.Current as App)._itemViewHolder.Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds");
-                    (App.Current as App)._itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
+                    itemViewHolder.Page = typeof(SoundPage);
+                    itemViewHolder.SelectedCategory = 0;
+                    itemViewHolder.Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds");
+                    itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
                     await ShowAllSoundsAsync();
                 }
-                else if ((App.Current as App)._itemViewHolder.SelectedCategory == 0 &&
-                        string.IsNullOrEmpty((App.Current as App)._itemViewHolder.SearchQuery))
+                else if (itemViewHolder.SelectedCategory == 0 &&
+                        string.IsNullOrEmpty(itemViewHolder.SearchQuery))
                 {   // If SoundPage shows AllSounds
 
                 }
@@ -1916,41 +1917,41 @@ namespace UniversalSoundBoard.DataAccess
         public static void UpdateLayoutColors()
         {
             // Set the background of the SideBar and the PlayingSoundsBar
-            if ((App.Current as App)._itemViewHolder.ShowAcrylicBackground)
+            if (itemViewHolder.ShowAcrylicBackground)
             {   // If the acrylic background is enabled
                 Color appThemeColor = GetApplicationThemeColor();
 
                 // Add the transparency effect
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).BackgroundSource = AcrylicBackgroundSource.HostBackdrop;
-                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.HostBackdrop;
+                itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.HostBackdrop;
 
                 // Set the default tint opacity
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintOpacity = sideBarAcrylicBackgroundTintOpacity;
-                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintOpacity = playingSoundsBarAcrylicBackgroundTintOpacity;
+                itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintOpacity = playingSoundsBarAcrylicBackgroundTintOpacity;
 
                 // Set the tint color
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintColor = appThemeColor;
-                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = appThemeColor;
+                itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = appThemeColor;
             }
             else if ((App.Current as App).RequestedTheme == ApplicationTheme.Light)
             {   // If the acrylic background is disabled and the theme is Light
                 // Remove the transparency effect
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).BackgroundSource = AcrylicBackgroundSource.Backdrop;
-                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.Backdrop;
+                itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.Backdrop;
 
                 // Set the background color
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintColor = sideBarLightBackgroundColor;
-                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = playingSoundsBarLightBackgroundColor;
+                itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = playingSoundsBarLightBackgroundColor;
             }
             else
             {   // If the acrylic background is disabled and the theme is dark
                 // Remove the transparency effect
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).BackgroundSource = AcrylicBackgroundSource.Backdrop;
-                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.Backdrop;
+                itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.Backdrop;
 
                 // Set the background color
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintColor = sideBarDarkBackgroundColor;
-                (App.Current as App)._itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = playingSoundsBarDarkBackgroundColor;
+                itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = playingSoundsBarDarkBackgroundColor;
             }
         }
         #endregion
@@ -1958,16 +1959,16 @@ namespace UniversalSoundBoard.DataAccess
         #region General Methods
         public static async Task CreateCategoriesListAsync()
         {
-            int selectedCategory = (App.Current as App)._itemViewHolder.SelectedCategory;
+            int selectedCategory = itemViewHolder.SelectedCategory;
             
-            (App.Current as App)._itemViewHolder.Categories.Clear();
-            (App.Current as App)._itemViewHolder.Categories.Add(new Category(Guid.Empty, new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds"), "\uE10F"));
+            itemViewHolder.Categories.Clear();
+            itemViewHolder.Categories.Add(new Category(Guid.Empty, new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds"), "\uE10F"));
 
             foreach (Category cat in await GetAllCategoriesAsync())
-                (App.Current as App)._itemViewHolder.Categories.Add(cat);
-            (App.Current as App)._itemViewHolder.SelectedCategory = selectedCategory;
+                itemViewHolder.Categories.Add(cat);
+            itemViewHolder.SelectedCategory = selectedCategory;
 
-            (App.Current as App)._itemViewHolder.TriggerCategoriesUpdatedEvent((App.Current as App)._itemViewHolder.Categories, null);
+            itemViewHolder.TriggerCategoriesUpdatedEvent(itemViewHolder.Categories, null);
         }
 
         public static async Task UpdatePlayingSoundListItemAsync(Guid uuid)
@@ -1975,15 +1976,15 @@ namespace UniversalSoundBoard.DataAccess
             var playingSound = await GetPlayingSoundAsync(uuid);
             if (playingSound == null) return;
 
-            var currentPlayingSoundList = (App.Current as App)._itemViewHolder.PlayingSounds.Where(p => p.Uuid == playingSound.Uuid);
+            var currentPlayingSoundList = itemViewHolder.PlayingSounds.Where(p => p.Uuid == playingSound.Uuid);
             if (currentPlayingSoundList.Count() == 0) return;
             var currentPlayingSound = currentPlayingSoundList.First();
             if (currentPlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing) return;
-            int index = (App.Current as App)._itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
+            int index = itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
 
             // Replace the playing sound
-            (App.Current as App)._itemViewHolder.PlayingSounds.RemoveAt(index);
-            (App.Current as App)._itemViewHolder.PlayingSounds.Insert(index, playingSound);
+            itemViewHolder.PlayingSounds.RemoveAt(index);
+            itemViewHolder.PlayingSounds.Insert(index, playingSound);
         }
 
         public static async Task CreatePlayingSoundsListAsync()
@@ -1993,12 +1994,12 @@ namespace UniversalSoundBoard.DataAccess
             {
                 if (ps.MediaPlayer != null)
                 {
-                    var currentPlayingSoundList = (App.Current as App)._itemViewHolder.PlayingSounds.Where(p => p.Uuid == ps.Uuid);
+                    var currentPlayingSoundList = itemViewHolder.PlayingSounds.Where(p => p.Uuid == ps.Uuid);
 
                     if (currentPlayingSoundList.Count() > 0)
                     {
                         var currentPlayingSound = currentPlayingSoundList.First();
-                        int index = (App.Current as App)._itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
+                        int index = itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
 
                         // Update the current playing sound if it is currently not playing
                         if (currentPlayingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
@@ -2016,33 +2017,33 @@ namespace UniversalSoundBoard.DataAccess
                             if (soundWasUpdated)
                             {
                                 // Replace the playing sound
-                                (App.Current as App)._itemViewHolder.PlayingSounds.RemoveAt(index);
-                                (App.Current as App)._itemViewHolder.PlayingSounds.Insert(index, ps);
+                                itemViewHolder.PlayingSounds.RemoveAt(index);
+                                itemViewHolder.PlayingSounds.Insert(index, ps);
                             }
                         }
                     }
                     else
                     {
                         // Add the new playing sound
-                        (App.Current as App)._itemViewHolder.PlayingSounds.Add(ps);
+                        itemViewHolder.PlayingSounds.Add(ps);
                     }
                 }
             }
             
             // Remove old playing sounds
-            foreach(var ps in (App.Current as App)._itemViewHolder.PlayingSounds)
+            foreach(var ps in itemViewHolder.PlayingSounds)
             {
                 // Remove the playing sound from ItemViewHolder if it does not exist in the new playing sounds list
                 if (allPlayingSounds.Where(p => p.Uuid == ps.Uuid).Count() == 0)
-                    (App.Current as App)._itemViewHolder.PlayingSounds.Remove(ps);
+                    itemViewHolder.PlayingSounds.Remove(ps);
             }
         }
 
         public static void SelectCategory(Guid uuid)
         {
-            for (int i = 0; i < (App.Current as App)._itemViewHolder.Categories.Count(); i++)
-                if (Equals((App.Current as App)._itemViewHolder.Categories[i].Uuid, uuid))
-                    (App.Current as App)._itemViewHolder.SelectedCategory = i;
+            for (int i = 0; i < itemViewHolder.Categories.Count(); i++)
+                if (Equals(itemViewHolder.Categories[i].Uuid, uuid))
+                    itemViewHolder.SelectedCategory = i;
         }
 
         private static List<Sound> SortSoundsList(List<Sound> sounds, SoundOrder order, bool reversed, Guid categoryUuid, bool favourite)
@@ -2125,7 +2126,7 @@ namespace UniversalSoundBoard.DataAccess
                 isLiveTileOn = (bool)localSettings.Values["liveTile"];
             }
 
-            if ((App.Current as App)._itemViewHolder.AllSounds.Count == 0 || !isLiveTileOn)
+            if (itemViewHolder.AllSounds.Count == 0 || !isLiveTileOn)
             {
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();
                 return;
@@ -2135,11 +2136,11 @@ namespace UniversalSoundBoard.DataAccess
 
             // Sort the sounds randomly
             Random random = new Random();
-            sounds = (App.Current as App)._itemViewHolder.AllSounds.OrderBy(s => random.Next()).ToList();
+            sounds = itemViewHolder.AllSounds.OrderBy(s => random.Next()).ToList();
             Sound soundWithImage = null;
 
             // Find the first sound with an image an use that for the live tile
-            foreach (Sound s in (App.Current as App)._itemViewHolder.AllSounds)
+            foreach (Sound s in itemViewHolder.AllSounds)
             {
                 if (s.HasImageFile())
                 {
@@ -2193,7 +2194,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task SetSoundBoardSizeTextAsync()
         {
-            if ((App.Current as App)._itemViewHolder.ProgressRingIsActive)
+            if (itemViewHolder.ProgressRingIsActive)
             {
                 await Task.Delay(1000);
                 await SetSoundBoardSizeTextAsync();
@@ -2201,7 +2202,7 @@ namespace UniversalSoundBoard.DataAccess
 
             // Copy AllSounds
             List<Sound> allSounds = new List<Sound>();
-            foreach (var sound in (App.Current as App)._itemViewHolder.AllSounds)
+            foreach (var sound in itemViewHolder.AllSounds)
                 allSounds.Add(sound);
 
             float totalSize = 0;
@@ -2219,7 +2220,7 @@ namespace UniversalSoundBoard.DataAccess
                 totalSize += size;
             }
 
-            (App.Current as App)._itemViewHolder.SoundboardSize = string.Format(new Windows.ApplicationModel.Resources.ResourceLoader().GetString("SettingsSoundBoardSize"), totalSize.ToString("n2") + " GB");
+            itemViewHolder.SoundboardSize = string.Format(new Windows.ApplicationModel.Resources.ResourceLoader().GetString("SettingsSoundBoardSize"), totalSize.ToString("n2") + " GB");
         }
 
         public static async Task<MediaPlayer> CreateMediaPlayerAsync(List<Sound> sounds, int current)
