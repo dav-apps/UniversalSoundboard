@@ -62,7 +62,7 @@ namespace UniversalSoundboard.Pages
                 try
                 {
                     Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
-                    Uri requestUrl = new Uri(FileManager.LoginImplicitUrl + "?api_key=" + FileManager.ApiKey + "&redirect_url=" + redirectUrl);
+                    Uri requestUrl = new Uri(string.Format("{0}?api_key={1}&app_id={2}&redirect_url={3}", FileManager.LoginImplicitUrl, FileManager.ApiKey, FileManager.AppId, redirectUrl));
 
                     var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
                     switch (webAuthenticationResult.ResponseStatus)

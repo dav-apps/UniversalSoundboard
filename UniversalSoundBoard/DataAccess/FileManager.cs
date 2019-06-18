@@ -81,43 +81,43 @@ namespace UniversalSoundBoard.DataAccess
         private static Color playingSoundsBarDarkBackgroundColor = Color.FromArgb(255, 15, 20, 35);       // #0f1423
 
         public static ItemViewHolder itemViewHolder;
-        public static DavEnvironment Environment = DavEnvironment.Production;
+        public static DavEnvironment Environment = DavEnvironment.Development;
 
         // dav Keys
         private const string ApiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
         public const string ApiKeyDevelopment = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";    // Dev
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
-        private const string LoginImplicitUrlProduction = "https://dav-apps.tech/login_implicit";
-        private const string LoginImplicitUrlDevelopment = "https://f92f0acb.ngrok.io/login_implicit";
+        private const string LoginImplicitUrlProduction = "https://dav-apps.tech/login_session";
+        private const string LoginImplicitUrlDevelopment = "https://4454be09.ngrok.io/login_session";
         public static string LoginImplicitUrl => Environment == DavEnvironment.Production ? LoginImplicitUrlProduction : LoginImplicitUrlDevelopment;
 
-        private const int AppIdProduction = 1;                 // Dev: 8; Prod: 1
-        private const int AppIdDevelopment = 8;
+        private const int AppIdProduction = 1;                 // Dev: 4; Prod: 1
+        private const int AppIdDevelopment = 4;
         public static int AppId => Environment == DavEnvironment.Production ? AppIdProduction : AppIdDevelopment;
 
-        private const int SoundFileTableIdProduction = 6;      // Dev: 11; Prod: 6
-        private const int SoundFileTableIdDevelopment = 11;
+        private const int SoundFileTableIdProduction = 6;      // Dev: 6; Prod: 6
+        private const int SoundFileTableIdDevelopment = 6;
         public static int SoundFileTableId => Environment == DavEnvironment.Production ? SoundFileTableIdProduction : SoundFileTableIdDevelopment;
 
-        private const int ImageFileTableIdProduction = 7;      // Dev: 15; Prod: 7
-        private const int ImageFileTableIdDevelopment = 15;
+        private const int ImageFileTableIdProduction = 7;      // Dev: 7; Prod: 7
+        private const int ImageFileTableIdDevelopment = 7;
         public static int ImageFileTableId => Environment == DavEnvironment.Production ? ImageFileTableIdProduction : ImageFileTableIdDevelopment;
 
-        private const int CategoryTableIdProduction = 8;       // Dev: 16; Prod: 8
-        private const int CategoryTableIdDevelopment = 16;
+        private const int CategoryTableIdProduction = 8;       // Dev: 8; Prod: 8
+        private const int CategoryTableIdDevelopment = 8;
         public static int CategoryTableId => Environment == DavEnvironment.Production ? CategoryTableIdProduction : CategoryTableIdDevelopment;
 
-        private const int SoundTableIdProduction = 5;          // Dev: 17; Prod: 5
-        private const int SoundTableIdDevelopment = 17;
+        private const int SoundTableIdProduction = 5;          // Dev: 5; Prod: 5
+        private const int SoundTableIdDevelopment = 5;
         public static int SoundTableId => Environment == DavEnvironment.Production ? SoundTableIdProduction : SoundTableIdDevelopment;
 
-        private const int PlayingSoundTableIdProduction = 9;   // Dev: 18; Prod: 9
-        private const int PlayingSoundTableIdDevelopment = 18;
+        private const int PlayingSoundTableIdProduction = 9;   // Dev: 9; Prod: 9
+        private const int PlayingSoundTableIdDevelopment = 9;
         public static int PlayingSoundTableId => Environment == DavEnvironment.Production ? PlayingSoundTableIdProduction : PlayingSoundTableIdDevelopment;
 
-        private const int OrderTableIdProduction = 12;  // Dev: 27; Prod: 12
-        private const int OrderTableIdDevelopment = 27;
+        private const int OrderTableIdProduction = 12;  // Dev: 10; Prod: 12
+        private const int OrderTableIdDevelopment = 10;
         public static int OrderTableId => Environment == DavEnvironment.Production ? OrderTableIdProduction : OrderTableIdDevelopment;
 
         // Table property names
