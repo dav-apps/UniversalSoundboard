@@ -110,6 +110,7 @@ namespace UniversalSoundBoard.Components
                     MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
                     MediaPlayerElement.MediaPlayer.MediaEnded -= Player_MediaEnded;
                     MediaPlayerElement.MediaPlayer.MediaEnded += Player_MediaEnded;
+                    PlayingSound.MediaPlayer.CommandManager.PreviousReceived -= MediaPlayerCommandManager_PreviousReceived;
                     PlayingSound.MediaPlayer.CommandManager.PreviousReceived += MediaPlayerCommandManager_PreviousReceived;
                     ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
                     ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
