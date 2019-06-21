@@ -89,7 +89,7 @@ namespace UniversalSoundBoard.DataAccess
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
         private const string LoginImplicitUrlProduction = "https://dav-apps.tech/login_session";
-        private const string LoginImplicitUrlDevelopment = "https://4454be09.ngrok.io/login_session";
+        private const string LoginImplicitUrlDevelopment = "https://08311d40.ngrok.io/login_session";
         public static string LoginImplicitUrl => Environment == DavEnvironment.Production ? LoginImplicitUrlProduction : LoginImplicitUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 4; Prod: 1
@@ -1662,15 +1662,15 @@ namespace UniversalSoundBoard.DataAccess
             var soundTableObject = await GetSoundFileTableObjectAsync(soundUuid);
             if (soundTableObject != null)
             {
-                switch (soundTableObject.DownloadStatus)
+                switch (soundTableObject.FileDownloadStatus)
                 {
-                    case TableObject.TableObjectDownloadStatus.NoFileOrNotLoggedIn:
+                    case TableObject.TableObjectFileDownloadStatus.NoFileOrNotLoggedIn:
                         return DownloadStatus.NoFileOrNotLoggedIn;
-                    case TableObject.TableObjectDownloadStatus.NotDownloaded:
+                    case TableObject.TableObjectFileDownloadStatus.NotDownloaded:
                         return DownloadStatus.NotDownloaded;
-                    case TableObject.TableObjectDownloadStatus.Downloading:
+                    case TableObject.TableObjectFileDownloadStatus.Downloading:
                         return DownloadStatus.Downloading;
-                    case TableObject.TableObjectDownloadStatus.Downloaded:
+                    case TableObject.TableObjectFileDownloadStatus.Downloaded:
                         return DownloadStatus.Downloaded;
                 }
             }
