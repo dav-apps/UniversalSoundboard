@@ -81,7 +81,7 @@ namespace UniversalSoundBoard.DataAccess
         private static Color playingSoundsBarDarkBackgroundColor = Color.FromArgb(255, 15, 20, 35);       // #0f1423
 
         public static ItemViewHolder itemViewHolder;
-        public static DavEnvironment Environment = DavEnvironment.Development;
+        public static DavEnvironment Environment = DavEnvironment.Production;
 
         // dav Keys
         private const string ApiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";  // Prod
