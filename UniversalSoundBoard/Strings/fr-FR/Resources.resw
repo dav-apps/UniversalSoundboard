@@ -1,0 +1,549 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AddButton-Category.Text" xml:space="preserve">
+    <value>Nouvelle catégorie</value>
+    <comment>Text im Flyout des +-Button</comment>
+  </data>
+  <data name="AddButton-Sound.Text" xml:space="preserve">
+    <value>Ajouter un son</value>
+    <comment>Text im Flyout des +-Button</comment>
+  </data>
+  <data name="AllSounds" xml:space="preserve">
+    <value>Tous les sons</value>
+    <comment>Titel</comment>
+  </data>
+  <data name="ContentDialog-Cancel" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="DeleteCategoryContentDialog-Content" xml:space="preserve">
+    <value>Êtes-vous sûr(e) ? (vos sons ne sont pas impactés.)</value>
+  </data>
+  <data name="DeleteCategoryContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="DeleteCategoryContentDialog-Title" xml:space="preserve">
+    <value>Supprimer la catégorie </value>
+  </data>
+  <data name="DeleteSoundContentDialog-Content" xml:space="preserve">
+    <value>Êtes-vous sûr(e) ?</value>
+  </data>
+  <data name="DeleteSoundContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="DeleteSoundContentDialog-Title" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="DeleteSoundsContentDialog-Content" xml:space="preserve">
+    <value>Êtes-vous sûr(e) ?</value>
+  </data>
+  <data name="DeleteSoundsContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="DeleteSoundsContentDialog-Title" xml:space="preserve">
+    <value>Supprimer les sons</value>
+    <comment>Supprimer plusieurs sons</comment>
+  </data>
+  <data name="Drop" xml:space="preserve">
+    <value>Déposer pour ajouter de nouveaux sons</value>
+    <comment>Glisser/déposer pour référencer de nouveaux sons</comment>
+  </data>
+  <data name="EditCategoryContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="EditCategoryContentDialog-Title" xml:space="preserve">
+    <value>Editer la catégorie</value>
+  </data>
+  <data name="CancelButton.Content" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="MoreButton-SetCategory.Text" xml:space="preserve">
+    <value>Affecter des catégories</value>
+  </data>
+  <data name="MoreButton-DeleteSounds.Text" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="NewCategoryContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Créer</value>
+  </data>
+  <data name="NewCategoryContentDialog-Title" xml:space="preserve">
+    <value>Nouvelle catégorie</value>
+  </data>
+  <data name="PlaySoundsSimultaneously.Text" xml:space="preserve">
+    <value>Jouer simultanément</value>
+  </data>
+  <data name="PlaySoundsSuccessively.Text" xml:space="preserve">
+    <value>Jouer successivement</value>
+  </data>
+  <data name="RenameSoundContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="RenameSoundContentDialog-Title" xml:space="preserve">
+    <value>Renommer</value>
+  </data>
+  <data name="Search.PlaceholderText" xml:space="preserve">
+    <value>Rechercher des sons</value>
+    <comment>Recherche des sons parmi ceux référencés dans l'application</comment>
+  </data>
+  <data name="Settings-Title" xml:space="preserve">
+    <value>Paramètres</value>
+  </data>
+  <data name="SoundTile-SetCategory" xml:space="preserve">
+    <value>Affecter des catégories</value>
+    <comment>Text im Flyout der SoundGridView-Elemente</comment>
+  </data>
+  <data name="SoundTile-ChangeImage" xml:space="preserve">
+    <value>Changer la vignette</value>
+    <comment>Text im Flyout der SoundGridView-Elemente</comment>
+  </data>
+  <data name="SoundTile-Delete" xml:space="preserve">
+    <value>Supprimer</value>
+    <comment>Text im Flyout der SoundGridView-Elemente</comment>
+  </data>
+  <data name="SoundTile-Rename" xml:space="preserve">
+    <value>Renommer</value>
+    <comment>Text im Flyout der SoundGridView-Elemente</comment>
+  </data>
+  <data name="Version.Text" xml:space="preserve">
+    <value>1.7.3</value>
+  </data>
+  <data name="PlayingSound_CastButton.Text" xml:space="preserve">
+    <value>Diffuser sur un autre appareil</value>
+  </data>
+  <data name="PlayingSound_RepeatButton.Text" xml:space="preserve">
+    <value>Répéter</value>
+  </data>
+  <data name="PlayingSoundsListToggle.Header" xml:space="preserve">
+    <value>Afficher la liste des sons</value>
+  </data>
+  <data name="PlayOneSoundAtOnceToggle.Header" xml:space="preserve">
+    <value>Jouer un seul son à la fois</value>
+  </data>
+  <data name="ThemeChangeMessageTextBlock.Text" xml:space="preserve">
+    <value>Merci de redémarrer l'application pour appliquer le nouveau thème.</value>
+  </data>
+  <data name="SoundTile-SetFavourite" xml:space="preserve">
+    <value>Ajouter aux favoris</value>
+  </data>
+  <data name="SoundTile-UnsetFavourite" xml:space="preserve">
+    <value>Retirer des favoris</value>
+  </data>
+  <data name="FavouritesPivotHeader.Header" xml:space="preserve">
+    <value>Favoris</value>
+  </data>
+  <data name="SoundsPivotHeader.Header" xml:space="preserve">
+    <value>Sons</value>
+  </data>
+  <data name="SettingsEntry-ShowCategoryIcon.Header" xml:space="preserve">
+    <value>Afficher les icônes des catégories sur le son</value>
+  </data>
+  <data name="SettingsPivot-Data.Header" xml:space="preserve">
+    <value>Données</value>
+  </data>
+  <data name="SettingsPivot-Design.Header" xml:space="preserve">
+    <value>Affichage</value>
+  </data>
+  <data name="SettingsPivot-General.Header" xml:space="preserve">
+    <value>Général</value>
+  </data>
+  <data name="SettingsSoundBoardSize" xml:space="preserve">
+    <value>La taille de votre Soundboard est {0}.</value>
+  </data>
+  <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
+    <value>Afficher l'onglet des favoris</value>
+  </data>
+  <data name="ExportNotification-Message" xml:space="preserve">
+    <value>Votre Soundboard a été exporté avec succès.</value>
+  </data>
+  <data name="ExportNotification-Title" xml:space="preserve">
+    <value>Export réussi !</value>
+  </data>
+  <data name="SettingsEntry-ExportDataButton.Content" xml:space="preserve">
+    <value>Exporter votre Soundboard</value>
+  </data>
+  <data name="SettingsEntry-ImportDataButton.Content" xml:space="preserve">
+    <value>Importer votre Soundboard</value>
+  </data>
+  <data name="ExportDataContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Exporter</value>
+  </data>
+  <data name="ExportDataContentDialog-Text1" xml:space="preserve">
+    <value>Vous pouvez exporter votre Soundboard pour le sauvegarder ou l'importer sur un autre appareil.
+
+Choissisez le dossier où stocker le fichier exporté.</value>
+  </data>
+  <data name="ExportDataContentDialog-Text2" xml:space="preserve">
+    <value>Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer jusqu'à ce que l'export soit terminé.</value>
+  </data>
+  <data name="ExportDataContentDialog-Title" xml:space="preserve">
+    <value>Exporter le Soundboard</value>
+  </data>
+  <data name="ImportDataContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Importer</value>
+  </data>
+  <data name="ImportDataContentDialog-Text1" xml:space="preserve">
+    <value>Vous pouvez importer un Soundboard depuis un autre appareil.
+Sélectionner le fichier du Soundboard préalablement exporté.</value>
+  </data>
+  <data name="ImportDataContentDialog-Text2" xml:space="preserve">
+    <value>Les nouveaux sons seront ajoutés à ce Soundboard.
+
+Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer jusqu'à ce que l'import soit terminé..</value>
+  </data>
+  <data name="ImportDataContentDialog-Title" xml:space="preserve">
+    <value>Importer un Soundboard</value>
+  </data>
+  <data name="ExportImportMessage-TidyUp" xml:space="preserve">
+    <value>Compression...</value>
+  </data>
+  <data name="ExportMessage-1" xml:space="preserve">
+    <value>Création des dossiers...</value>
+  </data>
+  <data name="ExportMessage-2" xml:space="preserve">
+    <value>Récupération ds fichiers...</value>
+  </data>
+  <data name="ExportMessage-3" xml:space="preserve">
+    <value>Création du dossier compressé (zip)...</value>
+  </data>
+  <data name="ExportMessage-4" xml:space="preserve">
+    <value>Déplacement du dossier compressé (zip)...</value>
+  </data>
+  <data name="ImportMessage-1" xml:space="preserve">
+    <value>Copie du dossier compressé (zip)...</value>
+  </data>
+  <data name="ImportMessage-2" xml:space="preserve">
+    <value>Extraction du Soundboard...</value>
+  </data>
+  <data name="ImportMessage-3" xml:space="preserve">
+    <value>Ajout des nouveaux sons...</value>
+  </data>
+  <data name="MoreButton-Cancel.Text" xml:space="preserve">
+    <value>Annuler</value>
+  </data>
+  <data name="AddButton.Text" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="SearchButton.Text" xml:space="preserve">
+    <value>Rechercher des sons</value>
+  </data>
+  <data name="SelectButton.Text" xml:space="preserve">
+    <value>Sélection</value>
+  </data>
+  <data name="VolumeButton.Text" xml:space="preserve">
+    <value>Volume</value>
+  </data>
+  <data name="PlaySoundsSuccessivelyContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Jouer</value>
+  </data>
+  <data name="PlaySoundsSuccessivelyContentDialog-Title" xml:space="preserve">
+    <value>Jouer les sons l'un après l'autre</value>
+  </data>
+  <data name="Shuffle" xml:space="preserve">
+    <value>Aléatoire</value>
+  </data>
+  <data name="SettingsEntry-DarkThemeRadioButton.Content" xml:space="preserve">
+    <value>Sombre</value>
+  </data>
+  <data name="SettingsEntry-LightThemeRadioButton.Content" xml:space="preserve">
+    <value>Clair</value>
+  </data>
+  <data name="SettingsEntry-SystemThemeRadioButton.Content" xml:space="preserve">
+    <value>Utiliser le paramètre système</value>
+  </data>
+  <data name="SettingsEntry-Theme.Text" xml:space="preserve">
+    <value>Thème</value>
+  </data>
+  <data name="ShareTarget-AddButton.Content" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="ShareTarget-AddCategoryButton.Content" xml:space="preserve">
+    <value>Ajouter une catégorie</value>
+  </data>
+  <data name="ShareTarget-SelectCategoryTextBlock.Text" xml:space="preserve">
+    <value>Sélectionner la catégorie à laquelle affecter les sons.</value>
+  </data>
+  <data name="Share" xml:space="preserve">
+    <value>Partager</value>
+  </data>
+  <data name="MoreButton-Share.Text" xml:space="preserve">
+    <value>Partager</value>
+  </data>
+  <data name="ShareButton.Text" xml:space="preserve">
+    <value>Partager</value>
+  </data>
+  <data name="ShareDialog-MultipleSounds" xml:space="preserve">
+    <value>Multiple sounds</value>
+  </data>
+  <data name="ShareDialog-Title" xml:space="preserve">
+    <value>Partagé avec UniversalSoundboard</value>
+  </data>
+  <data name="UpgradeDataMessage.Text" xml:space="preserve">
+    <value>Application de la mise à jour. Merci de ne pas fermer ou minimiser l'application.</value>
+  </data>
+  <data name="UpgradeDataStatusMessage-Preparing" xml:space="preserve">
+    <value>Préparation...</value>
+  </data>
+  <data name="SettingsEntry-SavePlayingSounds.Header" xml:space="preserve">
+    <value>Sauvegarder les sons en train d'être joués</value>
+  </data>
+  <data name="Pin" xml:space="preserve">
+    <value>Epingler au menu démarrer</value>
+  </data>
+  <data name="Unpin" xml:space="preserve">
+    <value>Détacher du menu démarrer</value>
+  </data>
+  <data name="Account-UpgradeLink.Content" xml:space="preserve">
+    <value>Besoin de plus ?</value>
+  </data>
+  <data name="Account-Title" xml:space="preserve">
+    <value>Mon compte</value>
+  </data>
+  <data name="LoginButton.Content" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="Account-UsedStorage" xml:space="preserve">
+    <value>{0} GB sur {1} GB utilisé</value>
+  </data>
+  <data name="Account-LogoutMessage" xml:space="preserve">
+    <value>Êtes-vous sûr(e) de vouloir vous déconnecter ?</value>
+  </data>
+  <data name="Logout" xml:space="preserve">
+    <value>Se déconnecter</value>
+  </data>
+  <data name="LogoutButton.Content" xml:space="preserve">
+    <value>Se déconnecter</value>
+  </data>
+  <data name="Account-LandingText1.Text" xml:space="preserve">
+    <value>Accéder au même Soundboard sur différents appareils</value>
+  </data>
+  <data name="Account-LandingText2.Text" xml:space="preserve">
+    <value>S'assurer de ne rien perdre de ses sons et de la personnalisation</value>
+  </data>
+  <data name="Account-LandingText3.Text" xml:space="preserve">
+    <value>Jouer vos sons sur tous vos appareils</value>
+  </data>
+  <data name="Account-LandingText4.Text" xml:space="preserve">
+    <value>Synchronisez votre Soundboard et accédez-y de n'importe où.</value>
+  </data>
+  <data name="Account-TryOut.Text" xml:space="preserve">
+    <value>Essayer gratuitement</value>
+  </data>
+  <data name="Account-VisitWebsiteLink.Content" xml:space="preserve">
+    <value>Visiter https://dav-apps.tech/</value>
+  </data>
+  <data name="SignupButton.Content" xml:space="preserve">
+    <value>Créer un compte</value>
+  </data>
+  <data name="DownloadFileContentDialog-Title" xml:space="preserve">
+    <value>téléchargement du fichier {0}...</value>
+  </data>
+  <data name="ContentDialog-Okay" xml:space="preserve">
+    <value>D'accord</value>
+  </data>
+  <data name="DownloadFileErrorContentDialog-Message" xml:space="preserve">
+    <value>Merci de vérifier votre connexion et de réessayer.</value>
+  </data>
+  <data name="DownloadFileErrorContentDialog-Title" xml:space="preserve">
+    <value>Une erreur est survenue durant le téléchargement du fichier</value>
+  </data>
+  <data name="PlayingSound_VolumeButton.Text" xml:space="preserve">
+    <value>Volume</value>
+  </data>
+  <data name="Export" xml:space="preserve">
+    <value>Exporter</value>
+  </data>
+  <data name="MoreButton-Export.Text" xml:space="preserve">
+    <value>Exporter</value>
+  </data>
+  <data name="ExportSoundsContentDialog-Title" xml:space="preserve">
+    <value>Exporter les sons</value>
+  </data>
+  <data name="SaveAsZip" xml:space="preserve">
+    <value>Sauyvegarder dans un dossier compressé (zip)</value>
+  </data>
+  <data name="ExportSoundsMessage" xml:space="preserve">
+    <value>Sons en cours d'export</value>
+  </data>
+  <data name="MoreButton_SelectAllFlyout-DeselectAll" xml:space="preserve">
+    <value>Tout désélectionner</value>
+  </data>
+  <data name="MoreButton_SelectAllFlyout-SelectAll" xml:space="preserve">
+    <value>Tout sélectionner</value>
+  </data>
+  <data name="Github-Link.Content" xml:space="preserve">
+    <value>Code source de UniversalSoundboard sur GitHub</value>
+  </data>
+  <data name="PrivacyPolicy-Link.Content" xml:space="preserve">
+    <value>Politique de confidentialité</value>
+  </data>
+  <data name="USBForAndroid-Link.Content" xml:space="preserve">
+    <value>Obtenir UniversalSoundboard pour Android</value>
+  </data>
+  <data name="Drop-FileTypeNotSupported" xml:space="preserve">
+    <value>Ce type de fichier n'est pas supporté</value>
+  </data>
+  <data name="AddSoundsMessage" xml:space="preserve">
+    <value>Les sons ont été ajoutés</value>
+  </data>
+  <data name="DeleteSoundMessage" xml:space="preserve">
+    <value>Le son a été supprimé</value>
+  </data>
+  <data name="DeleteSoundsMessage" xml:space="preserve">
+    <value>Les sons ont été supprimés</value>
+  </data>
+  <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
+    <value>Afficher un fond acrylique (~transparent)</value>
+  </data>
+  <data name="ContentDialog-Save" xml:space="preserve">
+    <value>Sauvegarder</value>
+  </data>
+  <data name="SetCategoryContentDialog-Title" xml:space="preserve">
+    <value>Affecter aux catégories : {0}</value>
+  </data>
+  <data name="SetCategoryForMultipleSoundsContentDialog-Title" xml:space="preserve">
+    <value>Définir les catégories pour {0} sons</value>
+  </data>
+  <data name="SetCategoryContentDialog-NoCategoriesText" xml:space="preserve">
+    <value>Ajouter votre première catégorie en cliquant sur le bouton +.</value>
+  </data>
+  <data name="SettingsEntry-ChangeCategoryOrderButton.Content" xml:space="preserve">
+    <value>Changer l'ordre des catégories</value>
+  </data>
+  <data name="CategoryOrderContentDialog-Title" xml:space="preserve">
+    <value>Changer l'ordre des catégories</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderComboBox-CreationDate.Content" xml:space="preserve">
+    <value>Date de création</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderComboBox-Custom.Content" xml:space="preserve">
+    <value>Personnaliser</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderComboBox-Name.Content" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderHeaderTextBlock.Text" xml:space="preserve">
+    <value>Trier les sons par</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderReversedComboBox-Ascending.Content" xml:space="preserve">
+    <value>Descendant (Z -> A)</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderReversedComboBox-Descending.Content" xml:space="preserve">
+    <value>Ascendant (A -> Z)</value>
+  </data>
+</root>
