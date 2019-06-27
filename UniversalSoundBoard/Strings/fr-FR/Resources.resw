@@ -119,15 +119,12 @@
   </resheader>
   <data name="AddButton-Category.Text" xml:space="preserve">
     <value>Nouvelle catégorie</value>
-    <comment>Text im Flyout des +-Button</comment>
   </data>
   <data name="AddButton-Sound.Text" xml:space="preserve">
     <value>Ajouter un son</value>
-    <comment>Text im Flyout des +-Button</comment>
   </data>
   <data name="AllSounds" xml:space="preserve">
     <value>Tous les sons</value>
-    <comment>Titel</comment>
   </data>
   <data name="ContentDialog-Cancel" xml:space="preserve">
     <value>Annuler</value>
@@ -206,22 +203,15 @@
   </data>
   <data name="SoundTile-SetCategory" xml:space="preserve">
     <value>Affecter des catégories</value>
-    <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="SoundTile-ChangeImage" xml:space="preserve">
     <value>Changer la vignette</value>
-    <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="SoundTile-Delete" xml:space="preserve">
     <value>Supprimer</value>
-    <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="SoundTile-Rename" xml:space="preserve">
     <value>Renommer</value>
-    <comment>Text im Flyout der SoundGridView-Elemente</comment>
-  </data>
-  <data name="Version.Text" xml:space="preserve">
-    <value>1.7.3</value>
   </data>
   <data name="PlayingSound_CastButton.Text" xml:space="preserve">
     <value>Diffuser sur un autre appareil</value>
@@ -541,9 +531,9 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Trier les sons par</value>
   </data>
   <data name="SettingsEntry-SoundOrderReversedComboBox-Ascending.Content" xml:space="preserve">
-    <value>Descendant (Z -> A)</value>
+    <value>Descendant (Z -&gt; A)</value>
   </data>
   <data name="SettingsEntry-SoundOrderReversedComboBox-Descending.Content" xml:space="preserve">
-    <value>Ascendant (A -> Z)</value>
+    <value>Ascendant (A -&gt; Z)</value>
   </data>
 </root>

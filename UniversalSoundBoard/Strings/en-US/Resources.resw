@@ -119,15 +119,12 @@
   </resheader>
   <data name="AddButton-Category.Text" xml:space="preserve">
     <value>New Category</value>
-    <comment>Text im Flyout des +-Button</comment>
   </data>
   <data name="AddButton-Sound.Text" xml:space="preserve">
     <value>Add Sounds</value>
-    <comment>Text im Flyout des +-Button</comment>
   </data>
   <data name="AllSounds" xml:space="preserve">
     <value>All Sounds</value>
-    <comment>Titel</comment>
   </data>
   <data name="ContentDialog-Cancel" xml:space="preserve">
     <value>Cancel</value>
@@ -158,11 +155,9 @@
   </data>
   <data name="DeleteSoundsContentDialog-Title" xml:space="preserve">
     <value>Delete Sounds</value>
-    <comment>Löschen von mehreren Sounds</comment>
   </data>
   <data name="Drop" xml:space="preserve">
     <value>Drop to add new sounds</value>
-    <comment>Wenn man Sounddatei ins Fenster zieht</comment>
   </data>
   <data name="EditCategoryContentDialog-PrimaryButton" xml:space="preserve">
     <value>Save</value>
@@ -199,29 +194,24 @@
   </data>
   <data name="Search.PlaceholderText" xml:space="preserve">
     <value>Search for Sounds</value>
-    <comment>Placeholder im Suchfeld</comment>
   </data>
   <data name="Settings-Title" xml:space="preserve">
     <value>Settings</value>
   </data>
   <data name="SoundTile-SetCategory" xml:space="preserve">
     <value>Set Categories</value>
-    <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="SoundTile-ChangeImage" xml:space="preserve">
     <value>Change Image</value>
-    <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="SoundTile-Delete" xml:space="preserve">
     <value>Delete</value>
-    <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="SoundTile-Rename" xml:space="preserve">
     <value>Rename</value>
-    <comment>Text im Flyout der SoundGridView-Elemente</comment>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>1.7.3</value>
+    <value>1.7.4</value>
   </data>
   <data name="PlayingSound_CastButton.Text" xml:space="preserve">
     <value>Cast to Device</value>
