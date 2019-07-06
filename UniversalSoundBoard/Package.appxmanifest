@@ -5,7 +5,7 @@
   <Properties>
     <DisplayName>UniversalSoundboard</DisplayName>
     <PublisherDisplayName>dav Apps</PublisherDisplayName>
-    <Logo>Assets\Generierte Assets\StoreLogo.png</Logo>
+    <Logo>Assets\Icons\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
     <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
@@ -15,16 +15,16 @@
   </Resources>
   <Applications>
     <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="UniversalSoundBoard.App">
-      <uap:VisualElements DisplayName="UniversalSoundboard" Square150x150Logo="Assets\Generierte Assets\Square150x150Logo.png" Square44x44Logo="Assets\Generierte Assets\Square44x44Logo.png" Description="Create your own soundboard! Add images to your sounds and sort them in categories to keep track of all your sounds." BackgroundColor="transparent">
-        <uap:LockScreen Notification="badge" BadgeLogo="Assets\Generierte Assets\BadgeLogo.png" />
-        <uap:DefaultTile Wide310x150Logo="Assets\Generierte Assets\Wide310x150Logo.png" ShortName="UniversalSoundBoard" Square310x310Logo="Assets\Generierte Assets\Square310x310Logo.png" Square71x71Logo="Assets\Generierte Assets\Square71x71Logo.png">
+      <uap:VisualElements DisplayName="UniversalSoundboard" Square150x150Logo="Assets\Icons\Square150x150Logo.png" Square44x44Logo="Assets\Icons\Square44x44Logo.png" Description="Create your own soundboard! Add images to your sounds and sort them in categories to keep track of all your sounds." BackgroundColor="transparent">
+        <uap:LockScreen Notification="badge" BadgeLogo="Assets\Icons\BadgeLogo.png" />
+        <uap:DefaultTile Wide310x150Logo="Assets\Icons\Wide310x150Logo.png" ShortName="UniversalSoundboard" Square310x310Logo="Assets\Icons\Square310x310Logo.png" Square71x71Logo="Assets\Icons\Square71x71Logo.png">
           <uap:ShowNameOnTiles>
-            <uap:ShowOn Tile="square150x150Logo" />
-            <uap:ShowOn Tile="wide310x150Logo" />
-            <uap:ShowOn Tile="square310x310Logo" />
+            <uap:ShowOn Tile="square150x150Logo"/>
+            <uap:ShowOn Tile="wide310x150Logo"/>
+            <uap:ShowOn Tile="square310x310Logo"/>
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
-        <uap:SplashScreen Image="Assets\Generierte Assets\SplashScreen.png" />
+        <uap:SplashScreen Image="Assets\Icons\SplashScreen.png" />
         <uap:InitialRotationPreference>
           <uap:Rotation Preference="portrait" />
           <uap:Rotation Preference="landscape" />
