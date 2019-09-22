@@ -2132,24 +2132,13 @@ namespace UniversalSoundBoard.DataAccess
                 return;
             }
 
-            List<Sound> sounds = new List<Sound>();
+            // Get all sounds with an image
+            List<Sound> sounds = itemViewHolder.AllSounds.Where(s => s.HasImageFile()).ToList();
+            if (sounds.Count == 0) return;
 
-            // Sort the sounds randomly
+            // Pick a random sound
             Random random = new Random();
-            sounds = itemViewHolder.AllSounds.OrderBy(s => random.Next()).ToList();
-            Sound soundWithImage = null;
-
-            // Find the first sound with an image an use that for the live tile
-            foreach (Sound s in itemViewHolder.AllSounds)
-            {
-                if (s.HasImageFile())
-                {
-                    soundWithImage = s;
-                    break;
-                }
-            }
-
-            if (soundWithImage == null) return;
+            Sound soundWithImage = sounds[random.Next(sounds.Count)];
 
             StorageFile imageFile = await soundWithImage.GetImageFileAsync();
             if (imageFile == null) return;
