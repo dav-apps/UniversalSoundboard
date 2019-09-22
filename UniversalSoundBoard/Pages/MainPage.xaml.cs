@@ -59,8 +59,8 @@ namespace UniversalSoundBoard.Pages
             InitializeAccountSettings();
 
             await FileManager.CreateCategoriesListAsync();
-            var b = FileManager.ShowAllSoundsAsync();
-            var c = FileManager.CreatePlayingSoundsListAsync();
+            await FileManager.CreatePlayingSoundsListAsync();
+            await FileManager.ShowAllSoundsAsync();
 
             await FileManager.itemViewHolder.User.InitAsync();
         }
