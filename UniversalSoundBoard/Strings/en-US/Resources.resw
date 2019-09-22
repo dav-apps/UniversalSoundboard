@@ -258,12 +258,6 @@
   <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
     <value>Show Favourites tab</value>
   </data>
-  <data name="ExportNotification-Message" xml:space="preserve">
-    <value>Your Soundboard was successfully exported</value>
-  </data>
-  <data name="ExportNotification-Title" xml:space="preserve">
-    <value>Export successfull!</value>
-  </data>
   <data name="SettingsEntry-ExportDataButton.Content" xml:space="preserve">
     <value>Export Soundboard</value>
   </data>
@@ -470,7 +464,7 @@ This may take some time, depending on how large the import file is.</value>
     <value>Save as Zip file</value>
   </data>
   <data name="ExportSoundsMessage" xml:space="preserve">
-    <value>Sounds are being exported</value>
+    <value>Exporting sounds...</value>
   </data>
   <data name="MoreButton_SelectAllFlyout-DeselectAll" xml:space="preserve">
     <value>Deselect all</value>

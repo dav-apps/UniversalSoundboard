@@ -258,12 +258,6 @@
   <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
     <value>Afficher l'onglet des favoris</value>
   </data>
-  <data name="ExportNotification-Message" xml:space="preserve">
-    <value>Votre Soundboard a été exporté avec succès.</value>
-  </data>
-  <data name="ExportNotification-Title" xml:space="preserve">
-    <value>Export réussi !</value>
-  </data>
   <data name="SettingsEntry-ExportDataButton.Content" xml:space="preserve">
     <value>Exporter votre Soundboard</value>
   </data>
@@ -468,7 +462,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Sauyvegarder dans un dossier compressé (zip)</value>
   </data>
   <data name="ExportSoundsMessage" xml:space="preserve">
-    <value>Sons en cours d'export</value>
+    <value>Exporter des sons...</value>
   </data>
   <data name="MoreButton_SelectAllFlyout-DeselectAll" xml:space="preserve">
     <value>Tout désélectionner</value>
