@@ -566,6 +566,9 @@ namespace UniversalSoundBoard.Pages
 
         private async void SetCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            FileManager.itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("UpdateSoundsMessage");
+            FileManager.itemViewHolder.LoadingScreenVisibility = true;
+
             // Get the selected categories from the SelectedCategories Dictionary in ContentDialogs
             List<Guid> categoryUuids = new List<Guid>();
             foreach (var entry in ContentDialogs.SelectedCategories)
@@ -574,6 +577,7 @@ namespace UniversalSoundBoard.Pages
             foreach(var sound in FileManager.itemViewHolder.SelectedSounds)
                 await FileManager.SetCategoriesOfSoundAsync(sound.Uuid, categoryUuids);
 
+            FileManager.itemViewHolder.LoadingScreenVisibility = false;
             await FileManager.UpdateGridViewAsync();
         }
 
