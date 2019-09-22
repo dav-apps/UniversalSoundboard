@@ -211,7 +211,7 @@
     <value>Rename</value>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>1.7.5</value>
+    <value>1.7.6</value>
   </data>
   <data name="PlayingSound_CastButton.Text" xml:space="preserve">
     <value>Cast to Device</value>
@@ -491,13 +491,10 @@ This may take some time, depending on how large the import file is.</value>
     <value>This file type is not supported</value>
   </data>
   <data name="AddSoundsMessage" xml:space="preserve">
-    <value>Sounds are added</value>
-  </data>
-  <data name="DeleteSoundMessage" xml:space="preserve">
-    <value>Sound is deleted</value>
+    <value>Adding sounds...</value>
   </data>
   <data name="DeleteSoundsMessage" xml:space="preserve">
-    <value>Sounds are deleted</value>
+    <value>Deleting sounds...</value>
   </data>
   <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
     <value>Show acrylic background</value>
@@ -537,5 +534,8 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="SettingsEntry-SoundOrderReversedComboBox-Descending.Content" xml:space="preserve">
     <value>Descending</value>
+  </data>
+  <data name="UpdateSoundsMessage" xml:space="preserve">
+    <value>Updating sounds...</value>
   </data>
 </root>

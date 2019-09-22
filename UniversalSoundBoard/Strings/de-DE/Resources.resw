@@ -488,13 +488,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>Dieser Dateityp wird nicht unterstützt</value>
   </data>
   <data name="AddSoundsMessage" xml:space="preserve">
-    <value>Sounds werden hinzugefügt</value>
-  </data>
-  <data name="DeleteSoundMessage" xml:space="preserve">
-    <value>Sound wird gelöscht</value>
+    <value>Sounds hinzufügen...</value>
   </data>
   <data name="DeleteSoundsMessage" xml:space="preserve">
-    <value>Sounds werden gelöscht</value>
+    <value>Sounds löschen...</value>
   </data>
   <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
     <value>Zeige transparenten Hintergrund</value>
@@ -534,5 +531,8 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="SettingsEntry-SoundOrderReversedComboBox-Descending.Content" xml:space="preserve">
     <value>Absteigend</value>
+  </data>
+  <data name="UpdateSoundsMessage" xml:space="preserve">
+    <value>Sounds aktualisieren...</value>
   </data>
 </root>

@@ -441,7 +441,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Créer un compte</value>
   </data>
   <data name="DownloadFileContentDialog-Title" xml:space="preserve">
-    <value>téléchargement du fichier {0}...</value>
+    <value>Téléchargement du fichier {0}...</value>
   </data>
   <data name="ContentDialog-Okay" xml:space="preserve">
     <value>D'accord</value>
@@ -489,13 +489,10 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Ce type de fichier n'est pas supporté</value>
   </data>
   <data name="AddSoundsMessage" xml:space="preserve">
-    <value>Les sons ont été ajoutés</value>
-  </data>
-  <data name="DeleteSoundMessage" xml:space="preserve">
-    <value>Le son a été supprimé</value>
+    <value>Ajouter des sons....</value>
   </data>
   <data name="DeleteSoundsMessage" xml:space="preserve">
-    <value>Les sons ont été supprimés</value>
+    <value>Supprimer des sons...</value>
   </data>
   <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
     <value>Afficher un fond acrylique (~transparent)</value>
@@ -535,5 +532,8 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="SettingsEntry-SoundOrderReversedComboBox-Descending.Content" xml:space="preserve">
     <value>Ascendant (A -&gt; Z)</value>
+  </data>
+  <data name="UpdateSoundsMessage" xml:space="preserve">
+    <value>Actualiser des sons...</value>
   </data>
 </root>
