@@ -395,7 +395,7 @@ namespace UniversalSoundBoard.Pages
 
             PlayingSound playingSound = new PlayingSound(Guid.Empty, sounds, player, repetitions, randomly, 0)
             {
-                Uuid = await FileManager.AddPlayingSoundAsync(Guid.Empty, sounds, 0, repetitions, false, player.Volume)
+                Uuid = await FileManager.AddPlayingSoundAsync(Guid.Empty, sounds, 0, repetitions, randomly, player.Volume)
             };
             FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
             playingSound.MediaPlayer.Play();
