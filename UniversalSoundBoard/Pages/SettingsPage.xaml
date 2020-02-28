@@ -98,11 +98,7 @@
                                              NavigateUri="http://dav-apps.tech/privacy" />
 
                             <HyperlinkButton x:Uid="Github-Link"
-                                             NavigateUri="https://github.com/Dav2070/UniversalSoundboard"
-                                             Margin="0,-8,0,0" />
-
-                            <HyperlinkButton x:Uid="USBForAndroid-Link"
-                                             NavigateUri="https://play.google.com/store/apps/details?id=app.dav.universalsoundboard"
+                                             NavigateUri="https://github.com/dav-apps/UniversalSoundboard"
                                              Margin="0,-8,0,0" />
 
                             <StackPanel Orientation="Horizontal"
@@ -113,7 +109,7 @@
                                 <TextBlock x:Uid="Version" 
                                            IsTextSelectionEnabled="True" />
                             </StackPanel>
-                            <TextBlock Text="Copyright © 2019 by dav" />
+                            <TextBlock Text="Copyright © 2020 by dav" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

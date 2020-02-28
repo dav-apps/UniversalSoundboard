@@ -478,9 +478,6 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PrivacyPolicy-Link.Content" xml:space="preserve">
     <value>Privacy Policy</value>
   </data>
-  <data name="USBForAndroid-Link.Content" xml:space="preserve">
-    <value>Get UniversalSoundboard for Android</value>
-  </data>
   <data name="Drop-FileTypeNotSupported" xml:space="preserve">
     <value>This file type is not supported</value>
   </data>

@@ -475,9 +475,6 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PrivacyPolicy-Link.Content" xml:space="preserve">
     <value>Datenschutzerklärung</value>
   </data>
-  <data name="USBForAndroid-Link.Content" xml:space="preserve">
-    <value>UniversalSoundboard für Android</value>
-  </data>
   <data name="Drop-FileTypeNotSupported" xml:space="preserve">
     <value>Dieser Dateityp wird nicht unterstützt</value>
   </data>

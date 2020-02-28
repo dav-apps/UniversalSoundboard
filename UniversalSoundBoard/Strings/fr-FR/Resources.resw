@@ -476,9 +476,6 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="PrivacyPolicy-Link.Content" xml:space="preserve">
     <value>Politique de confidentialité</value>
   </data>
-  <data name="USBForAndroid-Link.Content" xml:space="preserve">
-    <value>Obtenir UniversalSoundboard pour Android</value>
-  </data>
   <data name="Drop-FileTypeNotSupported" xml:space="preserve">
     <value>Ce type de fichier n'est pas supporté</value>
   </data>
