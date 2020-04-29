@@ -31,9 +31,6 @@ namespace UniversalSoundBoard
         /// </summary>
         public App()
         {
-            Microsoft.ApplicationInsights.WindowsAppInitializer.InitializeAsync(
-                Microsoft.ApplicationInsights.WindowsCollectors.Metadata |
-                Microsoft.ApplicationInsights.WindowsCollectors.Session);
             InitializeComponent();
             Suspending += OnSuspending;
 
@@ -111,9 +108,6 @@ namespace UniversalSoundBoard
             {
                 localSettings.Values["theme"] = FileManager.themeDefault;
             }
-
-            // Init Websocket
-            Websockets.Net.WebsocketConnection.Link();
 
             // Initialize Dav settings
             ProjectInterface.RetrieveConstants = new RetrieveConstants();
