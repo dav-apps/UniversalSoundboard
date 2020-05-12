@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using MUXC = Microsoft.UI.Xaml.Controls;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -232,12 +233,12 @@ namespace UniversalSoundBoard.Pages
         }
 
         #region EventHandlers
-        private async void SideBar_BackRequested(NavigationView sender, NavigationViewBackRequestedEventArgs args)
+        private async void SideBar_BackRequested(MUXC.NavigationView sender, MUXC.NavigationViewBackRequestedEventArgs args)
         {
             await FileManager.GoBackAsync();
         }
         
-        private async void SideBar_ItemInvoked(NavigationView sender, NavigationViewItemInvokedEventArgs args)
+        private async void SideBar_ItemInvoked(MUXC.NavigationView sender, MUXC.NavigationViewItemInvokedEventArgs args)
         {
             FileManager.itemViewHolder.SelectedSounds.Clear();
 
@@ -279,8 +280,8 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
             FileManager.itemViewHolder.IsBackButtonEnabled = true;
 
-            if (SideBar.DisplayMode == NavigationViewDisplayMode.Compact ||
-                SideBar.DisplayMode == NavigationViewDisplayMode.Minimal)
+            if (SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Compact ||
+                SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Minimal)
                 SideBar.IsPaneOpen = false;
         }
 
