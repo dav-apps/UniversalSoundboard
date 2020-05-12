@@ -4,36 +4,43 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <Application.Resources>
-        <SolidColorBrush x:Key="LightThemeButtonColor" Color="#EAEAEA" />
-        <SolidColorBrush x:Key="DarkThemeButtonColor" Color="DimGray" />
-        <Color x:Key="DarkThemeBackgroundColor">#0d1221</Color>
-        <Color x:Key="LightThemeBackgroundColor">White</Color>
-        
-        <!-- The button style for the Play All Button to look like the SymbolIcons -->
-        <Style TargetType="Button" x:Key="PlayAllButtonStyle">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate>
-                        <Grid>
-                            <ContentPresenter>
-                                <TextBlock
-                                    FontFamily="{TemplateBinding FontFamily}"
-                                    SelectionHighlightColor="{TemplateBinding Foreground}"
-                                    Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}"
-                                    FontSize="{TemplateBinding FontSize}"
-                                    Foreground="{TemplateBinding Foreground}"
-                                    HorizontalAlignment="Center"
-                                    VerticalAlignment="Center"
-                                    Height="Auto"
-                                    Width="Auto"/>
-                            </ContentPresenter>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
+                <!-- Other merged dictionaries here -->
+            </ResourceDictionary.MergedDictionaries>
 
-        <!-- Override the background of the MediaTransportControls -->
-        <SolidColorBrush x:Key="MediaTransportControlsPanelBackground" Color="Transparent" />
+            <SolidColorBrush x:Key="LightThemeButtonColor" Color="#EAEAEA" />
+            <SolidColorBrush x:Key="DarkThemeButtonColor" Color="DimGray" />
+            <Color x:Key="DarkThemeBackgroundColor">#0d1221</Color>
+            <Color x:Key="LightThemeBackgroundColor">White</Color>
+
+            <!-- The button style for the Play All Button to look like the SymbolIcons -->
+            <Style TargetType="Button" x:Key="PlayAllButtonStyle">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate>
+                            <Grid>
+                                <ContentPresenter>
+                                    <TextBlock
+                                        FontFamily="{TemplateBinding FontFamily}"
+                                        SelectionHighlightColor="{TemplateBinding Foreground}"
+                                        Text="{Binding Content, RelativeSource={RelativeSource Mode=TemplatedParent}}"
+                                        FontSize="{TemplateBinding FontSize}"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center"
+                                        Height="Auto"
+                                        Width="Auto" />
+                                </ContentPresenter>
+                            </Grid>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Override the background of the MediaTransportControls -->
+            <SolidColorBrush x:Key="MediaTransportControlsPanelBackground" Color="Transparent" />
+        </ResourceDictionary>
     </Application.Resources>
 </Application>
