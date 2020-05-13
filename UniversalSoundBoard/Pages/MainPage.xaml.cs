@@ -217,23 +217,7 @@ namespace UniversalSoundBoard.Pages
         {
             FileManager.AdjustLayout();
 
-            // Workaround for the weird problem with the changing position of the Search box when the volume button is invisible
-            if (FileManager.itemViewHolder.VolumeButtonVisibility)
-                SearchAutoSuggestBox.Margin = new Thickness(3, 0, 3, 0);
-            else
-                SearchAutoSuggestBox.Margin = new Thickness(3, 8, 3, 0);
-            
-            // Set the margin of the title and the App name when the NavigationView disappears completely
-            if (Window.Current.Bounds.Width <= 640)
-            {
-                TitleStackPanel.Margin = new Thickness(104, 0, 0, 3);
-            }
-            else
-            {
-                TitleStackPanel.Margin = new Thickness(17, 0, 0, 3);
-            }
-
-            // Set the width of the title bar and position of the title, depending on whether the Hamburger button of the NavigationView is visible
+            // Set the width of the title bar and the position of the title, depending on whether the Hamburger button of the NavigationView is visible
             if(SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Minimal)
             {
                 TitleBar.Width = Window.Current.Bounds.Width - 80;
@@ -330,7 +314,7 @@ namespace UniversalSoundBoard.Pages
             }
 
             var template = (DataTemplate)Resources["SoundItemTemplate"];
-            var listViewItemStyle = this.Resources["ListViewItemStyle"] as Style;
+            var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
             var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(PlaySoundsList, template, listViewItemStyle);
             playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
             await playSoundsSuccessivelyContentDialog.ShowAsync();
