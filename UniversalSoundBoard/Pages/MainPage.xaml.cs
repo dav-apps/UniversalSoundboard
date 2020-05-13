@@ -49,7 +49,6 @@ namespace UniversalSoundBoard.Pages
             InitializeLocalSettings();
             CustomiseTitleBar();
             InitializeLayout();
-            AdjustLayout();
         }
 
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
@@ -61,6 +60,7 @@ namespace UniversalSoundBoard.Pages
             SideBar.MenuItemsSource = FileManager.itemViewHolder.Categories;
 
             InitializeAccountSettings();
+            AdjustLayout();
 
             await FileManager.CreateCategoriesListAsync();
             await FileManager.CreatePlayingSoundsListAsync();
@@ -189,11 +189,15 @@ namespace UniversalSoundBoard.Pages
         
         private void CustomiseTitleBar()
         {
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
             titleBar.ButtonForegroundColor = ((App.Current as App).RequestedTheme == ApplicationTheme.Dark) ? Colors.White : Colors.Black;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+
+            // Set custom title bar
+            CoreApplicationViewTitleBar coreTitleBar = CoreApplication.GetCurrentView().TitleBar;
+            coreTitleBar.ExtendViewIntoTitleBar = true;
+            Window.Current.SetTitleBar(TitleBar);
         }
 
         private void InitializeLayout()
@@ -223,12 +227,22 @@ namespace UniversalSoundBoard.Pages
             if (Window.Current.Bounds.Width <= 640)
             {
                 TitleStackPanel.Margin = new Thickness(104, 0, 0, 3);
-                WindowTitleTextBox.Margin = new Thickness(17, 8, 0, 0);
             }
             else
             {
                 TitleStackPanel.Margin = new Thickness(17, 0, 0, 3);
-                WindowTitleTextBox.Margin = new Thickness(57, 8, 0, 0);
+            }
+
+            // Set the width of the title bar and position of the title, depending on whether the Hamburger button of the NavigationView is visible
+            if(SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Minimal)
+            {
+                TitleBar.Width = Window.Current.Bounds.Width - 80;
+                WindowTitleTextBox.Margin = new Thickness(97, 12, 0, 0);
+            }
+            else
+            {
+                TitleBar.Width = Window.Current.Bounds.Width - 40;
+                WindowTitleTextBox.Margin = new Thickness(57, 12, 0, 0);
             }
         }
 

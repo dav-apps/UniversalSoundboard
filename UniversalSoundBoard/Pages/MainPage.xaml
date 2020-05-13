@@ -109,8 +109,8 @@
                             <PersonPicture
                                 ProfilePicture="{Binding User.Avatar, Converter={StaticResource FileToBitmapImageConverter}}" 
                                 Height="23"
-                                 Width="23" 
-                                 Margin="-6,0,0,0" />
+                                Width="23" 
+                                Margin="-6,0,0,0" />
                             <TextBlock
                                 Text="{Binding User.Username}" 
                                 Margin="15,0,0,0" 
@@ -429,7 +429,6 @@
                                             Icon="Bullets" 
                                             Visibility="{Binding SelectButtonVisibility, Converter={StaticResource NormalOptionsInMoreButtonFlyoutVisibilityConverter}}"
                                             Click="SelectButton_Click" />
-
                                         <!-- #endregion Normal Options -->
 
                                         <!-- #region Selection Options -->
@@ -490,35 +489,49 @@
             </muxc:NavigationView.Content>
         </muxc:NavigationView>
 
-        <ProgressRing Name="ProgressRing"
-				      HorizontalAlignment="Center" 
-                      VerticalAlignment="Center"
-				      Width="45" 
-				      Height="45" 
-				      IsActive="{Binding ProgressRingIsActive, Mode=TwoWay}" />
+        <ProgressRing
+            Name="ProgressRing"
+			HorizontalAlignment="Center" 
+            VerticalAlignment="Center"
+			Width="45" 
+			Height="45" 
+			IsActive="{Binding ProgressRingIsActive, Mode=TwoWay}" />
 
-        <TextBlock Name="WindowTitleTextBox" 
-                   Style="{StaticResource CaptionTextBlockStyle}"
-                   Text="{x:Bind appmodel:Package.Current.DisplayName}" 
-                   VerticalAlignment="Top" 
-                   HorizontalAlignment="Left"
-                   Margin="57,8,0,0" />
+        <TextBlock
+            Name="WindowTitleTextBox" 
+            Style="{StaticResource CaptionTextBlockStyle}"
+            Text="{x:Bind appmodel:Package.Current.DisplayName}" 
+            VerticalAlignment="Top" 
+            HorizontalAlignment="Left" />
+        
+        <Grid
+            Name="TitleBar"
+            Background="Transparent"
+            VerticalAlignment="Top"
+            HorizontalAlignment="Right"
+            Width="200"
+            Height="40">
+        </Grid>
 
         <controls:Loading x:Name="LoadingControl" IsLoading="{Binding LoadingScreenVisibility}">
             <controls:Loading.Background>
-                <SolidColorBrush Color="Black" 
-                                 Opacity="0.7" />
+                <SolidColorBrush Color="Black" Opacity="0.7" />
             </controls:Loading.Background>
-            <StackPanel Orientation="Horizontal" 
-                        Padding="12">
-                <ProgressRing IsActive="True" 
-                              Margin="0,0,16,0" 
-                              Height="27" 
-                              Width="27" />
-                <TextBlock Text="{Binding LoadingScreenMessage}" 
-                           FontSize="17"
-                           VerticalAlignment="Center" 
-                           Foreground="White" />
+            
+            <StackPanel
+                Orientation="Horizontal" 
+                Padding="12">
+                
+                <ProgressRing
+                    IsActive="True" 
+                    Margin="0,0,16,0" 
+                    Height="27" 
+                    Width="27" />
+                <TextBlock
+                    Text="{Binding LoadingScreenMessage}" 
+                    FontSize="17"
+                    VerticalAlignment="Center" 
+                    Foreground="White" />
             </StackPanel>
         </controls:Loading>
     </Grid>
