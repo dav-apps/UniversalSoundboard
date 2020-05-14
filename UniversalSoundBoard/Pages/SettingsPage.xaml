@@ -58,13 +58,17 @@
                                           Toggled="SavePlayingSoundsToggle_Toggled" />
                         </StackPanel>
 
-                        <StackPanel Name="ChangeCategoryOrderStackPanel"
-                                    Style="{StaticResource SettingsEntryStyle}"
-                                    Margin="-10,10,5,5">
-                            <Button Name="ChangeCategoryOrderButton"
-                                    x:Uid="SettingsEntry-ChangeCategoryOrderButton"
-                                    Content="Change the order of the categories"
-                                    Click="ChangeCategoryOrderButton_Click" />
+                        <StackPanel
+                            Name="ChangeCategoryOrderStackPanel"
+                            Style="{StaticResource SettingsEntryStyle}"
+                            Margin="-10,10,5,5">
+                            
+                            <Button
+                                Name="ChangeCategoryOrderButton"
+                                x:Uid="SettingsEntry-ChangeCategoryOrderButton"
+                                Style="{StaticResource ButtonRevealStyle}"
+                                Content="Change the order of the categories"
+                                Click="ChangeCategoryOrderButton_Click" />
                         </StackPanel>
                         
                         <StackPanel Name="SoundOrderStackPanel"
@@ -95,7 +99,7 @@
                         <StackPanel Style="{StaticResource SettingsEntryStyle}"
                                     Margin="-10,15,5,5">
                             <HyperlinkButton x:Uid="PrivacyPolicy-Link"
-                                             NavigateUri="http://dav-apps.tech/privacy" />
+                                             NavigateUri="https://dav-apps.tech/privacy" />
 
                             <HyperlinkButton x:Uid="Github-Link"
                                              NavigateUri="https://github.com/dav-apps/UniversalSoundboard"
@@ -170,44 +174,57 @@
                     <StackPanel Name="SettingsDataStackPanel" Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Margin="-10,5,0,0">
                             <StackPanel Orientation="Horizontal">
-                                <Button Name="ImportDataButton" 
-                                        x:Uid="SettingsEntry-ImportDataButton" 
-                                        Content="Import Data"
-                                        Click="ImportDataButton_Click" 
-                                        IsEnabled="{Binding AreExportAndImportButtonsEnabled}" />
+                                <Button
+                                    Name="ImportDataButton" 
+                                    x:Uid="SettingsEntry-ImportDataButton" 
+                                    Style="{StaticResource ButtonRevealStyle}"
+                                    Content="Import Data"
+                                    Click="ImportDataButton_Click" 
+                                    IsEnabled="{Binding AreExportAndImportButtonsEnabled}" />
+                                
                                 <RelativePanel Margin="7">
-                                    <ProgressRing Name="ImportDataProgressRing"
-                                                  Height="25" 
-                                                  Width="25" 
-                                                  IsActive="{Binding IsImporting}" />
-                                    <SymbolIcon IsTapEnabled="False" 
-                                                Symbol="Accept" 
-                                                Visibility="{Binding Imported}" />
+                                    <ProgressRing
+                                        Name="ImportDataProgressRing"
+                                        Height="25" 
+                                        Width="25" 
+                                        IsActive="{Binding IsImporting}" />
+                                    
+                                    <SymbolIcon
+                                        IsTapEnabled="False" 
+                                        Symbol="Accept" 
+                                        Visibility="{Binding Imported}" />
                                 </RelativePanel>
                             </StackPanel>
                             <StackPanel Margin="0,10,0,0">
-                                <TextBlock Name="ImportMessageTextBlock" 
-                                           Text="{Binding ImportMessage}"
-                                           FontSize="14" 
-                                           Visibility="{Binding IsImporting}" />
+                                <TextBlock
+                                    Name="ImportMessageTextBlock" 
+                                    Text="{Binding ImportMessage}"
+                                    FontSize="14" 
+                                    Visibility="{Binding IsImporting}" />
                             </StackPanel>
                         </StackPanel>
                         
                         <StackPanel Margin="-10,5,0,5">
                             <StackPanel Orientation="Horizontal">
-                                <Button Name="ExportDataButton" 
-                                        x:Uid="SettingsEntry-ExportDataButton" 
-                                        Content="Export Data"
-                                        Click="ExportDataButton_Click" 
-                                        IsEnabled="{Binding AreExportAndImportButtonsEnabled}" />
+                                <Button
+                                    Name="ExportDataButton" 
+                                    x:Uid="SettingsEntry-ExportDataButton" 
+                                    Style="{StaticResource ButtonRevealStyle}"
+                                    Content="Export Data"
+                                    Click="ExportDataButton_Click" 
+                                    IsEnabled="{Binding AreExportAndImportButtonsEnabled}" />
+                                
                                 <RelativePanel Margin="7">
-                                    <ProgressRing Name="ExportDataProgressRing"
-                                                  Height="25" 
-                                                  Width="25" 
-                                                  IsActive="{Binding IsExporting}" />
-                                    <SymbolIcon IsTapEnabled="False" 
-                                                Symbol="Accept" 
-                                                Visibility="{Binding Exported}" />
+                                    <ProgressRing
+                                        Name="ExportDataProgressRing"
+                                        Height="25" 
+                                        Width="25" 
+                                        IsActive="{Binding IsExporting}" />
+                                    
+                                    <SymbolIcon
+                                        IsTapEnabled="False" 
+                                        Symbol="Accept" 
+                                        Visibility="{Binding Exported}" />
                                 </RelativePanel>
                             </StackPanel>
                             <StackPanel Margin="0,10,0,0">

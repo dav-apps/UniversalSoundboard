@@ -55,6 +55,7 @@
 
                     <Button Name="LogoutButton"
                             x:Uid="LogoutButton"
+                            Style="{StaticResource ButtonRevealStyle}"
                             Visibility="Collapsed"
                             Click="LogoutButton_Click" />
                 </StackPanel>
@@ -116,16 +117,16 @@
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                                 <Button Name="LoginButton"
                                         x:Uid="LoginButton"
+                                        Style="{StaticResource ButtonRevealStyle}"
                                         Content="Log in"
                                         Margin="0,20,10,0"
-                                        Background="LightGray"
                                         Click="LoginButton_Click" />
 
                                 <Button Name="SignupButton"
                                         x:Uid="SignupButton"
+                                        Style="{StaticResource ButtonRevealStyle}"
                                         Content="Sign up"
                                         Margin="10,20,0,0"
-                                        Background="LightGray"
                                         Click="SignupButton_Click" />
                             </StackPanel>
 

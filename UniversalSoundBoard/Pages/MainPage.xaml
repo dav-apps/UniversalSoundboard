@@ -99,11 +99,13 @@
                         Name="LoginMenuItem"
                         x:Uid="LoginButton"
                         Icon="Contact"
-                        Visibility="{Binding LoginMenuItemVisibility}" />
+                        Visibility="{Binding LoginMenuItemVisibility}"
+                        Tapped="LogInMenuItem_Tapped" />
 
                     <NavigationViewItem
                         Name="AccountMenuItem"
-                        Visibility="{Binding LoginMenuItemVisibility, Converter={StaticResource ReverseBoolConverter}}">
+                        Visibility="{Binding LoginMenuItemVisibility, Converter={StaticResource ReverseBoolConverter}}"
+                        Tapped="LogInMenuItem_Tapped">
 
                         <StackPanel Orientation="Horizontal">
                             <PersonPicture

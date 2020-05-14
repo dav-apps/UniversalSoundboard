@@ -35,10 +35,6 @@ namespace UniversalSoundboard.Pages
         private void SetDarkThemeLayout()
         {
             Color appThemeColor = FileManager.GetApplicationThemeColor();
-            Color buttonColor = (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? Colors.DimGray : Colors.LightGray;
-
-            LoginButton.Background = new SolidColorBrush(buttonColor);
-            SignupButton.Background = new SolidColorBrush(buttonColor);
             ContentRoot.Background = new SolidColorBrush(appThemeColor);
         }
 
