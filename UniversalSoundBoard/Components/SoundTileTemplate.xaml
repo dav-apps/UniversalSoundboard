@@ -9,7 +9,10 @@
     xmlns:components="using:UniversalSoundboard.Components"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Height="200"
+    Width="200"
+    Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
         <converters:CategoryIconsConverter x:Key="CategoryIconsConverter" />
@@ -17,81 +20,94 @@
         <DataTemplate x:Key="SetCategoryItemTemplate" x:DataType="models:Category">
             <components:SetCategoryItemTemplate />
         </DataTemplate>
+
+        <Storyboard x:Name="ShowNameStoryboard">
+            <DoubleAnimation
+                x:Name="ShowNameStoryboardAnimation"
+                Storyboard.TargetName="SoundTileNameContainerTransform"
+                Storyboard.TargetProperty="Y"
+                To="0"
+                Duration="0:0:0.2">
+
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Name="HideNameStoryboard">
+            <DoubleAnimation
+                Storyboard.TargetName="SoundTileNameContainerTransform"
+                Storyboard.TargetProperty="Y"
+                To="0"
+                Duration="0:0:0.2">
+                
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+
+            <DoubleAnimation
+                Storyboard.TargetName="SoundTileNameContainerAcrylicBrush"
+                Storyboard.TargetProperty="Opacity"
+                To="0" Duration="0:0:0.15">
+
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
     </UserControl.Resources>
 
-    <RelativePanel Name="ContentRoot" 
-                   Background="White"
-                   RightTapped="ContentRoot_RightTapped" 
-                   Holding="ContentRoot_Holding" 
-                   PointerEntered="ContentRoot_PointerEntered" 
-                   PointerExited="ContentRoot_PointerExited">
+    <UserControl.Clip>
+        <RectangleGeometry Rect="0 0 200 200" />
+    </UserControl.Clip>
 
-        <ToolTipService.ToolTip>
-            <TextBlock Text="{x:Bind Sound.Name}" />
-        </ToolTipService.ToolTip>
+    <RelativePanel
+        Name="ContentRoot" 
+        Background="Transparent"
+        Width="200"
+        Height="200"
+        RightTapped="ContentRoot_RightTapped" 
+        Holding="ContentRoot_Holding" 
+        PointerEntered="ContentRoot_PointerEntered" 
+        PointerExited="ContentRoot_PointerExited">
 
-        <VisualStateManager.VisualStateGroups>
-            <VisualStateGroup>
-                <VisualState x:Name="Mobile">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="0" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        
-                    </VisualState.Setters>
-                </VisualState>
-                <VisualState x:Name="Desktop">
-                    <VisualState.StateTriggers>
-                        <AdaptiveTrigger MinWindowWidth="900" />
-                    </VisualState.StateTriggers>
-                    <VisualState.Setters>
-                        <Setter Target="SoundTileName.FontSize" Value="25" />
-                    </VisualState.Setters>
-                </VisualState>
-            </VisualStateGroup>
-        </VisualStateManager.VisualStateGroups>
+        <Image
+            Name="SoundTileImage"
+            Width="200"
+            Height="200">
 
-        <Grid Name="SoundTileGrid" 
-              RelativePanel.AlignTopWithPanel="True">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="20" />
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+            <Image.Source>
+                <BitmapImage UriSource="{x:Bind Sound.Image.UriSource}" />
+            </Image.Source>
+        </Image>
 
-            <RelativePanel Name="IconsRelativePanel" 
-                           Grid.Row="0" 
-                           Canvas.ZIndex="1">
-                <SymbolIcon Name="FavouriteSymbol" 
-                            Symbol="OutlineStar" 
-					        Visibility="{x:Bind Sound.Favourite}" 
-                            RelativePanel.AlignLeftWithPanel="True" 
-                            RelativePanel.AlignTopWithPanel="True" />
-                <TextBlock Name="CategoryIconSymbol" 
-                           Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}}"
-                           FontFamily="Segoe MDL2 Assets" 
-                           FontSize="20" 
-                           RelativePanel.AlignRightWithPanel="True" 
-                           RelativePanel.AlignTopWithPanel="True"
-                           Visibility="{Binding ShowCategoryIcon}" />
-            </RelativePanel>
+        <RelativePanel
+            Name="SoundTileNameContainer"
+            RelativePanel.AlignBottomWithPanel="True"
+            Height="{x:Bind soundTileNameContainerHeight}"
+            Width="200">
 
-            <RelativePanel Grid.Row="1" 
-                           Height="150">
-                <Image Name="SoundTileImage"
-                       RelativePanel.AlignHorizontalCenterWithPanel="True" 
-                       RelativePanel.AlignVerticalCenterWithPanel="True">
-                    <Image.Source>
-                        <BitmapImage UriSource="{x:Bind Sound.Image.UriSource}" />
-                    </Image.Source>
-                </Image>
-            </RelativePanel>
+            <RelativePanel.RenderTransform>
+                <TranslateTransform x:Name="SoundTileNameContainerTransform" Y="0" />
+            </RelativePanel.RenderTransform>
 
-            <TextBlock Name="SoundTileName" 
-                       Grid.Row="2" 
-                       Text="{x:Bind Sound.Name}" 
-                       FontSize="20" 
-                       Canvas.ZIndex="20" />
-        </Grid>
+            <RelativePanel.Background>
+                <AcrylicBrush
+                    x:Name="SoundTileNameContainerAcrylicBrush"
+                    BackgroundSource="Backdrop"
+                    TintOpacity="0"
+                    TintColor="{StaticResource DarkThemeBackgroundColor}" />
+            </RelativePanel.Background>
+
+            <TextBlock
+                Name="SoundTileName"
+                Text="{x:Bind Sound.Name}"
+                FontSize="20"
+                TextWrapping="Wrap"
+                MaxLines="5"
+                RelativePanel.AlignTopWithPanel="True" />
+        </RelativePanel>
     </RelativePanel>
 </UserControl>

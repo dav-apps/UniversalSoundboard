@@ -8,7 +8,6 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Microsoft.Toolkit.Uwp.UI.Animations;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Common;
@@ -29,25 +28,44 @@ namespace UniversalSoundBoard.Components
         private bool downloadFileThrewError = false;
         private bool downloadFileIsExecuting = false;
         private List<StorageFile> soundFiles = new List<StorageFile>();
+        private double visibleNameMarginBottom = 0;
+        double soundTileNameContainerHeight = 0;
+        int soundTileNameLines = 0;
 
 
         public SoundTileTemplate()
         {
             InitializeComponent();
             DataContextChanged += (s, e) => Bindings.Update();
-            SetDarkThemeLayout();
             SetDataContext();
             CreateFlyout();
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetupNameAnimations();
         }
 
         private void SetDataContext()
         {
             ContentRoot.DataContext = FileManager.itemViewHolder;
         }
-        
-        private void SetDarkThemeLayout()
+
+        private void SetupNameAnimations()
         {
-            ContentRoot.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
+            soundTileNameContainerHeight = SoundTileName.ActualHeight;
+            Bindings.Update();
+
+            // Calculate the margin that the text needs to move up to be completely visible
+            double lineHeight = 26.6015625;
+            soundTileNameLines = Convert.ToInt32(SoundTileName.ActualHeight / lineHeight);
+            visibleNameMarginBottom = -(soundTileNameLines - 1) * lineHeight;
+
+            SoundTileNameContainer.Margin = new Thickness(0, 0, 0, visibleNameMarginBottom);
+            ShowNameStoryboardAnimation.To = visibleNameMarginBottom;
+
+            SoundTileNameContainerAcrylicBrush.TintColor = FileManager.GetApplicationThemeColor();
+            SoundTileNameContainerAcrylicBrush.Opacity = 0;
         }
 
         private async void SoundTileOptionsSetCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -65,7 +83,7 @@ namespace UniversalSoundBoard.Components
             List<Guid> categoryUuids = new List<Guid>();
             foreach (var entry in ContentDialogs.SelectedCategories)
                 if (entry.Value) categoryUuids.Add(entry.Key);
-            
+
             await FileManager.SetCategoriesOfSoundAsync(Sound.Uuid, categoryUuids);
             await FileManager.UpdateGridViewAsync();
         }
@@ -100,11 +118,11 @@ namespace UniversalSoundBoard.Components
                 FileManager.itemViewHolder.FavouriteSounds.Remove(Sound);
             }
 
-            FavouriteSymbol.Visibility = newFav ? Visibility.Visible : Visibility.Collapsed;
+            //FavouriteSymbol.Visibility = newFav ? Visibility.Visible : Visibility.Collapsed;
             SetFavouritesMenuItemText();
             await FileManager.SetSoundAsFavouriteAsync(Sound.Uuid, newFav);
         }
-        
+
         private async void SoundTileOptionsSetImage_Click(object sender, RoutedEventArgs e)
         {
             Sound sound = Sound;
@@ -127,14 +145,14 @@ namespace UniversalSoundBoard.Components
                 await FileManager.UpdateGridViewAsync();
             }
         }
-        
+
         private async void SoundTileOptionsDelete_Click(object sender, RoutedEventArgs e)
         {
             var DeleteSoundContentDialog = ContentDialogs.CreateDeleteSoundContentDialog(Sound.Name);
             DeleteSoundContentDialog.PrimaryButtonClick += DeleteSoundContentDialog_PrimaryButtonClick;
             await DeleteSoundContentDialog.ShowAsync();
         }
-        
+
         private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.DeleteSoundAsync(Sound.Uuid);
@@ -142,24 +160,24 @@ namespace UniversalSoundBoard.Components
             // UpdateGridView nicht in deleteSound, weil es auch in einer Schleife aufgerufen wird (löschen mehrerer Sounds)
             await FileManager.UpdateGridViewAsync();
         }
-        
+
         private async void SoundTileOptionsRename_Click(object sender, RoutedEventArgs e)
         {
             var RenameSoundContentDialog = ContentDialogs.CreateRenameSoundContentDialog(Sound);
             RenameSoundContentDialog.PrimaryButtonClick += RenameSoundContentDialog_PrimaryButtonClick;
             await RenameSoundContentDialog.ShowAsync();
         }
-        
+
         private async void RenameSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Save new name
-            if(ContentDialogs.RenameSoundTextBox.Text != Sound.Name)
+            if (ContentDialogs.RenameSoundTextBox.Text != Sound.Name)
             {
                 await FileManager.RenameSoundAsync(Sound.Uuid, ContentDialogs.RenameSoundTextBox.Text);
                 await FileManager.UpdateGridViewAsync();
             }
         }
-        
+
         private void SetFavouritesMenuItemText()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -176,7 +194,7 @@ namespace UniversalSoundBoard.Components
             bool isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
             PinFlyoutItem.Text = isPinned ? loader.GetString("Unpin") : loader.GetString("Pin");
         }
-        
+
         private void CreateFlyout()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -237,7 +255,7 @@ namespace UniversalSoundBoard.Components
                 string tileId = Sound.Uuid.ToString();
                 string displayName = Sound.Name;
                 string arguments = Sound.Uuid.ToString();
-                
+
                 SecondaryTile tile = new SecondaryTile(
                         tileId,
                         displayName,
@@ -263,10 +281,9 @@ namespace UniversalSoundBoard.Components
                 tile.VisualElements.ShowNameOnSquare310x310Logo = true;
 
                 // Add the tile to the Start Menu
-                isPinned = await tile.RequestCreateAsync();
                 var imageFile = await Sound.GetImageFileAsync();
 
-                if(imageFile != null)
+                if (imageFile != null)
                 {
                     // Update the tile with the appropriate image and text
                     NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
@@ -315,7 +332,7 @@ namespace UniversalSoundBoard.Components
 
             StorageFile tempFile = await audioFile.CopyAsync(tempFolder, Sound.Name + "." + ext, NameCollisionOption.ReplaceExisting);
             soundFiles.Add(tempFile);
-            
+
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
             DataTransferManager.ShowShareUI();
@@ -391,7 +408,7 @@ namespace UniversalSoundBoard.Components
             downloadFileWasCanceled = true;
             downloadFileIsExecuting = false;
         }
-        
+
         private void FileDownloadProgress(int value)
         {
             if (!downloadFileIsExecuting) return;
@@ -409,42 +426,54 @@ namespace UniversalSoundBoard.Components
                 ContentDialogs.DownloadFileContentDialog.Hide();
             }
         }
-        
+
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
             if (soundFiles.Count == 0) return;
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            
+
             DataRequest request = args.Request;
             request.Data.SetStorageItems(soundFiles);
             request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
             request.Data.Properties.Description = soundFiles.First().Name;
         }
-        
+
         private void Flyout_Opened(object sender, object e)
         {
             SetFavouritesMenuItemText();
             SetPinFlyoutText();
         }
-        
+
         private void ContentRoot_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
         }
-        
+
         private void ContentRoot_Holding(object sender, HoldingRoutedEventArgs e)
         {
             OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
         }
-        
+
         private void ContentRoot_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            SoundTileImage.Scale(1.1f, 1.1f, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 2000, 0, EasingType.Quintic).Start();
+            // Scale the image
+            SoundTileImage.Scale(1.1f, 1.1f, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 400, 0, EasingType.Quintic).Start();
+
+            // Set the opacity of the name background
+            if (soundTileNameLines > 1)
+                SoundTileNameContainerAcrylicBrush.Opacity = 1;
+
+            // Show the animation of the name
+            ShowNameStoryboard.Begin();
         }
-        
+
         private void ContentRoot_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            SoundTileImage.Scale(1, 1, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 1000, 0, EasingType.Quintic).Start();
+            // Scale the image
+            SoundTileImage.Scale(1, 1, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 400, 0, EasingType.Quintic).Start();
+
+            // Show the animation of the name
+            HideNameStoryboard.Begin();
         }
     }
 }
