@@ -19,7 +19,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="SoundGridViewTemplate" x:DataType="models:Sound">
-            <components:SoundTileTemplate HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+            <components:SoundTileTemplate />
         </DataTemplate>
 
         <Style TargetType="Pivot">
