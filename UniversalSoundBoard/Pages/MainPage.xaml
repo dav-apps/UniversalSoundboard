@@ -196,6 +196,7 @@
                             <RelativePanel
                                 Name="OptionsRelativePanel"
                                 Margin="0,0,10,0"
+                                Visibility="{x:Bind optionsVisible}"
                                 RelativePanel.AlignVerticalCenterWithPanel="True"
                                 RelativePanel.AlignRightWithPanel="True">
 

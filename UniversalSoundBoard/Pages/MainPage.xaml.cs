@@ -27,6 +27,7 @@ namespace UniversalSoundBoard.Pages
         public static CoreDispatcher dispatcher;
 
         bool skipVolumeSliderValueChangedEvent = false;
+        bool optionsVisible = true;
         private bool downloadFileIsExecuting = false;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
@@ -233,6 +234,10 @@ namespace UniversalSoundBoard.Pages
         #region EventHandlers
         private async void SideBar_BackRequested(MUXC.NavigationView sender, MUXC.NavigationViewBackRequestedEventArgs args)
         {
+            // Show the options
+            optionsVisible = true;
+            Bindings.Update();
+
             await FileManager.GoBackAsync();
         }
         
@@ -250,6 +255,7 @@ namespace UniversalSoundBoard.Pages
                 FileManager.itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
                 FileManager.itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
                 FileManager.itemViewHolder.IsBackButtonEnabled = true;
+                optionsVisible = false;
             }
             else
             {
@@ -262,12 +268,15 @@ namespace UniversalSoundBoard.Pages
                     return;
 
                 FileManager.itemViewHolder.SelectedCategory = newSelectedCategory;
+                optionsVisible = true;
 
                 if (FileManager.itemViewHolder.SelectedCategory == 0)
                     await FileManager.ShowAllSoundsAsync();
                 else
                     await FileManager.ShowCategoryAsync(category.Uuid);
             }
+
+            Bindings.Update();
         }
 
         private void LogInMenuItem_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
@@ -281,6 +290,10 @@ namespace UniversalSoundBoard.Pages
             if (SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Compact ||
                 SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Minimal)
                 SideBar.IsPaneOpen = false;
+
+            // Hide the options
+            optionsVisible = false;
+            Bindings.Update();
         }
 
         private async void CategoryEditButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
