@@ -10,8 +10,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Height="200"
-    Width="200"
+    Width="{Binding SoundTileWidth}"
     Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
@@ -41,16 +40,6 @@
                 Storyboard.TargetProperty="Y"
                 To="0"
                 Duration="0:0:0.2">
-                
-                <DoubleAnimation.EasingFunction>
-                    <CubicEase EasingMode="EaseOut" />
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-
-            <DoubleAnimation
-                Storyboard.TargetName="SoundTileNameContainerAcrylicBrush"
-                Storyboard.TargetProperty="Opacity"
-                To="0" Duration="0:0:0.15">
 
                 <DoubleAnimation.EasingFunction>
                     <CubicEase EasingMode="EaseOut" />
@@ -60,14 +49,13 @@
     </UserControl.Resources>
 
     <UserControl.Clip>
-        <RectangleGeometry Rect="0 0 200 200" />
+        <RectangleGeometry x:Name="UserControlClipRect" />
     </UserControl.Clip>
 
     <RelativePanel
         Name="ContentRoot" 
         Background="Transparent"
-        Width="200"
-        Height="200"
+        Width="{Binding SoundTileWidth}"
         RightTapped="ContentRoot_RightTapped" 
         Holding="ContentRoot_Holding" 
         PointerEntered="ContentRoot_PointerEntered" 
@@ -75,8 +63,8 @@
 
         <Image
             Name="SoundTileImage"
-            Width="200"
-            Height="200">
+            Height="200"
+            Width="{Binding SoundTileWidth}">
 
             <Image.Source>
                 <BitmapImage UriSource="{x:Bind Sound.Image.UriSource}" />
@@ -87,7 +75,7 @@
             Name="SoundTileNameContainer"
             RelativePanel.AlignBottomWithPanel="True"
             Height="{x:Bind soundTileNameContainerHeight}"
-            Width="200">
+            Width="{Binding SoundTileWidth}">
 
             <RelativePanel.RenderTransform>
                 <TranslateTransform x:Name="SoundTileNameContainerTransform" Y="0" />
@@ -97,7 +85,7 @@
                 <AcrylicBrush
                     x:Name="SoundTileNameContainerAcrylicBrush"
                     BackgroundSource="Backdrop"
-                    TintOpacity="0"
+                    TintOpacity="0.7"
                     TintColor="{StaticResource DarkThemeBackgroundColor}" />
             </RelativePanel.Background>
 

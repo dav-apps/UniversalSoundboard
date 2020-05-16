@@ -14,6 +14,7 @@ using UniversalSoundBoard.Common;
 using Windows.UI.StartScreen;
 using Windows.UI.Notifications;
 using System.Threading.Tasks;
+using Windows.Foundation;
 
 namespace UniversalSoundBoard.Components
 {
@@ -43,7 +44,19 @@ namespace UniversalSoundBoard.Components
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            UpdateSizes();
+            FileManager.itemViewHolder.SoundTileSizeChangedEvent += ItemViewHolder_SoundTileSizeChangedEvent;
+        }
+
+        private void ItemViewHolder_SoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)
+        {
+            UpdateSizes();
+        }
+
+        private void UpdateSizes()
+        {
             SetupNameAnimations();
+            UserControlClipRect.Rect = new Rect(0, 0, FileManager.itemViewHolder.SoundTileWidth, 200);
         }
 
         private void SetDataContext()
@@ -65,7 +78,6 @@ namespace UniversalSoundBoard.Components
             ShowNameStoryboardAnimation.To = visibleNameMarginBottom;
 
             SoundTileNameContainerAcrylicBrush.TintColor = FileManager.GetApplicationThemeColor();
-            SoundTileNameContainerAcrylicBrush.Opacity = 0;
         }
 
         private async void SoundTileOptionsSetCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -458,10 +470,6 @@ namespace UniversalSoundBoard.Components
         {
             // Scale the image
             SoundTileImage.Scale(1.1f, 1.1f, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 400, 0, EasingType.Quintic).Start();
-
-            // Set the opacity of the name background
-            if (soundTileNameLines > 1)
-                SoundTileNameContainerAcrylicBrush.Opacity = 1;
 
             // Show the animation of the name
             ShowNameStoryboard.Begin();

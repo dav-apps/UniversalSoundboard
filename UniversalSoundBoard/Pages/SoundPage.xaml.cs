@@ -461,19 +461,17 @@ namespace UniversalSoundBoard.Pages
         
         private void SetSoundGridItemWidth(SizeChangedEventArgs e, GridView gridView)
         {
-            double optimizedWidth = 130.0;
-
-            if (Window.Current.Bounds.Width > FileManager.tabletMaxWidth)
-                optimizedWidth = 180;
-
-            if (Window.Current.Bounds.Width > (FileManager.tabletMaxWidth * 2.3))
-                optimizedWidth = 220;
-
             ItemsWrapGrid appItemsPanel = (ItemsWrapGrid)gridView.ItemsPanelRoot;
+            int optimizedWidth = Window.Current.Bounds.Width > FileManager.tabletMaxWidth ? 200 : 150;
 
-            double margin = 12.0;
-            var number = (int)e.NewSize.Width / (int)optimizedWidth;
-            appItemsPanel.ItemWidth = (e.NewSize.Width - margin) / number;
+            // Calculate the size for the tiles, so that the entire space of the GridView is filled
+            int number = (int)e.NewSize.Width / optimizedWidth;
+            double newSoundTileWidth = (e.NewSize.Width - 12) / number;
+
+            // Update the width of the sound tiles and trigger the change event
+            appItemsPanel.ItemWidth = newSoundTileWidth;
+            FileManager.itemViewHolder.SoundTileWidth = newSoundTileWidth;
+            FileManager.itemViewHolder.TriggerSoundTileSizeChangedEvent(gridView, e);
         }
 
         #region ContentDialog Methods

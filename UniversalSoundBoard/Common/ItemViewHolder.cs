@@ -67,6 +67,8 @@ namespace UniversalSoundBoard.Common
         private AcrylicBrush _playingSoundsBarAcrylicBackgroundBrush;       // This represents the background of the PlayingSoundsBar
         private SoundOrder _soundOrder;                                     // The selected sound order in the settings
         private bool _soundOrderReversed;                                   // If the sound order is descending (false) or ascending (true)
+        private double _soundTileWidth;                                     // The width of all sound tiles in the GridViews
+        public event EventHandler<SizeChangedEventArgs> SoundTileSizeChangedEvent;  // This event is triggered when the size of the sound tiles in the GridViews has changed
 
         public string Title
         {
@@ -648,6 +650,22 @@ namespace UniversalSoundBoard.Common
                 _soundOrderReversed = value;
                 NotifyPropertyChanged("SoundOrderReversed");
             }
+        }
+
+        public double SoundTileWidth
+        {
+            get => _soundTileWidth;
+
+            set
+            {
+                _soundTileWidth = value;
+                NotifyPropertyChanged("SoundTileWidth");
+            }
+        }
+
+        public void TriggerSoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)
+        {
+            SoundTileSizeChangedEvent?.Invoke(sender, e);
         }
 
 
