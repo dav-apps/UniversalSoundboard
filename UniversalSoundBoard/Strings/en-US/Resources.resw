@@ -419,12 +419,9 @@ This may take some time, depending on how large the import file is.</value>
     <value>Access the same Soundboard on all your devices</value>
   </data>
   <data name="Account-LandingText2.Text" xml:space="preserve">
-    <value>Make sure your sounds don't get lost when you lose or reset your device</value>
+    <value>Make sure your sounds don't get lost</value>
   </data>
-  <data name="Account-LandingText3.Text" xml:space="preserve">
-    <value>See your playing sounds on all your devices</value>
-  </data>
-  <data name="Account-LandingText4.Text" xml:space="preserve">
+  <data name="Account-LandingText-Header.Text" xml:space="preserve">
     <value>Save your Soundboard and access it from anywhere</value>
   </data>
   <data name="Account-TryOut.Text" xml:space="preserve">

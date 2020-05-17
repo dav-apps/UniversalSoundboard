@@ -60,22 +60,24 @@
                             Click="LogoutButton_Click" />
                 </StackPanel>
 
-                <StackPanel Name="LoggedOutContent" 
-                            Visibility="Visible"
-                            Margin="0,30,0,0">
-                    <TextBlock Text="Save your Soundboard and access it from anywhere"
-                               x:Uid="Account-LandingText4"
-                               FontSize="25"
-                               TextWrapping="WrapWholeWords"
-                               Margin="0,0,0,50"
-                               HorizontalAlignment="Center"
-                               TextAlignment="Center" />
+                <StackPanel
+                    Name="LoggedOutContent" 
+                    Visibility="Visible"
+                    Margin="0,30,0,0">
+                    
+                    <TextBlock
+                        Text="Save your Soundboard and access it from anywhere"
+                        x:Uid="Account-LandingText-Header"
+                        FontSize="25"
+                        TextWrapping="WrapWholeWords"
+                        Margin="0,0,0,80"
+                        HorizontalAlignment="Center"
+                        TextAlignment="Center" />
 
                     <Grid>
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="3*" />
-                            <ColumnDefinition Width="3*" />
+                            <ColumnDefinition Width="2*" />
+                            <ColumnDefinition Width="2*" />
                         </Grid.ColumnDefinitions>
 
                         <Grid.RowDefinitions>
@@ -83,31 +85,27 @@
                             <RowDefinition Height="Auto" />
                         </Grid.RowDefinitions>
 
-                        <StackPanel Grid.Column="0" Grid.Row="0" Padding="10">
-                            <FontIcon Glyph="&#xE895;"
+                        <RelativePanel Grid.Column="0" Grid.Row="0" Padding="10">
+                            <StackPanel RelativePanel.AlignHorizontalCenterWithPanel="True" MaxWidth="400">
+                                <FontIcon Glyph="&#xE895;"
                                         FontSize="75" />
-                            <TextBlock Style="{StaticResource LandingDescriptionStyle}" 
+                                <TextBlock Style="{StaticResource LandingDescriptionStyle}" 
                                        Text="Access the same Soundboard on all your devices"
                                        x:Uid="Account-LandingText1" />
-                        </StackPanel>
+                            </StackPanel>
+                        </RelativePanel>
 
-                        <StackPanel Grid.Column="1" Grid.Row="0" Padding="10">
-                            <FontIcon Glyph="&#xE1F6;" 
+                        <RelativePanel Grid.Column="1" Grid.Row="0" Padding="10">
+                            <StackPanel RelativePanel.AlignHorizontalCenterWithPanel="True" MaxWidth="400">
+                                <FontIcon Glyph="&#xE1F6;" 
                                       FontSize="75" />
-                            <TextBlock Style="{StaticResource LandingDescriptionStyle}" 
-                                       Text="Make sure your sounds don't get lost when you lose or reset your device"
+                                <TextBlock Style="{StaticResource LandingDescriptionStyle}" 
+                                       Text="Make sure your sounds don't get lost"
                                        x:Uid="Account-LandingText2" />
-                        </StackPanel>
+                            </StackPanel>
+                        </RelativePanel>
 
-                        <StackPanel Grid.Column="2" Grid.Row="0" Padding="10">
-                            <FontIcon Glyph="&#xE212;" 
-                                        FontSize="75" />
-                            <TextBlock Style="{StaticResource LandingDescriptionStyle}" 
-                                       Text="See your playing sounds on your other devices"
-                                       x:Uid="Account-LandingText3" />
-                        </StackPanel>
-
-                        <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,40,0,0">
+                        <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,60,0,0">
                             <TextBlock Text="Try it out for free"
                                        x:Uid="Account-TryOut"
                                        FontSize="30"
