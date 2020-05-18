@@ -34,8 +34,7 @@ namespace UniversalSoundBoard.Pages
         async void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
             SetDataContext();
-            SetSoundsPivotVisibility();
-            FileManager.itemViewHolder.SelectAllSoundsEvent += _itemViewHolder_SelectAllSoundsEvent;
+            FileManager.itemViewHolder.SelectAllSoundsEvent += ItemViewHolder_SelectAllSoundsEvent;
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
 
@@ -54,7 +53,7 @@ namespace UniversalSoundBoard.Pages
         {
             if (!FileManager.itemViewHolder.ShowSoundsPivot)
                 return SoundGridView2;
-            else if (SoundsPivot.SelectedIndex == 1)
+            else if (SoundGridViewPivot.SelectedIndex == 1)
                 return FavouriteSoundGridView;
             else
                 return SoundGridView;
@@ -70,7 +69,7 @@ namespace UniversalSoundBoard.Pages
             FavouriteSoundGridView.AllowDrop = value;
         }
 
-        private void _itemViewHolder_SelectAllSoundsEvent(object sender, RoutedEventArgs e)
+        private void ItemViewHolder_SelectAllSoundsEvent(object sender, RoutedEventArgs e)
         {
             skipSoundListSelectionChangedEvent = true;
 
@@ -165,11 +164,6 @@ namespace UniversalSoundBoard.Pages
             }
 
             FileManager.itemViewHolder.AreSelectButtonsEnabled = gridView.SelectedItems.Count > 0;
-        }
-        
-        private void SetSoundsPivotVisibility()
-        {
-            SoundGridView2.Visibility = FileManager.itemViewHolder.ShowSoundsPivot ? Visibility.Collapsed : Visibility.Visible;
         }
         
         private void SetDataContext()
@@ -434,7 +428,7 @@ namespace UniversalSoundBoard.Pages
             }
         }
         
-        private void SoundsPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
+        private void SoundGridViewPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
         {
             // Deselect all items in both GridViews
             SoundGridView.DeselectRange(new ItemIndexRange(0, (uint)SoundGridView.Items.Count));
@@ -442,6 +436,11 @@ namespace UniversalSoundBoard.Pages
 
             FileManager.itemViewHolder.SelectedSounds.Clear();
             soundsPivotSelected = (sender.SelectedIndex == 0);
+        }
+
+        private void SoundListViewPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
+        {
+
         }
         
         private void SoundGridView_SizeChanged(object sender, SizeChangedEventArgs e)
