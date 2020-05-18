@@ -124,6 +124,9 @@
     </Compile>
     <Compile Include="Common\Converters.cs" />
     <Compile Include="Components\CustomMediaTransportControls.cs" />
+    <Compile Include="Components\SoundListItemTemplate.xaml.cs">
+      <DependentUpon>SoundListItemTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="DataAccess\DatabaseOperations.cs" />
     <Compile Include="DataAccess\FileManager.cs" />
     <Compile Include="Models\OldDatabaseModels.cs" />
@@ -241,6 +244,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\SetCategoryItemTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SoundListItemTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
