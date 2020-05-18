@@ -87,7 +87,8 @@ namespace UniversalSoundBoard
                 ShowAcrylicBackground = true,
                 PlayingSoundsBarAcrylicBackgroundBrush = new AcrylicBrush(),
                 SoundOrder = FileManager.soundOrderDefault,
-                SoundOrderReversed = FileManager.soundOrderReversedDefault
+                SoundOrderReversed = FileManager.soundOrderReversedDefault,
+                SoundTileWidth = 200
             };
 
             // Set dark theme

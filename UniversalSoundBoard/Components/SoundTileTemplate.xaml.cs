@@ -32,6 +32,7 @@ namespace UniversalSoundBoard.Components
         private double visibleNameMarginBottom = 0;
         double soundTileNameContainerHeight = 0;
         int soundTileNameLines = 0;
+        double soundTileWidth = 200;
 
 
         public SoundTileTemplate()
@@ -57,6 +58,8 @@ namespace UniversalSoundBoard.Components
         {
             SetupNameAnimations();
             UserControlClipRect.Rect = new Rect(0, 0, FileManager.itemViewHolder.SoundTileWidth, 200);
+            soundTileWidth = FileManager.itemViewHolder.SoundTileWidth;
+            Bindings.Update();
         }
 
         private void SetDataContext()

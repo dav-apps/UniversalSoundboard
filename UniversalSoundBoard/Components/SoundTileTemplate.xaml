@@ -10,7 +10,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Width="{Binding SoundTileWidth}"
+    Width="{x:Bind soundTileWidth}"
     Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
