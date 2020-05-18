@@ -523,4 +523,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="UpdateSoundsMessage" xml:space="preserve">
     <value>Sounds aktualisieren...</value>
   </data>
+  <data name="SettingsEntry-ShowListView.Header" xml:space="preserve">
+    <value>Sounds als Liste anzeigen</value>
+  </data>
 </root>

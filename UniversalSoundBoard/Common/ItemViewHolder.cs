@@ -22,7 +22,7 @@ namespace UniversalSoundBoard.Common
         private Type _page;                                                 // The current page
         private ListViewSelectionMode _selectionMode;                       // The selection mode of the GridView. Is either ListViewSelectionMode.None or ListViewSelectionMode.Multiple
         private ObservableCollection<Category> _categories;                 // A list of all categories.
-        public event EventHandler CategoriesUpdated;                       // Is triggered when all categories were loaded into the Categories ObservableCollection
+        public event EventHandler CategoriesUpdated;                        // Is triggered when all categories were loaded into the Categories ObservableCollection
         private ObservableCollection<Sound> _sounds;                        // A list of the sounds which are displayed when the Sound pivot is selected, sorted by the selected sort option
         private ObservableCollection<Sound> _favouriteSounds;               // A list of the favourite sound which are displayed when the Favourite pivot is selected, sorted by the selected sort option
         private ObservableCollection<Sound> _allSounds;                     // A list of all sounds, unsorted
@@ -31,6 +31,7 @@ namespace UniversalSoundBoard.Common
         private ObservableCollection<PlayingSound> _playingSounds;          // A list of the Playing Sounds which are displayed in the right menu
         private Visibility _playingSoundsListVisibility;                    // If true shows the Playing Sounds list at the right
         private bool _playOneSoundAtOnce;                                   // If true plays only one sound at a time
+        private bool _showListView;                                         // If true, shows the sounds on the SoundPage in a ListView
         private bool _showCategoryIcon;                                     // If true shows the icon of the category on the sound tile
         private bool _showSoundsPivot;                                      // If true shows the pivot to select Sounds or Favourite sounds
         private bool _savePlayingSounds;                                    // If true saves the PlayingSounds and loads them when starting the app
@@ -259,6 +260,17 @@ namespace UniversalSoundBoard.Common
             {
                 _playOneSoundAtOnce = value;
                 NotifyPropertyChanged("PlayOneSoundAtOnce");
+            }
+        }
+
+        public bool ShowListView
+        {
+            get => _showListView;
+
+            set
+            {
+                _showListView = value;
+                NotifyPropertyChanged("ShowListView");
             }
         }
 

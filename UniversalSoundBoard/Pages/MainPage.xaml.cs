@@ -119,6 +119,16 @@ namespace UniversalSoundBoard.Pages
                 localSettings.Values[FileManager.liveTileKey] = FileManager.liveTileDefault;
             }
 
+            if(localSettings.Values[FileManager.showListViewKey] == null)
+            {
+                localSettings.Values[FileManager.showListViewKey] = FileManager.showListViewDefault;
+                FileManager.itemViewHolder.ShowListView = FileManager.showListViewDefault;
+            }
+            else
+            {
+                FileManager.itemViewHolder.ShowListView = (bool)localSettings.Values[FileManager.showListViewKey];
+            }
+
             if (localSettings.Values[FileManager.showCategoryIconKey] == null)
             {
                 localSettings.Values[FileManager.showCategoryIconKey] = FileManager.showCategoryIconDefault;

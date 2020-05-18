@@ -526,4 +526,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="UpdateSoundsMessage" xml:space="preserve">
     <value>Updating sounds...</value>
   </data>
+  <data name="SettingsEntry-ShowListView.Header" xml:space="preserve">
+    <value>Show sounds as a list</value>
+  </data>
 </root>

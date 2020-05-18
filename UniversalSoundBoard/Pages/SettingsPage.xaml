@@ -122,11 +122,13 @@
                 <ScrollViewer>
                     <StackPanel Name="SettingsDesignStackPanel" Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <ToggleSwitch Name="LiveTileToggle" 
-                                          Header="Live Tile" 
-                                          Toggled="LiveTileToggle_Toggled" />
+                            <ToggleSwitch
+                                Name="ShowListViewToggle"
+                                x:Uid="SettingsEntry-ShowListView"
+                                Header="Sounds als Liste anzeigen"
+                                Toggled="ListViewToggle_Toggled" />
                         </StackPanel>
-
+                        
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch Name="PlayingSoundsListToggle" 
                                           x:Uid="PlayingSoundsListToggle" 
@@ -139,6 +141,12 @@
                                           x:Uid="SettingsEntry-ShowCategoryIcon" 
                                           Header="Show Category Icon of a Sound" 
                                           Toggled="ShowCategoryToggle_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                            <ToggleSwitch Name="LiveTileToggle" 
+                                          Header="Live Tile" 
+                                          Toggled="LiveTileToggle_Toggled" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">

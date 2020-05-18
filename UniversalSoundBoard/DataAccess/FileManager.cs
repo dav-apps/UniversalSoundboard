@@ -41,6 +41,7 @@ namespace UniversalSoundBoard.DataAccess
         public const string playingSoundsListVisibleKey = "playingSoundsListVisible";
         public const string playOneSoundAtOnceKey = "playOneSoundAtOnce";
         public const string liveTileKey = "liveTile";
+        public const string showListViewKey = "showListView";
         public const string showCategoryIconKey = "showCategoryIcon";
         public const string showSoundsPivotKey = "showSoundsPivot";
         public const string savePlayingSoundsKey = "savePlayingSounds";
@@ -55,6 +56,7 @@ namespace UniversalSoundBoard.DataAccess
         public const bool playingSoundsListVisibleDefault = true;
         public const bool playOneSoundAtOnceDefault = false;
         public const string themeDefault = "system";
+        public const bool showListViewDefault = false;
         public const bool showCategoryIconDefault = true;
         public const bool showSoundsPivotDefault = true;
         public const bool savePlayingSoundsDefault = true;

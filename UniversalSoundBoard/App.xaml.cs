@@ -53,6 +53,7 @@ namespace UniversalSoundBoard
                 PlayingSounds = new ObservableCollection<PlayingSound>(),
                 PlayingSoundsListVisibility = Visibility.Visible,
                 PlayOneSoundAtOnce = FileManager.playOneSoundAtOnceDefault,
+                ShowListView = FileManager.showListViewDefault,
                 ShowCategoryIcon = FileManager.showCategoryIconDefault,
                 ShowSoundsPivot = FileManager.showSoundsPivotDefault,
                 SavePlayingSounds = FileManager.savePlayingSoundsDefault,

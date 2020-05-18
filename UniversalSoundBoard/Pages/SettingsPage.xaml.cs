@@ -43,6 +43,7 @@ namespace UniversalSoundBoard.Pages
             SetLiveTileToggle();
             SetPlayingSoundsListVisibilityToggle();
             SetPlayOneSoundAtOnceToggle();
+            SetShowListViewToggle();
             SetShowCategoryIconToggle();
             SetShowAcrylicBackgroundToggle();
             SetShowSoundsPivotToggle();
@@ -75,6 +76,11 @@ namespace UniversalSoundBoard.Pages
         private void SetPlayOneSoundAtOnceToggle()
         {
             PlayOneSoundAtOnceToggle.IsOn = (bool)localSettings.Values[FileManager.playOneSoundAtOnceKey];
+        }
+
+        private void SetShowListViewToggle()
+        {
+            ShowListViewToggle.IsOn = (bool)localSettings.Values[FileManager.showListViewKey];
         }
         
         private void SetShowCategoryIconToggle()
@@ -179,7 +185,14 @@ namespace UniversalSoundBoard.Pages
 
             SetToggleMessageVisibility();
         }
-        
+
+        private void ListViewToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!initialized) return;
+            localSettings.Values[FileManager.showListViewKey] = ShowListViewToggle.IsOn;
+            FileManager.itemViewHolder.ShowListView = ShowListViewToggle.IsOn;
+        }
+
         private void ShowCategoryToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
