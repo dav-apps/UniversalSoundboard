@@ -124,6 +124,7 @@
     </Compile>
     <Compile Include="Common\Converters.cs" />
     <Compile Include="Components\CustomMediaTransportControls.cs" />
+    <Compile Include="Components\SoundItemManager.cs" />
     <Compile Include="Components\SoundListItemTemplate.xaml.cs">
       <DependentUpon>SoundListItemTemplate.xaml</DependentUpon>
     </Compile>

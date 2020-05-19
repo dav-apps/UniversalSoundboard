@@ -15,16 +15,14 @@ using Windows.UI.StartScreen;
 using Windows.UI.Notifications;
 using System.Threading.Tasks;
 using Windows.Foundation;
+using UniversalSoundboard.Components;
 
 namespace UniversalSoundBoard.Components
 {
     public sealed partial class SoundTileTemplate : UserControl
     {
         public Sound Sound { get => DataContext as Sound; }
-        MenuFlyout OptionsFlyout;
-        MenuFlyoutItem SetFavouriteFlyout;
-        MenuFlyoutItem SetCategoryFlyoutItem;
-        MenuFlyoutItem PinFlyoutItem;
+        public SoundItemOptionsFlyout OptionsFlyout;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
         private bool downloadFileIsExecuting = false;
@@ -39,13 +37,13 @@ namespace UniversalSoundBoard.Components
         {
             InitializeComponent();
             DataContextChanged += (s, e) => Bindings.Update();
-            SetDataContext();
-            CreateFlyout();
+            ContentRoot.DataContext = FileManager.itemViewHolder;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateSizes();
+            InitOptionsFlyout();
             FileManager.itemViewHolder.SoundTileSizeChangedEvent += ItemViewHolder_SoundTileSizeChangedEvent;
         }
 
@@ -54,17 +52,28 @@ namespace UniversalSoundBoard.Components
             UpdateSizes();
         }
 
+        private void InitOptionsFlyout()
+        {
+            if (Sound == null) return;
+            OptionsFlyout = new SoundItemOptionsFlyout(Sound.Uuid, Sound.Favourite);
+
+            OptionsFlyout.FlyoutOpened += Flyout_Opened;
+            OptionsFlyout.SetCategoryFlyoutItemClick += SoundTileOptionsSetCategoryFlyoutItem_Click;
+            OptionsFlyout.SetFavouriteFlyoutItemClick += SoundTileOptionsSetFavourite_Click;
+            OptionsFlyout.ShareFlyoutItemClick += ShareFlyoutItem_Click;
+            OptionsFlyout.ExportFlyoutItemClick += ExportFlyoutItem_Click;
+            OptionsFlyout.PinFlyoutItemClick += PinFlyoutItem_Click;
+            OptionsFlyout.SetImageFlyoutItemClick += SoundTileOptionsSetImage_Click;
+            OptionsFlyout.RenameFlyoutItemClick += SoundTileOptionsRename_Click;
+            OptionsFlyout.DeleteFlyoutItemClick += SoundTileOptionsDelete_Click;
+        }
+
         private void UpdateSizes()
         {
             SetupNameAnimations();
             UserControlClipRect.Rect = new Rect(0, 0, FileManager.itemViewHolder.SoundTileWidth, 200);
             soundTileWidth = FileManager.itemViewHolder.SoundTileWidth;
             Bindings.Update();
-        }
-
-        private void SetDataContext()
-        {
-            ContentRoot.DataContext = FileManager.itemViewHolder;
         }
 
         private void SetupNameAnimations()
@@ -81,6 +90,12 @@ namespace UniversalSoundBoard.Components
             ShowNameStoryboardAnimation.To = visibleNameMarginBottom;
 
             SoundTileNameContainerAcrylicBrush.TintColor = FileManager.GetApplicationThemeColor();
+        }
+
+        private void Flyout_Opened(object sender, object e)
+        {
+            SetFavouritesMenuItemText();
+            SetPinFlyoutText();
         }
 
         private async void SoundTileOptionsSetCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -138,199 +153,6 @@ namespace UniversalSoundBoard.Components
             await FileManager.SetSoundAsFavouriteAsync(Sound.Uuid, newFav);
         }
 
-        private async void SoundTileOptionsSetImage_Click(object sender, RoutedEventArgs e)
-        {
-            Sound sound = Sound;
-            var picker = new Windows.Storage.Pickers.FileOpenPicker
-            {
-                ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
-                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary
-            };
-            picker.FileTypeFilter.Add(".png");
-            picker.FileTypeFilter.Add(".jpg");
-            picker.FileTypeFilter.Add(".jpeg");
-
-            StorageFile file = await picker.PickSingleFileAsync();
-            if (file != null)
-            {
-                // Application now has read/write access to the picked file
-                FileManager.itemViewHolder.ProgressRingIsActive = true;
-                await FileManager.UpdateImageOfSoundAsync(sound.Uuid, file);
-                FileManager.itemViewHolder.ProgressRingIsActive = false;
-                await FileManager.UpdateGridViewAsync();
-            }
-        }
-
-        private async void SoundTileOptionsDelete_Click(object sender, RoutedEventArgs e)
-        {
-            var DeleteSoundContentDialog = ContentDialogs.CreateDeleteSoundContentDialog(Sound.Name);
-            DeleteSoundContentDialog.PrimaryButtonClick += DeleteSoundContentDialog_PrimaryButtonClick;
-            await DeleteSoundContentDialog.ShowAsync();
-        }
-
-        private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            await FileManager.DeleteSoundAsync(Sound.Uuid);
-
-            // UpdateGridView nicht in deleteSound, weil es auch in einer Schleife aufgerufen wird (löschen mehrerer Sounds)
-            await FileManager.UpdateGridViewAsync();
-        }
-
-        private async void SoundTileOptionsRename_Click(object sender, RoutedEventArgs e)
-        {
-            var RenameSoundContentDialog = ContentDialogs.CreateRenameSoundContentDialog(Sound);
-            RenameSoundContentDialog.PrimaryButtonClick += RenameSoundContentDialog_PrimaryButtonClick;
-            await RenameSoundContentDialog.ShowAsync();
-        }
-
-        private async void RenameSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            // Save new name
-            if (ContentDialogs.RenameSoundTextBox.Text != Sound.Name)
-            {
-                await FileManager.RenameSoundAsync(Sound.Uuid, ContentDialogs.RenameSoundTextBox.Text);
-                await FileManager.UpdateGridViewAsync();
-            }
-        }
-
-        private void SetFavouritesMenuItemText()
-        {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
-            if (Sound.Favourite)
-                SetFavouriteFlyout.Text = loader.GetString("SoundTile-UnsetFavourite");
-            else
-                SetFavouriteFlyout.Text = loader.GetString("SoundTile-SetFavourite");
-        }
-
-        private void SetPinFlyoutText()
-        {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            bool isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
-            PinFlyoutItem.Text = isPinned ? loader.GetString("Unpin") : loader.GetString("Pin");
-        }
-
-        private void CreateFlyout()
-        {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
-            // Check if the sound is pinned to start
-            bool isPinned = false;
-            if (Sound != null)
-                isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
-
-            OptionsFlyout = new MenuFlyout();
-            OptionsFlyout.Opened += Flyout_Opened;
-            SetCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("SoundTile-SetCategory") };
-            SetCategoryFlyoutItem.Click += SoundTileOptionsSetCategoryFlyoutItem_Click;
-            SetFavouriteFlyout = new MenuFlyoutItem();
-            SetFavouriteFlyout.Click += SoundTileOptionsSetFavourite_Click;
-            MenuFlyoutItem ShareFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("Share") };
-            ShareFlyoutItem.Click += ShareFlyoutItem_Click;
-            MenuFlyoutItem ExportFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("Export") };
-            ExportFlyoutItem.Click += ExportFlyoutItem_Click;
-            PinFlyoutItem = new MenuFlyoutItem();
-            PinFlyoutItem.Text = isPinned ? loader.GetString("Unpin") : loader.GetString("Pin");
-            PinFlyoutItem.Click += PinFlyoutItem_Click;
-            MenuFlyoutSeparator separator = new MenuFlyoutSeparator();
-            MenuFlyoutItem SetImageFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-ChangeImage") };
-            SetImageFlyout.Click += SoundTileOptionsSetImage_Click;
-            MenuFlyoutItem RenameFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-Rename") };
-            RenameFlyout.Click += SoundTileOptionsRename_Click;
-            MenuFlyoutItem DeleteFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-Delete") };
-            DeleteFlyout.Click += SoundTileOptionsDelete_Click;
-
-            OptionsFlyout.Items.Add(SetCategoryFlyoutItem);
-            OptionsFlyout.Items.Add(SetFavouriteFlyout);
-            OptionsFlyout.Items.Add(ShareFlyoutItem);
-            OptionsFlyout.Items.Add(ExportFlyoutItem);
-            OptionsFlyout.Items.Add(PinFlyoutItem);
-            OptionsFlyout.Items.Add(separator);
-            OptionsFlyout.Items.Add(SetImageFlyout);
-            OptionsFlyout.Items.Add(RenameFlyout);
-            OptionsFlyout.Items.Add(DeleteFlyout);
-        }
-
-        private async void PinFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            bool isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
-
-            // Check if the should be pinned or unpinned
-            if (isPinned)
-            {
-                // Initialize a secondary tile with the same tile ID you want removed
-                SecondaryTile toBeDeleted = new SecondaryTile(Sound.Uuid.ToString());
-
-                // And then unpin the tile
-                await toBeDeleted.RequestDeleteAsync();
-            }
-            else
-            {
-                // Construct the tile
-                string tileId = Sound.Uuid.ToString();
-                string displayName = Sound.Name;
-                string arguments = Sound.Uuid.ToString();
-
-                SecondaryTile tile = new SecondaryTile(
-                        tileId,
-                        displayName,
-                        arguments,
-                        new Uri("ms-appx:///Assets/Generierte Assets/Square150x150Logo.png"),
-                        TileSize.Default);
-
-                tile.VisualElements.ForegroundText = ForegroundText.Light;
-
-                // Enable wide and large tile sizes
-                tile.VisualElements.Wide310x150Logo = new Uri("ms-appx:///Assets/Generierte Assets/Wide310x150Logo.png");
-                tile.VisualElements.Square310x310Logo = new Uri("ms-appx:///Assets/Generierte Assets/Square310x310Logo.png");
-
-                // Add a small size logo for better looking small tile
-                tile.VisualElements.Square71x71Logo = new Uri("ms-appx:///Assets/Generierte Assets/Square71x71Logo.png");
-
-                // Add a unique corner logo for the secondary tile
-                tile.VisualElements.Square44x44Logo = new Uri("ms-appx:///Assets/Generierte Assets/Square44x44Logo.png");
-
-                // Show the display name on all sizes
-                tile.VisualElements.ShowNameOnSquare150x150Logo = true;
-                tile.VisualElements.ShowNameOnWide310x150Logo = true;
-                tile.VisualElements.ShowNameOnSquare310x310Logo = true;
-
-                // Add the tile to the Start Menu
-                var imageFile = await Sound.GetImageFileAsync();
-
-                if (imageFile != null)
-                {
-                    // Update the tile with the appropriate image and text
-                    NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
-                    {
-                        Branding = NotificationsExtensions.Tiles.TileBranding.NameAndLogo,
-
-                        Content = new NotificationsExtensions.Tiles.TileBindingContentAdaptive()
-                        {
-                            BackgroundImage = new NotificationsExtensions.Tiles.TileBackgroundImage()
-                            {
-                                Source = imageFile.Path,
-                                AlternateText = Sound.Name
-                            }
-                        }
-                    };
-
-                    NotificationsExtensions.Tiles.TileContent content = new NotificationsExtensions.Tiles.TileContent()
-                    {
-                        Visual = new NotificationsExtensions.Tiles.TileVisual()
-                        {
-                            TileMedium = binding,
-                            TileWide = binding,
-                            TileLarge = binding
-                        }
-                    };
-
-                    var notification = new TileNotification(content.GetXml());
-                    TileUpdateManager.CreateTileUpdaterForSecondaryTile(tile.TileId).Update(notification);
-                }
-            }
-        }
-
         private async void ShareFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             if (!await DownloadFile()) return;
@@ -382,6 +204,140 @@ namespace UniversalSoundBoard.Components
                 await FileIO.WriteBytesAsync(file, await FileManager.GetBytesAsync(audioFile));
                 await CachedFileManager.CompleteUpdatesAsync(file);
             }
+        }
+
+        private async void PinFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            bool isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
+
+            if (isPinned)
+            {
+                SecondaryTile tile = new SecondaryTile(Sound.Uuid.ToString());
+                await tile.RequestDeleteAsync();
+            }
+            else
+            {
+                // Initialize the tile
+                SecondaryTile tile = new SecondaryTile(
+                    Sound.Uuid.ToString(),
+                    Sound.Name,
+                    Sound.Uuid.ToString(),
+                    new Uri("ms-appx:///Assets/Icons/Square150x150Logo.png"),
+                    TileSize.Default
+                );
+
+                // Set the logos for all tile sizes
+                tile.VisualElements.Wide310x150Logo = new Uri("ms-appx:///Assets/Icons/Wide310x150Logo.png");
+                tile.VisualElements.Square310x310Logo = new Uri("ms-appx:///Assets/Icons/Square310x310Logo.png");
+                tile.VisualElements.Square71x71Logo = new Uri("ms-appx:///Assets/Icons/Square71x71Logo.png");
+                tile.VisualElements.Square44x44Logo = new Uri("ms-appx:///Assets/Icons/Square44x44Logo.png");
+
+                // Show the display name on all sizes
+                tile.VisualElements.ShowNameOnSquare150x150Logo = true;
+                tile.VisualElements.ShowNameOnWide310x150Logo = true;
+                tile.VisualElements.ShowNameOnSquare310x310Logo = true;
+
+                // Pin the tile
+                if (!await tile.RequestCreateAsync()) return;
+
+                // Update the tile with the image of the sound
+                var imageFile = await Sound.GetImageFileAsync();
+                if (imageFile == null)
+                    imageFile = await StorageFile.GetFileFromApplicationUriAsync(Sound.GetDefaultImageUri());
+
+                NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
+                {
+                    Branding = NotificationsExtensions.Tiles.TileBranding.NameAndLogo,
+
+                    Content = new NotificationsExtensions.Tiles.TileBindingContentAdaptive()
+                    {
+                        BackgroundImage = new NotificationsExtensions.Tiles.TileBackgroundImage()
+                        {
+                            Source = imageFile.Path,
+                            AlternateText = Sound.Name
+                        }
+                    }
+                };
+
+                NotificationsExtensions.Tiles.TileContent content = new NotificationsExtensions.Tiles.TileContent()
+                {
+                    Visual = new NotificationsExtensions.Tiles.TileVisual()
+                    {
+                        TileSmall = binding,
+                        TileMedium = binding,
+                        TileWide = binding,
+                        TileLarge = binding
+                    }
+                };
+
+                var notification = new TileNotification(content.GetXml());
+                TileUpdateManager.CreateTileUpdaterForSecondaryTile(tile.TileId).Update(notification);
+            }
+        }
+
+        private async void SoundTileOptionsSetImage_Click(object sender, RoutedEventArgs e)
+        {
+            Sound sound = Sound;
+            var picker = new Windows.Storage.Pickers.FileOpenPicker
+            {
+                ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary
+            };
+            picker.FileTypeFilter.Add(".png");
+            picker.FileTypeFilter.Add(".jpg");
+            picker.FileTypeFilter.Add(".jpeg");
+
+            StorageFile file = await picker.PickSingleFileAsync();
+            if (file != null)
+            {
+                // Application now has read/write access to the picked file
+                FileManager.itemViewHolder.ProgressRingIsActive = true;
+                await FileManager.UpdateImageOfSoundAsync(sound.Uuid, file);
+                FileManager.itemViewHolder.ProgressRingIsActive = false;
+                await FileManager.UpdateGridViewAsync();
+            }
+        }
+
+        private async void SoundTileOptionsRename_Click(object sender, RoutedEventArgs e)
+        {
+            var RenameSoundContentDialog = ContentDialogs.CreateRenameSoundContentDialog(Sound);
+            RenameSoundContentDialog.PrimaryButtonClick += RenameSoundContentDialog_PrimaryButtonClick;
+            await RenameSoundContentDialog.ShowAsync();
+        }
+
+        private async void RenameSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Save new name
+            if (ContentDialogs.RenameSoundTextBox.Text != Sound.Name)
+            {
+                await FileManager.RenameSoundAsync(Sound.Uuid, ContentDialogs.RenameSoundTextBox.Text);
+                await FileManager.UpdateGridViewAsync();
+            }
+        }
+
+        private async void SoundTileOptionsDelete_Click(object sender, RoutedEventArgs e)
+        {
+            var DeleteSoundContentDialog = ContentDialogs.CreateDeleteSoundContentDialog(Sound.Name);
+            DeleteSoundContentDialog.PrimaryButtonClick += DeleteSoundContentDialog_PrimaryButtonClick;
+            await DeleteSoundContentDialog.ShowAsync();
+        }
+
+        private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            await FileManager.DeleteSoundAsync(Sound.Uuid);
+
+            // UpdateGridView nicht in deleteSound, weil es auch in einer Schleife aufgerufen wird (löschen mehrerer Sounds)
+            await FileManager.UpdateGridViewAsync();
+        }
+
+        private void SetFavouritesMenuItemText()
+        {
+            OptionsFlyout.SetFavourite(Sound.Favourite);
+        }
+
+        private void SetPinFlyoutText()
+        {
+            OptionsFlyout.UpdatePinText();
         }
 
         private async Task<bool> DownloadFile()
@@ -451,12 +407,6 @@ namespace UniversalSoundBoard.Components
             request.Data.SetStorageItems(soundFiles);
             request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
             request.Data.Properties.Description = soundFiles.First().Name;
-        }
-
-        private void Flyout_Opened(object sender, object e)
-        {
-            SetFavouritesMenuItemText();
-            SetPinFlyoutText();
         }
 
         private void ContentRoot_RightTapped(object sender, RightTappedRoutedEventArgs e)

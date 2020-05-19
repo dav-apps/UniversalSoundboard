@@ -198,16 +198,16 @@
   <data name="Settings-Title" xml:space="preserve">
     <value>Einstellungen</value>
   </data>
-  <data name="SoundTile-SetCategory" xml:space="preserve">
+  <data name="SoundItemOptionsFlyout-SetCategories" xml:space="preserve">
     <value>Kategorien festlegen</value>
   </data>
-  <data name="SoundTile-ChangeImage" xml:space="preserve">
+  <data name="SoundItemOptionsFlyout-SetImage" xml:space="preserve">
     <value>Bild wechseln</value>
   </data>
-  <data name="SoundTile-Delete" xml:space="preserve">
+  <data name="SoundItemOptionsFlyout-Delete" xml:space="preserve">
     <value>Löschen</value>
   </data>
-  <data name="SoundTile-Rename" xml:space="preserve">
+  <data name="SoundItemOptionsFlyout-Rename" xml:space="preserve">
     <value>Umbenennen</value>
   </data>
   <data name="PlayingSound_CastButton.Text" xml:space="preserve">
@@ -225,10 +225,10 @@
   <data name="ThemeChangeMessageTextBlock.Text" xml:space="preserve">
     <value>Bitte starte die App neu, um das neue Thema anzuwenden.</value>
   </data>
-  <data name="SoundTile-SetFavourite" xml:space="preserve">
+  <data name="SoundItemOptionsFlyout-SetFavourite" xml:space="preserve">
     <value>Zu Favoriten hinzufügen</value>
   </data>
-  <data name="SoundTile-UnsetFavourite" xml:space="preserve">
+  <data name="SoundItemOptionsFlyout-UnsetFavourite" xml:space="preserve">
     <value>Von Favoriten entfernen</value>
   </data>
   <data name="FavouritesPivotHeader.Header" xml:space="preserve">
