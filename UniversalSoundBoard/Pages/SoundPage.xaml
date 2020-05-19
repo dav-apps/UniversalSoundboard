@@ -31,10 +31,22 @@
             <Setter Property="HeaderTemplate" Value="{StaticResource PivotHeaderTemplate}"/>
         </Style>
 
-        <Style TargetType="GridView">
-            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True"/>
-            <Setter Property="IsItemClickEnabled" Value="True"/>
-            <Setter Property="ItemTemplate" Value="{StaticResource SoundGridViewItemTemplate}"/>
+        <Style x:Key="SoundGridViewStyle" TargetType="GridView">
+            <Setter Property="Margin" Value="0,10,0,0" />
+            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />
+            <Setter Property="animations:ReorderGridAnimation.Duration" Value="150" />
+            <Setter Property="IsItemClickEnabled" Value="True" />
+            <Setter Property="CanReorderItems" Value="True" />
+            <Setter Property="AllowDrop" Value="True" />
+            <Setter Property="ItemTemplate" Value="{StaticResource SoundGridViewItemTemplate}" />
+        </Style>
+
+        <Style x:Key="SoundListViewStyle" TargetType="ListView">
+            <Setter Property="Margin" Value="0,10,5,0" />
+            <Setter Property="IsItemClickEnabled" Value="True" />
+            <Setter Property="CanReorderItems" Value="True" />
+            <Setter Property="AllowDrop" Value="True" />
+            <Setter Property="ItemTemplate" Value="{StaticResource SoundListViewItemTemplate}" />
         </Style>
     </Page.Resources>
 
@@ -71,32 +83,26 @@
                     <PivotItem x:Uid="SoundsPivotHeader" Margin="0,0,0,0">
                         <GridView
                             Name="SoundGridView"
-                            ItemClick="SoundGridView_ItemClick" 
-                            animations:ReorderGridAnimation.Duration="150"
-                            SelectionMode="{Binding SelectionMode}" 
-                            SelectionChanged="SoundGridView_SelectionChanged"
+                            Style="{StaticResource SoundGridViewStyle}"
                             ItemsSource="{Binding Sounds}"
-                            SizeChanged="SoundGridView_SizeChanged"
-                            Margin="0,10,0,0"
-                            CanReorderItems="True"
-                            AllowDrop="True"
-                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}">
+                            SelectionMode="{Binding SelectionMode}"
+                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
+                            ItemClick="SoundGridView_ItemClick"
+                            SelectionChanged="SoundGridView_SelectionChanged"
+                            SizeChanged="SoundGridView_SizeChanged">
                         </GridView>
                     </PivotItem>
 
                     <PivotItem x:Uid="FavouritesPivotHeader" Margin="0,0,0,0">
                         <GridView 
                             Name="FavouriteSoundGridView"
-                            ItemClick="SoundGridView_ItemClick" 
-                            animations:ReorderGridAnimation.Duration="150"
-                            SelectionMode="{Binding SelectionMode}" 
-                            SelectionChanged="SoundGridView_SelectionChanged"
+                            Style="{StaticResource SoundGridViewStyle}"
                             ItemsSource="{Binding FavouriteSounds}"
-                            SizeChanged="FavouriteSoundGridView_SizeChanged"
-                            Margin="0,10,0,0"
-                            CanReorderItems="True"
-                            AllowDrop="True"
-                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}">
+                            SelectionMode="{Binding SelectionMode}"
+                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
+                            ItemClick="SoundGridView_ItemClick"
+                            SelectionChanged="SoundGridView_SelectionChanged"
+                            SizeChanged="SoundGridView_SizeChanged">
                         </GridView>
                     </PivotItem>
                 </Pivot>
@@ -109,22 +115,24 @@
                     <PivotItem x:Uid="SoundsPivotHeader" Margin="0,0,0,0">
                         <ListView
                             Name="SoundListView"
-                            Margin="0,10,0,0"
+                            Style="{StaticResource SoundListViewStyle}"
+                            ItemsSource="{Binding Sounds}"
                             SelectionMode="{Binding SelectionMode}"
-                            IsItemClickEnabled="True"
-                            ItemTemplate="{StaticResource SoundListViewItemTemplate}"
-                            ItemsSource="{Binding Sounds}">
+                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
+                            ItemClick="SoundListView_ItemClick"
+                            SelectionChanged="SoundListView_SelectionChanged">
                         </ListView>
                     </PivotItem>
 
                     <PivotItem x:Uid="FavouritesPivotHeader" Margin="0,0,0,0">
                         <ListView
                             Name="FavouriteSoundListView"
-                            Margin="0,10,0,0"
+                            Style="{StaticResource SoundListViewStyle}"
+                            ItemsSource="{Binding FavouriteSounds}"
                             SelectionMode="{Binding SelectionMode}"
-                            IsItemClickEnabled="True"
-                            ItemTemplate="{StaticResource SoundListViewItemTemplate}"
-                            ItemsSource="{Binding FavouriteSounds}">
+                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
+                            ItemClick="SoundListView_ItemClick"
+                            SelectionChanged="SoundListView_SelectionChanged">
                         </ListView>
                     </PivotItem>
                 </Pivot>
@@ -132,30 +140,30 @@
 
             <Grid
                 Grid.Row="0"
-                Margin="5,10,0,0"
+                Margin="5,0,0,0"
                 Visibility="{Binding ShowSoundsPivot, Converter={StaticResource ReverseBoolConverter}}">
 
                 <GridView
                     Name="SoundGridView2"
+                    Style="{StaticResource SoundGridViewStyle}"
                     Visibility="{Binding ShowListView, Converter={StaticResource ReverseBoolConverter}}"
-                    ItemClick="SoundGridView_ItemClick" 
-                    animations:ReorderGridAnimation.Duration="150"
-                    SelectionMode="{Binding SelectionMode}" 
-                    SelectionChanged="SoundGridView_SelectionChanged"
                     ItemsSource="{Binding Sounds}"
-                    SizeChanged="SoundGridView2_SizeChanged"
-                    CanReorderItems="True"
-                    AllowDrop="True"
-                    IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}">
+                    SelectionMode="{Binding SelectionMode}"
+                    IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
+                    ItemClick="SoundGridView_ItemClick"
+                    SelectionChanged="SoundGridView_SelectionChanged"
+                    SizeChanged="SoundGridView_SizeChanged">
                 </GridView>
 
                 <ListView
                     Name="SoundListView2"
+                    Style="{StaticResource SoundListViewStyle}"
                     Visibility="{Binding ShowListView}"
+                    ItemsSource="{Binding Sounds}"
                     SelectionMode="{Binding SelectionMode}"
-                    IsItemClickEnabled="True"
-                    ItemTemplate="{StaticResource SoundListViewItemTemplate}"
-                    ItemsSource="{Binding Sounds}">
+                    IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
+                    ItemClick="SoundListView_ItemClick"
+                    SelectionChanged="SoundListView_SelectionChanged">
                 </ListView>
             </Grid>
 
