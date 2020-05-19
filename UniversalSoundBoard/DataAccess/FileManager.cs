@@ -1016,14 +1016,7 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             // Get Image for Sound
-            BitmapImage image = new BitmapImage();
-
-            Uri defaultImageUri;
-            if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
-                defaultImageUri = new Uri("ms-appx:///Assets/Images/default-dark.png", UriKind.Absolute);
-            else
-                defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
-            image.UriSource = defaultImageUri;
+            BitmapImage image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
 
             string imageFileUuidString = soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName);
             Guid? imageFileUuid = ConvertStringToGuid(imageFileUuidString);

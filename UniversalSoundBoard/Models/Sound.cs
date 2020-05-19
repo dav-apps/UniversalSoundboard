@@ -57,13 +57,7 @@ namespace UniversalSoundBoard.Models
 
         public bool HasImageFile()
         {
-            Uri defaultImageUri;
-            if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
-                defaultImageUri = new Uri("ms-appx:///Assets/Images/default-dark.png", UriKind.Absolute);
-            else
-                defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
-
-            return Image.UriSource != defaultImageUri;
+            return Image.UriSource != GetDefaultImageUri();
         }
 
         public async Task<StorageFile> GetImageFileAsync()
@@ -84,6 +78,16 @@ namespace UniversalSoundBoard.Models
         public async Task<DownloadStatus> GetAudioFileDownloadStatusAsync()
         {
             return await FileManager.GetSoundFileDownloadStatusAsync(Uuid);
+        }
+
+        public static Uri GetDefaultImageUri()
+        {
+            Uri defaultImageUri;
+            if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
+                defaultImageUri = new Uri("ms-appx:///Assets/Images/default-dark.png", UriKind.Absolute);
+            else
+                defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
+            return defaultImageUri;
         }
     }
 
