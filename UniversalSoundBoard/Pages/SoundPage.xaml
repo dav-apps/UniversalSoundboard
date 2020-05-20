@@ -48,6 +48,10 @@
             <Setter Property="AllowDrop" Value="True" />
             <Setter Property="ItemTemplate" Value="{StaticResource SoundListViewItemTemplate}" />
         </Style>
+
+        <Style TargetType="ListViewItem" x:Key="ListViewItemStyle">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
     </Page.Resources>
 
     <Grid Name="ContentRoot"
@@ -116,6 +120,7 @@
                         <ListView
                             Name="SoundListView"
                             Style="{StaticResource SoundListViewStyle}"
+                            ItemContainerStyle="{StaticResource ListViewItemStyle}"
                             ItemsSource="{Binding Sounds}"
                             SelectionMode="{Binding SelectionMode}"
                             IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
@@ -128,6 +133,7 @@
                         <ListView
                             Name="FavouriteSoundListView"
                             Style="{StaticResource SoundListViewStyle}"
+                            ItemContainerStyle="{StaticResource ListViewItemStyle}"
                             ItemsSource="{Binding FavouriteSounds}"
                             SelectionMode="{Binding SelectionMode}"
                             IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
@@ -158,6 +164,7 @@
                 <ListView
                     Name="SoundListView2"
                     Style="{StaticResource SoundListViewStyle}"
+                    ItemContainerStyle="{StaticResource ListViewItemStyle}"
                     Visibility="{Binding ShowListView}"
                     ItemsSource="{Binding Sounds}"
                     SelectionMode="{Binding SelectionMode}"

@@ -532,11 +532,8 @@ namespace UniversalSoundBoard.Pages
         
         private void SoundGridView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            SetSoundGridItemWidth(e, SoundGridView);
-        }
-        
-        private void SetSoundGridItemWidth(SizeChangedEventArgs e, GridView gridView)
-        {
+            GridView gridView = (GridView)sender;
+
             ItemsWrapGrid appItemsPanel = (ItemsWrapGrid)gridView.ItemsPanelRoot;
             int optimizedWidth = Window.Current.Bounds.Width > FileManager.tabletMaxWidth ? 200 : 150;
 

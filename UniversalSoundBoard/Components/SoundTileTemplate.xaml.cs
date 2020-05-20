@@ -92,6 +92,34 @@ namespace UniversalSoundBoard.Components
             SoundTileNameContainerAcrylicBrush.TintColor = FileManager.GetApplicationThemeColor();
         }
 
+        private void ContentRoot_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+        }
+
+        private void ContentRoot_Holding(object sender, HoldingRoutedEventArgs e)
+        {
+            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+        }
+
+        private void ContentRoot_PointerEntered(object sender, PointerRoutedEventArgs e)
+        {
+            // Scale the image
+            SoundTileImage.Scale(1.1f, 1.1f, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 400, 0, EasingType.Quintic).Start();
+
+            // Show the animation of the name
+            ShowNameStoryboard.Begin();
+        }
+
+        private void ContentRoot_PointerExited(object sender, PointerRoutedEventArgs e)
+        {
+            // Scale the image
+            SoundTileImage.Scale(1, 1, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 400, 0, EasingType.Quintic).Start();
+
+            // Show the animation of the name
+            HideNameStoryboard.Begin();
+        }
+
         private void Flyout_Opened(object sender, object e)
         {
             SetFavouritesMenuItemText();
@@ -407,34 +435,6 @@ namespace UniversalSoundBoard.Components
             request.Data.SetStorageItems(soundFiles);
             request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
             request.Data.Properties.Description = soundFiles.First().Name;
-        }
-
-        private void ContentRoot_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
-        }
-
-        private void ContentRoot_Holding(object sender, HoldingRoutedEventArgs e)
-        {
-            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
-        }
-
-        private void ContentRoot_PointerEntered(object sender, PointerRoutedEventArgs e)
-        {
-            // Scale the image
-            SoundTileImage.Scale(1.1f, 1.1f, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 400, 0, EasingType.Quintic).Start();
-
-            // Show the animation of the name
-            ShowNameStoryboard.Begin();
-        }
-
-        private void ContentRoot_PointerExited(object sender, PointerRoutedEventArgs e)
-        {
-            // Scale the image
-            SoundTileImage.Scale(1, 1, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 400, 0, EasingType.Quintic).Start();
-
-            // Show the animation of the name
-            HideNameStoryboard.Begin();
         }
     }
 }
