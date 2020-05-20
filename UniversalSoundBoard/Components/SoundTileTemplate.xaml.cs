@@ -22,7 +22,6 @@ namespace UniversalSoundBoard.Components
     public sealed partial class SoundTileTemplate : UserControl
     {
         public Sound Sound { get => DataContext as Sound; }
-        public SoundItemOptionsFlyout OptionsFlyout;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
         private bool downloadFileIsExecuting = false;
@@ -43,29 +42,12 @@ namespace UniversalSoundBoard.Components
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateSizes();
-            InitOptionsFlyout();
             FileManager.itemViewHolder.SoundTileSizeChangedEvent += ItemViewHolder_SoundTileSizeChangedEvent;
         }
 
         private void ItemViewHolder_SoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)
         {
             UpdateSizes();
-        }
-
-        private void InitOptionsFlyout()
-        {
-            if (Sound == null) return;
-            OptionsFlyout = new SoundItemOptionsFlyout(Sound.Uuid, Sound.Favourite);
-
-            OptionsFlyout.FlyoutOpened += Flyout_Opened;
-            OptionsFlyout.SetCategoryFlyoutItemClick += SoundTileOptionsSetCategoryFlyoutItem_Click;
-            OptionsFlyout.SetFavouriteFlyoutItemClick += SoundTileOptionsSetFavourite_Click;
-            OptionsFlyout.ShareFlyoutItemClick += ShareFlyoutItem_Click;
-            OptionsFlyout.ExportFlyoutItemClick += ExportFlyoutItem_Click;
-            OptionsFlyout.PinFlyoutItemClick += PinFlyoutItem_Click;
-            OptionsFlyout.SetImageFlyoutItemClick += SoundTileOptionsSetImage_Click;
-            OptionsFlyout.RenameFlyoutItemClick += SoundTileOptionsRename_Click;
-            OptionsFlyout.DeleteFlyoutItemClick += SoundTileOptionsDelete_Click;
         }
 
         private void UpdateSizes()
@@ -94,12 +76,28 @@ namespace UniversalSoundBoard.Components
 
         private void ContentRoot_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+            ShowFlyout(sender, e.GetPosition(sender as UIElement));
         }
 
         private void ContentRoot_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+            ShowFlyout(sender, e.GetPosition(sender as UIElement));
+        }
+
+        private void ShowFlyout(object sender, Point position)
+        {
+            var flyout = new SoundItemOptionsFlyout(Sound.Uuid, Sound.Favourite);
+
+            flyout.SetCategoryFlyoutItemClick += OptionsFlyout_SetCategoryFlyoutItemClick;
+            flyout.SetFavouriteFlyoutItemClick += OptionsFlyout_SetFavouriteFlyoutItemClick;
+            flyout.ShareFlyoutItemClick += OptionsFlyout_ShareFlyoutItemClick;
+            flyout.ExportFlyoutItemClick += OptionsFlyout_ExportFlyoutItemClick;
+            flyout.PinFlyoutItemClick += OptionsFlyout_PinFlyoutItemClick;
+            flyout.SetImageFlyoutItemClick += OptionsFlyout_SetImageFlyoutItemClick;
+            flyout.RenameFlyoutItemClick += OptionsFlyout_RenameFlyoutItemClick;
+            flyout.DeleteFlyoutItemClick += OptionsFlyout_DeleteFlyoutItemClick;
+
+            flyout.ShowAt(sender as UIElement, position);
         }
 
         private void ContentRoot_PointerEntered(object sender, PointerRoutedEventArgs e)
@@ -120,13 +118,7 @@ namespace UniversalSoundBoard.Components
             HideNameStoryboard.Begin();
         }
 
-        private void Flyout_Opened(object sender, object e)
-        {
-            SetFavouritesMenuItemText();
-            SetPinFlyoutText();
-        }
-
-        private async void SoundTileOptionsSetCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void OptionsFlyout_SetCategoryFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             var itemTemplate = (DataTemplate)Resources["SetCategoryItemTemplate"];
             List<Sound> soundsList = new List<Sound> { Sound };
@@ -146,7 +138,7 @@ namespace UniversalSoundBoard.Components
             await FileManager.UpdateGridViewAsync();
         }
 
-        private async void SoundTileOptionsSetFavourite_Click(object sender, RoutedEventArgs e)
+        private async void OptionsFlyout_SetFavouriteFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             bool newFav = !Sound.Favourite;
 
@@ -177,11 +169,10 @@ namespace UniversalSoundBoard.Components
             }
 
             //FavouriteSymbol.Visibility = newFav ? Visibility.Visible : Visibility.Collapsed;
-            SetFavouritesMenuItemText();
             await FileManager.SetSoundAsFavouriteAsync(Sound.Uuid, newFav);
         }
 
-        private async void ShareFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void OptionsFlyout_ShareFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             if (!await DownloadFile()) return;
 
@@ -203,7 +194,7 @@ namespace UniversalSoundBoard.Components
             DataTransferManager.ShowShareUI();
         }
 
-        private async void ExportFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void OptionsFlyout_ExportFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             if (!await DownloadFile()) return;
 
@@ -234,7 +225,7 @@ namespace UniversalSoundBoard.Components
             }
         }
 
-        private async void PinFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void OptionsFlyout_PinFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             bool isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
 
@@ -303,7 +294,7 @@ namespace UniversalSoundBoard.Components
             }
         }
 
-        private async void SoundTileOptionsSetImage_Click(object sender, RoutedEventArgs e)
+        private async void OptionsFlyout_SetImageFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             Sound sound = Sound;
             var picker = new Windows.Storage.Pickers.FileOpenPicker
@@ -326,7 +317,7 @@ namespace UniversalSoundBoard.Components
             }
         }
 
-        private async void SoundTileOptionsRename_Click(object sender, RoutedEventArgs e)
+        private async void OptionsFlyout_RenameFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             var RenameSoundContentDialog = ContentDialogs.CreateRenameSoundContentDialog(Sound);
             RenameSoundContentDialog.PrimaryButtonClick += RenameSoundContentDialog_PrimaryButtonClick;
@@ -343,7 +334,7 @@ namespace UniversalSoundBoard.Components
             }
         }
 
-        private async void SoundTileOptionsDelete_Click(object sender, RoutedEventArgs e)
+        private async void OptionsFlyout_DeleteFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             var DeleteSoundContentDialog = ContentDialogs.CreateDeleteSoundContentDialog(Sound.Name);
             DeleteSoundContentDialog.PrimaryButtonClick += DeleteSoundContentDialog_PrimaryButtonClick;
@@ -356,16 +347,6 @@ namespace UniversalSoundBoard.Components
 
             // UpdateGridView nicht in deleteSound, weil es auch in einer Schleife aufgerufen wird (löschen mehrerer Sounds)
             await FileManager.UpdateGridViewAsync();
-        }
-
-        private void SetFavouritesMenuItemText()
-        {
-            OptionsFlyout.SetFavourite(Sound.Favourite);
-        }
-
-        private void SetPinFlyoutText()
-        {
-            OptionsFlyout.UpdatePinText();
         }
 
         private async Task<bool> DownloadFile()

@@ -1,5 +1,6 @@
 ﻿using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
+using Windows.Foundation;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -8,7 +9,6 @@ namespace UniversalSoundboard.Components
     public sealed partial class SoundListItemTemplate : UserControl
     {
         public Sound Sound { get => DataContext as Sound; }
-        public SoundItemOptionsFlyout OptionsFlyout;
 
         public SoundListItemTemplate()
         {
@@ -17,40 +17,30 @@ namespace UniversalSoundboard.Components
             ContentRoot.DataContext = FileManager.itemViewHolder;
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
-        {
-            InitOptionsFlyout();
-        }
-
-        private void InitOptionsFlyout()
-        {
-            if (Sound == null) return;
-            OptionsFlyout = new SoundItemOptionsFlyout(Sound.Uuid, Sound.Favourite);
-
-            OptionsFlyout.FlyoutOpened += OptionsFlyout_FlyoutOpened;
-            OptionsFlyout.SetCategoryFlyoutItemClick += OptionsFlyout_SetCategoryFlyoutItemClick;
-            OptionsFlyout.SetFavouriteFlyoutItemClick += OptionsFlyout_SetFavouriteFlyoutItemClick;
-            OptionsFlyout.ShareFlyoutItemClick += OptionsFlyout_ShareFlyoutItemClick;
-            OptionsFlyout.ExportFlyoutItemClick += OptionsFlyout_ExportFlyoutItemClick;
-            OptionsFlyout.PinFlyoutItemClick += OptionsFlyout_PinFlyoutItemClick;
-            OptionsFlyout.SetImageFlyoutItemClick += OptionsFlyout_SetImageFlyoutItemClick;
-            OptionsFlyout.RenameFlyoutItemClick += OptionsFlyout_RenameFlyoutItemClick;
-            OptionsFlyout.DeleteFlyoutItemClick += OptionsFlyout_DeleteFlyoutItemClick;
-        }
-
         private void ContentRoot_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
         {
-            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+            ShowFlyout(sender, e.GetPosition(sender as UIElement));
         }
 
         private void ContentRoot_Holding(object sender, Windows.UI.Xaml.Input.HoldingRoutedEventArgs e)
         {
-            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+            ShowFlyout(sender, e.GetPosition(sender as UIElement));
         }
 
-        private void OptionsFlyout_FlyoutOpened(object sender, object e)
+        private void ShowFlyout(object sender, Point position)
         {
+            var flyout = new SoundItemOptionsFlyout(Sound.Uuid, Sound.Favourite);
 
+            flyout.SetCategoryFlyoutItemClick += OptionsFlyout_SetCategoryFlyoutItemClick;
+            flyout.SetFavouriteFlyoutItemClick += OptionsFlyout_SetFavouriteFlyoutItemClick;
+            flyout.ShareFlyoutItemClick += OptionsFlyout_ShareFlyoutItemClick;
+            flyout.ExportFlyoutItemClick += OptionsFlyout_ExportFlyoutItemClick;
+            flyout.PinFlyoutItemClick += OptionsFlyout_PinFlyoutItemClick;
+            flyout.SetImageFlyoutItemClick += OptionsFlyout_SetImageFlyoutItemClick;
+            flyout.RenameFlyoutItemClick += OptionsFlyout_RenameFlyoutItemClick;
+            flyout.DeleteFlyoutItemClick += OptionsFlyout_DeleteFlyoutItemClick;
+
+            flyout.ShowAt(sender as UIElement, position);
         }
 
         private void OptionsFlyout_SetCategoryFlyoutItemClick(object sender, RoutedEventArgs e)

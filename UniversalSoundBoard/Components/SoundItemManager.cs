@@ -15,7 +15,6 @@ namespace UniversalSoundboard.Components
     public class SoundItemOptionsFlyout
     {
         private readonly ResourceLoader loader;
-        private Guid soundUuid;
 
         private MenuFlyout optionsFlyout;
         private MenuFlyoutItem setFavouriteFlyoutItem;
@@ -33,35 +32,34 @@ namespace UniversalSoundboard.Components
 
         public SoundItemOptionsFlyout(Guid soundUuid, bool favourite) {
             loader = new ResourceLoader();
-            this.soundUuid = soundUuid;
 
             // Create the flyout
             optionsFlyout = new MenuFlyout();
-            optionsFlyout.Opened += (object sender, object e) => FlyoutOpened.Invoke(sender, e);
+            optionsFlyout.Opened += (object sender, object e) => FlyoutOpened?.Invoke(sender, e);
 
             // Set categories
             MenuFlyoutItem setCategoriesFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("SoundItemOptionsFlyout-SetCategories") };
-            setCategoriesFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetCategoryFlyoutItemClick.Invoke(sender, e);
+            setCategoriesFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetCategoryFlyoutItemClick?.Invoke(sender, e);
             optionsFlyout.Items.Add(setCategoriesFlyoutItem);
 
             // Set favourite
             setFavouriteFlyoutItem = new MenuFlyoutItem { Text = loader.GetString(favourite ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite") };
-            setFavouriteFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetFavouriteFlyoutItemClick.Invoke(sender, e);
+            setFavouriteFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetFavouriteFlyoutItemClick?.Invoke(sender, e);
             optionsFlyout.Items.Add(setFavouriteFlyoutItem);
 
             // Share
             MenuFlyoutItem shareFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("Share") };
-            shareFlyoutItem.Click += (object sender, RoutedEventArgs e) => ShareFlyoutItemClick.Invoke(sender, e);
+            shareFlyoutItem.Click += (object sender, RoutedEventArgs e) => ShareFlyoutItemClick?.Invoke(sender, e);
             optionsFlyout.Items.Add(shareFlyoutItem);
 
             // Export
             MenuFlyoutItem exportFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("Export") };
-            exportFlyoutItem.Click += (object sender, RoutedEventArgs e) => ExportFlyoutItemClick.Invoke(sender, e);
+            exportFlyoutItem.Click += (object sender, RoutedEventArgs e) => ExportFlyoutItemClick?.Invoke(sender, e);
             optionsFlyout.Items.Add(exportFlyoutItem);
 
             // Pin
             pinFlyoutItem = new MenuFlyoutItem { Text = loader.GetString(SecondaryTile.Exists(soundUuid.ToString()) ? "Unpin" : "Pin") };
-            pinFlyoutItem.Click += (object sender, RoutedEventArgs e) => PinFlyoutItemClick.Invoke(sender, e);
+            pinFlyoutItem.Click += (object sender, RoutedEventArgs e) => PinFlyoutItemClick?.Invoke(sender, e);
             optionsFlyout.Items.Add(pinFlyoutItem);
 
             // Separator
@@ -69,28 +67,18 @@ namespace UniversalSoundboard.Components
 
             // Set image
             MenuFlyoutItem setImageFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundItemOptionsFlyout-SetImage") };
-            setImageFlyout.Click += (object sender, RoutedEventArgs e) => SetImageFlyoutItemClick.Invoke(sender, e);
+            setImageFlyout.Click += (object sender, RoutedEventArgs e) => SetImageFlyoutItemClick?.Invoke(sender, e);
             optionsFlyout.Items.Add(setImageFlyout);
 
             // Rename
             MenuFlyoutItem renameFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundItemOptionsFlyout-Rename") };
-            renameFlyout.Click += (object sender, RoutedEventArgs e) => RenameFlyoutItemClick.Invoke(sender, e);
+            renameFlyout.Click += (object sender, RoutedEventArgs e) => RenameFlyoutItemClick?.Invoke(sender, e);
             optionsFlyout.Items.Add(renameFlyout);
 
             // Delete
             MenuFlyoutItem deleteFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundItemOptionsFlyout-Delete") };
-            deleteFlyout.Click += (object sender, RoutedEventArgs e) => DeleteFlyoutItemClick.Invoke(sender, e);
+            deleteFlyout.Click += (object sender, RoutedEventArgs e) => DeleteFlyoutItemClick?.Invoke(sender, e);
             optionsFlyout.Items.Add(deleteFlyout);
-        }
-
-        public void SetFavourite(bool favourite)
-        {
-            setFavouriteFlyoutItem.Text = loader.GetString(favourite ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite");
-        }
-
-        public void UpdatePinText()
-        {
-            pinFlyoutItem.Text = loader.GetString(SecondaryTile.Exists(soundUuid.ToString()) ? "Unpin" : "Pin");
         }
 
         public void ShowAt(UIElement sender, Point position)
