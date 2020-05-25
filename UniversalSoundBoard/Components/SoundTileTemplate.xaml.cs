@@ -15,16 +15,13 @@ using UniversalSoundBoard.Common;
 using Windows.UI.StartScreen;
 using Windows.UI.Notifications;
 using System.Threading.Tasks;
+using Windows.Foundation;
 
 namespace UniversalSoundBoard.Components
 {
     public sealed partial class SoundTileTemplate : UserControl
     {
         public Sound Sound { get => DataContext as Sound; }
-        MenuFlyout OptionsFlyout;
-        MenuFlyoutItem SetFavouriteFlyout;
-        MenuFlyoutItem SetCategoryFlyoutItem;
-        MenuFlyoutItem PinFlyoutItem;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
         private bool downloadFileIsExecuting = false;
@@ -37,7 +34,6 @@ namespace UniversalSoundBoard.Components
             DataContextChanged += (s, e) => Bindings.Update();
             SetDarkThemeLayout();
             SetDataContext();
-            CreateFlyout();
         }
 
         private void SetDataContext()
@@ -101,7 +97,6 @@ namespace UniversalSoundBoard.Components
             }
 
             FavouriteSymbol.Visibility = newFav ? Visibility.Visible : Visibility.Collapsed;
-            SetFavouritesMenuItemText();
             await FileManager.SetSoundAsFavouriteAsync(Sound.Uuid, newFav);
         }
         
@@ -160,44 +155,21 @@ namespace UniversalSoundBoard.Components
             }
         }
         
-        private void SetFavouritesMenuItemText()
+        private void ShowOptionsFlyout(UIElement targetElement, Point position)
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 
-            if (Sound.Favourite)
-                SetFavouriteFlyout.Text = loader.GetString("SoundTile-UnsetFavourite");
-            else
-                SetFavouriteFlyout.Text = loader.GetString("SoundTile-SetFavourite");
-        }
-
-        private void SetPinFlyoutText()
-        {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            bool isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
-            PinFlyoutItem.Text = isPinned ? loader.GetString("Unpin") : loader.GetString("Pin");
-        }
-        
-        private void CreateFlyout()
-        {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
-            // Check if the sound is pinned to start
-            bool isPinned = false;
-            if (Sound != null)
-                isPinned = SecondaryTile.Exists(Sound.Uuid.ToString());
-
-            OptionsFlyout = new MenuFlyout();
-            OptionsFlyout.Opened += Flyout_Opened;
-            SetCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("SoundTile-SetCategory") };
+            MenuFlyout OptionsFlyout = new MenuFlyout();
+            MenuFlyoutItem SetCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("SoundTile-SetCategory") };
             SetCategoryFlyoutItem.Click += SoundTileOptionsSetCategoryFlyoutItem_Click;
-            SetFavouriteFlyout = new MenuFlyoutItem();
+            MenuFlyoutItem SetFavouriteFlyout = new MenuFlyoutItem { Text = loader.GetString(Sound.Favourite ? "SoundTile-UnsetFavourite" : "SoundTile-SetFavourite") };
             SetFavouriteFlyout.Click += SoundTileOptionsSetFavourite_Click;
             MenuFlyoutItem ShareFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("Share") };
             ShareFlyoutItem.Click += ShareFlyoutItem_Click;
             MenuFlyoutItem ExportFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("Export") };
             ExportFlyoutItem.Click += ExportFlyoutItem_Click;
-            PinFlyoutItem = new MenuFlyoutItem();
-            PinFlyoutItem.Text = isPinned ? loader.GetString("Unpin") : loader.GetString("Pin");
+            MenuFlyoutItem PinFlyoutItem = new MenuFlyoutItem { Text = loader.GetString(SecondaryTile.Exists(Sound.Uuid.ToString()) ? "Unpin" : "Pin") };
+
             PinFlyoutItem.Click += PinFlyoutItem_Click;
             MenuFlyoutSeparator separator = new MenuFlyoutSeparator();
             MenuFlyoutItem SetImageFlyout = new MenuFlyoutItem { Text = loader.GetString("SoundTile-ChangeImage") };
@@ -216,6 +188,8 @@ namespace UniversalSoundBoard.Components
             OptionsFlyout.Items.Add(SetImageFlyout);
             OptionsFlyout.Items.Add(RenameFlyout);
             OptionsFlyout.Items.Add(DeleteFlyout);
+
+            OptionsFlyout.ShowAt(targetElement, position);
         }
 
         private async void PinFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -421,20 +395,14 @@ namespace UniversalSoundBoard.Components
             request.Data.Properties.Description = soundFiles.First().Name;
         }
         
-        private void Flyout_Opened(object sender, object e)
-        {
-            SetFavouritesMenuItemText();
-            SetPinFlyoutText();
-        }
-        
         private void ContentRoot_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
-            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+            ShowOptionsFlyout(sender as UIElement, e.GetPosition(sender as UIElement));
         }
         
         private void ContentRoot_Holding(object sender, HoldingRoutedEventArgs e)
         {
-            OptionsFlyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+            ShowOptionsFlyout(sender as UIElement, e.GetPosition(sender as UIElement));
         }
         
         private void ContentRoot_PointerEntered(object sender, PointerRoutedEventArgs e)
