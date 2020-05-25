@@ -11,7 +11,7 @@
           Background="{ThemeResource SystemControlForegroundAccentBrush}">
         <Canvas>
             <Image Name="SplashScreenLogo" 
-                   Source="ms-appx:///Assets/Generierte Assets/SplashScreen.png" />
+                   Source="ms-appx:///Assets/Icons/SplashScreen.png" />
 
             <ProgressRing Name="SplashProgressRing" 
                           IsActive="True" 

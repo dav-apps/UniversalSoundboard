@@ -216,20 +216,20 @@ namespace UniversalSoundBoard.Components
                         tileId,
                         displayName,
                         arguments,
-                        new Uri("ms-appx:///Assets/Generierte Assets/Square150x150Logo.png"),
+                        new Uri("ms-appx:///Assets/Icons/Square150x150Logo.png"),
                         TileSize.Default);
 
                 tile.VisualElements.ForegroundText = ForegroundText.Light;
 
                 // Enable wide and large tile sizes
-                tile.VisualElements.Wide310x150Logo = new Uri("ms-appx:///Assets/Generierte Assets/Wide310x150Logo.png");
-                tile.VisualElements.Square310x310Logo = new Uri("ms-appx:///Assets/Generierte Assets/Square310x310Logo.png");
+                tile.VisualElements.Wide310x150Logo = new Uri("ms-appx:///Assets/Icons/Wide310x150Logo.png");
+                tile.VisualElements.Square310x310Logo = new Uri("ms-appx:///Assets/Icons/Square310x310Logo.png");
 
                 // Add a small size logo for better looking small tile
-                tile.VisualElements.Square71x71Logo = new Uri("ms-appx:///Assets/Generierte Assets/Square71x71Logo.png");
+                tile.VisualElements.Square71x71Logo = new Uri("ms-appx:///Assets/Icons/Square71x71Logo.png");
 
                 // Add a unique corner logo for the secondary tile
-                tile.VisualElements.Square44x44Logo = new Uri("ms-appx:///Assets/Generierte Assets/Square44x44Logo.png");
+                tile.VisualElements.Square44x44Logo = new Uri("ms-appx:///Assets/Icons/Square44x44Logo.png");
 
                 // Show the display name on all sizes
                 tile.VisualElements.ShowNameOnSquare150x150Logo = true;
@@ -237,7 +237,7 @@ namespace UniversalSoundBoard.Components
                 tile.VisualElements.ShowNameOnSquare310x310Logo = true;
 
                 // Add the tile to the Start Menu
-                isPinned = await tile.RequestCreateAsync();
+                if (!await tile.RequestCreateAsync()) return;
                 var imageFile = await Sound.GetImageFileAsync();
 
                 if(imageFile != null)
