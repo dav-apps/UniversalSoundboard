@@ -211,7 +211,7 @@
     <value>Rename</value>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>1.7.9</value>
+    <value>1.7.10</value>
   </data>
   <data name="PlayingSound_CastButton.Text" xml:space="preserve">
     <value>Cast to Device</value>
