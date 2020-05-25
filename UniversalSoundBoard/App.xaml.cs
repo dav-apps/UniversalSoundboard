@@ -109,6 +109,9 @@ namespace UniversalSoundBoard
                 localSettings.Values["theme"] = FileManager.themeDefault;
             }
 
+            // Init Websocket
+            Websockets.Net.WebsocketConnection.Link();
+
             // Initialize Dav settings
             ProjectInterface.RetrieveConstants = new RetrieveConstants();
             ProjectInterface.LocalDataSettings = new LocalDataSettings();
