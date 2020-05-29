@@ -2263,11 +2263,14 @@ namespace UniversalSoundBoard.DataAccess
 
             if (mediaPlaybackList.Items.Count == 0)
                 return null;
+            else if (mediaPlaybackList.Items.Count == 1)
+                return player;
 
             if (mediaPlaybackList.Items.Count >= current + 1)
-                mediaPlaybackList.MoveTo((uint)current);
-            else
-                mediaPlaybackList.MoveTo(0);
+            {
+                try { mediaPlaybackList.MoveTo((uint)current); }
+                catch { }
+            }
 
             return player;
         }

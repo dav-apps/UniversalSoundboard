@@ -174,10 +174,6 @@
       <Project>{ce39175d-d394-4bd0-ae01-51b433ac785d}</Project>
       <Name>davClassLibrary</Name>
     </ProjectReference>
-    <ProjectReference Include="..\UniversalSoundBoard\UniversalSoundBoard.csproj">
-      <Project>{d28c5d63-9e01-456a-b935-63d72f3f4e46}</Project>
-      <Name>UniversalSoundBoard</Name>
-    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

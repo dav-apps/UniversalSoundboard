@@ -44,9 +44,6 @@ namespace UniversalSoundBoard.Pages
             PlaySoundsList = new ObservableCollection<Sound>();
             Suggestions = new List<string>();
 
-            // Init Websocket
-            Websockets.Net.WebsocketConnection.Link();
-
             InitializeLocalSettings();
             CustomiseTitleBar();
             InitializeLayout();
