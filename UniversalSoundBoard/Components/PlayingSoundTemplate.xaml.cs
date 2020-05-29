@@ -65,6 +65,7 @@ namespace UniversalSoundBoard.Components
         
         private void AdjustLayout()
         {
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
             MediaPlayerElement.TransportControls.IsCompact = Window.Current.Bounds.Width < FileManager.mobileMaxWidth;
             (MediaPlayerElement.TransportControls as CustomMediaTransportControls).SetVolumeButtonVisibility(Window.Current.Bounds.Width > FileManager.topButtonsCollapsedMaxWidth);
             MediaPlayerElement.TransportControls.IsVolumeButtonVisible = Window.Current.Bounds.Width > FileManager.topButtonsCollapsedMaxWidth;
@@ -75,8 +76,8 @@ namespace UniversalSoundBoard.Components
             if (PlayingSound == null) return;
             MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteMenuFlyoutItem");
             FavouriteFlyout.Text = PlayingSound.CurrentSound.Favourite ?
-                FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite") :
-                FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+                FavouriteFlyout.Text = loader.GetString("SoundItemOptionsFlyout-UnsetFavourite") :
+                FavouriteFlyout.Text = loader.GetString("SoundItemOptionsFlyout-SetFavourite");
 
             // Hide or show the Previous and Next buttons
             if(PlayingSound.MediaPlayer != null)
@@ -293,18 +294,19 @@ namespace UniversalSoundBoard.Components
             // Set the text of the Add to Favourites Flyout
             FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
             MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteMenuFlyoutItem");
+            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 
             if (oldFav)
             {
                 // Remove sound from favourites
                 FileManager.itemViewHolder.FavouriteSounds.Remove(currentSound);
-                FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-SetFavourite");
+                FavouriteFlyout.Text = loader.GetString("SoundItemOptionsFlyout-SetFavourite");
             }
             else
             {
                 // Add to favourites
                 FileManager.itemViewHolder.FavouriteSounds.Add(currentSound);
-                FavouriteFlyout.Text = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("SoundTile-UnsetFavourite");
+                FavouriteFlyout.Text = loader.GetString("SoundItemOptionsFlyout-UnsetFavourite");
             }
 
             await FileManager.SetSoundAsFavouriteAsync(currentSound.Uuid, newFav);
