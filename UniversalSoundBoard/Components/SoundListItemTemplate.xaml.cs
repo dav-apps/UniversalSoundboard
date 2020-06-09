@@ -27,8 +27,9 @@ namespace UniversalSoundboard.Components
         {
             Sound.Favourite = newFav;
 
-            // TODO: Update the UI
-            //FavouriteSymbol.Visibility = newFav ? Visibility.Visible : Visibility.Collapsed;
+            // Update the UI
+            Sound.Favourite = newFav;
+            Bindings.Update();
         }
 
         private void ContentRoot_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)

@@ -6,41 +6,80 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:models="using:UniversalSoundBoard.Models"
     xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:converters="using:UniversalSoundBoard.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
     Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
+        <converters:CategoryIconsConverter x:Key="CategoryIconsConverter" />
+
         <DataTemplate x:Key="SetCategoryItemTemplate" x:DataType="models:Category">
             <components:SetCategoryItemTemplate />
         </DataTemplate>
     </UserControl.Resources>
 
-    <RelativePanel
+    <Grid
         Name="ContentRoot"
-        Margin="0,4,0,4"
         RightTapped="ContentRoot_RightTapped"
         Holding="ContentRoot_Holding">
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <Image
-            Name="SoundListItemImage"
-            Height="50"
-            Width="75"
-            Stretch="Uniform"
-            RelativePanel.AlignLeftWithPanel="True">
-            
-            <Image.Source>
-                <BitmapImage UriSource="{x:Bind Sound.Image.UriSource}" />
-            </Image.Source>
-        </Image>
+        <RelativePanel
+            Margin="0,4,0,4">
 
-        <TextBlock
-            Name="SoundListItemName"
-            Text="{x:Bind Sound.Name}"
-            Margin="13,0,0,0"
-            FontSize="17"
-            RelativePanel.RightOf="SoundListItemImage"
-            RelativePanel.AlignVerticalCenterWithPanel="True" />
-    </RelativePanel>
+            <Image
+                Name="SoundListItemImage"
+                Height="50"
+                Width="75"
+                Stretch="Uniform"
+                RelativePanel.AlignLeftWithPanel="True">
+
+                <Image.Source>
+                    <BitmapImage UriSource="{x:Bind Sound.Image.UriSource}" />
+                </Image.Source>
+            </Image>
+
+            <RelativePanel
+                Margin="13,0,0,0"
+                RelativePanel.RightOf="SoundListItemImage"
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignVerticalCenterWithPanel="True">
+
+                <SymbolIcon
+                    Name="FavouriteSymbol"
+                    Symbol="OutlineStar"
+                    Margin="0,0,10,0"
+                    Visibility="{x:Bind Sound.Favourite}"
+                    RelativePanel.AlignLeftWithPanel="True"
+                    RelativePanel.AlignVerticalCenterWithPanel="True" />
+
+                <TextBlock
+                    Name="SoundListItemName"
+                    Text="{x:Bind Sound.Name}"
+                    FontSize="17"
+                    Margin="0,0,10,0"
+                    RelativePanel.RightOf="FavouriteSymbol"
+                    RelativePanel.LeftOf="CategoryIconSymbolStackPanel"
+                    RelativePanel.AlignVerticalCenterWithPanel="True" />
+
+                <StackPanel
+                    Name="CategoryIconSymbolStackPanel"
+                    Visibility="{Binding ShowCategoryIcon}"
+                    RelativePanel.AlignRightWithPanel="True"
+                    RelativePanel.AlignVerticalCenterWithPanel="True">
+                    
+                    <TextBlock
+                        Name="CategoryIconSymbol"
+                        Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}}"
+                        FontFamily="Segoe MDL2 Assets" 
+                        FontSize="20" />
+                </StackPanel>
+            </RelativePanel>
+        </RelativePanel>
+    </Grid>
 </UserControl>
