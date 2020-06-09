@@ -513,7 +513,7 @@
         <TextBlock
             Name="WindowTitleTextBox" 
             Style="{StaticResource CaptionTextBlockStyle}"
-            Text="{x:Bind appmodel:Package.Current.DisplayName}" 
+            Text="UniversalSoundboard" 
             VerticalAlignment="Top" 
             HorizontalAlignment="Left" />
         
