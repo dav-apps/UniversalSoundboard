@@ -204,7 +204,7 @@ namespace UniversalSoundBoard.Converters
             string icons = "";
 
             foreach (var category in categories)
-                icons += category.Icon + " ";
+                icons += category.Icon + "\n\n";
 
             return icons;
         }

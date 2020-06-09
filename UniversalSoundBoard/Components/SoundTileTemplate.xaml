@@ -71,6 +71,24 @@
             </Image.Source>
         </Image>
 
+        <SymbolIcon
+            Name="FavouriteSymbol"
+            Symbol="OutlineStar"
+            Margin="6,6,0,0"
+            Visibility="{x:Bind Sound.Favourite}"
+            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True" />
+
+        <TextBlock
+            Name="CategoryIconsTextBlock"
+            Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}}"
+            FontFamily="Segoe MDL2 Assets" 
+            FontSize="20"
+            Margin="0,6,6,0"
+            Visibility="{Binding ShowCategoryIcon}"
+            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True" />
+
         <RelativePanel
             Name="SoundTileNameContainer"
             RelativePanel.AlignBottomWithPanel="True"
