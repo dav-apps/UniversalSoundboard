@@ -214,4 +214,20 @@ namespace UniversalSoundBoard.Converters
             throw new NotImplementedException();
         }
     }
+
+    public class CategoriesMarginConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var categories = value as List<Category>;
+
+            if (categories.Count == 0) return new Thickness(0, 0, 0, 0);
+            return new Thickness(0, 0, 10, 0);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

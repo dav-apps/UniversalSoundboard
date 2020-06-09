@@ -1,9 +1,7 @@
 ﻿using UniversalSoundBoard.Common;
 using UniversalSoundBoard.Models;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 
 namespace UniversalSoundBoard.Components
 {
@@ -15,11 +13,6 @@ namespace UniversalSoundBoard.Components
         {
             InitializeComponent();
             DataContextChanged += (s, e) => Bindings.Update();
-
-            if(App.Current.RequestedTheme == ApplicationTheme.Dark)
-                RemoveSoundButton.Background = new SolidColorBrush(Colors.Black);
-            else
-                RemoveSoundButton.Background = new SolidColorBrush(Colors.White);
         }
 
         private void RemoveSoundButton_Click(object sender, RoutedEventArgs e)

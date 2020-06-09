@@ -11,36 +11,48 @@
 
     <UserControl.Resources>
         <converters:CategoryIconsConverter x:Key="CategoryIconsConverter" />
+        <converters:CategoriesMarginConverter x:Key="CategoriesMarginConverter" />
     </UserControl.Resources>
 
     <Grid Name="ContentRoot">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="*" />
-            <ColumnDefinition Width="Auto" />
         </Grid.ColumnDefinitions>
-        
-        <TextBlock Name="CategoryIconTextBlock" 
-                   Grid.Column="0"
-                   Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}}"
-                   FontFamily="Segoe MDL2 Assets"
-                   VerticalAlignment="Center" 
-                   Margin="0,3,10,0" />
-        <TextBlock Name="SoundNameTextBlock" 
-                   Text="{x:Bind Sound.Name}" 
-                   Grid.Column="1" 
-                   Grid.ColumnSpan="2"
-                   RelativePanel.RightOf="CategoryIconTextBlock"
-                   VerticalAlignment="Center" />
-        <Button Name="RemoveSoundButton" 
-                RelativePanel.AlignRightWithPanel="True"
-                FontFamily="Segoe MDL2 Assets" 
-                Grid.Column="2"
-                Content="&#xE108;" 
-                Canvas.ZIndex="1"
-                Height="35" 
+
+        <RelativePanel>
+            <SymbolIcon
+                Name="FavouriteSymbol"
+                Symbol="OutlineStar"
+                Margin="0,0,10,0"
+                Visibility="{x:Bind Sound.Favourite}"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignVerticalCenterWithPanel="True" />
+
+            <TextBlock
+                Name="SoundNameTextBlock"
+                Text="{x:Bind Sound.Name}"
+                Margin="0,0,10,0"
+                RelativePanel.RightOf="FavouriteSymbol"
+                RelativePanel.LeftOf="CategoryIconsTextBlock"
+                RelativePanel.AlignVerticalCenterWithPanel="True" />
+
+            <TextBlock
+                Name="CategoryIconsTextBlock"
+                Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}}"
+                FontFamily="Segoe MDL2 Assets"
+                Margin="{x:Bind Sound.Categories, Converter={StaticResource CategoriesMarginConverter}}"
+                RelativePanel.LeftOf="RemoveSoundButton"
+                RelativePanel.AlignVerticalCenterWithPanel="True" />
+
+            <Button
+                Name="RemoveSoundButton"
+                Background="Transparent"
+                FontFamily="Segoe MDL2 Assets"
+                Content="&#xE108;"
+                Height="35"
                 Width="35"
-                HorizontalAlignment="Right"
-                Click="RemoveSoundButton_Click"/>
+                RelativePanel.AlignRightWithPanel="True"
+                Click="RemoveSoundButton_Click" />
+        </RelativePanel>
     </Grid>
 </UserControl>

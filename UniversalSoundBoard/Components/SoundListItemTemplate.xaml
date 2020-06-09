@@ -14,6 +14,7 @@
 
     <UserControl.Resources>
         <converters:CategoryIconsConverter x:Key="CategoryIconsConverter" />
+        <converters:CategoriesMarginConverter x:Key="CategoriesMarginConverter" />
 
         <DataTemplate x:Key="SetCategoryItemTemplate" x:DataType="models:Category">
             <components:SetCategoryItemTemplate />
@@ -64,21 +65,18 @@
                     FontSize="17"
                     Margin="0,0,10,0"
                     RelativePanel.RightOf="FavouriteSymbol"
-                    RelativePanel.LeftOf="CategoryIconSymbolStackPanel"
+                    RelativePanel.LeftOf="CategoryIconsTextBlock"
                     RelativePanel.AlignVerticalCenterWithPanel="True" />
 
-                <StackPanel
-                    Name="CategoryIconSymbolStackPanel"
+                <TextBlock
+                    Name="CategoryIconsTextBlock"
+                    Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}}"
+                    FontFamily="Segoe MDL2 Assets" 
+                    FontSize="20"
+                    Margin="{x:Bind Sound.Categories, Converter={StaticResource CategoriesMarginConverter}}"
                     Visibility="{Binding ShowCategoryIcon}"
                     RelativePanel.AlignRightWithPanel="True"
-                    RelativePanel.AlignVerticalCenterWithPanel="True">
-                    
-                    <TextBlock
-                        Name="CategoryIconSymbol"
-                        Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}}"
-                        FontFamily="Segoe MDL2 Assets" 
-                        FontSize="20" />
-                </StackPanel>
+                    RelativePanel.AlignVerticalCenterWithPanel="True" />
             </RelativePanel>
         </RelativePanel>
     </Grid>
