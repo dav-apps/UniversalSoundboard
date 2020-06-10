@@ -18,6 +18,7 @@ using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using MUXC = Microsoft.UI.Xaml.Controls;
+using Windows.ApplicationModel.Resources;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -34,6 +35,7 @@ namespace UniversalSoundBoard.Pages
         public static ObservableCollection<Sound> PlaySoundsList;
         private List<string> Suggestions;
         private List<StorageFile> selectedFiles = new List<StorageFile>();
+        private Guid selectedCategory = Guid.Empty;
 
 
         public MainPage()
@@ -260,6 +262,8 @@ namespace UniversalSoundBoard.Pages
                 icon.Glyph = category.Icon;
                 item.Icon = icon;
 
+                item.RightTapped += NavigationViewMenuItem_RightTapped;
+
                 foreach (var childItem in CreateCategoriesMenuItems(category.Children))
                     item.MenuItems.Add(childItem);
 
@@ -333,6 +337,29 @@ namespace UniversalSoundBoard.Pages
             // Hide the options
             optionsVisible = false;
             Bindings.Update();
+        }
+
+        private void NavigationViewMenuItem_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
+        {
+            e.Handled = true;
+            selectedCategory = (Guid)((MUXC.NavigationViewItem)sender).Tag;
+
+            // Show flyout for category menu item
+            var loader = new ResourceLoader();
+            MenuFlyout flyout = new MenuFlyout();
+
+            MenuFlyoutItem createSubCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-AddSubCategory") };
+            createSubCategoryFlyoutItem.Click += CreateSubCategoryFlyoutItem_Click;
+            flyout.Items.Add(createSubCategoryFlyoutItem);
+
+            flyout.ShowAt((UIElement)sender, e.GetPosition(sender as UIElement));
+        }
+
+        private async void CreateSubCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var newSubCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(selectedCategory);
+            newSubCategoryContentDialog.PrimaryButtonClick += NewSubCategoryContentDialog_PrimaryButtonClick;
+            await newSubCategoryContentDialog.ShowAsync();
         }
 
         private async void CategoryEditButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
@@ -428,7 +455,7 @@ namespace UniversalSoundBoard.Pages
 
             if (files.Any())
             {
-                FileManager.itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AddSoundsMessage");
+                FileManager.itemViewHolder.LoadingScreenMessage = new ResourceLoader().GetString("AddSoundsMessage");
                 FileManager.itemViewHolder.LoadingScreenVisibility = true;
                 AddButton.IsEnabled = false;
 
@@ -462,7 +489,7 @@ namespace UniversalSoundBoard.Pages
         
         private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog();
+            var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(Guid.Empty);
             newCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
             await newCategoryContentDialog.ShowAsync();
         }
@@ -480,7 +507,7 @@ namespace UniversalSoundBoard.Pages
                 {
                     await FileManager.ShowAllSoundsAsync();
                     FileManager.itemViewHolder.SelectedCategory = 0;
-                    FileManager.itemViewHolder.Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds");
+                    FileManager.itemViewHolder.Title = new ResourceLoader().GetString("AllSounds");
                 }
                 else
                 {
@@ -505,7 +532,7 @@ namespace UniversalSoundBoard.Pages
             string text = sender.Text;
             if (String.IsNullOrEmpty(text))
             {
-                FileManager.itemViewHolder.Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds");
+                FileManager.itemViewHolder.Title = new ResourceLoader().GetString("AllSounds");
             }
             else
             {
@@ -564,7 +591,7 @@ namespace UniversalSoundBoard.Pages
         {
             if (selectedFiles.Count == 0) return;
 
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            var loader = new ResourceLoader();
             string description = loader.GetString("ShareDialog-MultipleSounds");
             if (selectedFiles.Count == 1)
                 description = selectedFiles.First().Name;
@@ -620,7 +647,7 @@ namespace UniversalSoundBoard.Pages
 
         private async void SetCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            FileManager.itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("UpdateSoundsMessage");
+            FileManager.itemViewHolder.LoadingScreenMessage = new ResourceLoader().GetString("UpdateSoundsMessage");
             FileManager.itemViewHolder.LoadingScreenVisibility = true;
 
             // Get the selected categories from the SelectedCategories Dictionary in ContentDialogs
@@ -675,6 +702,21 @@ namespace UniversalSoundBoard.Pages
         #endregion
 
         #region ContentDialogs
+        private async void NewSubCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Get combobox value
+            ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
+            string icon = typeItem.Content.ToString();
+
+            await FileManager.AddCategoryAsync(Guid.Empty, selectedCategory, ContentDialogs.NewCategoryTextBox.Text, icon);
+
+            // Reload the categories menu items
+            LoadCategoriesMenuItems();
+
+            // Navigate to the new category
+            await FileManager.ShowCategoryAsync(FileManager.itemViewHolder.Categories.Last().Uuid);
+        }
+
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get categories List and save with new value
@@ -729,6 +771,9 @@ namespace UniversalSoundBoard.Pages
 
             await FileManager.AddCategoryAsync(Guid.Empty, Guid.Empty, ContentDialogs.NewCategoryTextBox.Text, icon);
 
+            // Reload the categories menu items
+            LoadCategoriesMenuItems();
+
             // Navigate to the new category
             await FileManager.ShowCategoryAsync(FileManager.itemViewHolder.Categories.Last().Uuid);
         }
@@ -744,7 +789,7 @@ namespace UniversalSoundBoard.Pages
 
         private async void DeleteSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            FileManager.itemViewHolder.LoadingScreenMessage = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("DeleteSoundsMessage");
+            FileManager.itemViewHolder.LoadingScreenMessage = new ResourceLoader().GetString("DeleteSoundsMessage");
             FileManager.itemViewHolder.LoadingScreenVisibility = true;
 
             // Delete Sounds

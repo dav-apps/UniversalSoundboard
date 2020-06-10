@@ -118,10 +118,10 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddButton-Category.Text" xml:space="preserve">
-    <value>New Category</value>
+    <value>Add category</value>
   </data>
   <data name="AddButton-Sound.Text" xml:space="preserve">
-    <value>Add Sounds</value>
+    <value>Add sounds</value>
   </data>
   <data name="AllSounds" xml:space="preserve">
     <value>All Sounds</value>
@@ -154,7 +154,7 @@
     <value>Delete</value>
   </data>
   <data name="DeleteSoundsContentDialog-Title" xml:space="preserve">
-    <value>Delete Sounds</value>
+    <value>Delete sounds</value>
   </data>
   <data name="Drop" xml:space="preserve">
     <value>Drop to add new sounds</value>
@@ -178,7 +178,7 @@
     <value>Create</value>
   </data>
   <data name="NewCategoryContentDialog-Title" xml:space="preserve">
-    <value>New Category</value>
+    <value>New category</value>
   </data>
   <data name="PlaySoundsSimultaneously.Text" xml:space="preserve">
     <value>Play simultaneously</value>
@@ -199,7 +199,7 @@
     <value>Settings</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetCategories" xml:space="preserve">
-    <value>Set Categories</value>
+    <value>Set categories</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetImage" xml:space="preserve">
     <value>Set image</value>
@@ -528,5 +528,11 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="SettingsEntry-ShowListView.Header" xml:space="preserve">
     <value>Show sounds as a list</value>
+  </data>
+  <data name="CategoryOptionsFlyout-AddSubCategory" xml:space="preserve">
+    <value>Add subcategory</value>
+  </data>
+  <data name="NewSubCategoryContentDialog-Title" xml:space="preserve">
+    <value>New subcategory</value>
   </data>
 </root>

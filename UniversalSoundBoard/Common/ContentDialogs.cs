@@ -15,6 +15,7 @@ namespace UniversalSoundBoard.Common
     public class ContentDialogs
     {
         public static TextBox NewCategoryTextBox;
+        public static Guid NewCategoryParentUuid;
         public static TextBox EditCategoryTextBox;
         public static TextBox RenameSoundTextBox;
         public static TextBox ExportFolderTextBox;
@@ -49,12 +50,12 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog ExportSoundsContentDialog;
         public static ContentDialog SetCategoryContentDialog;
         public static ContentDialog CategoryOrderContentDialog;
-        
 
-        public static ContentDialog CreateNewCategoryContentDialog()
+
+        #region NewCategory
+        public static ContentDialog CreateNewCategoryContentDialog(Guid parentUuid)
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
             NewCategoryContentDialog = new ContentDialog
             {
                 Title = loader.GetString("NewCategoryContentDialog-Title"),
@@ -62,6 +63,12 @@ namespace UniversalSoundBoard.Common
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
                 IsPrimaryButtonEnabled = false
             };
+
+            NewCategoryParentUuid = parentUuid;
+            if (!Equals(parentUuid, Guid.Empty))
+            {
+                NewCategoryContentDialog.Title = loader.GetString("NewSubCategoryContentDialog-Title");
+            }
 
             StackPanel stackPanel = new StackPanel();
             stackPanel.Orientation = Orientation.Vertical;
@@ -98,9 +105,11 @@ namespace UniversalSoundBoard.Common
 
         private static void NewCategoryContentDialogTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            NewCategoryContentDialog.IsPrimaryButtonEnabled = NewCategoryTextBox.Text.Length >= 3;
+            NewCategoryContentDialog.IsPrimaryButtonEnabled = NewCategoryTextBox.Text.Length >= 2;
         }
+        #endregion
 
+        #region EditCategory
         public static ContentDialog CreateEditCategoryContentDialogAsync()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -150,9 +159,11 @@ namespace UniversalSoundBoard.Common
 
         private static void EditCategoryTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            EditCategoryContentDialog.IsPrimaryButtonEnabled = EditCategoryTextBox.Text.Length >= 3;
+            EditCategoryContentDialog.IsPrimaryButtonEnabled = EditCategoryTextBox.Text.Length >= 2;
         }
+        #endregion
 
+        #region DeleteCategory
         public static ContentDialog CreateDeleteCategoryContentDialogAsync()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -167,7 +178,9 @@ namespace UniversalSoundBoard.Common
 
             return DeleteCategoryContentDialog;
         }
-        
+        #endregion
+
+        #region RenameSound
         public static ContentDialog CreateRenameSoundContentDialog(Sound sound)
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -199,7 +212,9 @@ namespace UniversalSoundBoard.Common
         {
             RenameSoundContentDialog.IsPrimaryButtonEnabled = RenameSoundTextBox.Text.Length >= 3;
         }
+        #endregion
 
+        #region DeleteSound
         public static ContentDialog CreateDeleteSoundContentDialog(string soundName)
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -214,7 +229,9 @@ namespace UniversalSoundBoard.Common
 
             return DeleteSoundContentDialog;
         }
+        #endregion
 
+        #region DeleteSounds
         public static ContentDialog CreateDeleteSoundsContentDialogAsync()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -229,7 +246,9 @@ namespace UniversalSoundBoard.Common
 
             return DeleteSoundsContentDialog;
         }
+        #endregion
 
+        #region ExportData
         public static ContentDialog CreateExportDataContentDialog()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -310,7 +329,9 @@ namespace UniversalSoundBoard.Common
                 ExportDataContentDialog.IsPrimaryButtonEnabled = true;
             }
         }
+        #endregion
 
+        #region ImportData
         public static ContentDialog CreateImportDataContentDialog()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -395,7 +416,9 @@ namespace UniversalSoundBoard.Common
                 ImportDataContentDialog.IsPrimaryButtonEnabled = true;
             }
         }
+        #endregion
 
+        #region PlaySoundsSuccessively
         public static ContentDialog CreatePlaySoundsSuccessivelyContentDialog(ObservableCollection<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle)
         {
             SoundsList = sounds;
@@ -473,7 +496,9 @@ namespace UniversalSoundBoard.Common
             if (!int.TryParse(args.Text, out int value) || value <= 0)
                 RepeatsComboBox.Text = "1";
         }
+        #endregion
 
+        #region Logout
         public static ContentDialog CreateLogoutContentDialog()
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -488,7 +513,9 @@ namespace UniversalSoundBoard.Common
 
             return LogoutContentDialog;
         }
+        #endregion
 
+        #region DownloadFile
         public static ContentDialog CreateDownloadFileContentDialog(string filename)
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -522,7 +549,9 @@ namespace UniversalSoundBoard.Common
 
             return DownloadFileErrorContentDialog;
         }
+        #endregion
 
+        #region ExportSounds
         public static ContentDialog CreateExportSoundsContentDialog(ObservableCollection<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle)
         {
             SoundsList = sounds;
@@ -609,7 +638,9 @@ namespace UniversalSoundBoard.Common
                     ExportSoundsContentDialog.IsPrimaryButtonEnabled = true;
             }
         }
+        #endregion
 
+        #region SetCategories
         public static ContentDialog CreateSetCategoryContentDialog(List<Sound> sounds, DataTemplate itemTemplate)
         {
             if (sounds.Count == 0) return null;
@@ -672,7 +703,9 @@ namespace UniversalSoundBoard.Common
             SetCategoryContentDialog.Content = content;
             return SetCategoryContentDialog;
         }
+        #endregion
 
+        #region CategoryOrder
         public static ContentDialog CreateCategoryOrderContentDialog(DataTemplate itemTemplate)
         {
             var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
@@ -723,5 +756,6 @@ namespace UniversalSoundBoard.Common
             CategoryOrderContentDialog.Content = content;
             return CategoryOrderContentDialog;
         }
+        #endregion
     }
 }

@@ -104,7 +104,7 @@ namespace UniversalSoundBoard.Pages
         private async void AddCategoryButton_Click(object sender, RoutedEventArgs e)
         {
             // Show new Category ContentDialog
-            var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog();
+            var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(Guid.Empty);
             newCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
             await newCategoryContentDialog.ShowAsync();
         }

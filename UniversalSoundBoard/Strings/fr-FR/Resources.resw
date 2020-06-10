@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="AddButton-Category.Text" xml:space="preserve">
-    <value>Nouvelle catégorie</value>
+    <value>Ajouter une catégorie</value>
   </data>
   <data name="AddButton-Sound.Text" xml:space="preserve">
     <value>Ajouter un son</value>
@@ -526,5 +526,11 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="SettingsEntry-ShowListView.Header" xml:space="preserve">
     <value>Affichage des sons sous la forme d'une liste</value>
+  </data>
+  <data name="CategoryOptionsFlyout-AddSubCategory" xml:space="preserve">
+    <value>Ajouter une sous-catégorie</value>
+  </data>
+  <data name="NewSubCategoryContentDialog-Title" xml:space="preserve">
+    <value>Nouvelle sous-catégorie</value>
   </data>
 </root>
