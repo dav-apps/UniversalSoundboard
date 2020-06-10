@@ -129,6 +129,7 @@ namespace UniversalSoundBoard.DataAccess
         public const string SoundTableImageUuidPropertyName = "image_uuid";
         public const string SoundTableCategoryUuidPropertyName = "category_uuid";
 
+        public const string CategoryTableParentPropertyName = "parent";
         public const string CategoryTableNamePropertyName = "name";
         public const string CategoryTableIconPropertyName = "icon";
 
@@ -446,7 +447,7 @@ namespace UniversalSoundBoard.DataAccess
                 NewData newData = await GetDataFromFileAsync(dataFile);
 
                 foreach (Category category in newData.Categories)
-                    await DatabaseOperations.AddCategoryAsync(category.Uuid, category.Name, category.Icon);
+                    await DatabaseOperations.AddCategoryAsync(category.Uuid, Guid.Empty, category.Name, category.Icon);
 
                 if (soundsFolder == null) return;
                 int i = 0;
@@ -496,7 +497,7 @@ namespace UniversalSoundBoard.DataAccess
                 foreach (var category in categories)
                 {
                     await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => {
-                        await AddCategoryAsync(category.Uuid, category.Name, category.Icon);
+                        await AddCategoryAsync(category.Uuid, Guid.Empty, category.Name, category.Icon);
                     });
                 }
 
@@ -568,7 +569,7 @@ namespace UniversalSoundBoard.DataAccess
             if (dataFile != null)
             {
                 foreach (Category cat in await GetCategoriesListAsync(dataFile))
-                    await DatabaseOperations.AddCategoryAsync(Guid.NewGuid(), cat.Name, cat.Icon);
+                    await DatabaseOperations.AddCategoryAsync(Guid.NewGuid(), Guid.Empty, cat.Name, cat.Icon);
 
                 await dataFile.DeleteAsync();
             }
@@ -1220,15 +1221,14 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        public static async Task<Category> AddCategoryAsync(Guid uuid, string name, string icon)
+        public static async Task<Category> AddCategoryAsync(Guid uuid, Guid parent, string name, string icon)
         {
             if (Equals(uuid, Guid.Empty))
                 uuid = Guid.NewGuid();
-
-            if (await DatabaseOperations.GetObjectAsync(uuid) != null)
+            else if (await DatabaseOperations.GetObjectAsync(uuid) != null)
                 return null;
 
-            await DatabaseOperations.AddCategoryAsync(uuid, name, icon);
+            await DatabaseOperations.AddCategoryAsync(uuid, parent, name, icon);
 
             await CreateCategoriesListAsync();
             return new Category(uuid, name, icon);
@@ -1240,7 +1240,10 @@ namespace UniversalSoundBoard.DataAccess
             List<Category> categoriesList = new List<Category>();
 
             foreach (var categoryTableObject in categoriesTableObjectList)
-                categoriesList.Add(await GetCategoryAsync(categoryTableObject.Uuid));
+            {
+                if(categoryTableObject.GetPropertyValue(CategoryTableParentPropertyName) == null)
+                    categoriesList.Add(await GetCategoryAsync(categoryTableObject.Uuid));
+            }
             
             return await SortCategoriesListAsync(categoriesList);
         }
@@ -1248,13 +1251,24 @@ namespace UniversalSoundBoard.DataAccess
         private static async Task<Category> GetCategoryAsync(Guid uuid)
         {
             var categoryTableObject = await DatabaseOperations.GetObjectAsync(uuid);
+            if (categoryTableObject == null || categoryTableObject.TableId != CategoryTableId) return null;
 
-            if (categoryTableObject == null || categoryTableObject.TableId != CategoryTableId)
-                return null;
+            // Get the children of the category
+            List<TableObject> childrenTableObjects = await DatabaseOperations.GetObjectsByPropertyAsync(CategoryTableParentPropertyName, categoryTableObject.Uuid.ToString());
 
-            return new Category(categoryTableObject.Uuid,
-                                categoryTableObject.GetPropertyValue(CategoryTableNamePropertyName),
-                                categoryTableObject.GetPropertyValue(CategoryTableIconPropertyName));
+            List<Category> children = new List<Category>();
+            foreach(var childObject in childrenTableObjects)
+            {
+                Category category = await GetCategoryAsync(childObject.Uuid);
+                if (category != null) children.Add(category);
+            }
+
+            return new Category(
+                categoryTableObject.Uuid,
+                categoryTableObject.GetPropertyValue(CategoryTableNamePropertyName),
+                categoryTableObject.GetPropertyValue(CategoryTableIconPropertyName),
+                children
+            );
         }
         
         public static async Task UpdateCategoryAsync(Guid uuid, string name, string icon)

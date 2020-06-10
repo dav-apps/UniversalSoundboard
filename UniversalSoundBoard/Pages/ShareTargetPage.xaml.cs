@@ -121,7 +121,7 @@ namespace UniversalSoundBoard.Pages
                 Icon = icon
             };
             
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await FileManager.AddCategoryAsync(Guid.Empty, category.Name, category.Icon));
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await FileManager.AddCategoryAsync(Guid.Empty, Guid.Empty, category.Name, category.Icon));
         }
 
         private async void ItemViewHolder_CategoriesUpdated(object sender, EventArgs e)

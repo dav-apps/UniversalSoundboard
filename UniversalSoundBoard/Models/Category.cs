@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace UniversalSoundBoard.Models
 {
@@ -7,6 +8,7 @@ namespace UniversalSoundBoard.Models
         public Guid Uuid { get; set; }
         public string Name { get; set; }
         public string Icon { get; set; }
+        public List<Category> Children { get; set; }
 
         public Category() { }
 
@@ -14,6 +16,7 @@ namespace UniversalSoundBoard.Models
         {
             Name = name;
             Icon = icon;
+            Children = new List<Category>();
         }
 
         public Category(Guid uuid, string name, string icon)
@@ -21,6 +24,15 @@ namespace UniversalSoundBoard.Models
             Uuid = uuid;
             Name = name;
             Icon = icon;
+            Children = new List<Category>();
+        }
+
+        public Category(Guid uuid, string name, string icon, List<Category> children)
+        {
+            Uuid = uuid;
+            Name = name;
+            Icon = icon;
+            Children = children;
         }
     }
 }

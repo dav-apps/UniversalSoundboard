@@ -20,6 +20,11 @@ namespace UniversalSoundBoard.DataAccess
             return await Dav.Database.GetTableObjectAsync(uuid);
         }
 
+        public static async Task<List<TableObject>> GetObjectsByPropertyAsync(string propertyName, string propertyValue)
+        {
+            return await Dav.Database.GetTableObjectsByPropertyAsync(propertyName, propertyValue);
+        }
+
         public static async Task<bool> ObjectExistsAsync(Guid uuid)
         {
             return await Dav.Database.TableObjectExistsAsync(uuid);
@@ -135,13 +140,17 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Category
-        public static async Task AddCategoryAsync(Guid uuid, string name, string icon)
+        public static async Task AddCategoryAsync(Guid uuid, Guid parent, string name, string icon)
         {
             List<Property> properties = new List<Property>
             {
-                new Property{Name = FileManager.CategoryTableNamePropertyName, Value = name},
-                new Property{Name = FileManager.CategoryTableIconPropertyName, Value = icon}
+                new Property{ Name = FileManager.CategoryTableNamePropertyName, Value = name },
+                new Property{ Name = FileManager.CategoryTableIconPropertyName, Value = icon }
             };
+
+            if (!Equals(Guid.Empty, parent))
+                properties.Add(new Property { Name = FileManager.CategoryTableParentPropertyName, Value = parent.ToString() });
+
             await TableObject.CreateAsync(uuid, FileManager.CategoryTableId, properties);
         }
 
