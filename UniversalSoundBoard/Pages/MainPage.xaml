@@ -4,7 +4,6 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:appmodel="using:Windows.ApplicationModel"
     xmlns:converters="using:UniversalSoundBoard.Converters"
     xmlns:components="using:UniversalSoundBoard.Components"
     xmlns:components1="using:UniversalSoundboard.Components"
@@ -15,7 +14,6 @@
     SizeChanged="Page_SizeChanged">
 
     <Page.Resources>
-        <converters:SelectedCategoryConverter x:Name="SelectedCategoryConverter" />
         <converters:ReverseBoolConverter x:Name="ReverseBoolConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
         <converters:CutTitleConverter x:Name="CutTitleConverter" />
@@ -76,22 +74,10 @@
         <muxc:NavigationView
             Name="SideBar"
             IsTitleBarAutoPaddingEnabled="False"
-            MenuItemsSource="{Binding Categories}"
             ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}"
-            SelectedItem="{Binding SelectedCategory, Mode=TwoWay, Converter={StaticResource SelectedCategoryConverter}}"
             IsBackEnabled="{Binding IsBackButtonEnabled}"
             ItemInvoked="SideBar_ItemInvoked"
             BackRequested="SideBar_BackRequested">
-
-            <muxc:NavigationView.MenuItemTemplate>
-                <DataTemplate x:DataType="models:Category">
-                    <muxc:NavigationViewItem Content="{x:Bind Name}" Tag="{x:Bind Uuid}">
-                        <muxc:NavigationViewItem.Icon>
-                            <FontIcon Glyph="{x:Bind Icon}" />
-                        </muxc:NavigationViewItem.Icon>
-                    </muxc:NavigationViewItem>
-                </DataTemplate>
-            </muxc:NavigationView.MenuItemTemplate>
 
             <muxc:NavigationView.PaneFooter>
                 <StackPanel>

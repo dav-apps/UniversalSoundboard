@@ -128,37 +128,6 @@ namespace UniversalSoundBoard.Converters
         }
     }
 
-    public class SelectedCategoryConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            // Get the index and return the category from the categories list at the index
-            int index = (int) value;
-
-            if(FileManager.itemViewHolder.Categories.Count > index)
-                return FileManager.itemViewHolder.Categories[index];
-            else if(FileManager.itemViewHolder.Categories.Count == 0)
-                return null;
-            else
-                return FileManager.itemViewHolder.Categories[0];
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            // Get the category and return the index
-            var category = value as Category;
-
-            int i = 0;
-            foreach(Category cat in FileManager.itemViewHolder.Categories)
-            {
-                if (cat == category)
-                    return i;
-                i++;
-            }
-            return 0;
-        }
-    }
-
     public class FileToBitmapImageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

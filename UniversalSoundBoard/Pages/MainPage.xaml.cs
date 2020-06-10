@@ -55,12 +55,12 @@ namespace UniversalSoundBoard.Pages
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
             
             FileManager.itemViewHolder.Page = typeof(SoundPage);
-            SideBar.MenuItemsSource = FileManager.itemViewHolder.Categories;
 
             InitializeAccountSettings();
             AdjustLayout();
 
             await FileManager.CreateCategoriesListAsync();
+            LoadCategoriesMenuItems();
             await FileManager.CreatePlayingSoundsListAsync();
             await FileManager.ShowAllSoundsAsync();
 
@@ -238,6 +238,37 @@ namespace UniversalSoundBoard.Pages
             }
         }
 
+        private void LoadCategoriesMenuItems()
+        {
+            SideBar.MenuItems.Clear();
+
+            foreach (var menuItem in CreateCategoriesMenuItems(FileManager.itemViewHolder.Categories.ToList()))
+                SideBar.MenuItems.Add(menuItem);
+        }
+
+        private List<MUXC.NavigationViewItem> CreateCategoriesMenuItems(List<Category> categories)
+        {
+            List<MUXC.NavigationViewItem> menuItems = new List<MUXC.NavigationViewItem>();
+
+            foreach (var category in categories)
+            {
+                MUXC.NavigationViewItem item = new MUXC.NavigationViewItem();
+                item.Tag = category.Uuid;
+                item.Content = category.Name;
+
+                var icon = new FontIcon();
+                icon.Glyph = category.Icon;
+                item.Icon = icon;
+
+                foreach (var childItem in CreateCategoriesMenuItems(category.Children))
+                    item.MenuItems.Add(childItem);
+
+                menuItems.Add(item);
+            }
+
+            return menuItems;
+        }
+
         #region EventHandlers
         private async void SideBar_BackRequested(MUXC.NavigationView sender, MUXC.NavigationViewBackRequestedEventArgs args)
         {
@@ -251,7 +282,6 @@ namespace UniversalSoundBoard.Pages
         private async void SideBar_ItemInvoked(MUXC.NavigationView sender, MUXC.NavigationViewItemInvokedEventArgs args)
         {
             FileManager.itemViewHolder.SelectedSounds.Clear();
-
             FileManager.ResetSearchArea();
 
             // Display all Sounds with the selected category
@@ -267,12 +297,14 @@ namespace UniversalSoundBoard.Pages
             else
             {
                 // Find the selected category in the categories list and set selectedCategory
-                var category = (Category)sender.SelectedItem;
-                int newSelectedCategory = FileManager.itemViewHolder.Categories.ToList().FindIndex(c => c.Uuid == category.Uuid);
+                var selectedItem = sender.SelectedItem as MUXC.NavigationViewItem;
+                Guid categoryUuid = (Guid)selectedItem.Tag;
+                int newSelectedCategory = FileManager.itemViewHolder.Categories.ToList().FindIndex(c => c.Uuid == categoryUuid);
 
-                if (newSelectedCategory == FileManager.itemViewHolder.SelectedCategory
-                    && FileManager.itemViewHolder.Page == typeof(SoundPage))
-                    return;
+                if (
+                    newSelectedCategory == FileManager.itemViewHolder.SelectedCategory
+                    && FileManager.itemViewHolder.Page == typeof(SoundPage)
+                ) return;
 
                 FileManager.itemViewHolder.SelectedCategory = newSelectedCategory;
                 optionsVisible = true;
@@ -280,7 +312,7 @@ namespace UniversalSoundBoard.Pages
                 if (FileManager.itemViewHolder.SelectedCategory == 0)
                     await FileManager.ShowAllSoundsAsync();
                 else
-                    await FileManager.ShowCategoryAsync(category.Uuid);
+                    await FileManager.ShowCategoryAsync(categoryUuid);
             }
 
             Bindings.Update();
@@ -695,15 +727,9 @@ namespace UniversalSoundBoard.Pages
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
             string icon = typeItem.Content.ToString();
 
-            Category category = new Category
-            {
-                Name = ContentDialogs.NewCategoryTextBox.Text,
-                Icon = icon
-            };
+            await FileManager.AddCategoryAsync(Guid.Empty, Guid.Empty, ContentDialogs.NewCategoryTextBox.Text, icon);
 
-            await FileManager.AddCategoryAsync(Guid.Empty, category.Name, category.Icon);
-
-            // Show new category
+            // Navigate to the new category
             await FileManager.ShowCategoryAsync(FileManager.itemViewHolder.Categories.Last().Uuid);
         }
 
