@@ -15,22 +15,22 @@ namespace UniversalSoundBoard.DataAccess
     public class DatabaseOperations
     {
         #region General Methods
-        public static async Task<TableObject> GetObjectAsync(Guid uuid)
+        public static async Task<TableObject> GetTableObjectAsync(Guid uuid)
         {
             return await Dav.Database.GetTableObjectAsync(uuid);
         }
 
-        public static async Task<List<TableObject>> GetObjectsByPropertyAsync(string propertyName, string propertyValue)
+        public static async Task<List<TableObject>> GetTableObjectsByPropertyAsync(string propertyName, string propertyValue)
         {
             return await Dav.Database.GetTableObjectsByPropertyAsync(propertyName, propertyValue);
         }
 
-        public static async Task<bool> ObjectExistsAsync(Guid uuid)
+        public static async Task<bool> TableObjectExistsAsync(Guid uuid)
         {
             return await Dav.Database.TableObjectExistsAsync(uuid);
         }
 
-        public static async Task DeleteObjectAsync(Guid uuid)
+        public static async Task DeleteTableObjectAsync(Guid uuid)
         {
             // Get the object and delete it
             var tableObject = await Dav.Database.GetTableObjectAsync(uuid);
@@ -40,20 +40,20 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Sound
-        public static async Task AddSoundAsync(Guid uuid, string name, string soundUuid, List<string> categoryUuids)
+        public static async Task<TableObject> CreateSoundAsync(Guid uuid, string name, bool favourite, Guid soundUuid, List<Guid> categoryUuids)
         {
             // Create TableObject with sound informations and TableObject with the Soundfile
             var properties = new List<Property>
             {
                 new Property{ Name = FileManager.SoundTableNamePropertyName, Value = name },
-                new Property{ Name = FileManager.SoundTableFavouritePropertyName, Value = bool.FalseString },
-                new Property{ Name = FileManager.SoundTableSoundUuidPropertyName, Value = soundUuid }
+                new Property{ Name = FileManager.SoundTableFavouritePropertyName, Value = favourite.ToString() },
+                new Property{ Name = FileManager.SoundTableSoundUuidPropertyName, Value = soundUuid.ToString() }
             };
 
             if (categoryUuids != null)
                 properties.Add(new Property { Name = FileManager.SoundTableCategoryUuidPropertyName, Value = string.Join(",", categoryUuids) });
 
-            await TableObject.CreateAsync(uuid, FileManager.SoundTableId, properties);
+            return await TableObject.CreateAsync(uuid, FileManager.SoundTableId, properties);
         }
 
         public static async Task<List<TableObject>> GetAllSoundsAsync()
@@ -61,22 +61,18 @@ namespace UniversalSoundBoard.DataAccess
             return await Dav.Database.GetAllTableObjectsAsync(FileManager.SoundTableId, false);
         }
 
-        public static async Task UpdateSoundAsync(Guid uuid, string name, string favourite, string soundUuid, string imageUuid, List<string> categoryUuids)
+        public static async Task UpdateSoundAsync(Guid uuid, string name, bool? favourite, Guid? imageUuid, List<Guid> categoryUuids)
         {
             // Get the sound table object
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-
-            if (soundTableObject == null) return;
-            if (soundTableObject.TableId != FileManager.SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != FileManager.SoundTableId) return;
 
             if (!string.IsNullOrEmpty(name))
                 await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableNamePropertyName, name);
-            if (!string.IsNullOrEmpty(favourite))
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableFavouritePropertyName, favourite);
-            if (!string.IsNullOrEmpty(soundUuid))
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableSoundUuidPropertyName, soundUuid);
-            if (!string.IsNullOrEmpty(imageUuid))
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableImageUuidPropertyName, imageUuid);
+            if (favourite.HasValue)
+                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableFavouritePropertyName, favourite.Value.ToString());
+            if (imageUuid.HasValue)
+                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableImageUuidPropertyName, imageUuid.Value.ToString());
             if (categoryUuids != null)
                 await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableCategoryUuidPropertyName, string.Join(",", categoryUuids));
         }
@@ -84,9 +80,7 @@ namespace UniversalSoundBoard.DataAccess
         public static async Task DeleteSoundAsync(Guid uuid)
         {
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-
-            if (soundTableObject == null) return;
-            if (soundTableObject.TableId != FileManager.SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != FileManager.SoundTableId) return;
 
             // Delete the sound file and the image file
             Guid? soundFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
@@ -111,9 +105,9 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region SoundFile
-        public static async Task AddSoundFileAsync(Guid uuid, StorageFile audioFile)
+        public static async Task<TableObject> CreateSoundFileAsync(Guid uuid, StorageFile audioFile)
         {
-            await TableObject.CreateAsync(uuid, FileManager.SoundFileTableId, new FileInfo(audioFile.Path));
+            return await TableObject.CreateAsync(uuid, FileManager.SoundFileTableId, new FileInfo(audioFile.Path));
         }
 
         public static async Task<List<TableObject>> GetAllSoundFilesAsync()
@@ -123,24 +117,22 @@ namespace UniversalSoundBoard.DataAccess
         #endregion SoundFile
 
         #region ImageFile
-        public static async Task AddImageFileAsync(Guid uuid, StorageFile imageFile)
+        public static async Task<TableObject> CreateImageFileAsync(Guid uuid, StorageFile imageFile)
         {
-            await TableObject.CreateAsync(uuid, FileManager.ImageFileTableId, new FileInfo(imageFile.Path));
+            return await TableObject.CreateAsync(uuid, FileManager.ImageFileTableId, new FileInfo(imageFile.Path));
         }
 
         public static async Task UpdateImageFileAsync(Guid uuid, StorageFile imageFile)
         {
             var imageFileTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-
-            if (imageFileTableObject == null) return;
-            if (imageFileTableObject.TableId != FileManager.ImageFileTableId) return;
+            if (imageFileTableObject == null || imageFileTableObject.TableId != FileManager.ImageFileTableId) return;
 
             await imageFileTableObject.SetFileAsync(new FileInfo(imageFile.Path));
         }
         #endregion
 
         #region Category
-        public static async Task AddCategoryAsync(Guid uuid, Guid parent, string name, string icon)
+        public static async Task<TableObject> CreateCategoryAsync(Guid uuid, Guid? parent, string name, string icon)
         {
             List<Property> properties = new List<Property>
             {
@@ -148,10 +140,10 @@ namespace UniversalSoundBoard.DataAccess
                 new Property{ Name = FileManager.CategoryTableIconPropertyName, Value = icon }
             };
 
-            if (!Equals(Guid.Empty, parent))
-                properties.Add(new Property { Name = FileManager.CategoryTableParentPropertyName, Value = parent.ToString() });
+            if (parent.HasValue)
+                properties.Add(new Property { Name = FileManager.CategoryTableParentPropertyName, Value = parent.Value.ToString() });
 
-            await TableObject.CreateAsync(uuid, FileManager.CategoryTableId, properties);
+            return await TableObject.CreateAsync(uuid, FileManager.CategoryTableId, properties);
         }
 
         public static async Task<List<TableObject>> GetAllCategoriesAsync()
@@ -162,30 +154,36 @@ namespace UniversalSoundBoard.DataAccess
         public static async Task UpdateCategoryAsync(Guid uuid, string name, string icon)
         {
             var categoryTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-
-            if (categoryTableObject == null) return;
-            if (categoryTableObject.TableId != FileManager.CategoryTableId) return;
+            if (categoryTableObject == null || categoryTableObject.TableId != FileManager.CategoryTableId) return;
 
             if (!string.IsNullOrEmpty(name))
                 await categoryTableObject.SetPropertyValueAsync(FileManager.CategoryTableNamePropertyName, name);
             if (!string.IsNullOrEmpty(icon))
                 await categoryTableObject.SetPropertyValueAsync(FileManager.CategoryTableIconPropertyName, icon);
         }
+
+        public static async Task DeleteCategoryAsync(Guid uuid)
+        {
+            var categoryTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (categoryTableObject == null || categoryTableObject.TableId != FileManager.CategoryTableId) return;
+
+            await categoryTableObject.DeleteAsync();
+        }
         #endregion
 
         #region PlayingSound
-        public static async Task AddPlayingSoundAsync(Guid uuid, List<string> soundIds, int current, int repetitions, bool randomly, double volume)
+        public static async Task<TableObject> CreatePlayingSoundAsync(Guid uuid, List<Guid> soundUuids, int current, int repetitions, bool randomly, double volume)
         {
             var properties = new List<Property>
             {
-                new Property{Name = FileManager.PlayingSoundTableSoundIdsPropertyName, Value = string.Join(",", soundIds)},
-                new Property{Name = FileManager.PlayingSoundTableCurrentPropertyName, Value = current.ToString()},
-                new Property{Name = FileManager.PlayingSoundTableRepetitionsPropertyName, Value = repetitions.ToString()},
-                new Property{Name = FileManager.PlayingSoundTableRandomlyPropertyName, Value = randomly.ToString()},
-                new Property{Name = FileManager.PlayingSoundTableVolumePropertyName, Value = volume.ToString()}
+                new Property{ Name = FileManager.PlayingSoundTableSoundIdsPropertyName, Value = string.Join(",", soundUuids) },
+                new Property{ Name = FileManager.PlayingSoundTableCurrentPropertyName, Value = current.ToString() },
+                new Property{ Name = FileManager.PlayingSoundTableRepetitionsPropertyName, Value = repetitions.ToString() },
+                new Property{ Name = FileManager.PlayingSoundTableRandomlyPropertyName, Value = randomly.ToString() },
+                new Property{ Name = FileManager.PlayingSoundTableVolumePropertyName, Value = volume.ToString() }
             };
 
-            await TableObject.CreateAsync(uuid, FileManager.PlayingSoundTableId, properties);
+            return await TableObject.CreateAsync(uuid, FileManager.PlayingSoundTableId, properties);
         }
 
         public static async Task<List<TableObject>> GetAllPlayingSoundsAsync()
@@ -193,23 +191,37 @@ namespace UniversalSoundBoard.DataAccess
             return await Dav.Database.GetAllTableObjectsAsync(FileManager.PlayingSoundTableId, false);
         }
 
-        public static async Task UpdatePlayingSoundAsync(Guid uuid, List<string> soundIds, string current, string repetitions, string randomly, string volume)
+        public static async Task<TableObject> GetPlayingSoundAsync(Guid uuid)
+        {
+            var tableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (tableObject == null || tableObject.TableId != FileManager.PlayingSoundTableId) return null;
+
+            return tableObject;
+        }
+
+        public static async Task UpdatePlayingSoundAsync(Guid uuid, List<Guid> soundUuids, int? current, int? repetitions, bool? randomly, double? volume)
         {
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != FileManager.PlayingSoundTableId) return;
 
-            if (playingSoundTableObject == null) return;
-            if (playingSoundTableObject.TableId != FileManager.PlayingSoundTableId) return;
+            if (soundUuids != null)
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableSoundIdsPropertyName, string.Join(",", soundUuids));
+            if (current.HasValue)
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableCurrentPropertyName, current.Value.ToString());
+            if (repetitions.HasValue)
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableRepetitionsPropertyName, repetitions.Value.ToString());
+            if (randomly.HasValue)
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableRandomlyPropertyName, randomly.Value.ToString());
+            if (volume.HasValue)
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableVolumePropertyName, volume.Value.ToString());
+        }
 
-            if (soundIds != null)
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableSoundIdsPropertyName, string.Join(",", soundIds));
-            if (!string.IsNullOrEmpty(current))
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableCurrentPropertyName, current);
-            if (!string.IsNullOrEmpty(repetitions))
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableRepetitionsPropertyName, repetitions);
-            if (!string.IsNullOrEmpty(randomly))
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableRandomlyPropertyName, randomly);
-            if (!string.IsNullOrEmpty(volume))
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableVolumePropertyName, volume);
+        public static async Task DeletePlayingSound(Guid uuid)
+        {
+            var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != FileManager.PlayingSoundTableId) return;
+
+            await playingSoundTableObject.DeleteAsync();
         }
         #endregion
 
