@@ -9,194 +9,84 @@ using Windows.UI;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
 using UniversalSoundBoard.DataAccess;
-using UniversalSoundboard.Pages;
 using Windows.UI.Xaml.Media;
 using UniversalSoundBoard.Common;
-using System.Diagnostics;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using MUXC = Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.Resources;
+using Windows.Foundation;
 
 namespace UniversalSoundBoard.Pages
 {
     public sealed partial class MainPage : Page
     {
-        int sideBarCollapsedMaxWidth = FileManager.sideBarCollapsedMaxWidth;
-        public static CoreDispatcher dispatcher;
-
-        bool skipVolumeSliderValueChangedEvent = false;
-        bool optionsVisible = true;
+        readonly ResourceLoader loader = new ResourceLoader();
+        public static CoreDispatcher dispatcher;    // Dispatcher for ShareTargetPage
+        private Guid selectedCategory = Guid.Empty; // The category that was right clicked for the flyout
+        public static ObservableCollection<Sound> PlaySoundsList = new ObservableCollection<Sound>();   // The sounds that are shown in the Play All Dialog
+        private List<string> Suggestions = new List<string>();  // The suggestions for the SearchAutoSuggestBox
+        private List<StorageFile> sharedFiles = new List<StorageFile>();    // The files that get shared
+        bool skipVolumeSliderValueChangedEvent = false;     // If true, the value changed event won't be executed for the volume sliders
+        bool selectionButtonsEnabled = false;               // If true, the buttons for multi selection are enabled
         private bool downloadFileIsExecuting = false;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
-        public static ObservableCollection<Sound> PlaySoundsList;
-        private List<string> Suggestions;
-        private List<StorageFile> selectedFiles = new List<StorageFile>();
-        private Guid selectedCategory = Guid.Empty;
-
 
         public MainPage()
         {
             InitializeComponent();
-            Loaded += MainPage_Loaded;
-            dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
-            PlaySoundsList = new ObservableCollection<Sound>();
-            Suggestions = new List<string>();
-
-            InitializeLocalSettings();
             CustomiseTitleBar();
-            InitializeLayout();
+            InitLayout();
+
+            RootGrid.DataContext = FileManager.itemViewHolder;
+            dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
+
+            SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
+            FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
         }
 
+        #region Page event handlers
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            SetDataContext();
-            SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
-            
-            FileManager.itemViewHolder.Page = typeof(SoundPage);
-
-            InitializeAccountSettings();
-            AdjustLayout();
-
+            // Load the Categories and the menu items
             await FileManager.CreateCategoriesListAsync();
-            LoadCategoriesMenuItems();
+            LoadMenuItems();
+
+            // Load the PlayingSounds
             await FileManager.CreatePlayingSoundsListAsync();
+
+            // Load the Sounds
             await FileManager.ShowAllSoundsAsync();
 
+            // Load the user details and start the sync
             await FileManager.itemViewHolder.User.InitAsync();
+
+            // Set the values of the volume sliders
+            VolumeSlider.Value = FileManager.itemViewHolder.Volume;
+            VolumeSlider2.Value = FileManager.itemViewHolder.Volume;
         }
 
-        private void SetDataContext()
+        async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
         {
-            RootGrid.DataContext = FileManager.itemViewHolder;
-        }
-        
-        private async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
-        {
-            await FileManager.GoBackAsync();
+            await GoBack();
             e.Handled = true;
         }
 
-        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             AdjustLayout();
         }
 
-        public void InitializeAccountSettings()
+        private void SelectedSounds_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
         {
-            FileManager.itemViewHolder.LoginMenuItemVisibility = !FileManager.itemViewHolder.User.IsLoggedIn;
+            selectionButtonsEnabled = FileManager.itemViewHolder.SelectedSounds.Count > 0;
+            Bindings.Update();
         }
-        
-        private void InitializeLocalSettings()
-        {
-            var localSettings = ApplicationData.Current.LocalSettings;
-            if (localSettings.Values[FileManager.playingSoundsListVisibleKey] == null)
-            {
-                localSettings.Values[FileManager.playingSoundsListVisibleKey] = FileManager.playingSoundsListVisibleDefault;
-                FileManager.itemViewHolder.PlayingSoundsListVisibility = FileManager.playingSoundsListVisibleDefault ? Visibility.Visible : Visibility.Collapsed;
-            }
-            else
-            {
-                FileManager.itemViewHolder.PlayingSoundsListVisibility = (bool)localSettings.Values[FileManager.playingSoundsListVisibleKey] ? Visibility.Visible : Visibility.Collapsed;
-            }
+        #endregion
 
-            if (localSettings.Values[FileManager.playOneSoundAtOnceKey] == null)
-            {
-                localSettings.Values[FileManager.playOneSoundAtOnceKey] = FileManager.playOneSoundAtOnceDefault;
-                FileManager.itemViewHolder.PlayOneSoundAtOnce = FileManager.playOneSoundAtOnceDefault;
-            }
-            else
-            {
-                FileManager.itemViewHolder.PlayOneSoundAtOnce = (bool)localSettings.Values[FileManager.playOneSoundAtOnceKey];
-            }
-
-            if (localSettings.Values[FileManager.liveTileKey] == null)
-            {
-                localSettings.Values[FileManager.liveTileKey] = FileManager.liveTileDefault;
-            }
-
-            if(localSettings.Values[FileManager.showListViewKey] == null)
-            {
-                localSettings.Values[FileManager.showListViewKey] = FileManager.showListViewDefault;
-                FileManager.itemViewHolder.ShowListView = FileManager.showListViewDefault;
-            }
-            else
-            {
-                FileManager.itemViewHolder.ShowListView = (bool)localSettings.Values[FileManager.showListViewKey];
-            }
-
-            if (localSettings.Values[FileManager.showCategoryIconKey] == null)
-            {
-                localSettings.Values[FileManager.showCategoryIconKey] = FileManager.showCategoryIconDefault;
-                FileManager.itemViewHolder.ShowCategoryIcon = FileManager.showCategoryIconDefault;
-            }
-            else
-            {
-                FileManager.itemViewHolder.ShowCategoryIcon = (bool)localSettings.Values[FileManager.showCategoryIconKey];
-            }
-
-            if (localSettings.Values[FileManager.showSoundsPivotKey] == null)
-            {
-                localSettings.Values[FileManager.showSoundsPivotKey] = FileManager.showSoundsPivotDefault;
-                FileManager.itemViewHolder.ShowSoundsPivot = FileManager.showSoundsPivotDefault;
-            }
-            else
-            {
-                FileManager.itemViewHolder.ShowSoundsPivot = (bool)localSettings.Values[FileManager.showSoundsPivotKey];
-            }
-
-            if(localSettings.Values[FileManager.savePlayingSoundsKey] == null)
-            {
-                localSettings.Values[FileManager.savePlayingSoundsKey] = FileManager.savePlayingSoundsDefault;
-                FileManager.itemViewHolder.SavePlayingSounds = FileManager.savePlayingSoundsDefault;
-            }
-            else
-            {
-                FileManager.itemViewHolder.SavePlayingSounds = (bool)localSettings.Values[FileManager.savePlayingSoundsKey];
-            }
-
-            if (localSettings.Values["volume"] == null)
-            {
-                localSettings.Values["volume"] = FileManager.volumeDefault;
-            }
-            double volume = (double)localSettings.Values["volume"] * 100;
-            VolumeSlider.Value = volume;
-            VolumeSlider2.Value = volume;
-
-            if (localSettings.Values[FileManager.showAcrylicBackgroundKey] == null)
-            {
-                localSettings.Values[FileManager.showAcrylicBackgroundKey] = FileManager.showAcrylicBackgroundDefault;
-                FileManager.itemViewHolder.ShowAcrylicBackground = FileManager.showAcrylicBackgroundDefault;
-            }
-            else
-            {
-                FileManager.itemViewHolder.ShowAcrylicBackground = (bool)localSettings.Values[FileManager.showAcrylicBackgroundKey];
-            }
-
-            if(localSettings.Values[FileManager.soundOrderKey] == null)
-            {
-                localSettings.Values[FileManager.soundOrderKey] = (int)FileManager.soundOrderDefault;
-                FileManager.itemViewHolder.SoundOrder = FileManager.soundOrderDefault;
-            }
-            else
-            {
-                FileManager.itemViewHolder.SoundOrder = (FileManager.SoundOrder)localSettings.Values[FileManager.soundOrderKey];
-            }
-
-            if(localSettings.Values[FileManager.soundOrderReversedKey] == null)
-            {
-                localSettings.Values[FileManager.soundOrderReversedKey] = FileManager.soundOrderReversedDefault;
-                FileManager.itemViewHolder.SoundOrderReversed = FileManager.soundOrderReversedDefault;
-            }
-            else
-            {
-                FileManager.itemViewHolder.SoundOrderReversed = (bool)localSettings.Values[FileManager.soundOrderReversedKey];
-            }
-        }
-        
         private void CustomiseTitleBar()
         {
             ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
@@ -210,17 +100,18 @@ namespace UniversalSoundBoard.Pages
             Window.Current.SetTitleBar(TitleBar);
         }
 
-        private void InitializeLayout()
+        private void InitLayout()
         {
-            Color appThemeColor = FileManager.GetApplicationThemeColor();
+            SideBar.ExpandedModeThresholdWidth = FileManager.sideBarCollapsedMaxWidth;
 
             // Set the background of the sidebar content
-            SideBar.Background = new SolidColorBrush(appThemeColor);
+            SideBar.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
 
-            // Initialize the Acrylic background of the SideBar
+            // Initialize the acrylic background of the SideBar
             Application.Current.Resources["NavigationViewExpandedPaneBackground"] = new AcrylicBrush();
 
             FileManager.UpdateLayoutColors();
+            AdjustLayout();
         }
 
         private void AdjustLayout()
@@ -228,7 +119,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.AdjustLayout();
 
             // Set the width of the title bar and the position of the title, depending on whether the Hamburger button of the NavigationView is visible
-            if(SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Minimal)
+            if (SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Minimal)
             {
                 TitleBar.Width = Window.Current.Bounds.Width - 80;
                 WindowTitleTextBox.Margin = new Thickness(97, 12, 0, 0);
@@ -240,15 +131,15 @@ namespace UniversalSoundBoard.Pages
             }
         }
 
-        private void LoadCategoriesMenuItems()
+        private void LoadMenuItems()
         {
             SideBar.MenuItems.Clear();
 
-            foreach (var menuItem in CreateCategoriesMenuItems(FileManager.itemViewHolder.Categories.ToList()))
+            foreach (var menuItem in CreateMenuItemsforCategories(FileManager.itemViewHolder.Categories.ToList()))
                 SideBar.MenuItems.Add(menuItem);
         }
 
-        private List<MUXC.NavigationViewItem> CreateCategoriesMenuItems(List<Category> categories)
+        private List<MUXC.NavigationViewItem> CreateMenuItemsforCategories(List<Category> categories)
         {
             List<MUXC.NavigationViewItem> menuItems = new List<MUXC.NavigationViewItem>();
 
@@ -264,7 +155,7 @@ namespace UniversalSoundBoard.Pages
 
                 item.RightTapped += NavigationViewMenuItem_RightTapped;
 
-                foreach (var childItem in CreateCategoriesMenuItems(category.Children))
+                foreach (var childItem in CreateMenuItemsforCategories(category.Children))
                     item.MenuItems.Add(childItem);
 
                 menuItems.Add(item);
@@ -273,70 +164,45 @@ namespace UniversalSoundBoard.Pages
             return menuItems;
         }
 
-        #region EventHandlers
-        private async void SideBar_BackRequested(MUXC.NavigationView sender, MUXC.NavigationViewBackRequestedEventArgs args)
+        private async Task GoBack()
         {
-            // Show the options
-            optionsVisible = true;
-            Bindings.Update();
-
             await FileManager.GoBackAsync();
+            AdjustLayout();
         }
-        
+
+        #region SideBar
         private async void SideBar_ItemInvoked(MUXC.NavigationView sender, MUXC.NavigationViewItemInvokedEventArgs args)
         {
             FileManager.itemViewHolder.SelectedSounds.Clear();
             FileManager.ResetSearchArea();
 
-            // Display all Sounds with the selected category
-            if (args.IsSettingsInvoked == true)
+            if (args.IsSettingsInvoked)
             {
-                FileManager.itemViewHolder.Page = typeof(SettingsPage);
-                FileManager.itemViewHolder.Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("Settings-Title");
-                FileManager.itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
-                FileManager.itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
-                FileManager.itemViewHolder.IsBackButtonEnabled = true;
-                optionsVisible = false;
+                // Show the Settings page
+                FileManager.NavigateToSettingsPage();
             }
             else
             {
-                // Find the selected category in the categories list and set selectedCategory
-                var selectedItem = sender.SelectedItem as MUXC.NavigationViewItem;
-                Guid categoryUuid = (Guid)selectedItem.Tag;
-                int newSelectedCategory = FileManager.itemViewHolder.Categories.ToList().FindIndex(c => c.Uuid == categoryUuid);
+                // Show the selected category
+                Guid categoryUuid = (Guid)args.InvokedItemContainer.Tag;
 
-                if (
-                    newSelectedCategory == FileManager.itemViewHolder.SelectedCategory
-                    && FileManager.itemViewHolder.Page == typeof(SoundPage)
-                ) return;
-
-                FileManager.itemViewHolder.SelectedCategory = newSelectedCategory;
-                optionsVisible = true;
-
-                if (FileManager.itemViewHolder.SelectedCategory == 0)
+                if (Equals(categoryUuid, Guid.Empty))
                     await FileManager.ShowAllSoundsAsync();
                 else
                     await FileManager.ShowCategoryAsync(categoryUuid);
             }
-
-            Bindings.Update();
         }
 
         private void LogInMenuItem_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            FileManager.itemViewHolder.Title = (new Windows.ApplicationModel.Resources.ResourceLoader()).GetString("Account-Title");
-            FileManager.itemViewHolder.Page = typeof(AccountPage);
-            FileManager.itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
-            FileManager.itemViewHolder.PlayAllButtonVisibility = Visibility.Collapsed;
-            FileManager.itemViewHolder.IsBackButtonEnabled = true;
+            // Show the Account page
+            FileManager.NavigateToAccountPage();
 
-            if (SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Compact ||
-                SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Minimal)
-                SideBar.IsPaneOpen = false;
-
-            // Hide the options
-            optionsVisible = false;
-            Bindings.Update();
+            // Close the SideBar if it was open on mobile
+            if (
+                SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Compact
+                || SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Minimal
+            ) SideBar.IsPaneOpen = false;
         }
 
         private void NavigationViewMenuItem_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
@@ -344,377 +210,22 @@ namespace UniversalSoundBoard.Pages
             e.Handled = true;
             selectedCategory = (Guid)((MUXC.NavigationViewItem)sender).Tag;
 
-            // Show flyout for category menu item
-            var loader = new ResourceLoader();
-            MenuFlyout flyout = new MenuFlyout();
-
-            MenuFlyoutItem createSubCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-AddSubCategory") };
-            createSubCategoryFlyoutItem.Click += CreateSubCategoryFlyoutItem_Click;
-            flyout.Items.Add(createSubCategoryFlyoutItem);
-
-            flyout.ShowAt((UIElement)sender, e.GetPosition(sender as UIElement));
+            // Show flyout for the category menu item
+            ShowCategoryOptionsFlyout((UIElement)sender, e.GetPosition(sender as UIElement));
         }
 
-        private async void CreateSubCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void SideBar_BackRequested(MUXC.NavigationView sender, MUXC.NavigationViewBackRequestedEventArgs args)
         {
-            var newSubCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(selectedCategory);
-            newSubCategoryContentDialog.PrimaryButtonClick += NewSubCategoryContentDialog_PrimaryButtonClick;
-            await newSubCategoryContentDialog.ShowAsync();
+            await GoBack();
         }
+        #endregion
 
+        #region Edit Category
         private async void CategoryEditButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             var editCategoryContentDialog = ContentDialogs.CreateEditCategoryContentDialogAsync();
             editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
             await editCategoryContentDialog.ShowAsync();
-        }
-
-        private async void CategoryDeleteButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
-        {
-            var deleteCategoryContentDialog = ContentDialogs.CreateDeleteCategoryContentDialogAsync();
-            deleteCategoryContentDialog.PrimaryButtonClick += DeleteCategoryContentDialog_PrimaryButtonClick;
-            await deleteCategoryContentDialog.ShowAsync();
-        }
-
-        private async void CategoryPlayAllButton_Click(object sender, RoutedEventArgs e)
-        {
-            PlaySoundsList.Clear();
-
-            // If favourite sounds is selected or Favourite sounds are hiding
-            if (SoundPage.soundsPivotSelected || !FileManager.itemViewHolder.ShowSoundsPivot)
-            {
-                foreach (Sound sound in FileManager.itemViewHolder.Sounds)
-                    PlaySoundsList.Add(sound);
-            }
-            else
-            {
-                foreach (Sound sound in FileManager.itemViewHolder.FavouriteSounds)
-                    PlaySoundsList.Add(sound);
-            }
-
-            var template = (DataTemplate)Resources["SoundItemTemplate"];
-            var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
-            var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(PlaySoundsList, template, listViewItemStyle);
-            playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
-            await playSoundsSuccessivelyContentDialog.ShowAsync();
-        }
-        
-        private void VolumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
-        {
-            var volumeSlider = sender as Slider;
-            double newValue = e.NewValue;
-            double oldValue = e.OldValue;
-
-            if (!skipVolumeSliderValueChangedEvent)
-            {
-                // Change Volume of MediaPlayers
-                double addedValue = newValue - oldValue;
-
-                foreach (PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
-                {
-                    if ((playingSound.MediaPlayer.Volume + addedValue / 100) > 1)
-                        playingSound.MediaPlayer.Volume = 1;
-                    else if ((playingSound.MediaPlayer.Volume + addedValue / 100) < 0)
-                        playingSound.MediaPlayer.Volume = 0;
-                    else
-                        playingSound.MediaPlayer.Volume += addedValue / 100;
-                }
-
-                // Save new Volume
-                var localSettings = ApplicationData.Current.LocalSettings;
-                localSettings.Values["volume"] = volumeSlider.Value / 100;
-            }
-
-            skipVolumeSliderValueChangedEvent = true;
-            if (volumeSlider == VolumeSlider)
-                VolumeSlider2.Value = newValue;
-            else
-                VolumeSlider.Value = newValue;
-            skipVolumeSliderValueChangedEvent = false;
-        }
-        
-        private async void VolumeSlider_LostFocus(object sender, RoutedEventArgs e)
-        {
-            // Save the new volume of all playing sounds
-            foreach (PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
-                await FileManager.SetVolumeOfPlayingSoundAsync(playingSound.Uuid, playingSound.MediaPlayer.Volume);
-        }
-        
-        private async void NewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            // Open file explorer
-            var picker = new Windows.Storage.Pickers.FileOpenPicker
-            {
-                ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
-                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary
-            };
-            foreach (var fileType in FileManager.allowedFileTypes)
-                picker.FileTypeFilter.Add(fileType);
-
-            var files = await picker.PickMultipleFilesAsync();
-
-            if (files.Any())
-            {
-                FileManager.itemViewHolder.LoadingScreenMessage = new ResourceLoader().GetString("AddSoundsMessage");
-                FileManager.itemViewHolder.LoadingScreenVisibility = true;
-                AddButton.IsEnabled = false;
-
-                // Application now has read/write access to the picked file(s)
-                foreach (StorageFile soundFile in files)
-                {
-                    int selectedCategory = FileManager.itemViewHolder.SelectedCategory;
-                    List<Guid> categoryUuids = new List<Guid>();
-
-                    if(selectedCategory != 0)
-                    {
-                        try
-                        {
-                            categoryUuids.Add(FileManager.itemViewHolder.Categories[selectedCategory].Uuid);
-                        }
-                        catch (Exception exception)
-                        {
-                            Debug.WriteLine(exception.Message);
-                        }
-                    }
-
-                    await FileManager.AddSoundAsync(Guid.Empty, soundFile.DisplayName, categoryUuids, soundFile);
-                    FileManager.itemViewHolder.AllSoundsChanged = true;
-                }
-
-                await FileManager.UpdateGridViewAsync();
-            }
-            AddButton.IsEnabled = true;
-            FileManager.itemViewHolder.LoadingScreenVisibility = false;
-        }
-        
-        private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(Guid.Empty);
-            newCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
-            await newCategoryContentDialog.ShowAsync();
-        }
-
-        private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
-        {
-            if (!FileManager.skipAutoSuggestBoxTextChanged)
-            {
-                string text = sender.Text;
-
-                if (FileManager.itemViewHolder.Page != typeof(SoundPage))
-                    FileManager.itemViewHolder.Page = typeof(SoundPage);
-
-                if (string.IsNullOrEmpty(text))
-                {
-                    await FileManager.ShowAllSoundsAsync();
-                    FileManager.itemViewHolder.SelectedCategory = 0;
-                    FileManager.itemViewHolder.Title = new ResourceLoader().GetString("AllSounds");
-                }
-                else
-                {
-                    FileManager.itemViewHolder.Title = text;
-                    FileManager.itemViewHolder.SearchQuery = text;
-                    FileManager.itemViewHolder.SelectedCategory = 0;
-                    await FileManager.LoadSoundsByNameAsync(text);
-                    Suggestions = FileManager.itemViewHolder.AllSounds.Where(p => p.Name.ToLower().StartsWith(text.ToLower())).Select(p => p.Name).ToList();
-                    SearchAutoSuggestBox.ItemsSource = Suggestions;
-                    FileManager.itemViewHolder.IsBackButtonEnabled = true;
-                    FileManager.itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
-                }
-            }
-            FileManager.skipAutoSuggestBoxTextChanged = false;
-        }
-
-        private async void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
-        {
-            if (FileManager.itemViewHolder.Page != typeof(SoundPage))
-                FileManager.itemViewHolder.Page = typeof(SoundPage);
-
-            string text = sender.Text;
-            if (String.IsNullOrEmpty(text))
-            {
-                FileManager.itemViewHolder.Title = new ResourceLoader().GetString("AllSounds");
-            }
-            else
-            {
-                FileManager.itemViewHolder.Title = text;
-                FileManager.itemViewHolder.SearchQuery = text;
-                FileManager.itemViewHolder.EditButtonVisibility = Visibility.Collapsed;
-                await FileManager.LoadSoundsByNameAsync(text);
-            }
-
-            FileManager.CheckBackButtonVisibility();
-        }
-
-        private void SearchButton_Click(object sender, RoutedEventArgs e)
-        {
-            FileManager.itemViewHolder.IsBackButtonEnabled = true;
-            FileManager.itemViewHolder.SearchButtonVisibility = false;
-            FileManager.itemViewHolder.SearchAutoSuggestBoxVisibility = true;
-
-            // slightly delay setting focus
-            Task.Factory.StartNew(
-                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                    () => SearchAutoSuggestBox.Focus(FocusState.Programmatic)));
-        }
-
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            FileManager.SwitchSelectionMode();
-        }
-
-        private async void ShareButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (!await DownloadSelectedFiles()) return;
-
-            // Copy the files into the temp folder
-            selectedFiles.Clear();
-            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
-            {
-                StorageFile audioFile = await sound.GetAudioFileAsync();
-                if (audioFile == null) return;
-                string ext = await sound.GetAudioFileExtensionAsync();
-
-                if (string.IsNullOrEmpty(ext))
-                    ext = "mp3";
-
-                StorageFile tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + "." + ext, NameCollisionOption.ReplaceExisting);
-                selectedFiles.Add(tempFile);
-            }
-
-            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            DataTransferManager.ShowShareUI();
-        }
-
-        private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
-        {
-            if (selectedFiles.Count == 0) return;
-
-            var loader = new ResourceLoader();
-            string description = loader.GetString("ShareDialog-MultipleSounds");
-            if (selectedFiles.Count == 1)
-                description = selectedFiles.First().Name;
-
-            DataRequest request = args.Request;
-            request.Data.SetStorageItems(selectedFiles);
-            request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
-            request.Data.Properties.Description = description;
-        }
-
-        private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            downloadFileWasCanceled = true;
-            downloadFileIsExecuting = false;
-        }
-
-        private async void PlaySoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            bool oldPlayOneSoundAtOnce = FileManager.itemViewHolder.PlayOneSoundAtOnce;
-            FileManager.itemViewHolder.PlayOneSoundAtOnce = false;
-            foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
-            {
-                await SoundPage.PlaySoundAsync(sound);
-            }
-            FileManager.itemViewHolder.PlayOneSoundAtOnce = oldPlayOneSoundAtOnce;
-        }
-
-        private async void PlaySoundsSuccessivelyFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            PlaySoundsList.Clear();
-            foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
-                PlaySoundsList.Add(sound);
-
-            var template = (DataTemplate)Resources["SoundItemTemplate"];
-            var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
-            var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(PlaySoundsList, template, listViewItemStyle);
-            playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
-            await playSoundsSuccessivelyContentDialog.ShowAsync();
-        }
-
-        private async void MoreButton_SetCategory_Click(object sender, RoutedEventArgs e)
-        {
-            // Show the Set Category content dialog for multiple sounds
-            List<Sound> selectedSounds = new List<Sound>();
-            foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
-                selectedSounds.Add(sound);
-
-            var itemTemplate = (DataTemplate)Resources["SetCategoryItemTemplate"];
-            var SetCategoryContentDialog = ContentDialogs.CreateSetCategoryContentDialog(selectedSounds, itemTemplate);
-            SetCategoryContentDialog.PrimaryButtonClick += SetCategoryContentDialog_PrimaryButtonClick;
-            await SetCategoryContentDialog.ShowAsync();
-        }
-
-        private async void SetCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            FileManager.itemViewHolder.LoadingScreenMessage = new ResourceLoader().GetString("UpdateSoundsMessage");
-            FileManager.itemViewHolder.LoadingScreenVisibility = true;
-
-            // Get the selected categories from the SelectedCategories Dictionary in ContentDialogs
-            List<Guid> categoryUuids = new List<Guid>();
-            foreach (var entry in ContentDialogs.SelectedCategories)
-                if (entry.Value) categoryUuids.Add(entry.Key);
-
-            foreach(var sound in FileManager.itemViewHolder.SelectedSounds)
-                await FileManager.SetCategoriesOfSoundAsync(sound.Uuid, categoryUuids);
-
-            FileManager.itemViewHolder.LoadingScreenVisibility = false;
-            await FileManager.UpdateGridViewAsync();
-        }
-
-        private void VolumeFlyout_Click(object sender, RoutedEventArgs e)
-        {
-            VolumeFlyout.ContextFlyout.ShowAt(MoreButton);
-        }
-
-        private void SelectButton_Click(object sender, RoutedEventArgs e)
-        {
-            FileManager.SwitchSelectionMode();
-            FileManager.AdjustLayout();
-        }
-
-        private void MoreButton_SelectAllFlyout_Click(object sender, RoutedEventArgs e)
-        {
-            FileManager.itemViewHolder.TriggerSelectAllSoundsEvent(sender, e);
-        }
-
-        private async void MoreButton_ExportFlyout_Click(object sender, RoutedEventArgs e)
-        {
-            if (!await DownloadSelectedFiles()) return;
-
-            ObservableCollection<Sound> sounds = new ObservableCollection<Sound>();
-            foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
-                sounds.Add(sound);
-
-            var template = (DataTemplate)Resources["SoundItemTemplate"];
-            var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
-            var exportSoundsContentDialog = ContentDialogs.CreateExportSoundsContentDialog(sounds, template, listViewItemStyle);
-            exportSoundsContentDialog.PrimaryButtonClick += ExportSoundsContentDialog_PrimaryButtonClick;
-            await exportSoundsContentDialog.ShowAsync();
-        }
-
-        private async void MoreButton_DeleteSoundsFlyout_Click(object sender, RoutedEventArgs e)
-        {
-            var deleteSoundsContentDialog = ContentDialogs.CreateDeleteSoundsContentDialogAsync();
-            deleteSoundsContentDialog.PrimaryButtonClick += DeleteSoundsContentDialog_PrimaryButtonClick;
-            await deleteSoundsContentDialog.ShowAsync();
-        }
-        #endregion
-
-        #region ContentDialogs
-        private async void NewSubCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            // Get combobox value
-            ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
-            string icon = typeItem.Content.ToString();
-
-            await FileManager.AddCategoryAsync(Guid.Empty, selectedCategory, ContentDialogs.NewCategoryTextBox.Text, icon);
-
-            // Reload the categories menu items
-            LoadCategoriesMenuItems();
-
-            // Navigate to the new category
-            await FileManager.ShowCategoryAsync(FileManager.itemViewHolder.Categories.Last().Uuid);
         }
 
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -725,42 +236,175 @@ namespace UniversalSoundBoard.Pages
             string icon = typeItem.Content.ToString();
             string newName = ContentDialogs.EditCategoryTextBox.Text;
 
-            Category oldCategory = FileManager.itemViewHolder.Categories[FileManager.itemViewHolder.SelectedCategory];
-            Category newCategory = new Category(oldCategory.Uuid, newName, icon);
-
-            await FileManager.UpdateCategoryAsync(newCategory.Uuid, newCategory.Name, newCategory.Icon);
+            await FileManager.UpdateCategoryAsync(FileManager.itemViewHolder.SelectedCategory, newName, icon);
             FileManager.itemViewHolder.Title = newName;
+        }
+        #endregion
 
-            // Update page
-            FileManager.itemViewHolder.AllSoundsChanged = true;
-            await FileManager.UpdateGridViewAsync();
+        #region Delete Category
+        private async void CategoryDeleteButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            var deleteCategoryContentDialog = ContentDialogs.CreateDeleteCategoryContentDialogAsync();
+            deleteCategoryContentDialog.PrimaryButtonClick += DeleteCategoryContentDialog_PrimaryButtonClick;
+            await deleteCategoryContentDialog.ShowAsync();
         }
 
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            try
-            {
-                await FileManager.DeleteCategoryAsync(FileManager.itemViewHolder.Categories[FileManager.itemViewHolder.SelectedCategory].Uuid);
-            }
-            catch (Exception e)
-            {
-                Debug.WriteLine(e.Message);
-            }
-            FileManager.itemViewHolder.AllSoundsChanged = true;
+            await FileManager.DeleteCategoryAsync(FileManager.itemViewHolder.SelectedCategory);
+        }
+        #endregion
 
-            // Reload page
-            await FileManager.ShowAllSoundsAsync();
+        #region Play All / Play Sounds Successively / Play Sounds Simultaneously
+        private async void CategoryPlayAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            List<Sound> sounds = new List<Sound>();
+
+            // Check if it should play all sounds or the favourite sounds
+            if (SoundPage.soundsPivotSelected || !FileManager.itemViewHolder.ShowSoundsPivot)
+                foreach (Sound sound in FileManager.itemViewHolder.Sounds)
+                    PlaySoundsList.Add(sound);
+            else
+                foreach (Sound sound in FileManager.itemViewHolder.FavouriteSounds)
+                    PlaySoundsList.Add(sound);
+
+            var template = (DataTemplate)Resources["SoundItemTemplate"];
+            var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
+
+            var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(sounds, template, listViewItemStyle);
+            playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
+            await playSoundsSuccessivelyContentDialog.ShowAsync();
+        }
+
+        private async void PlaySoundsSuccessivelyFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            List<Sound> sounds = new List<Sound>();
+            foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
+                sounds.Add(sound);
+
+            var template = (DataTemplate)Resources["SoundItemTemplate"];
+            var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
+
+            var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(sounds, template, listViewItemStyle);
+            playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
+            await playSoundsSuccessivelyContentDialog.ShowAsync();
         }
 
         private async void PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            List<Sound> sounds = ContentDialogs.SoundsList.ToList();
             bool randomly = (bool)ContentDialogs.RandomCheckBox.IsChecked;
             int rounds = int.MaxValue;
+
             if (ContentDialogs.RepeatsComboBox.SelectedItem != ContentDialogs.RepeatsComboBox.Items.Last())
                 int.TryParse(ContentDialogs.RepeatsComboBox.SelectedValue.ToString(), out rounds);
 
-            await SoundPage.PlaySoundsAsync(sounds, rounds, randomly);
+            await SoundPage.PlaySoundsAsync(ContentDialogs.SoundsList.ToList(), rounds, randomly);
+        }
+
+        private async void PlaySoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            bool oldPlayOneSoundAtOnce = FileManager.itemViewHolder.PlayOneSoundAtOnce;
+
+            FileManager.itemViewHolder.PlayOneSoundAtOnce = false;
+            foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
+                await SoundPage.PlaySoundAsync(sound);
+
+            FileManager.itemViewHolder.PlayOneSoundAtOnce = oldPlayOneSoundAtOnce;
+        }
+        #endregion
+
+        #region Volume Slider
+        private void VolumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            if (skipVolumeSliderValueChangedEvent) return;
+
+            var volumeSlider = sender as Slider;
+            double newValue = e.NewValue;
+            double oldValue = e.OldValue;
+
+            // Change Volume of MediaPlayers
+            double addedValue = (newValue - oldValue) / 100;
+
+            foreach (PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
+            {
+                if ((playingSound.MediaPlayer.Volume + addedValue) > 1)
+                    playingSound.MediaPlayer.Volume = 1;
+                else if ((playingSound.MediaPlayer.Volume + addedValue) < 0)
+                    playingSound.MediaPlayer.Volume = 0;
+                else
+                    playingSound.MediaPlayer.Volume += addedValue;
+            }
+
+            // Save the new volume
+            FileManager.itemViewHolder.Volume = volumeSlider.Value / 100;
+
+            // Update the value of the other volume slider
+            skipVolumeSliderValueChangedEvent = true;
+
+            if (volumeSlider == VolumeSlider)
+                VolumeSlider2.Value = newValue;
+            else
+                VolumeSlider.Value = newValue;
+
+            skipVolumeSliderValueChangedEvent = false;
+        }
+
+        private async void VolumeSlider_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // Save the new volume of all playing sounds
+            foreach (PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
+                await FileManager.SetVolumeOfPlayingSoundAsync(playingSound.Uuid, playingSound.MediaPlayer.Volume);
+        }
+
+        private void VolumeFlyout_Click(object sender, RoutedEventArgs e)
+        {
+            VolumeFlyout.ContextFlyout.ShowAt(MoreButton);
+        }
+        #endregion
+
+        #region New Sounds
+        private async void NewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            // Open file explorer
+            var picker = new Windows.Storage.Pickers.FileOpenPicker
+            {
+                ViewMode = Windows.Storage.Pickers.PickerViewMode.List,
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary
+            };
+
+            foreach (var fileType in FileManager.allowedFileTypes)
+                picker.FileTypeFilter.Add(fileType);
+
+            var files = await picker.PickMultipleFilesAsync();
+
+            if (files.Any())
+            {
+                FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("AddSoundsMessage");
+                FileManager.itemViewHolder.LoadingScreenVisible = true;
+
+                // Get the category
+                Guid? selectedCategory = null;
+                if (!Equals(FileManager.itemViewHolder.SelectedCategory, Guid.Empty))
+                    selectedCategory = FileManager.itemViewHolder.SelectedCategory;
+
+                // Add all selected files
+                foreach (StorageFile soundFile in files)
+                {
+                    // Add the sound to the sound lists
+                    await FileManager.AddSound(await FileManager.CreateSoundAsync(null, soundFile.DisplayName, selectedCategory, soundFile));
+                }
+            }
+
+            FileManager.itemViewHolder.LoadingScreenVisible = false;
+        }
+        #endregion
+
+        #region New Category
+        private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(Guid.Empty);
+            newCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
+            await newCategoryContentDialog.ShowAsync();
         }
 
         private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -769,49 +413,148 @@ namespace UniversalSoundBoard.Pages
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
             string icon = typeItem.Content.ToString();
 
-            await FileManager.AddCategoryAsync(Guid.Empty, Guid.Empty, ContentDialogs.NewCategoryTextBox.Text, icon);
+            await FileManager.CreateCategoryAsync(null, null, ContentDialogs.NewCategoryTextBox.Text, icon);
 
             // Reload the categories menu items
-            LoadCategoriesMenuItems();
+            LoadMenuItems();
 
             // Navigate to the new category
-            await FileManager.ShowCategoryAsync(FileManager.itemViewHolder.Categories.Last().Uuid);
-        }
-
-        private async void ExportSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            List<Sound> soundsList = new List<Sound>();
-            foreach (var sound in ContentDialogs.SoundsList)
-                soundsList.Add(sound);
-
-            await FileManager.ExportSoundsAsync(soundsList, ContentDialogs.ExportSoundsAsZipCheckBox.IsChecked.Value, ContentDialogs.ExportSoundsFolder);
-        }
-
-        private async void DeleteSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            FileManager.itemViewHolder.LoadingScreenMessage = new ResourceLoader().GetString("DeleteSoundsMessage");
-            FileManager.itemViewHolder.LoadingScreenVisibility = true;
-
-            // Delete Sounds
-            List<Guid> soundUuids = new List<Guid>();
-            for (int i = 0; i < FileManager.itemViewHolder.SelectedSounds.Count; i++)
-                soundUuids.Add(FileManager.itemViewHolder.SelectedSounds.ElementAt(i).Uuid);
-
-            if (soundUuids.Count != 0)
-                await FileManager.DeleteSoundsAsync(soundUuids);
-
-            // Clear selected sounds list
-            FileManager.itemViewHolder.SelectedSounds.Clear();
-            FileManager.itemViewHolder.LoadingScreenVisibility = false;
-
-            await FileManager.UpdateGridViewAsync();
+            //await FileManager.ShowCategoryAsync(FileManager.itemViewHolder.Categories.Last().Uuid);
+            // TODO
         }
         #endregion
 
+        #region Search
+        private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            if (FileManager.skipAutoSuggestBoxTextChanged) return;
+
+            string text = sender.Text;
+
+            if (string.IsNullOrEmpty(text))
+            {
+                // Show all sounds
+                await FileManager.ShowAllSoundsAsync();
+            }
+            else
+            {
+                // Show the search result
+                FileManager.itemViewHolder.Title = text;
+                FileManager.itemViewHolder.SearchQuery = text;
+                FileManager.itemViewHolder.SelectedCategory = Guid.Empty;
+                FileManager.itemViewHolder.BackButtonEnabled = true;
+                FileManager.itemViewHolder.EditButtonVisible = false;
+
+                // Update the suggestions
+                Suggestions = FileManager.itemViewHolder.AllSounds.Where(p => p.Name.ToLower().StartsWith(text.ToLower())).Select(p => p.Name).ToList();
+
+                // Load the searched sounds
+                await FileManager.LoadSoundsByNameAsync(text);
+            }
+        }
+
+        private async void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            string text = sender.Text;
+
+            if (string.IsNullOrEmpty(text))
+            {
+                FileManager.itemViewHolder.Title = new ResourceLoader().GetString("AllSounds");
+            }
+            else
+            {
+                FileManager.itemViewHolder.Title = text;
+                FileManager.itemViewHolder.SearchQuery = text;
+                FileManager.itemViewHolder.EditButtonVisible = false;
+                await FileManager.LoadSoundsByNameAsync(text);
+            }
+
+            FileManager.UpdateBackButtonVisibility();
+        }
+
+        private void SearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            FileManager.itemViewHolder.BackButtonEnabled = true;
+            FileManager.itemViewHolder.SearchButtonVisible = false;
+            FileManager.itemViewHolder.SearchAutoSuggestBoxVisible = true;
+
+            // slightly delay setting focus
+            Task.Factory.StartNew(
+                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
+                    () => SearchAutoSuggestBox.Focus(FocusState.Programmatic)));
+        }
+        #endregion
+
+        #region CancelButton
+        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            FileManager.itemViewHolder.MultiSelectionEnabled = false;
+            AdjustLayout();
+        }
+        #endregion
+
+        #region SelectButton
+        private void SelectButton_Click(object sender, RoutedEventArgs e)
+        {
+            FileManager.itemViewHolder.MultiSelectionEnabled = true;
+            AdjustLayout();
+        }
+        #endregion
+
+        #region Select all
+        private void MoreButton_SelectAllFlyout_Click(object sender, RoutedEventArgs e)
+        {
+            FileManager.itemViewHolder.TriggerSelectAllSoundsEvent(sender, e);
+        }
+        #endregion
+
+        #region Share
+        private async void ShareButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!await DownloadSelectedFiles()) return;
+
+            sharedFiles.Clear();
+            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
+
+            // Copy the files into the temp folder
+            foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
+            {
+                StorageFile audioFile = await sound.GetAudioFileAsync();
+                if (audioFile == null) return;
+
+                string ext = await sound.GetAudioFileExtensionAsync();
+                if (string.IsNullOrEmpty(ext)) ext = "mp3";
+
+                StorageFile tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + "." + ext, NameCollisionOption.ReplaceExisting);
+                sharedFiles.Add(tempFile);
+            }
+
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            DataTransferManager.ShowShareUI();
+        }
+
+        private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            if (sharedFiles.Count == 0) return;
+
+            string description = loader.GetString("ShareDialog-MultipleSounds");
+            if (sharedFiles.Count == 1)
+                description = sharedFiles.First().Name;
+
+            DataRequest request = args.Request;
+            request.Data.SetStorageItems(sharedFiles);
+            request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
+            request.Data.Properties.Description = description;
+        }
+        #endregion
+
+        #region File download
         private async Task<bool> DownloadSelectedFiles()
         {
-            // Check if all sounds are available locally
             var selectedSounds = FileManager.itemViewHolder.SelectedSounds;
+
+            // Download each file that is not available locally
             foreach (var sound in selectedSounds)
             {
                 var downloadStatus = await sound.GetAudioFileDownloadStatusAsync();
@@ -835,6 +578,7 @@ namespace UniversalSoundBoard.Pages
                     downloadFileWasCanceled = false;
                     return false;
                 }
+
                 if (downloadFileThrewError) break;
             }
 
@@ -845,6 +589,7 @@ namespace UniversalSoundBoard.Pages
                 downloadFileThrewError = false;
                 return false;
             }
+
             return true;
         }
 
@@ -863,6 +608,148 @@ namespace UniversalSoundBoard.Pages
             {
                 // Hide the download dialog
                 ContentDialogs.DownloadFileContentDialog.Hide();
+            }
+        }
+
+        private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            downloadFileWasCanceled = true;
+            downloadFileIsExecuting = false;
+        }
+        #endregion
+
+        #region Set categories
+        private async void MoreButton_SetCategory_Click(object sender, RoutedEventArgs e)
+        {
+            // Show the Set Categories content dialog for multiple sounds
+            List<Sound> selectedSounds = new List<Sound>();
+            foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
+                selectedSounds.Add(sound);
+
+            var itemTemplate = (DataTemplate)Resources["SetCategoryItemTemplate"];
+
+            var SetCategoryContentDialog = ContentDialogs.CreateSetCategoriesContentDialog(selectedSounds, itemTemplate);
+            SetCategoryContentDialog.PrimaryButtonClick += SetCategoriesContentDialog_PrimaryButtonClick;
+            await SetCategoryContentDialog.ShowAsync();
+        }
+
+        private async void SetCategoriesContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("UpdateSoundsMessage");
+            FileManager.itemViewHolder.LoadingScreenVisible = true;
+
+            // Get the selected categories from the SelectedCategories Dictionary in ContentDialogs
+            List<Guid> categoryUuids = new List<Guid>();
+            foreach (var entry in ContentDialogs.SelectedCategories)
+                if (entry.Value) categoryUuids.Add(entry.Key);
+
+            foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
+                await FileManager.SetCategoriesOfSoundAsync(sound.Uuid, categoryUuids);
+
+            FileManager.itemViewHolder.LoadingScreenVisible = false;
+            // TODO: Update the sounds in the lists
+        }
+        #endregion
+
+        #region CategoryOptionsFlyout
+        private void ShowCategoryOptionsFlyout(UIElement sender, Point position)
+        {
+            MenuFlyout flyout = new MenuFlyout();
+
+            MenuFlyoutItem createSubCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-AddSubCategory") };
+            createSubCategoryFlyoutItem.Click += CreateSubCategoryFlyoutItem_Click;
+            flyout.Items.Add(createSubCategoryFlyoutItem);
+
+            flyout.ShowAt(sender, position);
+        }
+
+        #region Create SubCategory
+        private async void CreateSubCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var newSubCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(selectedCategory);
+            newSubCategoryContentDialog.PrimaryButtonClick += NewSubCategoryContentDialog_PrimaryButtonClick;
+            await newSubCategoryContentDialog.ShowAsync();
+        }
+
+        private async void NewSubCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Get combobox value
+            ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
+            string icon = typeItem.Content.ToString();
+
+            await FileManager.CreateCategoryAsync(null, selectedCategory, ContentDialogs.NewCategoryTextBox.Text, icon);
+
+            // Reload the categories menu items
+            LoadMenuItems();
+
+            // Navigate to the new category
+            // TODO
+            //await FileManager.ShowCategoryAsync(FileManager.itemViewHolder.Categories.Last().Uuid);
+        }
+        #endregion
+        #endregion
+
+        #region Export
+        private async void MoreButton_ExportFlyout_Click(object sender, RoutedEventArgs e)
+        {
+            if (!await DownloadSelectedFiles()) return;
+
+            List<Sound> sounds = new List<Sound>();
+            foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
+                sounds.Add(sound);
+
+            var template = (DataTemplate)Resources["SoundItemTemplate"];
+            var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
+
+            var exportSoundsContentDialog = ContentDialogs.CreateExportSoundsContentDialog(sounds, template, listViewItemStyle);
+            exportSoundsContentDialog.PrimaryButtonClick += ExportSoundsContentDialog_PrimaryButtonClick;
+            await exportSoundsContentDialog.ShowAsync();
+        }
+
+        private async void ExportSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            await FileManager.ExportSoundsAsync(ContentDialogs.SoundsList.ToList(), ContentDialogs.ExportSoundsAsZipCheckBox.IsChecked.Value, ContentDialogs.ExportSoundsFolder);
+        }
+        #endregion
+
+        #region Delete Sounds
+        private async void MoreButton_DeleteSoundsFlyout_Click(object sender, RoutedEventArgs e)
+        {
+            var deleteSoundsContentDialog = ContentDialogs.CreateDeleteSoundsContentDialogAsync();
+            deleteSoundsContentDialog.PrimaryButtonClick += DeleteSoundsContentDialog_PrimaryButtonClick;
+            await deleteSoundsContentDialog.ShowAsync();
+        }
+
+        private async void DeleteSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("DeleteSoundsMessage");
+            FileManager.itemViewHolder.LoadingScreenVisible = true;
+
+            // Delete Sounds
+            List<Guid> soundUuids = new List<Guid>();
+            for (int i = 0; i < FileManager.itemViewHolder.SelectedSounds.Count; i++)
+                soundUuids.Add(FileManager.itemViewHolder.SelectedSounds.ElementAt(i).Uuid);
+
+            if (soundUuids.Count != 0)
+                await FileManager.DeleteSoundsAsync(soundUuids);
+
+            // Clear selected sounds list
+            FileManager.itemViewHolder.SelectedSounds.Clear();
+            FileManager.itemViewHolder.LoadingScreenVisible = false;
+
+            // TODO: Remove deleted sounds from the list
+        }
+        #endregion
+
+        private void SelectCategory(Guid categoryUuid)
+        {
+            foreach (MUXC.NavigationViewItem item in SideBar.MenuItems)
+            {
+                if ((Guid)item.Tag == categoryUuid)
+                {
+                    item.IsSelected = true;
+                    return;
+                }
             }
         }
     }

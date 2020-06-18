@@ -11,25 +11,20 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
-    SizeChanged="Page_SizeChanged">
+    Loaded="MainPage_Loaded"
+    SizeChanged="MainPage_SizeChanged">
 
     <Page.Resources>
-        <converters:ReverseBoolConverter x:Name="ReverseBoolConverter" />
+        <!-- Converters -->
+        <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
-        <converters:CutTitleConverter x:Name="CutTitleConverter" />
-        <converters:CollapsedButtonsWidthConverter x:Name="CollapsedButtonsWidthConverter" />
         <converters:PlayingSoundsBarVisibilityConverter x:Key="PlayingSoundsBarVisibilityConverter" />
+        <converters:OptionsOnSoundPageVisibleConverter x:Name="OptionsOnSoundPageVisibleConverter" />
+        <converters:CollapsedButtonsWidthConverter x:Name="CollapsedButtonsWidthConverter" />
+        <converters:OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter x:Name="OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter" />
+        <converters:OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter x:Name="OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter" />
 
-        <converters:ValueConverterGroup x:Name="NormalOptionsInMoreButtonFlyoutVisibilityConverter">
-            <converters:ReverseBoolConverter />
-            <converters:MakeBoolFalseIfSelectOptionsVisible />
-        </converters:ValueConverterGroup>
-
-        <converters:ValueConverterGroup x:Name="SelectOptionsInMoreButtonFlyoutVisibilityConverter">
-            <converters:ReverseBoolConverter />
-            <converters:MakeBoolFalseIfNormalOptionsVisible />
-        </converters:ValueConverterGroup>
-
+        <!-- Item Templates -->
         <DataTemplate x:Key="SoundItemTemplate" x:DataType="models:Sound">
             <components:SoundItemTemplate />
         </DataTemplate>
@@ -69,13 +64,11 @@
         </Style>
     </Page.Resources>
 
-
     <Grid Name="RootGrid">
         <muxc:NavigationView
             Name="SideBar"
             IsTitleBarAutoPaddingEnabled="False"
-            ExpandedModeThresholdWidth="{x:Bind sideBarCollapsedMaxWidth}"
-            IsBackEnabled="{Binding IsBackButtonEnabled}"
+            IsBackEnabled="{Binding BackButtonEnabled}"
             ItemInvoked="SideBar_ItemInvoked"
             BackRequested="SideBar_BackRequested">
 
@@ -85,12 +78,12 @@
                         Name="LoginMenuItem"
                         x:Uid="LoginButton"
                         Icon="Contact"
-                        Visibility="{Binding LoginMenuItemVisibility}"
+                        Visibility="{Binding User.IsLoggedIn, Converter={StaticResource InvertBooleanConverter}}"
                         Tapped="LogInMenuItem_Tapped" />
 
                     <NavigationViewItem
                         Name="AccountMenuItem"
-                        Visibility="{Binding LoginMenuItemVisibility, Converter={StaticResource ReverseBoolConverter}}"
+                        Visibility="{Binding User.IsLoggedIn}"
                         Tapped="LogInMenuItem_Tapped">
 
                         <StackPanel Orientation="Horizontal">
@@ -142,7 +135,7 @@
                                 <TextBlock
                                     Name="TitleTextBlock" 
                                     Style="{StaticResource TitleTextBlockStyle}"
-                                    Text="{Binding Title, Converter={StaticResource CutTitleConverter}}"
+                                    Text="{Binding Title}"
                                     RelativePanel.AlignVerticalCenterWithPanel="True" />
 
                                 <StackPanel
@@ -154,14 +147,14 @@
                                         Name="CategoryEditButton" 
 				                        Symbol="Edit" 
                                         Margin="15,0,0,0" 
-                                        Visibility="{Binding EditButtonVisibility}"
+                                        Visibility="{Binding EditButtonVisible}"
                                         Tapped="CategoryEditButton_Tapped" />
 
                                     <SymbolIcon
                                         Name="CategoryDeleteButton" 
 				                        Symbol="Delete" 
                                         Margin="15,0,0,0"
-                                        Visibility="{Binding EditButtonVisibility}"
+                                        Visibility="{Binding EditButtonVisible}"
 				                        Tapped="CategoryDeleteButton_Tapped" />
 
                                     <Button
@@ -174,7 +167,7 @@
                                         Height="25" 
                                         Width="20"
 			                            Margin="15,0,0,0"
-                                        Visibility="{Binding PlayAllButtonVisibility}" 
+                                        Visibility="{Binding PlayAllButtonVisible}" 
                                         Click="CategoryPlayAllButton_Click" />
                                 </StackPanel>
                             </RelativePanel>
@@ -182,7 +175,7 @@
                             <RelativePanel
                                 Name="OptionsRelativePanel"
                                 Margin="0,0,10,0"
-                                Visibility="{x:Bind optionsVisible}"
+                                Visibility="{Binding Page, Converter={StaticResource OptionsOnSoundPageVisibleConverter}}"
                                 RelativePanel.AlignVerticalCenterWithPanel="True"
                                 RelativePanel.AlignRightWithPanel="True">
 
@@ -191,14 +184,14 @@
                                     Orientation="Horizontal"
                                     VerticalAlignment="Center"
                                     RelativePanel.AlignVerticalCenterWithPanel="True"
-                                    Visibility="{Binding NormalOptionsVisibility}">
+                                    Visibility="{Binding MultiSelectionEnabled, Converter={StaticResource InvertBooleanConverter}}">
 
                                     <Button
                                         Name="VolumeButton"
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
                                         Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}"
-                                        Visibility="{Binding VolumeButtonVisibility}">
+                                        Visibility="{Binding VolumeButtonVisible}">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                             <TextBlock
@@ -207,15 +200,15 @@
                                             <TextBlock
                                                 x:Uid="VolumeButton" 
                                                 Style="{StaticResource TopButtonInnerTextStyle}"
-                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}" />
+                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource InvertBooleanConverter}}" />
                                         </StackPanel>
 
                                         <Button.Flyout>
                                             <Flyout>
                                                 <Slider
-                                                    Name="VolumeSlider" 
-                                                    Maximum="100" 
-                                                    Minimum="0" 
+                                                    Name="VolumeSlider"
+                                                    Maximum="100"
+                                                    Minimum="0"
                                                     Width="150"
                                                     ValueChanged="VolumeSlider_ValueChanged"
                                                     LostFocus="VolumeSlider_LostFocus" />
@@ -231,8 +224,8 @@
                                         Name="AddButton"
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
-                                        Visibility="{Binding AddButtonVisibility}"
-                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large, Mode=TwoWay}">
+                                        Visibility="{Binding AddButtonVisible}"
+                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                             <TextBlock
@@ -241,7 +234,7 @@
                                             <TextBlock
                                                 x:Uid="AddButton" 
                                                 Style="{StaticResource TopButtonInnerTextStyle}"
-                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}" />
+                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource InvertBooleanConverter}}" />
                                         </StackPanel>
 
                                         <Button.Flyout>
@@ -266,7 +259,7 @@
                                         Name="SelectButton" 
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
-                                        Visibility="{Binding SelectButtonVisibility}"
+                                        Visibility="{Binding SelectButtonVisible}"
                                         Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}"
                                         Click="SelectButton_Click">
 
@@ -277,7 +270,7 @@
                                             <TextBlock
                                                 x:Uid="SelectButton" 
                                                 Style="{StaticResource TopButtonInnerTextStyle}"
-                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}"/>
+                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource InvertBooleanConverter}}"/>
                                         </StackPanel>
 
                                         <ToolTipService.ToolTip>
@@ -290,10 +283,11 @@
                                         x:Uid="Search" 
                                         Text="{Binding SearchQuery}"
                                         Width="200" 
-                                        Visibility="{Binding SearchAutoSuggestBoxVisibility}"
+                                        Visibility="{Binding SearchAutoSuggestBoxVisible}"
                                         QueryIcon="Find" 
                                         Margin="3,0,3,0"
                                         VerticalAlignment="Center"
+                                        ItemsSource="{x:Bind Suggestions}"
                                         TextChanged="SearchAutoSuggestBox_TextChanged" 
                                         QuerySubmitted="SearchAutoSuggestBox_QuerySubmitted" />
 
@@ -302,7 +296,7 @@
                                         Content="&#xE094;" 
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
-                                        Visibility="{Binding SearchButtonVisibility}"
+                                        Visibility="{Binding SearchButtonVisible}"
                                         Click="SearchButton_Click">
 
                                         <ToolTipService.ToolTip>
@@ -315,7 +309,7 @@
                                     Name="SelectOptionsStackPanel" 
                                     Orientation="Horizontal" 
                                     RelativePanel.RightOf="NormalOptionsStackPanel" 
-                                    Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}">
+                                    Visibility="{Binding MultiSelectionEnabled}">
 
                                     <Button
                                         Name="CancelButton" 
@@ -324,7 +318,7 @@
                                         Width="100"
                                         FontFamily="Segoe UI"
                                         VerticalAlignment="Center"
-                                        Visibility="{Binding CancelButtonVisibility}"
+                                        Visibility="{Binding CancelButtonVisible}"
                                         Click="CancelButton_Click">
                                     </Button>
 
@@ -332,8 +326,8 @@
                                         Name="ShareButton" 
                                         Style="{StaticResource TopButtonStyle}" 
                                         VerticalAlignment="Center"
-                                        Visibility="{Binding ShareButtonVisibility}" 
-                                        IsEnabled="{Binding AreSelectButtonsEnabled}"
+                                        Visibility="{Binding ShareButtonVisible}" 
+                                        IsEnabled="{x:Bind selectionButtonsEnabled}"
                                         Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=small}"
                                         Click="ShareButton_Click">
 
@@ -344,7 +338,7 @@
                                             <TextBlock
                                                 x:Uid="ShareButton" 
                                                 Style="{StaticResource TopButtonInnerTextStyle}"
-                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource ReverseBoolConverter}}" />
+                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource InvertBooleanConverter}}" />
                                         </StackPanel>
 
                                         <ToolTipService.ToolTip>
@@ -356,7 +350,7 @@
                                         Name="PlaySoundsButton" 
                                         Content="&#xE768;"
                                         Style="{StaticResource TopButtonStyle}"
-                                        IsEnabled="{Binding AreSelectButtonsEnabled}" >
+                                        IsEnabled="{x:Bind selectionButtonsEnabled}">
 
                                         <Button.Flyout>
                                             <MenuFlyout Placement="Bottom">
@@ -374,13 +368,13 @@
                                 </StackPanel>
 
                                 <Button
-                                    Name="MoreButton" 
-                                    Content="&#xE10C;"
+                                    Name="MoreButton"
                                     Style="{StaticResource TopButtonStyle}"
-                                    RelativePanel.RightOf="SelectOptionsStackPanel"
-                                    RelativePanel.AlignVerticalCenterWithPanel="True"
+                                    Content="&#xE10C;"
+                                    Visibility="{Binding MoreButtonVisible}"
                                     Margin="3,0,0,0"
-                                    Visibility="{Binding MoreButtonVisibility}">
+                                    RelativePanel.RightOf="SelectOptionsStackPanel"
+                                    RelativePanel.AlignVerticalCenterWithPanel="True">
 
                                     <Button.Flyout>
                                         <MenuFlyout Placement="Bottom">
@@ -389,7 +383,7 @@
                                                 Name="VolumeFlyout" 
                                                 x:Uid="VolumeButton"
                                                 Icon="Volume" 
-                                                Visibility="{Binding VolumeButtonVisibility, Converter={StaticResource NormalOptionsInMoreButtonFlyoutVisibilityConverter}}"
+                                                Visibility="{Binding VolumeButtonVisible, Converter={StaticResource OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter}}"
                                                 Click="VolumeFlyout_Click">
 
                                                 <MenuFlyoutItem.ContextFlyout>
@@ -409,7 +403,7 @@
                                                 Name="AddFlyout" 
                                                 Icon="Add" 
                                                 x:Uid="AddButton"
-                                                Visibility="{Binding AddButtonVisibility, Converter={StaticResource NormalOptionsInMoreButtonFlyoutVisibilityConverter}}">
+                                                Visibility="{Binding AddButtonVisible, Converter={StaticResource OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter}}">
 
                                                 <MenuFlyoutItem
                                                     Name="NewSoundFlyoutItem2" 
@@ -425,7 +419,7 @@
                                                 Name="SelectFlyout" 
                                                 x:Uid="SelectButton"
                                                 Icon="Bullets" 
-                                                Visibility="{Binding SelectButtonVisibility, Converter={StaticResource NormalOptionsInMoreButtonFlyoutVisibilityConverter}}"
+                                                Visibility="{Binding SelectButtonVisible, Converter={StaticResource OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter}}"
                                                 Click="SelectButton_Click" />
                                             <!-- #endregion Normal Options -->
 
@@ -435,42 +429,42 @@
                                                 Text="{Binding SelectAllFlyoutText}"
                                                 Icon="{Binding SelectAllFlyoutIcon}"
                                                 Click="MoreButton_SelectAllFlyout_Click"
-                                                Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}" />
+                                                Visibility="{Binding MultiSelectionEnabled}" />
 
                                             <MenuFlyoutItem
                                                 Name="MoreButton_ChangeCategoryFlyout" 
                                                 x:Uid="MoreButton-SetCategory" 
-                                                IsEnabled="{Binding AreSelectButtonsEnabled}"
-                                                Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}"
+                                                IsEnabled="{x:Bind selectionButtonsEnabled}"
+                                                Visibility="{Binding MultiSelectionEnabled}"
                                                 Click="MoreButton_SetCategory_Click" />
 
                                             <MenuFlyoutItem
                                                 Name="MoreButton_ShareFlyout" 
                                                 x:Uid="MoreButton-Share" 
                                                 Icon="Share"
-                                                IsEnabled="{Binding AreSelectButtonsEnabled}"
-                                                Visibility="{Binding ShareButtonVisibility, Converter={StaticResource SelectOptionsInMoreButtonFlyoutVisibilityConverter}}"
+                                                IsEnabled="{x:Bind selectionButtonsEnabled}"
+                                                Visibility="{Binding ShareButtonVisible, Converter={StaticResource OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter}}"
                                                 Click="ShareButton_Click" />
 
                                             <MenuFlyoutItem
                                                 Name="MoreButton_ExportFlyout"
                                                 x:Uid="MoreButton-Export"
-                                                IsEnabled="{Binding AreSelectButtonsEnabled}"
-                                                Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}"
+                                                IsEnabled="{x:Bind selectionButtonsEnabled}"
+                                                Visibility="{Binding MultiSelectionEnabled}"
                                                 Click="MoreButton_ExportFlyout_Click" />
 
                                             <MenuFlyoutItem
                                                 Name="MoreButton_DeleteSoundsFlyout" 
                                                 x:Uid="MoreButton-DeleteSounds"
                                                 Icon="Delete" 
-                                                IsEnabled="{Binding AreSelectButtonsEnabled}"
-                                                Visibility="{Binding NormalOptionsVisibility, Converter={StaticResource ReverseBoolConverter}}"
+                                                IsEnabled="{x:Bind selectionButtonsEnabled}"
+                                                Visibility="{Binding MultiSelectionEnabled}"
                                                 Click="MoreButton_DeleteSoundsFlyout_Click" />
 
                                             <MenuFlyoutItem
                                                 Name="MoreButton_Cancel"
-                                                x:Uid="MoreButton-Cancel" 
-                                                Visibility="{Binding CancelButtonVisibility, Converter={StaticResource SelectOptionsInMoreButtonFlyoutVisibilityConverter}}"
+                                                x:Uid="MoreButton-Cancel"
+                                                Visibility="{Binding CancelButtonVisible, Converter={StaticResource OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter}}"
                                                 Click="CancelButton_Click" />
                                             <!-- #endregion Selection Options -->
                                         </MenuFlyout>
@@ -494,7 +488,7 @@
             VerticalAlignment="Center"
 			Width="45" 
 			Height="45" 
-			IsActive="{Binding ProgressRingIsActive, Mode=TwoWay}" />
+			IsActive="{Binding ProgressRingIsActive}" />
 
         <TextBlock
             Name="WindowTitleTextBox" 
@@ -512,7 +506,7 @@
             Height="40">
         </Grid>
 
-        <controls:Loading x:Name="LoadingControl" IsLoading="{Binding LoadingScreenVisibility}">
+        <controls:Loading x:Name="LoadingControl" IsLoading="{Binding LoadingScreenVisible}">
             <controls:Loading.Background>
                 <SolidColorBrush Color="Black" Opacity="0.7" />
             </controls:Loading.Background>
@@ -526,6 +520,7 @@
                     Margin="0,0,16,0" 
                     Height="27" 
                     Width="27" />
+                
                 <TextBlock
                     Text="{Binding LoadingScreenMessage}" 
                     FontSize="17"
