@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
+using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
@@ -14,6 +16,9 @@ namespace UniversalSoundBoard.Common
 {
     public class ContentDialogs
     {
+        #region Variables
+        private static readonly ResourceLoader loader = new ResourceLoader();
+
         public static TextBox NewCategoryTextBox;
         public static Guid NewCategoryParentUuid;
         public static TextBox EditCategoryTextBox;
@@ -50,12 +55,11 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog ExportSoundsContentDialog;
         public static ContentDialog SetCategoryContentDialog;
         public static ContentDialog CategoryOrderContentDialog;
-
+        #endregion
 
         #region NewCategory
         public static ContentDialog CreateNewCategoryContentDialog(Guid parentUuid)
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
             NewCategoryContentDialog = new ContentDialog
             {
                 Title = loader.GetString("NewCategoryContentDialog-Title"),
@@ -66,17 +70,16 @@ namespace UniversalSoundBoard.Common
 
             NewCategoryParentUuid = parentUuid;
             if (!Equals(parentUuid, Guid.Empty))
-            {
                 NewCategoryContentDialog.Title = loader.GetString("NewSubCategoryContentDialog-Title");
-            }
 
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Vertical;
+            StackPanel stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
 
             List<string> IconsList = FileManager.GetIconsList();
 
             NewCategoryTextBox = new TextBox { Width = 300 };
-            NewCategoryTextBox.Text = "";
 
             IconSelectionComboBox = new ComboBox
             {
@@ -85,10 +88,9 @@ namespace UniversalSoundBoard.Common
                 Margin = new Thickness(15),
                 HorizontalAlignment = HorizontalAlignment.Center
             };
+
             foreach (string icon in IconsList)
-            {
                 IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = icon, FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
-            }
 
             Random random = new Random();
             int randomNumber = random.Next(IconsList.Count);
@@ -112,8 +114,7 @@ namespace UniversalSoundBoard.Common
         #region EditCategory
         public static ContentDialog CreateEditCategoryContentDialogAsync()
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-            Category currentCategory = FileManager.itemViewHolder.Categories[FileManager.itemViewHolder.SelectedCategory];
+            Category currentCategory = FileManager.itemViewHolder.Categories.ToList().Find(c => c.Uuid == FileManager.itemViewHolder.SelectedCategory);
 
             EditCategoryContentDialog = new ContentDialog
             {
@@ -122,11 +123,16 @@ namespace UniversalSoundBoard.Common
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
             };
 
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Vertical;
+            StackPanel stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
 
-            EditCategoryTextBox = new TextBox { Width = 300 };
-            EditCategoryTextBox.Text = currentCategory.Name;
+            EditCategoryTextBox = new TextBox
+            {
+                Text = currentCategory.Name,
+                Width = 300
+            };
 
             IconSelectionComboBox = new ComboBox
             {
@@ -138,13 +144,13 @@ namespace UniversalSoundBoard.Common
 
             // Select the icon of the sound
             List<string> IconsList = FileManager.GetIconsList();
+
             foreach (string icon in IconsList)
             {
                 ComboBoxItem item = new ComboBoxItem { Content = icon, FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 };
                 if (icon == currentCategory.Icon)
-                {
                     item.IsSelected = true;
-                }
+
                 IconSelectionComboBox.Items.Add(item);
             }
 
@@ -166,11 +172,11 @@ namespace UniversalSoundBoard.Common
         #region DeleteCategory
         public static ContentDialog CreateDeleteCategoryContentDialogAsync()
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            Category currentCategory = FileManager.itemViewHolder.Categories.ToList().Find(c => c.Uuid == FileManager.itemViewHolder.SelectedCategory);
 
             DeleteCategoryContentDialog = new ContentDialog
             {
-                Title = loader.GetString("DeleteCategoryContentDialog-Title") + FileManager.itemViewHolder.Categories[FileManager.itemViewHolder.SelectedCategory].Name,
+                Title = loader.GetString("DeleteCategoryContentDialog-Title") + currentCategory.Name,
                 Content = loader.GetString("DeleteCategoryContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteCategoryContentDialog-PrimaryButton"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
@@ -183,8 +189,6 @@ namespace UniversalSoundBoard.Common
         #region RenameSound
         public static ContentDialog CreateRenameSoundContentDialog(Sound sound)
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
             RenameSoundContentDialog = new ContentDialog
             {
                 Title = loader.GetString("RenameSoundContentDialog-Title"),
@@ -192,12 +196,15 @@ namespace UniversalSoundBoard.Common
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
             };
 
-            StackPanel stackPanel = new StackPanel();
-            stackPanel.Orientation = Orientation.Vertical;
+            StackPanel stackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
 
-            RenameSoundTextBox = new TextBox {
-                Width = 300,
-                Text = sound.Name
+            RenameSoundTextBox = new TextBox
+            {
+                Text = sound.Name,
+                Width = 300
             };
 
             stackPanel.Children.Add(RenameSoundTextBox);
@@ -217,8 +224,6 @@ namespace UniversalSoundBoard.Common
         #region DeleteSound
         public static ContentDialog CreateDeleteSoundContentDialog(string soundName)
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
             DeleteSoundContentDialog = new ContentDialog
             {
                 Title = loader.GetString("DeleteSoundContentDialog-Title") + soundName,
@@ -234,8 +239,6 @@ namespace UniversalSoundBoard.Common
         #region DeleteSounds
         public static ContentDialog CreateDeleteSoundsContentDialogAsync()
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
             DeleteSoundsContentDialog = new ContentDialog
             {
                 Title = loader.GetString("DeleteSoundsContentDialog-Title"),
@@ -251,8 +254,6 @@ namespace UniversalSoundBoard.Common
         #region ExportData
         public static ContentDialog CreateExportDataContentDialog()
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
             ExportDataContentDialog = new ContentDialog
             {
                 Title = loader.GetString("ExportDataContentDialog-Title"),
@@ -274,11 +275,16 @@ namespace UniversalSoundBoard.Common
             };
 
             // Create StackPanel with TextBox and Folder button
-            StackPanel folderStackPanel = new StackPanel();
-            folderStackPanel.Orientation = Orientation.Horizontal;
+            StackPanel folderStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
 
-            ExportFolderTextBox = new TextBox();
-            ExportFolderTextBox.IsReadOnly = true;
+            ExportFolderTextBox = new TextBox
+            {
+                IsReadOnly = true
+            };
+
             Button folderButton = new Button
             {
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
@@ -292,14 +298,12 @@ namespace UniversalSoundBoard.Common
             folderStackPanel.Children.Add(folderButton);
             folderStackPanel.Children.Add(ExportFolderTextBox);
 
-
             TextBlock contentText2 = new TextBlock
             {
                 Margin = new Thickness(0, 30, 0, 0),
                 TextWrapping = TextWrapping.WrapWholeWords,
                 Text = loader.GetString("ExportDataContentDialog-Text2")
             };
-
 
             content.Children.Add(contentText);
             content.Children.Add(folderStackPanel);
@@ -316,9 +320,10 @@ namespace UniversalSoundBoard.Common
             {
                 SuggestedStartLocation = PickerLocationId.Downloads
             };
-            folderPicker.FileTypeFilter.Add("*");
 
+            folderPicker.FileTypeFilter.Add("*");
             StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+
             if (folder != null)
             {
                 StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
@@ -334,8 +339,6 @@ namespace UniversalSoundBoard.Common
         #region ImportData
         public static ContentDialog CreateImportDataContentDialog()
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
             ImportDataContentDialog = new ContentDialog
             {
                 Title = loader.GetString("ImportDataContentDialog-Title"),
@@ -356,7 +359,6 @@ namespace UniversalSoundBoard.Common
                 Text = loader.GetString("ImportDataContentDialog-Text1")
             };
 
-
             // Create StackPanel with TextBox and Folder button
             StackPanel folderStackPanel = new StackPanel
             {
@@ -367,6 +369,7 @@ namespace UniversalSoundBoard.Common
             {
                 IsReadOnly = true
             };
+
             Button folderButton = new Button
             {
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
@@ -380,14 +383,12 @@ namespace UniversalSoundBoard.Common
             folderStackPanel.Children.Add(folderButton);
             folderStackPanel.Children.Add(ImportFolderTextBox);
 
-
             TextBlock contentText2 = new TextBlock
             {
                 Margin = new Thickness(0, 30, 0, 0),
                 TextWrapping = TextWrapping.WrapWholeWords,
                 Text = loader.GetString("ImportDataContentDialog-Text2")
             };
-
 
             content.Children.Add(contentText);
             content.Children.Add(folderStackPanel);
@@ -419,20 +420,19 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region PlaySoundsSuccessively
-        public static ContentDialog CreatePlaySoundsSuccessivelyContentDialog(ObservableCollection<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle)
+        public static ContentDialog CreatePlaySoundsSuccessivelyContentDialog(List<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle)
         {
-            SoundsList = sounds;
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            SoundsList.Clear();
+            foreach (var sound in sounds)
+                SoundsList.Add(sound);
 
             PlaySoundsSuccessivelyContentDialog = new ContentDialog
             {
                 Title = loader.GetString("PlaySoundsSuccessivelyContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("PlaySoundsSuccessivelyContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                IsPrimaryButtonEnabled = SoundsList.Count > 0
             };
-
-            if (SoundsList.Count == 0)
-                PlaySoundsSuccessivelyContentDialog.IsPrimaryButtonEnabled = false;
 
             StackPanel content = new StackPanel
             {
@@ -453,27 +453,30 @@ namespace UniversalSoundBoard.Common
             RepeatsComboBox = new ComboBox
             {
                 Margin = new Thickness(0, 10, 0, 0),
-                IsEditable = true
+                IsEditable = true,
+                Items =
+                {
+                    "1",
+                    "2",
+                    "3",
+                    "4",
+                    "5",
+                    "6",
+                    "7",
+                    "8",
+                    "9",
+                    "10",
+                    "15",
+                    "20",
+                    "25",
+                    "30",
+                    "40",
+                    "50",
+                    "100",
+                    "∞"
+                },
+                SelectedIndex = 0
             };
-            RepeatsComboBox.Items.Add("1");
-            RepeatsComboBox.Items.Add("2");
-            RepeatsComboBox.Items.Add("3");
-            RepeatsComboBox.Items.Add("4");
-            RepeatsComboBox.Items.Add("5");
-            RepeatsComboBox.Items.Add("6");
-            RepeatsComboBox.Items.Add("7");
-            RepeatsComboBox.Items.Add("8");
-            RepeatsComboBox.Items.Add("9");
-            RepeatsComboBox.Items.Add("10");
-            RepeatsComboBox.Items.Add("15");
-            RepeatsComboBox.Items.Add("20");
-            RepeatsComboBox.Items.Add("25");
-            RepeatsComboBox.Items.Add("30");
-            RepeatsComboBox.Items.Add("40");
-            RepeatsComboBox.Items.Add("50");
-            RepeatsComboBox.Items.Add("100");
-            RepeatsComboBox.Items.Add("∞");
-            RepeatsComboBox.SelectedIndex = 0;
             RepeatsComboBox.TextSubmitted += RepeatsComboBox_TextSubmitted;
 
             RandomCheckBox = new CheckBox
@@ -501,8 +504,6 @@ namespace UniversalSoundBoard.Common
         #region Logout
         public static ContentDialog CreateLogoutContentDialog()
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
             LogoutContentDialog = new ContentDialog
             {
                 Title = loader.GetString("Logout"),
@@ -518,17 +519,18 @@ namespace UniversalSoundBoard.Common
         #region DownloadFile
         public static ContentDialog CreateDownloadFileContentDialog(string filename)
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
             DownloadFileContentDialog = new ContentDialog
             {
                 Title = string.Format(loader.GetString("DownloadFileContentDialog-Title"), filename),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
             };
 
-            StackPanel content = new StackPanel();
-            content.Margin = new Thickness(0, 30, 0, 0);
-            content.Orientation = Orientation.Vertical;
+            StackPanel content = new StackPanel
+            {
+                Margin = new Thickness(0, 30, 0, 0),
+                Orientation = Orientation.Vertical
+            };
+
             downloadFileProgressBar = new ProgressBar();
             content.Children.Add(downloadFileProgressBar);
             DownloadFileContentDialog.Content = content;
@@ -538,8 +540,6 @@ namespace UniversalSoundBoard.Common
 
         public static ContentDialog CreateDownloadFileErrorContentDialog()
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
             DownloadFileErrorContentDialog = new ContentDialog
             {
                 Title = loader.GetString("DownloadFileErrorContentDialog-Title"),
@@ -552,10 +552,11 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region ExportSounds
-        public static ContentDialog CreateExportSoundsContentDialog(ObservableCollection<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle)
+        public static ContentDialog CreateExportSoundsContentDialog(List<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle)
         {
-            SoundsList = sounds;
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
+            SoundsList.Clear();
+            foreach (var sound in sounds)
+                SoundsList.Add(sound);
 
             ExportSoundsContentDialog = new ContentDialog
             {
@@ -583,14 +584,19 @@ namespace UniversalSoundBoard.Common
                 CanReorderItems = true,
                 AllowDrop = true
             };
-            
-            // Create StackPanel with TextBox and Folder button
-            StackPanel folderStackPanel = new StackPanel();
-            folderStackPanel.Orientation = Orientation.Horizontal;
-            folderStackPanel.Margin = new Thickness(0, 20, 0, 0);
 
-            ExportSoundsFolderTextBox = new TextBox();
-            ExportSoundsFolderTextBox.IsReadOnly = true;
+            // Create StackPanel with TextBox and Folder button
+            StackPanel folderStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 20, 0, 0)
+            };
+
+            ExportSoundsFolderTextBox = new TextBox
+            {
+                IsReadOnly = true
+            };
+
             Button folderButton = new Button
             {
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
@@ -607,10 +613,8 @@ namespace UniversalSoundBoard.Common
                 Margin = new Thickness(0, 20, 0, 0)
             };
 
-
             folderStackPanel.Children.Add(folderButton);
             folderStackPanel.Children.Add(ExportSoundsFolderTextBox);
-            
 
             content.Children.Add(ExportSoundsListView);
             content.Children.Add(folderStackPanel);
@@ -622,11 +626,14 @@ namespace UniversalSoundBoard.Common
 
         private async static void ExportSoundsFolderButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            var folderPicker = new FolderPicker();
-            folderPicker.SuggestedStartLocation = PickerLocationId.Downloads;
-            folderPicker.FileTypeFilter.Add("*");
+            var folderPicker = new FolderPicker
+            {
+                SuggestedStartLocation = PickerLocationId.Downloads
+            };
 
+            folderPicker.FileTypeFilter.Add("*");
             StorageFolder folder = await folderPicker.PickSingleFolderAsync();
+
             if (folder != null)
             {
                 StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
@@ -641,7 +648,7 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region SetCategories
-        public static ContentDialog CreateSetCategoryContentDialog(List<Sound> sounds, DataTemplate itemTemplate)
+        public static ContentDialog CreateSetCategoriesContentDialog(List<Sound> sounds, DataTemplate itemTemplate)
         {
             if (sounds.Count == 0) return null;
 
@@ -662,12 +669,9 @@ namespace UniversalSoundBoard.Common
                     return s.Categories.Exists(c => c.Uuid == category.Uuid);
                 });
             }
-            
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 
             string title = string.Format(loader.GetString("SetCategoryForMultipleSoundsContentDialog-Title"), sounds.Count);
-            if (sounds.Count == 1)
-                title = string.Format(loader.GetString("SetCategoryContentDialog-Title"), sounds[0].Name);
+            if (sounds.Count == 1) title = string.Format(loader.GetString("SetCategoryContentDialog-Title"), sounds[0].Name);
 
             SetCategoryContentDialog = new ContentDialog
             {
@@ -708,8 +712,6 @@ namespace UniversalSoundBoard.Common
         #region CategoryOrder
         public static ContentDialog CreateCategoryOrderContentDialog(DataTemplate itemTemplate)
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
-
             // Get all categories
             CategoryOrderList = new ObservableCollection<Category>();
 
