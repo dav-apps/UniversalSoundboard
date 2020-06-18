@@ -6,6 +6,7 @@ using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -24,57 +25,7 @@ namespace UniversalSoundBoard.Converters
         }
     }
 
-    public class CutTitleConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            string newTitle = (string)value;
-            if (string.IsNullOrEmpty(newTitle))
-                return "";
-
-            double width = Window.Current.Bounds.Width;
-            int maxLength = 20;
-
-            if (width < FileManager.hideSearchBoxMaxWidth)
-                maxLength = 14;
-            else if (width > FileManager.topButtonsCollapsedMaxWidth)
-                maxLength = 23;
-            else if (width > FileManager.topButtonsCollapsedMaxWidth * 1.5)
-                maxLength = 28;
-            else if (width > FileManager.topButtonsCollapsedMaxWidth * 2.5)
-                maxLength = 35;
-
-            if(newTitle.Count() > maxLength)
-            {
-                newTitle = newTitle.Substring(0, maxLength);
-                newTitle = newTitle.Insert(newTitle.Count(), "...");
-            }
-            return newTitle;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return FileManager.itemViewHolder.Title;
-        }
-    }
-
-    public class CollapsedButtonsWidthConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            if((string)parameter == "small")
-                return (bool)value ? 40 : 100;
-            else
-                return (bool)value ? 40 : 140;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return 60;
-        }
-    }
-
-    public class ReverseBoolConverter : IValueConverter
+    public class InvertBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -84,47 +35,6 @@ namespace UniversalSoundBoard.Converters
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             return !(bool)value;
-        }
-    }
-
-    public class MakeBoolFalseIfSelectOptionsVisible : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            // Make more button normal options flyout entries invisible if select options are visible
-            return FileManager.itemViewHolder.NormalOptionsVisibility ? (bool)value : false;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class MakeBoolFalseIfNormalOptionsVisible : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            // Make more button select options flyout entries invisible if normal options are visible
-            return FileManager.itemViewHolder.NormalOptionsVisibility ? false : (bool)value;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class ReturnValueConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return value as Category;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return value as Category;
         }
     }
 
@@ -133,8 +43,7 @@ namespace UniversalSoundBoard.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             // Get FileInfo and return BitmapImage
-            FileInfo file = value as FileInfo;
-            if (file == null) return null;
+            if (!(value is FileInfo file)) return null;
             return new BitmapImage(new Uri(file.FullName));
         }
 
@@ -151,10 +60,75 @@ namespace UniversalSoundBoard.Converters
         // This is bound to the acrylic background StackPanel in the NavigationViewHeader
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            var playingSoundsBarVisibility = FileManager.itemViewHolder.PlayingSoundsListVisibility;
-            var page = FileManager.itemViewHolder.Page;
-            
-            return playingSoundsBarVisibility == Visibility.Visible && page == typeof(SoundPage);
+            return FileManager.itemViewHolder.PlayingSoundsListVisible && FileManager.itemViewHolder.Page == typeof(SoundPage);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class OptionsOnSoundPageVisibleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return value as Type == typeof(SoundPage) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class CollapsedButtonsWidthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            if ((string)parameter == "small")
+                return (bool)value ? 40 : 100;
+            else
+                return (bool)value ? 40 : 140;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return 60;
+        }
+    }
+
+    public class OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return !(bool)value && FileManager.itemViewHolder.MultiSelectionEnabled;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return !(bool)value && !FileManager.itemViewHolder.MultiSelectionEnabled;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BooleanToSelectionMode : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return (bool)value ? ListViewSelectionMode.Multiple : ListViewSelectionMode.None;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -172,8 +146,12 @@ namespace UniversalSoundBoard.Converters
             List<Category> categories = value as List<Category>;
             string icons = "";
 
-            foreach (var category in categories)
-                icons += category.Icon + "\n\n";
+            if((string)parameter == "list")
+                foreach (var category in categories)
+                    icons += " " + category.Icon;
+            else
+                foreach (var category in categories)
+                    icons += category.Icon + "\n\n";
 
             return icons;
         }
