@@ -10,11 +10,15 @@
     xmlns:components1="using:UniversalSoundboard.Components"
     xmlns:converters="using:UniversalSoundBoard.Converters"
     mc:Ignorable="d"
-    SizeChanged="Page_SizeChanged">
+    Loaded="SoundPage_Loaded"
+    SizeChanged="SoundPage_SizeChanged">
 
     <Page.Resources>
-        <converters:ReverseBoolConverter x:Name="ReverseBoolConverter" />
-        
+        <!-- Converters -->
+        <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
+        <converters:BooleanToSelectionMode x:Name="BooleanToSelectionMode" />
+
+        <!-- DataTemplates -->
         <DataTemplate x:Key="PivotHeaderTemplate">
             <TextBlock Text="{Binding}" FontSize="15"/>
         </DataTemplate>
@@ -27,6 +31,7 @@
             <components1:SoundListItemTemplate />
         </DataTemplate>
 
+        <!-- Styles -->
         <Style TargetType="Pivot">
             <Setter Property="HeaderTemplate" Value="{StaticResource PivotHeaderTemplate}"/>
         </Style>
@@ -42,7 +47,7 @@
         </Style>
 
         <Style x:Key="SoundListViewStyle" TargetType="ListView">
-            <Setter Property="Margin" Value="0,10,5,0" />
+            <Setter Property="Margin" Value="0,10,0,0" />
             <Setter Property="IsItemClickEnabled" Value="True" />
             <Setter Property="CanReorderItems" Value="True" />
             <Setter Property="AllowDrop" Value="True" />
@@ -54,10 +59,11 @@
         </Style>
     </Page.Resources>
 
-    <Grid Name="ContentRoot"
-          AllowDrop="True" 
-          Drop="SoundGridView_Drop" 
-          DragOver="SoundGridView_DragOver">
+    <Grid
+        Name="ContentRoot"
+        AllowDrop="True" 
+        Drop="ContentRoot_Drop" 
+        DragOver="ContentRoot_DragOver">
 
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -81,7 +87,7 @@
 
                 <Pivot
                     Name="SoundGridViewPivot"
-                    Visibility="{Binding ShowListView, Converter={StaticResource ReverseBoolConverter}}"
+                    Visibility="{Binding ShowListView, Converter={StaticResource InvertBooleanConverter}}"
                     PivotItemLoaded="SoundGridViewPivot_PivotItemLoaded">
 
                     <PivotItem x:Uid="SoundsPivotHeader" Margin="0,0,0,0">
@@ -89,8 +95,8 @@
                             Name="SoundGridView"
                             Style="{StaticResource SoundGridViewStyle}"
                             ItemsSource="{Binding Sounds}"
-                            SelectionMode="{Binding SelectionMode}"
-                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
+                            SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
                             ItemClick="SoundGridView_ItemClick"
                             SelectionChanged="SoundGridView_SelectionChanged"
                             SizeChanged="SoundGridView_SizeChanged">
@@ -102,8 +108,8 @@
                             Name="FavouriteSoundGridView"
                             Style="{StaticResource SoundGridViewStyle}"
                             ItemsSource="{Binding FavouriteSounds}"
-                            SelectionMode="{Binding SelectionMode}"
-                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
+                            SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
                             ItemClick="SoundGridView_ItemClick"
                             SelectionChanged="SoundGridView_SelectionChanged"
                             SizeChanged="SoundGridView_SizeChanged">
@@ -122,10 +128,10 @@
                             Style="{StaticResource SoundListViewStyle}"
                             ItemContainerStyle="{StaticResource ListViewItemStyle}"
                             ItemsSource="{Binding Sounds}"
-                            SelectionMode="{Binding SelectionMode}"
-                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
-                            ItemClick="SoundListView_ItemClick"
-                            SelectionChanged="SoundListView_SelectionChanged">
+                            SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
+                            ItemClick="SoundGridView_ItemClick"
+                            SelectionChanged="SoundGridView_SelectionChanged">
                         </ListView>
                     </PivotItem>
 
@@ -135,10 +141,10 @@
                             Style="{StaticResource SoundListViewStyle}"
                             ItemContainerStyle="{StaticResource ListViewItemStyle}"
                             ItemsSource="{Binding FavouriteSounds}"
-                            SelectionMode="{Binding SelectionMode}"
-                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
-                            ItemClick="SoundListView_ItemClick"
-                            SelectionChanged="SoundListView_SelectionChanged">
+                            SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
+                            ItemClick="SoundGridView_ItemClick"
+                            SelectionChanged="SoundGridView_SelectionChanged">
                         </ListView>
                     </PivotItem>
                 </Pivot>
@@ -147,15 +153,15 @@
             <Grid
                 Grid.Row="0"
                 Margin="5,0,0,0"
-                Visibility="{Binding ShowSoundsPivot, Converter={StaticResource ReverseBoolConverter}}">
+                Visibility="{Binding ShowSoundsPivot, Converter={StaticResource InvertBooleanConverter}}">
 
                 <GridView
                     Name="SoundGridView2"
                     Style="{StaticResource SoundGridViewStyle}"
-                    Visibility="{Binding ShowListView, Converter={StaticResource ReverseBoolConverter}}"
+                    Visibility="{Binding ShowListView, Converter={StaticResource InvertBooleanConverter}}"
                     ItemsSource="{Binding Sounds}"
-                    SelectionMode="{Binding SelectionMode}"
-                    IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
+                    SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                    IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
                     ItemClick="SoundGridView_ItemClick"
                     SelectionChanged="SoundGridView_SelectionChanged"
                     SizeChanged="SoundGridView_SizeChanged">
@@ -167,10 +173,10 @@
                     ItemContainerStyle="{StaticResource ListViewItemStyle}"
                     Visibility="{Binding ShowListView}"
                     ItemsSource="{Binding Sounds}"
-                    SelectionMode="{Binding SelectionMode}"
-                    IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource ReverseBoolConverter}}"
-                    ItemClick="SoundListView_ItemClick"
-                    SelectionChanged="SoundListView_SelectionChanged">
+                    SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                    IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
+                    ItemClick="SoundGridView_ItemClick"
+                    SelectionChanged="SoundGridView_SelectionChanged">
                 </ListView>
             </Grid>
 
@@ -182,11 +188,13 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <Grid Name="HandleGrid" 
-                      Background="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="0,1,0,1" BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
-                      ManipulationStarted="HandleGrid_OnManipulationStarted" ManipulationDelta="HandleGrid_OnManipulationDelta" 
-                      ManipulationCompleted="HandleGrid_OnManipulationCompleted" ManipulationMode="TranslateY" 
-                      Tapped="HandleGrid_Tapped" Height="15">
+                <Grid
+                    Name="HandleGrid" 
+                    Background="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="0,1,0,1" BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
+                    ManipulationStarted="HandleGrid_OnManipulationStarted" ManipulationDelta="HandleGrid_OnManipulationDelta" 
+                    ManipulationCompleted="HandleGrid_OnManipulationCompleted" ManipulationMode="TranslateY" 
+                    Tapped="HandleGrid_Tapped" Height="15">
+                    
                     <SymbolIcon Symbol="More" />
                 </Grid>
 
@@ -208,11 +216,13 @@
             </Grid>
         </Grid>
 
-        <Grid Name="DrawerContent" 
-              Grid.Row="0" 
-              Grid.Column="1" 
-              Grid.RowSpan="2"
-              Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
+        <Grid
+            Name="DrawerContent" 
+            Grid.Row="0" 
+            Grid.Column="1" 
+            Grid.RowSpan="2"
+            Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
+            
             <ListView Name="PlayingSoundsListView" ItemsSource="{Binding PlayingSounds}" SelectionMode="None">
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
