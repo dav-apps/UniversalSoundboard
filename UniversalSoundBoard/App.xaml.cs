@@ -1,21 +1,16 @@
 ﻿using davClassLibrary.Common;
-using davClassLibrary.Models;
 using System;
-using System.Collections.ObjectModel;
 using System.Diagnostics;
 using UniversalSoundboard.Common;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
-using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundBoard
@@ -34,83 +29,6 @@ namespace UniversalSoundBoard
             InitializeComponent();
             Suspending += OnSuspending;
 
-            // Init itemViewHolder
-            FileManager.itemViewHolder = new ItemViewHolder
-            {
-                Title = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AllSounds"),
-                ProgressRingIsActive = false,
-                Sounds = new ObservableCollection<Sound>(),
-                FavouriteSounds = new ObservableCollection<Sound>(),
-                AllSounds = new ObservableCollection<Sound>(),
-                AllSoundsChanged = true,
-                Categories = new ObservableCollection<Category>(),
-                SearchQuery = "",
-                EditButtonVisibility = Visibility.Collapsed,
-                PlayAllButtonVisibility = Visibility.Collapsed,
-                SelectionMode = ListViewSelectionMode.None,
-                NormalOptionsVisibility = true,
-                SelectedSounds = new ObservableCollection<Sound>(),
-                PlayingSounds = new ObservableCollection<PlayingSound>(),
-                PlayingSoundsListVisibility = Visibility.Visible,
-                PlayOneSoundAtOnce = FileManager.playOneSoundAtOnceDefault,
-                ShowListView = FileManager.showListViewDefault,
-                ShowCategoryIcon = FileManager.showCategoryIconDefault,
-                ShowSoundsPivot = FileManager.showSoundsPivotDefault,
-                SavePlayingSounds = FileManager.savePlayingSoundsDefault,
-                IsExporting = false,
-                Exported = false,
-                IsImporting = false,
-                Imported = false,
-                AreExportAndImportButtonsEnabled = true,
-                ExportMessage = "",
-                ImportMessage = "",
-                SoundboardSize = "",
-                SearchAutoSuggestBoxVisibility = true,
-                VolumeButtonVisibility = true,
-                AddButtonVisibility = true,
-                SelectButtonVisibility = true,
-                SearchButtonVisibility = false,
-                CancelButtonVisibility = false,
-                ShareButtonVisibility = false,
-                MoreButtonVisibility = true,
-                TopButtonsCollapsed = false,
-                AreSelectButtonsEnabled = false,
-                SelectedCategory = 0,
-                UpgradeDataStatusText = "Preparing...",
-                User = null,
-                LoginMenuItemVisibility = true,
-                IsBackButtonEnabled = false,
-                LoadingScreenVisibility = false,
-                LoadingScreenMessage = "",
-                SelectAllFlyoutText = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("MoreButton_SelectAllFlyout-SelectAll"),
-                SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll),
-                ShowAcrylicBackground = true,
-                PlayingSoundsBarAcrylicBackgroundBrush = new AcrylicBrush(),
-                SoundOrder = FileManager.soundOrderDefault,
-                SoundOrderReversed = FileManager.soundOrderReversedDefault,
-                SoundTileWidth = 200
-            };
-
-            // Set dark theme
-            var localSettings = ApplicationData.Current.LocalSettings;
-            
-            if(localSettings.Values["theme"] != null)
-            {
-                switch ((string)localSettings.Values["theme"])
-                {
-                    case "dark":
-                        RequestedTheme = ApplicationTheme.Dark;
-                        break;
-                    case "light":
-                        RequestedTheme = ApplicationTheme.Light;
-                        break;
-                }
-            }
-            else
-            {
-                localSettings.Values["theme"] = FileManager.themeDefault;
-            }
-
             // Init Websocket
             Websockets.Net.WebsocketConnection.Link();
 
@@ -119,7 +37,15 @@ namespace UniversalSoundBoard
             ProjectInterface.LocalDataSettings = new LocalDataSettings();
             ProjectInterface.TriggerAction = new UniversalSoundboard.Common.TriggerAction();
             ProjectInterface.GeneralMethods = new GeneralMethods();
-            FileManager.itemViewHolder.User = new DavUser();
+
+            // Init itemViewHolder
+            FileManager.itemViewHolder = new ItemViewHolder();
+
+            // Set the theme
+            if (FileManager.itemViewHolder.Theme == FileManager.AppTheme.Light)
+                RequestedTheme = ApplicationTheme.Light;
+            else if (FileManager.itemViewHolder.Theme == FileManager.AppTheme.Dark)
+                RequestedTheme = ApplicationTheme.Dark;
         }
 
         /// <summary>
@@ -160,16 +86,6 @@ namespace UniversalSoundBoard
                 }
                 // Ensure the current window is active
                 Window.Current.Activate();
-            }
-
-            if (e.PreviousExecutionState != ApplicationExecutionState.Running)
-            {
-                if(!await FileManager.UsesDavDataModelAsync())
-                {
-                    bool loadState = e.PreviousExecutionState == ApplicationExecutionState.Terminated;
-                    UpgradeDataSplashScreen upgradeDataSplashScreen = new UpgradeDataSplashScreen(e.SplashScreen, loadState);
-                    Window.Current.Content = upgradeDataSplashScreen;
-                }
             }
             
             // Check if app was launched from a secondary tile
