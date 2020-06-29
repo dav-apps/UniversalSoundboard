@@ -15,6 +15,15 @@
             <Color x:Key="DarkThemeBackgroundColor">#0d1221</Color>
             <Color x:Key="LightThemeBackgroundColor">White</Color>
 
+            <!-- Override the background of the MediaTransportControls -->
+            <SolidColorBrush x:Key="MediaTransportControlsPanelBackground" Color="Transparent" />
+
+            <AcrylicBrush
+                x:Name="NavigationViewHeaderBackgroundBrush"
+                BackgroundSource="Backdrop"
+                TintOpacity="0.75"
+                TintColor="#0d1221" />
+
             <!-- The button style for the Play All Button to look like the SymbolIcons -->
             <Style TargetType="Button" x:Key="PlayAllButtonStyle">
                 <Setter Property="Template">
@@ -38,9 +47,6 @@
                     </Setter.Value>
                 </Setter>
             </Style>
-
-            <!-- Override the background of the MediaTransportControls -->
-            <SolidColorBrush x:Key="MediaTransportControlsPanelBackground" Color="Transparent" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

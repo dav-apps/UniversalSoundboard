@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.UI.Xaml.Media;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -55,12 +56,14 @@ namespace UniversalSoundBoard.Converters
         }
     }
 
-    public class PlayingSoundsBarVisibilityConverter : IValueConverter
+    public class PlayingSoundsBarWidthConverter : IValueConverter
     {
-        // This is bound to the acrylic background StackPanel in the NavigationViewHeader
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return FileManager.itemViewHolder.PlayingSoundsListVisible && FileManager.itemViewHolder.Page == typeof(SoundPage);
+            if (FileManager.itemViewHolder.PlayingSoundsListVisible && FileManager.itemViewHolder.Page == typeof(SoundPage))
+                return FileManager.itemViewHolder.PlayingSoundsBarWidth;
+            else
+                return 0;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -170,6 +173,19 @@ namespace UniversalSoundBoard.Converters
 
             if (categories.Count == 0) return new Thickness(0, 0, 0, 0);
             return new Thickness(0, 0, 10, 0);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class NavigationViewHeaderBackgroundConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return FileManager.itemViewHolder.ShowSoundsPivot ? (Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush) : new AcrylicBrush();
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

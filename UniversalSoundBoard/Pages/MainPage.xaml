@@ -18,11 +18,12 @@
         <!-- Converters -->
         <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
-        <converters:PlayingSoundsBarVisibilityConverter x:Key="PlayingSoundsBarVisibilityConverter" />
+        <converters:PlayingSoundsBarWidthConverter x:Name="PlayingSoundsBarWidthConverter" />
         <converters:OptionsOnSoundPageVisibleConverter x:Name="OptionsOnSoundPageVisibleConverter" />
         <converters:CollapsedButtonsWidthConverter x:Name="CollapsedButtonsWidthConverter" />
         <converters:OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter x:Name="OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter" />
         <converters:OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter x:Name="OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter" />
+        <converters:NavigationViewHeaderBackgroundConverter x:Name="NavigationViewHeaderBackgroundConverter" />
 
         <!-- Item Templates -->
         <DataTemplate x:Key="SoundItemTemplate" x:DataType="models:Sound">
@@ -108,15 +109,18 @@
                         <RowDefinition Height="*" />
                     </Grid.RowDefinitions>
 
-                    <RelativePanel Name="NavigationViewHeader">
+                    <RelativePanel
+                        Name="NavigationViewHeader"
+                        Canvas.ZIndex="1"
+                        Background="{Binding ShowSoundsPivot, Converter={StaticResource NavigationViewHeaderBackgroundConverter}}">
+                        
                         <StackPanel
                             Name="NavigationViewHeaderAcrylicBackgroundStackPanel"
-                            Width="{Binding PlayingSoundsBarWidth}"
+                            Width="{Binding PlayingSoundsBarWidth, Converter={StaticResource PlayingSoundsBarWidthConverter}}"
                             Height="85"
-                            Visibility="{Binding Page, Converter={StaticResource PlayingSoundsBarVisibilityConverter}}"
                             Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}"
                             RelativePanel.AlignRightWithPanel="True" />
-
+                        
                         <RelativePanel
                             Name="NavigationViewHeaderContent"
                             Height="40"
@@ -187,40 +191,6 @@
                                     Visibility="{Binding MultiSelectionEnabled, Converter={StaticResource InvertBooleanConverter}}">
 
                                     <Button
-                                        Name="VolumeButton"
-                                        Style="{StaticResource TopButtonStyle}"
-                                        VerticalAlignment="Center"
-                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}"
-                                        Visibility="{Binding VolumeButtonVisible}">
-
-                                        <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
-                                            <TextBlock
-                                                Style="{StaticResource TopButtonInnerIconStyle}"
-                                                Text="&#xE767;" />
-                                            <TextBlock
-                                                x:Uid="VolumeButton" 
-                                                Style="{StaticResource TopButtonInnerTextStyle}"
-                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource InvertBooleanConverter}}" />
-                                        </StackPanel>
-
-                                        <Button.Flyout>
-                                            <Flyout>
-                                                <Slider
-                                                    Name="VolumeSlider"
-                                                    Maximum="100"
-                                                    Minimum="0"
-                                                    Width="150"
-                                                    ValueChanged="VolumeSlider_ValueChanged"
-                                                    LostFocus="VolumeSlider_LostFocus" />
-                                            </Flyout>
-                                        </Button.Flyout>
-
-                                        <ToolTipService.ToolTip>
-                                            <TextBlock x:Uid="VolumeButton" />
-                                        </ToolTipService.ToolTip>
-                                    </Button>
-
-                                    <Button
                                         Name="AddButton"
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
@@ -252,6 +222,40 @@
 
                                         <ToolTipService.ToolTip>
                                             <TextBlock x:Uid="AddButton" />
+                                        </ToolTipService.ToolTip>
+                                    </Button>
+
+                                    <Button
+                                        Name="VolumeButton"
+                                        Style="{StaticResource TopButtonStyle}"
+                                        VerticalAlignment="Center"
+                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}"
+                                        Visibility="{Binding VolumeButtonVisible}">
+
+                                        <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
+                                            <TextBlock
+                                                Style="{StaticResource TopButtonInnerIconStyle}"
+                                                Text="&#xE767;" />
+                                            <TextBlock
+                                                x:Uid="VolumeButton" 
+                                                Style="{StaticResource TopButtonInnerTextStyle}"
+                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource InvertBooleanConverter}}" />
+                                        </StackPanel>
+
+                                        <Button.Flyout>
+                                            <Flyout>
+                                                <Slider
+                                                    Name="VolumeSlider"
+                                                    Maximum="100"
+                                                    Minimum="0"
+                                                    Width="150"
+                                                    ValueChanged="VolumeSlider_ValueChanged"
+                                                    LostFocus="VolumeSlider_LostFocus" />
+                                            </Flyout>
+                                        </Button.Flyout>
+
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="VolumeButton" />
                                         </ToolTipService.ToolTip>
                                     </Button>
 
@@ -379,6 +383,22 @@
                                     <Button.Flyout>
                                         <MenuFlyout Placement="Bottom">
                                             <!-- #region Normal Options -->
+                                            <MenuFlyoutSubItem
+                                                Name="AddFlyout" 
+                                                Icon="Add" 
+                                                x:Uid="AddButton"
+                                                Visibility="{Binding AddButtonVisible, Converter={StaticResource OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter}}">
+
+                                                <MenuFlyoutItem
+                                                    Name="NewSoundFlyoutItem2" 
+                                                    x:Uid="AddButton-Sound" 
+                                                    Click="NewSoundFlyoutItem_Click" />
+                                                <MenuFlyoutItem
+                                                    Name="NewCategoryFlyoutItem2" 
+                                                    x:Uid="AddButton-Category" 
+                                                    Click="NewCategoryFlyoutItem_Click" />
+                                            </MenuFlyoutSubItem>
+                                            
                                             <MenuFlyoutItem
                                                 Name="VolumeFlyout" 
                                                 x:Uid="VolumeButton"
@@ -398,22 +418,6 @@
                                                     </Flyout>
                                                 </MenuFlyoutItem.ContextFlyout>
                                             </MenuFlyoutItem>
-
-                                            <MenuFlyoutSubItem
-                                                Name="AddFlyout" 
-                                                Icon="Add" 
-                                                x:Uid="AddButton"
-                                                Visibility="{Binding AddButtonVisible, Converter={StaticResource OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter}}">
-
-                                                <MenuFlyoutItem
-                                                    Name="NewSoundFlyoutItem2" 
-                                                    x:Uid="AddButton-Sound" 
-                                                    Click="NewSoundFlyoutItem_Click" />
-                                                <MenuFlyoutItem
-                                                    Name="NewCategoryFlyoutItem2" 
-                                                    x:Uid="AddButton-Category" 
-                                                    Click="NewCategoryFlyoutItem_Click" />
-                                            </MenuFlyoutSubItem>
 
                                             <MenuFlyoutItem
                                                 Name="SelectFlyout" 
@@ -476,8 +480,10 @@
 
                     <Frame
                         Name="ContentFrame"
+                        Canvas.ZIndex="0"
                         SourcePageType="{Binding Page, Mode=TwoWay}" 
-                        Grid.Row="1" />
+                        Grid.Row="0"
+                        Grid.RowSpan="2" />
                 </Grid>
             </muxc:NavigationView.Content>
         </muxc:NavigationView>
