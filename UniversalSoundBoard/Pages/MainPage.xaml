@@ -285,7 +285,7 @@
                                     <AutoSuggestBox
                                         Name="SearchAutoSuggestBox"
                                         x:Uid="Search" 
-                                        Text="{Binding SearchQuery}"
+                                        Text="{Binding SearchQuery, Mode=TwoWay}"
                                         Width="200" 
                                         Visibility="{Binding SearchAutoSuggestBoxVisible}"
                                         QueryIcon="Find" 

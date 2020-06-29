@@ -427,10 +427,9 @@ namespace UniversalSoundBoard.Pages
         #region Search
         private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            if (FileManager.skipAutoSuggestBoxTextChanged) return;
+            if (args.Reason == AutoSuggestionBoxTextChangeReason.ProgrammaticChange) return;
 
             string text = sender.Text;
-
             if (string.IsNullOrEmpty(text))
             {
                 // Show all sounds
@@ -450,6 +449,9 @@ namespace UniversalSoundBoard.Pages
 
                 // Load the searched sounds
                 await FileManager.LoadSoundsByNameAsync(text);
+
+                FileManager.UpdatePlayAllButtonVisibility();
+                FileManager.UpdateBackButtonVisibility();
             }
         }
 
@@ -469,6 +471,7 @@ namespace UniversalSoundBoard.Pages
                 await FileManager.LoadSoundsByNameAsync(text);
             }
 
+            FileManager.UpdatePlayAllButtonVisibility();
             FileManager.UpdateBackButtonVisibility();
         }
 
