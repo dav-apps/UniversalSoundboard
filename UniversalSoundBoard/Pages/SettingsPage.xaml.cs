@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
-using Windows.Storage;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -14,32 +13,26 @@ namespace UniversalSoundBoard.Pages
 {
     public sealed partial class SettingsPage : Page
     {
-        static string themeAtBeginning;
-        ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+        int themeAtBeginning = -1;
         bool initialized = false;
 
         public SettingsPage()
         {
             InitializeComponent();
 
-            if(string.IsNullOrEmpty(themeAtBeginning))
-                themeAtBeginning = (string)localSettings.Values[FileManager.themeKey];
+            if (themeAtBeginning == -1) themeAtBeginning = (int)FileManager.itemViewHolder.Theme;
         }
         
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            SetDataContext();
-            await FileManager.SetSoundBoardSizeTextAsync();
-        }
-        
-        private void SetDataContext()
+        private async void SettingsPage_Loaded(object sender, RoutedEventArgs e)
         {
             ContentRoot.DataContext = FileManager.itemViewHolder;
+            SetDarkThemeLayout();
+            await FileManager.SetSoundBoardSizeTextAsync();
         }
         
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
-            SetDarkThemeLayout();
+            // Init the settings UI elements
             SetLiveTileToggle();
             SetPlayingSoundsListVisibilityToggle();
             SetPlayOneSoundAtOnceToggle();
@@ -63,173 +56,187 @@ namespace UniversalSoundBoard.Pages
             SettingsDataStackPanel.Background = appThemeColorBrush;
         }
 
+        #region LiveTile
         private void SetLiveTileToggle()
         {
-            LiveTileToggle.IsOn = (bool)localSettings.Values[FileManager.liveTileKey];
-        }
-        
-        private void SetPlayingSoundsListVisibilityToggle()
-        {
-            PlayingSoundsListToggle.IsOn = (bool)localSettings.Values[FileManager.playingSoundsListVisibleKey];
-        }
-        
-        private void SetPlayOneSoundAtOnceToggle()
-        {
-            PlayOneSoundAtOnceToggle.IsOn = (bool)localSettings.Values[FileManager.playOneSoundAtOnceKey];
+            LiveTileToggle.IsOn = FileManager.itemViewHolder.LiveTileEnabled;
         }
 
-        private void SetShowListViewToggle()
-        {
-            ShowListViewToggle.IsOn = (bool)localSettings.Values[FileManager.showListViewKey];
-        }
-        
-        private void SetShowCategoryIconToggle()
-        {
-            ShowCategoryToggle.IsOn = (bool)localSettings.Values[FileManager.showCategoryIconKey];
-        }
-
-        private void SetShowAcrylicBackgroundToggle()
-        {
-            ShowAcrylicBackgroundToggle.IsOn = (bool)localSettings.Values[FileManager.showAcrylicBackgroundKey];
-        }
-        
-        private void SetShowSoundsPivotToggle()
-        {
-            ShowSoundsPivotToggle.IsOn = (bool)localSettings.Values[FileManager.showSoundsPivotKey];
-        }
-
-        private void SetThemeRadioButton()
-        {
-            if (localSettings.Values[FileManager.themeKey] != null)
-            {
-                switch ((string)localSettings.Values[FileManager.themeKey])
-                {
-                    case "light":
-                        LightThemeRadioButton.IsChecked = true;
-                        break;
-                    case "dark":
-                        DarkThemeRadioButton.IsChecked = true;
-                        break;
-                    case "system":
-                        SystemThemeRadioButton.IsChecked = true;
-                        break;
-                }
-            }
-
-            SetToggleMessageVisibility();
-        }
-
-        private void SetSavePlayingSoundsToggle()
-        {
-            SavePlayingSoundsToggle.IsOn = (bool)localSettings.Values[FileManager.savePlayingSoundsKey];
-            SavePlayingSoundsStackPanel.Visibility = FileManager.itemViewHolder.PlayingSoundsListVisibility;
-        }
-
-        private void SetSoundOrderComboBox()
-        {
-            SoundOrderComboBox.SelectedIndex = (int)localSettings.Values[FileManager.soundOrderKey];
-        }
-
-        private void SetSoundOrderReversedComboBox()
-        {
-            SoundOrderReversedComboBox.SelectedIndex = (bool)localSettings.Values[FileManager.soundOrderReversedKey] ? 1 : 0;
-
-            // Disable the combo box if custom sound order is selected
-            if (FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom)
-                SoundOrderReversedComboBox.IsEnabled = false;
-        }
-
-        private void SetToggleMessageVisibility()
-        {
-            ThemeChangeMessageTextBlock.Visibility = themeAtBeginning != (string)localSettings.Values[FileManager.themeKey] ? Visibility.Visible : Visibility.Collapsed;
-        }
-        
         private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            localSettings.Values[FileManager.liveTileKey] = LiveTileToggle.IsOn;
-            if (!LiveTileToggle.IsOn)
-                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
-            else
+            FileManager.itemViewHolder.LiveTileEnabled = LiveTileToggle.IsOn;
+
+            if (LiveTileToggle.IsOn)
                 Task.Run(FileManager.UpdateLiveTileAsync);
+            else
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
         }
-        
+        #endregion
+
+        #region PlayingSoundsListVisibility
+        private void SetPlayingSoundsListVisibilityToggle()
+        {
+            PlayingSoundsListToggle.IsOn = FileManager.itemViewHolder.PlayingSoundsListVisible;
+        }
+
         private async void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            localSettings.Values[FileManager.playingSoundsListVisibleKey] = PlayingSoundsListToggle.IsOn;
-            FileManager.itemViewHolder.PlayingSoundsListVisibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+            FileManager.itemViewHolder.PlayingSoundsListVisible = PlayingSoundsListToggle.IsOn;
 
             SavePlayingSoundsStackPanel.Visibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
 
             await FileManager.AddOrRemoveAllPlayingSoundsAsync();
         }
-        
+        #endregion
+
+        #region PlayOneSoundAtOnce
+        private void SetPlayOneSoundAtOnceToggle()
+        {
+            PlayOneSoundAtOnceToggle.IsOn = FileManager.itemViewHolder.PlayOneSoundAtOnce;
+        }
+
         private void PlayOneSoundAtOnceToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            localSettings.Values[FileManager.playOneSoundAtOnceKey] = PlayOneSoundAtOnceToggle.IsOn;
             FileManager.itemViewHolder.PlayOneSoundAtOnce = PlayOneSoundAtOnceToggle.IsOn;
         }
-        
-        private void ThemeRadioButton_Checked(object sender, RoutedEventArgs e)
-        {
-            if (!initialized) return;
-            RadioButton radioButton = sender as RadioButton;
-            if(radioButton == LightThemeRadioButton)
-                localSettings.Values[FileManager.themeKey] = "light";
-            else if (radioButton == DarkThemeRadioButton)
-                localSettings.Values[FileManager.themeKey] = "dark";
-            else if (radioButton == SystemThemeRadioButton)
-                localSettings.Values[FileManager.themeKey] = "system";
+        #endregion
 
-            SetToggleMessageVisibility();
+        #region ShowListView
+        private void SetShowListViewToggle()
+        {
+            ShowListViewToggle.IsOn = FileManager.itemViewHolder.ShowListView;
         }
 
         private void ListViewToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            localSettings.Values[FileManager.showListViewKey] = ShowListViewToggle.IsOn;
             FileManager.itemViewHolder.ShowListView = ShowListViewToggle.IsOn;
+        }
+        #endregion
+
+        #region ShowCategories
+        private void SetShowCategoryIconToggle()
+        {
+            ShowCategoryToggle.IsOn = FileManager.itemViewHolder.ShowCategoryIcon;
         }
 
         private void ShowCategoryToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            localSettings.Values[FileManager.showCategoryIconKey] = ShowCategoryToggle.IsOn;
             FileManager.itemViewHolder.ShowCategoryIcon = ShowCategoryToggle.IsOn;
+        }
+        #endregion
+
+        #region ShowAcrylicBackground
+        private void SetShowAcrylicBackgroundToggle()
+        {
+            ShowAcrylicBackgroundToggle.IsOn = FileManager.itemViewHolder.ShowAcrylicBackground;
         }
 
         private void ShowAcrylicBackgroundToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            localSettings.Values[FileManager.showAcrylicBackgroundKey] = ShowAcrylicBackgroundToggle.IsOn;
             FileManager.itemViewHolder.ShowAcrylicBackground = ShowAcrylicBackgroundToggle.IsOn;
-            
+
             // Update the UI
             FileManager.UpdateLayoutColors();
+        }
+        #endregion
+
+        #region ShowSoundsPivot
+        private void SetShowSoundsPivotToggle()
+        {
+            ShowSoundsPivotToggle.IsOn = FileManager.itemViewHolder.ShowSoundsPivot;
         }
 
         private void ShowSoundsPivotToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            localSettings.Values[FileManager.showSoundsPivotKey] = ShowSoundsPivotToggle.IsOn;
             FileManager.itemViewHolder.ShowSoundsPivot = ShowSoundsPivotToggle.IsOn;
+        }
+        #endregion
+
+        #region Theme
+        private void SetThemeRadioButton()
+        {
+            switch (FileManager.itemViewHolder.Theme)
+            {
+                case FileManager.AppTheme.Light:
+                    LightThemeRadioButton.IsChecked = true;
+                    break;
+                case FileManager.AppTheme.Dark:
+                    DarkThemeRadioButton.IsChecked = true;
+                    break;
+                case FileManager.AppTheme.System:
+                    SystemThemeRadioButton.IsChecked = true;
+                    break;
+            }
+
+            SetThemeMessageVisibility();
+        }
+
+        private void ThemeRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            if (!initialized) return;
+            RadioButton radioButton = sender as RadioButton;
+
+            if (radioButton == LightThemeRadioButton)
+                FileManager.itemViewHolder.Theme = FileManager.AppTheme.Light;
+            else if (radioButton == DarkThemeRadioButton)
+                FileManager.itemViewHolder.Theme = FileManager.AppTheme.Dark;
+            else if (radioButton == SystemThemeRadioButton)
+                FileManager.itemViewHolder.Theme = FileManager.AppTheme.System;
+
+            SetThemeMessageVisibility();
+        }
+
+        private void SetThemeMessageVisibility()
+        {
+            ThemeChangeMessageTextBlock.Visibility = themeAtBeginning != (int)FileManager.itemViewHolder.Theme ? Visibility.Visible : Visibility.Collapsed;
+        }
+        #endregion
+
+        #region SavePlayingSounds
+        private void SetSavePlayingSoundsToggle()
+        {
+            SavePlayingSoundsToggle.IsOn = FileManager.itemViewHolder.SavePlayingSounds;
+            SavePlayingSoundsStackPanel.Visibility = FileManager.itemViewHolder.PlayingSoundsListVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private async void SavePlayingSoundsToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            localSettings.Values[FileManager.savePlayingSoundsKey] = SavePlayingSoundsToggle.IsOn;
             FileManager.itemViewHolder.SavePlayingSounds = SavePlayingSoundsToggle.IsOn;
 
             await FileManager.AddOrRemoveAllPlayingSoundsAsync();
         }
+        #endregion
 
+        #region SoundOrder
+        private void SetSoundOrderComboBox()
+        {
+            SoundOrderComboBox.SelectedIndex = (int)FileManager.itemViewHolder.SoundOrder;
+        }
+
+        private void SetSoundOrderReversedComboBox()
+        {
+            SoundOrderReversedComboBox.SelectedIndex = FileManager.itemViewHolder.SoundOrderReversed ? 1 : 0;
+
+            // Disable the combo box if custom sound order is selected
+            if (FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom)
+                SoundOrderReversedComboBox.IsEnabled = false;
+        }
+        #endregion
+
+        #region Events
         private async void ChangeCategoryOrderButton_Click(object sender, RoutedEventArgs e)
         {
             // Show the CategoryOrderContentDialog
             var itemTemplate = (DataTemplate)Resources["CategoryOrderItemTemplate"];
+
             var CategoryOrderContentDialog = ContentDialogs.CreateCategoryOrderContentDialog(itemTemplate);
             CategoryOrderContentDialog.PrimaryButtonClick += CategoryOrderContentDialog_PrimaryButtonClick;
             await CategoryOrderContentDialog.ShowAsync();
@@ -240,17 +247,16 @@ namespace UniversalSoundBoard.Pages
             // Save the new order of the categories
             List<Guid> uuids = new List<Guid>();
 
-            foreach(var category in ContentDialogs.CategoryOrderList)
+            foreach (var category in ContentDialogs.CategoryOrderList)
                 uuids.Add(category.Uuid);
 
-            await FileManager.SetCategoryOrderAsync(uuids);
+            //await FileManager.SetCategoryOrderAsync(uuids);
             await FileManager.CreateCategoriesListAsync();
         }
 
         private void SoundOrderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!initialized) return;
-            localSettings.Values[FileManager.soundOrderKey] = SoundOrderComboBox.SelectedIndex;
             FileManager.itemViewHolder.SoundOrder = (FileManager.SoundOrder)SoundOrderComboBox.SelectedIndex;
 
             SoundOrderReversedComboBox.IsEnabled = FileManager.itemViewHolder.SoundOrder != FileManager.SoundOrder.Custom;
@@ -261,7 +267,6 @@ namespace UniversalSoundBoard.Pages
         private void SoundOrderReversedComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!initialized) return;
-            localSettings.Values[FileManager.soundOrderReversedKey] = SoundOrderReversedComboBox.SelectedIndex != 0;
             FileManager.itemViewHolder.SoundOrderReversed = SoundOrderReversedComboBox.SelectedIndex != 0;
         }
 
@@ -269,25 +274,25 @@ namespace UniversalSoundBoard.Pages
         {
             var ExportDataContentDialog = ContentDialogs.CreateExportDataContentDialog();
             ExportDataContentDialog.PrimaryButtonClick += ExportDataContentDialog_PrimaryButtonClickAsync;
-
             await ExportDataContentDialog.ShowAsync();
         }
-        
+
         private async void ExportDataContentDialog_PrimaryButtonClickAsync(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.ExportDataAsync(ContentDialogs.ExportFolder);
         }
-        
+
         private async void ImportDataButton_Click(object sender, RoutedEventArgs e)
         {
             var ImportDataContentDialog = ContentDialogs.CreateImportDataContentDialog();
             ImportDataContentDialog.PrimaryButtonClick += ImportDataContentDialog_PrimaryButtonClick;
             await ImportDataContentDialog.ShowAsync();
         }
-        
+
         private async void ImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.ImportDataAsync(ContentDialogs.ImportFile);
         }
+        #endregion
     }
 }
