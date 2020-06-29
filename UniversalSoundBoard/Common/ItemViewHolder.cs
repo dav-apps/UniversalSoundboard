@@ -1,80 +1,264 @@
 ﻿using davClassLibrary.Models;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
+using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
+using UniversalSoundBoard.Pages;
+using Windows.ApplicationModel.Resources;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using static UniversalSoundBoard.DataAccess.FileManager;
 
 namespace UniversalSoundBoard.Common
 {
     public class ItemViewHolder : INotifyPropertyChanged
     {
-        private string _title;                                              // Is the text of the title
-        private bool _progressRingIsActive;                                 // Shows the Progress Ring if true
-        private string _searchQuery;                                        // The string entered into the search box
-        private Visibility _editButtonVisibility;                           // If true shows the edit button next to the title, only when a category is selected
-        private Visibility _playAllButtonVisibility;                        // If true shows the Play button next to the title, only when a category or All Sounds is selected
-        private bool _normalOptionsVisibility;                              // If true shows the normal buttons at the top, e.g. Search bar and Volume Button. If false shows the multi select buttons
+        #region Constants for the localSettings keys
+        private const string themeKey = "theme";
+        private const string playingSoundsListVisibleKey = "playingSoundsListVisible";
+        private const string playOneSoundAtOnceKey = "playOneSoundAtOnce";
+        private const string liveTileKey = "liveTile";
+        private const string showListViewKey = "showListView";
+        private const string showCategoryIconKey = "showCategoryIcon";
+        private const string showSoundsPivotKey = "showSoundsPivot";
+        private const string savePlayingSoundsKey = "savePlayingSounds";
+        private const string volumeKey = "volume";
+        private const string showAcrylicBackgroundKey = "showAcrylicBackground";
+        private const string soundOrderKey = "soundOrder";
+        private const string soundOrderReversedKey = "soundOrderReversed";
+        #endregion
+
+        #region Constants for localSettings defaults
+        private const FileManager.AppTheme themeDefault = FileManager.AppTheme.System;
+        private const bool playingSoundsListVisibleDefault = true;
+        private const bool playOneSoundAtOnceDefault = false;
+        private const bool liveTileDefault = true;
+        private const bool showListViewDefault = false;
+        private const bool showCategoryIconDefault = true;
+        private const bool showSoundsPivotDefault = true;
+        private const bool savePlayingSoundsDefault = true;
+        private const double volumeDefault = 1.0;
+        private const bool showAcrylicBackgroundDefault = true;
+        private const FileManager.SoundOrder soundOrderDefault = FileManager.SoundOrder.Custom;
+        private const bool soundOrderReversedDefault = false;
+        #endregion
+
+        #region Variables
+        #region State
+        private string _title;                                              // The title text
         private Type _page;                                                 // The current page
-        private ListViewSelectionMode _selectionMode;                       // The selection mode of the GridView. Is either ListViewSelectionMode.None or ListViewSelectionMode.Multiple
-        private ObservableCollection<Category> _categories;                 // A list of all categories.
-        public event EventHandler CategoriesUpdated;                        // Is triggered when all categories were loaded into the Categories ObservableCollection
-        private ObservableCollection<Sound> _sounds;                        // A list of the sounds which are displayed when the Sound pivot is selected, sorted by the selected sort option
-        private ObservableCollection<Sound> _favouriteSounds;               // A list of the favourite sound which are displayed when the Favourite pivot is selected, sorted by the selected sort option
-        private ObservableCollection<Sound> _allSounds;                     // A list of all sounds, unsorted
+        private string _searchQuery;                                        // The string entered into the search box
         private bool _allSoundsChanged;                                     // If there was made change to one or multiple sounds so that a reload of the sounds is required
-        private ObservableCollection<Sound> _selectedSounds;                // A list of the sounds which are selected
-        private ObservableCollection<PlayingSound> _playingSounds;          // A list of the Playing Sounds which are displayed in the right menu
-        private Visibility _playingSoundsListVisibility;                    // If true shows the Playing Sounds list at the right
+        private Guid _selectedCategory;                                     // The index of the currently selected category in the category list
+        private DavUser _user;                                              // The User object with username and avatar
+        private bool _exporting;                                            // If true the soundboard is currently being exported
+        private bool _exported;                                             // If true the soundboard was exported in the app session
+        private bool _importing;                                            // If true a soundboard is currently being imported
+        private bool _imported;                                             // If true a soundboard was import in the app session
+        private string _exportMessage;                                      // The text describing the status of the export
+        private string _importMessage;                                      // The text describing the status of the import
+        private string _soundboardSize;                                     // The text shown on the settings page which describes the size of the soundboard
+        #endregion
+
+        #region Lists
+        public List<Category> Categories { get; }                           // A list of all categories
+        public ObservableCollection<Sound> AllSounds { get; }               // A list of all sounds, unsorted
+        public ObservableCollection<Sound> Sounds { get; }                  // A list of the sounds which are displayed when the Sound pivot is selected, sorted by the selected sort option
+        public ObservableCollection<Sound> FavouriteSounds { get; }         // A list of the favourite sound which are displayed when the Favourite pivot is selected, sorted by the selected sort option
+        public ObservableCollection<Sound> SelectedSounds { get; }          // A list of the sounds which are selected
+        public ObservableCollection<PlayingSound> PlayingSounds { get; }    // A list of the Playing Sounds which are displayed in the right menu
+        #endregion
+
+        #region Layout & Design
+        private bool _progressRingIsActive;                                 // Shows the Progress Ring if true
+        private bool _loadingScreenVisible;                                 // If true, the large loading screen is visible
+        private string _loadingScreenMessage;                               // The text that is shown in the loading screen
+        private bool _backButtonEnabled;                                    // If the Back Button is enabled
+        private bool _multiSelectionEnabled;                                // If true, the GridView has multi selection and the multi selection buttons are visible
+        private bool _playAllButtonVisible;                                 // If true shows the Play button next to the title, only when a category or All Sounds is selected
+        private bool _editButtonVisible;                                    // If true shows the edit button next to the title, only when a category is selected
+        private bool _topButtonsCollapsed;                                  // If true the buttons at the top show only the icon, if false they show the icon and text
+        private bool _addButtonVisible;                                     // If true the Add button at the top to add sounds or a category is visible
+        private bool _volumeButtonVisible;                                  // If true the volume button at the top is visible
+        private bool _selectButtonVisible;                                  // If true the button to switch to multi selection mode is visible
+        private bool _searchAutoSuggestBoxVisible;                          // If true the search box is visible, if false multi selection is on or the search button shown
+        private bool _searchButtonVisible;                                  // If true the search button at the top is visible
+        private bool _shareButtonVisible;                                   // If true the Share button at the top to share sounds is visible
+        private bool _moreButtonVisible;                                    // If true the More button at the top, when multi selection mode is on, is visible
+        private bool _cancelButtonVisible;                                  // If the the cancel button at the top to switch from multi selection mode to normal mode is visible
+        private string _selectAllFlyoutText;                                // The text of the Select All flyout item in the Navigation View Header
+        private SymbolIcon _selectAllFlyoutIcon;                            // The icon of the Select All flyout item in the Navigation View Header
+        private double _soundTileWidth;                                     // The width of all sound tiles in the GridViews
+        private double _playingSoundsBarWidth;                              // Holds the width of the right playing sound bar to update the width of the acrylic background in the NavigationViewHeader
+        private AcrylicBrush _playingSoundsBarAcrylicBackgroundBrush;       // This represents the background of the PlayingSoundsBar
+        private bool _exportAndImportButtonsEnabled;                        // If true shows the export and import buttons on the settings page
+        #endregion
+        #endregion
+
+        #region Settings
+        private FileManager.AppTheme _theme;                                // The design theme of the app
+        private bool _playingSoundsListVisible;                             // If true shows the Playing Sounds list at the right
         private bool _playOneSoundAtOnce;                                   // If true plays only one sound at a time
+        private bool _liveTileEnabled;                                      // If true, show the live tile
         private bool _showListView;                                         // If true, shows the sounds on the SoundPage in a ListView
         private bool _showCategoryIcon;                                     // If true shows the icon of the category on the sound tile
         private bool _showSoundsPivot;                                      // If true shows the pivot to select Sounds or Favourite sounds
         private bool _savePlayingSounds;                                    // If true saves the PlayingSounds and loads them when starting the app
-        private bool _isExporting;                                          // If true the soundboard is currently being exported
-        private bool _exported;                                             // If true the soundboard was exported in the app session
-        private bool _isImporting;                                          // If true a soundboard is currently being imported
-        private bool _imported;                                             // If true a soundboard was import in the app session
-        private bool _areExportAndImportButtonsEnabled;                     // If true shows the export and import buttons on the settings page
-        private string _exportMessage;                                      // The text describing the status of the export
-        private string _importMessage;                                      // The text describing the status of the import
-        private string _soundboardSize;                                     // The text shown on the settings page which describes the size of the soundboard
-        private bool _searchAutoSuggestBoxVisibility;                       // If true the search box is visible, if false multi selection is on or the search button shown
-        private bool _volumeButtonVisibility;                               // If true the volume button at the top is visible
-        private bool _addButtonVisibility;                                  // If true the Add button at the top to add sounds or a category is visible
-        private bool _selectButtonVisibility;                               // If true the button to switch to multi selection mode is visible
-        private bool _searchButtonVisibility;                               // If true the search button at the top is visible
-        private bool _cancelButtonVisibility;                               // If the the cancel button at the top to switch from multi selection mode to normal mode is visible
-        private bool _shareButtonVisibility;                                // If true the Share button at the top to share sounds is visible
-        private bool _moreButtonVisibility;                                 // If true the More button at the top, when multi selection mode is on, is visible
-        private bool _topButtonsCollapsed;                                  // If true the buttons at the top show only the icon, if false they show the icon and text
-        private bool _areSelectButtonsEnabled;                              // If false the buttons at the top in multi selection mode are disabled
-        private int _selectedCategory;                                      // The index of the currently selected category in the category list
-        private string _upgradeDataStatusText;                              // The text that is shown on the splash screen when the old data is migrated
-        private DavUser _user;                                              // The User object with username and avatar
-        private bool _loginMenuItemVisibility;                              // If true, the LoginMenuItem in the NavigationView is visible
-        private bool _isBackButtonEnabled;                                  // If the Back Button is enabled
-        private bool _loadingScreenVisibility;                              // If true, the big loading screen is visible
-        private string _loadingScreenMessage;                               // The text that is shown in the loading screen
-        public event EventHandler<RoutedEventArgs> SelectAllSoundsEvent;    // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
-        private string _selectAllFlyoutText;                                // The text of the Select All flyout item in the Navigation View Header
-        private SymbolIcon _selectAllFlyoutIcon;                            // The icon of the Select All flyout item in the Navigation View Header
-        private double _playingSoundsBarWidth;                              // Holds the width of the right playing sound bar to update the width of the acrylic background in the NavigationViewHeader
+        private double _volume;                                             // The default volume for all PlayingSounds, between 0 and 1
         private bool _showAcrylicBackground;                                // If true the acrylic background is visible
-        private AcrylicBrush _playingSoundsBarAcrylicBackgroundBrush;       // This represents the background of the PlayingSoundsBar
-        private SoundOrder _soundOrder;                                     // The selected sound order in the settings
+        private FileManager.SoundOrder _soundOrder;                         // The selected sound order in the settings
         private bool _soundOrderReversed;                                   // If the sound order is descending (false) or ascending (true)
-        private double _soundTileWidth;                                     // The width of all sound tiles in the GridViews
-        public event EventHandler<SizeChangedEventArgs> SoundTileSizeChangedEvent;  // This event is triggered when the size of the sound tiles in the GridViews has changed
+        #endregion
 
+        #region Events
+        public event EventHandler CategoriesUpdatedEvent;                        // Is triggered when all categories were loaded into the Categories ObservableCollection
+        public event EventHandler<RoutedEventArgs> SelectAllSoundsEvent;    // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
+        public event EventHandler<SizeChangedEventArgs> SoundTileSizeChangedEvent;  // This event is triggered when the size of the sound tiles in the GridViews has changed
+        #endregion
+
+        #region Local variables
+        readonly ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+        #endregion
+
+        public ItemViewHolder()
+        {
+            ResourceLoader loader = new ResourceLoader();
+
+            // Set the default values
+            #region State
+            _title = loader.GetString("AllSounds");
+            _page = typeof(SoundPage);
+            _searchQuery = "";
+            _allSoundsChanged = true;
+            _selectedCategory = Guid.Empty;
+            _user = new DavUser();
+            _exporting = false;
+            _exported = false;
+            _importing = false;
+            _imported = false;
+            _exportMessage = "";
+            _importMessage = "";
+            _soundboardSize = "";
+            #endregion
+
+            #region Lists
+            Categories = new List<Category>();
+            AllSounds = new ObservableCollection<Sound>();
+            Sounds = new ObservableCollection<Sound>();
+            FavouriteSounds = new ObservableCollection<Sound>();
+            SelectedSounds = new ObservableCollection<Sound>();
+            PlayingSounds = new ObservableCollection<PlayingSound>();
+            #endregion
+
+            #region Layout & Design
+            _progressRingIsActive = false;
+            _loadingScreenVisible = false;
+            _loadingScreenMessage = "";
+            _backButtonEnabled = false;
+            _playAllButtonVisible = false;
+            _editButtonVisible = false;
+            _topButtonsCollapsed = false;
+            _addButtonVisible = true;
+            _volumeButtonVisible = true;
+            _selectButtonVisible = true;
+            _searchAutoSuggestBoxVisible = true;
+            _searchButtonVisible = false;
+            _shareButtonVisible = false;
+            _moreButtonVisible = true;
+            _cancelButtonVisible = false;
+            _selectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
+            _selectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll);
+            _soundTileWidth = 200;
+            _playingSoundsBarWidth = 0;
+            _playingSoundsBarAcrylicBackgroundBrush = new AcrylicBrush();
+            _exportAndImportButtonsEnabled = true;
+            #endregion
+
+            #region Settings
+            if (localSettings.Values[themeKey] == null)
+                _theme = themeDefault;
+            else
+            {
+                switch ((string)localSettings.Values[themeKey])
+                {
+                    case "light":
+                        _theme = FileManager.AppTheme.Light;
+                        break;
+                    case "dark":
+                        _theme = FileManager.AppTheme.Dark;
+                        break;
+                    case "system":
+                        _theme = FileManager.AppTheme.System;
+                        break;
+                }
+            }
+
+            if (localSettings.Values[playingSoundsListVisibleKey] == null)
+                _playingSoundsListVisible = playingSoundsListVisibleDefault;
+            else
+                _playingSoundsListVisible = (bool)localSettings.Values[playingSoundsListVisibleKey];
+
+            if (localSettings.Values[playOneSoundAtOnceKey] == null)
+                _playOneSoundAtOnce = playOneSoundAtOnceDefault;
+            else
+                _playOneSoundAtOnce = (bool)localSettings.Values[playOneSoundAtOnceKey];
+
+            if (localSettings.Values[liveTileKey] == null)
+                _liveTileEnabled = liveTileDefault;
+            else
+                _liveTileEnabled = (bool)localSettings.Values[liveTileKey];
+
+            if (localSettings.Values[showListViewKey] == null)
+                _showListView = showListViewDefault;
+            else
+                _showListView = (bool)localSettings.Values[showListViewKey];
+
+            if (localSettings.Values[showCategoryIconKey] == null)
+                _showCategoryIcon = showCategoryIconDefault;
+            else
+                _showCategoryIcon = (bool)localSettings.Values[showCategoryIconKey];
+
+            if (localSettings.Values[showSoundsPivotKey] == null)
+                _showSoundsPivot = showSoundsPivotDefault;
+            else
+                _showSoundsPivot = (bool)localSettings.Values[showSoundsPivotKey];
+
+            if (localSettings.Values[savePlayingSoundsKey] == null)
+                _savePlayingSounds = savePlayingSoundsDefault;
+            else
+                _savePlayingSounds = (bool)localSettings.Values[savePlayingSoundsKey];
+
+            if (localSettings.Values[volumeKey] == null)
+                _volume = volumeDefault;
+            else
+                _volume = (double)localSettings.Values[volumeKey];
+
+            if (localSettings.Values[showAcrylicBackgroundKey] == null)
+                _showAcrylicBackground = showAcrylicBackgroundDefault;
+            else
+                _showAcrylicBackground = (bool)localSettings.Values[showAcrylicBackgroundKey];
+
+            if (localSettings.Values[soundOrderKey] == null)
+                _soundOrder = soundOrderDefault;
+            else
+                _soundOrder = (FileManager.SoundOrder)localSettings.Values[soundOrderKey];
+
+            if (localSettings.Values[soundOrderReversedKey] == null)
+                _soundOrderReversed = soundOrderReversedDefault;
+            else
+                _soundOrderReversed = (bool)localSettings.Values[soundOrderReversedKey];
+            #endregion
+        }
+
+        #region Access Modifiers
+        #region State
         public string Title
         {
             get => _title;
-
             set
             {
                 _title = value;
@@ -82,125 +266,9 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public bool ProgressRingIsActive
-        {
-            get => _progressRingIsActive;
-
-            set
-            {
-                _progressRingIsActive = value;
-                NotifyPropertyChanged("ProgressRingIsActive");
-            }
-        }
-
-        public ObservableCollection<Sound> Sounds
-        {
-            get => _sounds;
-
-            set
-            {
-                _sounds = value;
-                NotifyPropertyChanged("Sounds");
-            }
-        }
-
-        public ObservableCollection<Sound> FavouriteSounds
-        {
-            get => _favouriteSounds;
-
-            set
-            {
-                _favouriteSounds = value;
-                NotifyPropertyChanged("FavouriteSounds");
-            }
-        }
-
-        public ObservableCollection<Sound> AllSounds
-        {
-            get => _allSounds;
-
-            set
-            {
-                _allSounds = value;
-                NotifyPropertyChanged("AllSounds");
-            }
-        }
-
-        public bool AllSoundsChanged
-        {
-            get => _allSoundsChanged;
-
-            set
-            {
-                _allSoundsChanged = value;
-                NotifyPropertyChanged("AllSoundsChanged");
-            }
-        }
-
-        public ObservableCollection<Category> Categories
-        {
-            get => _categories;
-
-            set
-            {
-                _categories = value;
-                NotifyPropertyChanged("Categories");
-            }
-        }
-
-        public void TriggerCategoriesUpdatedEvent(object sender, EventArgs e)
-        {
-            CategoriesUpdated?.Invoke(sender, e);
-        }
-
-        public string SearchQuery
-        {
-            get => _searchQuery;
-
-            set
-            {
-                _searchQuery = value;
-                NotifyPropertyChanged("SearchQuery");
-            }
-        }
-
-        public Visibility EditButtonVisibility
-        {
-            get => _editButtonVisibility;
-
-            set
-            {
-                _editButtonVisibility = value;
-                NotifyPropertyChanged("EditButtonVisibility");
-            }
-        }
-
-        public Visibility PlayAllButtonVisibility
-        {
-            get => _playAllButtonVisibility;
-
-            set
-            {
-                _playAllButtonVisibility = value;
-                NotifyPropertyChanged("PlayAllButtonVisibility");
-            }
-        }
-
-        public bool NormalOptionsVisibility
-        {
-            get => _normalOptionsVisibility;
-
-            set
-            {
-                _normalOptionsVisibility = value;
-                NotifyPropertyChanged("NormalOptionsVisibility");
-            }
-        }
-
         public Type Page
         {
             get => _page;
-
             set
             {
                 _page = value;
@@ -208,120 +276,59 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public ListViewSelectionMode SelectionMode
+        public string SearchQuery
         {
-            get => _selectionMode;
-
+            get => _searchQuery;
             set
             {
-                _selectionMode = value;
-                NotifyPropertyChanged("SelectionMode");
+                _searchQuery = value;
+                NotifyPropertyChanged("SearchQuery");
             }
         }
 
-        public ObservableCollection<Sound> SelectedSounds
+        public bool AllSoundsChanged
         {
-            get => _selectedSounds;
-
+            get => _allSoundsChanged;
             set
             {
-                _selectedSounds = value;
-                NotifyPropertyChanged("SelectedSounds");
+                _allSoundsChanged = value;
+                NotifyPropertyChanged("AllSoundsChanged");
             }
         }
 
-        public ObservableCollection<PlayingSound> PlayingSounds
+        public Guid SelectedCategory
         {
-            get => _playingSounds;
-
+            get => _selectedCategory;
             set
             {
-                _playingSounds = value;
-                NotifyPropertyChanged("PlayingSounds");
+                _selectedCategory = value;
+                NotifyPropertyChanged("SelectedCategory");
             }
         }
 
-        public Visibility PlayingSoundsListVisibility
+        public DavUser User
         {
-            get => _playingSoundsListVisibility;
-
+            get => _user;
             set
             {
-                _playingSoundsListVisibility = value;
-                NotifyPropertyChanged("PlayingSoundsListVisibility");
+                _user = value;
+                NotifyPropertyChanged("User");
             }
         }
 
-        public bool PlayOneSoundAtOnce
+        public bool Exporting
         {
-            get => _playOneSoundAtOnce;
-
+            get => _exporting;
             set
             {
-                _playOneSoundAtOnce = value;
-                NotifyPropertyChanged("PlayOneSoundAtOnce");
-            }
-        }
-
-        public bool ShowListView
-        {
-            get => _showListView;
-
-            set
-            {
-                _showListView = value;
-                NotifyPropertyChanged("ShowListView");
-            }
-        }
-
-        public bool ShowCategoryIcon
-        {
-            get => _showCategoryIcon;
-
-            set
-            {
-                _showCategoryIcon = value;
-                NotifyPropertyChanged("ShowCategoryIcon");
-            }
-        }
-
-        public bool ShowSoundsPivot
-        {
-            get => _showSoundsPivot;
-
-            set
-            {
-                _showSoundsPivot = value;
-                NotifyPropertyChanged("ShowSoundsPivot");
-            }
-        }
-
-        public bool SavePlayingSounds
-        {
-            get => _savePlayingSounds;
-
-            set
-            {
-                _savePlayingSounds = value;
-                NotifyPropertyChanged("SavePlayingSounds");
-            }
-        }
-
-        public bool IsExporting
-        {
-            get => _isExporting;
-
-            set
-            {
-                _isExporting = value;
-                NotifyPropertyChanged("IsExporting");
+                _exporting = value;
+                NotifyPropertyChanged("Exporting");
             }
         }
 
         public bool Exported
         {
             get => _exported;
-
             set
             {
                 _exported = value;
@@ -329,21 +336,19 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public bool IsImporting
+        public bool Importing
         {
-            get => _isImporting;
-
+            get => _importing;
             set
             {
-                _isImporting = value;
-                NotifyPropertyChanged("IsImporting");
+                _importing = value;
+                NotifyPropertyChanged("Importing");
             }
         }
 
         public bool Imported
         {
             get => _imported;
-
             set
             {
                 _imported = value;
@@ -351,21 +356,9 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public bool AreExportAndImportButtonsEnabled
-        {
-            get => _areExportAndImportButtonsEnabled;
-
-            set
-            {
-                _areExportAndImportButtonsEnabled = value;
-                NotifyPropertyChanged("AreExportAndImportButtonsEnabled");
-            }
-        }
-
         public string ExportMessage
         {
             get => _exportMessage;
-
             set
             {
                 _exportMessage = value;
@@ -376,7 +369,6 @@ namespace UniversalSoundBoard.Common
         public string ImportMessage
         {
             get => _importMessage;
-
             set
             {
                 _importMessage = value;
@@ -387,194 +379,38 @@ namespace UniversalSoundBoard.Common
         public string SoundboardSize
         {
             get => _soundboardSize;
-
             set
             {
                 _soundboardSize = value;
                 NotifyPropertyChanged("SoundboardSize");
             }
         }
+        #endregion
 
-        public bool SearchAutoSuggestBoxVisibility
+        #region Layout & Design
+        public bool ProgressRingIsActive
         {
-            get => _searchAutoSuggestBoxVisibility;
-
+            get => _progressRingIsActive;
             set
             {
-                _searchAutoSuggestBoxVisibility = value;
-                NotifyPropertyChanged("SearchAutoSuggestBoxVisibility");
+                _progressRingIsActive = value;
+                NotifyPropertyChanged("ProgressRingIsActive");
             }
         }
 
-        public bool VolumeButtonVisibility
+        public bool LoadingScreenVisible
         {
-            get => _volumeButtonVisibility;
-
+            get => _loadingScreenVisible;
             set
             {
-                _volumeButtonVisibility = value;
-                NotifyPropertyChanged("VolumeButtonVisibility");
-            }
-        }
-
-        public bool AddButtonVisibility
-        {
-            get => _addButtonVisibility;
-
-            set
-            {
-                _addButtonVisibility = value;
-                NotifyPropertyChanged("AddButtonVisibility");
-            }
-        }
-
-        public bool SelectButtonVisibility
-        {
-            get => _selectButtonVisibility;
-
-            set
-            {
-                _selectButtonVisibility = value;
-                NotifyPropertyChanged("SelectButtonVisibility");
-            }
-        }
-
-        public bool SearchButtonVisibility
-        {
-            get => _searchButtonVisibility;
-
-            set
-            {
-                _searchButtonVisibility = value;
-                NotifyPropertyChanged("SearchButtonVisibility");
-            }
-        }
-
-        public bool CancelButtonVisibility
-        {
-            get => _cancelButtonVisibility;
-
-            set
-            {
-                _cancelButtonVisibility = value;
-                NotifyPropertyChanged("CancelButtonVisibility");
-            }
-        }
-
-        public bool ShareButtonVisibility
-        {
-            get => _shareButtonVisibility;
-
-            set
-            {
-                _shareButtonVisibility = value;
-                NotifyPropertyChanged("ShareButtonVisibility");
-            }
-        }
-
-        public bool MoreButtonVisibility
-        {
-            get => _moreButtonVisibility;
-
-            set
-            {
-                _moreButtonVisibility = value;
-                NotifyPropertyChanged("MoreButtonVisibility");
-            }
-        }
-
-        public bool TopButtonsCollapsed
-        {
-            get => _topButtonsCollapsed;
-
-            set
-            {
-                _topButtonsCollapsed = value;
-                NotifyPropertyChanged("TopButtonsCollapsed");
-            }
-        }
-
-        public bool AreSelectButtonsEnabled
-        {
-            get => _areSelectButtonsEnabled;
-
-            set
-            {
-                _areSelectButtonsEnabled = value;
-                NotifyPropertyChanged("AreSelectButtonsEnabled");
-            }
-        }
-
-        public int SelectedCategory
-        {
-            get => _selectedCategory;
-
-            set
-            {
-                _selectedCategory = value;
-                NotifyPropertyChanged("SelectedCategory");
-            }
-        }
-
-        public string UpgradeDataStatusText
-        {
-            get => _upgradeDataStatusText;
-
-            set
-            {
-                _upgradeDataStatusText = value;
-                NotifyPropertyChanged("UpgradeDataStatusText");
-            }
-        }
-
-        public DavUser User
-        {
-            get => _user;
-
-            set
-            {
-                _user = value;
-                NotifyPropertyChanged("User");
-            }
-        }
-
-        public bool LoginMenuItemVisibility
-        {
-            get => _loginMenuItemVisibility;
-
-            set
-            {
-                _loginMenuItemVisibility = value;
-                NotifyPropertyChanged("LoginMenuItemVisibility");
-            }
-        }
-
-        public bool IsBackButtonEnabled
-        {
-            get => _isBackButtonEnabled;
-
-            set
-            {
-                _isBackButtonEnabled = value;
-                NotifyPropertyChanged("IsBackButtonEnabled");
-            }
-        }
-
-        public bool LoadingScreenVisibility
-        {
-            get => _loadingScreenVisibility;
-
-            set
-            {
-                _loadingScreenVisibility = value;
-                NotifyPropertyChanged("LoadingScreenVisibility");
+                _loadingScreenVisible = value;
+                NotifyPropertyChanged("LoadingScreenVisible");
             }
         }
 
         public string LoadingScreenMessage
         {
             get => _loadingScreenMessage;
-
             set
             {
                 _loadingScreenMessage = value;
@@ -582,15 +418,139 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public void TriggerSelectAllSoundsEvent(object sender, RoutedEventArgs e)
+        public bool BackButtonEnabled
         {
-            SelectAllSoundsEvent?.Invoke(sender, e);
+            get => _backButtonEnabled;
+            set
+            {
+                _backButtonEnabled = value;
+                NotifyPropertyChanged("BackButtonEnabled");
+            }
+        }
+
+        public bool MultiSelectionEnabled
+        {
+            get => _multiSelectionEnabled;
+            set
+            {
+                _multiSelectionEnabled = value;
+                NotifyPropertyChanged("MultiSelectionEnabled");
+            }
+        }
+
+        public bool PlayAllButtonVisible
+        {
+            get => _playAllButtonVisible;
+            set
+            {
+                _playAllButtonVisible = value;
+                NotifyPropertyChanged("PlayAllButtonVisible");
+            }
+        }
+
+        public bool EditButtonVisible
+        {
+            get => _editButtonVisible;
+            set
+            {
+                _editButtonVisible = value;
+                NotifyPropertyChanged("EditButtonVisible");
+            }
+        }
+
+        public bool TopButtonsCollapsed
+        {
+            get => _topButtonsCollapsed;
+            set
+            {
+                _topButtonsCollapsed = value;
+                NotifyPropertyChanged("TopButtonsCollapsed");
+            }
+        }
+
+        public bool AddButtonVisible
+        {
+            get => _addButtonVisible;
+            set
+            {
+                _addButtonVisible = value;
+                NotifyPropertyChanged("AddButtonVisible");
+            }
+        }
+
+        public bool VolumeButtonVisible
+        {
+            get => _volumeButtonVisible;
+            set
+            {
+                _volumeButtonVisible = value;
+                NotifyPropertyChanged("VolumeButtonVisible");
+            }
+        }
+
+        public bool SelectButtonVisible
+        {
+            get => _selectButtonVisible;
+            set
+            {
+                _selectButtonVisible = value;
+                NotifyPropertyChanged("SelectButtonVisible");
+            }
+        }
+
+        public bool SearchAutoSuggestBoxVisible
+        {
+            get => _searchAutoSuggestBoxVisible;
+            set
+            {
+                _searchAutoSuggestBoxVisible = value;
+                NotifyPropertyChanged("SearchAutoSuggestBoxVisible");
+            }
+        }
+
+        public bool SearchButtonVisible
+        {
+            get => _searchButtonVisible;
+            set
+            {
+                _searchButtonVisible = value;
+                NotifyPropertyChanged("SearchButtonVisible");
+            }
+        }
+
+        public bool ShareButtonVisible
+        {
+            get => _shareButtonVisible;
+            set
+            {
+                _shareButtonVisible = value;
+                NotifyPropertyChanged("ShareButtonVisible");
+            }
+        }
+
+        public bool MoreButtonVisible
+        {
+            get => _moreButtonVisible;
+            set
+            {
+                _moreButtonVisible = value;
+                NotifyPropertyChanged("MoreButtonVisible");
+            }
+        }
+
+        public bool CancelButtonVisible
+        {
+            get => _cancelButtonVisible;
+            set
+            {
+                _cancelButtonVisible = value;
+                NotifyPropertyChanged("CancelButtonVisible");
+            }
         }
 
         public string SelectAllFlyoutText
         {
             get => _selectAllFlyoutText;
-
             set
             {
                 _selectAllFlyoutText = value;
@@ -601,7 +561,6 @@ namespace UniversalSoundBoard.Common
         public SymbolIcon SelectAllFlyoutIcon
         {
             get => _selectAllFlyoutIcon;
-
             set
             {
                 _selectAllFlyoutIcon = value;
@@ -609,10 +568,19 @@ namespace UniversalSoundBoard.Common
             }
         }
 
+        public double SoundTileWidth
+        {
+            get => _soundTileWidth;
+            set
+            {
+                _soundTileWidth = value;
+                NotifyPropertyChanged("SoundTileWidth");
+            }
+        }
+
         public double PlayingSoundsBarWidth
         {
             get => _playingSoundsBarWidth;
-
             set
             {
                 _playingSoundsBarWidth = value;
@@ -620,21 +588,9 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public bool ShowAcrylicBackground
-        {
-            get => _showAcrylicBackground;
-
-            set
-            {
-                _showAcrylicBackground = value;
-                NotifyPropertyChanged("ShowAcrylicBackground");
-            }
-        }
-
         public AcrylicBrush PlayingSoundsBarAcrylicBackgroundBrush
         {
             get => _playingSoundsBarAcrylicBackgroundBrush;
-
             set
             {
                 _playingSoundsBarAcrylicBackgroundBrush = value;
@@ -642,12 +598,146 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public SoundOrder SoundOrder
+        public bool ExportAndImportButtonsEnabled
         {
-            get => _soundOrder;
-
+            get => _exportAndImportButtonsEnabled;
             set
             {
+                _exportAndImportButtonsEnabled = value;
+                NotifyPropertyChanged("ExportAndImportButtonsEnabled");
+            }
+        }
+        #endregion
+        #endregion
+
+        #region Settings
+        public FileManager.AppTheme Theme
+        {
+            get => _theme;
+            set
+            {
+                string themeString = "system";
+                switch (value)
+                {
+                    case FileManager.AppTheme.Light:
+                        themeString = "light";
+                        break;
+                    case FileManager.AppTheme.Dark:
+                        themeString = "dark";
+                        break;
+                }
+
+                localSettings.Values[themeKey] = themeString;
+                _theme = value;
+                NotifyPropertyChanged("Theme");
+            }
+        }
+
+        public bool PlayingSoundsListVisible
+        {
+            get => _playingSoundsListVisible;
+            set
+            {
+                localSettings.Values[playingSoundsListVisibleKey] = value;
+                _playingSoundsListVisible = value;
+                NotifyPropertyChanged("PlayingSoundsListVisible");
+            }
+        }
+
+        public bool PlayOneSoundAtOnce
+        {
+            get => _playOneSoundAtOnce;
+            set
+            {
+                localSettings.Values[playOneSoundAtOnceKey] = value;
+                _playOneSoundAtOnce = value;
+                NotifyPropertyChanged("PlayOneSoundAtOnce");
+            }
+        }
+
+        public bool LiveTileEnabled
+        {
+            get => _liveTileEnabled;
+            set
+            {
+                localSettings.Values[liveTileKey] = value;
+                _liveTileEnabled = value;
+                NotifyPropertyChanged("LiveTileEnabled");
+            }
+        }
+
+        public bool ShowListView
+        {
+            get => _showListView;
+            set
+            {
+                localSettings.Values[showListViewKey] = value;
+                _showListView = value;
+                NotifyPropertyChanged("ShowListView");
+            }
+        }
+
+        public bool ShowCategoryIcon
+        {
+            get => _showCategoryIcon;
+            set
+            {
+                localSettings.Values[showCategoryIconKey] = value;
+                _showCategoryIcon = value;
+                NotifyPropertyChanged("ShowCategoryIcon");
+            }
+        }
+
+        public bool ShowSoundsPivot
+        {
+            get => _showSoundsPivot;
+            set
+            {
+                localSettings.Values[showSoundsPivotKey] = value;
+                _showSoundsPivot = value;
+                NotifyPropertyChanged("ShowSoundsPivot");
+            }
+        }
+
+        public bool SavePlayingSounds
+        {
+            get => _savePlayingSounds;
+            set
+            {
+                localSettings.Values[savePlayingSoundsKey] = value;
+                _savePlayingSounds = value;
+                NotifyPropertyChanged("SavePlayingSounds");
+            }
+        }
+
+        public double Volume
+        {
+            get => _volume;
+            set
+            {
+                localSettings.Values[volumeKey] = value;
+                _volume = value;
+                NotifyPropertyChanged("Volume");
+            }
+        }
+
+        public bool ShowAcrylicBackground
+        {
+            get => _showAcrylicBackground;
+            set
+            {
+                localSettings.Values[showAcrylicBackgroundKey] = value;
+                _showAcrylicBackground = value;
+                NotifyPropertyChanged("ShowAcrylicBackground");
+            }
+        }
+
+        public FileManager.SoundOrder SoundOrder
+        {
+            get => _soundOrder;
+            set
+            {
+                localSettings.Values[soundOrderKey] = value;
                 _soundOrder = value;
                 NotifyPropertyChanged("SoundOrder");
             }
@@ -656,31 +746,33 @@ namespace UniversalSoundBoard.Common
         public bool SoundOrderReversed
         {
             get => _soundOrderReversed;
-
             set
             {
+                localSettings.Values[soundOrderReversedKey] = value;
                 _soundOrderReversed = value;
                 NotifyPropertyChanged("SoundOrderReversed");
             }
         }
+        #endregion
 
-        public double SoundTileWidth
+        #region Events
+        public void TriggerCategoriesUpdatedEvent(object sender, EventArgs e)
         {
-            get => _soundTileWidth;
+            CategoriesUpdatedEvent?.Invoke(sender, e);
+        }
 
-            set
-            {
-                _soundTileWidth = value;
-                NotifyPropertyChanged("SoundTileWidth");
-            }
+        public void TriggerSelectAllSoundsEvent(object sender, RoutedEventArgs e)
+        {
+            SelectAllSoundsEvent?.Invoke(sender, e);
         }
 
         public void TriggerSoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)
         {
             SoundTileSizeChangedEvent?.Invoke(sender, e);
         }
+        #endregion
 
-
+        #region NotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
@@ -698,7 +790,8 @@ namespace UniversalSoundBoard.Common
 
         private void OnPropertyChanged(string propertyName)
         {
-            this.PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+        #endregion
     }
 }
