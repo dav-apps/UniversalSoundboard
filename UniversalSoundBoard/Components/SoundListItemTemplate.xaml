@@ -9,13 +9,14 @@
     xmlns:converters="using:UniversalSoundBoard.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400"
-    Loaded="UserControl_Loaded">
+    d:DesignWidth="400">
 
     <UserControl.Resources>
+        <!-- Converters -->
         <converters:CategoryIconsConverter x:Key="CategoryIconsConverter" />
         <converters:CategoriesMarginConverter x:Key="CategoriesMarginConverter" />
 
+        <!-- DataTemplates -->
         <DataTemplate x:Key="SetCategoryItemTemplate" x:DataType="models:Category">
             <components:SetCategoryItemTemplate />
         </DataTemplate>
@@ -70,7 +71,7 @@
 
                 <TextBlock
                     Name="CategoryIconsTextBlock"
-                    Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}}"
+                    Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}, ConverterParameter=list}"
                     FontFamily="Segoe MDL2 Assets" 
                     FontSize="20"
                     Margin="{x:Bind Sound.Categories, Converter={StaticResource CategoriesMarginConverter}}"

@@ -11,16 +11,19 @@
     <Grid>
         <ScrollViewer Name="ContentRoot" Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
             <StackPanel>
-                <TextBlock Name="SelectCategoryTextBlock" 
-                       x:Uid="ShareTarget-SelectCategoryTextBlock"
-                       Grid.Row="0"
-                       Margin="12,5,0,10"/>
+                <TextBlock
+                    Name="SelectCategoryTextBlock" 
+                    x:Uid="ShareTarget-SelectCategoryTextBlock"
+                    Grid.Row="0"
+                    Margin="12,5,0,10"/>
 
-                <ListView Name="CategoriesListView" 
-                      Grid.Row="1"
-                      ItemsSource="{x:Bind categories}"
-                      SelectionMode="Multiple"
-                      IsMultiSelectCheckBoxEnabled="False">
+                <ListView
+                    Name="CategoriesListView" 
+                    Grid.Row="1"
+                    ItemsSource="{x:Bind categories}"
+                    SelectionMode="Multiple"
+                    IsMultiSelectCheckBoxEnabled="False">
+                    
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:Category">
                             <Grid>
@@ -29,51 +32,62 @@
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
 
-                                <TextBlock Name="CategoryIconTextBlock" 
-                                       Grid.Column="0"
-                                       Text="{x:Bind Icon}"
-                                       FontFamily="Segoe MDL2 Assets"
-                                       VerticalAlignment="Center" 
-                                       Margin="0,3,10,0" />
-                                <TextBlock Name="CategoryNameTextBlock" 
-                                       Text="{x:Bind Name}" 
-                                       Grid.Column="1"
-                                       VerticalAlignment="Center" />
+                                <TextBlock
+                                    Name="CategoryIconTextBlock" 
+                                    Grid.Column="0"
+                                    Text="{x:Bind Icon}"
+                                    FontFamily="Segoe MDL2 Assets"
+                                    VerticalAlignment="Center" 
+                                    Margin="0,3,10,0" />
+                                <TextBlock
+                                    Name="CategoryNameTextBlock" 
+                                    Text="{x:Bind Name}" 
+                                    Grid.Column="1"
+                                    VerticalAlignment="Center" />
                             </Grid>
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>
 
-                <StackPanel Orientation="Horizontal"
-                            Margin="10,10,0,10">
-                    <Button Name="AddButton" 
-                            x:Uid="ShareTarget-AddButton" 
-                            Grid.Row="2"
-                            Click="AddButton_Click"/>
+                <StackPanel
+                    Orientation="Horizontal"
+                    Margin="10,10,0,10">
+                    
+                    <Button
+                        Name="AddButton" 
+                        x:Uid="ShareTarget-AddButton" 
+                        Grid.Row="2"
+                        Click="AddButton_Click"/>
 
-                    <Button Name="AddCategoryButton" 
-                            x:Uid="ShareTarget-AddCategoryButton"
-                            Margin="20,0,0,0"
-                            Click="AddCategoryButton_Click"/>
+                    <Button
+                        Name="AddCategoryButton" 
+                        x:Uid="ShareTarget-AddCategoryButton"
+                        Margin="20,0,0,0"
+                        Click="AddCategoryButton_Click"/>
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
 
         <controls:Loading x:Name="LoadingControl">
             <controls:Loading.Background>
-                <SolidColorBrush Color="Black" 
-                                     Opacity="0.7" />
+                <SolidColorBrush Color="Black" Opacity="0.7" />
             </controls:Loading.Background>
-            <StackPanel Orientation="Horizontal" 
-                        Padding="12">
-                <ProgressRing IsActive="True" 
-                                Margin="0,0,16,0" 
-                                Height="27" 
-                                Width="27" />
-                <TextBlock Name="LoadingControlMessageTextBlock"
-                            FontSize="17"
-                            VerticalAlignment="Center" 
-                            Foreground="White" />
+            
+            <StackPanel
+                Orientation="Horizontal" 
+                Padding="12">
+                
+                <ProgressRing
+                    IsActive="True" 
+                    Margin="0,0,16,0" 
+                    Height="27" 
+                    Width="27" />
+                
+                <TextBlock
+                    Name="LoadingControlMessageTextBlock"
+                    FontSize="17"
+                    VerticalAlignment="Center" 
+                    Foreground="White" />
             </StackPanel>
         </controls:Loading>
     </Grid>

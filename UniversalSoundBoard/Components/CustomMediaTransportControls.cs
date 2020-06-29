@@ -196,7 +196,7 @@ namespace UniversalSoundBoard.Components
             }
         }
 
-        // Raise custom events
+        #region Custom Events
         private void VolumeSlider_LostFocusEvent(object sender, RoutedEventArgs e) => VolumeSlider_LostFocus?.Invoke(this, EventArgs.Empty);
 
         private void VolumeSlider2_ValueChanged(object sender, RangeBaseValueChangedEventArgs e) => VolumeSlider_ValueChanged?.Invoke(sender, e);
@@ -218,5 +218,6 @@ namespace UniversalSoundBoard.Components
         private void Repeat_10x_Click(object sender, RoutedEventArgs e) => Repeat_10x_Clicked?.Invoke(this, EventArgs.Empty);
 
         private void Repeat_endless_Click(object sender, RoutedEventArgs e) => Repeat_endless_Clicked?.Invoke(this, EventArgs.Empty);
+        #endregion
     }
 }

@@ -6,7 +6,8 @@ namespace UniversalSoundboard.Common
 {
     public class LocalDataSettings : ILocalDataSettings
     {
-        private ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+        private readonly ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
+        private const string davKey = "dav";
 
         public string GetValue(string key)
         {
@@ -18,9 +19,7 @@ namespace UniversalSoundboard.Common
                 var value = davComposite[key];
 
                 if (value != null)
-                {
                     return value.ToString();
-                }
                 else
                     return null;
             }
@@ -38,13 +37,13 @@ namespace UniversalSoundboard.Common
 
         private ApplicationDataCompositeValue GetComposite()
         {
-            var composite = (ApplicationDataCompositeValue)localSettings.Values[FileManager.davKey];
+            var composite = (ApplicationDataCompositeValue)localSettings.Values[davKey];
             return composite ?? new ApplicationDataCompositeValue();
         }
 
         private void SetComposite(ApplicationDataCompositeValue composite)
         {
-            localSettings.Values[FileManager.davKey] = composite;
+            localSettings.Values[davKey] = composite;
         }
     }
 }

@@ -19,29 +19,24 @@ namespace UniversalSoundBoard.Components
         int soundTileNameLines = 0;
         double soundTileWidth = 200;
 
-
         public SoundTileTemplate()
         {
             InitializeComponent();
-            DataContextChanged += (s, e) => Bindings.Update();
             ContentRoot.DataContext = FileManager.itemViewHolder;
+
+            DataContextChanged += SoundTileTemplate_DataContextChanged;
+            FileManager.itemViewHolder.SoundTileSizeChangedEvent += ItemViewHolder_SoundTileSizeChangedEvent;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            soundItem = new SoundItem(Sound, (DataTemplate)Resources["SetCategoryItemTemplate"]);
-            soundItem.FavouriteChanged += SoundItem_FavouriteChanged;
-
             UpdateSizes();
-            FileManager.itemViewHolder.SoundTileSizeChangedEvent += ItemViewHolder_SoundTileSizeChangedEvent;
         }
 
-        private void SoundItem_FavouriteChanged(object sender, bool newFav)
+        private void SoundTileTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            Sound.Favourite = newFav;
-
-            // TODO: Update the UI
-            //FavouriteSymbol.Visibility = newFav ? Visibility.Visible : Visibility.Collapsed;
+            Bindings.Update();
+            soundItem = new SoundItem(Sound, (DataTemplate)Resources["SetCategoryItemTemplate"]);
         }
 
         private void ItemViewHolder_SoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)

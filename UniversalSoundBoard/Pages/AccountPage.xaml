@@ -9,8 +9,10 @@
     Loaded="Page_Loaded">
 
     <Page.Resources>
+        <!-- Converters -->
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
 
+        <!-- Styles -->
         <Style TargetType="FontIcon" x:Key="LandingIconStyle">
             <Setter Property="FontSize" Value="75" />
         </Style>
@@ -23,34 +25,44 @@
         </Style>
     </Page.Resources>
 
-    <Grid Name="ContentRoot"
-          Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Grid
+        Name="ContentRoot"
+        Margin="0,85,0,0"
+        Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <ScrollViewer>
             <StackPanel Padding="5">
                 <StackPanel Name="LoggedInContent" Visibility="Collapsed" Margin="30,30,0,0">
                     <StackPanel Name="UserInformationStackPanel" Orientation="Horizontal">
-                        <PersonPicture  Name="AvatarPicture"
-                                        Width="150"
-                                        Height="150"
-                                        ProfilePicture="{Binding User.Avatar, Converter={StaticResource FileToBitmapImageConverter}}" />
+                        <PersonPicture
+                            Name="AvatarPicture"
+                            Width="150"
+                            Height="150"
+                            ProfilePicture="{Binding User.Avatar, Converter={StaticResource FileToBitmapImageConverter}}" />
 
-                        <TextBlock Name="UsernameTextBlock"
-                                   Text="{Binding User.Username}"
-                                   FontSize="33"
-                                   Margin="30,0,0,0" />
+                        <TextBlock
+                            Name="UsernameTextBlock"
+                            Text="{Binding User.Username}"
+                            FontSize="33"
+                            Margin="30,0,0,0" />
                     </StackPanel>
                     <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                        <ProgressBar Name="StorageProgressBar"
-                                     Value="0" 
-                                     Width="250" Margin="0,40,0,0" />
-                        <TextBlock Name="StorageTextBlock"
-                                   Text=""
-                                   Margin="0,10,0,0" />
-                        <HyperlinkButton Name="UpgradeLink"
-                                         NavigateUri="http://dav-apps.tech/pricing"
-                                         x:Uid="Account-UpgradeLink"
-                                         Visibility="Collapsed" />
+                        <ProgressBar
+                            Name="StorageProgressBar"
+                            Value="0" 
+                            Width="250"
+                            Margin="0,40,0,0" />
+                        
+                        <TextBlock
+                            Name="StorageTextBlock"
+                            Text=""
+                            Margin="0,10,0,0" />
+                        
+                        <HyperlinkButton
+                            Name="UpgradeLink"
+                            NavigateUri="http://dav-apps.tech/pricing"
+                            x:Uid="Account-UpgradeLink"
+                            Visibility="Collapsed" />
                     </StackPanel>
 
                     <Button Name="LogoutButton"
@@ -87,51 +99,61 @@
 
                         <RelativePanel Grid.Column="0" Grid.Row="0" Padding="10">
                             <StackPanel RelativePanel.AlignHorizontalCenterWithPanel="True" MaxWidth="400">
-                                <FontIcon Glyph="&#xE895;"
-                                        FontSize="75" />
-                                <TextBlock Style="{StaticResource LandingDescriptionStyle}" 
-                                       Text="Access the same Soundboard on all your devices"
-                                       x:Uid="Account-LandingText1" />
+                                <FontIcon
+                                    Glyph="&#xE895;"
+                                    FontSize="75" />
+                                
+                                <TextBlock
+                                    Style="{StaticResource LandingDescriptionStyle}" 
+                                    Text="Access the same Soundboard on all your devices"
+                                    x:Uid="Account-LandingText1" />
                             </StackPanel>
                         </RelativePanel>
 
                         <RelativePanel Grid.Column="1" Grid.Row="0" Padding="10">
                             <StackPanel RelativePanel.AlignHorizontalCenterWithPanel="True" MaxWidth="400">
-                                <FontIcon Glyph="&#xE1F6;" 
-                                      FontSize="75" />
-                                <TextBlock Style="{StaticResource LandingDescriptionStyle}" 
-                                       Text="Make sure your sounds don't get lost"
-                                       x:Uid="Account-LandingText2" />
+                                <FontIcon
+                                    Glyph="&#xE1F6;" 
+                                    FontSize="75" />
+                                
+                                <TextBlock
+                                    Style="{StaticResource LandingDescriptionStyle}" 
+                                    Text="Make sure your sounds don't get lost"
+                                    x:Uid="Account-LandingText2" />
                             </StackPanel>
                         </RelativePanel>
 
                         <StackPanel Grid.Row="1" Grid.ColumnSpan="3" Margin="0,60,0,0">
-                            <TextBlock Text="Try it out for free"
-                                       x:Uid="Account-TryOut"
-                                       FontSize="30"
-                                       TextAlignment="Center"
-                                       Margin="0,50,0,5" />
+                            <TextBlock
+                                Text="Try it out for free"
+                                x:Uid="Account-TryOut"
+                                FontSize="30"
+                                TextAlignment="Center"
+                                Margin="0,50,0,5" />
 
                             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-                                <Button Name="LoginButton"
-                                        x:Uid="LoginButton"
-                                        Style="{StaticResource ButtonRevealStyle}"
-                                        Content="Log in"
-                                        Margin="0,20,10,0"
-                                        Click="LoginButton_Click" />
+                                <Button
+                                    Name="LoginButton"
+                                    x:Uid="LoginButton"
+                                    Style="{StaticResource ButtonRevealStyle}"
+                                    Content="Log in"
+                                    Margin="0,20,10,0"
+                                    Click="LoginButton_Click" />
 
-                                <Button Name="SignupButton"
-                                        x:Uid="SignupButton"
-                                        Style="{StaticResource ButtonRevealStyle}"
-                                        Content="Sign up"
-                                        Margin="10,20,0,0"
-                                        Click="SignupButton_Click" />
+                                <Button
+                                    Name="SignupButton"
+                                    x:Uid="SignupButton"
+                                    Style="{StaticResource ButtonRevealStyle}"
+                                    Content="Sign up"
+                                    Margin="10,20,0,0"
+                                    Click="SignupButton_Click" />
                             </StackPanel>
 
-                            <HyperlinkButton x:Uid="Account-VisitWebsiteLink"
-                                             HorizontalAlignment="Center"
-                                             Margin="0,10,0,20"
-                                             NavigateUri="https://dav-apps.tech" />
+                            <HyperlinkButton
+                                x:Uid="Account-VisitWebsiteLink"
+                                HorizontalAlignment="Center"
+                                Margin="0,10,0,20"
+                                NavigateUri="https://dav-apps.tech" />
                         </StackPanel>
                     </Grid>
                 </StackPanel>

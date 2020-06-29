@@ -8,6 +8,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
+    Loaded="PlayingSoundTemplate_Loaded"
     SizeChanged="UserControl_SizeChanged">
 
     <Grid Name="ContentRoot" Background="White">
@@ -20,30 +21,34 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock Name="PlayingSoundName" 
-                   Text="{x:Bind PlayingSound.CurrentSound.Name}"
-                   VerticalAlignment="Center" 
-                   Margin="10,5,0,0" 
-                   TextWrapping="WrapWholeWords" />
+        <TextBlock
+            Name="PlayingSoundName" 
+            Text="{x:Bind PlayingSound.CurrentSound.Name}"
+            VerticalAlignment="Center" 
+            Margin="10,5,0,0" 
+            TextWrapping="WrapWholeWords" />
 
-        <MediaPlayerElement Name="MediaPlayerElement" 
-                            Grid.Row="1"
-                            AreTransportControlsEnabled="True">
+        <MediaPlayerElement
+            Name="MediaPlayerElement" 
+            Grid.Row="1"
+            AreTransportControlsEnabled="True">
+            
             <MediaPlayerElement.TransportControls>
-                <components:CustomMediaTransportControls IsCompact="True"
-                                        IsFullWindowButtonVisible="False"
-                                        IsZoomButtonVisible="False"
-                                        VolumeSlider_LostFocus="CustomMediaTransportControls_VolumeSlider_LostFocus"
-                                        VolumeSlider_ValueChanged="CustomMediaTransportControls_VolumeSlider_ValueChanged"
-                                        RemoveButton_Clicked="CustomMediaTransportControls_RemoveButton_Clicked"
-                                        FavouriteFlyout_Clicked="CustomMediaTransportControls_FavouriteFlyout_Clicked"
-                                        CastButton_Clicked="CustomMediaTransportControls_CastButton_Clicked"
-                                        MenuFlyoutButton_Clicked="CustomMediaTransportControls_MenuFlyoutButton_Clicked"
-                                        Repeat_1x_Clicked="CustomMediaTransportControls_Repeat_1x_Clicked"
-                                        Repeat_2x_Clicked="CustomMediaTransportControls_Repeat_2x_Clicked"
-                                        Repeat_5x_Clicked="CustomMediaTransportControls_Repeat_5x_Clicked"
-                                        Repeat_10x_Clicked="CustomMediaTransportControls_Repeat_10x_Clicked"
-                                        Repeat_endless_Clicked="CustomMediaTransportControls_Repeat_endless_Clicked">
+                <components:CustomMediaTransportControls
+                    IsCompact="True"
+                    IsFullWindowButtonVisible="False"
+                    IsZoomButtonVisible="False"
+                    VolumeSlider_LostFocus="CustomMediaTransportControls_VolumeSlider_LostFocus"
+                    VolumeSlider_ValueChanged="CustomMediaTransportControls_VolumeSlider_ValueChanged"
+                    RemoveButton_Clicked="CustomMediaTransportControls_RemoveButton_Clicked"
+                    FavouriteFlyout_Clicked="CustomMediaTransportControls_FavouriteFlyout_Clicked"
+                    CastButton_Clicked="CustomMediaTransportControls_CastButton_Clicked"
+                    MenuFlyoutButton_Clicked="CustomMediaTransportControls_MenuFlyoutButton_Clicked"
+                    Repeat_1x_Clicked="CustomMediaTransportControls_Repeat_1x_Clicked"
+                    Repeat_2x_Clicked="CustomMediaTransportControls_Repeat_2x_Clicked"
+                    Repeat_5x_Clicked="CustomMediaTransportControls_Repeat_5x_Clicked"
+                    Repeat_10x_Clicked="CustomMediaTransportControls_Repeat_10x_Clicked"
+                    Repeat_endless_Clicked="CustomMediaTransportControls_Repeat_endless_Clicked">
                 </components:CustomMediaTransportControls>
             </MediaPlayerElement.TransportControls>
         </MediaPlayerElement>

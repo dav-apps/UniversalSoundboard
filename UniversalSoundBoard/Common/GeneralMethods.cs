@@ -11,6 +11,7 @@ namespace UniversalSoundboard.Common
         {
             var connection = NetworkInformation.GetInternetConnectionProfile();
             if (connection == null) return false;
+
             var networkCostType = connection.GetConnectionCost().NetworkCostType;
             return !(networkCostType != NetworkCostType.Unrestricted && networkCostType != NetworkCostType.Unknown);
         }

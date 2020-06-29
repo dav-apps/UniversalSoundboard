@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
+using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Media.Casting;
 using Windows.Media.Playback;
@@ -22,22 +23,32 @@ namespace UniversalSoundBoard.Components
         public PlayingSound PlayingSound { get; set; }
 
         CoreDispatcher dispatcher;
+        readonly ResourceLoader loader = new ResourceLoader();
         public string FavouriteFlyoutText = "Add Favorite";
         private bool skipVolumeSliderValueChangedEvent = false;
-
 
         public PlayingSoundTemplate()
         {
             InitializeComponent();
-            Loaded += PlayingSoundTemplate_Loaded;
 
-            SetDarkThemeLayout();
-            SetDataContext();
+            ContentRoot.DataContext = FileManager.itemViewHolder;
             DataContextChanged += PlayingSoundTemplate_DataContextChanged;
 
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
         }
-        
+
+        private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs eventArgs)
+        {
+            InitializePlayingSound();
+            SetDarkThemeLayout();
+            AdjustLayout();
+        }
+
+        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            AdjustLayout();
+        }
+
         private void PlayingSoundTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             if(DataContext != null)
@@ -46,26 +57,35 @@ namespace UniversalSoundBoard.Components
                 InitializePlayingSound();
             }
         }
-        
-        private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs eventArgs)
+
+        private void InitializePlayingSound()
         {
-            InitializePlayingSound();
-            AdjustLayout();
+            if (PlayingSound != null)
+            {
+                if (PlayingSound.MediaPlayer != null)
+                {
+                    MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
+                    MediaPlayerElement.MediaPlayer.MediaEnded -= Player_MediaEnded;
+                    MediaPlayerElement.MediaPlayer.MediaEnded += Player_MediaEnded;
+                    PlayingSound.MediaPlayer.CommandManager.PreviousReceived -= MediaPlayerCommandManager_PreviousReceived;
+                    PlayingSound.MediaPlayer.CommandManager.PreviousReceived += MediaPlayerCommandManager_PreviousReceived;
+                    ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
+                    ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
+                    PlayingSound.MediaPlayer.CurrentStateChanged += MediaPlayer_CurrentStateChanged;
+                    PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
+
+                    AdjustLayout();
+                }
+            }
         }
-        
-        private void SetDataContext()
+
+        private void SetDarkThemeLayout()
         {
-            ContentRoot.DataContext = FileManager.itemViewHolder;
+            ContentRoot.Background = new SolidColorBrush(Colors.Transparent);
         }
-        
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
-        {
-            AdjustLayout();
-        }
-        
+
         private void AdjustLayout()
         {
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
             MediaPlayerElement.TransportControls.IsCompact = Window.Current.Bounds.Width < FileManager.mobileMaxWidth;
             (MediaPlayerElement.TransportControls as CustomMediaTransportControls).SetVolumeButtonVisibility(Window.Current.Bounds.Width > FileManager.topButtonsCollapsedMaxWidth);
             MediaPlayerElement.TransportControls.IsVolumeButtonVisible = Window.Current.Bounds.Width > FileManager.topButtonsCollapsedMaxWidth;
@@ -89,11 +109,6 @@ namespace UniversalSoundBoard.Components
             }
         }
         
-        private void SetDarkThemeLayout()
-        {
-            ContentRoot.Background = new SolidColorBrush(Colors.Transparent);
-        }
-        
         private async Task RepeatSoundAsync(int repetitions)
         {
             int newRepetitions = repetitions + 1;
@@ -102,32 +117,12 @@ namespace UniversalSoundBoard.Components
             await FileManager.SetRepetitionsOfPlayingSoundAsync(PlayingSound.Uuid, newRepetitions);
         }
         
-        private void InitializePlayingSound()
-        {
-            if(PlayingSound != null)
-            {
-                if (PlayingSound.MediaPlayer != null)
-                {
-                    MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
-                    MediaPlayerElement.MediaPlayer.MediaEnded -= Player_MediaEnded;
-                    MediaPlayerElement.MediaPlayer.MediaEnded += Player_MediaEnded;
-                    PlayingSound.MediaPlayer.CommandManager.PreviousReceived -= MediaPlayerCommandManager_PreviousReceived;
-                    PlayingSound.MediaPlayer.CommandManager.PreviousReceived += MediaPlayerCommandManager_PreviousReceived;
-                    ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundTemplate_CurrentItemChanged;
-                    ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundTemplate_CurrentItemChanged;
-                    PlayingSound.MediaPlayer.CurrentStateChanged += MediaPlayer_CurrentStateChanged;
-                    PlayingSoundName.Text = PlayingSound.CurrentSound.Name;
-
-                    AdjustLayout();
-                }
-            }
-        }
-
         private async void MediaPlayer_CurrentStateChanged(MediaPlayer sender, object args)
         {
-            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => {
-                AdjustLayout();
-            });
+            await Windows.ApplicationModel.Core.CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(
+                CoreDispatcherPriority.Normal,
+                () => AdjustLayout()
+            );
         }
 
         private void MediaPlayerCommandManager_PreviousReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPreviousReceivedEventArgs args)
@@ -248,19 +243,19 @@ namespace UniversalSoundBoard.Components
         private void CustomMediaTransportControls_VolumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
             if (skipVolumeSliderValueChangedEvent) return;
-            double addedValue = e.NewValue - e.OldValue;
+            double addedValue = (e.NewValue - e.OldValue) / 100;
 
-            if ((PlayingSound.MediaPlayer.Volume + addedValue / 100) > 1)
+            if ((PlayingSound.MediaPlayer.Volume + addedValue) > 1)
             {
                 PlayingSound.MediaPlayer.Volume = 1;
             }
-            else if ((PlayingSound.MediaPlayer.Volume + addedValue / 100) < 0)
+            else if ((PlayingSound.MediaPlayer.Volume + addedValue) < 0)
             {
                 PlayingSound.MediaPlayer.Volume = 0;
             }
             else
             {
-                PlayingSound.MediaPlayer.Volume += addedValue / 100;
+                PlayingSound.MediaPlayer.Volume += addedValue;
             }
         }
 
@@ -294,7 +289,6 @@ namespace UniversalSoundBoard.Components
             // Set the text of the Add to Favourites Flyout
             FrameworkElement transportControlsTemplateRoot = (FrameworkElement)VisualTreeHelper.GetChild(MediaPlayerElement.TransportControls, 0);
             MenuFlyoutItem FavouriteFlyout = (MenuFlyoutItem)transportControlsTemplateRoot.FindName("FavouriteMenuFlyoutItem");
-            var loader = new Windows.ApplicationModel.Resources.ResourceLoader();
 
             if (oldFav)
             {
@@ -315,7 +309,7 @@ namespace UniversalSoundBoard.Components
         private void CustomMediaTransportControls_CastButton_Clicked(object sender, EventArgs e)
         {
             MenuFlyoutItem castButton = sender as MenuFlyoutItem;
-            GeneralTransform transform = castButton.TransformToVisual(Window.Current.Content as UIElement);
+            GeneralTransform transform = castButton.TransformToVisual(Window.Current.Content);
             Point pt = transform.TransformPoint(new Point(0, 0));
 
             CastingDevicePicker castingPicker = new CastingDevicePicker();

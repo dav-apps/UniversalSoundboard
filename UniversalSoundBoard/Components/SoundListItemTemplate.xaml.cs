@@ -13,23 +13,15 @@ namespace UniversalSoundboard.Components
         public SoundListItemTemplate()
         {
             InitializeComponent();
-            DataContextChanged += (s, e) => Bindings.Update();
             ContentRoot.DataContext = FileManager.itemViewHolder;
+
+            DataContextChanged += SoundListItemTemplate_DataContextChanged;
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private void SoundListItemTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            soundItem = new SoundItem(Sound, (DataTemplate)Resources["SetCategoryItemTemplate"]);
-            soundItem.FavouriteChanged += SoundItem_FavouriteChanged;
-        }
-
-        private void SoundItem_FavouriteChanged(object sender, bool newFav)
-        {
-            Sound.Favourite = newFav;
-
-            // Update the UI
-            Sound.Favourite = newFav;
             Bindings.Update();
+            soundItem = new SoundItem(Sound, (DataTemplate)Resources["SetCategoryItemTemplate"]);
         }
 
         private void ContentRoot_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)

@@ -10,9 +10,10 @@
     Loaded="UserControl_Loaded">
 
     <StackPanel Orientation="Horizontal">
-        <CheckBox Name="SetCategoryCheckbox" 
-                  Content="{x:Bind Category.Name}" 
-                  Checked="SetCategoryCheckbox_Checked"
-                  Unchecked="SetCategoryCheckbox_Unchecked" />
+        <CheckBox
+            Name="SetCategoryCheckbox" 
+            Content="{x:Bind Category.Name}" 
+            Checked="SetCategoryCheckbox_Checked"
+            Unchecked="SetCategoryCheckbox_Unchecked" />
     </StackPanel>
 </UserControl>
