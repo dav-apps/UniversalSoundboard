@@ -18,7 +18,6 @@
         <!-- Converters -->
         <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
-        <converters:PlayingSoundsBarWidthConverter x:Name="PlayingSoundsBarWidthConverter" />
         <converters:OptionsOnSoundPageVisibleConverter x:Name="OptionsOnSoundPageVisibleConverter" />
         <converters:CollapsedButtonsWidthConverter x:Name="CollapsedButtonsWidthConverter" />
         <converters:OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter x:Name="OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter" />
@@ -113,14 +112,7 @@
                         Name="NavigationViewHeader"
                         Canvas.ZIndex="1"
                         Background="{Binding ShowSoundsPivot, Converter={StaticResource NavigationViewHeaderBackgroundConverter}}">
-                        
-                        <StackPanel
-                            Name="NavigationViewHeaderAcrylicBackgroundStackPanel"
-                            Width="{Binding PlayingSoundsBarWidth, Converter={StaticResource PlayingSoundsBarWidthConverter}}"
-                            Height="85"
-                            Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}"
-                            RelativePanel.AlignRightWithPanel="True" />
-                        
+
                         <RelativePanel
                             Name="NavigationViewHeaderContent"
                             Height="40"

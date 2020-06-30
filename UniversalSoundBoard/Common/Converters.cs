@@ -56,22 +56,6 @@ namespace UniversalSoundBoard.Converters
         }
     }
 
-    public class PlayingSoundsBarWidthConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            if (FileManager.itemViewHolder.PlayingSoundsListVisible && FileManager.itemViewHolder.Page == typeof(SoundPage))
-                return FileManager.itemViewHolder.PlayingSoundsBarWidth;
-            else
-                return 0;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
     public class OptionsOnSoundPageVisibleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
