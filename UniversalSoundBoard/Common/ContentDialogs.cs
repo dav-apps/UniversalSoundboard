@@ -31,7 +31,7 @@ namespace UniversalSoundBoard.Common
         public static CheckBox RandomCheckBox;
         public static ListView SoundsListView;
         public static ComboBox RepeatsComboBox;
-        public static ObservableCollection<Sound> SoundsList;
+        public static ObservableCollection<Sound> SoundsList = new ObservableCollection<Sound>();
         public static ProgressBar downloadFileProgressBar;
         public static ListView ExportSoundsListView;
         public static TextBox ExportSoundsFolderTextBox;

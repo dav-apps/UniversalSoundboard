@@ -38,7 +38,7 @@
 
             <TextBlock
                 Name="CategoryIconsTextBlock"
-                Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}}"
+                Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}, ConverterParameter=list}"
                 FontFamily="Segoe MDL2 Assets"
                 Margin="{x:Bind Sound.Categories, Converter={StaticResource CategoriesMarginConverter}}"
                 RelativePanel.LeftOf="RemoveSoundButton"

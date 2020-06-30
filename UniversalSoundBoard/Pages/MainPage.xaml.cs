@@ -12,7 +12,6 @@ using UniversalSoundBoard.DataAccess;
 using Windows.UI.Xaml.Media;
 using UniversalSoundBoard.Common;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
 using MUXC = Microsoft.UI.Xaml.Controls;
@@ -26,7 +25,6 @@ namespace UniversalSoundBoard.Pages
         readonly ResourceLoader loader = new ResourceLoader();
         public static CoreDispatcher dispatcher;    // Dispatcher for ShareTargetPage
         private Guid selectedCategory = Guid.Empty; // The category that was right clicked for the flyout
-        public static ObservableCollection<Sound> PlaySoundsList = new ObservableCollection<Sound>();   // The sounds that are shown in the Play All Dialog
         private List<string> Suggestions = new List<string>();  // The suggestions for the SearchAutoSuggestBox
         private List<StorageFile> sharedFiles = new List<StorageFile>();    // The files that get shared
         bool skipVolumeSliderValueChangedEvent = false;     // If true, the value changed event won't be executed for the volume sliders
@@ -264,10 +262,10 @@ namespace UniversalSoundBoard.Pages
             // Check if it should play all sounds or the favourite sounds
             if (SoundPage.soundsPivotSelected || !FileManager.itemViewHolder.ShowSoundsPivot)
                 foreach (Sound sound in FileManager.itemViewHolder.Sounds)
-                    PlaySoundsList.Add(sound);
+                    sounds.Add(sound);
             else
                 foreach (Sound sound in FileManager.itemViewHolder.FavouriteSounds)
-                    PlaySoundsList.Add(sound);
+                    sounds.Add(sound);
 
             var template = (DataTemplate)Resources["SoundItemTemplate"];
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
