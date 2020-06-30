@@ -51,6 +51,8 @@ namespace UniversalSoundBoard.Pages
         #region Page event handlers
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            AdjustLayout();
+
             // Load the Categories and the menu items
             await FileManager.CreateCategoriesListAsync();
             LoadMenuItems();
@@ -111,7 +113,6 @@ namespace UniversalSoundBoard.Pages
             Application.Current.Resources["NavigationViewExpandedPaneBackground"] = new AcrylicBrush();
 
             FileManager.UpdateLayoutColors();
-            AdjustLayout();
         }
 
         private void AdjustLayout()
