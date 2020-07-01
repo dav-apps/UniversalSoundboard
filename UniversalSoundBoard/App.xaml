@@ -75,7 +75,7 @@
                 <Setter Property="Template">
                     <Setter.Value>
                         <ControlTemplate TargetType="Pivot">
-                            <Grid x:Name="RootElement" Background="{TemplateBinding Background}" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                            <Grid x:Name="RootElement" Background="Transparent" HorizontalAlignment="{TemplateBinding HorizontalAlignment}" VerticalAlignment="{TemplateBinding VerticalAlignment}">
                                 <Grid.Resources>
                                     <Style x:Key="BaseContentControlStyle" TargetType="ContentControl">
                                         <Setter Property="FontFamily" Value="XamlAutoFontFamily"/>
@@ -144,12 +144,12 @@
                                                 <Grid.RenderTransform>
                                                     <CompositeTransform x:Name="PivotLayoutElementTranslateTransform"/>
                                                 </Grid.RenderTransform>
-                                                <RelativePanel Canvas.ZIndex="1" Background="{StaticResource NavigationViewHeaderBackgroundBrush}">
+                                                <RelativePanel Canvas.ZIndex="1" Background="{TemplateBinding Background}">
                                                     <ContentControl Margin="{TemplateBinding Padding}" x:Name="HeaderClipper" HorizontalContentAlignment="Stretch" UseSystemFocusVisuals="{StaticResource UseSystemFocusVisuals}">
                                                         <ContentControl.Clip>
                                                             <RectangleGeometry x:Name="HeaderClipperGeometry"/>
                                                         </ContentControl.Clip>
-                                                        <Grid Background="{ThemeResource PivotHeaderBackground}" Margin="0,-10,0,0" Padding="5,0,0,1">
+                                                        <Grid Margin="0,-10,0,0" Padding="5,0,0,1">
                                                             <Grid.RenderTransform>
                                                                 <CompositeTransform x:Name="HeaderOffsetTranslateTransform"/>
                                                             </Grid.RenderTransform>
