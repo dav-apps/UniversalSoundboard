@@ -164,17 +164,4 @@ namespace UniversalSoundBoard.Converters
             throw new NotImplementedException();
         }
     }
-
-    public class NavigationViewHeaderBackgroundConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return FileManager.itemViewHolder.ShowSoundsPivot ? (Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush) : new AcrylicBrush();
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
-    }
 }

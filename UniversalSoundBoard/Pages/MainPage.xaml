@@ -22,7 +22,6 @@
         <converters:CollapsedButtonsWidthConverter x:Name="CollapsedButtonsWidthConverter" />
         <converters:OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter x:Name="OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter" />
         <converters:OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter x:Name="OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter" />
-        <converters:NavigationViewHeaderBackgroundConverter x:Name="NavigationViewHeaderBackgroundConverter" />
 
         <!-- Item Templates -->
         <DataTemplate x:Key="SoundItemTemplate" x:DataType="models:Sound">
@@ -111,7 +110,7 @@
                     <RelativePanel
                         Name="NavigationViewHeader"
                         Canvas.ZIndex="1"
-                        Background="{Binding ShowSoundsPivot, Converter={StaticResource NavigationViewHeaderBackgroundConverter}}">
+                        Background="Transparent">
 
                         <RelativePanel
                             Name="NavigationViewHeaderContent"
