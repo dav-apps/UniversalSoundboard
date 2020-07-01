@@ -14,16 +14,20 @@
         <DataTemplate x:Key="CategoryOrderItemTemplate" x:DataType="models:Category">
             <components:CategoryOrderItemTemplate />
         </DataTemplate>
-        
+
         <!-- Styles -->
-        <Style TargetType="StackPanel" x:Key="SettingsContentStyle">
+        <Style x:Key="SettingsContentStyle" TargetType="StackPanel">
             <Setter Property="Orientation" Value="Vertical" />
             <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
             <Setter Property="Padding" Value="15,15,0,0" />
         </Style>
 
-        <Style TargetType="StackPanel" x:Key="SettingsEntryStyle">
-            <Setter Property="Margin" Value="-10,5,0,5" />
+        <Style x:Key="SettingsEntryStyle" TargetType="StackPanel">
+            <Setter Property="Margin" Value="0,5,0,5" />
+        </Style>
+
+        <Style TargetType="PivotItem">
+            <Setter Property="Margin" Value="2,28,0,0" />
         </Style>
     </Page.Resources>
 
@@ -34,9 +38,8 @@
 
         <Pivot
             Name="SettingsPivot" 
-            Grid.Row="1"
-            Margin="6,0,0,0">
-            
+            Style="{StaticResource CustomPivotStyle}">
+
             <PivotItem x:Uid="SettingsPivot-General">
                 <ScrollViewer>
                     <StackPanel Name="SettingsGeneralStackPanel" Style="{StaticResource SettingsContentStyle}">
@@ -70,7 +73,7 @@
                         <StackPanel
                             Name="ChangeCategoryOrderStackPanel"
                             Style="{StaticResource SettingsEntryStyle}"
-                            Margin="-10,10,5,5">
+                            Margin="0,10,5,5">
                             
                             <Button
                                 Name="ChangeCategoryOrderButton"
@@ -83,7 +86,7 @@
                         <StackPanel
                             Name="SoundOrderStackPanel"
                             Style="{StaticResource SettingsEntryStyle}"
-                            Margin="-10,10,0,5">
+                            Margin="0,10,0,5">
                             
                             <TextBlock
                                 Name="SoundOrderHeaderTextBlock" 
@@ -114,7 +117,7 @@
 
                         <StackPanel
                             Style="{StaticResource SettingsEntryStyle}"
-                            Margin="-10,15,5,5">
+                            Margin="0,15,5,5">
                             
                             <HyperlinkButton
                                 x:Uid="PrivacyPolicy-Link"
@@ -144,6 +147,7 @@
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
+            
             <PivotItem x:Uid="SettingsPivot-Design">
                 <ScrollViewer>
                     <StackPanel Name="SettingsDesignStackPanel" Style="{StaticResource SettingsContentStyle}">
@@ -216,10 +220,11 @@
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
+            
             <PivotItem x:Uid="SettingsPivot-Data">
                 <ScrollViewer>
                     <StackPanel Name="SettingsDataStackPanel" Style="{StaticResource SettingsContentStyle}">
-                        <StackPanel Margin="-10,5,0,0">
+                        <StackPanel Margin="0,5,0,0">
                             <StackPanel Orientation="Horizontal">
                                 <Button
                                     Name="ImportDataButton" 
@@ -251,7 +256,7 @@
                             </StackPanel>
                         </StackPanel>
                         
-                        <StackPanel Margin="-10,5,0,5">
+                        <StackPanel Margin="0,5,0,5">
                             <StackPanel Orientation="Horizontal">
                                 <Button
                                     Name="ExportDataButton" 
@@ -285,7 +290,7 @@
                         
                         <StackPanel
                             Style="{StaticResource SettingsEntryStyle}" 
-                            Margin="-10,15,5,5">
+                            Margin="0,15,5,5">
                             
                             <TextBlock
                                 Name="SoundBoardSizeTextBlock" 
