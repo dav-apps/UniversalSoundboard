@@ -479,8 +479,8 @@
                 <Pivot
                     Name="SoundGridViewPivot"
                     Style="{StaticResource CustomPivotStyle}"
-                    Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
                     Padding="0,85,0,0"
+                    Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
                     Visibility="{Binding ShowListView, Converter={StaticResource InvertBooleanConverter}}"
                     PivotItemLoaded="SoundGridViewPivot_PivotItemLoaded">
 
@@ -517,6 +517,7 @@
                     Name="SoundListViewPivot"
                     Style="{StaticResource CustomPivotStyle}"
                     Padding="0,85,0,0"
+                    Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
                     Visibility="{Binding ShowListView}"
                     PivotItemLoaded="SoundListViewPivot_PivotItemLoaded">
 
