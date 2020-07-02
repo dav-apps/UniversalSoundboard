@@ -853,7 +853,7 @@ namespace UniversalSoundBoard.DataAccess
             itemViewHolder.EditButtonVisible = false;
 
             await LoadAllSoundsAsync();
-            itemViewHolder.PlayAllButtonVisible = true;
+            UpdatePlayAllButtonVisibility();
         }
 
         public static async Task ShowCategoryAsync(Guid uuid)
@@ -877,7 +877,7 @@ namespace UniversalSoundBoard.DataAccess
 
             // Load the sounds of the category
             await LoadSoundsOfCategoryAsync(category.Uuid);
-            itemViewHolder.PlayAllButtonVisible = true;
+            UpdatePlayAllButtonVisibility();
         }
 
         /**
