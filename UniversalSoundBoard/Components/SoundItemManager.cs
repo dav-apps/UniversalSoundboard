@@ -27,8 +27,7 @@ namespace UniversalSoundboard.Components
         private Sound sound;
         private DataTemplate setCategoryItemTemplate;
 
-        public event EventHandler<bool> FavouriteChanged;
-
+        private readonly ResourceLoader loader = new ResourceLoader();
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
         private bool downloadFileIsExecuting = false;
@@ -57,15 +56,15 @@ namespace UniversalSoundboard.Components
             flyout.ShowAt(sender as UIElement, position);
         }
 
+        #region SetCategories
         private async void OptionsFlyout_SetCategoriesFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            List<Sound> soundsList = new List<Sound> { sound };
-            var SetCategoryContentDialog = ContentDialogs.CreateSetCategoryContentDialog(soundsList, setCategoryItemTemplate);
-            SetCategoryContentDialog.PrimaryButtonClick += SetCategoryContentDialog_PrimaryButtonClick;
-            await SetCategoryContentDialog.ShowAsync();
+            var SetCategoriesContentDialog = ContentDialogs.CreateSetCategoriesContentDialog(new List<Sound> { sound }, setCategoryItemTemplate);
+            SetCategoriesContentDialog.PrimaryButtonClick += SetCategoriesContentDialog_PrimaryButtonClick;
+            await SetCategoriesContentDialog.ShowAsync();
         }
 
-        private async void SetCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void SetCategoriesContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get the selected categories from the SelectedCategories Dictionary in ContentDialogs
             List<Guid> categoryUuids = new List<Guid>();
@@ -73,9 +72,11 @@ namespace UniversalSoundboard.Components
                 if (entry.Value) categoryUuids.Add(entry.Key);
 
             await FileManager.SetCategoriesOfSoundAsync(sound.Uuid, categoryUuids);
-            await FileManager.UpdateGridViewAsync();
+            await FileManager.ReloadSound(sound.Uuid);
         }
+        #endregion
 
+        #region SetFavourite
         private async void OptionsFlyout_SetFavouriteFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             bool newFav = !sound.Favourite;
@@ -107,9 +108,11 @@ namespace UniversalSoundboard.Components
             }
 
             await FileManager.SetSoundAsFavouriteAsync(sound.Uuid, newFav);
-            FavouriteChanged?.Invoke(this, newFav);
+            await FileManager.ReloadSound(sound.Uuid);
         }
+        #endregion
 
+        #region Share
         private async void OptionsFlyout_ShareFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             if (!await DownloadFile()) return;
@@ -124,7 +127,7 @@ namespace UniversalSoundboard.Components
             if (string.IsNullOrEmpty(ext))
                 ext = "mp3";
 
-            StorageFile tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + "." + ext, NameCollisionOption.ReplaceExisting);
+            StorageFile tempFile = await audioFile.CopyAsync(tempFolder, string.Format("{0}.{1}", sound.Name, ext), NameCollisionOption.ReplaceExisting);
             soundFiles.Add(tempFile);
 
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
@@ -135,14 +138,15 @@ namespace UniversalSoundboard.Components
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
         {
             if (soundFiles.Count == 0) return;
-            var loader = new ResourceLoader();
 
             DataRequest request = args.Request;
             request.Data.SetStorageItems(soundFiles);
             request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
             request.Data.Properties.Description = soundFiles.First().Name;
         }
+        #endregion
 
+        #region Export
         private async void OptionsFlyout_ExportFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             if (!await DownloadFile()) return;
@@ -173,7 +177,9 @@ namespace UniversalSoundboard.Components
                 await CachedFileManager.CompleteUpdatesAsync(file);
             }
         }
+        #endregion
 
+        #region Pin
         private async void OptionsFlyout_PinFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             bool isPinned = SecondaryTile.Exists(sound.Uuid.ToString());
@@ -242,7 +248,9 @@ namespace UniversalSoundboard.Components
                 TileUpdateManager.CreateTileUpdaterForSecondaryTile(tile.TileId).Update(notification);
             }
         }
+        #endregion
 
+        #region SetImage
         private async void OptionsFlyout_SetImageFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             var picker = new Windows.Storage.Pickers.FileOpenPicker
@@ -250,6 +258,7 @@ namespace UniversalSoundboard.Components
                 ViewMode = Windows.Storage.Pickers.PickerViewMode.Thumbnail,
                 SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary
             };
+
             picker.FileTypeFilter.Add(".png");
             picker.FileTypeFilter.Add(".jpg");
             picker.FileTypeFilter.Add(".jpeg");
@@ -257,14 +266,13 @@ namespace UniversalSoundboard.Components
             StorageFile file = await picker.PickSingleFileAsync();
             if (file != null)
             {
-                // Application now has read/write access to the picked file
-                FileManager.itemViewHolder.ProgressRingIsActive = true;
                 await FileManager.UpdateImageOfSoundAsync(sound.Uuid, file);
-                FileManager.itemViewHolder.ProgressRingIsActive = false;
-                await FileManager.UpdateGridViewAsync();
+                await FileManager.ReloadSound(sound.Uuid);
             }
         }
+        #endregion
 
+        #region Rename
         private async void OptionsFlyout_RenameFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             var RenameSoundContentDialog = ContentDialogs.CreateRenameSoundContentDialog(sound);
@@ -278,10 +286,12 @@ namespace UniversalSoundboard.Components
             if (ContentDialogs.RenameSoundTextBox.Text != sound.Name)
             {
                 await FileManager.RenameSoundAsync(sound.Uuid, ContentDialogs.RenameSoundTextBox.Text);
-                await FileManager.UpdateGridViewAsync();
+                await FileManager.ReloadSound(sound.Uuid);
             }
         }
+        #endregion
 
+        #region Delete
         private async void OptionsFlyout_DeleteFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             var DeleteSoundContentDialog = ContentDialogs.CreateDeleteSoundContentDialog(sound.Name);
@@ -292,11 +302,11 @@ namespace UniversalSoundboard.Components
         private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.DeleteSoundAsync(sound.Uuid);
-
-            // UpdateGridView nicht in deleteSound, weil es auch in einer Schleife aufgerufen wird (löschen mehrerer Sounds)
-            await FileManager.UpdateGridViewAsync();
+            FileManager.RemoveSound(sound.Uuid);
         }
+        #endregion
 
+        #region File download
         private async Task<bool> DownloadFile()
         {
             var downloadStatus = await sound.GetAudioFileDownloadStatusAsync();
@@ -309,7 +319,7 @@ namespace UniversalSoundboard.Components
                 Progress<int> progress = new Progress<int>(FileDownloadProgress);
                 await sound.DownloadFileAsync(progress);
 
-                ContentDialogs.CreateDownloadFileContentDialog(sound.Name + "." + sound.GetAudioFileExtensionAsync());
+                ContentDialogs.CreateDownloadFileContentDialog(string.Format("{0}.{1}", sound.Name, sound.GetAudioFileExtensionAsync()));
                 ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
                 ContentDialogs.DownloadFileContentDialog.SecondaryButtonClick += DownloadFileContentDialog_SecondaryButtonClick;
                 await ContentDialogs.DownloadFileContentDialog.ShowAsync();
@@ -331,12 +341,6 @@ namespace UniversalSoundboard.Components
             return true;
         }
 
-        private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            downloadFileWasCanceled = true;
-            downloadFileIsExecuting = false;
-        }
-
         private void FileDownloadProgress(int value)
         {
             if (!downloadFileIsExecuting) return;
@@ -354,6 +358,13 @@ namespace UniversalSoundboard.Components
                 ContentDialogs.DownloadFileContentDialog.Hide();
             }
         }
+
+        private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            downloadFileWasCanceled = true;
+            downloadFileIsExecuting = false;
+        }
+        #endregion
     }
 
     public class SoundItemOptionsFlyout
