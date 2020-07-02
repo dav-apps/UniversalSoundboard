@@ -82,14 +82,8 @@ namespace UniversalSoundBoard.Common
         private bool _playAllButtonVisible;                                 // If true shows the Play button next to the title, only when a category or All Sounds is selected
         private bool _editButtonVisible;                                    // If true shows the edit button next to the title, only when a category is selected
         private bool _topButtonsCollapsed;                                  // If true the buttons at the top show only the icon, if false they show the icon and text
-        private bool _addButtonVisible;                                     // If true the Add button at the top to add sounds or a category is visible
-        private bool _volumeButtonVisible;                                  // If true the volume button at the top is visible
-        private bool _selectButtonVisible;                                  // If true the button to switch to multi selection mode is visible
         private bool _searchAutoSuggestBoxVisible;                          // If true the search box is visible, if false multi selection is on or the search button shown
         private bool _searchButtonVisible;                                  // If true the search button at the top is visible
-        private bool _shareButtonVisible;                                   // If true the Share button at the top to share sounds is visible
-        private bool _moreButtonVisible;                                    // If true the More button at the top, when multi selection mode is on, is visible
-        private bool _cancelButtonVisible;                                  // If the the cancel button at the top to switch from multi selection mode to normal mode is visible
         private string _selectAllFlyoutText;                                // The text of the Select All flyout item in the Navigation View Header
         private SymbolIcon _selectAllFlyoutIcon;                            // The icon of the Select All flyout item in the Navigation View Header
         private double _soundTileWidth;                                     // The width of all sound tiles in the GridViews
@@ -162,14 +156,8 @@ namespace UniversalSoundBoard.Common
             _playAllButtonVisible = false;
             _editButtonVisible = false;
             _topButtonsCollapsed = false;
-            _addButtonVisible = true;
-            _volumeButtonVisible = true;
-            _selectButtonVisible = true;
             _searchAutoSuggestBoxVisible = true;
             _searchButtonVisible = false;
-            _shareButtonVisible = false;
-            _moreButtonVisible = true;
-            _cancelButtonVisible = false;
             _selectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
             _selectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll);
             _soundTileWidth = 200;
@@ -468,36 +456,6 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public bool AddButtonVisible
-        {
-            get => _addButtonVisible;
-            set
-            {
-                _addButtonVisible = value;
-                NotifyPropertyChanged("AddButtonVisible");
-            }
-        }
-
-        public bool VolumeButtonVisible
-        {
-            get => _volumeButtonVisible;
-            set
-            {
-                _volumeButtonVisible = value;
-                NotifyPropertyChanged("VolumeButtonVisible");
-            }
-        }
-
-        public bool SelectButtonVisible
-        {
-            get => _selectButtonVisible;
-            set
-            {
-                _selectButtonVisible = value;
-                NotifyPropertyChanged("SelectButtonVisible");
-            }
-        }
-
         public bool SearchAutoSuggestBoxVisible
         {
             get => _searchAutoSuggestBoxVisible;
@@ -515,36 +473,6 @@ namespace UniversalSoundBoard.Common
             {
                 _searchButtonVisible = value;
                 NotifyPropertyChanged("SearchButtonVisible");
-            }
-        }
-
-        public bool ShareButtonVisible
-        {
-            get => _shareButtonVisible;
-            set
-            {
-                _shareButtonVisible = value;
-                NotifyPropertyChanged("ShareButtonVisible");
-            }
-        }
-
-        public bool MoreButtonVisible
-        {
-            get => _moreButtonVisible;
-            set
-            {
-                _moreButtonVisible = value;
-                NotifyPropertyChanged("MoreButtonVisible");
-            }
-        }
-
-        public bool CancelButtonVisible
-        {
-            get => _cancelButtonVisible;
-            set
-            {
-                _cancelButtonVisible = value;
-                NotifyPropertyChanged("CancelButtonVisible");
             }
         }
 

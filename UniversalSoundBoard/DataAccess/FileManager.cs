@@ -41,9 +41,6 @@ namespace UniversalSoundBoard.DataAccess
         public const int tabletMaxWidth = 650;
         public const int topButtonsCollapsedMaxWidth = 1400;
         public const int sideBarCollapsedMaxWidth = 1100;
-        public const int moveSelectButtonMaxWidth = 850;
-        public const int moveAddButtonMaxWidth = 750;
-        public const int moveVolumeButtonMaxWidth = 800;
         public const int hideSearchBoxMaxWidth = 700;
 
         // Colors for the background of PlayingSoundsBar and SideBar
@@ -1445,14 +1442,7 @@ namespace UniversalSoundBoard.DataAccess
         public static void AdjustLayout()
         {
             double width = Window.Current.Bounds.Width;
-
             itemViewHolder.TopButtonsCollapsed = width < topButtonsCollapsedMaxWidth;
-            itemViewHolder.SelectButtonVisible = !(width < moveSelectButtonMaxWidth);
-            itemViewHolder.AddButtonVisible = !(width < moveAddButtonMaxWidth);
-            itemViewHolder.VolumeButtonVisible = !(width < moveVolumeButtonMaxWidth);
-            itemViewHolder.ShareButtonVisible = !(width < moveAddButtonMaxWidth);
-            itemViewHolder.CancelButtonVisible = !(width < hideSearchBoxMaxWidth);
-            itemViewHolder.MoreButtonVisible = width < moveSelectButtonMaxWidth || itemViewHolder.MultiSelectionEnabled;
 
             if (string.IsNullOrEmpty(itemViewHolder.SearchQuery))
             {

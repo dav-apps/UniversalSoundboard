@@ -1,9 +1,7 @@
-﻿using Microsoft.UI.Xaml.Media;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
 using Windows.UI.Xaml;
@@ -75,6 +73,8 @@ namespace UniversalSoundBoard.Converters
         {
             if ((string)parameter == "small")
                 return (bool)value ? 40 : 100;
+            else if ((string)parameter == "medium")
+                return (bool)value ? 40 : 120;
             else
                 return (bool)value ? 40 : 140;
         }
@@ -82,32 +82,6 @@ namespace UniversalSoundBoard.Converters
         public object ConvertBack(object value, Type targetType, object parameter, string language)
         {
             return 60;
-        }
-    }
-
-    public class OptionButtonVisibleAndMultiSelectionEnabledVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return !(bool)value && FileManager.itemViewHolder.MultiSelectionEnabled;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
-        }
-    }
-
-    public class OptionButtonVisibleAndMultiSelectionDisabledVisibilityConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return !(bool)value && !FileManager.itemViewHolder.MultiSelectionEnabled;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            throw new NotImplementedException();
         }
     }
 

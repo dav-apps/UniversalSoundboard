@@ -66,7 +66,6 @@ namespace UniversalSoundBoard.Pages
 
             // Set the values of the volume sliders
             VolumeSlider.Value = FileManager.itemViewHolder.Volume;
-            VolumeSlider2.Value = FileManager.itemViewHolder.Volume;
         }
 
         async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -315,8 +314,6 @@ namespace UniversalSoundBoard.Pages
         #region Volume Slider
         private void VolumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
         {
-            if (skipVolumeSliderValueChangedEvent) return;
-
             var volumeSlider = sender as Slider;
             double newValue = e.NewValue;
             double oldValue = e.OldValue;
@@ -336,16 +333,6 @@ namespace UniversalSoundBoard.Pages
 
             // Save the new volume
             FileManager.itemViewHolder.Volume = volumeSlider.Value / 100;
-
-            // Update the value of the other volume slider
-            skipVolumeSliderValueChangedEvent = true;
-
-            if (volumeSlider == VolumeSlider)
-                VolumeSlider2.Value = newValue;
-            else
-                VolumeSlider.Value = newValue;
-
-            skipVolumeSliderValueChangedEvent = false;
         }
 
         private async void VolumeSlider_LostFocus(object sender, RoutedEventArgs e)
@@ -353,11 +340,6 @@ namespace UniversalSoundBoard.Pages
             // Save the new volume of all playing sounds
             foreach (PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
                 await FileManager.SetVolumeOfPlayingSoundAsync(playingSound.Uuid, playingSound.MediaPlayer.Volume);
-        }
-
-        private void VolumeFlyout_Click(object sender, RoutedEventArgs e)
-        {
-            VolumeFlyout.ContextFlyout.ShowAt(MoreButton);
         }
         #endregion
 
@@ -511,7 +493,7 @@ namespace UniversalSoundBoard.Pages
         #endregion
 
         #region Share
-        private async void ShareButton_Click(object sender, RoutedEventArgs e)
+        private async void MoreButton_ShareFlyout_Click(object sender, RoutedEventArgs e)
         {
             if (!await DownloadSelectedFiles()) return;
 
@@ -715,7 +697,7 @@ namespace UniversalSoundBoard.Pages
         #endregion
 
         #region Delete Sounds
-        private async void MoreButton_DeleteSoundsFlyout_Click(object sender, RoutedEventArgs e)
+        private async void DeleteSoundsButton_Click(object sender, RoutedEventArgs e)
         {
             var deleteSoundsContentDialog = ContentDialogs.CreateDeleteSoundsContentDialogAsync();
             deleteSoundsContentDialog.PrimaryButtonClick += DeleteSoundsContentDialog_PrimaryButtonClick;

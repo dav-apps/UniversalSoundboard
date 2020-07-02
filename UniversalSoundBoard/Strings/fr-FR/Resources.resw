@@ -173,9 +173,6 @@
   <data name="MoreButton-SetCategory.Text" xml:space="preserve">
     <value>Affecter des catégories</value>
   </data>
-  <data name="MoreButton-DeleteSounds.Text" xml:space="preserve">
-    <value>Supprimer</value>
-  </data>
   <data name="NewCategoryContentDialog-PrimaryButton" xml:space="preserve">
     <value>Créer</value>
   </data>
@@ -368,9 +365,6 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="MoreButton-Share.Text" xml:space="preserve">
     <value>Partager</value>
   </data>
-  <data name="ShareButton.Text" xml:space="preserve">
-    <value>Partager</value>
-  </data>
   <data name="ShareDialog-MultipleSounds" xml:space="preserve">
     <value>Multiple sounds</value>
   </data>
@@ -532,5 +526,11 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="NewSubCategoryContentDialog-Title" xml:space="preserve">
     <value>Nouvelle sous-catégorie</value>
+  </data>
+  <data name="DeleteSoundsButton.Text" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="PlaySoundsButton.Text" xml:space="preserve">
+    <value>Jouer</value>
   </data>
 </root>

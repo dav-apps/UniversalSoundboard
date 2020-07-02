@@ -171,9 +171,6 @@
   <data name="MoreButton-SetCategory.Text" xml:space="preserve">
     <value>Kategorien festlegen</value>
   </data>
-  <data name="MoreButton-DeleteSounds.Text" xml:space="preserve">
-    <value>Löschen</value>
-  </data>
   <data name="NewCategoryContentDialog-PrimaryButton" xml:space="preserve">
     <value>Erstellen</value>
   </data>
@@ -367,9 +364,6 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="MoreButton-Share.Text" xml:space="preserve">
     <value>Teilen</value>
   </data>
-  <data name="ShareButton.Text" xml:space="preserve">
-    <value>Teilen</value>
-  </data>
   <data name="ShareDialog-MultipleSounds" xml:space="preserve">
     <value>Mehrere Sounds</value>
   </data>
@@ -531,5 +525,11 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="NewSubCategoryContentDialog-Title" xml:space="preserve">
     <value>Neue Unterkategorie</value>
+  </data>
+  <data name="DeleteSoundsButton.Text" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="PlaySoundsButton.Text" xml:space="preserve">
+    <value>Abspielen</value>
   </data>
 </root>
