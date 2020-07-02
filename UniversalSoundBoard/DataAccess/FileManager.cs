@@ -1021,6 +1021,42 @@ namespace UniversalSoundBoard.DataAccess
         }
         #endregion
 
+        #region
+        /**
+         * Updates the category in the categories list and in the SideBar
+         */
+        public static async Task ReloadCategory(Guid uuid)
+        {
+            var category = await GetCategoryAsync(uuid);
+            if (category != null) ReloadCategory(category);
+        }
+
+        public static void ReloadCategory(Category updatedCategory)
+        {
+            // Replace the category in the categories list with the updated category
+            ReplaceCategory(itemViewHolder.Categories, updatedCategory);
+        }
+
+        private static bool ReplaceCategory(List<Category> categoriesList, Category updatedCategory)
+        {
+            for(int i = 0; i < categoriesList.Count; i++)
+            {
+                if (categoriesList[i].Uuid == updatedCategory.Uuid)
+                {
+                    categoriesList[i] = updatedCategory;
+                    return true;
+                }
+                else
+                {
+                    if (ReplaceCategory(categoriesList[i].Children, updatedCategory))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+        #endregion
+
         #region Sound CRUD methods
         public static async Task<Guid> CreateSoundAsync(Guid? uuid, string name, Guid? categoryUuid, StorageFile audioFile)
         {
@@ -1113,7 +1149,7 @@ namespace UniversalSoundBoard.DataAccess
             return categoriesList;
         }
 
-        private static async Task<Category> GetCategoryAsync(Guid uuid, bool withChildren = true)
+        public static async Task<Category> GetCategoryAsync(Guid uuid, bool withChildren = true)
         {
             var categoryTableObject = await DatabaseOperations.GetTableObjectAsync(uuid);
             if (categoryTableObject == null || categoryTableObject.TableId != CategoryTableId) return null;

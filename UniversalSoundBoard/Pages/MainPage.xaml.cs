@@ -27,7 +27,6 @@ namespace UniversalSoundBoard.Pages
         private Guid selectedCategory = Guid.Empty; // The category that was right clicked for the flyout
         private List<string> Suggestions = new List<string>();  // The suggestions for the SearchAutoSuggestBox
         private List<StorageFile> sharedFiles = new List<StorageFile>();    // The files that get shared
-        bool skipVolumeSliderValueChangedEvent = false;     // If true, the value changed event won't be executed for the volume sliders
         bool selectionButtonsEnabled = false;               // If true, the buttons for multi selection are enabled
         private bool downloadFileIsExecuting = false;
         private bool downloadFileWasCanceled = false;
@@ -65,7 +64,7 @@ namespace UniversalSoundBoard.Pages
             await FileManager.itemViewHolder.User.InitAsync();
 
             // Set the values of the volume sliders
-            VolumeSlider.Value = FileManager.itemViewHolder.Volume;
+            VolumeSlider.Value = FileManager.itemViewHolder.Volume * 100;
         }
 
         async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -143,13 +142,12 @@ namespace UniversalSoundBoard.Pages
 
             foreach (var category in categories)
             {
-                MUXC.NavigationViewItem item = new MUXC.NavigationViewItem();
-                item.Tag = category.Uuid;
-                item.Content = category.Name;
-
-                var icon = new FontIcon();
-                icon.Glyph = category.Icon;
-                item.Icon = icon;
+                MUXC.NavigationViewItem item = new MUXC.NavigationViewItem
+                {
+                    Tag = category.Uuid,
+                    Content = category.Name,
+                    Icon = new FontIcon { Glyph = category.Icon }
+                };
 
                 item.RightTapped += NavigationViewMenuItem_RightTapped;
 
@@ -160,6 +158,30 @@ namespace UniversalSoundBoard.Pages
             }
 
             return menuItems;
+        }
+
+        private bool UpdateCategoryMenuItem(List<MUXC.NavigationViewItem> menuItems, Category updatedCategory)
+        {
+            foreach(var menuItem in menuItems)
+            {
+                if((Guid)menuItem.Tag == updatedCategory.Uuid)
+                {
+                    menuItem.Content = updatedCategory.Name;
+                    menuItem.Icon = new FontIcon { Glyph = updatedCategory.Icon };
+                    return true;
+                }
+                else
+                {
+                    List<MUXC.NavigationViewItem> childItems = new List<MUXC.NavigationViewItem>();
+                    foreach (var childItem in menuItem.MenuItems)
+                        childItems.Add(childItem as MUXC.NavigationViewItem);
+
+                    if (UpdateCategoryMenuItem(childItems, updatedCategory))
+                        return true;
+                }
+            }
+
+            return false;
         }
 
         private async Task GoBack()
@@ -234,8 +256,19 @@ namespace UniversalSoundBoard.Pages
             string icon = typeItem.Content.ToString();
             string newName = ContentDialogs.EditCategoryTextBox.Text;
 
+            // Update the category in the database
             await FileManager.UpdateCategoryAsync(FileManager.itemViewHolder.SelectedCategory, newName, icon);
+
+            // Update the title and reload the category in the categories list
             FileManager.itemViewHolder.Title = newName;
+            await FileManager.ReloadCategory(FileManager.itemViewHolder.SelectedCategory);
+
+            // Update the Category MenuItem of the SideBar
+            List<MUXC.NavigationViewItem> menuItems = new List<MUXC.NavigationViewItem>();
+            foreach (var menuItem in SideBar.MenuItems)
+                menuItems.Add(menuItem as MUXC.NavigationViewItem);
+
+            UpdateCategoryMenuItem(menuItems, await FileManager.GetCategoryAsync(FileManager.itemViewHolder.SelectedCategory));
         }
         #endregion
 
