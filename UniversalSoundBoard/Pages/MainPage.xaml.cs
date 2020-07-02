@@ -243,7 +243,7 @@ namespace UniversalSoundBoard.Pages
         #region Edit Category
         private async void CategoryEditButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
-            var editCategoryContentDialog = ContentDialogs.CreateEditCategoryContentDialogAsync();
+            var editCategoryContentDialog = ContentDialogs.CreateEditCategoryContentDialog();
             editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
             await editCategoryContentDialog.ShowAsync();
         }

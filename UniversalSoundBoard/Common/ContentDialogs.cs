@@ -112,9 +112,9 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region EditCategory
-        public static ContentDialog CreateEditCategoryContentDialogAsync()
+        public static ContentDialog CreateEditCategoryContentDialog()
         {
-            Category currentCategory = FileManager.itemViewHolder.Categories.ToList().Find(c => c.Uuid == FileManager.itemViewHolder.SelectedCategory);
+            Category currentCategory = FileManager.FindCategory(FileManager.itemViewHolder.SelectedCategory);
 
             EditCategoryContentDialog = new ContentDialog
             {

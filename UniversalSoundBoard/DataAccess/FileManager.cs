@@ -1055,6 +1055,27 @@ namespace UniversalSoundBoard.DataAccess
 
             return false;
         }
+
+        public static Category FindCategory(Guid uuid)
+        {
+            return FindCategoryInList(itemViewHolder.Categories, uuid);
+        }
+
+        private static Category FindCategoryInList(List<Category> categoriesList, Guid uuid)
+        {
+            foreach(var category in categoriesList)
+            {
+                if (category.Uuid == uuid)
+                    return category;
+                else
+                {
+                    var childCategory = FindCategoryInList(category.Children, uuid);
+                    if (childCategory != null) return childCategory;
+                }
+            }
+
+            return null;
+        }
         #endregion
 
         #region Sound CRUD methods
