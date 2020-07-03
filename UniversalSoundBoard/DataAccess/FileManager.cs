@@ -1021,7 +1021,34 @@ namespace UniversalSoundBoard.DataAccess
         }
         #endregion
 
-        #region
+        #region Category methods
+        /**
+         * Adds the category to the Categories list, either at the end or as a child of another category
+         */
+        public static async Task AddCategory(Guid uuid, Guid parent)
+        {
+            var category = await GetCategoryAsync(uuid);
+            if (category != null) AddCategory(category, parent);
+        }
+
+        public static void AddCategory(Category category, Guid parent)
+        {
+            if (parent.Equals(Guid.Empty))
+            {
+                // Add the category to the end of the Categories list
+                itemViewHolder.Categories.Add(category);
+            }
+            else
+            {
+                // Find the parent category
+                var parentCategory = FindCategory(parent);
+                if (parentCategory == null) return;
+
+                // Add the category to the children of the parent
+                parentCategory.Children.Add(category);
+            }
+        }
+
         /**
          * Updates the category in the categories list and in the SideBar
          */
@@ -1053,6 +1080,41 @@ namespace UniversalSoundBoard.DataAccess
                 }
             }
 
+            return false;
+        }
+
+        public static void RemoveCategory(Guid uuid)
+        {
+            RemoveCategoryInList(itemViewHolder.Categories, uuid);
+        }
+
+        private static bool RemoveCategoryInList(List<Category> categoriesList, Guid uuid)
+        {
+            bool categoryFound = false;
+            int i = 0;
+
+            foreach(var category in categoriesList)
+            {
+                if (category.Uuid == uuid)
+                {
+                    categoryFound = true;
+                    break;
+                }
+                else
+                {
+                    if (RemoveCategoryInList(category.Children, uuid))
+                        return true;
+                }
+
+                i++;
+            }
+
+            if (categoryFound)
+            {
+                // Remove the category from the list
+                categoriesList.RemoveAt(i);
+                return true;
+            }
             return false;
         }
 

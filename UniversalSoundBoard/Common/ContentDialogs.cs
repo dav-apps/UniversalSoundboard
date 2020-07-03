@@ -172,7 +172,7 @@ namespace UniversalSoundBoard.Common
         #region DeleteCategory
         public static ContentDialog CreateDeleteCategoryContentDialogAsync()
         {
-            Category currentCategory = FileManager.itemViewHolder.Categories.ToList().Find(c => c.Uuid == FileManager.itemViewHolder.SelectedCategory);
+            Category currentCategory = FileManager.FindCategory(FileManager.itemViewHolder.SelectedCategory);
 
             DeleteCategoryContentDialog = new ContentDialog
             {

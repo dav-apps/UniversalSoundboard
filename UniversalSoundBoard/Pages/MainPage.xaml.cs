@@ -14,7 +14,7 @@ using UniversalSoundBoard.Common;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
-using MUXC = Microsoft.UI.Xaml.Controls;
+using WinUI = Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 
@@ -116,7 +116,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.AdjustLayout();
 
             // Set the width of the title bar and the position of the title, depending on whether the Hamburger button of the NavigationView is visible
-            if (SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Minimal)
+            if (SideBar.DisplayMode == WinUI.NavigationViewDisplayMode.Minimal)
             {
                 TitleBar.Width = Window.Current.Bounds.Width - 80;
                 WindowTitleTextBox.Margin = new Thickness(97, 12, 0, 0);
@@ -136,13 +136,13 @@ namespace UniversalSoundBoard.Pages
                 SideBar.MenuItems.Add(menuItem);
         }
 
-        private List<MUXC.NavigationViewItem> CreateMenuItemsforCategories(List<Category> categories)
+        private List<WinUI.NavigationViewItem> CreateMenuItemsforCategories(List<Category> categories)
         {
-            List<MUXC.NavigationViewItem> menuItems = new List<MUXC.NavigationViewItem>();
+            List<WinUI.NavigationViewItem> menuItems = new List<WinUI.NavigationViewItem>();
 
             foreach (var category in categories)
             {
-                MUXC.NavigationViewItem item = new MUXC.NavigationViewItem
+                WinUI.NavigationViewItem item = new WinUI.NavigationViewItem
                 {
                     Tag = category.Uuid,
                     Content = category.Name,
@@ -151,7 +151,7 @@ namespace UniversalSoundBoard.Pages
 
                 item.RightTapped += NavigationViewMenuItem_RightTapped;
 
-                foreach (var childItem in CreateMenuItemsforCategories(category.Children))
+                foreach (var childItem in CreateMenuItemsforCategories(category.Children.ToList()))
                     item.MenuItems.Add(childItem);
 
                 menuItems.Add(item);
@@ -160,27 +160,102 @@ namespace UniversalSoundBoard.Pages
             return menuItems;
         }
 
-        private bool UpdateCategoryMenuItem(List<MUXC.NavigationViewItem> menuItems, Category updatedCategory)
+        private bool AddCategoryMenuItem(IList<object> menuItems, Category category, Guid parent)
         {
-            foreach(var menuItem in menuItems)
+            if (parent.Equals(Guid.Empty))
             {
-                if((Guid)menuItem.Tag == updatedCategory.Uuid)
+                // Add the category menu item to the end of the menuItems
+                WinUI.NavigationViewItem item = new WinUI.NavigationViewItem
                 {
-                    menuItem.Content = updatedCategory.Name;
-                    menuItem.Icon = new FontIcon { Glyph = updatedCategory.Icon };
+                    Tag = category.Uuid,
+                    Content = category.Name,
+                    Icon = new FontIcon { Glyph = category.Icon }
+                };
+
+                item.RightTapped += NavigationViewMenuItem_RightTapped;
+                menuItems.Add(item);
+                return true;
+            }
+
+            // Find the MenuItem of the parent category
+            foreach (var menuItem in menuItems)
+            {
+                WinUI.NavigationViewItem item = (WinUI.NavigationViewItem)menuItem;
+
+                if ((Guid)item.Tag == parent)
+                {
+                    WinUI.NavigationViewItem newItem = new WinUI.NavigationViewItem
+                    {
+                        Tag = category.Uuid,
+                        Content = category.Name,
+                        Icon = new FontIcon { Glyph = category.Icon }
+                    };
+
+                    newItem.RightTapped += NavigationViewMenuItem_RightTapped;
+                    item.MenuItems.Add(newItem);
                     return true;
                 }
                 else
                 {
-                    List<MUXC.NavigationViewItem> childItems = new List<MUXC.NavigationViewItem>();
-                    foreach (var childItem in menuItem.MenuItems)
-                        childItems.Add(childItem as MUXC.NavigationViewItem);
-
-                    if (UpdateCategoryMenuItem(childItems, updatedCategory))
+                    if (AddCategoryMenuItem(item.MenuItems, category, parent))
                         return true;
                 }
             }
 
+            return false;
+        }
+
+        private bool UpdateCategoryMenuItem(IList<object> menuItems, Category updatedCategory)
+        {
+            foreach(var menuItem in menuItems)
+            {
+                WinUI.NavigationViewItem item = (WinUI.NavigationViewItem)menuItem;
+
+                if((Guid)item.Tag == updatedCategory.Uuid)
+                {
+                    item.Content = updatedCategory.Name;
+                    item.Icon = new FontIcon { Glyph = updatedCategory.Icon };
+                    return true;
+                }
+                else
+                {
+                    if (UpdateCategoryMenuItem(item.MenuItems, updatedCategory))
+                        return true;
+                }
+            }
+
+            return false;
+        }
+
+        private bool RemoveMenuItem(IList<object> menuItems, Guid uuid)
+        {
+            bool categoryFound = false;
+            int i = 0;
+
+            foreach(var menuItem in menuItems)
+            {
+                WinUI.NavigationViewItem item = (WinUI.NavigationViewItem)menuItem;
+
+                if((Guid)item.Tag == uuid)
+                {
+                    categoryFound = true;
+                    break;
+                }
+                else
+                {
+                    if (RemoveMenuItem(item.MenuItems, uuid))
+                        return true;
+                }
+
+                i++;
+            }
+
+            if (categoryFound)
+            {
+                // Remove the menu item
+                menuItems.RemoveAt(i);
+                return true;
+            }
             return false;
         }
 
@@ -191,7 +266,7 @@ namespace UniversalSoundBoard.Pages
         }
 
         #region SideBar
-        private async void SideBar_ItemInvoked(MUXC.NavigationView sender, MUXC.NavigationViewItemInvokedEventArgs args)
+        private async void SideBar_ItemInvoked(WinUI.NavigationView sender, WinUI.NavigationViewItemInvokedEventArgs args)
         {
             FileManager.itemViewHolder.SelectedSounds.Clear();
             FileManager.ResetSearchArea();
@@ -220,21 +295,22 @@ namespace UniversalSoundBoard.Pages
 
             // Close the SideBar if it was open on mobile
             if (
-                SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Compact
-                || SideBar.DisplayMode == MUXC.NavigationViewDisplayMode.Minimal
+                SideBar.DisplayMode == WinUI.NavigationViewDisplayMode.Compact
+                || SideBar.DisplayMode == WinUI.NavigationViewDisplayMode.Minimal
             ) SideBar.IsPaneOpen = false;
         }
 
         private void NavigationViewMenuItem_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
         {
             e.Handled = true;
-            selectedCategory = (Guid)((MUXC.NavigationViewItem)sender).Tag;
+            selectedCategory = (Guid)((WinUI.NavigationViewItem)sender).Tag;
+            if (selectedCategory.Equals(Guid.Empty)) return;
 
             // Show flyout for the category menu item
             ShowCategoryOptionsFlyout((UIElement)sender, e.GetPosition(sender as UIElement));
         }
 
-        private async void SideBar_BackRequested(MUXC.NavigationView sender, MUXC.NavigationViewBackRequestedEventArgs args)
+        private async void SideBar_BackRequested(WinUI.NavigationView sender, WinUI.NavigationViewBackRequestedEventArgs args)
         {
             await GoBack();
         }
@@ -263,12 +339,8 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.Title = newName;
             await FileManager.ReloadCategory(FileManager.itemViewHolder.SelectedCategory);
 
-            // Update the Category MenuItem of the SideBar
-            List<MUXC.NavigationViewItem> menuItems = new List<MUXC.NavigationViewItem>();
-            foreach (var menuItem in SideBar.MenuItems)
-                menuItems.Add(menuItem as MUXC.NavigationViewItem);
-
-            UpdateCategoryMenuItem(menuItems, await FileManager.GetCategoryAsync(FileManager.itemViewHolder.SelectedCategory));
+            // Update the title of the menu item
+            UpdateCategoryMenuItem(SideBar.MenuItems, await FileManager.GetCategoryAsync(FileManager.itemViewHolder.SelectedCategory));
         }
         #endregion
 
@@ -283,6 +355,15 @@ namespace UniversalSoundBoard.Pages
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.DeleteCategoryAsync(FileManager.itemViewHolder.SelectedCategory);
+
+            // Remove the category from the Categories list
+            FileManager.RemoveCategory(FileManager.itemViewHolder.SelectedCategory);
+
+            // Remove the category from the SideBar
+            RemoveMenuItem(SideBar.MenuItems, FileManager.itemViewHolder.SelectedCategory);
+
+            // Navigate to all Sounds
+            await FileManager.ShowAllSoundsAsync();
         }
         #endregion
 
@@ -427,14 +508,17 @@ namespace UniversalSoundBoard.Pages
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
             string icon = typeItem.Content.ToString();
 
-            await FileManager.CreateCategoryAsync(null, null, ContentDialogs.NewCategoryTextBox.Text, icon);
+            Guid categoryUuid = await FileManager.CreateCategoryAsync(null, null, ContentDialogs.NewCategoryTextBox.Text, icon);
+            Category newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
 
-            // Reload the categories menu items
-            LoadMenuItems();
+            // Add the category to the Categories list
+            FileManager.AddCategory(newCategory, Guid.Empty);
+
+            // Add the category to the SideBar
+            AddCategoryMenuItem(SideBar.MenuItems, newCategory, Guid.Empty);
 
             // Navigate to the new category
-            //await FileManager.ShowCategoryAsync(FileManager.itemViewHolder.Categories.Last().Uuid);
-            // TODO
+            await FileManager.ShowCategoryAsync(categoryUuid);
         }
         #endregion
 
@@ -694,14 +778,17 @@ namespace UniversalSoundBoard.Pages
             ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
             string icon = typeItem.Content.ToString();
 
-            await FileManager.CreateCategoryAsync(null, selectedCategory, ContentDialogs.NewCategoryTextBox.Text, icon);
+            Guid categoryUuid = await FileManager.CreateCategoryAsync(null, selectedCategory, ContentDialogs.NewCategoryTextBox.Text, icon);
+            Category newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
 
-            // Reload the categories menu items
-            LoadMenuItems();
+            // Add the category to the categories list
+            FileManager.AddCategory(newCategory, selectedCategory);
+
+            // Add the category to the MenuItems of the SideBar
+            AddCategoryMenuItem(SideBar.MenuItems, newCategory, selectedCategory);
 
             // Navigate to the new category
-            // TODO
-            //await FileManager.ShowCategoryAsync(FileManager.itemViewHolder.Categories.Last().Uuid);
+            await FileManager.ShowCategoryAsync(selectedCategory);
         }
         #endregion
         #endregion
@@ -760,7 +847,7 @@ namespace UniversalSoundBoard.Pages
 
         private void SelectCategory(Guid categoryUuid)
         {
-            foreach (MUXC.NavigationViewItem item in SideBar.MenuItems)
+            foreach (WinUI.NavigationViewItem item in SideBar.MenuItems)
             {
                 if ((Guid)item.Tag == categoryUuid)
                 {
