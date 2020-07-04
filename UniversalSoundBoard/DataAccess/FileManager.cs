@@ -337,7 +337,7 @@ namespace UniversalSoundBoard.DataAccess
             StorageFolder exportFolder = await GetExportFolderAsync();
             var progress = new Progress<int>(ExportProgress);
 
-            await DataManager.ExportDataAsync(new DirectoryInfo(exportFolder.Path), progress);
+            await DatabaseOperations.ExportDataAsync(exportFolder, progress);
 
             itemViewHolder.ExportMessage = stringLoader.GetString("ExportMessage-3");
 
@@ -405,7 +405,7 @@ namespace UniversalSoundBoard.DataAccess
                     await UpgradeNewDataModelAsync(importFolder, true, progress);
                     break;
                 default:
-                    await Task.Run(() => DataManager.ImportDataAsync(new DirectoryInfo(importFolder.Path), progress));
+                    await DatabaseOperations.ImportDataAsync(importFolder, progress);
                     break;
             }
 
@@ -2460,12 +2460,20 @@ namespace UniversalSoundBoard.DataAccess
         {
             string data = await FileIO.ReadTextAsync(dataFile);
 
-            //Deserialize Json
+            // Deserialize Json
             var serializer = new DataContractJsonSerializer(typeof(NewData));
             var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
-            var dataReader = (NewData)serializer.ReadObject(ms);
+            return (NewData)serializer.ReadObject(ms);
+        }
 
-            return dataReader;
+        public static async Task<List<TableObjectData>> GetTableObjectDataFromFile(StorageFile dataFile)
+        {
+            string data = await FileIO.ReadTextAsync(dataFile);
+
+            // Deserialize Json
+            var serializer = new DataContractJsonSerializer(typeof(List<TableObjectData>));
+            var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
+            return (List<TableObjectData>)serializer.ReadObject(ms);
         }
         #endregion
     }
