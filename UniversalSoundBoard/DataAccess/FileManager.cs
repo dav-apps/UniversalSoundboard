@@ -701,12 +701,10 @@ namespace UniversalSoundBoard.DataAccess
         private static async Task CopySoundFileIntoFolderAsync(Sound sound, StorageFolder destinationFolder)
         {
             string ext = await sound.GetAudioFileExtensionAsync();
+            if (string.IsNullOrEmpty(ext)) ext = "mp3";
 
-            if (string.IsNullOrEmpty(ext))
-                ext = "mp3";
-
-            StorageFile soundFile = await destinationFolder.CreateFileAsync(sound.Name + "." + ext, CreationCollisionOption.GenerateUniqueName);
-            await FileIO.WriteBytesAsync(soundFile, await GetBytesAsync(await sound.GetAudioFileAsync()));
+            var soundFile = await sound.GetAudioFileAsync();
+            await soundFile.CopyAsync(destinationFolder, string.Format("{0}.{1}", sound.Name, ext), NameCollisionOption.GenerateUniqueName);
         }
 
         // Load the sounds from the database and return them
