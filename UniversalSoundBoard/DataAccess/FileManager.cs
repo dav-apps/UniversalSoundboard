@@ -813,9 +813,12 @@ namespace UniversalSoundBoard.DataAccess
             itemViewHolder.Sounds.Clear();
             itemViewHolder.FavouriteSounds.Clear();
 
+            // Get the top category and all subcategories of the category
+            List<Guid> categoryUuids = await GetSubCategoriesOfCategory(categoryUuid);
+
             foreach (var sound in itemViewHolder.AllSounds)
             {
-                if (!sound.Categories.Exists(c => Equals(c.Uuid, categoryUuid))) continue;
+                if (!sound.Categories.Exists(c => categoryUuids.Exists(uuid => c.Uuid == uuid))) continue;
 
                 itemViewHolder.Sounds.Add(sound);
                 if (sound.Favourite) itemViewHolder.FavouriteSounds.Add(sound);
@@ -1135,6 +1138,26 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             return null;
+        }
+
+        private static async Task<List<Guid>> GetSubCategoriesOfCategory(Guid categoryUuid)
+        {
+            List<Guid> subcategories = new List<Guid>();
+            subcategories.Add(categoryUuid);
+
+            // Get the category
+            Category category = await GetCategoryAsync(categoryUuid);
+
+            foreach (var subcategory in category.Children)
+            {
+                subcategories.Add(subcategory.Uuid);
+
+                if (subcategory.Children.Count > 0)
+                    foreach (var childcategory in await GetSubCategoriesOfCategory(subcategory.Uuid))
+                        subcategories.Add(childcategory);
+            }
+
+            return subcategories;
         }
         #endregion
 
