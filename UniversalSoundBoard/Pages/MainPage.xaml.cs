@@ -17,6 +17,7 @@ using Windows.ApplicationModel.DataTransfer;
 using WinUI = Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
+using UniversalSoundboard.Components;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -727,9 +728,7 @@ namespace UniversalSoundBoard.Pages
             foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
                 selectedSounds.Add(sound);
 
-            var itemTemplate = (DataTemplate)Resources["SetCategoryItemTemplate"];
-
-            var SetCategoryContentDialog = ContentDialogs.CreateSetCategoriesContentDialog(selectedSounds, itemTemplate);
+            var SetCategoryContentDialog = ContentDialogs.CreateSetCategoriesContentDialog(selectedSounds);
             SetCategoryContentDialog.PrimaryButtonClick += SetCategoriesContentDialog_PrimaryButtonClick;
             await SetCategoryContentDialog.ShowAsync();
         }
@@ -739,16 +738,24 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("UpdateSoundsMessage");
             FileManager.itemViewHolder.LoadingScreenVisible = true;
 
-            // Get the selected categories from the SelectedCategories Dictionary in ContentDialogs
+            // Get the selected categories
             List<Guid> categoryUuids = new List<Guid>();
-            foreach (var entry in ContentDialogs.SelectedCategories)
-                if (entry.Value) categoryUuids.Add(entry.Key);
+            foreach (var item in ContentDialogs.CategoriesTreeView.SelectedItems)
+                categoryUuids.Add((Guid)((CustomTreeViewNode)item).Tag);
 
+            // Get the selected sounds
+            List<Sound> selectedSounds = new List<Sound>();
             foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
+                selectedSounds.Add(sound);
+
+            // Update and reload the sounds
+            foreach (var sound in selectedSounds)
+            {
                 await FileManager.SetCategoriesOfSoundAsync(sound.Uuid, categoryUuids);
+                await FileManager.ReloadSound(sound.Uuid);
+            }
 
             FileManager.itemViewHolder.LoadingScreenVisible = false;
-            // TODO: Update the sounds in the lists
         }
         #endregion
 

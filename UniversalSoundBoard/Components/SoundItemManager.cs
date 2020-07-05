@@ -17,15 +17,9 @@ using Windows.UI.Xaml.Controls;
 
 namespace UniversalSoundboard.Components
 {
-    public class SoundItemManager
-    {
-
-    }
-
     public class SoundItem
     {
         private Sound sound;
-        private DataTemplate setCategoryItemTemplate;
 
         private readonly ResourceLoader loader = new ResourceLoader();
         private bool downloadFileWasCanceled = false;
@@ -33,10 +27,9 @@ namespace UniversalSoundboard.Components
         private bool downloadFileIsExecuting = false;
         private List<StorageFile> soundFiles = new List<StorageFile>();
 
-        public SoundItem(Sound sound, DataTemplate setCategoryItemTemplate)
+        public SoundItem(Sound sound)
         {
             this.sound = sound;
-            this.setCategoryItemTemplate = setCategoryItemTemplate;
         }
 
         public void ShowFlyout(object sender, Point position)
@@ -59,18 +52,19 @@ namespace UniversalSoundboard.Components
         #region SetCategories
         private async void OptionsFlyout_SetCategoriesFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            var SetCategoriesContentDialog = ContentDialogs.CreateSetCategoriesContentDialog(new List<Sound> { sound }, setCategoryItemTemplate);
+            var SetCategoriesContentDialog = ContentDialogs.CreateSetCategoriesContentDialog(new List<Sound> { sound });
             SetCategoriesContentDialog.PrimaryButtonClick += SetCategoriesContentDialog_PrimaryButtonClick;
             await SetCategoriesContentDialog.ShowAsync();
         }
 
         private async void SetCategoriesContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            // Get the selected categories from the SelectedCategories Dictionary in ContentDialogs
+            // Get the selected categories
             List<Guid> categoryUuids = new List<Guid>();
-            foreach (var entry in ContentDialogs.SelectedCategories)
-                if (entry.Value) categoryUuids.Add(entry.Key);
+            foreach (var item in ContentDialogs.CategoriesTreeView.SelectedItems)
+                categoryUuids.Add((Guid)((CustomTreeViewNode)item).Tag);
 
+            // Update and reload the sound
             await FileManager.SetCategoriesOfSoundAsync(sound.Uuid, categoryUuids);
             await FileManager.ReloadSound(sound.Uuid);
         }

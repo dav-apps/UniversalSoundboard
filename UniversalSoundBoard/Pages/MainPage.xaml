@@ -26,10 +26,6 @@
             <components:SoundItemTemplate />
         </DataTemplate>
 
-        <DataTemplate x:Key="SetCategoryItemTemplate" x:DataType="models:Category">
-            <components1:SetCategoryItemTemplate />
-        </DataTemplate>
-
         <!-- NavigationViewHeader styles -->
         <Style TargetType="ListViewItem" x:Key="ListViewItemStyle">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />

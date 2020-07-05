@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using UniversalSoundboard.Components;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.Resources;
@@ -11,6 +12,7 @@ using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using WinUI = Microsoft.UI.Xaml.Controls;
 
 namespace UniversalSoundBoard.Common
 {
@@ -38,7 +40,7 @@ namespace UniversalSoundBoard.Common
         public static CheckBox ExportSoundsAsZipCheckBox;
         public static StorageFolder ExportSoundsFolder;
         public static ListView CategoriesListView;
-        public static Dictionary<Guid, bool> SelectedCategories;
+        public static WinUI.TreeView CategoriesTreeView;
         public static ObservableCollection<Category> CategoryOrderList;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
@@ -648,27 +650,9 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region SetCategories
-        public static ContentDialog CreateSetCategoriesContentDialog(List<Sound> sounds, DataTemplate itemTemplate)
+        public static ContentDialog CreateSetCategoriesContentDialog(List<Sound> sounds)
         {
             if (sounds.Count == 0) return null;
-
-            // Get all categories
-            var categories = new List<Category>();
-            SelectedCategories = new Dictionary<Guid, bool>();
-            
-            int i = -1;
-            foreach (var category in FileManager.itemViewHolder.Categories)
-            {
-                if (++i == 0) continue;
-
-                categories.Add(category);
-
-                // Check if all sounds belong to this category and if so, select the category
-                SelectedCategories[category.Uuid] = sounds.TrueForAll(s =>
-                {
-                    return s.Categories.Exists(c => c.Uuid == category.Uuid);
-                });
-            }
 
             string title = string.Format(loader.GetString("SetCategoryForMultipleSoundsContentDialog-Title"), sounds.Count);
             if (sounds.Count == 1) title = string.Format(loader.GetString("SetCategoryContentDialog-Title"), sounds[0].Name);
@@ -685,16 +669,35 @@ namespace UniversalSoundBoard.Common
                 Orientation = Orientation.Vertical
             };
 
-            CategoriesListView = new ListView
+            CategoriesTreeView = new WinUI.TreeView
             {
-                ItemTemplate = itemTemplate,
-                ItemsSource = categories,
-                SelectionMode = ListViewSelectionMode.None,
-                Height = 300
+                Height = 300,
+                SelectionMode = WinUI.TreeViewSelectionMode.Multiple,
+                CanDrag = false,
+                CanDragItems = false
             };
 
+            // Get all categories
+            List<Category> categories = new List<Category>();
+            for (int i = 1; i < FileManager.itemViewHolder.Categories.Count; i++)
+                categories.Add(FileManager.itemViewHolder.Categories[i]);
+
+            // Find the intersection of the categories of all sounds
+            List<Guid> soundCategories = new List<Guid>();
+            foreach(var category in sounds.First().Categories)
+                if (sounds.TrueForAll(s => s.Categories.Exists(c => c.Uuid == category.Uuid)))
+                    soundCategories.Add(category.Uuid);
+
+            // Add the nodes to the tree view
+            List<CustomTreeViewNode> selectedNodes = new List<CustomTreeViewNode>();
+            foreach (var node in CreateTreeViewNodesFromCategories(categories, selectedNodes, soundCategories))
+                CategoriesTreeView.RootNodes.Add(node);
+
+            foreach (var node in selectedNodes)
+                CategoriesTreeView.SelectedNodes.Add(node);
+
             if(categories.Count > 0)
-                content.Children.Add(CategoriesListView);
+                content.Children.Add(CategoriesTreeView);
             else
             {
                 TextBlock noCategoriesTextBlock = new TextBlock
@@ -706,6 +709,38 @@ namespace UniversalSoundBoard.Common
 
             SetCategoryContentDialog.Content = content;
             return SetCategoryContentDialog;
+        }
+
+        /**
+         * Goes through all categories recursively and creates for each category a CustomTreeViewNode, with the Uuid of the category as Tag
+         * Also adds each CustomTreeViewNode to selectedNodes, if selectedCategories contains the Uuid of the category
+         */
+        private static List<CustomTreeViewNode> CreateTreeViewNodesFromCategories(
+            List<Category> categories,
+            List<CustomTreeViewNode> selectedNodes,
+            List<Guid> selectedCategories
+        )
+        {
+            List<CustomTreeViewNode> nodes = new List<CustomTreeViewNode>();
+
+            foreach(var category in categories)
+            {
+                CustomTreeViewNode node = new CustomTreeViewNode()
+                {
+                    Content = category.Name,
+                    Tag = category.Uuid
+                };
+
+                foreach (var childNode in CreateTreeViewNodesFromCategories(category.Children, selectedNodes, selectedCategories))
+                    node.Children.Add(childNode);
+
+                nodes.Add(node);
+
+                if (selectedCategories.Exists(c => c == category.Uuid))
+                    selectedNodes.Add(node);
+            }
+
+            return nodes;
         }
         #endregion
 

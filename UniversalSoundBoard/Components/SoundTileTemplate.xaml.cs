@@ -35,8 +35,8 @@ namespace UniversalSoundBoard.Components
 
         private void SoundTileTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
+            soundItem = new SoundItem(Sound);
             Bindings.Update();
-            soundItem = new SoundItem(Sound, (DataTemplate)Resources["SetCategoryItemTemplate"]);
         }
 
         private void ItemViewHolder_SoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)

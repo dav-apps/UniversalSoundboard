@@ -21,7 +21,7 @@ namespace UniversalSoundboard.Components
         private void SoundListItemTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             Bindings.Update();
-            soundItem = new SoundItem(Sound, (DataTemplate)Resources["SetCategoryItemTemplate"]);
+            soundItem = new SoundItem(Sound);
         }
 
         private void ContentRoot_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)

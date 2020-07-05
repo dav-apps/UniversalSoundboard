@@ -753,8 +753,6 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             // Get the categories
-            var categories = itemViewHolder.Categories.ToList();
-
             var categoryUuidsString = soundTableObject.GetPropertyValue(SoundTableCategoryUuidPropertyName);
             sound.Categories = new List<Category>();
             if (!string.IsNullOrEmpty(categoryUuidsString))
@@ -764,7 +762,7 @@ namespace UniversalSoundBoard.DataAccess
                     Guid? cUuid = ConvertStringToGuid(cUuidString);
                     if (cUuid.HasValue)
                     {
-                        var category = categories.Find(c => c.Uuid == cUuid.Value);
+                        var category = FindCategory(cUuid.Value);
                         if (category != null)
                             sound.Categories.Add(category);
                     }
@@ -1123,7 +1121,7 @@ namespace UniversalSoundBoard.DataAccess
             return FindCategoryInList(itemViewHolder.Categories, uuid);
         }
 
-        private static Category FindCategoryInList(List<Category> categoriesList, Guid uuid)
+        public static Category FindCategoryInList(List<Category> categoriesList, Guid uuid)
         {
             foreach(var category in categoriesList)
             {
