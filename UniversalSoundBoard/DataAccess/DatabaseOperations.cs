@@ -395,11 +395,14 @@ namespace UniversalSoundBoard.DataAccess
             var tableObjects = await Dav.Database.GetAllTableObjectsAsync(false);
             int i = 0;
 
-            foreach(var tableObject in tableObjects)
+            // Get the dav data folder
+            StorageFolder davFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync("dav");
+
+            foreach (var tableObject in tableObjects)
             {
                 tableObjectDataList.Add(tableObject.ToTableObjectData());
 
-                if (tableObject.IsFile)
+                if (tableObject.IsFile && tableObject.File != null)
                 {
                     // Create the folder for the table, if it does not exist
                     StorageFolder tableFolder;
@@ -408,8 +411,15 @@ namespace UniversalSoundBoard.DataAccess
                     else
                         tableFolder = await exportFolder.GetFolderAsync(tableObject.TableId.ToString());
 
-                    StorageFile tableObjectFile = await StorageFile.GetFileFromPathAsync(tableObject.File.FullName);
-                    if (tableObjectFile != null) await tableObjectFile.CopyAsync(tableFolder);
+                    // Get the table folder within the dav folder
+                    StorageFolder davTableFolder = (StorageFolder)await davFolder.TryGetItemAsync(tableObject.TableId.ToString());
+                    if (davTableFolder == null) continue;
+
+                    // Get the table object file within the table folder
+                    StorageFile tableObjectFile = (StorageFile)await davTableFolder.TryGetItemAsync(tableObject.File.Name);
+                    if (tableObjectFile == null) continue;
+
+                    await tableObjectFile.CopyAsync(tableFolder);
                 }
 
                 i++;
