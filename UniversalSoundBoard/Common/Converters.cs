@@ -108,11 +108,21 @@ namespace UniversalSoundBoard.Converters
             string icons = "";
 
             if((string)parameter == "list")
-                foreach (var category in categories)
-                    icons += " " + category.Icon;
+            {
+                for(int i = 0; i < categories.Count; i++)
+                {
+                    if (i >= 5) break;
+                    icons += " " + categories[i].Icon;
+                }
+            }
             else
-                foreach (var category in categories)
-                    icons += category.Icon + "\n\n";
+            {
+                for(int i = 0; i < categories.Count; i++)
+                {
+                    if (i >= 4) break;
+                    icons += categories[i].Icon + "\n\n";
+                }
+            }
 
             return icons;
         }
