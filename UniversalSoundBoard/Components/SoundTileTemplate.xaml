@@ -47,18 +47,18 @@
     </UserControl.Clip>
 
     <RelativePanel
-        Name="ContentRoot" 
+        Name="ContentRoot"
         Background="Transparent"
-        Width="{Binding SoundTileWidth}"
-        RightTapped="ContentRoot_RightTapped" 
-        Holding="ContentRoot_Holding" 
-        PointerEntered="ContentRoot_PointerEntered" 
+        Width="{x:Bind soundTileWidth}"
+        RightTapped="ContentRoot_RightTapped"
+        Holding="ContentRoot_Holding"
+        PointerEntered="ContentRoot_PointerEntered"
         PointerExited="ContentRoot_PointerExited">
 
         <Image
             Name="SoundTileImage"
             Height="200"
-            Width="{Binding SoundTileWidth}">
+            Width="{x:Bind soundTileWidth}">
 
             <Image.Source>
                 <BitmapImage UriSource="{x:Bind Sound.Image.UriSource}" />
@@ -87,7 +87,7 @@
             Name="SoundTileNameContainer"
             RelativePanel.AlignBottomWithPanel="True"
             Height="{x:Bind soundTileNameContainerHeight}"
-            Width="{Binding SoundTileWidth}">
+            Width="{x:Bind soundTileWidth}">
 
             <RelativePanel.RenderTransform>
                 <TranslateTransform x:Name="SoundTileNameContainerTransform" Y="0" />
@@ -98,7 +98,7 @@
                     x:Name="SoundTileNameContainerAcrylicBrush"
                     BackgroundSource="Backdrop"
                     TintOpacity="0.7"
-                    TintColor="{StaticResource DarkThemeBackgroundColor}" />
+                    TintColor="Transparent" />
             </RelativePanel.Background>
 
             <TextBlock

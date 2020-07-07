@@ -408,6 +408,7 @@
                                 <ScrollContentPresenter x:Name="ScrollContentPresenter"
                                     Grid.RowSpan="2"
                                     Grid.ColumnSpan="2"
+                                    Margin="10,0,10,0"
                                     ContentTemplate="{TemplateBinding ContentTemplate}" />
                                 <Grid
                                     Grid.RowSpan="2"
@@ -443,12 +444,6 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
-        <ControlTemplate x:Name="ScrollViewerScrollBarlessTemplate" TargetType="ScrollViewer">
-            <Grid Background="{TemplateBinding Background}">
-                <ScrollContentPresenter x:Name="ScrollContentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Margin="{TemplateBinding Padding}" />
-            </Grid>
-        </ControlTemplate>
     </Page.Resources>
 
     <Grid
@@ -488,7 +483,7 @@
                         <GridView
                             Name="SoundGridView"
                             Style="{StaticResource SoundGridViewStyle}"
-                            Padding="5,123,0,0"
+                            Padding="0,123,0,0"
                             ItemsSource="{Binding Sounds}"
                             SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
                             IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
@@ -502,7 +497,7 @@
                         <GridView 
                             Name="FavouriteSoundGridView"
                             Style="{StaticResource SoundGridViewStyle}"
-                            Padding="5,123,0,0"
+                            Padding="0,123,0,0"
                             ItemsSource="{Binding FavouriteSounds}"
                             SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
                             IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
@@ -525,7 +520,7 @@
                         <ListView
                             Name="SoundListView"
                             Style="{StaticResource SoundListViewStyle}"
-                            Padding="5,123,5,0"
+                            Padding="0,123,0,0"
                             ItemContainerStyle="{StaticResource ListViewItemStyle}"
                             ItemsSource="{Binding Sounds}"
                             SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
@@ -539,7 +534,7 @@
                         <ListView
                             Name="FavouriteSoundListView"
                             Style="{StaticResource SoundListViewStyle}"
-                            Padding="5,123,5,0"
+                            Padding="0,123,0,0"
                             ItemContainerStyle="{StaticResource ListViewItemStyle}"
                             ItemsSource="{Binding FavouriteSounds}"
                             SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
@@ -571,7 +566,7 @@
                     Grid.Row="0"
                     Grid.RowSpan="2"
                     Style="{StaticResource SoundGridViewStyle}"
-                    Padding="5,85,0,0"
+                    Padding="0,85,0,0"
                     Visibility="{Binding ShowListView, Converter={StaticResource InvertBooleanConverter}}"
                     ItemsSource="{Binding Sounds}"
                     SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
@@ -587,7 +582,7 @@
                     Grid.RowSpan="2"
                     Style="{StaticResource SoundListViewStyle}"
                     ItemContainerStyle="{StaticResource ListViewItemStyle}"
-                    Padding="5,85,5,0"
+                    Padding="0,85,0,0"
                     Visibility="{Binding ShowListView}"
                     ItemsSource="{Binding Sounds}"
                     SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
