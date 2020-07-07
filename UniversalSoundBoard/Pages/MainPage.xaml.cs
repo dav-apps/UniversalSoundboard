@@ -281,6 +281,7 @@ namespace UniversalSoundBoard.Pages
             {
                 // Show the selected category
                 Guid categoryUuid = (Guid)args.InvokedItemContainer.Tag;
+                if (categoryUuid.Equals(FileManager.itemViewHolder.SelectedCategory) && FileManager.itemViewHolder.Page == typeof(SoundPage)) return;
 
                 if (Equals(categoryUuid, Guid.Empty))
                     await FileManager.ShowAllSoundsAsync();

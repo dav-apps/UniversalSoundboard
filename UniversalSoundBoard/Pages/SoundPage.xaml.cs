@@ -239,8 +239,6 @@ namespace UniversalSoundBoard.Pages
 
         private async Task UpdateSoundOrder(bool showFavourites)
         {
-            // TODO
-            /*
             // Get the current category uuid
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
 
@@ -251,7 +249,6 @@ namespace UniversalSoundBoard.Pages
 
             await DatabaseOperations.SetSoundOrderAsync(currentCategoryUuid, showFavourites, uuids);
             FileManager.UpdateCustomSoundOrder(currentCategoryUuid, showFavourites, uuids);
-            */
         }
 
         public static async Task PlaySoundAsync(Sound sound)

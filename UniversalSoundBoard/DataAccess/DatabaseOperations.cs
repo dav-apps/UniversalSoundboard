@@ -335,8 +335,10 @@ namespace UniversalSoundBoard.DataAccess
                 }
                 await tableObject.SetPropertyValuesAsync(newProperties);
                 
-                bool removeNonExistentSounds = FileManager.itemViewHolder.User == null || !FileManager.itemViewHolder.User.IsLoggedIn ||
-                                                (FileManager.itemViewHolder.User.IsLoggedIn && FileManager.syncFinished);
+                bool removeNonExistentSounds =
+                    FileManager.itemViewHolder.User == null
+                    || !FileManager.itemViewHolder.User.IsLoggedIn
+                    || (FileManager.itemViewHolder.User.IsLoggedIn && FileManager.syncFinished);
 
                 if (removeNonExistentSounds)
                 {

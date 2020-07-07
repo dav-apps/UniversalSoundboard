@@ -665,7 +665,7 @@ namespace UniversalSoundBoard.Common
             get => _soundOrder;
             set
             {
-                localSettings.Values[soundOrderKey] = value;
+                localSettings.Values[soundOrderKey] = (int)value;
                 _soundOrder = value;
                 NotifyPropertyChanged("SoundOrder");
             }
