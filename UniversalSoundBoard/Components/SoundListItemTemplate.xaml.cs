@@ -2,6 +2,7 @@
 using UniversalSoundBoard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundboard.Components
 {
@@ -16,12 +17,22 @@ namespace UniversalSoundboard.Components
             ContentRoot.DataContext = FileManager.itemViewHolder;
 
             DataContextChanged += SoundListItemTemplate_DataContextChanged;
+            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
         }
 
         private void SoundListItemTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             Bindings.Update();
             soundItem = new SoundItem(Sound);
+        }
+
+        private void ItemViewHolder_ThemeChangedEvent(object sender, System.EventArgs e)
+        {
+            RequestedTheme = FileManager.GetRequestedTheme();
+
+            // Set the appropriate default image
+            if (Sound != null && !Sound.HasImageFile())
+                Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
         }
 
         private void ContentRoot_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)

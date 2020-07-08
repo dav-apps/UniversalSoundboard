@@ -4,12 +4,14 @@ using System.IO;
 using System.Threading.Tasks;
 using UniversalSoundBoard.DataAccess;
 using Windows.Storage;
-using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundBoard.Models
 {
     public class Sound{
+        private const string DefaultLightSoundImageUri = "ms-appx:///Assets/Images/default.png";
+        private const string DefaultDarkSoundImageUri = "ms-appx:///Assets/Images/default-dark.png";
+
         public Guid Uuid { get; }
         public string Name { get; set; }
         public List<Category> Categories { get; set; }
@@ -57,7 +59,9 @@ namespace UniversalSoundBoard.Models
 
         public bool HasImageFile()
         {
-            return Image.UriSource != GetDefaultImageUri();
+            return
+                Image.UriSource.ToString() != DefaultLightSoundImageUri
+                && Image.UriSource.ToString() != DefaultDarkSoundImageUri;
         }
 
         public async Task<StorageFile> GetImageFileAsync()
@@ -84,9 +88,9 @@ namespace UniversalSoundBoard.Models
         {
             Uri defaultImageUri;
             if (FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Dark)
-                defaultImageUri = new Uri("ms-appx:///Assets/Images/default-dark.png", UriKind.Absolute);
+                defaultImageUri = new Uri(DefaultDarkSoundImageUri, UriKind.Absolute);
             else
-                defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
+                defaultImageUri = new Uri(DefaultLightSoundImageUri, UriKind.Absolute);
             return defaultImageUri;
         }
     }

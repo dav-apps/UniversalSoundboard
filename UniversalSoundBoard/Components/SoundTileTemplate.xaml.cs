@@ -7,6 +7,7 @@ using Microsoft.Toolkit.Uwp.UI.Animations;
 using UniversalSoundBoard.DataAccess;
 using Windows.Foundation;
 using UniversalSoundboard.Components;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundBoard.Components
 {
@@ -25,18 +26,25 @@ namespace UniversalSoundBoard.Components
             ContentRoot.DataContext = FileManager.itemViewHolder;
 
             DataContextChanged += SoundTileTemplate_DataContextChanged;
+            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
             FileManager.itemViewHolder.SoundTileSizeChangedEvent += ItemViewHolder_SoundTileSizeChangedEvent;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateSizes();
+            SetThemeColors();
         }
 
         private void SoundTileTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             soundItem = new SoundItem(Sound);
             Bindings.Update();
+        }
+
+        private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
+        {
+            SetThemeColors();
         }
 
         private void ItemViewHolder_SoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)
@@ -64,8 +72,16 @@ namespace UniversalSoundBoard.Components
 
             SoundTileNameContainer.Margin = new Thickness(0, 0, 0, visibleNameMarginBottom);
             ShowNameStoryboardAnimation.To = visibleNameMarginBottom;
+        }
 
+        private void SetThemeColors()
+        {
+            RequestedTheme = FileManager.GetRequestedTheme();
             SoundTileNameContainerAcrylicBrush.TintColor = FileManager.GetApplicationThemeColor();
+
+            // Set the appropriate default image
+            if(Sound != null && !Sound.HasImageFile())
+                Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
         }
 
         private void ContentRoot_RightTapped(object sender, RightTappedRoutedEventArgs e)
