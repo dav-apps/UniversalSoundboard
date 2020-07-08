@@ -67,7 +67,8 @@ namespace UniversalSoundBoard.Common
                 Title = loader.GetString("NewCategoryContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("NewCategoryContentDialog-PrimaryButton"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
-                IsPrimaryButtonEnabled = false
+                IsPrimaryButtonEnabled = false,
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             NewCategoryParentUuid = parentUuid;
@@ -123,6 +124,7 @@ namespace UniversalSoundBoard.Common
                 Title = loader.GetString("EditCategoryContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("EditCategoryContentDialog-PrimaryButton"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             StackPanel stackPanel = new StackPanel
@@ -181,7 +183,8 @@ namespace UniversalSoundBoard.Common
                 Title = loader.GetString("DeleteCategoryContentDialog-Title") + currentCategory.Name,
                 Content = loader.GetString("DeleteCategoryContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteCategoryContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             return DeleteCategoryContentDialog;
@@ -196,6 +199,7 @@ namespace UniversalSoundBoard.Common
                 Title = loader.GetString("RenameSoundContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("RenameSoundContentDialog-PrimaryButton"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             StackPanel stackPanel = new StackPanel
@@ -231,7 +235,8 @@ namespace UniversalSoundBoard.Common
                 Title = loader.GetString("DeleteSoundContentDialog-Title") + soundName,
                 Content = loader.GetString("DeleteSoundContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteSoundContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             return DeleteSoundContentDialog;
@@ -246,7 +251,8 @@ namespace UniversalSoundBoard.Common
                 Title = loader.GetString("DeleteSoundsContentDialog-Title"),
                 Content = loader.GetString("DeleteSoundsContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteSoundsContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             return DeleteSoundsContentDialog;
@@ -261,7 +267,8 @@ namespace UniversalSoundBoard.Common
                 Title = loader.GetString("ExportDataContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("ExportDataContentDialog-PrimaryButton"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
-                IsPrimaryButtonEnabled = false
+                IsPrimaryButtonEnabled = false,
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             StackPanel content = new StackPanel
@@ -346,7 +353,8 @@ namespace UniversalSoundBoard.Common
                 Title = loader.GetString("ImportDataContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("ImportDataContentDialog-PrimaryButton"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
-                IsPrimaryButtonEnabled = false
+                IsPrimaryButtonEnabled = false,
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             StackPanel content = new StackPanel
@@ -433,7 +441,8 @@ namespace UniversalSoundBoard.Common
                 Title = loader.GetString("PlaySoundsSuccessivelyContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("PlaySoundsSuccessivelyContentDialog-PrimaryButton"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
-                IsPrimaryButtonEnabled = SoundsList.Count > 0
+                IsPrimaryButtonEnabled = SoundsList.Count > 0,
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             StackPanel content = new StackPanel
@@ -511,7 +520,8 @@ namespace UniversalSoundBoard.Common
                 Title = loader.GetString("Logout"),
                 Content = loader.GetString("Account-LogoutMessage"),
                 PrimaryButtonText = loader.GetString("Logout"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             return LogoutContentDialog;
@@ -524,7 +534,8 @@ namespace UniversalSoundBoard.Common
             DownloadFileContentDialog = new ContentDialog
             {
                 Title = string.Format(loader.GetString("DownloadFileContentDialog-Title"), filename),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             StackPanel content = new StackPanel
@@ -546,7 +557,8 @@ namespace UniversalSoundBoard.Common
             {
                 Title = loader.GetString("DownloadFileErrorContentDialog-Title"),
                 Content = loader.GetString("DownloadFileErrorContentDialog-Message"),
-                CloseButtonText = loader.GetString("ContentDialog-Okay")
+                CloseButtonText = loader.GetString("ContentDialog-Okay"),
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             return DownloadFileErrorContentDialog;
@@ -565,7 +577,8 @@ namespace UniversalSoundBoard.Common
                 Title = loader.GetString("ExportSoundsContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("Export"),
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
-                IsPrimaryButtonEnabled = false
+                IsPrimaryButtonEnabled = false,
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             if (SoundsList.Count == 0)
@@ -661,7 +674,8 @@ namespace UniversalSoundBoard.Common
             {
                 Title = title,
                 PrimaryButtonText = loader.GetString("ContentDialog-Save"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel")
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             StackPanel content = new StackPanel
@@ -730,7 +744,8 @@ namespace UniversalSoundBoard.Common
             CategoryOrderContentDialog = new ContentDialog
             {
                 Title = loader.GetString("CategoryOrderContentDialog-Title"),
-                PrimaryButtonText = loader.GetString("ContentDialog-Okay")
+                PrimaryButtonText = loader.GetString("ContentDialog-Okay"),
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             StackPanel content = new StackPanel
