@@ -1080,9 +1080,9 @@ namespace UniversalSoundBoard.DataAccess
 
                 if (soundTableObject != null)
                     await soundTableObject.DeleteImmediatelyAsync();
-            }
 
-            itemViewHolder.AllSoundsChanged = true;
+                RemoveSound(sound.Uuid);
+            }
         }
         #endregion
 
@@ -1137,6 +1137,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             // Replace the category in the categories list with the updated category
             ReplaceCategory(itemViewHolder.Categories, updatedCategory);
+            itemViewHolder.TriggerCategoryUpdatedEvent(updatedCategory.Uuid);
         }
 
         private static bool ReplaceCategory(List<Category> categoriesList, Category updatedCategory)
@@ -1161,6 +1162,7 @@ namespace UniversalSoundBoard.DataAccess
         public static void RemoveCategory(Guid uuid)
         {
             RemoveCategoryInList(itemViewHolder.Categories, uuid);
+            itemViewHolder.TriggerCategoryRemovedEvent(uuid);
         }
 
         private static bool RemoveCategoryInList(List<Category> categoriesList, Guid uuid)
@@ -1314,6 +1316,20 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             return false;
+        }
+        #endregion
+
+        #region PlayingSound methods
+        public static void RemovePlayingSound(Guid uuid)
+        {
+            PlayingSound playingSound = itemViewHolder.PlayingSounds.ToList().Find(ps => ps.Uuid == uuid);
+            if (playingSound == null) return;
+
+            // Check if the PlayingSound is currently playing
+            if (playingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing) return;
+
+            // Remove the playing sound
+            itemViewHolder.PlayingSounds.Remove(playingSound);
         }
         #endregion
 

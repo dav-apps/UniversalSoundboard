@@ -44,6 +44,8 @@ namespace UniversalSoundBoard.Pages
 
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
+            FileManager.itemViewHolder.CategoryUpdatedEvent += ItemViewHolder_CategoryUpdatedEvent;
+            FileManager.itemViewHolder.CategoryRemovedEvent += ItemViewHolder_CategoryRemovedEvent;
         }
 
         #region Page event handlers
@@ -83,6 +85,18 @@ namespace UniversalSoundBoard.Pages
         {
             selectionButtonsEnabled = FileManager.itemViewHolder.SelectedSounds.Count > 0;
             Bindings.Update();
+        }
+
+        private async void ItemViewHolder_CategoryUpdatedEvent(object sender, Guid uuid)
+        {
+            // Update the text and icon of the menu item of the category
+            UpdateCategoryMenuItem(SideBar.MenuItems, await FileManager.GetCategoryAsync(uuid));
+        }
+
+        private void ItemViewHolder_CategoryRemovedEvent(object sender, Guid uuid)
+        {
+            // Remove the category from the SideBar
+            RemoveMenuItem(SideBar.MenuItems, uuid);
         }
         #endregion
 
@@ -340,9 +354,6 @@ namespace UniversalSoundBoard.Pages
             // Update the title and reload the category in the categories list
             FileManager.itemViewHolder.Title = newName;
             await FileManager.ReloadCategory(FileManager.itemViewHolder.SelectedCategory);
-
-            // Update the title of the menu item
-            UpdateCategoryMenuItem(SideBar.MenuItems, await FileManager.GetCategoryAsync(FileManager.itemViewHolder.SelectedCategory));
         }
         #endregion
 
@@ -360,9 +371,6 @@ namespace UniversalSoundBoard.Pages
 
             // Remove the category from the Categories list
             FileManager.RemoveCategory(FileManager.itemViewHolder.SelectedCategory);
-
-            // Remove the category from the SideBar
-            RemoveMenuItem(SideBar.MenuItems, FileManager.itemViewHolder.SelectedCategory);
 
             // Navigate to all Sounds
             await FileManager.ShowAllSoundsAsync();
