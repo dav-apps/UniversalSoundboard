@@ -43,6 +43,7 @@ namespace UniversalSoundBoard.Pages
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
+            ActualThemeChanged += MainPage_ActualThemeChanged;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
             FileManager.itemViewHolder.CategoryUpdatedEvent += ItemViewHolder_CategoryUpdatedEvent;
             FileManager.itemViewHolder.CategoryRemovedEvent += ItemViewHolder_CategoryRemovedEvent;
@@ -79,6 +80,16 @@ namespace UniversalSoundBoard.Pages
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             AdjustLayout();
+        }
+
+        private void MainPage_ActualThemeChanged(FrameworkElement sender, object args)
+        {
+            // Update the theme
+            var themeBefore = FileManager.itemViewHolder.CurrentTheme;
+            FileManager.itemViewHolder.CurrentTheme = sender.ActualTheme == ElementTheme.Dark ? FileManager.AppTheme.Dark : FileManager.AppTheme.Light;
+
+            if (FileManager.itemViewHolder.CurrentTheme != themeBefore)
+                FileManager.itemViewHolder.TriggerThemeChangedEvent();
         }
 
         private void SelectedSounds_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
