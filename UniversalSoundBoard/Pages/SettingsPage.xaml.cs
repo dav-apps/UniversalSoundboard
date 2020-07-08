@@ -13,20 +13,18 @@ namespace UniversalSoundBoard.Pages
 {
     public sealed partial class SettingsPage : Page
     {
-        int themeAtBeginning = -1;
         bool initialized = false;
 
         public SettingsPage()
         {
             InitializeComponent();
-
-            if (themeAtBeginning == -1) themeAtBeginning = (int)FileManager.itemViewHolder.Theme;
+            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
         }
-        
+
         private async void SettingsPage_Loaded(object sender, RoutedEventArgs e)
         {
             ContentRoot.DataContext = FileManager.itemViewHolder;
-            SetDarkThemeLayout();
+            SetAppThemeColors();
             await FileManager.SetSoundBoardSizeTextAsync();
         }
         
@@ -47,7 +45,12 @@ namespace UniversalSoundBoard.Pages
             initialized = true;
         }
 
-        private void SetDarkThemeLayout()
+        private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
+        {
+            SetAppThemeColors();
+        }
+
+        private void SetAppThemeColors()
         {
             SolidColorBrush appThemeColorBrush = new SolidColorBrush(FileManager.GetApplicationThemeColor());
             ContentRoot.Background = appThemeColorBrush;
@@ -174,28 +177,36 @@ namespace UniversalSoundBoard.Pages
                     SystemThemeRadioButton.IsChecked = true;
                     break;
             }
-
-            SetThemeMessageVisibility();
         }
 
         private void ThemeRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
+            FileManager.AppTheme themeBefore = FileManager.itemViewHolder.CurrentTheme;
             RadioButton radioButton = sender as RadioButton;
 
             if (radioButton == LightThemeRadioButton)
+            {
                 FileManager.itemViewHolder.Theme = FileManager.AppTheme.Light;
+                FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Light;
+            }
             else if (radioButton == DarkThemeRadioButton)
+            {
                 FileManager.itemViewHolder.Theme = FileManager.AppTheme.Dark;
+                FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Dark;
+            }
             else if (radioButton == SystemThemeRadioButton)
+            {
                 FileManager.itemViewHolder.Theme = FileManager.AppTheme.System;
+                FileManager.itemViewHolder.CurrentTheme = (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? FileManager.AppTheme.Dark : FileManager.AppTheme.Light;
+            }
 
-            SetThemeMessageVisibility();
-        }
-
-        private void SetThemeMessageVisibility()
-        {
-            ThemeChangeMessageTextBlock.Visibility = themeAtBeginning != (int)FileManager.itemViewHolder.Theme ? Visibility.Visible : Visibility.Collapsed;
+            // Call the theme updated event if the theme has changed
+            if (FileManager.itemViewHolder.CurrentTheme != themeBefore)
+            {
+                FileManager.itemViewHolder.TriggerThemeChangedEvent();
+                SetAppThemeColors();
+            }
         }
         #endregion
 

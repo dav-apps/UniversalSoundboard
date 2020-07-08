@@ -219,9 +219,6 @@
   <data name="PlayOneSoundAtOnceToggle.Header" xml:space="preserve">
     <value>Nur einen Sound auf einmal abspielen</value>
   </data>
-  <data name="ThemeChangeMessageTextBlock.Text" xml:space="preserve">
-    <value>Bitte starte die App neu, um das neue Thema anzuwenden.</value>
-  </data>
   <data name="SoundItemOptionsFlyout-SetFavourite" xml:space="preserve">
     <value>Zu Favoriten hinzufügen</value>
   </data>

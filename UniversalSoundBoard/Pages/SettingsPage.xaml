@@ -205,17 +205,11 @@
                                 Name="DarkThemeRadioButton" 
                                 x:Uid="SettingsEntry-DarkThemeRadioButton"
                                 Checked="ThemeRadioButton_Checked" />
-                            
+
                             <RadioButton
                                 Name="SystemThemeRadioButton" 
                                 x:Uid="SettingsEntry-SystemThemeRadioButton"
                                 Checked="ThemeRadioButton_Checked" />
-                            
-                            <TextBlock
-                                Name="ThemeChangeMessageTextBlock" 
-                                x:Uid="ThemeChangeMessageTextBlock" 
-                                Visibility="Collapsed" 
-                                Margin="0,0,0,10" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
