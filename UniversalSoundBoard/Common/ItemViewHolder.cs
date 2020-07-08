@@ -74,6 +74,7 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Layout & Design
+        private FileManager.AppTheme _currentTheme;                         // The current theme of the app; is either Light or Dark
         private bool _progressRingIsActive;                                 // Shows the Progress Ring if true
         private bool _loadingScreenVisible;                                 // If true, the large loading screen is visible
         private string _loadingScreenMessage;                               // The text that is shown in the loading screen
@@ -114,6 +115,7 @@ namespace UniversalSoundBoard.Common
         public event EventHandler<Guid> CategoryRemovedEvent;                       // Is triggered when a category was removed
         public event EventHandler<RoutedEventArgs> SelectAllSoundsEvent;            // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
         public event EventHandler<SizeChangedEventArgs> SoundTileSizeChangedEvent;  // This event is triggered when the size of the sound tiles in the GridViews has changed
+        public event EventHandler ThemeChangedEvent;                                // This is triggered when the user changes the theme in the settings
         #endregion
 
         #region Local variables
@@ -151,6 +153,7 @@ namespace UniversalSoundBoard.Common
             #endregion
 
             #region Layout & Design
+            _currentTheme = FileManager.AppTheme.Light;
             _progressRingIsActive = false;
             _loadingScreenVisible = false;
             _loadingScreenMessage = "";
@@ -378,6 +381,16 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Layout & Design
+        public FileManager.AppTheme CurrentTheme
+        {
+            get => _currentTheme;
+            set
+            {
+                _currentTheme = value;
+                NotifyPropertyChanged("CurrentTheme");
+            }
+        }
+
         public bool ProgressRingIsActive
         {
             get => _progressRingIsActive;
@@ -709,6 +722,11 @@ namespace UniversalSoundBoard.Common
         public void TriggerSoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)
         {
             SoundTileSizeChangedEvent?.Invoke(sender, e);
+        }
+
+        public void TriggerThemeChangedEvent()
+        {
+            ThemeChangedEvent?.Invoke(null, null);
         }
         #endregion
 

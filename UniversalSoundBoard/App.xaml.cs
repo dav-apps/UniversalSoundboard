@@ -43,9 +43,17 @@ namespace UniversalSoundBoard
 
             // Set the theme
             if (FileManager.itemViewHolder.Theme == FileManager.AppTheme.Light)
+            {
                 RequestedTheme = ApplicationTheme.Light;
+                FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Light;
+            }
             else if (FileManager.itemViewHolder.Theme == FileManager.AppTheme.Dark)
+            {
                 RequestedTheme = ApplicationTheme.Dark;
+                FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Dark;
+            }
+            else
+                FileManager.itemViewHolder.CurrentTheme = RequestedTheme == ApplicationTheme.Light ? FileManager.AppTheme.Light : FileManager.AppTheme.Dark;
         }
 
         /// <summary>
