@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
-using UniversalSoundBoard;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
+using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
 using Windows.UI;
 using Windows.UI.Xaml;
@@ -15,6 +15,8 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class AccountPage : Page
     {
+        ResourceLoader loader = new ResourceLoader();
+
         public AccountPage()
         {
             InitializeComponent();
@@ -22,14 +24,9 @@ namespace UniversalSoundboard.Pages
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
-            SetDataContext();
+            ContentRoot.DataContext = FileManager.itemViewHolder;
             SetDarkThemeLayout();
             UpdateUserLayout();
-        }
-
-        private void SetDataContext()
-        {
-            ContentRoot.DataContext = FileManager.itemViewHolder;
         }
 
         private void SetDarkThemeLayout()
@@ -43,12 +40,7 @@ namespace UniversalSoundboard.Pages
             ShowLoggedInContent();
 
             if (FileManager.itemViewHolder.User.IsLoggedIn)
-            {
                 SetUsedStorageTextBlock();
-                FileManager.itemViewHolder.LoginMenuItemVisibility = false;
-            }
-            else
-                FileManager.itemViewHolder.LoginMenuItemVisibility = true;
         }
 
         public static async Task Login()
@@ -93,7 +85,7 @@ namespace UniversalSoundboard.Pages
         {
             if(FileManager.itemViewHolder.User.TotalStorage > 0)
             {
-                string message = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("Account-UsedStorage");
+                string message = loader.GetString("Account-UsedStorage");
 
                 double usedStorageGB = Math.Round(FileManager.itemViewHolder.User.UsedStorage / 1000000000.0, 1);
                 double totalStorageGB = Math.Round(FileManager.itemViewHolder.User.TotalStorage / 1000000000.0, 1);

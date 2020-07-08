@@ -1059,6 +1059,31 @@ namespace UniversalSoundBoard.DataAccess
             // Send the notification
             TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
         }
+
+        public static async Task RemoveNotLocallySavedSoundsAsync()
+        {
+            // Get each sound and check if the file exists
+            foreach (var sound in itemViewHolder.AllSounds)
+            {
+                var soundFileTableObject = await GetSoundFileTableObjectAsync(sound.Uuid);
+                if (soundFileTableObject != null && soundFileTableObject.FileDownloaded()) continue;
+
+                // Completely remove the sound from the database so that it won't be deleted when the user logs in again
+                var imageFileTableObject = await GetImageFileTableObjectAsync(sound.Uuid);
+                var soundTableObject = await DatabaseOperations.GetTableObjectAsync(sound.Uuid);
+
+                if (soundFileTableObject != null)
+                    await soundFileTableObject.DeleteImmediatelyAsync();
+
+                if (imageFileTableObject != null)
+                    await imageFileTableObject.DeleteImmediatelyAsync();
+
+                if (soundTableObject != null)
+                    await soundTableObject.DeleteImmediatelyAsync();
+            }
+
+            itemViewHolder.AllSoundsChanged = true;
+        }
         #endregion
 
         #region Category methods
