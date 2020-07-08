@@ -11,6 +11,7 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using UniversalSoundBoard.Common;
@@ -908,13 +909,35 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void AddSound(Sound sound)
         {
-            // Check if the sound belongs to the selected category
-            bool soundBelongsToSelectedCategory = itemViewHolder.SelectedCategory == Guid.Empty || sound.Categories.Exists(c => c.Uuid == itemViewHolder.SelectedCategory);
-
             // Add to AllSounds
             itemViewHolder.AllSounds.Add(sound);
 
-            // Add to Sounds
+            if (customSoundOrdersLoaded)
+            {
+                // Add the sound to the custom sound order dictionaries
+                CustomSoundOrder[Guid.Empty].Add(sound.Uuid);
+            }
+
+            // Get all categories and all parent categories to which the sound belongs
+            List<Category> parentCategories = new List<Category>();
+            foreach (var category in sound.Categories)
+            {
+                // Add the sound to the category and the parent categories
+                foreach (var c in GetCategoryPath(category))
+                {
+                    parentCategories.Add(c);
+
+                    if (customSoundOrdersLoaded && !CustomSoundOrder[c.Uuid].Contains(sound.Uuid))
+                        CustomSoundOrder[c.Uuid].Add(sound.Uuid);
+                }
+            }
+
+            // Check if the sound belongs to the selected category
+            bool soundBelongsToSelectedCategory =
+                itemViewHolder.SelectedCategory == Guid.Empty
+                || parentCategories.Exists(c => c.Uuid == itemViewHolder.SelectedCategory);
+
+            // Add to the current sounds
             if (soundBelongsToSelectedCategory)
                 itemViewHolder.Sounds.Add(sound);
         }
@@ -1174,6 +1197,88 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             return subcategories;
+        }
+
+        /**
+         * Goes through all categories recursively and creates for each category a CustomTreeViewNode, with the Uuid of the category as Tag
+         * Also adds each CustomTreeViewNode to selectedNodes, if selectedCategories contains the Uuid of the category
+         */
+        public static List<CustomTreeViewNode> CreateTreeViewNodesFromCategories(
+            List<Category> categories,
+            List<CustomTreeViewNode> selectedNodes,
+            List<Guid> selectedCategories
+        )
+        {
+            List<CustomTreeViewNode> nodes = new List<CustomTreeViewNode>();
+
+            foreach (var category in categories)
+            {
+                CustomTreeViewNode node = new CustomTreeViewNode()
+                {
+                    Content = category.Name,
+                    Tag = category.Uuid
+                };
+
+                foreach (var childNode in CreateTreeViewNodesFromCategories(category.Children, selectedNodes, selectedCategories))
+                    node.Children.Add(childNode);
+
+                nodes.Add(node);
+
+                if (selectedCategories.Exists(c => c == category.Uuid))
+                    selectedNodes.Add(node);
+            }
+
+            return nodes;
+        }
+
+        /**
+         * Returns a list of all nested parents of the category in the correct order and the category itself
+         */
+        public static List<Category> GetCategoryPath(Category searchedCategory)
+        {
+            List<Category> parentCategories = new List<Category>();
+
+            foreach (var currentCategory in itemViewHolder.Categories)
+            {
+                if (currentCategory.Uuid.Equals(Guid.Empty)) continue;
+
+                parentCategories.Add(currentCategory);
+                if (BuildCategoryPath(parentCategories, searchedCategory))
+                    return parentCategories;
+                else
+                {
+                    // Remove the category from the list
+                    parentCategories.Remove(currentCategory);
+                }
+            }
+
+            return parentCategories;
+        }
+
+        /**
+         * Goes through the nested categories tree and builds the category path in the parentCategories list.
+         * Returns true if the last parent category is the searched category or contains it within the child tree
+         */
+        public static bool BuildCategoryPath(List<Category> parentCategories, Category searchedCategory)
+        {
+            // Check if the last category of the parent categories is the searched category
+            if (parentCategories.Last().Uuid == searchedCategory.Uuid) return true;
+
+            // Add each child of the last parent category to the parent categories and call this method
+            foreach (var childCategory in parentCategories.Last().Children)
+            {
+                parentCategories.Add(childCategory);
+
+                if (BuildCategoryPath(parentCategories, searchedCategory))
+                    return true;
+                else
+                {
+                    // Remove the child category from the list
+                    parentCategories.Remove(parentCategories.Last());
+                }
+            }
+
+            return false;
         }
         #endregion
 

@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:UniversalSoundBoard.Converters"
     xmlns:components="using:UniversalSoundBoard.Components"
-    xmlns:components1="using:UniversalSoundboard.Components"
     xmlns:models="using:UniversalSoundBoard.Models"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"

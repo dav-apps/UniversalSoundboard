@@ -674,7 +674,9 @@ namespace UniversalSoundBoard.Common
                 Height = 300,
                 SelectionMode = WinUI.TreeViewSelectionMode.Multiple,
                 CanDrag = false,
-                CanDragItems = false
+                CanDragItems = false,
+                CanReorderItems = false,
+                AllowDrop = false
             };
 
             // Get all categories
@@ -688,9 +690,9 @@ namespace UniversalSoundBoard.Common
                 if (sounds.TrueForAll(s => s.Categories.Exists(c => c.Uuid == category.Uuid)))
                     soundCategories.Add(category.Uuid);
 
-            // Add the nodes to the tree view
+            // Create the nodes and add them to the tree view
             List<CustomTreeViewNode> selectedNodes = new List<CustomTreeViewNode>();
-            foreach (var node in CreateTreeViewNodesFromCategories(categories, selectedNodes, soundCategories))
+            foreach (var node in FileManager.CreateTreeViewNodesFromCategories(categories, selectedNodes, soundCategories))
                 CategoriesTreeView.RootNodes.Add(node);
 
             foreach (var node in selectedNodes)
@@ -709,38 +711,6 @@ namespace UniversalSoundBoard.Common
 
             SetCategoryContentDialog.Content = content;
             return SetCategoryContentDialog;
-        }
-
-        /**
-         * Goes through all categories recursively and creates for each category a CustomTreeViewNode, with the Uuid of the category as Tag
-         * Also adds each CustomTreeViewNode to selectedNodes, if selectedCategories contains the Uuid of the category
-         */
-        private static List<CustomTreeViewNode> CreateTreeViewNodesFromCategories(
-            List<Category> categories,
-            List<CustomTreeViewNode> selectedNodes,
-            List<Guid> selectedCategories
-        )
-        {
-            List<CustomTreeViewNode> nodes = new List<CustomTreeViewNode>();
-
-            foreach(var category in categories)
-            {
-                CustomTreeViewNode node = new CustomTreeViewNode()
-                {
-                    Content = category.Name,
-                    Tag = category.Uuid
-                };
-
-                foreach (var childNode in CreateTreeViewNodesFromCategories(category.Children, selectedNodes, selectedCategories))
-                    node.Children.Add(childNode);
-
-                nodes.Add(node);
-
-                if (selectedCategories.Exists(c => c == category.Uuid))
-                    selectedNodes.Add(node);
-            }
-
-            return nodes;
         }
         #endregion
 

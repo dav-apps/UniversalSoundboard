@@ -2,7 +2,7 @@
 
 namespace UniversalSoundboard.Components
 {
-    class CustomTreeViewNode : WinUI.TreeViewNode
+    public class CustomTreeViewNode : WinUI.TreeViewNode
     {
         public object Tag { get; set; }
 
