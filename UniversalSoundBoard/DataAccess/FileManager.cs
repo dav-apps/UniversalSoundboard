@@ -745,10 +745,9 @@ namespace UniversalSoundBoard.DataAccess
 
             // Get favourite
             var favouriteString = soundTableObject.GetPropertyValue(SoundTableFavouritePropertyName);
-            bool favourite = false;
             if (!string.IsNullOrEmpty(favouriteString))
             {
-                bool.TryParse(favouriteString, out favourite);
+                bool.TryParse(favouriteString, out bool favourite);
                 sound.Favourite = favourite;
             }
 
@@ -2302,6 +2301,11 @@ namespace UniversalSoundBoard.DataAccess
         public static Color GetApplicationThemeColor()
         {
             return itemViewHolder.CurrentTheme == AppTheme.Dark ? ((Color)Application.Current.Resources["DarkThemeBackgroundColor"]) : ((Color)Application.Current.Resources["LightThemeBackgroundColor"]);
+        }
+
+        public static ElementTheme GetRequestedTheme()
+        {
+            return itemViewHolder.CurrentTheme == AppTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
         }
         #endregion
 

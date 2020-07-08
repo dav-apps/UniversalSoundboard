@@ -110,12 +110,12 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Events
+        public event EventHandler ThemeChangedEvent;                                // This is triggered when the user changes the theme in the settings
         public event EventHandler CategoriesUpdatedEvent;                           // Is triggered when all categories were loaded into the Categories ObservableCollection
         public event EventHandler<Guid> CategoryUpdatedEvent;                       // Is triggered when a category was updated
         public event EventHandler<Guid> CategoryRemovedEvent;                       // Is triggered when a category was removed
         public event EventHandler<RoutedEventArgs> SelectAllSoundsEvent;            // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
         public event EventHandler<SizeChangedEventArgs> SoundTileSizeChangedEvent;  // This event is triggered when the size of the sound tiles in the GridViews has changed
-        public event EventHandler ThemeChangedEvent;                                // This is triggered when the user changes the theme in the settings
         #endregion
 
         #region Local variables
@@ -699,6 +699,11 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Events
+        public void TriggerThemeChangedEvent()
+        {
+            ThemeChangedEvent?.Invoke(null, null);
+        }
+
         public void TriggerCategoriesUpdatedEvent()
         {
             CategoriesUpdatedEvent?.Invoke(null, null);
@@ -722,11 +727,6 @@ namespace UniversalSoundBoard.Common
         public void TriggerSoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)
         {
             SoundTileSizeChangedEvent?.Invoke(sender, e);
-        }
-
-        public void TriggerThemeChangedEvent()
-        {
-            ThemeChangedEvent?.Invoke(null, null);
         }
         #endregion
 

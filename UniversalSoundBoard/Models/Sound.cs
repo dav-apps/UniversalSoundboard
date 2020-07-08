@@ -83,7 +83,7 @@ namespace UniversalSoundBoard.Models
         public static Uri GetDefaultImageUri()
         {
             Uri defaultImageUri;
-            if ((App.Current as App).RequestedTheme == ApplicationTheme.Dark)
+            if (FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Dark)
                 defaultImageUri = new Uri("ms-appx:///Assets/Images/default-dark.png", UriKind.Absolute);
             else
                 defaultImageUri = new Uri("ms-appx:///Assets/Images/default.png", UriKind.Absolute);
