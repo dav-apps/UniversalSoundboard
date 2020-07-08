@@ -360,7 +360,7 @@ namespace UniversalSoundBoard.DataAccess
             StorageFolder exportFolder = await GetExportFolderAsync();
             var progress = new Progress<int>((int value) => itemViewHolder.ExportMessage = value + " %");
 
-            await DataManager.ExportDataAsync(new DirectoryInfo(exportFolder.Path), progress);
+            await DatabaseOperations.ExportDataAsync(exportFolder, progress);
 
             itemViewHolder.ExportMessage = loader.GetString("ExportMessage-3");
 
@@ -422,7 +422,7 @@ namespace UniversalSoundBoard.DataAccess
                     await UpgradeNewDataModelAsync(importFolder, true, progress);
                     break;
                 default:
-                    await Task.Run(() => DataManager.ImportDataAsync(new DirectoryInfo(importFolder.Path), progress));
+                    await Task.Run(() => DatabaseOperations.ImportDataAsync(importFolder, progress));
                     break;
             }
 
@@ -2436,6 +2436,19 @@ namespace UniversalSoundBoard.DataAccess
             return categoriesList;
         }
 
+        public static async Task WriteFileAsync(StorageFile file, object objectToWrite)
+        {
+            DataContractJsonSerializer js = new DataContractJsonSerializer(objectToWrite.GetType());
+            MemoryStream ms = new MemoryStream();
+            js.WriteObject(ms, objectToWrite);
+
+            ms.Position = 0;
+            StreamReader sr = new StreamReader(ms);
+            string data = sr.ReadToEnd();
+
+            await FileIO.WriteTextAsync(file, data);
+        }
+
         public static async Task<NewData> GetDataFromFileAsync(StorageFile dataFile)
         {
             string data = await FileIO.ReadTextAsync(dataFile);
@@ -2447,6 +2460,16 @@ namespace UniversalSoundBoard.DataAccess
 
             return dataReader;
         }
-        #endregion
+
+        public static async Task<List<TableObjectData>> GetTableObjectDataFromFile(StorageFile dataFile)
+        {
+            string data = await FileIO.ReadTextAsync(dataFile);
+
+            // Deserialize Json
+            var serializer = new DataContractJsonSerializer(typeof(List<TableObjectData>));
+            var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
+            return (List<TableObjectData>)serializer.ReadObject(ms);
+        }
     }
+    #endregion
 }
