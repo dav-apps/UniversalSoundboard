@@ -44,6 +44,7 @@ namespace UniversalSoundBoard.Pages
 
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
             ActualThemeChanged += MainPage_ActualThemeChanged;
+            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
             FileManager.itemViewHolder.CategoryUpdatedEvent += ItemViewHolder_CategoryUpdatedEvent;
             FileManager.itemViewHolder.CategoryRemovedEvent += ItemViewHolder_CategoryRemovedEvent;
@@ -90,6 +91,11 @@ namespace UniversalSoundBoard.Pages
 
             if (FileManager.itemViewHolder.CurrentTheme != themeBefore)
                 FileManager.itemViewHolder.TriggerThemeChangedEvent();
+        }
+
+        private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
+        {
+            SetThemeColors();
         }
 
         private void SelectedSounds_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
@@ -152,6 +158,12 @@ namespace UniversalSoundBoard.Pages
                 TitleBar.Width = Window.Current.Bounds.Width - 40;
                 WindowTitleTextBox.Margin = new Thickness(57, 12, 0, 0);
             }
+        }
+
+        private void SetThemeColors()
+        {
+            InitLayout();
+            RequestedTheme = FileManager.GetRequestedTheme();
         }
 
         private void LoadMenuItems()

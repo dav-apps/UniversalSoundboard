@@ -23,7 +23,7 @@ namespace UniversalSoundBoard.Pages
         public ShareTargetPage()
         {
             InitializeComponent();
-            SetDarkThemeLayout();
+            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
             FileManager.itemViewHolder.CategoriesUpdatedEvent += ItemViewHolder_CategoriesUpdated;
         }
 
@@ -40,10 +40,23 @@ namespace UniversalSoundBoard.Pages
 
             // Update the categories list
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await FileManager.CreateCategoriesListAsync());
+
+            SetThemeColors();
         }
 
-        private void SetDarkThemeLayout()
+        private async void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
         {
+            await currentDispatcher.RunAsync(CoreDispatcherPriority.Low, () => SetThemeColors());
+        }
+
+        private async void ItemViewHolder_CategoriesUpdated(object sender, EventArgs e)
+        {
+            await currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, LoadCategories);
+        }
+
+        private void SetThemeColors()
+        {
+            RequestedTheme = FileManager.GetRequestedTheme();
             ContentRoot.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
         }
 
@@ -61,7 +74,6 @@ namespace UniversalSoundBoard.Pages
                 CategoriesTreeView.RootNodes.Add(node);
         }
 
-        #region Events
         private async void AddButton_Click(object sender, RoutedEventArgs e)
         {
             AddButton.IsEnabled = false;
@@ -85,11 +97,5 @@ namespace UniversalSoundBoard.Pages
 
             shareOperation.ReportCompleted();
         }
-
-        private async void ItemViewHolder_CategoriesUpdated(object sender, EventArgs e)
-        {
-            await currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, LoadCategories);
-        }
-        #endregion
     }
 }

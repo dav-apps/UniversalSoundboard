@@ -29,18 +29,18 @@ namespace UniversalSoundBoard.Pages
         {
             InitializeComponent();
             ContentRoot.DataContext = FileManager.itemViewHolder;
+
+            // Subscribe to events
+            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
+            FileManager.itemViewHolder.SelectAllSoundsEvent += ItemViewHolder_SelectAllSoundsEvent;
+            FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
+            FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
         }
 
         #region Events
         async void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
             await ShowPlayingSoundsListAsync();
-
-            // Subscribe to events
-            FileManager.itemViewHolder.SelectAllSoundsEvent += ItemViewHolder_SelectAllSoundsEvent;
-            FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
-            FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
-
             FileManager.itemViewHolder.PlayingSoundsBarWidth = DrawerContent.ActualWidth;
         }
 
@@ -58,6 +58,11 @@ namespace UniversalSoundBoard.Pages
 
             // Update the value of ItemViewHolder.PlayingSoundsBarWidth
             FileManager.itemViewHolder.PlayingSoundsBarWidth = DrawerContent.ActualWidth;
+        }
+
+        private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
+        {
+            RequestedTheme = FileManager.GetRequestedTheme();
         }
 
         private void ItemViewHolder_SelectAllSoundsEvent(object sender, RoutedEventArgs e)

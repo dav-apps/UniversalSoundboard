@@ -6,7 +6,6 @@ using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -20,19 +19,25 @@ namespace UniversalSoundboard.Pages
         public AccountPage()
         {
             InitializeComponent();
+            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             ContentRoot.DataContext = FileManager.itemViewHolder;
-            SetDarkThemeLayout();
+            SetThemeColors();
             UpdateUserLayout();
         }
 
-        private void SetDarkThemeLayout()
+        private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
         {
-            Color appThemeColor = FileManager.GetApplicationThemeColor();
-            ContentRoot.Background = new SolidColorBrush(appThemeColor);
+            SetThemeColors();
+        }
+
+        private void SetThemeColors()
+        {
+            RequestedTheme = FileManager.GetRequestedTheme();
+            ContentRoot.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
         }
 
         private void UpdateUserLayout()

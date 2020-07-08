@@ -24,7 +24,7 @@ namespace UniversalSoundBoard.Pages
         private async void SettingsPage_Loaded(object sender, RoutedEventArgs e)
         {
             ContentRoot.DataContext = FileManager.itemViewHolder;
-            SetAppThemeColors();
+            SetThemeColors();
             await FileManager.SetSoundBoardSizeTextAsync();
         }
         
@@ -47,11 +47,12 @@ namespace UniversalSoundBoard.Pages
 
         private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
         {
-            SetAppThemeColors();
+            SetThemeColors();
         }
 
-        private void SetAppThemeColors()
+        private void SetThemeColors()
         {
+            RequestedTheme = FileManager.GetRequestedTheme();
             SolidColorBrush appThemeColorBrush = new SolidColorBrush(FileManager.GetApplicationThemeColor());
             ContentRoot.Background = appThemeColorBrush;
             SettingsGeneralStackPanel.Background = appThemeColorBrush;
@@ -205,7 +206,7 @@ namespace UniversalSoundBoard.Pages
             if (FileManager.itemViewHolder.CurrentTheme != themeBefore)
             {
                 FileManager.itemViewHolder.TriggerThemeChangedEvent();
-                SetAppThemeColors();
+                SetThemeColors();
             }
         }
         #endregion
