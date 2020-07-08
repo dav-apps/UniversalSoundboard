@@ -1087,6 +1087,16 @@ namespace UniversalSoundBoard.DataAccess
                 // Add the category to the children of the parent
                 parentCategory.Children.Add(category);
             }
+
+            if (customSoundOrdersLoaded)
+            {
+                // Add the category to the CustomSoundOrders
+                if (!CustomSoundOrder.ContainsKey(category.Uuid))
+                    CustomSoundOrder[category.Uuid] = new List<Guid>();
+
+                if (!CustomFavouriteSoundOrder.ContainsKey(category.Uuid))
+                    CustomFavouriteSoundOrder[category.Uuid] = new List<Guid>();
+            }
         }
 
         /**
@@ -2089,7 +2099,7 @@ namespace UniversalSoundBoard.DataAccess
             foreach (Category cat in await GetAllCategoriesAsync())
                 itemViewHolder.Categories.Add(cat);
 
-            itemViewHolder.TriggerCategoriesUpdatedEvent(itemViewHolder.Categories, null);
+            itemViewHolder.TriggerCategoriesUpdatedEvent();
         }
 
         public static async Task UpdatePlayingSoundListItemAsync(Guid uuid)

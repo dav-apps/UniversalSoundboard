@@ -353,9 +353,6 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="ShareTarget-AddButton.Content" xml:space="preserve">
     <value>Ajouter</value>
   </data>
-  <data name="ShareTarget-AddCategoryButton.Content" xml:space="preserve">
-    <value>Ajouter une catégorie</value>
-  </data>
   <data name="ShareTarget-SelectCategoryTextBlock.Text" xml:space="preserve">
     <value>Sélectionner la catégorie à laquelle affecter les sons.</value>
   </data>

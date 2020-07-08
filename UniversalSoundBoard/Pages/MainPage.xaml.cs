@@ -515,6 +515,7 @@ namespace UniversalSoundBoard.Pages
 
             // Add the category to the Categories list
             FileManager.AddCategory(newCategory, Guid.Empty);
+            FileManager.itemViewHolder.TriggerCategoriesUpdatedEvent();
 
             // Add the category to the SideBar
             AddCategoryMenuItem(SideBar.MenuItems, newCategory, Guid.Empty);
@@ -791,6 +792,7 @@ namespace UniversalSoundBoard.Pages
 
             // Add the category to the categories list
             FileManager.AddCategory(newCategory, selectedCategory);
+            FileManager.itemViewHolder.TriggerCategoriesUpdatedEvent();
 
             // Add the category to the MenuItems of the SideBar
             AddCategoryMenuItem(SideBar.MenuItems, newCategory, selectedCategory);

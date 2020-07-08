@@ -684,9 +684,9 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Events
-        public void TriggerCategoriesUpdatedEvent(object sender, EventArgs e)
+        public void TriggerCategoriesUpdatedEvent()
         {
-            CategoriesUpdatedEvent?.Invoke(sender, e);
+            CategoriesUpdatedEvent?.Invoke(null, null);
         }
 
         public void TriggerSelectAllSoundsEvent(object sender, RoutedEventArgs e)
