@@ -845,13 +845,17 @@ namespace UniversalSoundBoard.Pages
                 soundUuids.Add(FileManager.itemViewHolder.SelectedSounds.ElementAt(i).Uuid);
 
             if (soundUuids.Count != 0)
+            {
                 await FileManager.DeleteSoundsAsync(soundUuids);
+
+                // Remove deleted sounds from the lists
+                foreach (var soundUuid in soundUuids)
+                    FileManager.RemoveSound(soundUuid);
+            }
 
             // Clear selected sounds list
             FileManager.itemViewHolder.SelectedSounds.Clear();
             FileManager.itemViewHolder.LoadingScreenVisible = false;
-
-            // TODO: Remove deleted sounds from the list
         }
         #endregion
 
