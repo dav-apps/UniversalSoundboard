@@ -39,6 +39,7 @@ namespace UniversalSoundBoard.Components
         private void SoundTileTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             soundItem = new SoundItem(Sound);
+            soundItem.ImageUpdated += SoundItem_ImageUpdated;
             Bindings.Update();
         }
 
@@ -50,6 +51,12 @@ namespace UniversalSoundBoard.Components
         private void ItemViewHolder_SoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)
         {
             UpdateSizes();
+        }
+
+        private void SoundItem_ImageUpdated(object sender, EventArgs e)
+        {
+            Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
+            Bindings.Update();
         }
 
         private void UpdateSizes()
@@ -81,7 +88,10 @@ namespace UniversalSoundBoard.Components
 
             // Set the appropriate default image
             if(Sound != null && !Sound.HasImageFile())
+            {
                 Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
+                Bindings.Update();
+            }
         }
 
         private void ContentRoot_RightTapped(object sender, RightTappedRoutedEventArgs e)

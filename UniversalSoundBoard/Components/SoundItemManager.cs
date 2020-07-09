@@ -21,6 +21,8 @@ namespace UniversalSoundboard.Components
     {
         private Sound sound;
 
+        public event EventHandler ImageUpdated;
+
         private readonly ResourceLoader loader = new ResourceLoader();
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
@@ -262,6 +264,7 @@ namespace UniversalSoundboard.Components
             {
                 await FileManager.UpdateImageOfSoundAsync(sound.Uuid, file);
                 await FileManager.ReloadSound(sound.Uuid);
+                ImageUpdated?.Invoke(this, null);
             }
         }
         #endregion

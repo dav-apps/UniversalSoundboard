@@ -22,8 +22,9 @@ namespace UniversalSoundboard.Components
 
         private void SoundListItemTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            Bindings.Update();
             soundItem = new SoundItem(Sound);
+            soundItem.ImageUpdated += SoundItem_ImageUpdated;
+            Bindings.Update();
         }
 
         private void ItemViewHolder_ThemeChangedEvent(object sender, System.EventArgs e)
@@ -32,7 +33,16 @@ namespace UniversalSoundboard.Components
 
             // Set the appropriate default image
             if (Sound != null && !Sound.HasImageFile())
+            {
                 Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
+                Bindings.Update();
+            }
+        }
+
+        private void SoundItem_ImageUpdated(object sender, System.EventArgs e)
+        {
+            Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
+            Bindings.Update();
         }
 
         private void ContentRoot_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
