@@ -43,15 +43,9 @@ namespace UniversalSoundBoard
 
             // Set the theme
             if (FileManager.itemViewHolder.Theme == FileManager.AppTheme.Light)
-            {
-                RequestedTheme = ApplicationTheme.Light;
                 FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Light;
-            }
             else if (FileManager.itemViewHolder.Theme == FileManager.AppTheme.Dark)
-            {
-                RequestedTheme = ApplicationTheme.Dark;
                 FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Dark;
-            }
             else
                 FileManager.itemViewHolder.CurrentTheme = RequestedTheme == ApplicationTheme.Light ? FileManager.AppTheme.Light : FileManager.AppTheme.Dark;
         }
@@ -90,6 +84,7 @@ namespace UniversalSoundBoard
                     // When the navigation stack isn't restored navigate to the first page,
                     // configuring the new page by passing required information as a navigation
                     // parameter
+                    rootFrame.ActualThemeChanged += RootFrame_ActualThemeChanged;
                     rootFrame.Navigate(typeof(MainPage), e.Arguments);
                 }
                 // Ensure the current window is active
@@ -105,6 +100,18 @@ namespace UniversalSoundBoard
             }
 
             Window.Current.Activate();
+        }
+
+        private void RootFrame_ActualThemeChanged(FrameworkElement sender, object args)
+        {
+            if (FileManager.itemViewHolder.Theme != FileManager.AppTheme.System) return;
+
+            // Update the theme
+            var themeBefore = FileManager.itemViewHolder.CurrentTheme;
+            FileManager.itemViewHolder.CurrentTheme = sender.ActualTheme == ElementTheme.Dark ? FileManager.AppTheme.Dark : FileManager.AppTheme.Light;
+
+            if (FileManager.itemViewHolder.CurrentTheme != themeBefore)
+                FileManager.itemViewHolder.TriggerThemeChangedEvent();
         }
 
         private Frame CreateRootFrame(ApplicationExecutionState previousExecutionState, string arguments, Type page)

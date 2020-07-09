@@ -36,14 +36,12 @@ namespace UniversalSoundBoard.Pages
         public MainPage()
         {
             InitializeComponent();
-            CustomiseTitleBar();
-            InitLayout();
+            SetThemeColors();
 
             RootGrid.DataContext = FileManager.itemViewHolder;
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
-            ActualThemeChanged += MainPage_ActualThemeChanged;
             FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
             FileManager.itemViewHolder.CategoryUpdatedEvent += ItemViewHolder_CategoryUpdatedEvent;
@@ -83,16 +81,6 @@ namespace UniversalSoundBoard.Pages
             AdjustLayout();
         }
 
-        private void MainPage_ActualThemeChanged(FrameworkElement sender, object args)
-        {
-            // Update the theme
-            var themeBefore = FileManager.itemViewHolder.CurrentTheme;
-            FileManager.itemViewHolder.CurrentTheme = sender.ActualTheme == ElementTheme.Dark ? FileManager.AppTheme.Dark : FileManager.AppTheme.Light;
-
-            if (FileManager.itemViewHolder.CurrentTheme != themeBefore)
-                FileManager.itemViewHolder.TriggerThemeChangedEvent();
-        }
-
         private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
         {
             SetThemeColors();
@@ -120,7 +108,7 @@ namespace UniversalSoundBoard.Pages
         private void CustomiseTitleBar()
         {
             ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.ButtonForegroundColor = ((App.Current as App).RequestedTheme == ApplicationTheme.Dark) ? Colors.White : Colors.Black;
+            titleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Dark ? Colors.White : Colors.Black;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
@@ -164,6 +152,7 @@ namespace UniversalSoundBoard.Pages
         {
             InitLayout();
             RequestedTheme = FileManager.GetRequestedTheme();
+            CustomiseTitleBar();
         }
 
         private void LoadMenuItems()
