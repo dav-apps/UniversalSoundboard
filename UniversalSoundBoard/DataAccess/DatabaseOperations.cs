@@ -233,11 +233,27 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region CategoryOrder
-        public static async Task SetCategoryOrderAsync(List<Guid> uuids)
+        public static async Task SetCategoryOrderAsync(List<Guid> uuids, Guid parentCategoryUuid)
         {
             // Check if the order already exists
             List<TableObject> tableObjects = await GetAllOrdersAsync();
-            TableObject tableObject = tableObjects.Find(obj => obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) == FileManager.CategoryOrderType);
+            bool rootCategory = parentCategoryUuid.Equals(Guid.Empty);
+
+            TableObject tableObject = tableObjects.Find(obj =>
+            {
+                // Check if the object is of type Category
+                if (obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) != FileManager.CategoryOrderType) return false;
+
+                // Check if the object has the correct parent category uuid
+                string categoryUuidString = obj.GetPropertyValue(FileManager.OrderTableCategoryPropertyName);
+                Guid? cUuid = FileManager.ConvertStringToGuid(categoryUuidString);
+                if (!cUuid.HasValue)
+                {
+                    // Return true if the object belongs to no category and the searched category is the root category
+                    return rootCategory;
+                }
+                else return cUuid.Value.Equals(parentCategoryUuid);
+            });
 
             if (tableObject == null)
             {
@@ -245,7 +261,9 @@ namespace UniversalSoundBoard.DataAccess
                 List<Property> properties = new List<Property>
                 {
                     // Set the type property
-                    new Property { Name = FileManager.OrderTableTypePropertyName, Value = FileManager.CategoryOrderType }
+                    new Property { Name = FileManager.OrderTableTypePropertyName, Value = FileManager.CategoryOrderType },
+                    // Set the category property
+                    new Property { Name = FileManager.OrderTableCategoryPropertyName, Value = parentCategoryUuid.ToString() }
                 };
 
                 int i = 0;
