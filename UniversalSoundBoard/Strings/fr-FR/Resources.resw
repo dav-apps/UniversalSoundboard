@@ -527,4 +527,22 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="PlaySoundsButton.Text" xml:space="preserve">
     <value>Jouer</value>
   </data>
+  <data name="CategoryOptionsFlyout-Position" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveDown" xml:space="preserve">
+    <value>Descendre</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveToCategoryAbove" xml:space="preserve">
+    <value>Passer à la catégorie ci-dessus</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveToCategoryBelow" xml:space="preserve">
+    <value>Passer à la catégorie ci-dessous</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveToParentCategory" xml:space="preserve">
+    <value>Passer à la catégorie des parents</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveUp" xml:space="preserve">
+    <value>Monter</value>
+  </data>
 </root>

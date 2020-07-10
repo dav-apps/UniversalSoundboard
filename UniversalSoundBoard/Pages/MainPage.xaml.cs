@@ -101,7 +101,7 @@ namespace UniversalSoundBoard.Pages
         private void ItemViewHolder_CategoryRemovedEvent(object sender, Guid uuid)
         {
             // Remove the category from the SideBar
-            RemoveMenuItem(SideBar.MenuItems, uuid);
+            RemoveCategoryMenuItem(SideBar.MenuItems, uuid);
         }
         #endregion
 
@@ -254,7 +254,7 @@ namespace UniversalSoundBoard.Pages
             return false;
         }
 
-        private bool RemoveMenuItem(IList<object> menuItems, Guid uuid)
+        private bool RemoveCategoryMenuItem(IList<object> menuItems, Guid uuid)
         {
             bool categoryFound = false;
             int i = 0;
@@ -270,7 +270,7 @@ namespace UniversalSoundBoard.Pages
                 }
                 else
                 {
-                    if (RemoveMenuItem(item.MenuItems, uuid))
+                    if (RemoveCategoryMenuItem(item.MenuItems, uuid))
                         return true;
                 }
 
@@ -284,6 +284,91 @@ namespace UniversalSoundBoard.Pages
                 return true;
             }
             return false;
+        }
+
+        /**
+         * Returns a list of the positions of the menu item parents and the category itself of the searched category in the correct order
+         */
+        private List<int> GetCategoryMenuItemPositionPath(Guid searchedCategoryUuid)
+        {
+            List<int> positions = new List<int>();
+            List<WinUI.NavigationViewItem> parentItems = new List<WinUI.NavigationViewItem>();
+            int i = 0;
+
+            foreach(var menuItem in SideBar.MenuItems)
+            {
+                WinUI.NavigationViewItem item = (WinUI.NavigationViewItem)menuItem;
+                Guid uuid = (Guid)item.Tag;
+                if (uuid.Equals(Guid.Empty)) continue;
+
+                positions.Add(i);
+                parentItems.Add(item);
+                if (BuildCategoryMenuItemPositionPath(positions, parentItems, searchedCategoryUuid))
+                    return positions;
+                else
+                {
+                    // Remove the position and the item from positions and from parentItems
+                    positions.RemoveAt(positions.Count - 1);
+                    parentItems.Remove(item);
+                }
+
+                i++;
+            }
+
+            return positions;
+        }
+
+        /**
+         * Goes through the nested menu items tree and builds the path of the positions in positions and the path of the menu items in parentItems
+         * Returns true if the last menu item belongs to the searched category or contains the menu item of it within the child tree
+         */
+        private bool BuildCategoryMenuItemPositionPath(List<int> positions, List<WinUI.NavigationViewItem> parentItems, Guid searchedCategoryUuid)
+        {
+            // Check if the last item in parentItems is the searched category
+            if (((Guid)parentItems.Last().Tag).Equals(searchedCategoryUuid)) return true;
+            int i = 0;
+
+            // Add each child of the last element in parentItems to parentItems and call this method
+            foreach(var childItem in parentItems.Last().MenuItems)
+            {
+                WinUI.NavigationViewItem item = (WinUI.NavigationViewItem)childItem;
+
+                positions.Add(i);
+                parentItems.Add(item);
+
+                if (BuildCategoryMenuItemPositionPath(positions, parentItems, searchedCategoryUuid))
+                    return true;
+                else
+                {
+                    // Remove the position and the item from positions and from parentItems
+                    positions.RemoveAt(positions.Count - 1);
+                    parentItems.Remove(item);
+                }
+
+                i++;
+            }
+
+            return false;
+        }
+
+        private int GetCategoryMenuItemChildrenCountByPath(List<int> positionPath)
+        {
+            List<WinUI.NavigationViewItem> currentItemList = new List<WinUI.NavigationViewItem>();
+            
+            // Copy the SideBar menu items into the current items list
+            for(int i = 1; i < SideBar.MenuItems.Count; i++)
+                currentItemList.Add((WinUI.NavigationViewItem)SideBar.MenuItems[i]);
+
+            foreach (var position in positionPath)
+            {
+                var currentItem = currentItemList.ElementAt(position);
+                currentItemList.Clear();
+
+                foreach (var childItem in currentItem.MenuItems)
+                    currentItemList.Add((WinUI.NavigationViewItem)childItem);
+            }
+
+            return currentItemList.Count;
         }
 
         private async Task GoBack()
@@ -784,14 +869,127 @@ namespace UniversalSoundBoard.Pages
         #region CategoryOptionsFlyout
         private void ShowCategoryOptionsFlyout(UIElement sender, Point position)
         {
+            // Get the position of the selected category
+            List<int> positionPath = GetCategoryMenuItemPositionPath(selectedCategory);
+            int itemPosition = positionPath.ElementAt(positionPath.Count - 1);
+            positionPath.RemoveAt(positionPath.Count - 1);
+
+            int selectedItemChildCount = GetCategoryMenuItemChildrenCountByPath(positionPath);
+            bool isFirstItem = itemPosition == 0;
+            bool isLastItem = itemPosition == selectedItemChildCount - 1;
+            bool isSubCategory = positionPath.Count > 0;
+
+            // Create and show the MenuFlyout
             MenuFlyout flyout = new MenuFlyout();
 
+            // Position
+            MenuFlyoutSubItem positionSubFlyoutItem = new MenuFlyoutSubItem { Text = loader.GetString("CategoryOptionsFlyout-Position") };
+
+            FontIcon arrowTop = new FontIcon { Glyph = "\uE74A" };
+            FontIcon arrowBottom = new FontIcon { Glyph = "\uE74B" };
+            FontIcon arrowTopLeft = new FontIcon { Glyph = "\uE742" };
+            FontIcon arrowTopRight = new FontIcon { Glyph = "\uE742", FlowDirection = FlowDirection.RightToLeft, MirroredWhenRightToLeft = true };
+            FontIcon arrowBottomLeft = new FontIcon { Glyph = "\uE741", FlowDirection = FlowDirection.RightToLeft, MirroredWhenRightToLeft = true };
+            FontIcon arrowBottomRight = new FontIcon { Glyph = "\uE741" };
+
+            // Move up
+            MenuFlyoutItem moveUpFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-Position-MoveUp") };
+            moveUpFlyoutItem.Click += MoveUpFlyoutItem_Click;
+
+            // Move down
+            MenuFlyoutItem moveDownFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-Position-MoveDown") };
+            moveDownFlyoutItem.Click += MoveDownFlyoutItem_Click;
+
+            // Move to category above
+            MenuFlyoutItem moveToCategoryAboveItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-Position-MoveToCategoryAbove") };
+            moveToCategoryAboveItem.Click += MoveToCategoryAboveItem_Click;
+
+            // Move to category below
+            MenuFlyoutItem moveToCategoryBelowItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-Position-MoveToCategoryBelow") };
+            moveToCategoryBelowItem.Click += MoveToCategoryBelowItem_Click;
+
+            // Move to parent category
+            MenuFlyoutItem moveToParentCategoryItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-Position-MoveToParentCategory") };
+            moveToParentCategoryItem.Click += MoveToParentCategoryItem_Click;
+
+            if (!isFirstItem)
+            {
+                // Move up
+                moveUpFlyoutItem.Icon = arrowTop;
+                positionSubFlyoutItem.Items.Add(moveUpFlyoutItem);
+            }
+
+            if(!isLastItem)
+            {
+                // Move down
+                moveDownFlyoutItem.Icon = arrowBottom;
+                positionSubFlyoutItem.Items.Add(moveDownFlyoutItem);
+            }
+
+            if(isFirstItem && isSubCategory)
+            {
+                // Move to parent category
+                moveToParentCategoryItem.Icon = arrowTopLeft;
+                positionSubFlyoutItem.Items.Add(moveToParentCategoryItem);
+            }
+
+            if (!isFirstItem)
+            {
+                // Move to category above
+                moveToCategoryAboveItem.Icon = arrowTopRight;
+                positionSubFlyoutItem.Items.Add(moveToCategoryAboveItem);
+            }
+
+            if (!isLastItem)
+            {
+                // Move to category below
+                moveToCategoryBelowItem.Icon = arrowBottomRight;
+                positionSubFlyoutItem.Items.Add(moveToCategoryBelowItem);
+            }
+
+            if(isLastItem && isSubCategory)
+            {
+                // Move to parent category
+                moveToParentCategoryItem.Icon = arrowBottomLeft;
+                positionSubFlyoutItem.Items.Add(moveToParentCategoryItem);
+            }
+
+            flyout.Items.Add(positionSubFlyoutItem);
+
+            // Create subcategory
             MenuFlyoutItem createSubCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-AddSubCategory") };
             createSubCategoryFlyoutItem.Click += CreateSubCategoryFlyoutItem_Click;
             flyout.Items.Add(createSubCategoryFlyoutItem);
 
             flyout.ShowAt(sender, position);
         }
+
+        #region Position
+        private void MoveUpFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void MoveDownFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
+
+        private void MoveToCategoryAboveItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MoveToCategoryBelowItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void MoveToParentCategoryItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        #endregion
 
         #region Create SubCategory
         private async void CreateSubCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)

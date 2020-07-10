@@ -526,4 +526,22 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PlaySoundsButton.Text" xml:space="preserve">
     <value>Abspielen</value>
   </data>
+  <data name="CategoryOptionsFlyout-Position" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveDown" xml:space="preserve">
+    <value>Nach unten verschieben</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveToCategoryAbove" xml:space="preserve">
+    <value>In obere Kategorie verschieben</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveToCategoryBelow" xml:space="preserve">
+    <value>In untere Kategorie verschieben</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveToParentCategory" xml:space="preserve">
+    <value>In übergeordnete Kategorie verschieben</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveUp" xml:space="preserve">
+    <value>Nach oben verschieben</value>
+  </data>
 </root>

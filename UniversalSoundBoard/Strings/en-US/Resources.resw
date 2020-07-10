@@ -529,4 +529,22 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PlaySoundsButton.Text" xml:space="preserve">
     <value>Play</value>
   </data>
+  <data name="CategoryOptionsFlyout-Position" xml:space="preserve">
+    <value>Position</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveDown" xml:space="preserve">
+    <value>Move down</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveToCategoryAbove" xml:space="preserve">
+    <value>Move to category above</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveToCategoryBelow" xml:space="preserve">
+    <value>Move to category below</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveToParentCategory" xml:space="preserve">
+    <value>Move to parent category</value>
+  </data>
+  <data name="CategoryOptionsFlyout-Position-MoveUp" xml:space="preserve">
+    <value>Move up</value>
+  </data>
 </root>
