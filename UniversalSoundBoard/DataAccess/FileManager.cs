@@ -1272,6 +1272,11 @@ namespace UniversalSoundBoard.DataAccess
          */
         public static List<Category> GetCategoryPath(Category searchedCategory)
         {
+            return GetCategoryPath(searchedCategory.Uuid);
+        }
+
+        public static List<Category> GetCategoryPath(Guid searchedCategory)
+        {
             List<Category> parentCategories = new List<Category>();
 
             foreach (var currentCategory in itemViewHolder.Categories)
@@ -1295,10 +1300,10 @@ namespace UniversalSoundBoard.DataAccess
          * Goes through the nested categories tree and builds the category path in the parentCategories list.
          * Returns true if the last parent category is the searched category or contains it within the child tree
          */
-        public static bool BuildCategoryPath(List<Category> parentCategories, Category searchedCategory)
+        public static bool BuildCategoryPath(List<Category> parentCategories, Guid searchedCategory)
         {
             // Check if the last category of the parent categories is the searched category
-            if (parentCategories.Last().Uuid == searchedCategory.Uuid) return true;
+            if (parentCategories.Last().Uuid == searchedCategory) return true;
 
             // Add each child of the last parent category to the parent categories and call this method
             foreach (var childCategory in parentCategories.Last().Children)
@@ -1412,16 +1417,19 @@ namespace UniversalSoundBoard.DataAccess
         internal static async Task<List<Category>> GetAllCategoriesAsync()
         {
             List<TableObject> categoriesTableObjectList = await DatabaseOperations.GetAllCategoriesAsync();
-            List<Category> categoriesList = new List<Category>();
+            List<Category> categories = new List<Category>();
+            List<Category> sortedCategories = new List<Category>();
 
+            // Get all categories
             foreach (var categoryTableObject in categoriesTableObjectList)
-            {
                 if (categoryTableObject.GetPropertyValue(CategoryTableParentPropertyName) == null)
-                    categoriesList.Add(await GetCategoryAsync(categoryTableObject.Uuid));
-            }
+                    categories.Add(await GetCategoryAsync(categoryTableObject.Uuid));
 
-            // TODO: Sort categories
-            return categoriesList;
+            // Sort all categories
+            foreach (var category in await SortCategoriesByCustomOrder(categories, Guid.Empty))
+                sortedCategories.Add(category);
+
+            return sortedCategories;
         }
 
         public static async Task<Category> GetCategoryAsync(Guid uuid, bool withChildren = true)
@@ -1435,17 +1443,24 @@ namespace UniversalSoundBoard.DataAccess
                 List<TableObject> childrenTableObjects = await DatabaseOperations.GetTableObjectsByPropertyAsync(CategoryTableParentPropertyName, categoryTableObject.Uuid.ToString());
 
                 List<Category> children = new List<Category>();
+                List<Category> sortedChildren = new List<Category>();
+
+                // Get the child categories
                 foreach (var childObject in childrenTableObjects)
                 {
                     Category category = await GetCategoryAsync(childObject.Uuid);
                     if (category != null) children.Add(category);
                 }
 
+                // Sort the child categories
+                foreach (var category in await SortCategoriesByCustomOrder(children, uuid))
+                    sortedChildren.Add(category);
+
                 return new Category(
                     categoryTableObject.Uuid,
                     categoryTableObject.GetPropertyValue(CategoryTableNamePropertyName),
                     categoryTableObject.GetPropertyValue(CategoryTableIconPropertyName),
-                    children
+                    sortedChildren
                 );
             }
             else
@@ -1651,6 +1666,140 @@ namespace UniversalSoundBoard.DataAccess
         }
         #endregion
 
+        #region Category order methods
+        public static async Task<List<Category>> SortCategoriesByCustomOrder(List<Category> categories, Guid parentCategoryUuid)
+        {
+            // Get the order table objects
+            var tableObjects = await DatabaseOperations.GetAllOrdersAsync();
+            bool rootCategories = parentCategoryUuid.Equals(Guid.Empty);
+
+            // Get the order table objects with the type Category (0) and the right parent category
+            var categoryOrderTableObjects = tableObjects.FindAll((TableObject obj) =>
+            {
+                // Check if the object is of type Category
+                if (obj.GetPropertyValue(OrderTableTypePropertyName) != CategoryOrderType) return false;
+
+                // Check if the object has the correct parent category uuid
+                string categoryUuidString = obj.GetPropertyValue(OrderTableCategoryPropertyName);
+                Guid? cUuid = ConvertStringToGuid(categoryUuidString);
+                if (!cUuid.HasValue)
+                {
+                    // Return true if the object belongs to no category and the searched category is the root category
+                    return rootCategories;
+                }
+                else return cUuid.Value.Equals(parentCategoryUuid);
+            });
+
+            if (categoryOrderTableObjects.Count > 0)
+            {
+                bool saveNewOrder = false;
+                TableObject lastOrderTableObject = categoryOrderTableObjects.Last();
+                List<Guid> uuids = new List<Guid>();
+                List<Category> sortedCategories = new List<Category>();
+
+                // Add all categories to newCategories
+                List<Category> newCategories = new List<Category>();
+                foreach (var category in categories)
+                    newCategories.Add(category);
+
+                foreach (var property in lastOrderTableObject.Properties)
+                {
+                    if (!int.TryParse(property.Name, out int index)) continue;
+
+                    Guid? categoryUuid = ConvertStringToGuid(property.Value);
+                    if (!categoryUuid.HasValue) continue;
+
+                    // Check if this uuid is already in the uuids list
+                    if (uuids.Contains(categoryUuid.Value))
+                    {
+                        saveNewOrder = true;
+                        continue;
+                    }
+
+                    // Get the category from the list
+                    var category = categories.Find(c => c.Uuid == categoryUuid);
+                    if (category == null) continue;
+
+                    sortedCategories.Add(category);
+                    uuids.Add(category.Uuid);
+                    newCategories.Remove(category);
+                }
+
+                // Add the categories, that are not in the order, at the end
+                foreach (var category in newCategories)
+                {
+                    sortedCategories.Add(category);
+                    uuids.Add(category.Uuid);
+                    saveNewOrder = true;
+                }
+
+                // If there are multiple order objects, merge them
+                while (categoryOrderTableObjects.Count > 1)
+                {
+                    saveNewOrder = true;
+
+                    // Merge the first order table object into the last one
+                    var firstOrderTableObject = categoryOrderTableObjects.First();
+
+                    // Go through each uuid of the order object
+                    foreach (var property in firstOrderTableObject.Properties)
+                    {
+                        // Make sure the property is an index of the order
+                        if (!int.TryParse(property.Name, out int index)) continue;
+
+                        Guid? categoryUuid = ConvertStringToGuid(property.Value);
+                        if (!categoryUuid.HasValue) continue;
+
+                        //  Check if the uuid already exists in the first order object
+                        if (uuids.Contains(categoryUuid.Value)) continue;
+
+                        // Get the category from the list
+                        var category = categories.Find(c => c.Uuid == categoryUuid);
+                        if (category == null) continue;
+
+                        // Add the property to uuids and sortedCategories
+                        sortedCategories.Add(category);
+                        uuids.Add(category.Uuid);
+                    }
+
+                    // Delete the object and remove it from the list
+                    await firstOrderTableObject.DeleteAsync();
+                    categoryOrderTableObjects.Remove(firstOrderTableObject);
+                }
+
+                if (saveNewOrder)
+                    await DatabaseOperations.SetCategoryOrderAsync(uuids, parentCategoryUuid);
+
+                return sortedCategories;
+            }
+            else
+            {
+                // Create the category order table object with the current order
+                List<Guid> uuids = new List<Guid>();
+
+                foreach (var category in categories)
+                    uuids.Add(category.Uuid);
+
+                await DatabaseOperations.SetCategoryOrderAsync(uuids, parentCategoryUuid);
+                return categories;
+            }
+        }
+
+        public static async Task UpdateCustomCategoriesOrder(List<Category> categories, Guid parentCategoryUuid)
+        {
+            List<Guid> categoryUuids = new List<Guid>();
+            foreach (var category in categories)
+                categoryUuids.Add(category.Uuid);
+
+            await UpdateCustomCategoriesOrder(categoryUuids, parentCategoryUuid);
+        }
+
+        public static async Task UpdateCustomCategoriesOrder(List<Guid> categoryUuids, Guid parentCategoryUuid)
+        {
+            await DatabaseOperations.SetCategoryOrderAsync(categoryUuids, parentCategoryUuid);
+        }
+        #endregion
+
         #region Sound order methods
         /**
          * Sorts the sounds list by the given sound order
@@ -1802,7 +1951,7 @@ namespace UniversalSoundBoard.DataAccess
             // Get the order table objects
             var tableObjects = await DatabaseOperations.GetAllOrdersAsync();
 
-            // Get the order objects with the type Sound (1), the right category uuid and the same favourite
+            // Get the order table objects with the type Sound (1), the right category uuid and the same favourite
             var soundOrderTableObjects = tableObjects.FindAll((TableObject obj) =>
             {
                 // Check if the object is of type Sound
