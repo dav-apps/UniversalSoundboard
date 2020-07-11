@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
 using Windows.UI.Xaml;
@@ -141,6 +142,19 @@ namespace UniversalSoundBoard.Converters
 
             if (categories.Count == 0) return new Thickness(0, 0, 0, 0);
             return new Thickness(0, 0, 10, 0);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class GridViewReorderItemsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

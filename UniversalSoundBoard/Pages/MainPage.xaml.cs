@@ -513,6 +513,7 @@ namespace UniversalSoundBoard.Pages
             else
             {
                 // Show the selected category
+                if (args.InvokedItemContainer == null) return;
                 Guid categoryUuid = (Guid)args.InvokedItemContainer.Tag;
                 if (categoryUuid.Equals(FileManager.itemViewHolder.SelectedCategory) && FileManager.itemViewHolder.Page == typeof(SoundPage)) return;
 

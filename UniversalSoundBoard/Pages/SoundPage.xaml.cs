@@ -47,9 +47,6 @@ namespace UniversalSoundBoard.Pages
         protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             soundsPivotSelected = true;
-
-            bool canReorderItems = FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom;
-            SetReorderItems(canReorderItems);
         }
 
         private async void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -118,14 +115,6 @@ namespace UniversalSoundBoard.Pages
 
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            bool canReorderItems = !(
-                e.Action == NotifyCollectionChangedAction.Add
-                && !string.IsNullOrEmpty(FileManager.itemViewHolder.SearchQuery)
-            );
-
-            // Enable or disable the ability to drag sounds
-            SetReorderItems(canReorderItems);
-
             if (e.Action == NotifyCollectionChangedAction.Remove)
                 isDragging = true;
 
@@ -161,25 +150,6 @@ namespace UniversalSoundBoard.Pages
         #endregion
 
         #region Helper methods
-        private void SetReorderItems(bool value)
-        {
-            // GridViews
-            SoundGridView.CanReorderItems = value;
-            SoundGridView.AllowDrop = value;
-            SoundGridView2.CanReorderItems = value;
-            SoundGridView2.AllowDrop = value;
-            FavouriteSoundGridView.CanReorderItems = value;
-            FavouriteSoundGridView.AllowDrop = value;
-
-            // ListViews
-            SoundListView.CanReorderItems = value;
-            SoundListView.AllowDrop = value;
-            SoundListView2.CanReorderItems = value;
-            SoundListView2.AllowDrop = value;
-            FavouriteSoundListView.CanReorderItems = value;
-            FavouriteSoundListView.AllowDrop = value;
-        }
-
         private GridView GetVisibleGridView()
         {
             if (!FileManager.itemViewHolder.ShowSoundsPivot)
