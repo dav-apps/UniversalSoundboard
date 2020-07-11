@@ -1086,6 +1086,17 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Category methods
+        public static async Task CreateCategoriesListAsync()
+        {
+            itemViewHolder.Categories.Clear();
+            itemViewHolder.Categories.Add(new Category(Guid.Empty, loader.GetString("AllSounds"), "\uE10F"));
+
+            foreach (Category cat in await GetAllCategoriesAsync())
+                itemViewHolder.Categories.Add(cat);
+
+            itemViewHolder.TriggerCategoriesUpdatedEvent();
+        }
+
         /**
          * Adds the category to the Categories list, either at the end or as a child of another category
          */
@@ -1321,6 +1332,140 @@ namespace UniversalSoundBoard.DataAccess
 
             return false;
         }
+
+        /**
+         * Finds the category with the given uuid, moves it up or down within the list and saves the new category order
+         * Should be called with categories = itemViewHolder.Categories and with parentCategoryUuid = Guid.Empty, if the category is not a subcategory
+         */
+        public static async Task<bool> MoveCategoryAndSaveOrderAsync(List<Category> categories, Guid searchedCategoryUuid, Guid parentCategoryUuid, bool up)
+        {
+            bool categoryFound = false;
+            int i = 0;
+
+            foreach (var category in categories)
+            {
+                if (category.Uuid.Equals(searchedCategoryUuid))
+                {
+                    categoryFound = true;
+                    break;
+                }
+                else
+                {
+                    if (await MoveCategoryAndSaveOrderAsync(category.Children, searchedCategoryUuid, category.Uuid, up))
+                        return true;
+                }
+
+                i++;
+            }
+
+            if (categoryFound)
+            {
+                // Move the menu item
+                var category = categories[i];
+                categories.Remove(category);
+                if (up)
+                    categories.Insert(i - 1, category);
+                else
+                    categories.Insert(i + 1, category);
+
+                await UpdateCustomCategoriesOrder(categories, parentCategoryUuid);
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * Finds the category with the given uuid, moves it into the Children of the category above or below and saves the new category orders and the new parent of the moved category
+         * Should be called with categories = itemViewHolder.Categories
+         */
+        public static async Task<bool> MoveCategoryToCategoryAndSaveOrderAsync(List<Category> categories, Guid searchedCategoryUuid, bool up)
+        {
+            for (int i = 0; i < categories.Count; i++)
+            {
+                var currentCategory = categories[i];
+
+                if (currentCategory.Uuid.Equals(searchedCategoryUuid))
+                {
+                    var movedElement = categories.ElementAt(i);
+                    if (up && i == 0) return true;
+
+                    // Remove the category from the categories
+                    categories.RemoveAt(i);
+
+                    // Add the category to the children of the category above or below
+                    Category targetCategory;
+
+                    if (up)
+                    {
+                        targetCategory = categories[i - 1];
+                        targetCategory.Children.Add(movedElement);
+                    }
+                    else
+                    {
+                        targetCategory = categories[i];
+                        targetCategory.Children.Insert(0, movedElement);
+                    }
+
+                    // Save the new order of the children
+                    await UpdateCustomCategoriesOrder(targetCategory.Children, targetCategory.Uuid);
+
+                    // Update the parent of the moved category
+                    await UpdateParentOfCategoryAsync(movedElement.Uuid, targetCategory.Uuid);
+
+                    return true;
+                }
+                else if (await MoveCategoryToCategoryAndSaveOrderAsync(currentCategory.Children, searchedCategoryUuid, up))
+                    return true;
+            }
+            return false;
+        }
+
+        /**
+         * Finds the category with the given uuid, moves it into the Children of the parent category above or below and saves the new category orders and the parent of the moved category
+         * Should be called with categories = itemViewHolder.Categories
+         */
+        public static async Task<bool> MoveCategoryToParentAndSaveOrderAsync(List<Category> categories, Guid parentUuid, Guid searchedCategoryUuid, bool up)
+        {
+            for (int i = 0; i < categories.Count; i++)
+            {
+                bool categoryFound = false;
+                int j = 0;
+                var currentCategory = categories[i];
+
+                foreach (var childCategory in currentCategory.Children)
+                {
+                    if (childCategory.Uuid.Equals(searchedCategoryUuid))
+                    {
+                        categoryFound = true;
+                        break;
+                    }
+
+                    j++;
+                }
+
+                if (categoryFound)
+                {
+                    var movedElement = currentCategory.Children.ElementAt(j);
+
+                    // Remove the child from the children
+                    currentCategory.Children.RemoveAt(j);
+                    await UpdateCustomCategoriesOrder(currentCategory.Children, currentCategory.Uuid);
+
+                    // Add the element to the parent
+                    if (up)
+                        categories.Insert(i, movedElement);
+                    else
+                        categories.Insert(i + 1, movedElement);
+
+                    await UpdateCustomCategoriesOrder(categories, searchedCategoryUuid);
+                    await UpdateParentOfCategoryAsync(movedElement.Uuid, parentUuid);
+                    return true;
+                }
+                else if (await MoveCategoryToParentAndSaveOrderAsync(currentCategory.Children, currentCategory.Uuid, searchedCategoryUuid, up))
+                    return true;
+            }
+            return false;
+        }
         #endregion
 
         #region PlayingSound methods
@@ -1422,8 +1567,21 @@ namespace UniversalSoundBoard.DataAccess
 
             // Get all categories
             foreach (var categoryTableObject in categoriesTableObjectList)
-                if (categoryTableObject.GetPropertyValue(CategoryTableParentPropertyName) == null)
+            {
+                string parent = categoryTableObject.GetPropertyValue(CategoryTableParentPropertyName);
+                bool isRootCategory = parent == null;
+
+                if (!isRootCategory)
+                {
+                    // Try to parse the uuid
+                    Guid? parentUuid = ConvertStringToGuid(parent);
+                    if (parentUuid.HasValue && parentUuid.Value.Equals(Guid.Empty))
+                        isRootCategory = true;
+                }
+
+                if (isRootCategory)
                     categories.Add(await GetCategoryAsync(categoryTableObject.Uuid));
+            }
 
             // Sort all categories
             foreach (var category in await SortCategoriesByCustomOrder(categories, Guid.Empty))
@@ -1475,7 +1633,12 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task UpdateCategoryAsync(Guid uuid, string name, string icon)
         {
-            await DatabaseOperations.UpdateCategoryAsync(uuid, name, icon);
+            await DatabaseOperations.UpdateCategoryAsync(uuid, name, icon, null);
+        }
+
+        public static async Task UpdateParentOfCategoryAsync(Guid uuid, Guid parent)
+        {
+            await DatabaseOperations.UpdateCategoryAsync(uuid, null, null, parent);
         }
 
         public static async Task DeleteCategoryAsync(Guid categoryUuid)
@@ -2280,17 +2443,6 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region General methods
-        public static async Task CreateCategoriesListAsync()
-        {
-            itemViewHolder.Categories.Clear();
-            itemViewHolder.Categories.Add(new Category(Guid.Empty, loader.GetString("AllSounds"), "\uE10F"));
-
-            foreach (Category cat in await GetAllCategoriesAsync())
-                itemViewHolder.Categories.Add(cat);
-
-            itemViewHolder.TriggerCategoriesUpdatedEvent();
-        }
-
         public static async Task UpdatePlayingSoundListItemAsync(Guid uuid)
         {
             var playingSound = await GetPlayingSoundAsync(uuid);

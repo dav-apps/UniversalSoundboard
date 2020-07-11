@@ -151,7 +151,7 @@ namespace UniversalSoundBoard.DataAccess
             return await Dav.Database.GetAllTableObjectsAsync(FileManager.CategoryTableId, false);
         }
 
-        public static async Task UpdateCategoryAsync(Guid uuid, string name, string icon)
+        public static async Task UpdateCategoryAsync(Guid uuid, string name, string icon, Guid? parent)
         {
             var categoryTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (categoryTableObject == null || categoryTableObject.TableId != FileManager.CategoryTableId) return;
@@ -160,6 +160,8 @@ namespace UniversalSoundBoard.DataAccess
                 await categoryTableObject.SetPropertyValueAsync(FileManager.CategoryTableNamePropertyName, name);
             if (!string.IsNullOrEmpty(icon))
                 await categoryTableObject.SetPropertyValueAsync(FileManager.CategoryTableIconPropertyName, icon);
+            if (parent.HasValue)
+                await categoryTableObject.SetPropertyValueAsync(FileManager.CategoryTableParentPropertyName, parent.Value.ToString());
         }
 
         public static async Task DeleteCategoryAsync(Guid uuid)

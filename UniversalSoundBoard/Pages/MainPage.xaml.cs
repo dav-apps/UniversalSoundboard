@@ -351,6 +351,9 @@ namespace UniversalSoundBoard.Pages
             return false;
         }
 
+        /**
+         * Returns the count of the children of the category, defined by the given path
+         */
         private int GetCategoryMenuItemChildrenCountByPath(List<int> positionPath)
         {
             List<WinUI.NavigationViewItem> currentItemList = new List<WinUI.NavigationViewItem>();
@@ -369,6 +372,125 @@ namespace UniversalSoundBoard.Pages
             }
 
             return currentItemList.Count;
+        }
+
+        /**
+         * Finds the category menu item with the given uuid and moves it up or down within the list of menu items
+         * Should be called with menuItems = SideBar.MenuItems
+         */
+        private bool MoveCategoryMenuItem(IList<object> menuItems, Guid searchedCategoryUuid, bool up)
+        {
+            bool categoryFound = false;
+            int i = 0;
+
+            foreach (var menuItem in menuItems)
+            {
+                WinUI.NavigationViewItem item = (WinUI.NavigationViewItem)menuItem;
+
+                if (((Guid)item.Tag).Equals(searchedCategoryUuid))
+                {
+                    categoryFound = true;
+                    break;
+                }
+                else
+                {
+                    if (MoveCategoryMenuItem(item.MenuItems, searchedCategoryUuid, up))
+                        return true;
+                }
+
+                i++;
+            }
+
+            if (categoryFound)
+            {
+                // Move the menu item
+                var selectedItem = menuItems[i];
+                menuItems.Remove(selectedItem);
+                if (up)
+                    menuItems.Insert(i - 1, selectedItem);
+                else
+                    menuItems.Insert(i + 1, selectedItem);
+
+                return true;
+            }
+            return false;
+        }
+
+        /**
+         * Finds the category menu item with the given uuid and moves it into the children of the menu item above or below
+         * Should be called with menuItems = SideBar.MenuItems
+         */
+        private bool MoveCategoryMenuItemToMenuItem(IList<object> menuItems, Guid searchedCategoryUuid, bool up)
+        {
+            for (int i = 0; i < menuItems.Count; i++)
+            {
+                var item = (WinUI.NavigationViewItem)menuItems[i];
+
+                if (((Guid)item.Tag).Equals(searchedCategoryUuid))
+                {
+                    var movedElement = menuItems.ElementAt(i);
+
+                    // Remove the item from the menu items
+                    menuItems.RemoveAt(i);
+
+                    // Add the menu item to the category above or below
+                    if (up)
+                        ((WinUI.NavigationViewItem)menuItems[i - 1]).MenuItems.Add(movedElement);
+                    else
+                        ((WinUI.NavigationViewItem)menuItems[i]).MenuItems.Insert(0, movedElement);
+
+                    return true;
+                }
+                else if (MoveCategoryMenuItemToMenuItem(item.MenuItems, searchedCategoryUuid, up))
+                    return true;
+            }
+            return false;
+        }
+
+        /**
+         * Finds the category menu item with the given uuid and moves it into the children of the parent menu item above or below
+         * Should be called with menuItems = SideBar.MenuItems
+         */
+        private bool MoveCategoryMenuItemToParent(IList<object> menuItems, Guid uuid, bool up)
+        {
+            for(int i = 0; i < menuItems.Count; i++)
+            {
+                var item = (WinUI.NavigationViewItem)menuItems[i];
+                bool categoryFound = false;
+                int j = 0;
+
+                foreach(var childMenuItem in item.MenuItems)
+                {
+                    var childItem = (WinUI.NavigationViewItem)childMenuItem;
+
+                    if(((Guid)childItem.Tag).Equals(uuid))
+                    {
+                        categoryFound = true;
+                        break;
+                    }
+                    
+                    j++;
+                }
+
+                if (categoryFound)
+                {
+                    var movedElement = item.MenuItems.ElementAt(j);
+
+                    // Remove the child from the children of the menu item
+                    item.MenuItems.RemoveAt(j);
+
+                    // Add the element to the parent
+                    if(up)
+                        menuItems.Insert(i, movedElement);
+                    else
+                        menuItems.Insert(i + 1, movedElement);
+
+                    return true;
+                }
+                else if (MoveCategoryMenuItemToParent(item.MenuItems, uuid, up))
+                    return true;
+            }
+            return false;
         }
 
         private async Task GoBack()
@@ -910,7 +1032,6 @@ namespace UniversalSoundBoard.Pages
 
             // Move to parent category
             MenuFlyoutItem moveToParentCategoryItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-Position-MoveToParentCategory") };
-            moveToParentCategoryItem.Click += MoveToParentCategoryItem_Click;
 
             if (!isFirstItem)
             {
@@ -926,10 +1047,11 @@ namespace UniversalSoundBoard.Pages
                 positionSubFlyoutItem.Items.Add(moveDownFlyoutItem);
             }
 
-            if(isFirstItem && isSubCategory)
+            if(isFirstItem && !isLastItem && isSubCategory)
             {
                 // Move to parent category
                 moveToParentCategoryItem.Icon = arrowTopLeft;
+                moveToParentCategoryItem.Click += MoveToParentCategoryAboveItem_Click;
                 positionSubFlyoutItem.Items.Add(moveToParentCategoryItem);
             }
 
@@ -951,10 +1073,12 @@ namespace UniversalSoundBoard.Pages
             {
                 // Move to parent category
                 moveToParentCategoryItem.Icon = arrowBottomLeft;
+                moveToParentCategoryItem.Click += MoveToParentCategoryBelowItem_Click;
                 positionSubFlyoutItem.Items.Add(moveToParentCategoryItem);
             }
 
-            flyout.Items.Add(positionSubFlyoutItem);
+            if(positionSubFlyoutItem.Items.Count > 0)
+                flyout.Items.Add(positionSubFlyoutItem);
 
             // Create subcategory
             MenuFlyoutItem createSubCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-AddSubCategory") };
@@ -965,29 +1089,40 @@ namespace UniversalSoundBoard.Pages
         }
 
         #region Position
-        private void MoveUpFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void MoveUpFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            
+            MoveCategoryMenuItem(SideBar.MenuItems, selectedCategory, true);
+            await FileManager.MoveCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, Guid.Empty, true);
         }
 
-        private void MoveDownFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void MoveDownFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            
+            MoveCategoryMenuItem(SideBar.MenuItems, selectedCategory, false);
+            await FileManager.MoveCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, Guid.Empty, false);
         }
 
-        private void MoveToCategoryAboveItem_Click(object sender, RoutedEventArgs e)
+        private async void MoveToCategoryAboveItem_Click(object sender, RoutedEventArgs e)
         {
-
+            MoveCategoryMenuItemToMenuItem(SideBar.MenuItems, selectedCategory, true);
+            await FileManager.MoveCategoryToCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, true);
         }
 
-        private void MoveToCategoryBelowItem_Click(object sender, RoutedEventArgs e)
+        private async void MoveToCategoryBelowItem_Click(object sender, RoutedEventArgs e)
         {
-
+            MoveCategoryMenuItemToMenuItem(SideBar.MenuItems, selectedCategory, false);
+            await FileManager.MoveCategoryToCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, false);
         }
 
-        private void MoveToParentCategoryItem_Click(object sender, RoutedEventArgs e)
+        private async void MoveToParentCategoryAboveItem_Click(object sender, RoutedEventArgs e)
         {
+            MoveCategoryMenuItemToParent(SideBar.MenuItems, selectedCategory, true);
+            await FileManager.MoveCategoryToParentAndSaveOrderAsync(FileManager.itemViewHolder.Categories, Guid.Empty, selectedCategory, true);
+        }
 
+        private async void MoveToParentCategoryBelowItem_Click(object sender, RoutedEventArgs e)
+        {
+            MoveCategoryMenuItemToParent(SideBar.MenuItems, selectedCategory, false);
+            await FileManager.MoveCategoryToParentAndSaveOrderAsync(FileManager.itemViewHolder.Categories, Guid.Empty, selectedCategory, false);
         }
         #endregion
 
