@@ -4,17 +4,10 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:models="using:UniversalSoundBoard.Models"
-    xmlns:components="using:UniversalSoundboard.Components"
     mc:Ignorable="d"
     Loaded="SettingsPage_Loaded">
 
     <Page.Resources>
-        <!-- DataTemplates -->
-        <DataTemplate x:Key="CategoryOrderItemTemplate" x:DataType="models:Category">
-            <components:CategoryOrderItemTemplate />
-        </DataTemplate>
-
         <!-- Styles -->
         <Style x:Key="SettingsContentStyle" TargetType="StackPanel">
             <Setter Property="Orientation" Value="Vertical" />
@@ -62,7 +55,7 @@
                         <StackPanel
                             Name="SavePlayingSoundsStackPanel"
                             Style="{StaticResource SettingsEntryStyle}">
-                            
+
                             <ToggleSwitch
                                 Name="SavePlayingSoundsToggle"
                                 x:Uid="SettingsEntry-SavePlayingSounds"
@@ -70,19 +63,6 @@
                                 Toggled="SavePlayingSoundsToggle_Toggled" />
                         </StackPanel>
 
-                        <StackPanel
-                            Name="ChangeCategoryOrderStackPanel"
-                            Style="{StaticResource SettingsEntryStyle}"
-                            Margin="0,10,5,5">
-                            
-                            <Button
-                                Name="ChangeCategoryOrderButton"
-                                x:Uid="SettingsEntry-ChangeCategoryOrderButton"
-                                Style="{StaticResource ButtonRevealStyle}"
-                                Content="Change the order of the categories"
-                                Click="ChangeCategoryOrderButton_Click" />
-                        </StackPanel>
-                        
                         <StackPanel
                             Name="SoundOrderStackPanel"
                             Style="{StaticResource SettingsEntryStyle}"

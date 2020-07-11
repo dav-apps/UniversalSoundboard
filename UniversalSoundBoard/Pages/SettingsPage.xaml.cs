@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
@@ -244,28 +243,6 @@ namespace UniversalSoundBoard.Pages
         #endregion
 
         #region Events
-        private async void ChangeCategoryOrderButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Show the CategoryOrderContentDialog
-            var itemTemplate = (DataTemplate)Resources["CategoryOrderItemTemplate"];
-
-            var CategoryOrderContentDialog = ContentDialogs.CreateCategoryOrderContentDialog(itemTemplate);
-            CategoryOrderContentDialog.PrimaryButtonClick += CategoryOrderContentDialog_PrimaryButtonClick;
-            await CategoryOrderContentDialog.ShowAsync();
-        }
-
-        private async void CategoryOrderContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            // Save the new order of the categories
-            List<Guid> uuids = new List<Guid>();
-
-            foreach (var category in ContentDialogs.CategoryOrderList)
-                uuids.Add(category.Uuid);
-
-            //await FileManager.SetCategoryOrderAsync(uuids);
-            await FileManager.CreateCategoriesListAsync();
-        }
-
         private void SoundOrderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!initialized) return;

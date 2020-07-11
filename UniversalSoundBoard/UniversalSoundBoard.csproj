@@ -116,9 +116,6 @@
     <Compile Include="Common\LocalDataSettings.cs" />
     <Compile Include="Common\RetrieveConstants.cs" />
     <Compile Include="Common\TriggerAction.cs" />
-    <Compile Include="Components\CategoryOrderItemTemplate.xaml.cs">
-      <DependentUpon>CategoryOrderItemTemplate.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
     <Compile Include="Components\CustomMediaTransportControls.cs" />
@@ -235,10 +232,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Components\CategoryOrderItemTemplate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Components\SoundListItemTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

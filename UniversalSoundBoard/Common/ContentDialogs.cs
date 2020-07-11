@@ -41,7 +41,6 @@ namespace UniversalSoundBoard.Common
         public static StorageFolder ExportSoundsFolder;
         public static ListView CategoriesListView;
         public static WinUI.TreeView CategoriesTreeView;
-        public static ObservableCollection<Category> CategoryOrderList;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -725,58 +724,6 @@ namespace UniversalSoundBoard.Common
 
             SetCategoryContentDialog.Content = content;
             return SetCategoryContentDialog;
-        }
-        #endregion
-
-        #region CategoryOrder
-        public static ContentDialog CreateCategoryOrderContentDialog(DataTemplate itemTemplate)
-        {
-            // Get all categories
-            CategoryOrderList = new ObservableCollection<Category>();
-
-            int i = 0;
-            foreach (var category in FileManager.itemViewHolder.Categories)
-            {
-                if (i++ == 0) continue;
-                CategoryOrderList.Add(category);
-            }
-
-            CategoryOrderContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("CategoryOrderContentDialog-Title"),
-                PrimaryButtonText = loader.GetString("ContentDialog-Okay"),
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            StackPanel content = new StackPanel
-            {
-                Orientation = Orientation.Vertical
-            };
-
-            CategoriesListView = new ListView
-            {
-                ItemTemplate = itemTemplate,
-                ItemsSource = CategoryOrderList,
-                SelectionMode = ListViewSelectionMode.None,
-                Height = 300,
-                CanReorderItems = true,
-                CanDragItems = true,
-                AllowDrop = true
-            };
-
-            if(CategoryOrderList.Count > 0)
-                content.Children.Add(CategoriesListView);
-            else
-            {
-                TextBlock noCategoriesTextBlock = new TextBlock
-                {
-                    Text = loader.GetString("SetCategoryContentDialog-NoCategoriesText")
-                };
-                content.Children.Add(noCategoriesTextBlock);
-            }
-
-            CategoryOrderContentDialog.Content = content;
-            return CategoryOrderContentDialog;
         }
         #endregion
     }

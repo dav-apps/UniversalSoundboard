@@ -485,12 +485,6 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="SetCategoryContentDialog-NoCategoriesText" xml:space="preserve">
     <value>Ajouter votre première catégorie en cliquant sur le bouton +.</value>
   </data>
-  <data name="SettingsEntry-ChangeCategoryOrderButton.Content" xml:space="preserve">
-    <value>Changer l'ordre des catégories</value>
-  </data>
-  <data name="CategoryOrderContentDialog-Title" xml:space="preserve">
-    <value>Changer l'ordre des catégories</value>
-  </data>
   <data name="SettingsEntry-SoundOrderComboBox-CreationDate.Content" xml:space="preserve">
     <value>Date de création</value>
   </data>

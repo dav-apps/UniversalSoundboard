@@ -487,12 +487,6 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SetCategoryContentDialog-NoCategoriesText" xml:space="preserve">
     <value>Add your first category by clicking the Plus-Button.</value>
   </data>
-  <data name="SettingsEntry-ChangeCategoryOrderButton.Content" xml:space="preserve">
-    <value>Change the order of the categories</value>
-  </data>
-  <data name="CategoryOrderContentDialog-Title" xml:space="preserve">
-    <value>Change the order of the categories</value>
-  </data>
   <data name="SettingsEntry-SoundOrderComboBox-CreationDate.Content" xml:space="preserve">
     <value>Creation Date</value>
   </data>
