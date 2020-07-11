@@ -1411,6 +1411,7 @@ namespace UniversalSoundBoard.DataAccess
 
                     // Update the parent of the moved category
                     await UpdateParentOfCategoryAsync(movedElement.Uuid, targetCategory.Uuid);
+                    ReloadCategory(movedElement);
 
                     return true;
                 }
@@ -1457,8 +1458,10 @@ namespace UniversalSoundBoard.DataAccess
                     else
                         categories.Insert(i + 1, movedElement);
 
-                    await UpdateCustomCategoriesOrder(categories, searchedCategoryUuid);
+                    await UpdateCustomCategoriesOrder(categories, parentUuid);
                     await UpdateParentOfCategoryAsync(movedElement.Uuid, parentUuid);
+                    ReloadCategory(movedElement);
+
                     return true;
                 }
                 else if (await MoveCategoryToParentAndSaveOrderAsync(currentCategory.Children, currentCategory.Uuid, searchedCategoryUuid, up))
@@ -2010,30 +2013,32 @@ namespace UniversalSoundBoard.DataAccess
             // Load the sound orders, if that didn't already happen
             await LoadCustomSoundOrderAsync();
 
+            // Check if the order exists
+            if (
+                (favourites && !CustomFavouriteSoundOrder.ContainsKey(categoryUuid))
+                || (!favourites && !CustomSoundOrder.ContainsKey(categoryUuid))
+            ) return sounds;
+
             List<Sound> sortedSounds = new List<Sound>();
+            List<Sound> soundsCopy = new List<Sound>();
 
-            if (favourites)
+            // Copy the sounds list
+            foreach (var sound in sounds)
+                soundsCopy.Add(sound);
+
+            // Sort the sounds
+            foreach (var uuid in favourites ? CustomFavouriteSoundOrder[categoryUuid] : CustomSoundOrder[categoryUuid])
             {
-                if (!CustomFavouriteSoundOrder.ContainsKey(categoryUuid)) return sounds;
+                var i = soundsCopy.FindIndex(s => s.Uuid == uuid);
+                if (i == -1) continue;
 
-                foreach (var uuid in CustomFavouriteSoundOrder[categoryUuid])
-                {
-                    var sound = sounds.Find(s => s.Uuid == uuid);
-                    if (sound != null)
-                        sortedSounds.Add(sound);
-                }
+                sortedSounds.Add(soundsCopy.ElementAt(i));
+                soundsCopy.RemoveAt(i);
             }
-            else
-            {
-                if (!CustomSoundOrder.ContainsKey(categoryUuid)) return sounds;
 
-                foreach (var uuid in CustomSoundOrder[categoryUuid])
-                {
-                    var sound = sounds.Find(s => s.Uuid == uuid);
-                    if (sound != null)
-                        sortedSounds.Add(sound);
-                }
-            }
+            // Add the remaining sounds in the list to the end of the sorted sounds
+            foreach (var sound in soundsCopy)
+                sortedSounds.Add(sound);
 
             return sortedSounds;
         }
