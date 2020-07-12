@@ -68,24 +68,6 @@ namespace UniversalSoundBoard.Converters
         }
     }
 
-    public class CollapsedButtonsWidthConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            if ((string)parameter == "small")
-                return (bool)value ? 40 : 100;
-            else if ((string)parameter == "medium")
-                return (bool)value ? 40 : 120;
-            else
-                return (bool)value ? 40 : 140;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return 60;
-        }
-    }
-
     public class BooleanToSelectionMode : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
@@ -155,6 +137,19 @@ namespace UniversalSoundBoard.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             return FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class LogoImageSourceConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Light ? "ms-appx:///Assets/Icons/altform-lightunplated/Square44x44Logo.scale-400.png" : "ms-appx:///Assets/Icons/altform-unplated/Square44x44Logo.scale-400.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

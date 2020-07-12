@@ -264,7 +264,7 @@
   <data name="ExportDataContentDialog-Text1" xml:space="preserve">
     <value>Vous pouvez exporter votre Soundboard pour le sauvegarder ou l'importer sur un autre appareil.
 
-Choissisez le dossier où stocker le fichier exporté.</value>
+ Choissisez le dossier où stocker le fichier exporté.</value>
   </data>
   <data name="ExportDataContentDialog-Text2" xml:space="preserve">
     <value>Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer jusqu'à ce que l'export soit terminé.</value>
@@ -276,7 +276,7 @@ Choissisez le dossier où stocker le fichier exporté.</value>
     <value>Importer</value>
   </data>
   <data name="ImportDataContentDialog-Text1" xml:space="preserve">
-    <value>Vous pouvez importer un Soundboard depuis un autre appareil.
+    <value>Vous pouvez importer un Soundboard depuis un autre appareil. 
 Sélectionner le fichier du Soundboard préalablement exporté.</value>
   </data>
   <data name="ImportDataContentDialog-Text2" xml:space="preserve">
@@ -538,5 +538,20 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="CategoryOptionsFlyout-Position-MoveUp" xml:space="preserve">
     <value>Monter</value>
+  </data>
+  <data name="StartMessage-AddFirstSound.Text" xml:space="preserve">
+    <value>Ajoutez votre premier son</value>
+  </data>
+  <data name="StartMessage-ExistingSoundboardTitle.Text" xml:space="preserve">
+    <value>Vous avez déjà un Soundboard?</value>
+  </data>
+  <data name="StartMessage-ImportExistingSoundboard.Text" xml:space="preserve">
+    <value>Importer votre Soundboard</value>
+  </data>
+  <data name="StartMessage-Login.Text" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="StartMessage-Title.Text" xml:space="preserve">
+    <value>Bienvenue à UniversalSoundboard!</value>
   </data>
 </root>

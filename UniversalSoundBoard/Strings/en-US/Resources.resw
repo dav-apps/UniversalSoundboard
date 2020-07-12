@@ -253,10 +253,10 @@
     <value>Show Favourites tab</value>
   </data>
   <data name="SettingsEntry-ExportDataButton.Content" xml:space="preserve">
-    <value>Export Soundboard</value>
+    <value>Export soundboard</value>
   </data>
   <data name="SettingsEntry-ImportDataButton.Content" xml:space="preserve">
-    <value>Import Soundboard</value>
+    <value>Import soundboard</value>
   </data>
   <data name="ExportDataContentDialog-PrimaryButton" xml:space="preserve">
     <value>Export</value>
@@ -540,5 +540,20 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="CategoryOptionsFlyout-Position-MoveUp" xml:space="preserve">
     <value>Move up</value>
+  </data>
+  <data name="StartMessage-AddFirstSound.Text" xml:space="preserve">
+    <value>Add your first sound</value>
+  </data>
+  <data name="StartMessage-ExistingSoundboardTitle.Text" xml:space="preserve">
+    <value>You already have a soundboard?</value>
+  </data>
+  <data name="StartMessage-ImportExistingSoundboard.Text" xml:space="preserve">
+    <value>Import a soundboard</value>
+  </data>
+  <data name="StartMessage-Login.Text" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="StartMessage-Title.Text" xml:space="preserve">
+    <value>Welcome to UniversalSoundboard!</value>
   </data>
 </root>

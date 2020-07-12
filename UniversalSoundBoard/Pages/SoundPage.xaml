@@ -18,6 +18,7 @@
         <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
         <converters:BooleanToSelectionMode x:Name="BooleanToSelectionMode" />
         <converters:GridViewReorderItemsConverter x:Name="GridViewReorderItemsConverter" />
+        <converters:LogoImageSourceConverter x:Name="LogoImageSourceConverter" />
 
         <!-- DataTemplates -->
         <DataTemplate x:Key="SoundGridViewItemTemplate" x:DataType="models:Sound">
@@ -29,6 +30,16 @@
         </DataTemplate>
 
         <!-- Styles -->
+        <Style x:Name="StartMessageTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}">
+            <Setter Property="Margin" Value="0,60,0,0" />
+            <Setter Property="TextAlignment" Value="Center" />
+        </Style>
+        
+        <Style x:Name="StartMessageButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+        
         <Style TargetType="ListViewItem" x:Key="ListViewItemStyle">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
@@ -461,7 +472,101 @@
             <ColumnDefinition Width="*" x:Name="SecondColDef"  />
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
+        <ScrollViewer Grid.Row="0" Grid.Column="0">
+            <RelativePanel
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                Margin="0,150,0,25">
+
+                <Image
+                    Name="LogoImage"
+                    RelativePanel.AlignHorizontalCenterWithPanel="True"
+                    Source="{Binding CurrentTheme, Converter={StaticResource LogoImageSourceConverter}}"
+                    Width="90"
+                    Height="90" />
+
+                <TextBlock
+                    Name="StartMessageTitleTextBlock"
+                    x:Uid="StartMessage-Title"
+                    Style="{StaticResource StartMessageTitleStyle}"
+                    RelativePanel.Below="LogoImage"
+                    RelativePanel.AlignHorizontalCenterWithPanel="True" />
+
+                <Button
+                    Name="StartMessageAddFirstSoundButton"
+                    Style="{StaticResource StartMessageButtonStyle}"
+                    RelativePanel.Below="StartMessageTitleTextBlock"
+                    RelativePanel.AlignHorizontalCenterWithPanel="True"
+                    Margin="0,25,0,0">
+
+                    <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
+                        <TextBlock
+                            Text="&#xE109;"
+                            FontSize="18"
+                            FontFamily="Segoe MDL2 Assets" />
+
+                        <TextBlock
+                            x:Uid="StartMessage-AddFirstSound"
+                            FontFamily="Segoe UI"
+                            FontSize="18"
+                            Margin="15,-3,0,0"/>
+                    </StackPanel>
+                </Button>
+
+                <TextBlock
+                    Name="StartMessageExistingSoundboardTitleTextBlock"
+                    x:Uid="StartMessage-ExistingSoundboardTitle"
+                    Style="{StaticResource StartMessageTitleStyle}"
+                    RelativePanel.Below="StartMessageAddFirstSoundButton"
+                    RelativePanel.AlignHorizontalCenterWithPanel="True" />
+
+                <StackPanel
+                    Name="StartMessageExistingSoundboardOptionsStackPanel"
+                    RelativePanel.Below="StartMessageExistingSoundboardTitleTextBlock"
+                    RelativePanel.AlignHorizontalCenterWithPanel="True"
+                    Orientation="Horizontal"
+                    Margin="0,25,0,0">
+
+                    <Button
+                        Style="{StaticResource StartMessageButtonStyle}"
+                        Margin="0,0,8,0">
+
+                        <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
+                            <TextBlock
+                                Text="&#xE13D;"
+                                FontSize="18"
+                                FontFamily="Segoe MDL2 Assets" />
+
+                            <TextBlock
+                                x:Uid="StartMessage-Login"
+                                FontFamily="Segoe UI"
+                                FontSize="18"
+                                Margin="15,-3,0,0"/>
+                        </StackPanel>
+                    </Button>
+
+                    <Button
+                        Style="{StaticResource StartMessageButtonStyle}"
+                        Margin="8,0,0,0">
+
+                        <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
+                            <TextBlock
+                                Text="&#xE838;"
+                                FontSize="18"
+                                FontFamily="Segoe MDL2 Assets" />
+
+                            <TextBlock
+                                x:Uid="StartMessage-ImportExistingSoundboard"
+                                FontFamily="Segoe UI"
+                                FontSize="18"
+                                Margin="15,-3,0,0" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </RelativePanel>
+        </ScrollViewer>
+
+        <Grid Grid.Row="0" Grid.Column="0" Visibility="Collapsed">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
