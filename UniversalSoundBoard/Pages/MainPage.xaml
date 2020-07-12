@@ -18,7 +18,6 @@
         <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
         <converters:OptionsOnSoundPageVisibleConverter x:Name="OptionsOnSoundPageVisibleConverter" />
-        <converters:CollapsedButtonsWidthConverter x:Name="CollapsedButtonsWidthConverter" />
 
         <!-- Item Templates -->
         <DataTemplate x:Key="SoundItemTemplate" x:DataType="models:Sound">
@@ -32,7 +31,6 @@
 
         <Style TargetType="Button" x:Key="TopButtonStyle" BasedOn="{StaticResource ButtonRevealStyle}">
             <Setter Property="Height" Value="40" />
-            <Setter Property="Width" Value="40" />
             <Setter Property="Margin" Value="6,0,6,0" />
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
             <Setter Property="FontSize" Value="15" />
@@ -43,6 +41,7 @@
             <Setter Property="Orientation" Value="Horizontal" />
             <Setter Property="HorizontalAlignment" Value="Center" />
             <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="4,2,4,0" />
         </Style>
 
         <Style TargetType="TextBlock" x:Key="TopButtonInnerIconStyle">
@@ -51,7 +50,7 @@
         </Style>
 
         <Style TargetType="TextBlock" x:Key="TopButtonInnerTextStyle">
-            <Setter Property="Margin" Value="11,-2,0,0" />
+            <Setter Property="Margin" Value="15,-3,0,0" />
             <Setter Property="FontFamily" Value="Segoe UI" />
         </Style>
     </Page.Resources>
@@ -177,8 +176,7 @@
                                     <Button
                                         Name="AddButton"
                                         Style="{StaticResource TopButtonStyle}"
-                                        VerticalAlignment="Center"
-                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}">
+                                        VerticalAlignment="Center">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                             <TextBlock
@@ -211,8 +209,7 @@
                                     <Button
                                         Name="VolumeButton"
                                         Style="{StaticResource TopButtonStyle}"
-                                        VerticalAlignment="Center"
-                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}">
+                                        VerticalAlignment="Center">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                             <TextBlock
@@ -245,7 +242,6 @@
                                         Name="SelectButton" 
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
-                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=large}"
                                         Click="SelectButton_Click">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
@@ -280,6 +276,7 @@
                                         Name="SearchButton" 
                                         Content="&#xE094;" 
                                         Style="{StaticResource TopButtonStyle}"
+                                        Width="40"
                                         VerticalAlignment="Center"
                                         Visibility="{Binding SearchButtonVisible}"
                                         Click="SearchButton_Click">
@@ -300,8 +297,7 @@
                                         Name="PlaySoundsButton" 
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
-                                        IsEnabled="{x:Bind selectionButtonsEnabled}"
-                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=medium}">
+                                        IsEnabled="{x:Bind selectionButtonsEnabled}">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                             <TextBlock
@@ -336,7 +332,6 @@
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
                                         IsEnabled="{x:Bind selectionButtonsEnabled}"
-                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource CollapsedButtonsWidthConverter}, ConverterParameter=small}"
                                         Click="DeleteSoundsButton_Click">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
@@ -358,9 +353,9 @@
                                         Name="CancelButton" 
                                         x:Uid="CancelButton"
                                         Style="{StaticResource TopButtonStyle}"
-                                        Width="100"
                                         FontFamily="Segoe UI"
                                         VerticalAlignment="Center"
+                                        Padding="14,5,14,6"
                                         Visibility="{Binding MultiSelectionEnabled}"
                                         Click="CancelButton_Click">
                                     </Button>
@@ -370,6 +365,7 @@
                                     Name="MoreButton"
                                     Style="{StaticResource TopButtonStyle}"
                                     Content="&#xE10C;"
+                                    Width="40"
                                     Visibility="{Binding MultiSelectionEnabled}"
                                     RelativePanel.RightOf="SelectOptionsStackPanel"
                                     RelativePanel.AlignVerticalCenterWithPanel="True">
@@ -430,7 +426,7 @@
 			IsActive="{Binding ProgressRingIsActive}" />
 
         <TextBlock
-            Name="WindowTitleTextBox" 
+            Name="WindowTitleTextBlock" 
             Style="{StaticResource CaptionTextBlockStyle}"
             Text="UniversalSoundboard" 
             VerticalAlignment="Top" 

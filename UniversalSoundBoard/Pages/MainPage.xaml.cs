@@ -139,12 +139,12 @@ namespace UniversalSoundBoard.Pages
             if (SideBar.DisplayMode == WinUI.NavigationViewDisplayMode.Minimal)
             {
                 TitleBar.Width = Window.Current.Bounds.Width - 80;
-                WindowTitleTextBox.Margin = new Thickness(97, 12, 0, 0);
+                WindowTitleTextBlock.Margin = new Thickness(97, 12, 0, 0);
             }
             else
             {
                 TitleBar.Width = Window.Current.Bounds.Width - 40;
-                WindowTitleTextBox.Margin = new Thickness(57, 12, 0, 0);
+                WindowTitleTextBlock.Margin = new Thickness(57, 12, 0, 0);
             }
         }
 
