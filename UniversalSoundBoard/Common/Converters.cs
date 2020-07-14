@@ -158,11 +158,13 @@ namespace UniversalSoundBoard.Converters
         }
     }
 
-    public class AppStateLoadingConverter : IValueConverter
+    public class AppStateLoadingOrInitialSyncConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return FileManager.itemViewHolder.AppState == FileManager.AppState.Loading;
+            return
+                FileManager.itemViewHolder.AppState == FileManager.AppState.Loading
+                || FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

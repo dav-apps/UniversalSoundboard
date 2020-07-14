@@ -49,7 +49,7 @@ namespace UniversalSoundboard.Pages
                 SetUsedStorageTextBlock();
         }
 
-        public static async Task Login()
+        public static async Task<bool> Login()
         {
             if (NetworkInterface.GetIsNetworkAvailable())
             {
@@ -59,21 +59,16 @@ namespace UniversalSoundboard.Pages
                     Uri requestUrl = new Uri(string.Format("{0}/login_session?api_key={1}&app_id={2}&redirect_url={3}", FileManager.WebsiteBaseUrl, FileManager.ApiKey, FileManager.AppId, redirectUrl));
 
                     var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
-                    switch (webAuthenticationResult.ResponseStatus)
-                    {
-                        case WebAuthenticationStatus.Success:
-                            // Get the JWT from the response string
-                            string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
+                    if (webAuthenticationResult.ResponseStatus != WebAuthenticationStatus.Success) return false;
 
-                            // Log the user in with the jwt
-                            davClassLibrary.Models.DavUser user = new davClassLibrary.Models.DavUser();
-                            await user.LoginAsync(jwt);
-                            FileManager.itemViewHolder.User = user;
-                            break;
-                        default:
-                            Debug.WriteLine("There was an error with logging you in.");
-                            break;
-                    }
+                    // Get the JWT from the response string
+                    string jwt = webAuthenticationResult.ResponseData.Split(new[] { "jwt=" }, StringSplitOptions.None)[1];
+
+                    // Log the user in with the jwt
+                    davClassLibrary.Models.DavUser user = new davClassLibrary.Models.DavUser();
+                    await user.LoginAsync(jwt);
+                    FileManager.itemViewHolder.User = user;
+                    return true;
                 }
                 catch (Exception e)
                 {
@@ -85,6 +80,8 @@ namespace UniversalSoundboard.Pages
             {
                 Debug.WriteLine("No internet connection");
             }
+
+            return false;
         }
 
         private void SetUsedStorageTextBlock()

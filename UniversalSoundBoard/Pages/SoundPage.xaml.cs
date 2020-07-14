@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using UniversalSoundboard.Pages;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer;
@@ -319,6 +320,17 @@ namespace UniversalSoundBoard.Pages
         private async void StartMessageAddFirstSoundButton_Click(object sender, RoutedEventArgs e)
         {
             await MainPage.PickSounds();
+        }
+
+        private async void StartMessageLoginButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (await AccountPage.Login() && FileManager.itemViewHolder.AppState == FileManager.AppState.Empty)
+                FileManager.itemViewHolder.AppState = FileManager.AppState.InitialSync;
+        }
+
+        private void StartMessageImportButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
         #endregion
 

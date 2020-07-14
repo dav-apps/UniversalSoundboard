@@ -20,7 +20,7 @@
         <converters:GridViewReorderItemsConverter x:Name="GridViewReorderItemsConverter" />
         <converters:LogoImageSourceConverter x:Name="LogoImageSourceConverter" />
         <converters:AppStateEmptyConverter x:Name="AppStateEmptyConverter" />
-        <converters:AppStateLoadingConverter x:Name="AppStateLoadingConverter" />
+        <converters:AppStateLoadingOrInitialSyncConverter x:Name="AppStateLoadingOrInitialSyncConverter" />
         <converters:AppStateNormalConverter x:Name="AppStateNormalConverter" />
 
         <!-- DataTemplates -->
@@ -478,7 +478,7 @@
         <RelativePanel
             Grid.Row="0"
             Grid.Column="0"
-            Visibility="{Binding AppState, Converter={StaticResource AppStateLoadingConverter}}">
+            Visibility="{Binding AppState, Converter={StaticResource AppStateLoadingOrInitialSyncConverter}}">
 
             <ProgressRing
                 RelativePanel.AlignHorizontalCenterWithPanel="True"
@@ -550,8 +550,10 @@
                     Margin="0,25,0,0">
 
                     <Button
+                        Name="StartMessageLoginButton"
                         Style="{StaticResource StartMessageButtonStyle}"
-                        Margin="0,0,8,0">
+                        Margin="0,0,8,0"
+                        Click="StartMessageLoginButton_Click">
 
                         <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
                             <TextBlock
@@ -568,8 +570,10 @@
                     </Button>
 
                     <Button
+                        Name="StartMessageImportButton"
                         Style="{StaticResource StartMessageButtonStyle}"
-                        Margin="8,0,0,0">
+                        Margin="8,0,0,0"
+                        Click="StartMessageImportButton_Click">
 
                         <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
                             <TextBlock

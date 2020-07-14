@@ -734,7 +734,7 @@ namespace UniversalSoundBoard.Pages
             }
 
             FileManager.itemViewHolder.LoadingScreenVisible = false;
-            if (FileManager.itemViewHolder.AppState == FileManager.AppState.Empty)
+            if (FileManager.itemViewHolder.AppState == FileManager.AppState.Empty && files.Any())
                 FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
         }
         #endregion
