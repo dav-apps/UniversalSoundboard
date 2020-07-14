@@ -154,6 +154,7 @@ namespace UniversalSoundBoard.DataAccess
         public enum AppState
         {
             Loading,
+            InitialSync,
             Empty,
             Normal
         }
@@ -914,6 +915,13 @@ namespace UniversalSoundBoard.DataAccess
             UpdatePlayAllButtonVisibility();
         }
 
+        public static async Task AddAllSounds()
+        {
+            var allSoundTableObjects = await DatabaseOperations.GetAllSoundsAsync();
+            foreach(var soundTableObject in allSoundTableObjects)
+                AddSound(await GetSoundAsync(soundTableObject));
+        }
+
         /**
          * Adds the sound to all appropriate sound lists
          */
@@ -926,9 +934,10 @@ namespace UniversalSoundBoard.DataAccess
         public static void AddSound(Sound sound)
         {
             // Add to AllSounds
-            itemViewHolder.AllSounds.Add(sound);
+            if(!itemViewHolder.AllSounds.ToList().Exists(s => s.Uuid == sound.Uuid))
+                itemViewHolder.AllSounds.Add(sound);
 
-            if (customSoundOrdersLoaded)
+            if (customSoundOrdersLoaded && !CustomSoundOrder[Guid.Empty].Contains(sound.Uuid))
             {
                 // Add the sound to the custom sound order dictionaries
                 CustomSoundOrder[Guid.Empty].Add(sound.Uuid);
@@ -943,7 +952,7 @@ namespace UniversalSoundBoard.DataAccess
                 {
                     parentCategories.Add(c);
 
-                    if (customSoundOrdersLoaded && !CustomSoundOrder[c.Uuid].Contains(sound.Uuid))
+                    if (customSoundOrdersLoaded && CustomSoundOrder.ContainsKey(c.Uuid) && !CustomSoundOrder[c.Uuid].Contains(sound.Uuid))
                         CustomSoundOrder[c.Uuid].Add(sound.Uuid);
                 }
             }
@@ -954,7 +963,7 @@ namespace UniversalSoundBoard.DataAccess
                 || parentCategories.Exists(c => c.Uuid == itemViewHolder.SelectedCategory);
 
             // Add to the current sounds
-            if (soundBelongsToSelectedCategory)
+            if (soundBelongsToSelectedCategory && !itemViewHolder.Sounds.ToList().Exists(s => s.Uuid == sound.Uuid))
                 itemViewHolder.Sounds.Add(sound);
         }
 

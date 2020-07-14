@@ -9,9 +9,19 @@ namespace UniversalSoundboard.Common
 {
     public class TriggerAction : ITriggerAction
     {
-        public void UpdateAllOfTable(int tableId)
+        public async void UpdateAllOfTable(int tableId)
         {
-            
+            CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
+
+            if (tableId == FileManager.SoundTableId)
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.AddAllSounds());
+            else if (tableId == FileManager.CategoryTableId)
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.CreateCategoriesListAsync());
+            else if (tableId == FileManager.PlayingSoundTableId)
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.CreatePlayingSoundsListAsync());
+
+            if (FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync)
+                FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
         }
 
         public async void UpdateTableObject(TableObject tableObject, bool fileDownloaded)
