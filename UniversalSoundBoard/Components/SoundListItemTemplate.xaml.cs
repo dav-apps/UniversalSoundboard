@@ -17,7 +17,7 @@ namespace UniversalSoundboard.Components
             ContentRoot.DataContext = FileManager.itemViewHolder;
 
             DataContextChanged += SoundListItemTemplate_DataContextChanged;
-            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
         }
 
         private void SoundListItemTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -27,15 +27,18 @@ namespace UniversalSoundboard.Components
             Bindings.Update();
         }
 
-        private void ItemViewHolder_ThemeChangedEvent(object sender, System.EventArgs e)
+        private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            RequestedTheme = FileManager.GetRequestedTheme();
-
-            // Set the appropriate default image
-            if (Sound != null && !Sound.HasImageFile())
+            if (e.PropertyName.Equals("CurrentTheme"))
             {
-                Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
-                Bindings.Update();
+                RequestedTheme = FileManager.GetRequestedTheme();
+
+                // Set the appropriate default image
+                if (Sound != null && !Sound.HasImageFile())
+                {
+                    Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
+                    Bindings.Update();
+                }
             }
         }
 

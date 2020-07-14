@@ -26,7 +26,7 @@ namespace UniversalSoundBoard.Components
             ContentRoot.DataContext = FileManager.itemViewHolder;
 
             DataContextChanged += SoundTileTemplate_DataContextChanged;
-            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.SoundTileSizeChangedEvent += ItemViewHolder_SoundTileSizeChangedEvent;
         }
 
@@ -43,9 +43,10 @@ namespace UniversalSoundBoard.Components
             Bindings.Update();
         }
 
-        private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
+        private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            SetThemeColors();
+            if(e.PropertyName.Equals("CurrentTheme"))
+                SetThemeColors();
         }
 
         private void ItemViewHolder_SoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)

@@ -107,11 +107,7 @@ namespace UniversalSoundBoard
             if (FileManager.itemViewHolder.Theme != FileManager.AppTheme.System) return;
 
             // Update the theme
-            var themeBefore = FileManager.itemViewHolder.CurrentTheme;
             FileManager.itemViewHolder.CurrentTheme = sender.ActualTheme == ElementTheme.Dark ? FileManager.AppTheme.Dark : FileManager.AppTheme.Light;
-
-            if (FileManager.itemViewHolder.CurrentTheme != themeBefore)
-                FileManager.itemViewHolder.TriggerThemeChangedEvent();
         }
 
         private Frame CreateRootFrame(ApplicationExecutionState previousExecutionState, string arguments, Type page)

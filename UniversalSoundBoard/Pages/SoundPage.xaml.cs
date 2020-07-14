@@ -31,7 +31,7 @@ namespace UniversalSoundBoard.Pages
             ContentRoot.DataContext = FileManager.itemViewHolder;
 
             // Subscribe to events
-            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.SelectAllSoundsEvent += ItemViewHolder_SelectAllSoundsEvent;
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
@@ -57,9 +57,10 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.PlayingSoundsBarWidth = DrawerContent.ActualWidth;
         }
 
-        private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
+        private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            RequestedTheme = FileManager.GetRequestedTheme();
+            if(e.PropertyName.Equals("CurrentTheme"))
+                RequestedTheme = FileManager.GetRequestedTheme();
         }
 
         private void ItemViewHolder_SelectAllSoundsEvent(object sender, RoutedEventArgs e)

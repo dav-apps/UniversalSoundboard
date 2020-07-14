@@ -19,7 +19,7 @@ namespace UniversalSoundboard.Pages
         public AccountPage()
         {
             InitializeComponent();
-            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -29,9 +29,10 @@ namespace UniversalSoundboard.Pages
             UpdateUserLayout();
         }
 
-        private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
+        private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            SetThemeColors();
+            if(e.PropertyName.Equals("CurrentTheme"))
+                SetThemeColors();
         }
 
         private void SetThemeColors()

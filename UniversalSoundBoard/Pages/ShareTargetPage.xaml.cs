@@ -23,7 +23,7 @@ namespace UniversalSoundBoard.Pages
         public ShareTargetPage()
         {
             InitializeComponent();
-            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.CategoriesUpdatedEvent += ItemViewHolder_CategoriesUpdated;
         }
 
@@ -44,9 +44,10 @@ namespace UniversalSoundBoard.Pages
             SetThemeColors();
         }
 
-        private async void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
+        private async void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            await currentDispatcher.RunAsync(CoreDispatcherPriority.Low, () => SetThemeColors());
+            if(e.PropertyName.Equals("CurrentTheme"))
+                await currentDispatcher.RunAsync(CoreDispatcherPriority.Low, () => SetThemeColors());
         }
 
         private async void ItemViewHolder_CategoriesUpdated(object sender, EventArgs e)

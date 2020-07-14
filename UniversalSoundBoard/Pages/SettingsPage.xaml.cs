@@ -17,7 +17,7 @@ namespace UniversalSoundBoard.Pages
         public SettingsPage()
         {
             InitializeComponent();
-            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
         }
 
         private async void SettingsPage_Loaded(object sender, RoutedEventArgs e)
@@ -44,9 +44,10 @@ namespace UniversalSoundBoard.Pages
             initialized = true;
         }
 
-        private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
+        private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            SetThemeColors();
+            if(e.PropertyName.Equals("CurrentTheme"))
+                SetThemeColors();
         }
 
         private void SetThemeColors()
@@ -182,7 +183,6 @@ namespace UniversalSoundBoard.Pages
         private void ThemeRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            FileManager.AppTheme themeBefore = FileManager.itemViewHolder.CurrentTheme;
             RadioButton radioButton = sender as RadioButton;
 
             if (radioButton == LightThemeRadioButton)
@@ -199,13 +199,6 @@ namespace UniversalSoundBoard.Pages
             {
                 FileManager.itemViewHolder.Theme = FileManager.AppTheme.System;
                 FileManager.itemViewHolder.CurrentTheme = (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? FileManager.AppTheme.Dark : FileManager.AppTheme.Light;
-            }
-
-            // Call the theme updated event if the theme has changed
-            if (FileManager.itemViewHolder.CurrentTheme != themeBefore)
-            {
-                FileManager.itemViewHolder.TriggerThemeChangedEvent();
-                SetThemeColors();
             }
         }
         #endregion

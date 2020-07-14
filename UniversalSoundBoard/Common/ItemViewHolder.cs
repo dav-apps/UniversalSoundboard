@@ -110,7 +110,6 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Events
-        public event EventHandler ThemeChangedEvent;                                // This is triggered when the user changes the theme in the settings
         public event EventHandler CategoriesUpdatedEvent;                           // Is triggered when all categories were loaded into the Categories ObservableCollection
         public event EventHandler<Guid> CategoryUpdatedEvent;                       // Is triggered when a category was updated
         public event EventHandler<Guid> CategoryRemovedEvent;                       // Is triggered when a category was removed
@@ -752,11 +751,6 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Events
-        public void TriggerThemeChangedEvent()
-        {
-            ThemeChangedEvent?.Invoke(null, null);
-        }
-
         public void TriggerCategoriesUpdatedEvent()
         {
             CategoriesUpdatedEvent?.Invoke(null, null);

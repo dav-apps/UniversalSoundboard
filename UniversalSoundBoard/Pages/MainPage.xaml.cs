@@ -43,7 +43,6 @@ namespace UniversalSoundBoard.Pages
 
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
-            FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
             FileManager.itemViewHolder.CategoryUpdatedEvent += ItemViewHolder_CategoryUpdatedEvent;
             FileManager.itemViewHolder.CategoryRemovedEvent += ItemViewHolder_CategoryRemovedEvent;
@@ -84,16 +83,13 @@ namespace UniversalSoundBoard.Pages
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName == "Page" || e.PropertyName == "AppState")
+            if (e.PropertyName.Equals("Page") || e.PropertyName.Equals("AppState"))
             {
                 bool navigationViewHeaderVisible = FileManager.itemViewHolder.AppState == FileManager.AppState.Normal || FileManager.itemViewHolder.Page != typeof(SoundPage);
                 NavigationViewHeader.Visibility = navigationViewHeaderVisible ? Visibility.Visible : Visibility.Collapsed;
             }
-        }
-
-        private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
-        {
-            SetThemeColors();
+            else if(e.PropertyName.Equals("CurrentTheme"))
+                SetThemeColors();
         }
 
         private void SelectedSounds_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
