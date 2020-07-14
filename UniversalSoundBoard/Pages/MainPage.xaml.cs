@@ -42,6 +42,7 @@ namespace UniversalSoundBoard.Pages
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
 
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.ThemeChangedEvent += ItemViewHolder_ThemeChangedEvent;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
             FileManager.itemViewHolder.CategoryUpdatedEvent += ItemViewHolder_CategoryUpdatedEvent;
@@ -79,6 +80,15 @@ namespace UniversalSoundBoard.Pages
         private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             AdjustLayout();
+        }
+
+        private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Page" || e.PropertyName == "AppState")
+            {
+                bool navigationViewHeaderVisible = FileManager.itemViewHolder.AppState == FileManager.AppState.Normal || FileManager.itemViewHolder.Page != typeof(SoundPage);
+                NavigationViewHeader.Visibility = navigationViewHeaderVisible ? Visibility.Visible : Visibility.Collapsed;
+            }
         }
 
         private void ItemViewHolder_ThemeChangedEvent(object sender, EventArgs e)
@@ -690,6 +700,13 @@ namespace UniversalSoundBoard.Pages
         #region New Sounds
         private async void NewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            await PickSounds();
+        }
+
+        public static async Task PickSounds()
+        {
+            var loader = new ResourceLoader();
+
             // Open file explorer
             var picker = new Windows.Storage.Pickers.FileOpenPicker
             {
@@ -721,6 +738,8 @@ namespace UniversalSoundBoard.Pages
             }
 
             FileManager.itemViewHolder.LoadingScreenVisible = false;
+            if (FileManager.itemViewHolder.AppState == FileManager.AppState.Empty)
+                FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
         }
         #endregion
 

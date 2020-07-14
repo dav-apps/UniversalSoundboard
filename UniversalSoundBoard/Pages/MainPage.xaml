@@ -102,6 +102,7 @@
                     <RelativePanel
                         Name="NavigationViewHeader"
                         Canvas.ZIndex="1"
+                        Visibility="Collapsed"
                         Background="Transparent">
 
                         <RelativePanel
@@ -410,7 +411,7 @@
                     <Frame
                         Name="ContentFrame"
                         Canvas.ZIndex="0"
-                        SourcePageType="{Binding Page, Mode=TwoWay}" 
+                        SourcePageType="{Binding Page, Mode=TwoWay}"
                         Grid.Row="0"
                         Grid.RowSpan="2" />
                 </Grid>
