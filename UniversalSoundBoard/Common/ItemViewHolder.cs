@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
@@ -49,6 +48,7 @@ namespace UniversalSoundBoard.Common
 
         #region Variables
         #region State
+        private FileManager.AppState _appState;                             // The current state of the app
         private string _title;                                              // The title text
         private Type _page;                                                 // The current page
         private string _searchQuery;                                        // The string entered into the search box
@@ -249,11 +249,23 @@ namespace UniversalSoundBoard.Common
 
         #region Access Modifiers
         #region State
+        public FileManager.AppState AppState
+        {
+            get => _appState;
+            set
+            {
+                if (_appState.Equals(value)) return;
+                _appState = value;
+                NotifyPropertyChanged("AppState");
+            }
+        }
+
         public string Title
         {
             get => _title;
             set
             {
+                if (_title.Equals(value)) return;
                 _title = value;
                 NotifyPropertyChanged("Title");
             }
@@ -264,6 +276,7 @@ namespace UniversalSoundBoard.Common
             get => _page;
             set
             {
+                if (_page.Equals(value)) return;
                 _page = value;
                 NotifyPropertyChanged("Page");
             }
@@ -274,6 +287,7 @@ namespace UniversalSoundBoard.Common
             get => _searchQuery;
             set
             {
+                if (_searchQuery.Equals(value)) return;
                 _searchQuery = value;
                 NotifyPropertyChanged("SearchQuery");
             }
@@ -284,6 +298,7 @@ namespace UniversalSoundBoard.Common
             get => _allSoundsChanged;
             set
             {
+                if (_allSoundsChanged.Equals(value)) return;
                 _allSoundsChanged = value;
                 NotifyPropertyChanged("AllSoundsChanged");
             }
@@ -294,6 +309,7 @@ namespace UniversalSoundBoard.Common
             get => _selectedCategory;
             set
             {
+                if (_selectedCategory.Equals(value)) return;
                 _selectedCategory = value;
                 NotifyPropertyChanged("SelectedCategory");
             }
@@ -304,6 +320,7 @@ namespace UniversalSoundBoard.Common
             get => _user;
             set
             {
+                if (_user.Equals(value)) return;
                 _user = value;
                 NotifyPropertyChanged("User");
             }
@@ -314,6 +331,7 @@ namespace UniversalSoundBoard.Common
             get => _exporting;
             set
             {
+                if (_exporting.Equals(value)) return;
                 _exporting = value;
                 NotifyPropertyChanged("Exporting");
             }
@@ -324,6 +342,7 @@ namespace UniversalSoundBoard.Common
             get => _exported;
             set
             {
+                if (_exported.Equals(value)) return;
                 _exported = value;
                 NotifyPropertyChanged("Exported");
             }
@@ -334,6 +353,7 @@ namespace UniversalSoundBoard.Common
             get => _importing;
             set
             {
+                if (_importing.Equals(value)) return;
                 _importing = value;
                 NotifyPropertyChanged("Importing");
             }
@@ -344,6 +364,7 @@ namespace UniversalSoundBoard.Common
             get => _imported;
             set
             {
+                if (_imported.Equals(value)) return;
                 _imported = value;
                 NotifyPropertyChanged("Imported");
             }
@@ -354,6 +375,7 @@ namespace UniversalSoundBoard.Common
             get => _exportMessage;
             set
             {
+                if (_exportMessage.Equals(value)) return;
                 _exportMessage = value;
                 NotifyPropertyChanged("ExportMessage");
             }
@@ -364,6 +386,7 @@ namespace UniversalSoundBoard.Common
             get => _importMessage;
             set
             {
+                if (_importMessage.Equals(value)) return;
                 _importMessage = value;
                 NotifyPropertyChanged("ImportMessage");
             }
@@ -374,6 +397,7 @@ namespace UniversalSoundBoard.Common
             get => _soundboardSize;
             set
             {
+                if (_soundboardSize.Equals(value)) return;
                 _soundboardSize = value;
                 NotifyPropertyChanged("SoundboardSize");
             }
@@ -386,6 +410,7 @@ namespace UniversalSoundBoard.Common
             get => _currentTheme;
             set
             {
+                if (_currentTheme.Equals(value)) return;
                 _currentTheme = value;
                 NotifyPropertyChanged("CurrentTheme");
             }
@@ -396,6 +421,7 @@ namespace UniversalSoundBoard.Common
             get => _progressRingIsActive;
             set
             {
+                if (_progressRingIsActive.Equals(value)) return;
                 _progressRingIsActive = value;
                 NotifyPropertyChanged("ProgressRingIsActive");
             }
@@ -406,6 +432,7 @@ namespace UniversalSoundBoard.Common
             get => _loadingScreenVisible;
             set
             {
+                if (_loadingScreenVisible.Equals(value)) return;
                 _loadingScreenVisible = value;
                 NotifyPropertyChanged("LoadingScreenVisible");
             }
@@ -416,6 +443,7 @@ namespace UniversalSoundBoard.Common
             get => _loadingScreenMessage;
             set
             {
+                if (_loadingScreenMessage.Equals(value)) return;
                 _loadingScreenMessage = value;
                 NotifyPropertyChanged("LoadingScreenMessage");
             }
@@ -426,6 +454,7 @@ namespace UniversalSoundBoard.Common
             get => _backButtonEnabled;
             set
             {
+                if (_backButtonEnabled.Equals(value)) return;
                 _backButtonEnabled = value;
                 NotifyPropertyChanged("BackButtonEnabled");
             }
@@ -436,6 +465,7 @@ namespace UniversalSoundBoard.Common
             get => _multiSelectionEnabled;
             set
             {
+                if (_multiSelectionEnabled.Equals(value)) return;
                 _multiSelectionEnabled = value;
                 NotifyPropertyChanged("MultiSelectionEnabled");
             }
@@ -446,6 +476,7 @@ namespace UniversalSoundBoard.Common
             get => _playAllButtonVisible;
             set
             {
+                if (_playAllButtonVisible.Equals(value)) return;
                 _playAllButtonVisible = value;
                 NotifyPropertyChanged("PlayAllButtonVisible");
             }
@@ -456,6 +487,7 @@ namespace UniversalSoundBoard.Common
             get => _editButtonVisible;
             set
             {
+                if (_editButtonVisible.Equals(value)) return;
                 _editButtonVisible = value;
                 NotifyPropertyChanged("EditButtonVisible");
             }
@@ -466,6 +498,7 @@ namespace UniversalSoundBoard.Common
             get => _topButtonsCollapsed;
             set
             {
+                if (_topButtonsCollapsed.Equals(value)) return;
                 _topButtonsCollapsed = value;
                 NotifyPropertyChanged("TopButtonsCollapsed");
             }
@@ -476,6 +509,7 @@ namespace UniversalSoundBoard.Common
             get => _searchAutoSuggestBoxVisible;
             set
             {
+                if (_searchAutoSuggestBoxVisible.Equals(value)) return;
                 _searchAutoSuggestBoxVisible = value;
                 NotifyPropertyChanged("SearchAutoSuggestBoxVisible");
             }
@@ -486,6 +520,7 @@ namespace UniversalSoundBoard.Common
             get => _searchButtonVisible;
             set
             {
+                if (_searchButtonVisible.Equals(value)) return;
                 _searchButtonVisible = value;
                 NotifyPropertyChanged("SearchButtonVisible");
             }
@@ -496,6 +531,7 @@ namespace UniversalSoundBoard.Common
             get => _selectAllFlyoutText;
             set
             {
+                if (_selectAllFlyoutText.Equals(value)) return;
                 _selectAllFlyoutText = value;
                 NotifyPropertyChanged("SelectAllFlyoutText");
             }
@@ -506,6 +542,7 @@ namespace UniversalSoundBoard.Common
             get => _selectAllFlyoutIcon;
             set
             {
+                if (_selectAllFlyoutIcon.Equals(value)) return;
                 _selectAllFlyoutIcon = value;
                 NotifyPropertyChanged("SelectAllFlyoutIcon");
             }
@@ -516,6 +553,7 @@ namespace UniversalSoundBoard.Common
             get => _soundTileWidth;
             set
             {
+                if (_soundTileWidth.Equals(value)) return;
                 _soundTileWidth = value;
                 NotifyPropertyChanged("SoundTileWidth");
             }
@@ -526,6 +564,7 @@ namespace UniversalSoundBoard.Common
             get => _playingSoundsBarWidth;
             set
             {
+                if (_playingSoundsBarWidth.Equals(value)) return;
                 _playingSoundsBarWidth = value;
                 NotifyPropertyChanged("PlayingSoundsBarWidth");
             }
@@ -536,6 +575,7 @@ namespace UniversalSoundBoard.Common
             get => _playingSoundsBarAcrylicBackgroundBrush;
             set
             {
+                if (_playingSoundsBarAcrylicBackgroundBrush.Equals(value)) return;
                 _playingSoundsBarAcrylicBackgroundBrush = value;
                 NotifyPropertyChanged("PlayingSoundsBarAcrylicBackgroundBrush");
             }
@@ -546,6 +586,7 @@ namespace UniversalSoundBoard.Common
             get => _exportAndImportButtonsEnabled;
             set
             {
+                if (_exportAndImportButtonsEnabled.Equals(value)) return;
                 _exportAndImportButtonsEnabled = value;
                 NotifyPropertyChanged("ExportAndImportButtonsEnabled");
             }
@@ -559,6 +600,7 @@ namespace UniversalSoundBoard.Common
             get => _theme;
             set
             {
+                if (_theme.Equals(value)) return;
                 string themeString = "system";
                 switch (value)
                 {
@@ -581,6 +623,7 @@ namespace UniversalSoundBoard.Common
             get => _playingSoundsListVisible;
             set
             {
+                if (_playingSoundsListVisible.Equals(value)) return;
                 localSettings.Values[playingSoundsListVisibleKey] = value;
                 _playingSoundsListVisible = value;
                 NotifyPropertyChanged("PlayingSoundsListVisible");
@@ -592,6 +635,7 @@ namespace UniversalSoundBoard.Common
             get => _playOneSoundAtOnce;
             set
             {
+                if (_playOneSoundAtOnce.Equals(value)) return;
                 localSettings.Values[playOneSoundAtOnceKey] = value;
                 _playOneSoundAtOnce = value;
                 NotifyPropertyChanged("PlayOneSoundAtOnce");
@@ -603,6 +647,7 @@ namespace UniversalSoundBoard.Common
             get => _liveTileEnabled;
             set
             {
+                if (_liveTileEnabled.Equals(value)) return;
                 localSettings.Values[liveTileKey] = value;
                 _liveTileEnabled = value;
                 NotifyPropertyChanged("LiveTileEnabled");
@@ -614,6 +659,7 @@ namespace UniversalSoundBoard.Common
             get => _showListView;
             set
             {
+                if (_showListView.Equals(value)) return;
                 localSettings.Values[showListViewKey] = value;
                 _showListView = value;
                 NotifyPropertyChanged("ShowListView");
@@ -625,6 +671,7 @@ namespace UniversalSoundBoard.Common
             get => _showCategoryIcon;
             set
             {
+                if (_showCategoryIcon.Equals(value)) return;
                 localSettings.Values[showCategoryIconKey] = value;
                 _showCategoryIcon = value;
                 NotifyPropertyChanged("ShowCategoryIcon");
@@ -636,6 +683,7 @@ namespace UniversalSoundBoard.Common
             get => _showSoundsPivot;
             set
             {
+                if (_showSoundsPivot.Equals(value)) return;
                 localSettings.Values[showSoundsPivotKey] = value;
                 _showSoundsPivot = value;
                 NotifyPropertyChanged("ShowSoundsPivot");
@@ -647,6 +695,7 @@ namespace UniversalSoundBoard.Common
             get => _savePlayingSounds;
             set
             {
+                if (_savePlayingSounds.Equals(value)) return;
                 localSettings.Values[savePlayingSoundsKey] = value;
                 _savePlayingSounds = value;
                 NotifyPropertyChanged("SavePlayingSounds");
@@ -658,6 +707,7 @@ namespace UniversalSoundBoard.Common
             get => _volume;
             set
             {
+                if (_volume.Equals(value)) return;
                 localSettings.Values[volumeKey] = value;
                 _volume = value;
                 NotifyPropertyChanged("Volume");
@@ -669,6 +719,7 @@ namespace UniversalSoundBoard.Common
             get => _showAcrylicBackground;
             set
             {
+                if (_showAcrylicBackground.Equals(value)) return;
                 localSettings.Values[showAcrylicBackgroundKey] = value;
                 _showAcrylicBackground = value;
                 NotifyPropertyChanged("ShowAcrylicBackground");
@@ -680,6 +731,7 @@ namespace UniversalSoundBoard.Common
             get => _soundOrder;
             set
             {
+                if (_soundOrder.Equals(value)) return;
                 localSettings.Values[soundOrderKey] = (int)value;
                 _soundOrder = value;
                 NotifyPropertyChanged("SoundOrder");
@@ -691,6 +743,7 @@ namespace UniversalSoundBoard.Common
             get => _soundOrderReversed;
             set
             {
+                if (_soundOrderReversed.Equals(value)) return;
                 localSettings.Values[soundOrderReversedKey] = value;
                 _soundOrderReversed = value;
                 NotifyPropertyChanged("SoundOrderReversed");
@@ -733,20 +786,7 @@ namespace UniversalSoundBoard.Common
         #region NotifyPropertyChanged
         public event PropertyChangedEventHandler PropertyChanged;
 
-        protected bool SetProperty<T>(ref T storage, T value, [CallerMemberName] string propertyName = null)
-        {
-            if (Equals(storage, value)) return false;
-            storage = value;
-            OnPropertyChanged(propertyName);
-            return true;
-        }
-
         private void NotifyPropertyChanged(string propertyName)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        private void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
