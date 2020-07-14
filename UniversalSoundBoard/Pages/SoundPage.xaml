@@ -19,6 +19,9 @@
         <converters:BooleanToSelectionMode x:Name="BooleanToSelectionMode" />
         <converters:GridViewReorderItemsConverter x:Name="GridViewReorderItemsConverter" />
         <converters:LogoImageSourceConverter x:Name="LogoImageSourceConverter" />
+        <converters:AppStateEmptyConverter x:Name="AppStateEmptyConverter" />
+        <converters:AppStateLoadingConverter x:Name="AppStateLoadingConverter" />
+        <converters:AppStateNormalConverter x:Name="AppStateNormalConverter" />
 
         <!-- DataTemplates -->
         <DataTemplate x:Key="SoundGridViewItemTemplate" x:DataType="models:Sound">
@@ -472,7 +475,25 @@
             <ColumnDefinition Width="*" x:Name="SecondColDef"  />
         </Grid.ColumnDefinitions>
 
-        <ScrollViewer Grid.Row="0" Grid.Column="0">
+        <RelativePanel
+            Grid.Row="0"
+            Grid.Column="0"
+            Visibility="{Binding AppState, Converter={StaticResource AppStateLoadingConverter}}">
+
+            <ProgressRing
+                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                Height="40"
+                Width="40"
+                IsActive="True" />
+        </RelativePanel>
+
+        <ScrollViewer
+            Name="StartMessageScrollViewer"
+            Grid.Row="0"
+            Grid.Column="0"
+            Visibility="{Binding AppState, Converter={StaticResource AppStateEmptyConverter}}">
+            
             <RelativePanel
                 RelativePanel.AlignRightWithPanel="True"
                 RelativePanel.AlignLeftWithPanel="True"
@@ -497,7 +518,8 @@
                     Style="{StaticResource StartMessageButtonStyle}"
                     RelativePanel.Below="StartMessageTitleTextBlock"
                     RelativePanel.AlignHorizontalCenterWithPanel="True"
-                    Margin="0,25,0,0">
+                    Margin="0,25,0,0"
+                    Click="StartMessageAddFirstSoundButton_Click">
 
                     <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
                         <TextBlock
@@ -566,7 +588,12 @@
             </RelativePanel>
         </ScrollViewer>
 
-        <Grid Grid.Row="0" Grid.Column="0" Visibility="Collapsed">
+        <Grid
+            Name="SoundContentGrid"
+            Grid.Row="0"
+            Grid.Column="0"
+            Visibility="{Binding AppState, Converter={StaticResource AppStateNormalConverter}}">
+            
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />

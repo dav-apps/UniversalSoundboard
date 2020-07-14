@@ -157,4 +157,43 @@ namespace UniversalSoundBoard.Converters
             throw new NotImplementedException();
         }
     }
+
+    public class AppStateLoadingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return FileManager.itemViewHolder.AppState == FileManager.AppState.Loading;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AppStateEmptyConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return FileManager.itemViewHolder.AppState == FileManager.AppState.Empty;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class AppStateNormalConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return FileManager.itemViewHolder.AppState == FileManager.AppState.Normal;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }

@@ -37,7 +37,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
         }
 
-        #region Events
+        #region Page event handlers
         async void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
             await ShowPlayingSoundsListAsync();
@@ -313,7 +313,14 @@ namespace UniversalSoundBoard.Pages
             }
         }
 
-        #region Events
+        #region Event handlers
+        #region Start message event handlers
+        private async void StartMessageAddFirstSoundButton_Click(object sender, RoutedEventArgs e)
+        {
+            await MainPage.PickSounds();
+        }
+        #endregion
+
         private async void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (FileManager.itemViewHolder.MultiSelectionEnabled) return;
