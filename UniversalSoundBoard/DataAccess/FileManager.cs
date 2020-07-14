@@ -37,25 +37,24 @@ namespace UniversalSoundBoard.DataAccess
     public class FileManager
     {
         #region Variables
-        // Design constants
+        #region Design constants
         public const int mobileMaxWidth = 550;
         public const int tabletMaxWidth = 650;
         public const int topButtonsCollapsedMaxWidth = 1400;
         public const int sideBarCollapsedMaxWidth = 1100;
         public const int hideSearchBoxMaxWidth = 700;
+        #endregion
 
-        // Colors for the background of PlayingSoundsBar and SideBar
-        private static double sideBarAcrylicBackgroundTintOpacity = 0.6;
-        private static double playingSoundsBarAcrylicBackgroundTintOpacity = 0.85;
+        #region Colors for the background of PlayingSoundsBar and SideBar
+        private static readonly double sideBarAcrylicBackgroundTintOpacity = 0.6;
+        private static readonly double playingSoundsBarAcrylicBackgroundTintOpacity = 0.85;
         private static Color sideBarLightBackgroundColor = Color.FromArgb(255, 245, 245, 245);            // #f5f5f5
         private static Color sideBarDarkBackgroundColor = Color.FromArgb(255, 29, 34, 49);                // #1d2231
         private static Color playingSoundsBarLightBackgroundColor = Color.FromArgb(255, 253, 253, 253);   // #fdfdfd
         private static Color playingSoundsBarDarkBackgroundColor = Color.FromArgb(255, 15, 20, 35);       // #0f1423
+        #endregion
 
-        public static ItemViewHolder itemViewHolder;
-        public static DavEnvironment Environment = DavEnvironment.Production;
-
-        // dav Keys
+        #region dav Keys
         private const string ApiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";     // Prod
         public const string ApiKeyDevelopment = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";     // Dev
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
@@ -91,8 +90,9 @@ namespace UniversalSoundBoard.DataAccess
         private const int OrderTableIdProduction = 12;  // Dev: 10; Prod: 12
         private const int OrderTableIdDevelopment = 10;
         public static int OrderTableId => Environment == DavEnvironment.Production ? OrderTableIdProduction : OrderTableIdDevelopment;
+        #endregion
 
-        // Table property names
+        #region Table property names
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
         public const string SoundTableSoundUuidPropertyName = "sound_uuid";
@@ -112,8 +112,9 @@ namespace UniversalSoundBoard.DataAccess
         public const string OrderTableTypePropertyName = "type";
         public const string OrderTableCategoryPropertyName = "category";
         public const string OrderTableFavouritePropertyName = "favs";
+        #endregion
 
-        // Other constants
+        #region Other constants
         public const string TableObjectExtPropertyName = "ext";
         public const string CategoryOrderType = "0";
         public const string SoundOrderType = "1";
@@ -126,7 +127,9 @@ namespace UniversalSoundBoard.DataAccess
             ".wma",
             ".flac"
         };
+        #endregion
 
+        #region Enums
         private enum DataModel
         {
             Old,
@@ -148,7 +151,18 @@ namespace UniversalSoundBoard.DataAccess
             Dark
         }
 
-        // Local variables
+        public enum AppState
+        {
+            Loading,
+            Empty,
+            Normal
+        }
+        #endregion
+
+        #region Local variables
+        public static ItemViewHolder itemViewHolder;
+        public static DavEnvironment Environment = DavEnvironment.Production;
+
         private static readonly ResourceLoader loader = new ResourceLoader();
         internal static bool syncFinished = false;
         private static bool customSoundOrdersLoaded = false;
@@ -156,6 +170,7 @@ namespace UniversalSoundBoard.DataAccess
         // Save the custom order of the sounds in all categories to load them faster
         private static Dictionary<Guid, List<Guid>> CustomSoundOrder = new Dictionary<Guid, List<Guid>>();
         private static Dictionary<Guid, List<Guid>> CustomFavouriteSoundOrder = new Dictionary<Guid, List<Guid>>();
+        #endregion
         #endregion
 
         #region Filesystem methods
@@ -704,6 +719,7 @@ namespace UniversalSoundBoard.DataAccess
         private static async Task LoadSoundsFromDatabase()
         {
             if (!itemViewHolder.AllSoundsChanged) return;
+            itemViewHolder.AppState = AppState.Loading;
 
             // Get all sound table objects
             List<TableObject> soundTableObjects = await DatabaseOperations.GetAllSoundsAsync();
@@ -723,6 +739,7 @@ namespace UniversalSoundBoard.DataAccess
 
             await UpdateLiveTileAsync();
 
+            itemViewHolder.AppState = itemViewHolder.AllSounds.Count == 0 ? AppState.Empty : AppState.Normal;
             itemViewHolder.AllSoundsChanged = false;
         }
 
