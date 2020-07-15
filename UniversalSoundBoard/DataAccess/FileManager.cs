@@ -458,7 +458,7 @@ namespace UniversalSoundBoard.DataAccess
             if (startMessage)
                 itemViewHolder.LoadingScreenVisible = false;
 
-            await CreateCategoriesListAsync();
+            await LoadCategoriesAsync();
             await LoadAllSoundsAsync();
             await CreatePlayingSoundsListAsync();
             await SetSoundBoardSizeTextAsync();
@@ -1126,7 +1126,7 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Category methods
-        public static async Task CreateCategoriesListAsync()
+        public static async Task LoadCategoriesAsync()
         {
             itemViewHolder.Categories.Clear();
             itemViewHolder.Categories.Add(new Category(Guid.Empty, loader.GetString("AllSounds"), "\uE10F"));

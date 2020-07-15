@@ -39,7 +39,7 @@ namespace UniversalSoundBoard.Pages
                 items.Add(file);
 
             // Update the categories list
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await FileManager.CreateCategoriesListAsync());
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await FileManager.LoadCategoriesAsync());
 
             SetThemeColors();
         }

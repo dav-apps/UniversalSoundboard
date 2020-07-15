@@ -16,7 +16,7 @@ namespace UniversalSoundboard.Common
             if (tableId == FileManager.SoundTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.AddAllSounds());
             else if (tableId == FileManager.CategoryTableId)
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.CreateCategoriesListAsync());
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.LoadCategoriesAsync());
             else if (tableId == FileManager.PlayingSoundTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.CreatePlayingSoundsListAsync());
 

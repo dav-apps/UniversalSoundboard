@@ -44,6 +44,7 @@ namespace UniversalSoundBoard.Pages
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
+            FileManager.itemViewHolder.CategoriesUpdatedEvent += ItemViewHolder_CategoriesUpdatedEvent;
             FileManager.itemViewHolder.CategoryUpdatedEvent += ItemViewHolder_CategoryUpdatedEvent;
             FileManager.itemViewHolder.CategoryRemovedEvent += ItemViewHolder_CategoryRemovedEvent;
         }
@@ -54,7 +55,7 @@ namespace UniversalSoundBoard.Pages
             AdjustLayout();
 
             // Load the Categories and the menu items
-            await FileManager.CreateCategoriesListAsync();
+            await FileManager.LoadCategoriesAsync();
             LoadMenuItems();
 
             // Load the PlayingSounds
@@ -96,6 +97,11 @@ namespace UniversalSoundBoard.Pages
         {
             selectionButtonsEnabled = FileManager.itemViewHolder.SelectedSounds.Count > 0;
             Bindings.Update();
+        }
+
+        private void ItemViewHolder_CategoriesUpdatedEvent(object sender, EventArgs e)
+        {
+            LoadMenuItems();
         }
 
         private async void ItemViewHolder_CategoryUpdatedEvent(object sender, Guid uuid)
