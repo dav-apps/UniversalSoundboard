@@ -336,9 +336,10 @@ namespace UniversalSoundBoard.Pages
             await startMessageImportDataContentDialog.ShowAsync();
         }
 
-        private void StartMessageImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void StartMessageImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            
+            FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
+            await FileManager.ImportDataAsync(ContentDialogs.ImportFile, true);
         }
         #endregion
 

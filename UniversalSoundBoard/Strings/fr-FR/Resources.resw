@@ -365,12 +365,6 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="ShareDialog-Title" xml:space="preserve">
     <value>Partagé avec UniversalSoundboard</value>
   </data>
-  <data name="UpgradeDataMessage.Text" xml:space="preserve">
-    <value>Application de la mise à jour. Merci de ne pas fermer ou minimiser l'application.</value>
-  </data>
-  <data name="UpgradeDataStatusMessage-Preparing" xml:space="preserve">
-    <value>Préparation...</value>
-  </data>
   <data name="SettingsEntry-SavePlayingSounds.Header" xml:space="preserve">
     <value>Sauvegarder les sons en train d'être joués</value>
   </data>
@@ -556,5 +550,8 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="StartMessageImportDataContentDialog-Text2" xml:space="preserve">
     <value>L'import peut prendre un certain temps, en fonction de la dimension de votre Soundboard.</value>
+  </data>
+  <data name="ImportMessage-0" xml:space="preserve">
+    <value>Importer votre Soundboard</value>
   </data>
 </root>

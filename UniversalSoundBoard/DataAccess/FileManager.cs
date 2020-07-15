@@ -403,9 +403,12 @@ namespace UniversalSoundBoard.DataAccess
             itemViewHolder.ExportAndImportButtonsEnabled = true;
         }
 
-        public static async Task ImportDataAsync(StorageFile zipFile)
+        public static async Task ImportDataAsync(StorageFile zipFile, bool startMessage)
         {
-            itemViewHolder.ImportMessage = loader.GetString("ImportMessage-1");
+            SetImportMessage(loader.GetString("ImportMessage-1"), startMessage);
+
+            if (startMessage)
+                itemViewHolder.LoadingScreenVisible = true;
 
             await ClearCacheAsync();
 
@@ -427,7 +430,7 @@ namespace UniversalSoundBoard.DataAccess
             });
 
             DataModel dataModel = await GetDataModelAsync(importFolder);
-            Progress<int> progress = new Progress<int>((int value) => itemViewHolder.ImportMessage = value + " %");
+            Progress<int> progress = new Progress<int>((int value) => SetImportMessage(string.Format("{0} %", value), startMessage));
 
             switch (dataModel)
             {
@@ -442,20 +445,31 @@ namespace UniversalSoundBoard.DataAccess
                     break;
             }
 
-            itemViewHolder.ImportMessage = loader.GetString("ExportImportMessage-TidyUp");  // TidyUp
+            SetImportMessage(loader.GetString("ExportImportMessage-TidyUp"), startMessage);     // TidyUp
             itemViewHolder.Importing = false;
 
             await ClearCacheAsync();
 
-            itemViewHolder.ImportMessage = "";
+            SetImportMessage("", startMessage);
             itemViewHolder.Imported = true;
             itemViewHolder.AllSoundsChanged = true;
             itemViewHolder.ExportAndImportButtonsEnabled = true;
+
+            if (startMessage)
+                itemViewHolder.LoadingScreenVisible = false;
 
             await CreateCategoriesListAsync();
             await LoadAllSoundsAsync();
             await CreatePlayingSoundsListAsync();
             await SetSoundBoardSizeTextAsync();
+        }
+
+        private static void SetImportMessage(string message, bool startMessage)
+        {
+            if (startMessage)
+                itemViewHolder.LoadingScreenMessage = string.Format("{0}\n{1}", loader.GetString("ImportMessage-0"), message);
+            else
+                itemViewHolder.ImportMessage = message;
         }
 
         private static async Task UpgradeNewDataModelAsync(StorageFolder root, bool import, IProgress<int> progress)

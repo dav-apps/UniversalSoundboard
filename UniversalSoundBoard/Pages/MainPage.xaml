@@ -453,9 +453,9 @@
                 
                 <ProgressRing
                     IsActive="True" 
-                    Margin="0,0,16,0" 
-                    Height="27" 
-                    Width="27" />
+                    Margin="0,0,28,0" 
+                    Height="30" 
+                    Width="30" />
                 
                 <TextBlock
                     Text="{Binding LoadingScreenMessage}" 
