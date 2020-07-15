@@ -277,7 +277,7 @@ namespace UniversalSoundBoard.Common
 
             TextBlock contentText = new TextBlock
             {
-                Margin = new Thickness(0, 0, 0, 30),
+                Margin = new Thickness(0, 0, 0, 20),
                 TextWrapping = TextWrapping.WrapWholeWords,
                 Text = loader.GetString("ExportDataContentDialog-Text1")
             };
@@ -308,7 +308,7 @@ namespace UniversalSoundBoard.Common
 
             TextBlock contentText2 = new TextBlock
             {
-                Margin = new Thickness(0, 30, 0, 0),
+                Margin = new Thickness(0, 20, 0, 0),
                 TextWrapping = TextWrapping.WrapWholeWords,
                 Text = loader.GetString("ExportDataContentDialog-Text2")
             };
@@ -363,7 +363,7 @@ namespace UniversalSoundBoard.Common
 
             TextBlock contentText = new TextBlock
             {
-                Margin = new Thickness(0, 0, 0, 30),
+                Margin = new Thickness(0, 0, 0, 20),
                 TextWrapping = TextWrapping.WrapWholeWords,
                 Text = loader.GetString("ImportDataContentDialog-Text1")
             };
@@ -394,9 +394,72 @@ namespace UniversalSoundBoard.Common
 
             TextBlock contentText2 = new TextBlock
             {
-                Margin = new Thickness(0, 30, 0, 0),
+                Margin = new Thickness(0, 20, 0, 0),
                 TextWrapping = TextWrapping.WrapWholeWords,
                 Text = loader.GetString("ImportDataContentDialog-Text2")
+            };
+
+            content.Children.Add(contentText);
+            content.Children.Add(folderStackPanel);
+            content.Children.Add(contentText2);
+
+            ImportDataContentDialog.Content = content;
+
+            return ImportDataContentDialog;
+        }
+
+        public static ContentDialog CreateStartMessageImportDataContentDialog()
+        {
+            ImportDataContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("ImportDataContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("ImportDataContentDialog-PrimaryButton"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                IsPrimaryButtonEnabled = false,
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+
+            StackPanel content = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
+            TextBlock contentText = new TextBlock
+            {
+                Margin = new Thickness(0, 0, 0, 20),
+                TextWrapping = TextWrapping.WrapWholeWords,
+                Text = loader.GetString("ImportDataContentDialog-Text1")
+            };
+
+            // Create StackPanel with TextBox and Folder button
+            StackPanel folderStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+            ImportFolderTextBox = new TextBox
+            {
+                IsReadOnly = true
+            };
+
+            Button folderButton = new Button
+            {
+                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                Content = "\uE838",
+                FontSize = 18,
+                Width = 35,
+                Height = 35
+            };
+            folderButton.Tapped += ImportFolderButton_Tapped;
+
+            folderStackPanel.Children.Add(folderButton);
+            folderStackPanel.Children.Add(ImportFolderTextBox);
+
+            TextBlock contentText2 = new TextBlock
+            {
+                Margin = new Thickness(0, 20, 0, 0),
+                TextWrapping = TextWrapping.WrapWholeWords,
+                Text = loader.GetString("StartMessageImportDataContentDialog-Text2")
             };
 
             content.Children.Add(contentText);

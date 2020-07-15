@@ -553,4 +553,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StartMessage-Title.Text" xml:space="preserve">
     <value>Willkommen bei UniversalSoundboard!</value>
   </data>
+  <data name="StartMessageImportDataContentDialog-Text2" xml:space="preserve">
+    <value>Der Import kann einige Zeit dauern, je nachdem wie groß dein Soundboard ist.</value>
+  </data>
 </root>

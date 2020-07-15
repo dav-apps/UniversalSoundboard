@@ -276,13 +276,13 @@
     <value>Importer</value>
   </data>
   <data name="ImportDataContentDialog-Text1" xml:space="preserve">
-    <value>Vous pouvez importer un Soundboard depuis un autre appareil. 
+    <value>Vous pouvez importer un autre Soundboard. 
 Sélectionner le fichier du Soundboard préalablement exporté.</value>
   </data>
   <data name="ImportDataContentDialog-Text2" xml:space="preserve">
     <value>Les nouveaux sons seront ajoutés à ce Soundboard.
 
-Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer jusqu'à ce que l'import soit terminé..</value>
+Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer jusqu'à ce que l'import soit terminé.</value>
   </data>
   <data name="ImportDataContentDialog-Title" xml:space="preserve">
     <value>Importer un Soundboard</value>
@@ -553,5 +553,8 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="StartMessage-Title.Text" xml:space="preserve">
     <value>Bienvenue à UniversalSoundboard!</value>
+  </data>
+  <data name="StartMessageImportDataContentDialog-Text2" xml:space="preserve">
+    <value>L'import peut prendre un certain temps, en fonction de la dimension de votre Soundboard.</value>
   </data>
 </root>

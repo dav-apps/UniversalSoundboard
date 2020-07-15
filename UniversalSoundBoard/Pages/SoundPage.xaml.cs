@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Pages;
+using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer;
@@ -328,9 +329,16 @@ namespace UniversalSoundBoard.Pages
                 FileManager.itemViewHolder.AppState = FileManager.AppState.InitialSync;
         }
 
-        private void StartMessageImportButton_Click(object sender, RoutedEventArgs e)
+        private async void StartMessageImportButton_Click(object sender, RoutedEventArgs e)
         {
+            var startMessageImportDataContentDialog = ContentDialogs.CreateStartMessageImportDataContentDialog();
+            startMessageImportDataContentDialog.PrimaryButtonClick += StartMessageImportDataContentDialog_PrimaryButtonClick;
+            await startMessageImportDataContentDialog.ShowAsync();
+        }
 
+        private void StartMessageImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            
         }
         #endregion
 
