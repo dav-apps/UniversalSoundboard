@@ -59,7 +59,7 @@ namespace UniversalSoundBoard.Pages
             LoadMenuItems();
 
             // Load the PlayingSounds
-            await FileManager.CreatePlayingSoundsListAsync();
+            await FileManager.LoadPlayingSoundsAsync();
 
             // Load the Sounds
             await FileManager.ShowAllSoundsAsync();

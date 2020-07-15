@@ -18,7 +18,7 @@ namespace UniversalSoundboard.Common
             else if (tableId == FileManager.CategoryTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.LoadCategoriesAsync());
             else if (tableId == FileManager.PlayingSoundTableId)
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.CreatePlayingSoundsListAsync());
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.LoadPlayingSoundsAsync());
 
             if (FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync)
                 FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
@@ -33,7 +33,7 @@ namespace UniversalSoundboard.Common
             else if(tableObject.TableId == FileManager.CategoryTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadCategory(tableObject.Uuid));
             else if(tableObject.TableId == FileManager.PlayingSoundTableId)
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.UpdatePlayingSoundListItemAsync(tableObject.Uuid));
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadPlayingSoundAsync(tableObject.Uuid));
         }
 
         public async void DeleteTableObject(TableObject tableObject)

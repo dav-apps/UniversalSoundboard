@@ -239,7 +239,7 @@ namespace UniversalSoundBoard.DataAccess
             return dataModel;
         }
 
-        private static async Task<StorageFile> GetTableObjectFileAsync(Guid uuid)
+        private static async Task<string> GetTableObjectFilePathAsync(Guid uuid)
         {
             var fileTableObject = await DatabaseOperations.GetTableObjectAsync(uuid);
 
@@ -249,15 +249,7 @@ namespace UniversalSoundBoard.DataAccess
                 || fileTableObject.File == null
             ) return null;
 
-            try
-            {
-                return await StorageFile.GetFileFromPathAsync(fileTableObject.File.FullName);
-            }
-            catch (FileNotFoundException e)
-            {
-                Debug.WriteLine(e.Message);
-                return null;
-            }
+            return fileTableObject.File.FullName;
         }
 
         public static async Task<StorageFile> GetAudioFileOfSoundAsync(Guid soundUuid)
@@ -460,7 +452,7 @@ namespace UniversalSoundBoard.DataAccess
 
             await LoadCategoriesAsync();
             await LoadAllSoundsAsync();
-            await CreatePlayingSoundsListAsync();
+            await LoadPlayingSoundsAsync();
             await SetSoundBoardSizeTextAsync();
         }
 
@@ -731,10 +723,9 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Sound methods
-        private static async Task LoadSoundsFromDatabase()
+        private static async Task<bool> LoadSoundsFromDatabaseAsync()
         {
-            if (!itemViewHolder.AllSoundsChanged) return;
-            itemViewHolder.AppState = AppState.Loading;
+            if (!itemViewHolder.AllSoundsChanged) return false;
 
             // Get all sound table objects
             List<TableObject> soundTableObjects = await DatabaseOperations.GetAllSoundsAsync();
@@ -752,10 +743,8 @@ namespace UniversalSoundBoard.DataAccess
             foreach (var sound in sounds)
                 itemViewHolder.AllSounds.Add(sound);
 
-            await UpdateLiveTileAsync();
-
-            itemViewHolder.AppState = itemViewHolder.AllSounds.Count == 0 ? AppState.Empty : AppState.Normal;
             itemViewHolder.AllSoundsChanged = false;
+            return true;
         }
 
         public static async Task<Sound> GetSoundAsync(Guid uuid)
@@ -807,10 +796,8 @@ namespace UniversalSoundBoard.DataAccess
             Guid? imageFileUuid = ConvertStringToGuid(imageFileUuidString);
             if (imageFileUuid.HasValue && !Equals(imageFileUuid, Guid.Empty))
             {
-                var imageFile = await GetTableObjectFileAsync(imageFileUuid.Value);
-
-                if (imageFile != null)
-                    image.UriSource = new Uri(imageFile.Path);
+                var imageFilePath = await GetTableObjectFilePathAsync(imageFileUuid.Value);
+                if (imageFilePath != null) image.UriSource = new Uri(imageFilePath);
             }
             sound.Image = image;
 
@@ -822,7 +809,8 @@ namespace UniversalSoundBoard.DataAccess
         */
         public static async Task LoadAllSoundsAsync()
         {
-            await LoadSoundsFromDatabase();
+            itemViewHolder.AppState = AppState.Loading;
+            bool soundsLoaded = await LoadSoundsFromDatabaseAsync();
 
             // Get all sounds and all favourite sounds
             List<Sound> allSounds = new List<Sound>();
@@ -836,11 +824,23 @@ namespace UniversalSoundBoard.DataAccess
             itemViewHolder.Sounds.Clear();
             itemViewHolder.FavouriteSounds.Clear();
 
-            foreach (var sound in await SortSoundsList(allSounds, itemViewHolder.SoundOrder, itemViewHolder.SoundOrderReversed, Guid.Empty, false))
+            // Sort the sounds
+            var sortedSounds = await SortSoundsList(allSounds, itemViewHolder.SoundOrder, itemViewHolder.SoundOrderReversed, Guid.Empty, false);
+            var sortedFavouriteSounds = await SortSoundsList(allFavouriteSounds, itemViewHolder.SoundOrder, itemViewHolder.SoundOrderReversed, Guid.Empty, true);
+
+            // Hide the progress ring
+            itemViewHolder.AppState = itemViewHolder.AllSounds.Count == 0 ? AppState.Empty : AppState.Normal;
+
+            // Add the sounds to the lists
+            foreach (var sound in sortedSounds)
                 itemViewHolder.Sounds.Add(sound);
 
-            foreach (var sound in await SortSoundsList(allFavouriteSounds, itemViewHolder.SoundOrder, itemViewHolder.SoundOrderReversed, Guid.Empty, true))
+            foreach (var sound in sortedFavouriteSounds)
                 itemViewHolder.FavouriteSounds.Add(sound);
+
+            // Update the LiveTile if the Sounds were just loaded
+            if(soundsLoaded)
+                await UpdateLiveTileAsync();
         }
 
         /**
@@ -848,7 +848,7 @@ namespace UniversalSoundBoard.DataAccess
         */
         public static async Task LoadSoundsOfCategoryAsync(Guid categoryUuid)
         {
-            await LoadSoundsFromDatabase();
+            await LoadSoundsFromDatabaseAsync();
 
             List<Sound> sounds = new List<Sound>();
             List<Sound> favouriteSounds = new List<Sound>();
@@ -878,7 +878,7 @@ namespace UniversalSoundBoard.DataAccess
         */
         public static async Task LoadSoundsByNameAsync(string name)
         {
-            await LoadSoundsFromDatabase();
+            await LoadSoundsFromDatabaseAsync();
 
             itemViewHolder.Sounds.Clear();
             itemViewHolder.FavouriteSounds.Clear();
@@ -1512,6 +1512,71 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region PlayingSound methods
+        public static async Task LoadPlayingSoundsAsync()
+        {
+            var allPlayingSounds = await GetAllPlayingSoundsAsync();
+            foreach (PlayingSound ps in allPlayingSounds)
+            {
+                if (ps.MediaPlayer != null)
+                {
+                    var currentPlayingSoundList = itemViewHolder.PlayingSounds.Where(p => p.Uuid == ps.Uuid);
+
+                    if (currentPlayingSoundList.Count() > 0)
+                    {
+                        var currentPlayingSound = currentPlayingSoundList.First();
+                        int index = itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
+
+                        // Update the current playing sound if it is currently not playing
+                        if (currentPlayingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
+                        {
+                            // Check if the playing sound changed
+                            bool soundWasUpdated = (
+                                currentPlayingSound.Randomly != ps.Randomly
+                                || currentPlayingSound.Repetitions != ps.Repetitions
+                                || currentPlayingSound.Sounds.Count != ps.Sounds.Count
+                            );
+
+                            if (currentPlayingSound.MediaPlayer != null && ps.MediaPlayer != null && !soundWasUpdated)
+                                soundWasUpdated = currentPlayingSound.MediaPlayer.Volume != ps.MediaPlayer.Volume;
+
+                            // Replace the playing sound if it has changed
+                            if (soundWasUpdated)
+                                itemViewHolder.PlayingSounds[index] = ps;
+                        }
+                    }
+                    else
+                    {
+                        // Add the new playing sound
+                        itemViewHolder.PlayingSounds.Add(ps);
+                    }
+                }
+            }
+
+            // Remove old playing sounds
+            foreach (var ps in itemViewHolder.PlayingSounds)
+            {
+                // Remove the playing sound from ItemViewHolder if it does not exist in the new playing sounds list
+                if (allPlayingSounds.Where(p => p.Uuid == ps.Uuid).Count() == 0)
+                    itemViewHolder.PlayingSounds.Remove(ps);
+            }
+        }
+
+        public static async Task ReloadPlayingSoundAsync(Guid uuid)
+        {
+            var playingSound = await GetPlayingSoundAsync(uuid);
+            if (playingSound == null) return;
+
+            var currentPlayingSoundList = itemViewHolder.PlayingSounds.Where(p => p.Uuid == playingSound.Uuid);
+            if (currentPlayingSoundList.Count() == 0) return;
+
+            var currentPlayingSound = currentPlayingSoundList.First();
+            if (currentPlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing) return;
+
+            // Replace the playing sound
+            int index = itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
+            if (index != -1) itemViewHolder.PlayingSounds[index] = playingSound;
+        }
+
         public static void RemovePlayingSound(Guid uuid)
         {
             PlayingSound playingSound = itemViewHolder.PlayingSounds.ToList().Find(ps => ps.Uuid == uuid);
@@ -2488,71 +2553,6 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region General methods
-        public static async Task UpdatePlayingSoundListItemAsync(Guid uuid)
-        {
-            var playingSound = await GetPlayingSoundAsync(uuid);
-            if (playingSound == null) return;
-
-            var currentPlayingSoundList = itemViewHolder.PlayingSounds.Where(p => p.Uuid == playingSound.Uuid);
-            if (currentPlayingSoundList.Count() == 0) return;
-
-            var currentPlayingSound = currentPlayingSoundList.First();
-            if (currentPlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing) return;
-
-            // Replace the playing sound
-            int index = itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
-            if(index != -1) itemViewHolder.PlayingSounds[index] = playingSound;
-        }
-
-        public static async Task CreatePlayingSoundsListAsync()
-        {
-            var allPlayingSounds = await GetAllPlayingSoundsAsync();
-            foreach (PlayingSound ps in allPlayingSounds)
-            {
-                if (ps.MediaPlayer != null)
-                {
-                    var currentPlayingSoundList = itemViewHolder.PlayingSounds.Where(p => p.Uuid == ps.Uuid);
-
-                    if (currentPlayingSoundList.Count() > 0)
-                    {
-                        var currentPlayingSound = currentPlayingSoundList.First();
-                        int index = itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
-
-                        // Update the current playing sound if it is currently not playing
-                        if (currentPlayingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing)
-                        {
-                            // Check if the playing sound changed
-                            bool soundWasUpdated = (
-                                currentPlayingSound.Randomly != ps.Randomly
-                                || currentPlayingSound.Repetitions != ps.Repetitions
-                                || currentPlayingSound.Sounds.Count != ps.Sounds.Count
-                            );
-
-                            if (currentPlayingSound.MediaPlayer != null && ps.MediaPlayer != null && !soundWasUpdated)
-                                soundWasUpdated = currentPlayingSound.MediaPlayer.Volume != ps.MediaPlayer.Volume;
-
-                            // Replace the playing sound if it has changed
-                            if (soundWasUpdated)
-                                itemViewHolder.PlayingSounds[index] = ps;
-                        }
-                    }
-                    else
-                    {
-                        // Add the new playing sound
-                        itemViewHolder.PlayingSounds.Add(ps);
-                    }
-                }
-            }
-            
-            // Remove old playing sounds
-            foreach(var ps in itemViewHolder.PlayingSounds)
-            {
-                // Remove the playing sound from ItemViewHolder if it does not exist in the new playing sounds list
-                if (allPlayingSounds.Where(p => p.Uuid == ps.Uuid).Count() == 0)
-                    itemViewHolder.PlayingSounds.Remove(ps);
-            }
-        }
-
         public static async Task SetSoundBoardSizeTextAsync()
         {
             // TODO
