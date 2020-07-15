@@ -797,6 +797,9 @@ namespace UniversalSoundBoard.DataAccess
             }
             else if(selectedCategoryAtBeginning == null)
             {
+                itemViewHolder.Sounds.Clear();
+                itemViewHolder.FavouriteSounds.Clear();
+
                 // Load sounds by name
                 foreach (var sound in itemViewHolder.AllSounds)
                 {
