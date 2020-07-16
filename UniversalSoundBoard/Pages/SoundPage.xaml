@@ -55,7 +55,7 @@
 
             <Pivot x:Name="SoundsPivot" Grid.Row="0"
                    Margin="5,0,0,0" Visibility="{Binding ShowSoundsPivot}"
-                   PivotItemLoaded="SoundsPivot_PivotItemLoaded">
+                   SelectionChanged="SoundsPivot_SelectionChanged">
                 <PivotItem x:Uid="SoundsPivotHeader" Margin="0,0,0,0">
                     <GridView   Name="SoundGridView"
                                 ItemClick="SoundGridView_ItemClick" 

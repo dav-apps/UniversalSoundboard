@@ -433,17 +433,19 @@ namespace UniversalSoundBoard.Pages
                 await RemovePlayingSoundAsync(removedPlayingSounds[i]);
             }
         }
-        
-        private void SoundsPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
+
+        private void SoundsPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Pivot selectedPivot = (Pivot)sender;
+
             // Deselect all items in both GridViews
             SoundGridView.DeselectRange(new ItemIndexRange(0, (uint)SoundGridView.Items.Count));
             FavouriteSoundGridView.DeselectRange(new ItemIndexRange(0, (uint)FavouriteSoundGridView.Items.Count));
 
             FileManager.itemViewHolder.SelectedSounds.Clear();
-            soundsPivotSelected = (sender.SelectedIndex == 0);
+            soundsPivotSelected = selectedPivot.SelectedIndex == 0;
         }
-        
+
         private void SoundGridView_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             SetSoundGridItemWidth(e, SoundGridView);
