@@ -473,24 +473,28 @@ namespace UniversalSoundBoard.Pages
                 DrawerContentGrid.Height = HandleGrid.ActualHeight;
         }
 
-        private void SoundGridViewPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
+        private void SoundGridViewPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Pivot pivot = (Pivot)sender;
+
             // Deselect all items in both GridViews
             SoundGridView.DeselectRange(new ItemIndexRange(0, (uint)SoundGridView.Items.Count));
             FavouriteSoundGridView.DeselectRange(new ItemIndexRange(0, (uint)FavouriteSoundGridView.Items.Count));
 
             FileManager.itemViewHolder.SelectedSounds.Clear();
-            soundsPivotSelected = sender.SelectedIndex == 0;
+            soundsPivotSelected = pivot.SelectedIndex == 0;
         }
 
-        private void SoundListViewPivot_PivotItemLoaded(Pivot sender, PivotItemEventArgs args)
+        private void SoundListViewPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            Pivot pivot = (Pivot)sender;
+
             // Deselect all items in both ListViews
             SoundListView.DeselectRange(new ItemIndexRange(0, (uint)SoundListView.Items.Count));
             FavouriteSoundListView.DeselectRange(new ItemIndexRange(0, (uint)FavouriteSoundListView.Items.Count));
 
             FileManager.itemViewHolder.SelectedSounds.Clear();
-            soundsPivotSelected = sender.SelectedIndex == 0;
+            soundsPivotSelected = pivot.SelectedIndex == 0;
         }
 
         private void SoundGridView_SizeChanged(object sender, SizeChangedEventArgs e)

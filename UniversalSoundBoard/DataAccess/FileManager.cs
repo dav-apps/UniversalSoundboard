@@ -2167,7 +2167,7 @@ namespace UniversalSoundBoard.DataAccess
             else
             {
                 var category = await GetCategoryAsync(categoryUuid);
-                await LoadCustomSoundOrderForCategoryAsync(category);
+                if(category != null) await LoadCustomSoundOrderForCategoryAsync(category);
             }
         }
 
@@ -2574,6 +2574,7 @@ namespace UniversalSoundBoard.DataAccess
             {
                 await Task.Delay(1000);
                 await SetSoundBoardSizeTextAsync();
+                return;
             }
 
             // Copy AllSounds
@@ -2581,10 +2582,10 @@ namespace UniversalSoundBoard.DataAccess
             foreach (var sound in itemViewHolder.AllSounds)
                 allSounds.Add(sound);
 
-            float totalSize = 0;
+            double totalSize = 0;
             foreach (Sound sound in allSounds)
             {
-                float size = 0;
+                double size = 0;
                 var soundAudioFile = await sound.GetAudioFileAsync();
                 if(soundAudioFile != null)
                     size = await GetFileSizeInGBAsync(soundAudioFile);
@@ -2670,10 +2671,10 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Helper Methods
-        public static async Task<float> GetFileSizeInGBAsync(StorageFile file)
+        public static async Task<double> GetFileSizeInGBAsync(StorageFile file)
         {
             BasicProperties pro = await file.GetBasicPropertiesAsync();
-            return pro.Size / 1000000000f;
+            return pro.Size / 1000000000.0;
         }
 
         public static List<string> GetIconsList()

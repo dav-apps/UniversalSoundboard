@@ -613,7 +613,7 @@
                     Padding="0,85,0,0"
                     Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
                     Visibility="{Binding ShowListView, Converter={StaticResource InvertBooleanConverter}}"
-                    PivotItemLoaded="SoundGridViewPivot_PivotItemLoaded">
+                    SelectionChanged="SoundGridViewPivot_SelectionChanged">
 
                     <PivotItem x:Uid="SoundsPivotHeader" Margin="0">
                         <GridView
@@ -652,7 +652,7 @@
                     Padding="0,85,0,0"
                     Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
                     Visibility="{Binding ShowListView}"
-                    PivotItemLoaded="SoundListViewPivot_PivotItemLoaded">
+                    SelectionChanged="SoundListViewPivot_SelectionChanged">
 
                     <PivotItem x:Uid="SoundsPivotHeader" Margin="0">
                         <ListView
