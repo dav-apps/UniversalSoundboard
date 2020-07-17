@@ -631,7 +631,7 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region ExportSounds
-        public static ContentDialog CreateExportSoundsContentDialog(List<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle)
+        public static ContentDialog CreateExportSoundsContentDialog(List<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle, Style buttonRevealStyle)
         {
             SoundsList.Clear();
             foreach (var sound in sounds)
@@ -679,6 +679,7 @@ namespace UniversalSoundBoard.Common
 
             Button folderButton = new Button
             {
+                Style = buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,

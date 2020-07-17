@@ -1190,8 +1190,9 @@ namespace UniversalSoundBoard.Pages
 
             var template = (DataTemplate)Resources["SoundItemTemplate"];
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
+            var buttonRevealStyle = Resources["ButtonRevealStyle"] as Style;
 
-            var exportSoundsContentDialog = ContentDialogs.CreateExportSoundsContentDialog(sounds, template, listViewItemStyle);
+            var exportSoundsContentDialog = ContentDialogs.CreateExportSoundsContentDialog(sounds, template, listViewItemStyle, buttonRevealStyle);
             exportSoundsContentDialog.PrimaryButtonClick += ExportSoundsContentDialog_PrimaryButtonClick;
             await exportSoundsContentDialog.ShowAsync();
         }
