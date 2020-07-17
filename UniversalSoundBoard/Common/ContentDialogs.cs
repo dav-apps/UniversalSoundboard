@@ -259,7 +259,7 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region ExportData
-        public static ContentDialog CreateExportDataContentDialog()
+        public static ContentDialog CreateExportDataContentDialog(Style buttonRevealStyle)
         {
             ExportDataContentDialog = new ContentDialog
             {
@@ -295,6 +295,7 @@ namespace UniversalSoundBoard.Common
 
             Button folderButton = new Button
             {
+                Style = buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,
@@ -345,7 +346,7 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region ImportData
-        public static ContentDialog CreateImportDataContentDialog()
+        public static ContentDialog CreateImportDataContentDialog(Style buttonRevealStyle)
         {
             ImportDataContentDialog = new ContentDialog
             {
@@ -381,6 +382,7 @@ namespace UniversalSoundBoard.Common
 
             Button folderButton = new Button
             {
+                Style = buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,
@@ -408,7 +410,7 @@ namespace UniversalSoundBoard.Common
             return ImportDataContentDialog;
         }
 
-        public static ContentDialog CreateStartMessageImportDataContentDialog()
+        public static ContentDialog CreateStartMessageImportDataContentDialog(Style buttonRevealStyle)
         {
             ImportDataContentDialog = new ContentDialog
             {
@@ -444,6 +446,7 @@ namespace UniversalSoundBoard.Common
 
             Button folderButton = new Button
             {
+                Style = buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,

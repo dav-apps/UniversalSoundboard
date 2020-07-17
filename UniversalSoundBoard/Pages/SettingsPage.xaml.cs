@@ -254,7 +254,8 @@ namespace UniversalSoundBoard.Pages
 
         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)
         {
-            var ExportDataContentDialog = ContentDialogs.CreateExportDataContentDialog();
+            Style buttonRevealStyle = Resources["ButtonRevealStyle"] as Style;
+            var ExportDataContentDialog = ContentDialogs.CreateExportDataContentDialog(buttonRevealStyle);
             ExportDataContentDialog.PrimaryButtonClick += ExportDataContentDialog_PrimaryButtonClickAsync;
             await ExportDataContentDialog.ShowAsync();
         }
@@ -266,7 +267,8 @@ namespace UniversalSoundBoard.Pages
 
         private async void ImportDataButton_Click(object sender, RoutedEventArgs e)
         {
-            var ImportDataContentDialog = ContentDialogs.CreateImportDataContentDialog();
+            Style buttonRevealStyle = Resources["ButtonRevealStyle"] as Style;
+            var ImportDataContentDialog = ContentDialogs.CreateImportDataContentDialog(buttonRevealStyle);
             ImportDataContentDialog.PrimaryButtonClick += ImportDataContentDialog_PrimaryButtonClick;
             await ImportDataContentDialog.ShowAsync();
         }

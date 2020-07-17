@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
@@ -331,7 +332,8 @@ namespace UniversalSoundBoard.Pages
 
         private async void StartMessageImportButton_Click(object sender, RoutedEventArgs e)
         {
-            var startMessageImportDataContentDialog = ContentDialogs.CreateStartMessageImportDataContentDialog();
+            Style buttonRevealStyle = Resources["ButtonRevealStyle"] as Style;
+            var startMessageImportDataContentDialog = ContentDialogs.CreateStartMessageImportDataContentDialog(buttonRevealStyle);
             startMessageImportDataContentDialog.PrimaryButtonClick += StartMessageImportDataContentDialog_PrimaryButtonClick;
             await startMessageImportDataContentDialog.ShowAsync();
         }
