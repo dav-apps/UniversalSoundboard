@@ -18,6 +18,7 @@ using WinUI = Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using UniversalSoundboard.Components;
+using UniversalSoundboard.Models;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -565,7 +566,7 @@ namespace UniversalSoundBoard.Pages
         #endregion
 
         #region Edit Category
-        private async void CategoryEditButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private async void CategoryEditButton_Click(object sender, RoutedEventArgs e)
         {
             var editCategoryContentDialog = ContentDialogs.CreateEditCategoryContentDialog();
             editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
@@ -590,7 +591,7 @@ namespace UniversalSoundBoard.Pages
         #endregion
 
         #region Delete Category
-        private async void CategoryDeleteButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private async void CategoryDeleteButton_Click(object sender, RoutedEventArgs e)
         {
             var deleteCategoryContentDialog = ContentDialogs.CreateDeleteCategoryContentDialogAsync();
             deleteCategoryContentDialog.PrimaryButtonClick += DeleteCategoryContentDialog_PrimaryButtonClick;
