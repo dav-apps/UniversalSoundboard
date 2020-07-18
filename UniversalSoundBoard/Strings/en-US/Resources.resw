@@ -555,4 +555,22 @@ This may take some time, depending on how large the import file is.</value>
   <data name="ImportMessage-0" xml:space="preserve">
     <value>Importing your soundboard</value>
   </data>
+  <data name="MoreButton.Text" xml:space="preserve">
+    <value>More options</value>
+  </data>
+  <data name="NextButton.Text" xml:space="preserve">
+    <value>Next Track</value>
+  </data>
+  <data name="PauseButtonToolTip" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="PlayButtonToolTip" xml:space="preserve">
+    <value>Play</value>
+  </data>
+  <data name="PreviousButton.Text" xml:space="preserve">
+    <value>Previous Track</value>
+  </data>
+  <data name="RemoveButton.Text" xml:space="preserve">
+    <value>Remove</value>
+  </data>
 </root>

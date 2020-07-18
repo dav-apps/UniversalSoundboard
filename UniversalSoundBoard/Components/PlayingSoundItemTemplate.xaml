@@ -96,7 +96,7 @@
                     </Button.Flyout>
 
                     <ToolTipService.ToolTip>
-                        <TextBlock Name="VolumeButtonToolTip" Text="Volume" />
+                        <TextBlock Name="VolumeButtonToolTip" x:Uid="VolumeButton" Text="Volume" />
                     </ToolTipService.ToolTip>
                 </Button>
             </StackPanel>
@@ -107,13 +107,35 @@
                 Orientation="Horizontal">
 
                 <Button
+                    Name="PreviousButton"
+                    Style="{StaticResource MediaControlButtonStyle}"
+                    Content="&#xE100;"
+                    Click="PreviousButton_Click">
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock Name="PreviousButtonToolTip" x:Uid="PreviousButton" Text="Previous" />
+                    </ToolTipService.ToolTip>
+                </Button>
+
+                <Button
                     Name="PlayPauseButton"
                     Style="{StaticResource MediaControlButtonStyle}"
-                    Click="PlayPauseButton_Click"
-                    Content="&#xE102;">
+                    Content="&#xE102;"
+                    Click="PlayPauseButton_Click">
 
                     <ToolTipService.ToolTip>
                         <TextBlock Name="PlayPauseButtonToolTip" Text="Play" />
+                    </ToolTipService.ToolTip>
+                </Button>
+
+                <Button
+                    Name="NextButton"
+                    Style="{StaticResource MediaControlButtonStyle}"
+                    Content="&#xE101;"
+                    Click="NextButton_Click">
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock Name="NextButtonToolTip" x:Uid="NextButton" Text="Next" />
                     </ToolTipService.ToolTip>
                 </Button>
             </StackPanel>
@@ -130,18 +152,18 @@
                     Content="&#xE106;">
 
                     <ToolTipService.ToolTip>
-                        <TextBlock Name="RemoveButtonToolTip" Text="Remove" />
+                        <TextBlock Name="RemoveButtonToolTip" x:Uid="RemoveButton" Text="Remove" />
                     </ToolTipService.ToolTip>
                 </Button>
 
                 <Button
-                    Name="MenuButton"
+                    Name="MoreButton"
                     Style="{StaticResource MediaControlButtonStyle}"
-                    Click="MenuButton_Click"
+                    Click="MoreButton_Click"
                     Content="&#xE10C;">
 
                     <ToolTipService.ToolTip>
-                        <TextBlock Name="MenuButtonToolTip" Text="Menu" />
+                        <TextBlock Name="MoreButtonToolTip" x:Uid="MoreButton" Text="More options" />
                     </ToolTipService.ToolTip>
                 </Button>
             </StackPanel>

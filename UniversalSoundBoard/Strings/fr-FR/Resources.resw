@@ -554,4 +554,22 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="ImportMessage-0" xml:space="preserve">
     <value>Importer votre Soundboard</value>
   </data>
+  <data name="MoreButton.Text" xml:space="preserve">
+    <value>Plus d'options</value>
+  </data>
+  <data name="NextButton.Text" xml:space="preserve">
+    <value>Piste suivante</value>
+  </data>
+  <data name="PauseButtonToolTip" xml:space="preserve">
+    <value>Suspendre</value>
+  </data>
+  <data name="PlayButtonToolTip" xml:space="preserve">
+    <value>Lecture</value>
+  </data>
+  <data name="PreviousButton.Text" xml:space="preserve">
+    <value>Piste précédente</value>
+  </data>
+  <data name="RemoveButton.Text" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
 </root>

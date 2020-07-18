@@ -74,11 +74,21 @@ namespace UniversalSoundBoard.Components
             await FileManager.SetVolumeOfPlayingSoundAsync(PlayingSound.Uuid, VolumeSlider.Value / 100);
         }
 
+        private void PreviousButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
         private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
             TogglePlayPause();
             await Task.Delay(25);
             UpdatePlayPauseButton();
+        }
+
+        private void NextButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private async void RemoveButton_Click(object sender, RoutedEventArgs e)
@@ -97,7 +107,7 @@ namespace UniversalSoundBoard.Components
             }
         }
 
-        private void MenuButton_Click(object sender, RoutedEventArgs e)
+        private void MoreButton_Click(object sender, RoutedEventArgs e)
         {
 
         }
@@ -124,12 +134,12 @@ namespace UniversalSoundBoard.Components
             if (PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
             {
                 PlayPauseButton.Content = "\uE103";
-                PlayPauseButtonToolTip.Text = "Pause";
+                PlayPauseButtonToolTip.Text = loader.GetString("PauseButtonToolTip");
             }
             else
             {
                 PlayPauseButton.Content = "\uE102";
-                PlayPauseButtonToolTip.Text = "Play";
+                PlayPauseButtonToolTip.Text = loader.GetString("PlayButtonToolTip");
             }
         }
         #endregion
