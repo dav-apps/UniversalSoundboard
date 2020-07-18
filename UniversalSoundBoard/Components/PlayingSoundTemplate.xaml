@@ -4,53 +4,116 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:components="using:UniversalSoundBoard.Components"
+    xmlns:components="using:UniversalSoundboard.Components"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
     Loaded="PlayingSoundTemplate_Loaded"
     SizeChanged="UserControl_SizeChanged">
 
-    <Grid Name="ContentRoot" Background="White">
+    <UserControl.Resources>
+        <Style x:Key="MediaControlButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
+            <Setter Property="Height" Value="40" />
+            <Setter Property="Width" Value="40" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="FontSize" Value="15" />
+            <Setter Property="Margin" Value="1,0,1,0" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Name="ContentRoot" Background="Transparent" Margin="0,6">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <TextBlock
-            Name="PlayingSoundName" 
-            Text="{x:Bind PlayingSound.CurrentSound.Name}"
-            VerticalAlignment="Center" 
-            Margin="10,5,0,0" 
-            TextWrapping="WrapWholeWords" />
+        <Grid Grid.Row="0" Margin="0,0,0,4">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <TextBlock
+                Name="PlayingSoundNameTextBlock"
+                Grid.Column="0"
+                VerticalAlignment="Center"
+                FontSize="15"
+                TextWrapping="WrapWholeWords" />
+
+            <Button
+                Name="ShowSoundsButton"
+                Grid.Column="1"
+                Style="{StaticResource ButtonRevealStyle}"
+                FontFamily="Segoe MDL2 Assets"
+                FontSize="14"
+                Height="32"
+                Width="32"
+                CornerRadius="18"
+                Background="Transparent"
+                Content="&#xE099;" />
+        </Grid>
 
         <MediaPlayerElement
-            Name="MediaPlayerElement" 
+            Name="MediaPlayerElement"
             Grid.Row="1"
             AreTransportControlsEnabled="True">
-            
+
             <MediaPlayerElement.TransportControls>
-                <components:CustomMediaTransportControls
-                    IsCompact="True"
-                    IsFullWindowButtonVisible="False"
-                    IsZoomButtonVisible="False"
-                    VolumeSlider_LostFocus="CustomMediaTransportControls_VolumeSlider_LostFocus"
-                    VolumeSlider_ValueChanged="CustomMediaTransportControls_VolumeSlider_ValueChanged"
-                    RemoveButton_Clicked="CustomMediaTransportControls_RemoveButton_Clicked"
-                    FavouriteFlyout_Clicked="CustomMediaTransportControls_FavouriteFlyout_Clicked"
-                    CastButton_Clicked="CustomMediaTransportControls_CastButton_Clicked"
-                    MenuFlyoutButton_Clicked="CustomMediaTransportControls_MenuFlyoutButton_Clicked"
-                    Repeat_1x_Clicked="CustomMediaTransportControls_Repeat_1x_Clicked"
-                    Repeat_2x_Clicked="CustomMediaTransportControls_Repeat_2x_Clicked"
-                    Repeat_5x_Clicked="CustomMediaTransportControls_Repeat_5x_Clicked"
-                    Repeat_10x_Clicked="CustomMediaTransportControls_Repeat_10x_Clicked"
-                    Repeat_endless_Clicked="CustomMediaTransportControls_Repeat_endless_Clicked">
-                </components:CustomMediaTransportControls>
+                <components:BasicMediaTransportControls />
             </MediaPlayerElement.TransportControls>
         </MediaPlayerElement>
+
+        <RelativePanel Grid.Row="2" Margin="0,10,0,0">
+            <StackPanel
+                Name="MiddleMediaControlStackPanel"
+                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                Orientation="Horizontal">
+
+                <Button
+                    Name="PlayPauseButton"
+                    Style="{StaticResource MediaControlButtonStyle}"
+                    Click="PlayPauseButton_Click"
+                    Content="&#xE102;">
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock Name="PlayPauseButtonToolTip" Text="Play" />
+                    </ToolTipService.ToolTip>
+                </Button>
+            </StackPanel>
+
+            <StackPanel
+                Name="RightMediaControlStackPanel"
+                RelativePanel.AlignRightWithPanel="True"
+                Orientation="Horizontal">
+
+                <Button
+                    Name="RemoveButton"
+                    Style="{StaticResource MediaControlButtonStyle}"
+                    Click="RemoveButton_Click"
+                    Content="&#xE106;">
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock Name="RemoveButtonToolTip" Text="Remove" />
+                    </ToolTipService.ToolTip>
+                </Button>
+
+                <Button
+                    Name="MenuButton"
+                    Style="{StaticResource MediaControlButtonStyle}"
+                    Click="MenuButton_Click"
+                    Content="&#xE10C;">
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock Name="MenuButtonToolTip" Text="Menu" />
+                    </ToolTipService.ToolTip>
+                </Button>
+            </StackPanel>
+        </RelativePanel>
     </Grid>
 </UserControl>
