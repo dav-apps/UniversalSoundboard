@@ -5,10 +5,11 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
-    xmlns:models="using:UniversalSoundBoard.Models"
     xmlns:components="using:UniversalSoundBoard.Components"
     xmlns:components1="using:UniversalSoundboard.Components"
     xmlns:converters="using:UniversalSoundBoard.Converters"
+    xmlns:models="using:UniversalSoundBoard.Models"
+    xmlns:models1="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     Loaded="SoundPage_Loaded"
     SizeChanged="SoundPage_SizeChanged">
@@ -765,7 +766,7 @@
                         </ListView.ItemContainerStyle>
 
                         <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models:PlayingSound">
+                            <DataTemplate x:DataType="models1:PlayingSound">
                                 <components:PlayingSoundTemplate />
                             </DataTemplate>
                         </ListView.ItemTemplate>
@@ -794,7 +795,7 @@
                 </ListView.ItemContainerStyle>
 
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models:PlayingSound">
+                    <DataTemplate x:DataType="models1:PlayingSound">
                         <components:PlayingSoundTemplate />
                     </DataTemplate>
                 </ListView.ItemTemplate>

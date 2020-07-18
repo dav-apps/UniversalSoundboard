@@ -46,6 +46,7 @@
 
             <Button
                 Name="RemoveSoundButton"
+                Style="{StaticResource ButtonRevealStyle}"
                 Background="Transparent"
                 FontFamily="Segoe MDL2 Assets"
                 Content="&#xE108;"

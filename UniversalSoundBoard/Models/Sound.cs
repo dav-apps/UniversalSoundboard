@@ -47,6 +47,11 @@ namespace UniversalSoundBoard.Models
             return await FileManager.GetAudioFileOfSoundAsync(Uuid);
         }
 
+        public async Task<string> GetAudioFilePathAsync()
+        {
+            return await FileManager.GetAudioFilePathOfSoundAsync(Uuid);
+        }
+
         public async Task<Uri> GetAudioUriAsync()
         {
             return await FileManager.GetAudioUriOfSoundAsync(Uuid);

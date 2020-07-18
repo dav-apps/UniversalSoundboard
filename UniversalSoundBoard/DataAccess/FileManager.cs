@@ -263,6 +263,17 @@ namespace UniversalSoundBoard.DataAccess
                 return null;
         }
 
+        public static async Task<string> GetAudioFilePathOfSoundAsync(Guid soundUuid)
+        {
+            var soundFileTableObject = await GetSoundFileTableObjectAsync(soundUuid);
+            if (soundFileTableObject == null || soundFileTableObject.File == null) return null;
+
+            if (File.Exists(soundFileTableObject.File.FullName))
+                return soundFileTableObject.File.FullName;
+            else
+                return null;
+        }
+
         public static async Task<string> GetAudioFileExtensionAsync(Guid soundUuid)
         {
             var soundFileTableObject = await GetSoundFileTableObjectAsync(soundUuid);
@@ -1875,7 +1886,7 @@ namespace UniversalSoundBoard.DataAccess
                 return null;
             }
 
-            // Get the properties of the table objects
+            // Get the properties of the table object
             string currentString = tableObject.GetPropertyValue(PlayingSoundTableCurrentPropertyName);
             int.TryParse(currentString, out int current);
 
@@ -2609,11 +2620,11 @@ namespace UniversalSoundBoard.DataAccess
 
             foreach (Sound sound in sounds)
             {
-                // Check if the sound was downloaded
-                StorageFile audioFile = await sound.GetAudioFileAsync();
+                // Create the MediaPlaybackItem using the audio file path
+                string audioFilePath = await sound.GetAudioFilePathAsync();
                 MediaPlaybackItem mediaPlaybackItem;
 
-                if (audioFile == null)
+                if (audioFilePath == null)
                 {
                     Uri soundUri = await sound.GetAudioUriAsync();
                     if (soundUri == null) continue;
@@ -2621,7 +2632,7 @@ namespace UniversalSoundBoard.DataAccess
                     mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(soundUri));
                 }
                 else
-                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromStorageFile(audioFile));
+                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri(audioFilePath)));
 
                 MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
                 props.Type = MediaPlaybackType.Music;
