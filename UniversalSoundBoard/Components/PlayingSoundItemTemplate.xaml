@@ -71,6 +71,37 @@
 
         <RelativePanel Grid.Row="2" Margin="0,10,0,0">
             <StackPanel
+                Name="LeftMediaControlStackPanel"
+                RelativePanel.AlignLeftWithPanel="True"
+                Orientation="Horizontal">
+
+                <Button
+                    Name="VolumeButton"
+                    Style="{StaticResource MediaControlButtonStyle}"
+                    Content="&#xE15D;"
+                    Click="VolumeButton_Click">
+
+                    <Button.Flyout>
+                        <Flyout>
+                            <StackPanel>
+                                <Slider
+                                    Name="VolumeSlider"
+                                    Minimum="0"
+                                    Maximum="100"
+                                    Width="130"
+                                    ValueChanged="VolumeSlider_ValueChanged"
+                                    LostFocus="VolumeSlider_LostFocus" />
+                            </StackPanel>
+                        </Flyout>
+                    </Button.Flyout>
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock Name="VolumeButtonToolTip" Text="Volume" />
+                    </ToolTipService.ToolTip>
+                </Button>
+            </StackPanel>
+            
+            <StackPanel
                 Name="MiddleMediaControlStackPanel"
                 RelativePanel.AlignHorizontalCenterWithPanel="True"
                 Orientation="Horizontal">

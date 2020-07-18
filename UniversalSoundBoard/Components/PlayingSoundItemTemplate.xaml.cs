@@ -56,6 +56,24 @@ namespace UniversalSoundBoard.Components
         }
 
         #region MediaControlButton events
+        private void VolumeButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Set the value of the volume slider
+            VolumeSlider.Value = Convert.ToInt32(PlayingSound.MediaPlayer.Volume * 100);
+        }
+
+        private void VolumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            // Apply the new volume
+            PlayingSound.MediaPlayer.Volume = VolumeSlider.Value / 100;
+        }
+
+        private async void VolumeSlider_LostFocus(object sender, RoutedEventArgs e)
+        {
+            // Save the new volume
+            await FileManager.SetVolumeOfPlayingSoundAsync(PlayingSound.Uuid, VolumeSlider.Value / 100);
+        }
+
         private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
             TogglePlayPause();
