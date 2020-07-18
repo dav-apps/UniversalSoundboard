@@ -139,8 +139,8 @@
     <Compile Include="Models\Data.cs" />
     <Compile Include="Models\Sound.cs" />
     <Compile Include="Models\SoundDetails.cs" />
-    <Compile Include="Components\PlayingSoundTemplate.xaml.cs">
-      <DependentUpon>PlayingSoundTemplate.xaml</DependentUpon>
+    <Compile Include="Components\PlayingSoundItemTemplate.xaml.cs">
+      <DependentUpon>PlayingSoundItemTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Pages\SettingsPage.xaml.cs">
@@ -246,7 +246,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Components\PlayingSoundTemplate.xaml">
+    <Page Include="Components\PlayingSoundItemTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

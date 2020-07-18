@@ -10,12 +10,12 @@ using Windows.UI.Xaml.Controls;
 
 namespace UniversalSoundBoard.Components
 {
-    public sealed partial class PlayingSoundTemplate : UserControl
+    public sealed partial class PlayingSoundItemTemplate : UserControl
     {
         public PlayingSound PlayingSound { get; set; }
         private readonly ResourceLoader loader = new ResourceLoader();
 
-        public PlayingSoundTemplate()
+        public PlayingSoundItemTemplate()
         {
             InitializeComponent();
 
