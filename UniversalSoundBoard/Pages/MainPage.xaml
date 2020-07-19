@@ -386,11 +386,12 @@
                                                 Visibility="{Binding MultiSelectionEnabled}" />
 
                                             <MenuFlyoutItem
-                                                Name="MoreButton_ChangeCategoryFlyout" 
-                                                x:Uid="MoreButton-SetCategory" 
+                                                Name="MoreButton_SetCategoriesFlyout"
+                                                x:Uid="MoreButton-SetCategories"
+                                                Icon="AllApps"
                                                 IsEnabled="{x:Bind selectionButtonsEnabled}"
                                                 Visibility="{Binding MultiSelectionEnabled}"
-                                                Click="MoreButton_SetCategory_Click" />
+                                                Click="MoreButton_SetCategories_Click" />
 
                                             <MenuFlyoutItem
                                                 Name="MoreButton_ShareFlyout" 
@@ -405,7 +406,12 @@
                                                 x:Uid="MoreButton-Export"
                                                 IsEnabled="{x:Bind selectionButtonsEnabled}"
                                                 Visibility="{Binding MultiSelectionEnabled}"
-                                                Click="MoreButton_ExportFlyout_Click" />
+                                                Click="MoreButton_ExportFlyout_Click">
+                                                
+                                                <MenuFlyoutItem.Icon>
+                                                    <FontIcon Glyph="&#xEDE1;" />
+                                                </MenuFlyoutItem.Icon>
+                                            </MenuFlyoutItem>
                                         </MenuFlyout>
                                     </Button.Flyout>
                                 </Button>

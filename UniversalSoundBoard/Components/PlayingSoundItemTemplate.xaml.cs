@@ -201,6 +201,14 @@ namespace UniversalSoundBoard.Components
             NextButton.Visibility = currentItemIndex != PlayingSound.Sounds.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
         }
 
+        private void UpdateUI()
+        {
+            // Set the name of the current sound and set the favourite flyout item
+            var currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
+            PlayingSoundNameTextBlock.Text = currentSound.Name;
+            SetFavouriteFlyoutItemText(currentSound.Favourite);
+        }
+
         /**
          * Toggles the MediaPlayer from Playing -> Paused or from Paused -> Playing
          */
@@ -234,14 +242,6 @@ namespace UniversalSoundBoard.Components
                 PlayPauseButton.Content = "\uE102";
                 PlayPauseButtonToolTip.Text = loader.GetString("PlayButtonToolTip");
             }
-        }
-
-        private void UpdateUI()
-        {
-            // Set the name of the current sound and set the favourite flyout item
-            var currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
-            PlayingSoundNameTextBlock.Text = currentSound.Name;
-            SetFavouriteFlyoutItemText(currentSound.Favourite);
         }
 
         private void SetFavouriteFlyoutItemText(bool fav)

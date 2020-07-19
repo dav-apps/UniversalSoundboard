@@ -168,7 +168,7 @@
   <data name="CancelButton.Content" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
-  <data name="MoreButton-SetCategory.Text" xml:space="preserve">
+  <data name="MoreButton-SetCategories.Text" xml:space="preserve">
     <value>Kategorien festlegen</value>
   </data>
   <data name="NewCategoryContentDialog-PrimaryButton" xml:space="preserve">

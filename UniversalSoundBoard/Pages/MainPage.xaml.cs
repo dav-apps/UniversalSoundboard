@@ -978,7 +978,7 @@ namespace UniversalSoundBoard.Pages
         #endregion
 
         #region Set categories
-        private async void MoreButton_SetCategory_Click(object sender, RoutedEventArgs e)
+        private async void MoreButton_SetCategories_Click(object sender, RoutedEventArgs e)
         {
             // Show the Set Categories content dialog for multiple sounds
             List<Sound> selectedSounds = new List<Sound>();
