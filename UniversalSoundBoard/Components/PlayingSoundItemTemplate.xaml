@@ -163,13 +163,14 @@
 
                     <Button.Flyout>
                         <MenuFlyout Placement="Top">
-                            <MenuFlyoutSubItem Name="MoreButtonRepeatFlyoutSubItem" x:Uid="MoreButton-Repeat">
+                            <MenuFlyoutSubItem Name="MoreButtonRepeatFlyoutSubItem" x:Uid="MoreButton-Repeat" Icon="RepeatAll">
                                 <MenuFlyoutItem Name="MoreButton_Repeat_1x" Text="1x" Click="MoreButton_Repeat_1x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_2x" Text="2x" Click="MoreButton_Repeat_2x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_5x" Text="5x" Click="MoreButton_Repeat_5x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_10x" Text="10x" Click="MoreButton_Repeat_10x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_endless" Text="∞" Click="MoreButton_Repeat_endless_Click" />
                             </MenuFlyoutSubItem>
+                            <MenuFlyoutItem Name="MoreButtonFavouriteItem" Text="Add to favourites" Icon="Favorite" Click="MoreButtonFavouriteItem_Click" />
                         </MenuFlyout>
                     </Button.Flyout>
 

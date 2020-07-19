@@ -62,8 +62,7 @@ namespace UniversalSoundBoard.Components
             PlayingSound.MediaPlayer.CommandManager.PreviousReceived -= CommandManager_PreviousReceived;
             PlayingSound.MediaPlayer.CommandManager.PreviousReceived += CommandManager_PreviousReceived;
 
-            // Set the name of the current sound
-            PlayingSoundNameTextBlock.Text = PlayingSound.Sounds.ElementAt(PlayingSound.Current).Name;
+            UpdateUI();
         }
 
         #region MediaControlButton events
@@ -129,6 +128,21 @@ namespace UniversalSoundBoard.Components
         private async void MoreButton_Repeat_endless_Click(object sender, RoutedEventArgs e)
         {
             await RepeatAsync(int.MaxValue);
+        }
+
+        private async void MoreButtonFavouriteItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+
+            Sound currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
+            currentSound.Favourite = !currentSound.Favourite;
+
+            // Update the text of the MenuFlyoutItem
+            SetFavouriteFlyoutItemText(currentSound.Favourite);
+
+            // Save the new favourite and reload the sound
+            await FileManager.SetSoundAsFavouriteAsync(currentSound.Uuid, currentSound.Favourite);
+            await FileManager.ReloadSound(currentSound.Uuid);
         }
         #endregion
 
@@ -216,6 +230,20 @@ namespace UniversalSoundBoard.Components
                 PlayPauseButtonToolTip.Text = loader.GetString("PlayButtonToolTip");
             }
         }
+
+        private void UpdateUI()
+        {
+            // Set the name of the current sound and set the favourite flyout item
+            var currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
+            PlayingSoundNameTextBlock.Text = currentSound.Name;
+            SetFavouriteFlyoutItemText(currentSound.Favourite);
+        }
+
+        private void SetFavouriteFlyoutItemText(bool fav)
+        {
+            MoreButtonFavouriteItem.Text = loader.GetString(fav ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite");
+            MoreButtonFavouriteItem.Icon = new FontIcon { Glyph = fav ? "\uE195" : "\uE113" };
+        }
         #endregion
 
         #region MediaPlayer event handlers
@@ -297,7 +325,7 @@ namespace UniversalSoundBoard.Components
                 int currentItemIndex = (int)sender.CurrentItemIndex;
 
                 // Show the name of the new sound
-                PlayingSoundNameTextBlock.Text = PlayingSound.Sounds.ElementAt(currentItemIndex).Name;
+                UpdateUI();
 
                 // Update PlayingSound.Current
                 PlayingSound.Current = currentItemIndex;
