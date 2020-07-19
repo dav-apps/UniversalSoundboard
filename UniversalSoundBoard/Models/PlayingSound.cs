@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.Media.Playback;
@@ -9,7 +10,7 @@ namespace UniversalSoundboard.Models
     public class PlayingSound
     {
         public Guid Uuid { get; set; }
-        public List<Sound> Sounds { get; set; }
+        public ObservableCollection<Sound> Sounds { get; set; }
         public MediaPlayer MediaPlayer { get; set; }
         public int Repetitions { get; set; }
         public bool Randomly { get; set; }
@@ -17,7 +18,7 @@ namespace UniversalSoundboard.Models
 
         public PlayingSound()
         {
-            Sounds = new List<Sound>();
+            Sounds = new ObservableCollection<Sound>();
             Repetitions = 0;
             Randomly = false;
             Current = 0;
@@ -25,7 +26,7 @@ namespace UniversalSoundboard.Models
 
         public PlayingSound(Sound sound, MediaPlayer player)
         {
-            Sounds = new List<Sound>
+            Sounds = new ObservableCollection<Sound>
             {
                 sound
             };
@@ -38,7 +39,7 @@ namespace UniversalSoundboard.Models
 
         public PlayingSound(List<Sound> sounds, MediaPlayer player)
         {
-            Sounds = new List<Sound>();
+            Sounds = new ObservableCollection<Sound>();
             foreach (Sound sound in sounds)
                 Sounds.Add(sound);
 
@@ -50,7 +51,7 @@ namespace UniversalSoundboard.Models
 
         public PlayingSound(Sound sound, MediaPlayer player, int repetitions)
         {
-            Sounds = new List<Sound>
+            Sounds = new ObservableCollection<Sound>
             {
                 sound
             };
@@ -63,7 +64,7 @@ namespace UniversalSoundboard.Models
         public PlayingSound(Guid uuid, List<Sound> sounds, MediaPlayer player, int repetitions, bool randomly, int current)
         {
             Uuid = uuid;
-            Sounds = new List<Sound>();
+            Sounds = new ObservableCollection<Sound>();
             foreach (Sound sound in sounds)
                 Sounds.Add(sound);
 

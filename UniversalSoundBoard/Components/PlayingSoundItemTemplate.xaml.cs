@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Models;
@@ -53,6 +54,8 @@ namespace UniversalSoundBoard.Components
 
             // Set the media player for the media player element
             MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
+
+            // Subscribe to MediaPlayer events
             PlayingSound.MediaPlayer.MediaEnded -= MediaPlayer_MediaEnded;
             PlayingSound.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
             PlayingSound.MediaPlayer.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
@@ -61,6 +64,8 @@ namespace UniversalSoundBoard.Components
             ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundItemTemplate_CurrentItemChanged;
             PlayingSound.MediaPlayer.CommandManager.PreviousReceived -= CommandManager_PreviousReceived;
             PlayingSound.MediaPlayer.CommandManager.PreviousReceived += CommandManager_PreviousReceived;
+            PlayingSound.Sounds.CollectionChanged -= Sounds_CollectionChanged;
+            PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
 
             UpdateUI();
         }
@@ -296,7 +301,7 @@ namespace UniversalSoundBoard.Components
                         }
 
                         // Set the new sound order
-                        await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds);
+                        await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds.ToList());
                     }
 
                     ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveTo(0);
@@ -324,11 +329,13 @@ namespace UniversalSoundBoard.Components
 
                 int currentItemIndex = (int)sender.CurrentItemIndex;
 
+                // Update PlayingSound.Current
+                PlayingSound.Current = currentItemIndex;
+
                 // Show the name of the new sound
                 UpdateUI();
 
-                // Update PlayingSound.Current
-                PlayingSound.Current = currentItemIndex;
+                // Save the new Current
                 await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, currentItemIndex);
 
                 AdjustLayout();
@@ -339,6 +346,22 @@ namespace UniversalSoundBoard.Components
         {
             args.Handled = true;
             MoveToPrevious();
+        }
+
+        private async void Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (PlayingSound.MediaPlayer == null) return;
+
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                // Remove the item at the start position of the removed items
+                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items.RemoveAt(e.OldStartingIndex);
+
+                // Update the PlayingSound
+                await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds.ToList());
+            }
+
+            UpdateUI();
         }
         #endregion
     }

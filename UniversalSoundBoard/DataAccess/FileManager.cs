@@ -1035,6 +1035,14 @@ namespace UniversalSoundBoard.DataAccess
                 else
                     itemViewHolder.FavouriteSounds.RemoveAt(i);
             }
+
+            // Replace in PlayingSounds
+            foreach(var playingSound in itemViewHolder.PlayingSounds)
+            {
+                i = playingSound.Sounds.ToList().FindIndex(s => s.Uuid == updatedSound.Uuid);
+                if (i != -1)
+                    playingSound.Sounds[i] = updatedSound;
+            }
         }
 
         /**
@@ -1056,6 +1064,14 @@ namespace UniversalSoundBoard.DataAccess
             i = itemViewHolder.FavouriteSounds.ToList().FindIndex(s => s.Uuid == uuid);
             if (i != -1)
                 itemViewHolder.FavouriteSounds.RemoveAt(i);
+
+            // Remove in PlayingSounds
+            foreach(var playingSound in itemViewHolder.PlayingSounds)
+            {
+                i = playingSound.Sounds.ToList().FindIndex(s => s.Uuid == uuid);
+                if (i != -1)
+                    playingSound.Sounds.RemoveAt(i);
+            }
         }
 
         public static async Task UpdateLiveTileAsync()
