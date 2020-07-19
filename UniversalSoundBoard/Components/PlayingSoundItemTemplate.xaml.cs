@@ -106,9 +106,29 @@ namespace UniversalSoundBoard.Components
             await RemovePlayingSound();
         }
 
-        private void MoreButton_Click(object sender, RoutedEventArgs e)
+        private async void MoreButton_Repeat_1x_Click(object sender, RoutedEventArgs e)
         {
+            await RepeatAsync(2);
+        }
 
+        private async void MoreButton_Repeat_2x_Click(object sender, RoutedEventArgs e)
+        {
+            await RepeatAsync(3);
+        }
+
+        private async void MoreButton_Repeat_5x_Click(object sender, RoutedEventArgs e)
+        {
+            await RepeatAsync(6);
+        }
+
+        private async void MoreButton_Repeat_10x_Click(object sender, RoutedEventArgs e)
+        {
+            await RepeatAsync(11);
+        }
+
+        private async void MoreButton_Repeat_endless_Click(object sender, RoutedEventArgs e)
+        {
+            await RepeatAsync(int.MaxValue);
         }
         #endregion
 
@@ -142,6 +162,12 @@ namespace UniversalSoundBoard.Components
                 PlayingSound.MediaPlayer.SystemMediaTransportControls.IsEnabled = false;
                 PlayingSound.MediaPlayer = null;
             }
+        }
+
+        private async Task RepeatAsync(int repetitions)
+        {
+            PlayingSound.Repetitions = repetitions;
+            await FileManager.SetRepetitionsOfPlayingSoundAsync(PlayingSound.Uuid, repetitions);
         }
         #endregion
 

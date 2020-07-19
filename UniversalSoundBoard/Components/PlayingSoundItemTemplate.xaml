@@ -159,8 +159,19 @@
                 <Button
                     Name="MoreButton"
                     Style="{StaticResource MediaControlButtonStyle}"
-                    Click="MoreButton_Click"
                     Content="&#xE10C;">
+
+                    <Button.Flyout>
+                        <MenuFlyout Placement="Top">
+                            <MenuFlyoutSubItem Name="MoreButtonRepeatFlyoutSubItem" x:Uid="MoreButton-Repeat">
+                                <MenuFlyoutItem Name="MoreButton_Repeat_1x" Text="1x" Click="MoreButton_Repeat_1x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_2x" Text="2x" Click="MoreButton_Repeat_2x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_5x" Text="5x" Click="MoreButton_Repeat_5x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_10x" Text="10x" Click="MoreButton_Repeat_10x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_endless" Text="∞" Click="MoreButton_Repeat_endless_Click" />
+                            </MenuFlyoutSubItem>
+                        </MenuFlyout>
+                    </Button.Flyout>
 
                     <ToolTipService.ToolTip>
                         <TextBlock Name="MoreButtonToolTip" x:Uid="MoreButton" Text="More options" />
