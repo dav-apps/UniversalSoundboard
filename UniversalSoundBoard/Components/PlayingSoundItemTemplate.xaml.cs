@@ -57,6 +57,10 @@ namespace UniversalSoundBoard.Components
             PlayingSound.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
             PlayingSound.MediaPlayer.PlaybackSession.PlaybackStateChanged -= PlaybackSession_PlaybackStateChanged;
             PlayingSound.MediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+            ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged -= PlayingSoundItemTemplate_CurrentItemChanged;
+            ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundItemTemplate_CurrentItemChanged;
+            PlayingSound.MediaPlayer.CommandManager.PreviousReceived -= CommandManager_PreviousReceived;
+            PlayingSound.MediaPlayer.CommandManager.PreviousReceived += CommandManager_PreviousReceived;
 
             // Set the name of the current sound
             PlayingSoundNameTextBlock.Text = PlayingSound.Sounds.ElementAt(PlayingSound.Current).Name;
@@ -83,7 +87,7 @@ namespace UniversalSoundBoard.Components
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            MoveToPrevious();
         }
 
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
@@ -93,7 +97,8 @@ namespace UniversalSoundBoard.Components
 
         private void NextButton_Click(object sender, RoutedEventArgs e)
         {
-
+            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+            ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveNext();
         }
 
         private async void RemoveButton_Click(object sender, RoutedEventArgs e)
@@ -104,6 +109,39 @@ namespace UniversalSoundBoard.Components
         private void MoreButton_Click(object sender, RoutedEventArgs e)
         {
 
+        }
+        #endregion
+
+        #region Functionality
+        private void MoveToPrevious()
+        {
+            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+            if (PlayingSound.MediaPlayer.PlaybackSession.Position.Seconds >= 5)
+            {
+                // Move to the start of the sound
+                PlayingSound.MediaPlayer.PlaybackSession.Position = new TimeSpan(0);
+            }
+            else
+            {
+                // Move to the previous sound
+                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MovePrevious();
+            }
+        }
+
+        private async Task RemovePlayingSound()
+        {
+            // Delete the PlayingSound and remove it from the list
+            await FileManager.DeletePlayingSoundAsync(PlayingSound.Uuid);
+            FileManager.itemViewHolder.PlayingSounds.Remove(PlayingSound);
+
+            // Disable the MediaPlayer
+            if (PlayingSound.MediaPlayer != null)
+            {
+                PlayingSound.MediaPlayer.Pause();
+                MediaPlayerElement.SetMediaPlayer(null);
+                PlayingSound.MediaPlayer.SystemMediaTransportControls.IsEnabled = false;
+                PlayingSound.MediaPlayer = null;
+            }
         }
         #endregion
 
@@ -223,22 +261,31 @@ namespace UniversalSoundBoard.Components
                 UpdatePlayPauseButton();
             });
         }
-        #endregion
 
-        private async Task RemovePlayingSound()
+        private async void PlayingSoundItemTemplate_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
         {
-            // Delete the PlayingSound and remove it from the list
-            await FileManager.DeletePlayingSoundAsync(PlayingSound.Uuid);
-            FileManager.itemViewHolder.PlayingSounds.Remove(PlayingSound);
-
-            // Disable the MediaPlayer
-            if (PlayingSound.MediaPlayer != null)
+            await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
             {
-                PlayingSound.MediaPlayer.Pause();
-                MediaPlayerElement.SetMediaPlayer(null);
-                PlayingSound.MediaPlayer.SystemMediaTransportControls.IsEnabled = false;
-                PlayingSound.MediaPlayer = null;
-            }
+                if (PlayingSound.Sounds.Count <= 1 || sender.CurrentItemIndex >= PlayingSound.Sounds.Count) return;
+
+                int currentItemIndex = (int)sender.CurrentItemIndex;
+
+                // Show the name of the new sound
+                PlayingSoundNameTextBlock.Text = PlayingSound.Sounds.ElementAt(currentItemIndex).Name;
+
+                // Update PlayingSound.Current
+                PlayingSound.Current = currentItemIndex;
+                await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, currentItemIndex);
+
+                AdjustLayout();
+            });
         }
+
+        private void CommandManager_PreviousReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPreviousReceivedEventArgs args)
+        {
+            args.Handled = true;
+            MoveToPrevious();
+        }
+        #endregion
     }
 }
