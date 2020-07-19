@@ -1035,6 +1035,8 @@ namespace UniversalSoundBoard.DataAccess
                 else
                     itemViewHolder.FavouriteSounds.RemoveAt(i);
             }
+            else if (updatedSound.Favourite)
+                itemViewHolder.FavouriteSounds.Add(updatedSound);
 
             // Replace in PlayingSounds
             foreach(var playingSound in itemViewHolder.PlayingSounds)

@@ -77,32 +77,6 @@ namespace UniversalSoundboard.Components
         {
             bool newFav = !sound.Favourite;
 
-            // Update all lists containing sounds with the new favourite value
-            List<ObservableCollection<Sound>> soundLists = new List<ObservableCollection<Sound>>
-            {
-                FileManager.itemViewHolder.Sounds,
-                FileManager.itemViewHolder.AllSounds,
-                FileManager.itemViewHolder.FavouriteSounds
-            };
-
-            foreach (ObservableCollection<Sound> soundList in soundLists)
-            {
-                var sounds = soundList.Where(s => s.Uuid == sound.Uuid);
-                if (sounds.Count() > 0)
-                    sounds.First().Favourite = newFav;
-            }
-
-            if (newFav)
-            {
-                // Add to favourites
-                FileManager.itemViewHolder.FavouriteSounds.Add(sound);
-            }
-            else
-            {
-                // Remove sound from favourites
-                FileManager.itemViewHolder.FavouriteSounds.Remove(sound);
-            }
-
             await FileManager.SetSoundAsFavouriteAsync(sound.Uuid, newFav);
             await FileManager.ReloadSound(sound.Uuid);
         }
