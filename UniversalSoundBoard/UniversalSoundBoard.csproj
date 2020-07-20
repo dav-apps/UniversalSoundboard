@@ -124,6 +124,7 @@
     <Compile Include="Components\SoundListItemTemplate.xaml.cs">
       <DependentUpon>SoundListItemTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\VolumeMenuFlyoutItem.cs" />
     <Compile Include="DataAccess\DatabaseOperations.cs" />
     <Compile Include="DataAccess\FileManager.cs" />
     <Compile Include="Models\OldDatabaseModels.cs" />
@@ -276,6 +277,10 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Page>
     <Page Include="Themes\BasicMediaTransportControls.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Themes\VolumeMenuFlyoutItem.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
