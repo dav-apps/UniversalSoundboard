@@ -4,11 +4,12 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:converters="using:UniversalSoundBoard.Converters"
-    xmlns:components="using:UniversalSoundBoard.Components"
-    xmlns:models="using:UniversalSoundBoard.Models"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:converters="using:UniversalSoundBoard.Converters"
+    xmlns:components="using:UniversalSoundBoard.Components"
+    xmlns:components1="using:UniversalSoundboard.Components"
+    xmlns:models="using:UniversalSoundBoard.Models"
     mc:Ignorable="d"
     Loaded="MainPage_Loaded"
     SizeChanged="MainPage_SizeChanged">
@@ -229,13 +230,10 @@
 
                                         <Button.Flyout>
                                             <Flyout>
-                                                <Slider
-                                                    Name="VolumeSlider"
-                                                    Maximum="100"
-                                                    Minimum="0"
-                                                    Width="150"
-                                                    ValueChanged="VolumeSlider_ValueChanged"
-                                                    LostFocus="VolumeSlider_LostFocus" />
+                                                <components1:VolumeControl
+                                                    x:Name="VolumeControl"
+                                                    ValueChanged="VolumeControl_ValueChanged"
+                                                    LostFocus="VolumeControl_LostFocus" />
                                             </Flyout>
                                         </Button.Flyout>
 

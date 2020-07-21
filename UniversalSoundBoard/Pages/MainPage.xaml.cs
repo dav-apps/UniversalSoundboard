@@ -19,6 +19,7 @@ using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -71,7 +72,7 @@ namespace UniversalSoundBoard.Pages
 
             // Set the value of the volume slider
             skipVolumeSliderValueChanged = true;
-            VolumeSlider.Value = FileManager.itemViewHolder.Volume * 100;
+            VolumeControl.Value = FileManager.itemViewHolder.Volume * 100;
             skipVolumeSliderValueChanged = false;
         }
 
@@ -671,8 +672,8 @@ namespace UniversalSoundBoard.Pages
         }
         #endregion
 
-        #region Volume Slider
-        private void VolumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        #region Volume Control
+        private void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             if (skipVolumeSliderValueChanged) return;
 
@@ -697,7 +698,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.Volume = volumeSlider.Value / 100;
         }
 
-        private async void VolumeSlider_LostFocus(object sender, RoutedEventArgs e)
+        private async void VolumeControl_LostFocus(object sender, RoutedEventArgs e)
         {
             // Save the new volume of all playing sounds
             foreach (PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
