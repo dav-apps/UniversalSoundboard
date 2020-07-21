@@ -83,15 +83,10 @@
 
                     <Button.Flyout>
                         <Flyout>
-                            <StackPanel>
-                                <Slider
-                                    Name="VolumeSlider"
-                                    Minimum="0"
-                                    Maximum="100"
-                                    Width="130"
-                                    ValueChanged="VolumeSlider_ValueChanged"
-                                    LostFocus="VolumeSlider_LostFocus" />
-                            </StackPanel>
+                            <components:VolumeControl
+                                x:Name="VolumeControl"
+                                ValueChanged="VolumeControl_ValueChanged"
+                                LostFocus="VolumeControl_LostFocus" />
                         </Flyout>
                     </Button.Flyout>
 

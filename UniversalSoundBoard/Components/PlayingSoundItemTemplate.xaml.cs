@@ -11,6 +11,7 @@ using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
 
 namespace UniversalSoundBoard.Components
 {
@@ -74,19 +75,19 @@ namespace UniversalSoundBoard.Components
         private void VolumeButton_Click(object sender, RoutedEventArgs e)
         {
             // Set the value of the volume slider
-            VolumeSlider.Value = Convert.ToInt32(PlayingSound.MediaPlayer.Volume * 100);
+            VolumeControl.Value = Convert.ToInt32(PlayingSound.MediaPlayer.Volume * 100);
         }
 
-        private void VolumeSlider_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        private void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             // Apply the new volume
-            PlayingSound.MediaPlayer.Volume = VolumeSlider.Value / 100;
+            PlayingSound.MediaPlayer.Volume = VolumeControl.Value / 100;
         }
 
-        private async void VolumeSlider_LostFocus(object sender, RoutedEventArgs e)
+        private async void VolumeControl_LostFocus(object sender, RoutedEventArgs e)
         {
             // Save the new volume
-            await FileManager.SetVolumeOfPlayingSoundAsync(PlayingSound.Uuid, VolumeSlider.Value / 100);
+            await FileManager.SetVolumeOfPlayingSoundAsync(PlayingSound.Uuid, VolumeControl.Value / 100);
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
