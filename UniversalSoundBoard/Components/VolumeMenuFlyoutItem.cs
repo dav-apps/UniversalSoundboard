@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -12,8 +8,8 @@ namespace UniversalSoundboard.Components
 {
     public class VolumeMenuFlyoutItem : MenuFlyoutItem
     {
-        public event EventHandler<RoutedEventArgs> MuteButton_Click;
-        public event EventHandler<RangeBaseValueChangedEventArgs> VolumeSlider_ValueChanged;
+        public event EventHandler<RangeBaseValueChangedEventArgs> VolumeControl_ValueChanged;
+        public event EventHandler<RoutedEventArgs> VolumeControl_LostFocus;
 
         public VolumeMenuFlyoutItem()
         {
@@ -22,11 +18,9 @@ namespace UniversalSoundboard.Components
 
         protected override void OnApplyTemplate()
         {
-            Button MuteButton = GetTemplateChild("MuteButton") as Button;
-            MuteButton.Click += (object sender, RoutedEventArgs e) => MuteButton_Click?.Invoke(sender, e);
-
-            Slider VolumeSlider = GetTemplateChild("VolumeSlider") as Slider;
-            VolumeSlider.ValueChanged += (object sender, RangeBaseValueChangedEventArgs e) => VolumeSlider_ValueChanged?.Invoke(sender, e);
+            VolumeControl VolumeControl = GetTemplateChild("VolumeControl") as VolumeControl;
+            VolumeControl.ValueChanged += (object sender, RangeBaseValueChangedEventArgs e) => VolumeControl_ValueChanged?.Invoke(sender, e);
+            VolumeControl.LostFocus += (object sender, RoutedEventArgs e) => VolumeControl_LostFocus?.Invoke(sender, e);
 
             base.OnApplyTemplate();
         }

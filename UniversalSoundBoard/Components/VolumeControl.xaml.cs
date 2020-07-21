@@ -2,6 +2,7 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Media;
 
 namespace UniversalSoundboard.Components
 {
@@ -9,6 +10,9 @@ namespace UniversalSoundboard.Components
     {
         public event EventHandler<RangeBaseValueChangedEventArgs> ValueChanged;
         public new event EventHandler<RoutedEventArgs> LostFocus;
+
+        public new Brush Background { get; set; }
+        public new Thickness Padding { get; set; }
 
         public double Value
         {

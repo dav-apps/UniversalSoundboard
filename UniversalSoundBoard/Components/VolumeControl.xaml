@@ -9,9 +9,10 @@
     d:DesignWidth="400">
 
     <RelativePanel
-        Background="Transparent"
-        MinWidth="175">
-        
+        MinWidth="175"
+        Background="{x:Bind Background}"
+        Padding="{x:Bind Padding}">
+
         <Button
             Name="MuteButton"
             Style="{StaticResource ButtonRevealStyle}"
