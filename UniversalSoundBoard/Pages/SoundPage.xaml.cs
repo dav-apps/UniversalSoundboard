@@ -43,8 +43,7 @@ namespace UniversalSoundBoard.Pages
         #region Page event handlers
         async void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
-            await ShowPlayingSoundsListAsync();
-            FileManager.itemViewHolder.PlayingSoundsBarWidth = DrawerContent.ActualWidth;
+            await UpdatePlayingSoundsListAsync();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -54,14 +53,7 @@ namespace UniversalSoundBoard.Pages
 
         private async void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            // Set the max width of the sounds list and playing sounds list columns
-            PlayingSoundsListColDef.MaxWidth = ContentRoot.ActualWidth / 2;
-            PlayingSoundsListColDef.MinWidth = ContentRoot.ActualWidth / 5;
-
-            await ShowPlayingSoundsListAsync();
-
-            // Update the value of ItemViewHolder.PlayingSoundsBarWidth
-            FileManager.itemViewHolder.PlayingSoundsBarWidth = DrawerContent.ActualWidth;
+            await UpdatePlayingSoundsListAsync();
         }
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -194,31 +186,45 @@ namespace UniversalSoundBoard.Pages
             }
         }
 
-        private async Task ShowPlayingSoundsListAsync()
+        private async Task UpdatePlayingSoundsListAsync()
         {
             if (FileManager.itemViewHolder.PlayingSoundsListVisible)
             {
                 // Remove unused PlayingSounds
                 await RemoveUnusedSoundsAsync();
 
-                if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)      // If user is on Mobile
+                // Set the max width of the sounds list and playing sounds list columns
+                PlayingSoundsBarColDef.MaxWidth = ContentRoot.ActualWidth / 2;
+                
+                if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
                 {
-                    PlayingSoundsListColDef.Width = new GridLength(0);     // Set size of right PlayingSoundsList to 0
-                    PlayingSoundsListColDef.MinWidth = 0;
-                    GripperColDef.Width = new GridLength(0);
+                    // Hide the PlayingSoundsBar and the GridSplitter
+                    PlayingSoundsBarColDef.Width = new GridLength(0);
+                    PlayingSoundsBarColDef.MinWidth = 0;
+                    GridSplitterColDef.Width = new GridLength(0);
+
+                    // Show the mobile PlayingSounds list
                     DrawerContentGrid.Visibility = Visibility.Visible;
                 }
-                else        // If user is on Tablet or Desktop
+                else
                 {
-                    PlayingSoundsListColDef.Width = new GridLength(1, GridUnitType.Star);
-                    GripperColDef.Width = new GridLength(12);
+                    // Show the PlayingSoundsBar and the GridSplitter
+                    PlayingSoundsBarColDef.Width = new GridLength(ContentRoot.ActualWidth * FileManager.itemViewHolder.PlayingSoundsBarWidth);
+                    PlayingSoundsBarColDef.MinWidth = ContentRoot.ActualWidth / 3.8;
+                    GridSplitterColDef.Width = new GridLength(12);
+
+                    // Hide the mobile PlayingSounds list
                     DrawerContentGrid.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
-                PlayingSoundsListColDef.Width = new GridLength(0);
-                GripperColDef.Width = new GridLength(0);
+                // Hide the PlayingSoundsBar and the GridSplitter
+                PlayingSoundsBarColDef.Width = new GridLength(0);
+                PlayingSoundsBarColDef.MinWidth = 0;
+                GridSplitterColDef.Width = new GridLength(0);
+
+                // Hide the mobile PlayingSounds list
                 DrawerContentGrid.Visibility = Visibility.Collapsed;
             }
         }
@@ -516,6 +522,12 @@ namespace UniversalSoundBoard.Pages
 
             FileManager.itemViewHolder.SoundTileWidth = (innerWidth - columns * (12 - columns)) / columns;
             FileManager.itemViewHolder.TriggerSoundTileSizeChangedEvent(gridView, e);
+        }
+
+        private void GridSplitter_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        {
+            // Calculate the width of the PlayingSoundsBar in percent
+            FileManager.itemViewHolder.PlayingSoundsBarWidth = PlayingSoundsBar.ActualWidth / ContentRoot.ActualWidth;
         }
         #endregion
     }
