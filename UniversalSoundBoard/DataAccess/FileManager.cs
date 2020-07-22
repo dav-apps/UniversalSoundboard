@@ -38,8 +38,7 @@ namespace UniversalSoundBoard.DataAccess
     {
         #region Variables
         #region Design constants
-        public const int mobileMaxWidth = 550;
-        public const int tabletMaxWidth = 650;
+        public const int mobileMaxWidth = 745;
         public const int topButtonsCollapsedMaxWidth = 1400;
         public const int sideBarCollapsedMaxWidth = 1100;
         public const int hideSearchBoxMaxWidth = 700;

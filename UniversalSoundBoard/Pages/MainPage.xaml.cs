@@ -34,7 +34,6 @@ namespace UniversalSoundBoard.Pages
         private bool downloadFileIsExecuting = false;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
-        private bool skipVolumeSliderValueChanged = false;
 
         public MainPage()
         {
@@ -71,9 +70,7 @@ namespace UniversalSoundBoard.Pages
             await FileManager.itemViewHolder.User.InitAsync();
 
             // Set the value of the volume slider
-            skipVolumeSliderValueChanged = true;
             VolumeControl.Value = FileManager.itemViewHolder.Volume * 100;
-            skipVolumeSliderValueChanged = false;
         }
 
         async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -675,8 +672,6 @@ namespace UniversalSoundBoard.Pages
         #region Volume Control
         private void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            if (skipVolumeSliderValueChanged) return;
-
             var volumeSlider = sender as Slider;
             double newValue = e.NewValue;
             double oldValue = e.OldValue;

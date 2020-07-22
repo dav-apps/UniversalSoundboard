@@ -8,16 +8,23 @@ namespace UniversalSoundboard.Components
 {
     public sealed partial class VolumeControl : UserControl
     {
-        public event EventHandler<RangeBaseValueChangedEventArgs> ValueChanged;
-        public new event EventHandler<RoutedEventArgs> LostFocus;
+        private bool skipVolumeSliderValueChanged = false;
 
         public new Brush Background { get; set; }
         public new Thickness Padding { get; set; }
 
+        public event EventHandler<RangeBaseValueChangedEventArgs> ValueChanged;
+        public new event EventHandler<RoutedEventArgs> LostFocus;
+
         public double Value
         {
             get => VolumeSlider.Value;
-            set => VolumeSlider.Value = value;
+            set
+            {
+                skipVolumeSliderValueChanged = true;
+                VolumeSlider.Value = value;
+                skipVolumeSliderValueChanged = false;
+            }
         }
 
         public VolumeControl()
@@ -25,7 +32,11 @@ namespace UniversalSoundboard.Components
             InitializeComponent();
         }
 
-        private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e) => ValueChanged?.Invoke(sender, e);
+        private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (skipVolumeSliderValueChanged) return;
+            ValueChanged?.Invoke(sender, e);
+        }
 
         private void VolumeSlider_LostFocus(object sender, RoutedEventArgs e) => LostFocus?.Invoke(sender, e);
     }
