@@ -54,6 +54,10 @@ namespace UniversalSoundBoard.Pages
 
         private async void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            // Set the max width of the sounds list and playing sounds list columns
+            PlayingSoundsListColDef.MaxWidth = ContentRoot.ActualWidth / 2;
+            PlayingSoundsListColDef.MinWidth = ContentRoot.ActualWidth / 5;
+
             await ShowPlayingSoundsListAsync();
 
             // Update the value of ItemViewHolder.PlayingSoundsBarWidth
@@ -199,18 +203,22 @@ namespace UniversalSoundBoard.Pages
 
                 if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)      // If user is on Mobile
                 {
-                    SecondColDef.Width = new GridLength(0);     // Set size of right PlayingSoundsList to 0
+                    PlayingSoundsListColDef.Width = new GridLength(0);     // Set size of right PlayingSoundsList to 0
+                    PlayingSoundsListColDef.MinWidth = 0;
+                    GripperColDef.Width = new GridLength(0);
                     DrawerContentGrid.Visibility = Visibility.Visible;
                 }
                 else        // If user is on Tablet or Desktop
                 {
-                    SecondColDef.Width = new GridLength(1, GridUnitType.Star);
+                    PlayingSoundsListColDef.Width = new GridLength(1, GridUnitType.Star);
+                    GripperColDef.Width = new GridLength(12);
                     DrawerContentGrid.Visibility = Visibility.Collapsed;
                 }
             }
             else
             {
-                SecondColDef.Width = new GridLength(0);
+                PlayingSoundsListColDef.Width = new GridLength(0);
+                GripperColDef.Width = new GridLength(0);
                 DrawerContentGrid.Visibility = Visibility.Collapsed;
             }
         }

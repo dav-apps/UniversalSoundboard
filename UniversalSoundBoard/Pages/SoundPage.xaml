@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:components="using:UniversalSoundBoard.Components"
     xmlns:components1="using:UniversalSoundboard.Components"
     xmlns:converters="using:UniversalSoundBoard.Converters"
@@ -472,8 +473,9 @@
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" />
-            <ColumnDefinition Width="*" x:Name="SecondColDef"  />
+            <ColumnDefinition Width="2*" x:Name="SoundsListColDef" />
+            <ColumnDefinition Width="16" x:Name="GripperColDef" />
+            <ColumnDefinition Width="*" x:Name="PlayingSoundsListColDef"  />
         </Grid.ColumnDefinitions>
 
         <RelativePanel
@@ -775,11 +777,29 @@
             </Grid>
         </Grid>
 
+        <controls:GridSplitter
+            Grid.Column="1"
+            Width="12"
+            Padding="0,123,0,0"
+            Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
+            <controls:GridSplitter.Element>
+                <Grid Width="12">
+                    <TextBlock
+                        Name="GridSplitterIconTextBlock"
+                        Text="&#xE784;"
+                        FontFamily="Segoe MDL2 Assets"
+                        Margin="-4,0,0,0"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        IsHitTestVisible="False" />
+                </Grid>
+            </controls:GridSplitter.Element>
+        </controls:GridSplitter>
+
         <Grid
             Name="DrawerContent" 
             Grid.Row="0" 
-            Grid.Column="1" 
-            Grid.RowSpan="2"
+            Grid.Column="2" 
             Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
 
             <ListView
