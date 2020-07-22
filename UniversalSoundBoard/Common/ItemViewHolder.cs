@@ -20,6 +20,7 @@ namespace UniversalSoundBoard.Common
         #region Constants for the localSettings keys
         private const string themeKey = "theme";
         private const string playingSoundsListVisibleKey = "playingSoundsListVisible";
+        private const string playingSoundsBarWidthKey = "playingSoundsBarWidth";
         private const string playOneSoundAtOnceKey = "playOneSoundAtOnce";
         private const string liveTileKey = "liveTile";
         private const string showListViewKey = "showListView";
@@ -35,6 +36,7 @@ namespace UniversalSoundBoard.Common
         #region Constants for localSettings defaults
         private const FileManager.AppTheme themeDefault = FileManager.AppTheme.System;
         private const bool playingSoundsListVisibleDefault = true;
+        private const double playingSoundsBarWidthDefault = 0.35;
         private const bool playOneSoundAtOnceDefault = false;
         private const bool liveTileDefault = true;
         private const bool showListViewDefault = false;
@@ -89,7 +91,6 @@ namespace UniversalSoundBoard.Common
         private string _selectAllFlyoutText;                                // The text of the Select All flyout item in the Navigation View Header
         private SymbolIcon _selectAllFlyoutIcon;                            // The icon of the Select All flyout item in the Navigation View Header
         private double _soundTileWidth;                                     // The width of all sound tiles in the GridViews
-        private double _playingSoundsBarWidth;                              // Holds the width of the right playing sound bar to update the width of the acrylic background in the NavigationViewHeader
         private AcrylicBrush _playingSoundsBarAcrylicBackgroundBrush;       // This represents the background of the PlayingSoundsBar
         private bool _exportAndImportButtonsEnabled;                        // If true shows the export and import buttons on the settings page
         #endregion
@@ -98,6 +99,7 @@ namespace UniversalSoundBoard.Common
         #region Settings
         private FileManager.AppTheme _theme;                                // The design theme of the app
         private bool _playingSoundsListVisible;                             // If true shows the Playing Sounds list at the right
+        private double _playingSoundsBarWidth;                              // The relative width of the PlayingSoundsBar in percent
         private bool _playOneSoundAtOnce;                                   // If true plays only one sound at a time
         private bool _liveTileEnabled;                                      // If true, show the live tile
         private bool _showListView;                                         // If true, shows the sounds on the SoundPage in a ListView
@@ -166,7 +168,6 @@ namespace UniversalSoundBoard.Common
             _selectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
             _selectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll);
             _soundTileWidth = 200;
-            _playingSoundsBarWidth = 0;
             _playingSoundsBarAcrylicBackgroundBrush = new AcrylicBrush();
             _exportAndImportButtonsEnabled = true;
             #endregion
@@ -194,6 +195,11 @@ namespace UniversalSoundBoard.Common
                 _playingSoundsListVisible = playingSoundsListVisibleDefault;
             else
                 _playingSoundsListVisible = (bool)localSettings.Values[playingSoundsListVisibleKey];
+
+            if (localSettings.Values[playingSoundsBarWidthKey] == null)
+                _playingSoundsBarWidth = playingSoundsBarWidthDefault;
+            else
+                _playingSoundsBarWidth = (double)localSettings.Values[playingSoundsBarWidthKey];
 
             if (localSettings.Values[playOneSoundAtOnceKey] == null)
                 _playOneSoundAtOnce = playOneSoundAtOnceDefault;
@@ -559,17 +565,6 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public double PlayingSoundsBarWidth
-        {
-            get => _playingSoundsBarWidth;
-            set
-            {
-                if (_playingSoundsBarWidth.Equals(value)) return;
-                _playingSoundsBarWidth = value;
-                NotifyPropertyChanged("PlayingSoundsBarWidth");
-            }
-        }
-
         public AcrylicBrush PlayingSoundsBarAcrylicBackgroundBrush
         {
             get => _playingSoundsBarAcrylicBackgroundBrush;
@@ -627,6 +622,18 @@ namespace UniversalSoundBoard.Common
                 localSettings.Values[playingSoundsListVisibleKey] = value;
                 _playingSoundsListVisible = value;
                 NotifyPropertyChanged("PlayingSoundsListVisible");
+            }
+        }
+
+        public double PlayingSoundsBarWidth
+        {
+            get => _playingSoundsBarWidth;
+            set
+            {
+                if (_playingSoundsBarWidth.Equals(value)) return;
+                localSettings.Values[playingSoundsBarWidthKey] = value;
+                _playingSoundsBarWidth = value;
+                NotifyPropertyChanged("PlayingSoundsBarWidth");
             }
         }
 
