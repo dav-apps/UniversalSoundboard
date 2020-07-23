@@ -8,6 +8,18 @@ namespace UniversalSoundboard.Components
 {
     public class VolumeMenuFlyoutItem : MenuFlyoutItem
     {
+        private VolumeControl volumeControl;
+
+        public double VolumeControlValue
+        {
+            get => volumeControl == null ? 1 : volumeControl.Value;
+            set
+            {
+                if (volumeControl == null) return;
+                volumeControl.Value = value;
+            }
+        }
+
         public event EventHandler<RangeBaseValueChangedEventArgs> VolumeControl_ValueChanged;
         public event EventHandler<RoutedEventArgs> VolumeControl_LostFocus;
 
@@ -18,9 +30,9 @@ namespace UniversalSoundboard.Components
 
         protected override void OnApplyTemplate()
         {
-            VolumeControl VolumeControl = GetTemplateChild("VolumeControl") as VolumeControl;
-            VolumeControl.ValueChanged += (object sender, RangeBaseValueChangedEventArgs e) => VolumeControl_ValueChanged?.Invoke(sender, e);
-            VolumeControl.LostFocus += (object sender, RoutedEventArgs e) => VolumeControl_LostFocus?.Invoke(sender, e);
+            volumeControl = GetTemplateChild("VolumeControl") as VolumeControl;
+            volumeControl.ValueChanged += (object sender, RangeBaseValueChangedEventArgs e) => VolumeControl_ValueChanged?.Invoke(sender, e);
+            volumeControl.LostFocus += (object sender, RoutedEventArgs e) => VolumeControl_LostFocus?.Invoke(sender, e);
 
             base.OnApplyTemplate();
         }

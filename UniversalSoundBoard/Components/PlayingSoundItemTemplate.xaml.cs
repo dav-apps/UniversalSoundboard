@@ -20,6 +20,7 @@ namespace UniversalSoundBoard.Components
         public PlayingSound PlayingSound { get; set; }
         private readonly ResourceLoader loader = new ResourceLoader();
         CoreDispatcher dispatcher;
+        PlayingSoundItemLayoutType layoutType = PlayingSoundItemLayoutType.Small;
 
         public PlayingSoundItemTemplate()
         {
@@ -80,14 +81,18 @@ namespace UniversalSoundBoard.Components
 
         private void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            double value = layoutType == PlayingSoundItemLayoutType.Large ? VolumeControl.Value : MoreButtonVolumeFlyoutItem.VolumeControlValue;
+
             // Apply the new volume
-            PlayingSound.MediaPlayer.Volume = VolumeControl.Value / 100;
+            PlayingSound.MediaPlayer.Volume = value / 100;
         }
 
         private async void VolumeControl_LostFocus(object sender, RoutedEventArgs e)
         {
+            double value = layoutType == PlayingSoundItemLayoutType.Large ? VolumeControl.Value : MoreButtonVolumeFlyoutItem.VolumeControlValue;
+
             // Save the new volume
-            await FileManager.SetVolumeOfPlayingSoundAsync(PlayingSound.Uuid, VolumeControl.Value / 100);
+            await FileManager.SetVolumeOfPlayingSoundAsync(PlayingSound.Uuid, value / 100);
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
@@ -109,6 +114,15 @@ namespace UniversalSoundBoard.Components
         private async void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
             await RemovePlayingSound();
+        }
+
+        private void MenuFlyout_Opened(object sender, object e)
+        {
+            if (layoutType != PlayingSoundItemLayoutType.Large)
+            {
+                // Set the value of the VolumeMenuFlyoutItem
+                MoreButtonVolumeFlyoutItem.VolumeControlValue = Convert.ToInt32(PlayingSound.MediaPlayer.Volume * 100);
+            }
         }
 
         private async void MoreButton_Repeat_1x_Click(object sender, RoutedEventArgs e)
@@ -206,16 +220,32 @@ namespace UniversalSoundBoard.Components
             double itemWidth = ContentRoot.ActualWidth;
 
             if (windowWidth <= FileManager.mobileMaxWidth)
-                VisualStateManager.GoToState(this, "LayoutSizeCompact", false);
+                layoutType = PlayingSoundItemLayoutType.Compact;
             else if (itemWidth <= 210)
-                VisualStateManager.GoToState(this, "LayoutSizeMini", false);
+                layoutType = PlayingSoundItemLayoutType.Mini;
             else if (itemWidth <= 300)
-                VisualStateManager.GoToState(this, "LayoutSizeSmall", false);
+                layoutType = PlayingSoundItemLayoutType.Small;
             else
-                VisualStateManager.GoToState(this, "LayoutSizeLarge", false);
+                layoutType = PlayingSoundItemLayoutType.Large;
+
+            switch (layoutType)
+            {
+                case PlayingSoundItemLayoutType.Compact:
+                    VisualStateManager.GoToState(this, "LayoutSizeCompact", false);
+                    break;
+                case PlayingSoundItemLayoutType.Mini:
+                    VisualStateManager.GoToState(this, "LayoutSizeMini", false);
+                    break;
+                case PlayingSoundItemLayoutType.Small:
+                    VisualStateManager.GoToState(this, "LayoutSizeSmall", false);
+                    break;
+                case PlayingSoundItemLayoutType.Large:
+                    VisualStateManager.GoToState(this, "LayoutSizeLarge", false);
+                    break;
+            }
 
             // Set the visibility of the time texts in the TransportControls
-            BasicMediaTransportControls.TimesVisible = windowWidth > FileManager.mobileMaxWidth;
+            BasicMediaTransportControls.TimesVisible = layoutType != PlayingSoundItemLayoutType.Compact;
         }
 
         private void UpdateUI()
@@ -381,5 +411,13 @@ namespace UniversalSoundBoard.Components
             UpdateUI();
         }
         #endregion
+    }
+
+    enum PlayingSoundItemLayoutType
+    {
+        Compact,
+        Mini,
+        Small,
+        Large
     }
 }
