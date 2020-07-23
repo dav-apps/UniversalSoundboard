@@ -23,8 +23,77 @@
     </UserControl.Resources>
 
     <Grid Name="ContentRoot" Background="Transparent" Margin="0,6">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="LayoutSizeLarge">
+                    <VisualState.Setters>
+                        <!-- MiddleMediaControlStackPanel -->
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.Below)" Value="MediaPlayerElement" />
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.RightOf)" Value="LeftMediaControlStackPanel" />
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.LeftOf)" Value="RightMediaControlStackPanel" />
+
+                        <!-- RightMediaControlStackPanel -->
+                        <Setter Target="RightMediaControlStackPanel.(RelativePanel.Below)" Value="MediaPlayerElement" />
+
+                        <!-- MoreButton (RightMediaControlStackPanel) -->
+                        <Setter Target="MoreButtonRemoveFlyoutItem.Visibility" Value="Collapsed" />
+                        <Setter Target="MoreButtonVolumeFlyoutItem.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="LayoutSizeSmall">
+                    <VisualState.Setters>
+                        <!-- LeftMediaControlStackPanel -->
+                        <Setter Target="LeftMediaControlStackPanel.Visibility" Value="Collapsed" />
+                        
+                        <!-- MiddleMediaControlStackPanel -->
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.Below)" Value="MediaPlayerElement" />
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignLeftWithPanel)" Value="True" />
+
+                        <!-- RightMediaControlStackPanel -->
+                        <Setter Target="RightMediaControlStackPanel.(RelativePanel.Below)" Value="MediaPlayerElement" />
+
+                        <!-- MoreButton (RightMediaControlStackPanel) -->
+                        <Setter Target="MoreButtonRemoveFlyoutItem.Visibility" Value="Collapsed" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="LayoutSizeMini">
+                    <VisualState.Setters>
+                        <!-- LeftMediaControlStackPanel -->
+                        <Setter Target="LeftMediaControlStackPanel.Visibility" Value="Collapsed" />
+
+                        <!-- MiddleMediaControlStackPanel -->
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.Below)" Value="MediaPlayerElement" />
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignLeftWithPanel)" Value="True" />
+
+                        <!-- RemoveButton (RightMediaControlStackPanel) -->
+                        <Setter Target="RemoveButton.Visibility" Value="Collapsed" />
+                        <Setter Target="RightMediaControlStackPanel.(RelativePanel.Below)" Value="MediaPlayerElement" />
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="LayoutSizeCompact">
+                    <VisualState.Setters>
+                        <!-- LeftMediaControlStackPanel -->
+                        <Setter Target="LeftMediaControlStackPanel.Visibility" Value="Collapsed" />
+
+                        <!-- MiddleMediaControlStackPanel -->
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignLeftWithPanel)" Value="True" />
+
+                        <!-- RightMediaControlStackPanel -->
+                        <Setter Target="RightMediaControlStackPanel.(RelativePanel.AlignRightWithPanel)" Value="True" />
+
+                        <!-- MoreButtonRemoveItem (RightMediaControlStackPanel) -->
+                        <Setter Target="MoreButtonRemoveFlyoutItem.Visibility" Value="Collapsed" />
+
+                        <!-- MediaPlayerElement -->
+                        <Setter Target="MediaPlayerElement.(RelativePanel.RightOf)" Value="MiddleMediaControlStackPanel" />
+                        <Setter Target="MediaPlayerElement.(RelativePanel.LeftOf)" Value="RightMediaControlStackPanel" />
+                        <Setter Target="MediaPlayerElement.Margin" Value="12,0,12,5" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
@@ -59,19 +128,22 @@
                 Content="&#xE099;" />
         </Grid>
 
-        <MediaPlayerElement
-            Name="MediaPlayerElement"
-            Grid.Row="1"
-            AreTransportControlsEnabled="True">
+        <RelativePanel
+            Grid.Row="1">
 
-            <MediaPlayerElement.TransportControls>
-                <components:BasicMediaTransportControls />
-            </MediaPlayerElement.TransportControls>
-        </MediaPlayerElement>
+            <MediaPlayerElement
+                Name="MediaPlayerElement"
+                AreTransportControlsEnabled="True"
+                Margin="0,0,0,5">
 
-        <RelativePanel Grid.Row="2" Margin="0,10,0,0">
+                <MediaPlayerElement.TransportControls>
+                    <components:BasicMediaTransportControls x:Name="BasicMediaTransportControls" />
+                </MediaPlayerElement.TransportControls>
+            </MediaPlayerElement>
+
             <StackPanel
                 Name="LeftMediaControlStackPanel"
+                RelativePanel.Below="MediaPlayerElement"
                 RelativePanel.AlignLeftWithPanel="True"
                 Orientation="Horizontal">
 
@@ -84,9 +156,9 @@
                     <Button.Flyout>
                         <Flyout>
                             <components:VolumeControl
-                                x:Name="VolumeControl"
-                                ValueChanged="VolumeControl_ValueChanged"
-                                LostFocus="VolumeControl_LostFocus" />
+                            x:Name="VolumeControl"
+                            ValueChanged="VolumeControl_ValueChanged"
+                            LostFocus="VolumeControl_LostFocus" />
                         </Flyout>
                     </Button.Flyout>
 
@@ -95,11 +167,11 @@
                     </ToolTipService.ToolTip>
                 </Button>
             </StackPanel>
-            
+
             <StackPanel
                 Name="MiddleMediaControlStackPanel"
-                RelativePanel.AlignHorizontalCenterWithPanel="True"
-                Orientation="Horizontal">
+                Orientation="Horizontal"
+                HorizontalAlignment="Center">
 
                 <Button
                     Name="PreviousButton"
@@ -158,6 +230,7 @@
 
                     <Button.Flyout>
                         <MenuFlyout Placement="Top">
+                            <components:VolumeMenuFlyoutItem Name="MoreButtonVolumeFlyoutItem" />
                             <MenuFlyoutSubItem Name="MoreButtonRepeatFlyoutSubItem" x:Uid="MoreButton-Repeat" Icon="RepeatAll">
                                 <MenuFlyoutItem Name="MoreButton_Repeat_1x" Text="1x" Click="MoreButton_Repeat_1x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_2x" Text="2x" Click="MoreButton_Repeat_2x_Click" />
@@ -165,7 +238,8 @@
                                 <MenuFlyoutItem Name="MoreButton_Repeat_10x" Text="10x" Click="MoreButton_Repeat_10x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_endless" Text="∞" Click="MoreButton_Repeat_endless_Click" />
                             </MenuFlyoutSubItem>
-                            <MenuFlyoutItem Name="MoreButtonFavouriteItem" Text="Add to favourites" Icon="Favorite" Click="MoreButtonFavouriteItem_Click" />
+                            <MenuFlyoutItem Name="MoreButtonFavouriteFlyoutItem" Text="Add to favourites" Icon="Favorite" Click="MoreButtonFavouriteItem_Click" />
+                            <MenuFlyoutItem Name="MoreButtonRemoveFlyoutItem" x:Uid="RemoveButton" Text="Remove" Icon="Clear" Click="RemoveButton_Click" />
                         </MenuFlyout>
                     </Button.Flyout>
 

@@ -200,6 +200,22 @@ namespace UniversalSoundBoard.Components
             int currentItemIndex = (int)((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemIndex;
             PreviousButton.Visibility = currentItemIndex > 0 ? Visibility.Visible : Visibility.Collapsed;
             NextButton.Visibility = currentItemIndex != PlayingSound.Sounds.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
+
+            // Set the appropriate layout for the PlayingSoundItem
+            double windowWidth = Window.Current.Bounds.Width;
+            double itemWidth = ContentRoot.ActualWidth;
+
+            if (windowWidth <= FileManager.mobileMaxWidth)
+                VisualStateManager.GoToState(this, "LayoutSizeCompact", false);
+            else if (itemWidth <= 210)
+                VisualStateManager.GoToState(this, "LayoutSizeMini", false);
+            else if (itemWidth <= 300)
+                VisualStateManager.GoToState(this, "LayoutSizeSmall", false);
+            else
+                VisualStateManager.GoToState(this, "LayoutSizeLarge", false);
+
+            // Set the visibility of the time texts in the TransportControls
+            BasicMediaTransportControls.TimesVisible = windowWidth > FileManager.mobileMaxWidth;
         }
 
         private void UpdateUI()
@@ -247,8 +263,8 @@ namespace UniversalSoundBoard.Components
 
         private void SetFavouriteFlyoutItemText(bool fav)
         {
-            MoreButtonFavouriteItem.Text = loader.GetString(fav ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite");
-            MoreButtonFavouriteItem.Icon = new FontIcon { Glyph = fav ? "\uE195" : "\uE113" };
+            MoreButtonFavouriteFlyoutItem.Text = loader.GetString(fav ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite");
+            MoreButtonFavouriteFlyoutItem.Icon = new FontIcon { Glyph = fav ? "\uE195" : "\uE113" };
         }
         #endregion
 
