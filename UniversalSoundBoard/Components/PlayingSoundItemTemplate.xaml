@@ -261,6 +261,7 @@
             Grid.Row="2"
             Margin="0,10,0,10"
             SelectionMode="Single"
+            SelectionChanged="SoundsListView_SelectionChanged"
             Visibility="Collapsed">
 
             <ListView.ItemTemplate>

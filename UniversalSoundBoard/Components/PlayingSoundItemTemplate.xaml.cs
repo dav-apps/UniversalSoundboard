@@ -220,6 +220,30 @@ namespace UniversalSoundBoard.Components
             PlayingSound.Repetitions = repetitions;
             await FileManager.SetRepetitionsOfPlayingSoundAsync(PlayingSound.Uuid, repetitions);
         }
+
+        private async Task MoveToSound(int index)
+        {
+            if (
+                PlayingSound.Sounds.Count <= 1
+                || PlayingSound.Current == index
+                || index >= PlayingSound.Sounds.Count
+                || index < 0
+            ) return;
+
+            // Update PlayingSound.Current
+            PlayingSound.Current = index;
+
+            // Move to the selected sound
+            if (((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemIndex != index)
+                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveTo(Convert.ToUInt32(index));
+
+            // Update the visibility of the Next/Previous buttons and show the name of the new sound and 
+            AdjustLayout();
+            UpdateUI();
+
+            // Save the new Current
+            await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, index);
+        }
         #endregion
 
         #region UI methods
@@ -397,19 +421,7 @@ namespace UniversalSoundBoard.Components
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
             {
-                if (PlayingSound.Sounds.Count <= 1 || sender.CurrentItemIndex >= PlayingSound.Sounds.Count) return;
-
-                int currentItemIndex = (int)sender.CurrentItemIndex;
-
-                // Update PlayingSound.Current
-                PlayingSound.Current = currentItemIndex;
-
-                // Show the name of the new sound and update the visibility of the Next/Previous buttons
-                UpdateUI();
-                AdjustLayout();
-
-                // Save the new Current
-                await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, currentItemIndex);
+                await MoveToSound((int)sender.CurrentItemIndex);
             });
         }
 
@@ -418,7 +430,9 @@ namespace UniversalSoundBoard.Components
             args.Handled = true;
             MoveToPrevious();
         }
+        #endregion
 
+        #region Other event handlers
         private async void Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (PlayingSound.MediaPlayer == null || skipSoundsCollectionChanged) return;
@@ -433,6 +447,11 @@ namespace UniversalSoundBoard.Components
             }
 
             UpdateUI();
+        }
+
+        private async void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await MoveToSound(SoundsListView.SelectedIndex);
         }
         #endregion
     }
