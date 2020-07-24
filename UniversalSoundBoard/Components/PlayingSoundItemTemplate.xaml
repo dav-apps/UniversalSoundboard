@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:models="using:UniversalSoundBoard.Models"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -96,6 +97,7 @@
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <Grid.ColumnDefinitions>
@@ -116,7 +118,7 @@
                 TextWrapping="WrapWholeWords" />
 
             <Button
-                Name="ShowSoundsButton"
+                Name="ExpandButton"
                 Grid.Column="1"
                 Style="{StaticResource ButtonRevealStyle}"
                 FontFamily="Segoe MDL2 Assets"
@@ -125,7 +127,8 @@
                 Width="32"
                 CornerRadius="18"
                 Background="Transparent"
-                Content="&#xE099;" />
+                Content="&#xE099;"
+                Click="ExpandButton_Click" />
         </Grid>
 
         <RelativePanel
@@ -252,5 +255,19 @@
                 </Button>
             </StackPanel>
         </RelativePanel>
+
+        <ListView
+            Name="SoundsListView"
+            Grid.Row="2"
+            Margin="0,10,0,10"
+            SelectionMode="Single"
+            Visibility="Collapsed">
+
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:Sound">
+                    <TextBlock Text="{x:Bind Name}" />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
     </Grid>
 </UserControl>

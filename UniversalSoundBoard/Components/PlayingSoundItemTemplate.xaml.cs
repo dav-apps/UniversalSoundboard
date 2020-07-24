@@ -21,6 +21,7 @@ namespace UniversalSoundBoard.Components
         private readonly ResourceLoader loader = new ResourceLoader();
         CoreDispatcher dispatcher;
         PlayingSoundItemLayoutType layoutType = PlayingSoundItemLayoutType.Small;
+        private bool skipSoundsCollectionChanged = false;
 
         public PlayingSoundItemTemplate()
         {
@@ -69,10 +70,26 @@ namespace UniversalSoundBoard.Components
             PlayingSound.Sounds.CollectionChanged -= Sounds_CollectionChanged;
             PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
 
+            SoundsListView.ItemsSource = PlayingSound.Sounds;
+
             UpdateUI();
         }
 
-        #region MediaControlButton events
+        #region Button events
+        private void ExpandButton_Click(object sender, RoutedEventArgs e)
+        {
+            if(SoundsListView.Visibility == Visibility.Collapsed)
+            {
+                SoundsListView.Visibility = Visibility.Visible;
+                ExpandButton.Content = "\uE098";
+            }
+            else
+            {
+                SoundsListView.Visibility = Visibility.Collapsed;
+                ExpandButton.Content = "\uE099";
+            }
+        }
+
         private void VolumeButton_Click(object sender, RoutedEventArgs e)
         {
             // Set the value of the volume slider
@@ -254,6 +271,9 @@ namespace UniversalSoundBoard.Components
             var currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
             PlayingSoundNameTextBlock.Text = currentSound.Name;
             SetFavouriteFlyoutItemText(currentSound.Favourite);
+
+            // Set the selected item of the sounds list
+            SoundsListView.SelectedIndex = PlayingSound.Current;
         }
 
         /**
@@ -321,6 +341,8 @@ namespace UniversalSoundBoard.Components
                     if (PlayingSound.Randomly)
                     {
                         Random random = new Random();
+                        skipSoundsCollectionChanged = true;
+                        int soundsCount = PlayingSound.Sounds.Count;
 
                         // Copy the sounds
                         List<Sound> sounds = new List<Sound>();
@@ -333,9 +355,10 @@ namespace UniversalSoundBoard.Components
                             mediaPlaybackItems.Add(item);
 
                         PlayingSound.Sounds.Clear();
+                        ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items.Clear();
 
                         // Add the sounds in random order
-                        for(int i = 0; i < sounds.Count; i++)
+                        for (int i = 0; i < soundsCount; i++)
                         {
                             // Take a random sound from the sounds list and add it to the original sounds list
                             int randomIndex = random.Next(sounds.Count);
@@ -349,6 +372,8 @@ namespace UniversalSoundBoard.Components
 
                         // Set the new sound order
                         await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds.ToList());
+
+                        skipSoundsCollectionChanged = false;
                     }
 
                     ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveTo(0);
@@ -379,13 +404,12 @@ namespace UniversalSoundBoard.Components
                 // Update PlayingSound.Current
                 PlayingSound.Current = currentItemIndex;
 
-                // Show the name of the new sound
+                // Show the name of the new sound and update the visibility of the Next/Previous buttons
                 UpdateUI();
+                AdjustLayout();
 
                 // Save the new Current
                 await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, currentItemIndex);
-
-                AdjustLayout();
             });
         }
 
@@ -397,7 +421,7 @@ namespace UniversalSoundBoard.Components
 
         private async void Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (PlayingSound.MediaPlayer == null) return;
+            if (PlayingSound.MediaPlayer == null || skipSoundsCollectionChanged) return;
 
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
