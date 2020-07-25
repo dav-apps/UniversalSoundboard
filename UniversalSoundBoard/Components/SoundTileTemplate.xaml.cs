@@ -62,6 +62,8 @@ namespace UniversalSoundBoard.Components
 
         private void UpdateSizes()
         {
+            if (FileManager.itemViewHolder.SoundTileWidth < 0) return;
+
             SetupNameAnimations();
             UserControlClipRect.Rect = new Rect(0, 0, FileManager.itemViewHolder.SoundTileWidth, 200);
             soundTileWidth = FileManager.itemViewHolder.SoundTileWidth;

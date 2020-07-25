@@ -572,4 +572,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="RemoveButton.Text" xml:space="preserve">
     <value>Supprimer</value>
   </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
 </root>

@@ -12,6 +12,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 
 namespace UniversalSoundBoard.Components
 {
@@ -22,6 +23,7 @@ namespace UniversalSoundBoard.Components
         CoreDispatcher dispatcher;
         PlayingSoundItemLayoutType layoutType = PlayingSoundItemLayoutType.Small;
         private bool skipSoundsCollectionChanged = false;
+        Guid selectedSoundUuid;
 
         public PlayingSoundItemTemplate()
         {
@@ -181,6 +183,40 @@ namespace UniversalSoundBoard.Components
             await FileManager.SetSoundAsFavouriteAsync(currentSound.Uuid, currentSound.Favourite);
             await FileManager.ReloadSound(currentSound.Uuid);
         }
+
+        private async void SoundsListViewRemoveSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
+        {
+            if (PlayingSound.Sounds.Count > 1)
+                RemoveSound((Guid)args.SwipeControl.Tag);
+            else
+                await RemovePlayingSound();
+        }
+        
+        private void SwipeControl_RightTapped(object sender, RightTappedRoutedEventArgs e)
+        {
+            MenuFlyout flyout = new MenuFlyout();
+            selectedSoundUuid = (Guid)(sender as SwipeControl).Tag;
+
+            if(PlayingSound.Sounds.Count > 1)
+            {
+                MenuFlyoutItem removeFlyoutItem = new MenuFlyoutItem
+                {
+                    Text = loader.GetString("Remove"),
+                    Icon = new FontIcon { Glyph = "\uE106" }
+                };
+                removeFlyoutItem.Click += RemoveFlyoutItem_Click;
+                flyout.Items.Add(removeFlyoutItem);
+            }
+
+            if(flyout.Items.Count > 0)
+                flyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
+        }
+
+        private void RemoveFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            // Remove the selected sound
+            RemoveSound(selectedSoundUuid);
+        }
         #endregion
 
         #region Functionality
@@ -244,6 +280,14 @@ namespace UniversalSoundBoard.Components
             // Save the new Current
             await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, index);
         }
+
+        private void RemoveSound(Guid uuid)
+        {
+            int index = PlayingSound.Sounds.ToList().FindIndex(s => s.Uuid.Equals(uuid));
+            if (index == -1) return;
+
+            PlayingSound.Sounds.RemoveAt(index);
+        }
         #endregion
 
         #region UI methods
@@ -252,9 +296,8 @@ namespace UniversalSoundBoard.Components
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
 
             // Set the visibility of the Previous and Next buttons
-            int currentItemIndex = (int)((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemIndex;
-            PreviousButton.Visibility = currentItemIndex > 0 ? Visibility.Visible : Visibility.Collapsed;
-            NextButton.Visibility = currentItemIndex != PlayingSound.Sounds.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
+            PreviousButton.Visibility = PlayingSound.Current > 0 ? Visibility.Visible : Visibility.Collapsed;
+            NextButton.Visibility = PlayingSound.Current != PlayingSound.Sounds.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
 
             // Set the appropriate layout for the PlayingSoundItem
             double windowWidth = Window.Current.Bounds.Width;
@@ -441,6 +484,12 @@ namespace UniversalSoundBoard.Components
             {
                 // Remove the item at the start position of the removed items
                 ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items.RemoveAt(e.OldStartingIndex);
+
+                if (e.OldStartingIndex <= PlayingSound.Current && PlayingSound.Current > 0)
+                {
+                    PlayingSound.Current--;
+                    await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Current);
+                }
 
                 // Update the PlayingSound
                 await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds.ToList());

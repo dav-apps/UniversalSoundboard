@@ -571,4 +571,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="RemoveButton.Text" xml:space="preserve">
     <value>Entfernen</value>
   </data>
+  <data name="Remove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
 </root>
