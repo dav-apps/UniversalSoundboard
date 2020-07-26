@@ -43,6 +43,7 @@ namespace UniversalSoundBoard.Components
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             AdjustLayout();
+            UpdateUI();
         }
 
         private void PlayingSoundTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -104,6 +105,12 @@ namespace UniversalSoundBoard.Components
 
             // Apply the new volume
             PlayingSound.MediaPlayer.Volume = value / 100;
+        }
+
+        private void VolumeControl_IconChanged(object sender, string newIcon)
+        {
+            // Update the icon of the Volume button
+            VolumeButton.Content = newIcon;
         }
 
         private async void VolumeControl_LostFocus(object sender, RoutedEventArgs e)
@@ -341,6 +348,10 @@ namespace UniversalSoundBoard.Components
 
             // Set the selected item of the sounds list
             SoundsListView.SelectedIndex = PlayingSound.Current;
+
+            // Set the volume icon
+            if (layoutType == PlayingSoundItemLayoutType.Large)
+                VolumeButton.Content = UniversalSoundboard.Components.VolumeControl.GetVolumeIcon(PlayingSound.MediaPlayer.Volume * 100);
         }
 
         /**
