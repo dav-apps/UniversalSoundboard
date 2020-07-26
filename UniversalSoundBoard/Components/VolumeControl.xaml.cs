@@ -9,13 +9,24 @@ namespace UniversalSoundboard.Components
     public sealed partial class VolumeControl : UserControl
     {
         private bool skipVolumeSliderValueChanged = false;
+        private bool muted = false;
 
         public new Brush Background { get; set; }
         public new Thickness Padding { get; set; }
+        public bool Muted
+        {
+            get => muted;
+            set
+            {
+                muted = value;
+                UpdateVolumeIcon();
+            }
+        }
 
         public event EventHandler<RangeBaseValueChangedEventArgs> ValueChanged;
         public event EventHandler<string> IconChanged;
         public new event EventHandler<RoutedEventArgs> LostFocus;
+        public event EventHandler<bool> MuteChanged;
 
         public double Value
         {
@@ -31,22 +42,35 @@ namespace UniversalSoundboard.Components
         public VolumeControl()
         {
             InitializeComponent();
-            UpdateVolumeIcon(VolumeSlider.Value);
+            UpdateVolumeIcon();
         }
 
         private void VolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            UpdateVolumeIcon(e.NewValue);
+            if (muted)
+            {
+                muted = false;
+                MuteChanged?.Invoke(this, false);
+            }
+
+            UpdateVolumeIcon();
             if (skipVolumeSliderValueChanged) return;
             ValueChanged?.Invoke(sender, e);
         }
 
         private void VolumeSlider_LostFocus(object sender, RoutedEventArgs e) => LostFocus?.Invoke(sender, e);
 
-        private void UpdateVolumeIcon(double volume)
+        private void MuteButton_Click(object sender, RoutedEventArgs e)
+        {
+            muted = !muted;
+            UpdateVolumeIcon();
+            MuteChanged?.Invoke(this, muted);
+        }
+
+        private void UpdateVolumeIcon()
         {
             string oldIcon = MuteButton.Content as string;
-            string newIcon = GetVolumeIcon(volume);
+            string newIcon = GetVolumeIcon(VolumeSlider.Value, muted);
             MuteButton.Content = newIcon;
 
             // If the icon changed, invoke the IconChanged event with the new icon
@@ -54,9 +78,9 @@ namespace UniversalSoundboard.Components
                 IconChanged?.Invoke(this, newIcon);
         }
 
-        public static string GetVolumeIcon(double volume)
+        public static string GetVolumeIcon(double volume, bool muted = false)
         {
-            if (volume <= 0)
+            if (volume <= 0 || muted)
                 return "\uE74F";
             else if (volume <= 32)
                 return "\uE993";

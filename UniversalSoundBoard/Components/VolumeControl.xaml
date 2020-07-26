@@ -23,9 +23,10 @@
             CornerRadius="20"
             Background="Transparent"
             Margin="-8,0,0,0"
+            Content="&#xE995;"
             FontFamily="Segoe MDL2 Assets"
             FontSize="16"
-            Content="&#xE995;" />
+            Click="MuteButton_Click" />
 
         <Slider
             Name="VolumeSlider"
