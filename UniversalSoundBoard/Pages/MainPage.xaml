@@ -220,6 +220,7 @@
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                             <TextBlock
+                                                Name="VolumeButtonIcon"
                                                 Style="{StaticResource TopButtonInnerIconStyle}"
                                                 Text="&#xE767;" />
                                             <TextBlock
@@ -233,6 +234,7 @@
                                                 <components1:VolumeControl
                                                     x:Name="VolumeControl"
                                                     ValueChanged="VolumeControl_ValueChanged"
+                                                    IconChanged="VolumeControl_IconChanged"
                                                     LostFocus="VolumeControl_LostFocus" />
                                             </Flyout>
                                         </Button.Flyout>

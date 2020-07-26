@@ -143,6 +143,9 @@ namespace UniversalSoundBoard.Pages
             Application.Current.Resources["NavigationViewExpandedPaneBackground"] = new AcrylicBrush();
 
             FileManager.UpdateLayoutColors();
+
+            // Set the VolumeButton icon
+            VolumeButtonIcon.Text = VolumeControl.GetVolumeIcon(FileManager.itemViewHolder.Volume * 100);
         }
 
         private void AdjustLayout()
@@ -691,6 +694,11 @@ namespace UniversalSoundBoard.Pages
 
             // Save the new volume
             FileManager.itemViewHolder.Volume = volumeSlider.Value / 100;
+        }
+
+        private void VolumeControl_IconChanged(object sender, string newIcon)
+        {
+            VolumeButtonIcon.Text = newIcon;
         }
 
         private async void VolumeControl_LostFocus(object sender, RoutedEventArgs e)
