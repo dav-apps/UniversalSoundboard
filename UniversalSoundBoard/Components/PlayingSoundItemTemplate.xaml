@@ -162,7 +162,8 @@
                                 x:Name="VolumeControl"
                                 ValueChanged="VolumeControl_ValueChanged"
                                 IconChanged="VolumeControl_IconChanged"
-                                LostFocus="VolumeControl_LostFocus" />
+                                LostFocus="VolumeControl_LostFocus"
+                                MuteChanged="VolumeControl_MuteChanged" />
                         </Flyout>
                     </Button.Flyout>
 
@@ -238,7 +239,8 @@
                                 x:Name="MoreButtonVolumeFlyoutItem"
                                 VolumeControl_ValueChanged="VolumeControl_ValueChanged"
                                 VolumeControl_IconChanged="VolumeControl_IconChanged"
-                                VolumeControl_LostFocus="VolumeControl_LostFocus" />
+                                VolumeControl_LostFocus="VolumeControl_LostFocus"
+                                VolumeControl_MuteChanged="VolumeControl_MuteChanged" />
                             <MenuFlyoutSubItem Name="MoreButtonRepeatFlyoutSubItem" x:Uid="MoreButton-Repeat" Icon="RepeatAll">
                                 <MenuFlyoutItem Name="MoreButton_Repeat_1x" Text="1x" Click="MoreButton_Repeat_1x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_2x" Text="2x" Click="MoreButton_Repeat_2x_Click" />

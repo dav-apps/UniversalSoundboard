@@ -97,6 +97,7 @@ namespace UniversalSoundBoard.Components
         {
             // Set the value of the volume slider
             VolumeControl.Value = Convert.ToInt32(PlayingSound.MediaPlayer.Volume * 100);
+            VolumeControl.Muted = PlayingSound.MediaPlayer.IsMuted;
         }
 
         private void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -119,6 +120,12 @@ namespace UniversalSoundBoard.Components
 
             // Save the new volume
             await FileManager.SetVolumeOfPlayingSoundAsync(PlayingSound.Uuid, value / 100);
+        }
+
+        private async void VolumeControl_MuteChanged(object sender, bool muted)
+        {
+            PlayingSound.MediaPlayer.IsMuted = muted;
+            await FileManager.SetMutedOfPlayingSoundAsync(PlayingSound.Uuid, muted);
         }
 
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
@@ -148,6 +155,7 @@ namespace UniversalSoundBoard.Components
             {
                 // Set the value of the VolumeMenuFlyoutItem
                 MoreButtonVolumeFlyoutItem.VolumeControlValue = Convert.ToInt32(PlayingSound.MediaPlayer.Volume * 100);
+                MoreButtonVolumeFlyoutItem.VolumeControlMuted = PlayingSound.MediaPlayer.IsMuted;
             }
         }
 
@@ -351,7 +359,7 @@ namespace UniversalSoundBoard.Components
 
             // Set the volume icon
             if (layoutType == PlayingSoundItemLayoutType.Large)
-                VolumeButton.Content = UniversalSoundboard.Components.VolumeControl.GetVolumeIcon(PlayingSound.MediaPlayer.Volume * 100);
+                VolumeButton.Content = UniversalSoundboard.Components.VolumeControl.GetVolumeIcon(PlayingSound.MediaPlayer.Volume * 100, PlayingSound.MediaPlayer.IsMuted);
         }
 
         /**
