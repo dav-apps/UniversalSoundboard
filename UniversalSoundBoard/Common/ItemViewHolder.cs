@@ -28,6 +28,7 @@ namespace UniversalSoundBoard.Common
         private const string showSoundsPivotKey = "showSoundsPivot";
         private const string savePlayingSoundsKey = "savePlayingSounds";
         private const string volumeKey = "volume";
+        private const string mutedKey = "muted";
         private const string showAcrylicBackgroundKey = "showAcrylicBackground";
         private const string soundOrderKey = "soundOrder";
         private const string soundOrderReversedKey = "soundOrderReversed";
@@ -44,6 +45,7 @@ namespace UniversalSoundBoard.Common
         private const bool showSoundsPivotDefault = true;
         private const bool savePlayingSoundsDefault = true;
         private const double volumeDefault = 1.0;
+        private const bool mutedDefault = false;
         private const bool showAcrylicBackgroundDefault = true;
         private const FileManager.SoundOrder soundOrderDefault = FileManager.SoundOrder.Custom;
         private const bool soundOrderReversedDefault = false;
@@ -107,6 +109,7 @@ namespace UniversalSoundBoard.Common
         private bool _showSoundsPivot;                                      // If true shows the pivot to select Sounds or Favourite sounds
         private bool _savePlayingSounds;                                    // If true saves the PlayingSounds and loads them when starting the app
         private double _volume;                                             // The default volume for all PlayingSounds, between 0 and 1
+        private bool _muted;                                                // If true, the volume is muted
         private bool _showAcrylicBackground;                                // If true the acrylic background is visible
         private FileManager.SoundOrder _soundOrder;                         // The selected sound order in the settings
         private bool _soundOrderReversed;                                   // If the sound order is descending (false) or ascending (true)
@@ -235,6 +238,11 @@ namespace UniversalSoundBoard.Common
                 _volume = volumeDefault;
             else
                 _volume = (double)localSettings.Values[volumeKey];
+
+            if (localSettings.Values[mutedKey] == null)
+                _muted = mutedDefault;
+            else
+                _muted = (bool)localSettings.Values[mutedKey];
 
             if (localSettings.Values[showAcrylicBackgroundKey] == null)
                 _showAcrylicBackground = showAcrylicBackgroundDefault;
@@ -718,6 +726,18 @@ namespace UniversalSoundBoard.Common
                 localSettings.Values[volumeKey] = value;
                 _volume = value;
                 NotifyPropertyChanged("Volume");
+            }
+        }
+
+        public bool Muted
+        {
+            get => _muted;
+            set
+            {
+                if (_muted.Equals(value)) return;
+                localSettings.Values[mutedKey] = value;
+                _muted = value;
+                NotifyPropertyChanged("Muted");
             }
         }
 
