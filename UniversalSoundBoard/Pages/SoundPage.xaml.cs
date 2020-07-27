@@ -261,9 +261,9 @@ namespace UniversalSoundBoard.Pages
                 await RemoveSoundsFromPlayingSoundsListAsync(removedPlayingSounds);
             }
 
-            PlayingSound playingSound = new PlayingSound(sound, player)
+            PlayingSound playingSound = new PlayingSound(player, sound)
             {
-                Uuid = await FileManager.CreatePlayingSoundAsync(null, soundList, 0, 0, false, player.Volume)
+                Uuid = await FileManager.CreatePlayingSoundAsync(null, soundList, 0, 0, false)
             };
             FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
             playingSound.MediaPlayer.Play();
@@ -291,9 +291,9 @@ namespace UniversalSoundBoard.Pages
                 await RemoveSoundsFromPlayingSoundsListAsync(removedPlayingSounds);
             }
 
-            PlayingSound playingSound = new PlayingSound(Guid.Empty, sounds, player, repetitions, randomly, 0)
+            PlayingSound playingSound = new PlayingSound(Guid.Empty, player, sounds, 0, repetitions, randomly)
             {
-                Uuid = await FileManager.CreatePlayingSoundAsync(null, sounds, 0, repetitions, randomly, player.Volume)
+                Uuid = await FileManager.CreatePlayingSoundAsync(null, sounds, 0, repetitions, randomly)
             };
             FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
             playingSound.MediaPlayer.Play();

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.Media.Playback;
 
@@ -10,82 +9,57 @@ namespace UniversalSoundboard.Models
     public class PlayingSound
     {
         public Guid Uuid { get; set; }
-        public ObservableCollection<Sound> Sounds { get; set; }
         public MediaPlayer MediaPlayer { get; set; }
+        public ObservableCollection<Sound> Sounds { get; set; }
+        public int Current { get; set; }
         public int Repetitions { get; set; }
         public bool Randomly { get; set; }
-        public int Current { get; set; }
+        public int Volume { get; set; }
+        public bool Muted { get; set; }
 
         public PlayingSound()
         {
             Sounds = new ObservableCollection<Sound>();
+            Current = 0;
             Repetitions = 0;
             Randomly = false;
-            Current = 0;
+            Volume = 100;
+            Muted = false;
         }
 
-        public PlayingSound(Sound sound, MediaPlayer player)
+        public PlayingSound(MediaPlayer player, Sound sound)
         {
-            Sounds = new ObservableCollection<Sound>
-            {
-                sound
-            };
-
             MediaPlayer = player;
+            Sounds = new ObservableCollection<Sound> { sound };
+            Current = 0;
             Repetitions = 0;
             Randomly = false;
-            Current = 0;
+            Volume = 100;
+            Muted = false;
         }
 
-        public PlayingSound(List<Sound> sounds, MediaPlayer player)
-        {
-            Sounds = new ObservableCollection<Sound>();
-            foreach (Sound sound in sounds)
-                Sounds.Add(sound);
-
-            MediaPlayer = player;
-            Repetitions = 0;
-            Randomly = false;
-            Current = 0;
-        }
-
-        public PlayingSound(Sound sound, MediaPlayer player, int repetitions)
-        {
-            Sounds = new ObservableCollection<Sound>
-            {
-                sound
-            };
-
-            MediaPlayer = player;
-            Repetitions = repetitions;
-            Randomly = false;
-        }
-
-        public PlayingSound(Guid uuid, List<Sound> sounds, MediaPlayer player, int repetitions, bool randomly, int current)
+        public PlayingSound(Guid uuid, MediaPlayer player, List<Sound> sounds, int current, int repetitions, bool randomly)
         {
             Uuid = uuid;
-            Sounds = new ObservableCollection<Sound>();
-            foreach (Sound sound in sounds)
-                Sounds.Add(sound);
-
             MediaPlayer = player;
+            Sounds = new ObservableCollection<Sound>(sounds);
+            Current = current;
             Repetitions = repetitions;
             Randomly = randomly;
+            Volume = 100;
+            Muted = false;
+        }
+
+        public PlayingSound(Guid uuid, MediaPlayer player, List<Sound> sounds, int current, int repetitions, bool randomly, int volume, bool muted)
+        {
+            Uuid = uuid;
+            MediaPlayer = player;
+            Sounds = new ObservableCollection<Sound>(sounds);
             Current = current;
-        }
-
-        public void AddSound(Sound sound)
-        {
-            Sounds.Add(sound);
-        }
-
-        public static PlayingSound GetPlayingSoundByMediaPlayer(MediaPlayer player)
-        {
-            foreach (PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
-                if (playingSound.MediaPlayer == player)
-                    return playingSound;
-
-            return null;
+            Repetitions = repetitions;
+            Randomly = randomly;
+            Volume = volume;
+            Muted = muted;
         }
     }
 }
