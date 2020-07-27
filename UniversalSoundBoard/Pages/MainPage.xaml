@@ -235,7 +235,7 @@
                                                     x:Name="VolumeControl"
                                                     ValueChanged="VolumeControl_ValueChanged"
                                                     IconChanged="VolumeControl_IconChanged"
-                                                    LostFocus="VolumeControl_LostFocus" />
+                                                    MuteChanged="VolumeControl_MuteChanged" />
                                             </Flyout>
                                         </Button.Flyout>
 

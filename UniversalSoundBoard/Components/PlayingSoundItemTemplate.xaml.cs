@@ -70,6 +70,9 @@ namespace UniversalSoundBoard.Components
             ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundItemTemplate_CurrentItemChanged;
             PlayingSound.MediaPlayer.CommandManager.PreviousReceived -= CommandManager_PreviousReceived;
             PlayingSound.MediaPlayer.CommandManager.PreviousReceived += CommandManager_PreviousReceived;
+
+            // Subscribe to other events
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             PlayingSound.Sounds.CollectionChanged -= Sounds_CollectionChanged;
             PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
 
@@ -96,8 +99,8 @@ namespace UniversalSoundBoard.Components
         private void VolumeButton_Click(object sender, RoutedEventArgs e)
         {
             // Set the value of the volume slider
-            VolumeControl.Value = Convert.ToInt32(PlayingSound.MediaPlayer.Volume * 100);
-            VolumeControl.Muted = PlayingSound.MediaPlayer.IsMuted;
+            VolumeControl.Value = PlayingSound.Volume;
+            VolumeControl.Muted = PlayingSound.Muted;
         }
 
         private void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -105,7 +108,7 @@ namespace UniversalSoundBoard.Components
             double value = layoutType == PlayingSoundItemLayoutType.Large ? VolumeControl.Value : MoreButtonVolumeFlyoutItem.VolumeControlValue;
 
             // Apply the new volume
-            PlayingSound.MediaPlayer.Volume = value / 100;
+            PlayingSound.MediaPlayer.Volume = value / 100 * FileManager.itemViewHolder.Volume / 100;
         }
 
         private void VolumeControl_IconChanged(object sender, string newIcon)
@@ -117,14 +120,19 @@ namespace UniversalSoundBoard.Components
         private async void VolumeControl_LostFocus(object sender, RoutedEventArgs e)
         {
             double value = layoutType == PlayingSoundItemLayoutType.Large ? VolumeControl.Value : MoreButtonVolumeFlyoutItem.VolumeControlValue;
+            int volume = Convert.ToInt32(value);
 
-            // Save the new volume
-            await FileManager.SetVolumeOfPlayingSoundAsync(PlayingSound.Uuid, value / 100);
+            // Save new Volume
+            PlayingSound.Volume = volume;
+            await FileManager.SetVolumeOfPlayingSoundAsync(PlayingSound.Uuid, volume);
         }
 
         private async void VolumeControl_MuteChanged(object sender, bool muted)
         {
-            PlayingSound.MediaPlayer.IsMuted = muted;
+            PlayingSound.MediaPlayer.IsMuted = muted || FileManager.itemViewHolder.Muted;
+
+            // Save new Muted
+            PlayingSound.Muted = muted;
             await FileManager.SetMutedOfPlayingSoundAsync(PlayingSound.Uuid, muted);
         }
 
@@ -154,8 +162,8 @@ namespace UniversalSoundBoard.Components
             if (layoutType != PlayingSoundItemLayoutType.Large)
             {
                 // Set the value of the VolumeMenuFlyoutItem
-                MoreButtonVolumeFlyoutItem.VolumeControlValue = Convert.ToInt32(PlayingSound.MediaPlayer.Volume * 100);
-                MoreButtonVolumeFlyoutItem.VolumeControlMuted = PlayingSound.MediaPlayer.IsMuted;
+                MoreButtonVolumeFlyoutItem.VolumeControlValue = PlayingSound.Volume;
+                MoreButtonVolumeFlyoutItem.VolumeControlMuted = PlayingSound.Muted;
             }
         }
 
@@ -359,7 +367,7 @@ namespace UniversalSoundBoard.Components
 
             // Set the volume icon
             if (layoutType == PlayingSoundItemLayoutType.Large)
-                VolumeButton.Content = UniversalSoundboard.Components.VolumeControl.GetVolumeIcon(PlayingSound.MediaPlayer.Volume * 100, PlayingSound.MediaPlayer.IsMuted);
+                VolumeButton.Content = UniversalSoundboard.Components.VolumeControl.GetVolumeIcon(PlayingSound.Volume, PlayingSound.Muted);
         }
 
         /**
@@ -368,6 +376,7 @@ namespace UniversalSoundBoard.Components
         private void TogglePlayPause()
         {
             if (PlayingSound.MediaPlayer == null) return;
+
             if (PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Opening || PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
                 PlayingSound.MediaPlayer.Pause();
             else
@@ -495,6 +504,14 @@ namespace UniversalSoundBoard.Components
         #endregion
 
         #region Other event handlers
+        private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == "Volume")
+                PlayingSound.MediaPlayer.Volume = (double)PlayingSound.Volume / 100 * FileManager.itemViewHolder.Volume / 100;
+            else if (e.PropertyName == "Muted")
+                PlayingSound.MediaPlayer.IsMuted = PlayingSound.Muted || FileManager.itemViewHolder.Muted;
+        }
+
         private async void Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (PlayingSound.MediaPlayer == null || skipSoundsCollectionChanged) return;

@@ -68,9 +68,6 @@ namespace UniversalSoundBoard.Pages
 
             // Load the user details and start the sync
             await FileManager.itemViewHolder.User.InitAsync();
-
-            // Set the value of the volume slider
-            VolumeControl.Value = FileManager.itemViewHolder.Volume * 100;
         }
 
         async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -144,8 +141,12 @@ namespace UniversalSoundBoard.Pages
 
             FileManager.UpdateLayoutColors();
 
+            // Set the value of the volume slider
+            VolumeControl.Value = FileManager.itemViewHolder.Volume;
+            VolumeControl.Muted = FileManager.itemViewHolder.Muted;
+
             // Set the VolumeButton icon
-            VolumeButtonIcon.Text = VolumeControl.GetVolumeIcon(FileManager.itemViewHolder.Volume * 100);
+            VolumeButtonIcon.Text = VolumeControl.GetVolumeIcon(FileManager.itemViewHolder.Volume, FileManager.itemViewHolder.Muted);
         }
 
         private void AdjustLayout()
@@ -676,24 +677,9 @@ namespace UniversalSoundBoard.Pages
         private void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             var volumeSlider = sender as Slider;
-            double newValue = e.NewValue;
-            double oldValue = e.OldValue;
-
-            // Change Volume of MediaPlayers
-            double addedValue = (newValue - oldValue) / 100;
-
-            foreach (PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
-            {
-                if ((playingSound.MediaPlayer.Volume + addedValue) > 1)
-                    playingSound.MediaPlayer.Volume = 1;
-                else if ((playingSound.MediaPlayer.Volume + addedValue) < 0)
-                    playingSound.MediaPlayer.Volume = 0;
-                else
-                    playingSound.MediaPlayer.Volume += addedValue;
-            }
 
             // Save the new volume
-            FileManager.itemViewHolder.Volume = volumeSlider.Value / 100;
+            FileManager.itemViewHolder.Volume = Convert.ToInt32(volumeSlider.Value);
         }
 
         private void VolumeControl_IconChanged(object sender, string newIcon)
@@ -701,11 +687,9 @@ namespace UniversalSoundBoard.Pages
             VolumeButtonIcon.Text = newIcon;
         }
 
-        private async void VolumeControl_LostFocus(object sender, RoutedEventArgs e)
+        private void VolumeControl_MuteChanged(object sender, bool muted)
         {
-            // Save the new volume of all playing sounds
-            foreach (PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
-                await FileManager.SetVolumeOfPlayingSoundAsync(playingSound.Uuid, playingSound.MediaPlayer.Volume);
+            FileManager.itemViewHolder.Muted = muted;
         }
         #endregion
 
