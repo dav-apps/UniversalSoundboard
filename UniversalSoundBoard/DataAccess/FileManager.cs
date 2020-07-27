@@ -106,6 +106,7 @@ namespace UniversalSoundBoard.DataAccess
         public const string PlayingSoundTableRepetitionsPropertyName = "repetitions";
         public const string PlayingSoundTableRandomlyPropertyName = "randomly";
         public const string PlayingSoundTableVolumePropertyName = "volume";
+        public const string PlayingSoundTableVolume2PropertyName = "volume2";
         public const string PlayingSoundTableMutedPropertyName = "muted";
 
         public const string OrderTableTypePropertyName = "type";
@@ -1791,25 +1792,18 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region PlayingSound CRUD methods
-        public static async Task<Guid> CreatePlayingSoundAsync(Guid? uuid, List<Sound> sounds, int current, int repetitions, bool randomly, double volume)
+        public static async Task<Guid> CreatePlayingSoundAsync(Guid? uuid, List<Sound> sounds, int current, int repetitions, bool randomly)
         {
             if (
                 !itemViewHolder.SavePlayingSounds
                 || !itemViewHolder.PlayingSoundsListVisible
             ) return uuid.GetValueOrDefault();
 
-            if (volume >= 1)
-                volume = 1;
-            else if (volume <= 0)
-                volume = 0;
-
             List<Guid> soundUuids = new List<Guid>();
             foreach (Sound sound in sounds)
                 soundUuids.Add(sound.Uuid);
 
-            var playingSoundTableObject = await DatabaseOperations.CreatePlayingSoundAsync(uuid ?? Guid.NewGuid(), soundUuids, current, repetitions, randomly, volume);
-
-            return playingSoundTableObject.Uuid;
+            return (await DatabaseOperations.CreatePlayingSoundAsync(uuid ?? Guid.NewGuid(), soundUuids, current, repetitions, randomly, 100)).Uuid;
         }
 
         public static async Task<List<PlayingSound>> GetAllPlayingSoundsAsync()
@@ -1853,10 +1847,10 @@ namespace UniversalSoundBoard.DataAccess
             await DatabaseOperations.UpdatePlayingSoundAsync(uuid, soundUuids, null, null, null, null, null);
         }
 
-        public static async Task SetVolumeOfPlayingSoundAsync(Guid uuid, double volume)
+        public static async Task SetVolumeOfPlayingSoundAsync(Guid uuid, int volume)
         {
-            if (volume >= 1)
-                volume = 1;
+            if (volume >= 100)
+                volume = 100;
             else if (volume <= 0)
                 volume = 0;
 
@@ -1912,17 +1906,31 @@ namespace UniversalSoundBoard.DataAccess
             string currentString = tableObject.GetPropertyValue(PlayingSoundTableCurrentPropertyName);
             int.TryParse(currentString, out int current);
 
-            string volumeString = tableObject.GetPropertyValue(PlayingSoundTableVolumePropertyName);
-            double.TryParse(volumeString, out double volume);
-
-            string mutedString = tableObject.GetPropertyValue(PlayingSoundTableMutedPropertyName);
-            bool.TryParse(mutedString, out bool muted);
-
             string repetitionsString = tableObject.GetPropertyValue(PlayingSoundTableRepetitionsPropertyName);
             int.TryParse(repetitionsString, out int repetitions);
 
             string randomlyString = tableObject.GetPropertyValue(PlayingSoundTableRandomlyPropertyName);
             bool.TryParse(randomlyString, out bool randomly);
+
+            // Backwards compatibility for volume saved as double
+            // Read from volume (double, 0 - 1), save to volume2 (int, 0 - 100)
+            string volumeString = tableObject.GetPropertyValue(PlayingSoundTableVolumePropertyName);
+            string volume2String = tableObject.GetPropertyValue(PlayingSoundTableVolume2PropertyName);
+            double volume = 100;
+
+            // Use volume2 if it exists, otherwise use volume
+            if(volume2String != null)
+            {
+                double.TryParse(volume2String, out volume);
+            }
+            else if(volumeString != null)
+            {
+                double.TryParse(volumeString, out volume);
+                volume *= 100;
+            }
+
+            string mutedString = tableObject.GetPropertyValue(PlayingSoundTableMutedPropertyName);
+            bool.TryParse(mutedString, out bool muted);
 
             // Create the media player
             MediaPlayer player = await CreateMediaPlayerAsync(sounds, current);
@@ -1930,10 +1938,10 @@ namespace UniversalSoundBoard.DataAccess
             if (player != null)
             {
                 player.AutoPlay = false;
-                player.Volume = volume;
-                player.IsMuted = muted;
+                player.Volume = (double)itemViewHolder.Volume / 100 * (volume / 100);
+                player.IsMuted = itemViewHolder.Muted || muted;
 
-                PlayingSound playingSound = new PlayingSound(tableObject.Uuid, sounds, player, repetitions, randomly, current);
+                PlayingSound playingSound = new PlayingSound(tableObject.Uuid, player, sounds, current, repetitions, randomly, Convert.ToInt32(volume), muted);
                 return playingSound;
             }
             else
@@ -1944,6 +1952,7 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
+        /*
         public static async Task AddOrRemoveAllPlayingSoundsAsync()
         {
             if (itemViewHolder.SavePlayingSounds && itemViewHolder.PlayingSoundsListVisible)
@@ -1977,6 +1986,7 @@ namespace UniversalSoundBoard.DataAccess
                     await DatabaseOperations.DeletePlayingSound(ps.Uuid);
             }
         }
+        */
         #endregion
 
         #region Category order methods
