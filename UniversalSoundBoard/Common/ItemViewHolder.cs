@@ -44,7 +44,7 @@ namespace UniversalSoundBoard.Common
         private const bool showCategoryIconDefault = true;
         private const bool showSoundsPivotDefault = true;
         private const bool savePlayingSoundsDefault = true;
-        private const double volumeDefault = 1.0;
+        private const int volumeDefault = 100;
         private const bool mutedDefault = false;
         private const bool showAcrylicBackgroundDefault = true;
         private const FileManager.SoundOrder soundOrderDefault = FileManager.SoundOrder.Custom;
@@ -108,7 +108,7 @@ namespace UniversalSoundBoard.Common
         private bool _showCategoryIcon;                                     // If true shows the icon of the category on the sound tile
         private bool _showSoundsPivot;                                      // If true shows the pivot to select Sounds or Favourite sounds
         private bool _savePlayingSounds;                                    // If true saves the PlayingSounds and loads them when starting the app
-        private double _volume;                                             // The default volume for all PlayingSounds, between 0 and 1
+        private int _volume;                                                // The volume of the entire app, between 0 and 100
         private bool _muted;                                                // If true, the volume is muted
         private bool _showAcrylicBackground;                                // If true the acrylic background is visible
         private FileManager.SoundOrder _soundOrder;                         // The selected sound order in the settings
@@ -237,7 +237,20 @@ namespace UniversalSoundBoard.Common
             if (localSettings.Values[volumeKey] == null)
                 _volume = volumeDefault;
             else
-                _volume = (double)localSettings.Values[volumeKey];
+            {
+                // Backwards compatibility for saving the volume as double
+                try
+                {
+                    // Try to read the volume as int
+                    _volume = (int)localSettings.Values[volumeKey];
+                }
+                catch
+                {
+                    // Overwrite the volume with the default
+                    localSettings.Values[volumeKey] = volumeDefault;
+                    _volume = volumeDefault;
+                }
+            }
 
             if (localSettings.Values[mutedKey] == null)
                 _muted = mutedDefault;
@@ -717,7 +730,7 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public double Volume
+        public int Volume
         {
             get => _volume;
             set
