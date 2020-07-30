@@ -391,78 +391,106 @@ namespace UniversalSoundBoard.DataAccess
         #region Export / Import
         public static async Task ExportDataAsync(StorageFolder exportFolder, IProgress<int> progress)
         {
-            List<TableObjectData> tableObjectDataList = new List<TableObjectData>();
-            var tableObjects = await Dav.Database.GetAllTableObjectsAsync(false);
-            int i = 0;
-
-            // Get the dav data folder
-            StorageFolder davFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync("dav");
-
-            foreach (var tableObject in tableObjects)
+            try
             {
-                tableObjectDataList.Add(tableObject.ToTableObjectData());
+                List<TableObjectData> tableObjectDataList = new List<TableObjectData>();
+                var tableObjects = await Dav.Database.GetAllTableObjectsAsync(false);
+                int i = 0;
 
-                if (tableObject.IsFile && tableObject.File != null)
+                // Get the dav data folder
+                StorageFolder davFolder = await ApplicationData.Current.LocalFolder.GetFolderAsync("dav");
+
+                foreach (var tableObject in tableObjects)
                 {
-                    // Create the folder for the table, if it does not exist
-                    StorageFolder tableFolder;
-                    if (await exportFolder.TryGetItemAsync(tableObject.TableId.ToString()) == null)
-                        tableFolder = await exportFolder.CreateFolderAsync(tableObject.TableId.ToString());
-                    else
-                        tableFolder = await exportFolder.GetFolderAsync(tableObject.TableId.ToString());
+                    try
+                    {
+                        tableObjectDataList.Add(tableObject.ToTableObjectData());
 
-                    // Get the table folder within the dav folder
-                    StorageFolder davTableFolder = (StorageFolder)await davFolder.TryGetItemAsync(tableObject.TableId.ToString());
-                    if (davTableFolder == null) continue;
+                        if (tableObject.IsFile && tableObject.File != null)
+                        {
+                            // Create the folder for the table, if it does not exist
+                            StorageFolder tableFolder;
+                            if (await exportFolder.TryGetItemAsync(tableObject.TableId.ToString()) == null)
+                                tableFolder = await exportFolder.CreateFolderAsync(tableObject.TableId.ToString());
+                            else
+                                tableFolder = await exportFolder.GetFolderAsync(tableObject.TableId.ToString());
 
-                    // Get the table object file within the table folder
-                    StorageFile tableObjectFile = (StorageFile)await davTableFolder.TryGetItemAsync(tableObject.File.Name);
-                    if (tableObjectFile == null) continue;
+                            // Get the table folder within the dav folder
+                            StorageFolder davTableFolder = (StorageFolder)await davFolder.TryGetItemAsync(tableObject.TableId.ToString());
+                            if (davTableFolder == null) continue;
 
-                    await tableObjectFile.CopyAsync(tableFolder);
+                            // Get the table object file within the table folder
+                            StorageFile tableObjectFile = (StorageFile)await davTableFolder.TryGetItemAsync(tableObject.File.Name);
+                            if (tableObjectFile == null) continue;
+
+                            await tableObjectFile.CopyAsync(tableFolder);
+                        }
+                    }
+                    catch (Exception innerException)
+                    {
+                        await FileManager.LogException(innerException);
+                    }
+
+                    i++;
+                    progress.Report((int)Math.Round(100.0 / tableObjects.Count * i));
                 }
 
-                i++;
-                progress.Report((int)Math.Round(100.0 / tableObjects.Count * i));
+                // Write the list of tableObjects as json
+                StorageFile dataFile = await exportFolder.CreateFileAsync(Dav.ExportDataFileName, CreationCollisionOption.ReplaceExisting);
+                await FileManager.WriteFileAsync(dataFile, tableObjectDataList);
             }
-
-            // Write the list of tableObjects as json
-            StorageFile dataFile = await exportFolder.CreateFileAsync(Dav.ExportDataFileName, CreationCollisionOption.ReplaceExisting);
-            await FileManager.WriteFileAsync(dataFile, tableObjectDataList);
+            catch(Exception outerException)
+            {
+                await FileManager.LogException(outerException);
+            }
         }
 
         public static async Task ImportDataAsync(StorageFolder importFolder, IProgress<int> progress)
         {
-            StorageFile dataFile = await importFolder.GetFileAsync(Dav.ExportDataFileName);
-            if (dataFile == null) return;
-
-            List<TableObjectData> tableObjectDataList = await FileManager.GetTableObjectDataFromFile(dataFile);
-            int i = 0;
-
-            foreach(var tableObjectData in tableObjectDataList)
+            try
             {
-                TableObject tableObject = TableObject.ConvertTableObjectDataToTableObject(tableObjectData);
-                tableObject.UploadStatus = TableObject.TableObjectUploadStatus.New;
+                StorageFile dataFile = await importFolder.GetFileAsync(Dav.ExportDataFileName);
+                if (dataFile == null) return;
 
-                if(!await Dav.Database.TableObjectExistsAsync(tableObject.Uuid))
+                List<TableObjectData> tableObjectDataList = await FileManager.GetTableObjectDataFromFile(dataFile);
+                int i = 0;
+
+                foreach (var tableObjectData in tableObjectDataList)
                 {
-                    await Dav.Database.CreateTableObjectWithPropertiesAsync(tableObject);
-
-                    if (tableObject.IsFile)
+                    try
                     {
-                        // Get the file from the appropriate folder
-                        StorageFolder tableFolder = (StorageFolder)await importFolder.TryGetItemAsync(tableObject.TableId.ToString());
-                        if (tableFolder == null) continue;
+                        TableObject tableObject = TableObject.ConvertTableObjectDataToTableObject(tableObjectData);
+                        tableObject.UploadStatus = TableObject.TableObjectUploadStatus.New;
 
-                        StorageFile tableObjectFile = (StorageFile)await tableFolder.TryGetItemAsync(tableObject.Uuid.ToString());
-                        if (tableObjectFile == null) continue;
+                        if (!await Dav.Database.TableObjectExistsAsync(tableObject.Uuid))
+                        {
+                            await Dav.Database.CreateTableObjectWithPropertiesAsync(tableObject);
 
-                        await tableObject.SetFileAsync(new FileInfo(tableObjectFile.Path));
+                            if (tableObject.IsFile)
+                            {
+                                // Get the file from the appropriate folder
+                                StorageFolder tableFolder = (StorageFolder)await importFolder.TryGetItemAsync(tableObject.TableId.ToString());
+                                if (tableFolder == null) continue;
+
+                                StorageFile tableObjectFile = (StorageFile)await tableFolder.TryGetItemAsync(tableObject.Uuid.ToString());
+                                if (tableObjectFile == null) continue;
+
+                                await tableObject.SetFileAsync(new FileInfo(tableObjectFile.Path));
+                            }
+                        }
                     }
-                }
+                    catch(Exception innerException)
+                    {
+                        await FileManager.LogException(innerException);
+                    }
 
-                i++;
-                progress.Report((int)Math.Round(100.0 / tableObjectDataList.Count * i));
+                    i++;
+                    progress.Report((int)Math.Round(100.0 / tableObjectDataList.Count * i));
+                }
+            }
+            catch(Exception outerException)
+            {
+                await FileManager.LogException(outerException);
             }
         }
         #endregion
