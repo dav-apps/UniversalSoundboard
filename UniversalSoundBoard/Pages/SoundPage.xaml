@@ -459,6 +459,19 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Storyboards -->
+        <Storyboard x:Name="SnapBottomPlayingSoundsBarStoryboard" Completed="SnapBottomPlayingSoundsBarStoryboard_Completed">
+            <ObjectAnimationUsingKeyFrames
+                x:Name="SnapBottomPlayingSoundsBarRowDefAnimation"
+                Storyboard.TargetName="BottomPlayingSoundsBarRowDef"
+                Storyboard.TargetProperty="(Height)" />
+
+            <ObjectAnimationUsingKeyFrames
+                x:Name="SnapBottomPlayingSoundsBarContentAnimation"
+                Storyboard.TargetName="BottomPlayingSoundsBarContent"
+                Storyboard.TargetProperty="Height" />
+        </Storyboard>
     </Page.Resources>
 
     <RelativePanel
@@ -788,7 +801,9 @@
         <Grid
             Name="BottomPlayingSoundsBar"
             RelativePanel.AlignTopWithPanel="True"
-            RelativePanel.AlignBottomWithPanel="True">
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -805,7 +820,8 @@
                 Margin="0,0,0,-3"
                 Background="Transparent"
                 GripperCursor="SizeNorthSouth"
-                ManipulationDelta="BottomPlayingSoundsBarGridSplitter_ManipulationDelta">
+                ManipulationDelta="BottomPlayingSoundsBarGridSplitter_ManipulationDelta"
+                ManipulationCompleted="BottomPlayingSoundsBarGridSplitter_ManipulationCompleted">
                 
                 <controls:GridSplitter.Element>
                     <Grid Height="16" Background="{StaticResource NavigationViewHeaderBackgroundBrush}">
