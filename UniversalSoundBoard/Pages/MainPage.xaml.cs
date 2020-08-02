@@ -18,7 +18,6 @@ using WinUI = Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using UniversalSoundboard.Components;
-using UniversalSoundboard.Models;
 using Windows.UI.Xaml.Controls.Primitives;
 
 namespace UniversalSoundBoard.Pages
@@ -65,6 +64,7 @@ namespace UniversalSoundBoard.Pages
 
             // Load the Sounds
             await FileManager.ShowAllSoundsAsync();
+            FileManager.itemViewHolder.TriggerSoundsLoadedEvent();
 
             // Load the user details and start the sync
             await FileManager.itemViewHolder.User.InitAsync();
