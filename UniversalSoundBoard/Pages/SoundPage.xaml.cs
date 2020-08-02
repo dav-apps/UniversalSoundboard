@@ -157,7 +157,7 @@ namespace UniversalSoundBoard.Pages
         #region Helper methods
         private void AdaptSoundListScrollViewerForBottomPlayingSoundsBar()
         {
-            double bottomPlayingSoundsBarHeight = Window.Current.Bounds.Height - PseudoContentGrid.ActualHeight;
+            double bottomPlayingSoundsBarHeight = BottomPlayingSoundsBar.Visibility == Visibility.Visible ? Window.Current.Bounds.Height - PseudoContentGrid.ActualHeight : 0;
 
             // Set the padding of the sound GridViews and ListViews, so that the ScrollViewer ends at the bottom bar and the list continues behind the bottom bar
             SoundGridView.Padding = new Thickness(
@@ -264,6 +264,8 @@ namespace UniversalSoundBoard.Pages
                     // Hide the mobile PlayingSounds list
                     BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                 }
+
+                AdaptSoundListScrollViewerForBottomPlayingSoundsBar();
             }
             else
             {

@@ -741,11 +741,11 @@
                 Grid.Column="1"
                 Width="12"
                 Padding="0,123,0,0"
-                ManipulationCompleted="PlayingSoundsBarGridSplitter_ManipulationCompleted"
-                Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
+                Background="Transparent"
+                ManipulationCompleted="PlayingSoundsBarGridSplitter_ManipulationCompleted">
                 
                 <controls:GridSplitter.Element>
-                    <Grid Width="12">
+                    <Grid Width="16" Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
                         <TextBlock
                             Name="GridSplitterIconTextBlock"
                             Text="&#xE784;"
@@ -803,11 +803,12 @@
                 Grid.Row="1"
                 Height="16"
                 Margin="0,0,0,-3"
-                Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
+                Background="Transparent"
+                GripperCursor="SizeNorthSouth"
                 ManipulationDelta="BottomPlayingSoundsBarGridSplitter_ManipulationDelta">
                 
                 <controls:GridSplitter.Element>
-                    <Grid Height="16">
+                    <Grid Height="16" Background="{StaticResource NavigationViewHeaderBackgroundBrush}">
                         <TextBlock
                             Text="&#xE76F;"
                             FontFamily="Segoe MDL2 Assets"

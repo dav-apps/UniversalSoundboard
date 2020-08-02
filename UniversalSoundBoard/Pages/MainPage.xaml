@@ -72,7 +72,8 @@
             IsTitleBarAutoPaddingEnabled="False"
             IsBackEnabled="{Binding BackButtonEnabled}"
             ItemInvoked="SideBar_ItemInvoked"
-            BackRequested="SideBar_BackRequested">
+            BackRequested="SideBar_BackRequested"
+            DisplayModeChanged="SideBar_DisplayModeChanged">
 
             <muxc:NavigationView.PaneFooter>
                 <StackPanel>

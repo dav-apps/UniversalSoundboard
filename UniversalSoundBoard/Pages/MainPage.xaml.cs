@@ -542,6 +542,16 @@ namespace UniversalSoundBoard.Pages
             }
         }
 
+        private async void SideBar_BackRequested(WinUI.NavigationView sender, WinUI.NavigationViewBackRequestedEventArgs args)
+        {
+            await GoBack();
+        }
+
+        private void SideBar_DisplayModeChanged(WinUI.NavigationView sender, WinUI.NavigationViewDisplayModeChangedEventArgs args)
+        {
+            AdjustLayout();
+        }
+
         private void LogInMenuItem_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
             // Show the Account page
@@ -562,11 +572,6 @@ namespace UniversalSoundBoard.Pages
 
             // Show flyout for the category menu item
             ShowCategoryOptionsFlyout((UIElement)sender, e.GetPosition(sender as UIElement));
-        }
-
-        private async void SideBar_BackRequested(WinUI.NavigationView sender, WinUI.NavigationViewBackRequestedEventArgs args)
-        {
-            await GoBack();
         }
         #endregion
 
