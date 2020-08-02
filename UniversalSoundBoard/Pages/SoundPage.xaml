@@ -51,7 +51,6 @@
 
         <Style x:Name="SoundGridViewStyle" TargetType="GridView">
             <!-- Custom Setters -->
-            <Setter Property="ScrollViewer.BringIntoViewOnFocusChange" Value="True" />
             <Setter Property="animations:ReorderGridAnimation.Duration" Value="150" />
             <Setter Property="IsItemClickEnabled" Value="True" />
             <Setter Property="AllowDrop" Value="True" />
@@ -462,365 +461,380 @@
         </Style>
     </Page.Resources>
 
-    <Grid
-        Name="ContentRoot"
-        AllowDrop="True" 
-        Drop="ContentRoot_Drop" 
-        DragOver="ContentRoot_DragOver">
+    <RelativePanel
+        Name="ContentRoot">
 
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
-
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="2*" x:Name="SoundsListColDef" />
-            <ColumnDefinition Width="12" x:Name="GridSplitterColDef" />
-            <ColumnDefinition Width="*" x:Name="PlayingSoundsBarColDef" />
-        </Grid.ColumnDefinitions>
-
-        <RelativePanel
-            Grid.Row="0"
-            Grid.Column="0"
-            Visibility="{Binding AppState, Converter={StaticResource AppStateLoadingOrInitialSyncConverter}}">
-
-            <ProgressRing
-                RelativePanel.AlignHorizontalCenterWithPanel="True"
-                RelativePanel.AlignVerticalCenterWithPanel="True"
-                Height="40"
-                Width="40"
-                IsActive="True" />
-        </RelativePanel>
-
-        <ScrollViewer
-            Name="StartMessageScrollViewer"
-            Grid.Row="0"
-            Grid.Column="0"
-            Visibility="{Binding AppState, Converter={StaticResource AppStateEmptyConverter}}">
+        <Grid
+            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True">
             
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*" x:Name="SoundsListColDef" />
+                <ColumnDefinition Width="12" x:Name="GridSplitterColDef" />
+                <ColumnDefinition Width="*" x:Name="PlayingSoundsBarColDef" />
+            </Grid.ColumnDefinitions>
+
             <RelativePanel
-                RelativePanel.AlignRightWithPanel="True"
-                RelativePanel.AlignLeftWithPanel="True"
-                Margin="0,150,0,25">
+                Grid.Row="0"
+                Grid.Column="0"
+                Visibility="{Binding AppState, Converter={StaticResource AppStateLoadingOrInitialSyncConverter}}">
 
-                <Image
-                    Name="LogoImage"
+                <ProgressRing
                     RelativePanel.AlignHorizontalCenterWithPanel="True"
-                    Source="{Binding CurrentTheme, Converter={StaticResource LogoImageSourceConverter}}"
-                    Width="90"
-                    Height="90" />
+                    RelativePanel.AlignVerticalCenterWithPanel="True"
+                    Height="40"
+                    Width="40"
+                    IsActive="True" />
+            </RelativePanel>
 
-                <TextBlock
-                    Name="StartMessageTitleTextBlock"
-                    x:Uid="StartMessage-Title"
-                    Style="{StaticResource StartMessageTitleStyle}"
-                    RelativePanel.Below="LogoImage"
-                    RelativePanel.AlignHorizontalCenterWithPanel="True" />
+            <ScrollViewer
+                Name="StartMessageScrollViewer"
+                Grid.Row="0"
+                Grid.Column="0"
+                Visibility="{Binding AppState, Converter={StaticResource AppStateEmptyConverter}}">
+            
+                <RelativePanel
+                    RelativePanel.AlignRightWithPanel="True"
+                    RelativePanel.AlignLeftWithPanel="True"
+                    Margin="0,150,0,25">
 
-                <Button
-                    Name="StartMessageAddFirstSoundButton"
-                    Style="{StaticResource StartMessageButtonStyle}"
-                    RelativePanel.Below="StartMessageTitleTextBlock"
-                    RelativePanel.AlignHorizontalCenterWithPanel="True"
-                    Margin="0,25,0,0"
-                    Click="StartMessageAddFirstSoundButton_Click">
+                    <Image
+                        Name="LogoImage"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True"
+                        Source="{Binding CurrentTheme, Converter={StaticResource LogoImageSourceConverter}}"
+                        Width="90"
+                        Height="90" />
 
-                    <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
-                        <TextBlock
-                            Text="&#xE109;"
-                            FontSize="18"
-                            FontFamily="Segoe MDL2 Assets" />
-
-                        <TextBlock
-                            x:Uid="StartMessage-AddFirstSound"
-                            FontFamily="Segoe UI"
-                            FontSize="18"
-                            Margin="15,-3,0,0"/>
-                    </StackPanel>
-                </Button>
-
-                <TextBlock
-                    Name="StartMessageExistingSoundboardTitleTextBlock"
-                    x:Uid="StartMessage-ExistingSoundboardTitle"
-                    Style="{StaticResource StartMessageTitleStyle}"
-                    RelativePanel.Below="StartMessageAddFirstSoundButton"
-                    RelativePanel.AlignHorizontalCenterWithPanel="True" />
-
-                <StackPanel
-                    Name="StartMessageExistingSoundboardOptionsStackPanel"
-                    RelativePanel.Below="StartMessageExistingSoundboardTitleTextBlock"
-                    RelativePanel.AlignHorizontalCenterWithPanel="True"
-                    Orientation="Horizontal"
-                    Margin="0,25,0,0">
+                    <TextBlock
+                        Name="StartMessageTitleTextBlock"
+                        x:Uid="StartMessage-Title"
+                        Style="{StaticResource StartMessageTitleStyle}"
+                        RelativePanel.Below="LogoImage"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True" />
 
                     <Button
-                        Name="StartMessageLoginButton"
+                        Name="StartMessageAddFirstSoundButton"
                         Style="{StaticResource StartMessageButtonStyle}"
-                        Margin="0,0,8,0"
-                        Click="StartMessageLoginButton_Click">
+                        RelativePanel.Below="StartMessageTitleTextBlock"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True"
+                        Margin="0,25,0,0"
+                        Click="StartMessageAddFirstSoundButton_Click">
 
                         <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
                             <TextBlock
-                                Text="&#xE13D;"
+                                Text="&#xE109;"
                                 FontSize="18"
                                 FontFamily="Segoe MDL2 Assets" />
 
                             <TextBlock
-                                x:Uid="StartMessage-Login"
+                                x:Uid="StartMessage-AddFirstSound"
                                 FontFamily="Segoe UI"
                                 FontSize="18"
                                 Margin="15,-3,0,0"/>
                         </StackPanel>
                     </Button>
 
-                    <Button
-                        Name="StartMessageImportButton"
-                        Style="{StaticResource StartMessageButtonStyle}"
-                        Margin="8,0,0,0"
-                        Click="StartMessageImportButton_Click">
+                    <TextBlock
+                        Name="StartMessageExistingSoundboardTitleTextBlock"
+                        x:Uid="StartMessage-ExistingSoundboardTitle"
+                        Style="{StaticResource StartMessageTitleStyle}"
+                        RelativePanel.Below="StartMessageAddFirstSoundButton"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True" />
 
-                        <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
-                            <TextBlock
-                                Text="&#xE838;"
-                                FontSize="18"
-                                FontFamily="Segoe MDL2 Assets" />
+                    <StackPanel
+                        Name="StartMessageExistingSoundboardOptionsStackPanel"
+                        RelativePanel.Below="StartMessageExistingSoundboardTitleTextBlock"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True"
+                        Orientation="Horizontal"
+                        Margin="0,25,0,0">
 
-                            <TextBlock
-                                x:Uid="StartMessage-ImportExistingSoundboard"
-                                FontFamily="Segoe UI"
-                                FontSize="18"
-                                Margin="15,-3,0,0" />
-                        </StackPanel>
-                    </Button>
-                </StackPanel>
-            </RelativePanel>
-        </ScrollViewer>
+                        <Button
+                            Name="StartMessageLoginButton"
+                            Style="{StaticResource StartMessageButtonStyle}"
+                            Margin="0,0,8,0"
+                            Click="StartMessageLoginButton_Click">
 
-        <Grid
-            Name="SoundContentGrid"
-            Grid.Row="0"
-            Grid.Column="0"
-            Visibility="{Binding AppState, Converter={StaticResource AppStateNormalConverter}}">
-            
-            <Grid.RowDefinitions>
-                <RowDefinition Height="*" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+                            <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
+                                <TextBlock
+                                    Text="&#xE13D;"
+                                    FontSize="18"
+                                    FontFamily="Segoe MDL2 Assets" />
+
+                                <TextBlock
+                                    x:Uid="StartMessage-Login"
+                                    FontFamily="Segoe UI"
+                                    FontSize="18"
+                                    Margin="15,-3,0,0"/>
+                            </StackPanel>
+                        </Button>
+
+                        <Button
+                            Name="StartMessageImportButton"
+                            Style="{StaticResource StartMessageButtonStyle}"
+                            Margin="8,0,0,0"
+                            Click="StartMessageImportButton_Click">
+
+                            <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
+                                <TextBlock
+                                    Text="&#xE838;"
+                                    FontSize="18"
+                                    FontFamily="Segoe MDL2 Assets" />
+
+                                <TextBlock
+                                    x:Uid="StartMessage-ImportExistingSoundboard"
+                                    FontFamily="Segoe UI"
+                                    FontSize="18"
+                                    Margin="15,-3,0,0" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </RelativePanel>
+            </ScrollViewer>
 
             <Grid
+                Name="SoundContentGrid"
                 Grid.Row="0"
-                Visibility="{Binding ShowSoundsPivot}">
-
-                <Pivot
-                    Name="SoundGridViewPivot"
-                    Style="{StaticResource CustomPivotStyle}"
-                    Padding="0,85,0,0"
-                    Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
-                    Visibility="{Binding ShowListView, Converter={StaticResource InvertBooleanConverter}}"
-                    SelectionChanged="SoundGridViewPivot_SelectionChanged">
-
-                    <PivotItem x:Uid="SoundsPivotHeader" Margin="0">
-                        <GridView
-                            Name="SoundGridView"
-                            Style="{StaticResource SoundGridViewStyle}"
-                            Padding="0,123,0,0"
-                            ItemsSource="{Binding Sounds}"
-                            SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
-                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                            CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
-                            ItemClick="SoundGridView_ItemClick"
-                            SelectionChanged="SoundGridView_SelectionChanged"
-                            SizeChanged="SoundGridView_SizeChanged">
-                        </GridView>
-                    </PivotItem>
-
-                    <PivotItem x:Uid="FavouritesPivotHeader" Margin="0">
-                        <GridView 
-                            Name="FavouriteSoundGridView"
-                            Style="{StaticResource SoundGridViewStyle}"
-                            Padding="0,123,0,0"
-                            ItemsSource="{Binding FavouriteSounds}"
-                            SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
-                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                            CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
-                            ItemClick="SoundGridView_ItemClick"
-                            SelectionChanged="SoundGridView_SelectionChanged"
-                            SizeChanged="SoundGridView_SizeChanged">
-                        </GridView>
-                    </PivotItem>
-                </Pivot>
-
-                <Pivot
-                    Name="SoundListViewPivot"
-                    Style="{StaticResource CustomPivotStyle}"
-                    Padding="0,85,0,0"
-                    Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
-                    Visibility="{Binding ShowListView}"
-                    SelectionChanged="SoundListViewPivot_SelectionChanged">
-
-                    <PivotItem x:Uid="SoundsPivotHeader" Margin="0">
-                        <ListView
-                            Name="SoundListView"
-                            Style="{StaticResource SoundListViewStyle}"
-                            Padding="0,123,0,0"
-                            ItemContainerStyle="{StaticResource ListViewItemStyle}"
-                            ItemsSource="{Binding Sounds}"
-                            SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
-                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                            CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
-                            ItemClick="SoundGridView_ItemClick"
-                            SelectionChanged="SoundGridView_SelectionChanged">
-                        </ListView>
-                    </PivotItem>
-
-                    <PivotItem x:Uid="FavouritesPivotHeader" Margin="0">
-                        <ListView
-                            Name="FavouriteSoundListView"
-                            Style="{StaticResource SoundListViewStyle}"
-                            Padding="0,123,0,0"
-                            ItemContainerStyle="{StaticResource ListViewItemStyle}"
-                            ItemsSource="{Binding FavouriteSounds}"
-                            SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
-                            IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                            CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
-                            ItemClick="SoundGridView_ItemClick"
-                            SelectionChanged="SoundGridView_SelectionChanged">
-                        </ListView>
-                    </PivotItem>
-                </Pivot>
-            </Grid>
-
-            <Grid
-                Grid.Row="0"
-                Margin="0"
-                Visibility="{Binding ShowSoundsPivot, Converter={StaticResource InvertBooleanConverter}}">
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="85" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-
-                <RelativePanel
-                    Grid.Row="0"
-                    Canvas.ZIndex="1"
-                    Background="{StaticResource NavigationViewHeaderBackgroundBrush}" />
-
-                <GridView
-                    Name="SoundGridView2"
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Style="{StaticResource SoundGridViewStyle}"
-                    Padding="0,85,0,0"
-                    Visibility="{Binding ShowListView, Converter={StaticResource InvertBooleanConverter}}"
-                    ItemsSource="{Binding Sounds}"
-                    SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
-                    IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                    CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
-                    ItemClick="SoundGridView_ItemClick"
-                    SelectionChanged="SoundGridView_SelectionChanged"
-                    SizeChanged="SoundGridView_SizeChanged">
-                </GridView>
-
-                <ListView
-                    Name="SoundListView2"
-                    Grid.Row="0"
-                    Grid.RowSpan="2"
-                    Style="{StaticResource SoundListViewStyle}"
-                    ItemContainerStyle="{StaticResource ListViewItemStyle}"
-                    Padding="0,85,0,0"
-                    Visibility="{Binding ShowListView}"
-                    ItemsSource="{Binding Sounds}"
-                    SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
-                    IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                    CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
-                    ItemClick="SoundGridView_ItemClick"
-                    SelectionChanged="SoundGridView_SelectionChanged">
-                </ListView>
-            </Grid>
-
-            <Grid
-                x:Name="DrawerContentGrid"
-                Grid.Row="1"
-                VerticalAlignment="Bottom"
-                Background="{ThemeResource AppBarBackgroundThemeBrush}"
-                RenderTransformOrigin="0.5,0.5">
-
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="Auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
+                Grid.Column="0"
+                Visibility="{Binding AppState, Converter={StaticResource AppStateNormalConverter}}"
+                AllowDrop="True" 
+                Drop="SoundContentGrid_Drop" 
+                DragOver="SoundContentGrid_DragOver">
 
                 <Grid
-                    Name="HandleGrid" 
-                    Background="{ThemeResource AppBarBorderThemeBrush}" BorderThickness="0,1,0,1" BorderBrush="{ThemeResource AppBarToggleButtonCheckedDisabledBackgroundThemeBrush}"
-                    ManipulationStarted="HandleGrid_OnManipulationStarted" ManipulationDelta="HandleGrid_OnManipulationDelta" 
-                    ManipulationCompleted="HandleGrid_OnManipulationCompleted" ManipulationMode="TranslateY" 
-                    Tapped="HandleGrid_Tapped" Height="15">
+                    Visibility="{Binding ShowSoundsPivot}">
 
-                    <SymbolIcon Symbol="More" />
+                    <Pivot
+                        Name="SoundGridViewPivot"
+                        Style="{StaticResource CustomPivotStyle}"
+                        Padding="0,85,0,0"
+                        Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
+                        Visibility="{Binding ShowListView, Converter={StaticResource InvertBooleanConverter}}"
+                        SelectionChanged="SoundGridViewPivot_SelectionChanged">
+
+                        <PivotItem x:Uid="SoundsPivotHeader" Margin="0">
+                            <GridView
+                                Name="SoundGridView"
+                                Style="{StaticResource SoundGridViewStyle}"
+                                Padding="0,123,0,0"
+                                ItemsSource="{Binding Sounds}"
+                                SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                                IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
+                                CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                                ItemClick="SoundGridView_ItemClick"
+                                SelectionChanged="SoundGridView_SelectionChanged"
+                                SizeChanged="SoundGridView_SizeChanged">
+                            </GridView>
+                        </PivotItem>
+
+                        <PivotItem x:Uid="FavouritesPivotHeader" Margin="0">
+                            <GridView 
+                                Name="FavouriteSoundGridView"
+                                Style="{StaticResource SoundGridViewStyle}"
+                                Padding="0,123,0,0"
+                                ItemsSource="{Binding FavouriteSounds}"
+                                SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                                IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
+                                CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                                ItemClick="SoundGridView_ItemClick"
+                                SelectionChanged="SoundGridView_SelectionChanged"
+                                SizeChanged="SoundGridView_SizeChanged">
+                            </GridView>
+                        </PivotItem>
+                    </Pivot>
+
+                    <Pivot
+                        Name="SoundListViewPivot"
+                        Style="{StaticResource CustomPivotStyle}"
+                        Padding="0,85,0,0"
+                        Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
+                        Visibility="{Binding ShowListView}"
+                        SelectionChanged="SoundListViewPivot_SelectionChanged">
+
+                        <PivotItem x:Uid="SoundsPivotHeader" Margin="0">
+                            <ListView
+                                Name="SoundListView"
+                                Style="{StaticResource SoundListViewStyle}"
+                                Padding="0,123,0,0"
+                                ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                                ItemsSource="{Binding Sounds}"
+                                SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                                IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
+                                CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                                ItemClick="SoundGridView_ItemClick"
+                                SelectionChanged="SoundGridView_SelectionChanged">
+                            </ListView>
+                        </PivotItem>
+
+                        <PivotItem x:Uid="FavouritesPivotHeader" Margin="0">
+                            <ListView
+                                Name="FavouriteSoundListView"
+                                Style="{StaticResource SoundListViewStyle}"
+                                Padding="0,123,0,0"
+                                ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                                ItemsSource="{Binding FavouriteSounds}"
+                                SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                                IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
+                                CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                                ItemClick="SoundGridView_ItemClick"
+                                SelectionChanged="SoundGridView_SelectionChanged">
+                            </ListView>
+                        </PivotItem>
+                    </Pivot>
                 </Grid>
 
-                <Grid Name="DrawerContent2" Grid.Row="1">
-                    <ListView Name="PlayingSoundsListView2" ItemsSource="{Binding PlayingSounds}" SelectionMode="None">
-                        <ListView.ItemContainerStyle>
-                            <Style TargetType="ListViewItem">
-                                <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                            </Style>
-                        </ListView.ItemContainerStyle>
+                <Grid
+                    Margin="0"
+                    Visibility="{Binding ShowSoundsPivot, Converter={StaticResource InvertBooleanConverter}}">
 
-                        <ListView.ItemTemplate>
-                            <DataTemplate x:DataType="models1:PlayingSound">
-                                <components:PlayingSoundItemTemplate />
-                            </DataTemplate>
-                        </ListView.ItemTemplate>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="85" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+
+                    <RelativePanel
+                        Grid.Row="0"
+                        Canvas.ZIndex="1"
+                        Background="{StaticResource NavigationViewHeaderBackgroundBrush}" />
+
+                    <GridView
+                        Name="SoundGridView2"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Style="{StaticResource SoundGridViewStyle}"
+                        Padding="0,85,0,0"
+                        Visibility="{Binding ShowListView, Converter={StaticResource InvertBooleanConverter}}"
+                        ItemsSource="{Binding Sounds}"
+                        SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                        IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
+                        CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                        ItemClick="SoundGridView_ItemClick"
+                        SelectionChanged="SoundGridView_SelectionChanged"
+                        SizeChanged="SoundGridView_SizeChanged">
+                    </GridView>
+
+                    <ListView
+                        Name="SoundListView2"
+                        Grid.Row="0"
+                        Grid.RowSpan="2"
+                        Style="{StaticResource SoundListViewStyle}"
+                        ItemContainerStyle="{StaticResource ListViewItemStyle}"
+                        Padding="0,85,0,0"
+                        Visibility="{Binding ShowListView}"
+                        ItemsSource="{Binding Sounds}"
+                        SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
+                        IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
+                        CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                        ItemClick="SoundGridView_ItemClick"
+                        SelectionChanged="SoundGridView_SelectionChanged">
                     </ListView>
                 </Grid>
             </Grid>
-        </Grid>
 
-        <controls:GridSplitter
-            Grid.Column="1"
-            Width="12"
-            Padding="0,123,0,0"
-            ManipulationCompleted="GridSplitter_ManipulationCompleted"
-            Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
-            <controls:GridSplitter.Element>
-                <Grid Width="12">
-                    <TextBlock
-                        Name="GridSplitterIconTextBlock"
-                        Text="&#xE784;"
-                        FontFamily="Segoe MDL2 Assets"
-                        Margin="-4,0,0,0"
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center"
-                        IsHitTestVisible="False" />
-                </Grid>
-            </controls:GridSplitter.Element>
-        </controls:GridSplitter>
+            <controls:GridSplitter
+                Name="PlayingSoundsBarGridSplitter"
+                Grid.Column="1"
+                Width="12"
+                Padding="0,123,0,0"
+                ManipulationCompleted="PlayingSoundsBarGridSplitter_ManipulationCompleted"
+                Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
+                
+                <controls:GridSplitter.Element>
+                    <Grid Width="12">
+                        <TextBlock
+                            Name="GridSplitterIconTextBlock"
+                            Text="&#xE784;"
+                            FontFamily="Segoe MDL2 Assets"
+                            Margin="-4,0,0,0"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            IsHitTestVisible="False" />
+                    </Grid>
+                </controls:GridSplitter.Element>
+            </controls:GridSplitter>
+
+            <Grid
+                Name="PlayingSoundsBar" 
+                Grid.Row="0" 
+                Grid.Column="2" 
+                Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
+
+                <ListView
+                    Name="PlayingSoundsListView"
+                    ItemsSource="{Binding PlayingSounds}"
+                    SelectionMode="None"
+                    Margin="0,85,0,0">
+
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                        </Style>
+                    </ListView.ItemContainerStyle>
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models1:PlayingSound">
+                            <components:PlayingSoundItemTemplate />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </Grid>
+        </Grid>
 
         <Grid
-            Name="PlayingSoundsBar" 
-            Grid.Row="0" 
-            Grid.Column="2" 
-            Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
+            Name="BottomPlayingSoundsBar"
+            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.AlignBottomWithPanel="True">
 
-            <ListView
-                Name="PlayingSoundsListView"
-                ItemsSource="{Binding PlayingSounds}"
-                SelectionMode="None"
-                Margin="0,85,0,0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="16" />
+                <RowDefinition Height="Auto" x:Name="BottomPlayingSoundsBarRowDef" />
+            </Grid.RowDefinitions>
+
+            <Grid Name="PseudoContentGrid" Width="0"></Grid>
+            
+            <controls:GridSplitter
+                Name="BottomPlayingSoundsBarGridSplitter"
+                Grid.Row="1"
+                Height="16"
+                Margin="0,0,0,-3"
+                Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
+                ManipulationDelta="BottomPlayingSoundsBarGridSplitter_ManipulationDelta">
                 
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
-                    </Style>
-                </ListView.ItemContainerStyle>
+                <controls:GridSplitter.Element>
+                    <Grid Height="16">
+                        <TextBlock
+                            Text="&#xE76F;"
+                            FontFamily="Segoe MDL2 Assets"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            IsHitTestVisible="False" />
+                    </Grid>
+                </controls:GridSplitter.Element>
+            </controls:GridSplitter>
 
-                <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models1:PlayingSound">
-                        <components:PlayingSoundItemTemplate />
-                    </DataTemplate>
-                </ListView.ItemTemplate>
-            </ListView>
+            <RelativePanel
+                Name="BottomPlayingSoundsBarContent"
+                Grid.Row="2"
+                Background="{StaticResource NavigationViewHeaderBackgroundBrush}">
+
+                <ListView
+                    Name="BottomPlayingSoundsBarListView"
+                    ItemsSource="{Binding PlayingSounds}"
+                    SelectionMode="None">
+
+                    <ListView.ItemTemplate>
+                        <DataTemplate x:DataType="models1:PlayingSound">
+                            <components:PlayingSoundItemTemplate />
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+            </RelativePanel>
         </Grid>
-    </Grid>
+    </RelativePanel>
 </Page>

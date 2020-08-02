@@ -16,7 +16,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundBoard.Pages
@@ -35,9 +34,15 @@ namespace UniversalSoundBoard.Pages
 
             // Subscribe to events
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
+            FileManager.itemViewHolder.SoundsLoadedEvent += ItemViewHolder_SoundsLoadedEvent;
             FileManager.itemViewHolder.SelectAllSoundsEvent += ItemViewHolder_SelectAllSoundsEvent;
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
+        }
+
+        private void ItemViewHolder_SoundsLoadedEvent(object sender, EventArgs e)
+        {
+            AdaptSoundListScrollViewerForBottomPlayingSoundsBar();
         }
 
         #region Page event handlers
@@ -150,6 +155,49 @@ namespace UniversalSoundBoard.Pages
         #endregion
 
         #region Helper methods
+        private void AdaptSoundListScrollViewerForBottomPlayingSoundsBar()
+        {
+            double bottomPlayingSoundsBarHeight = Window.Current.Bounds.Height - PseudoContentGrid.ActualHeight;
+
+            // Set the padding of the sound GridViews and ListViews, so that the ScrollViewer ends at the bottom bar and the list continues behind the bottom bar
+            SoundGridView.Padding = new Thickness(
+                SoundGridView.Padding.Left,
+                SoundGridView.Padding.Top,
+                SoundGridView.Padding.Right,
+                bottomPlayingSoundsBarHeight
+            );
+            FavouriteSoundGridView.Padding = new Thickness(
+                FavouriteSoundGridView.Padding.Left,
+                FavouriteSoundGridView.Padding.Top,
+                FavouriteSoundGridView.Padding.Right,
+                bottomPlayingSoundsBarHeight
+            );
+            SoundListView.Padding = new Thickness(
+                SoundListView.Padding.Left,
+                SoundListView.Padding.Top,
+                SoundListView.Padding.Right,
+                bottomPlayingSoundsBarHeight
+            );
+            FavouriteSoundListView.Padding = new Thickness(
+                FavouriteSoundListView.Padding.Left,
+                FavouriteSoundListView.Padding.Top,
+                FavouriteSoundListView.Padding.Right,
+                bottomPlayingSoundsBarHeight
+            );
+            SoundGridView2.Padding = new Thickness(
+                SoundGridView2.Padding.Left,
+                SoundGridView2.Padding.Top,
+                SoundGridView2.Padding.Right,
+                bottomPlayingSoundsBarHeight
+            );
+            SoundListView2.Padding = new Thickness(
+                SoundListView2.Padding.Left,
+                SoundListView2.Padding.Top,
+                SoundListView2.Padding.Right,
+                bottomPlayingSoundsBarHeight
+            );
+        }
+
         private GridView GetVisibleGridView()
         {
             if (!FileManager.itemViewHolder.ShowSoundsPivot)
@@ -204,7 +252,7 @@ namespace UniversalSoundBoard.Pages
                     GridSplitterColDef.Width = new GridLength(0);
 
                     // Show the mobile PlayingSounds list
-                    DrawerContentGrid.Visibility = Visibility.Visible;
+                    BottomPlayingSoundsBar.Visibility = Visibility.Visible;
                 }
                 else
                 {
@@ -214,7 +262,7 @@ namespace UniversalSoundBoard.Pages
                     GridSplitterColDef.Width = new GridLength(12);
 
                     // Hide the mobile PlayingSounds list
-                    DrawerContentGrid.Visibility = Visibility.Collapsed;
+                    BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                 }
             }
             else
@@ -225,11 +273,12 @@ namespace UniversalSoundBoard.Pages
                 GridSplitterColDef.Width = new GridLength(0);
 
                 // Hide the mobile PlayingSounds list
-                DrawerContentGrid.Visibility = Visibility.Collapsed;
+                BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
             }
         }
         #endregion
 
+        #region Functionality
         private async Task UpdateSoundOrder(bool showFavourites)
         {
             // Get the current category uuid
@@ -330,6 +379,7 @@ namespace UniversalSoundBoard.Pages
                 await RemovePlayingSoundAsync(removedPlayingSounds[i]);
             }
         }
+        #endregion
 
         #region Event handlers
         #region Start message event handlers
@@ -365,7 +415,7 @@ namespace UniversalSoundBoard.Pages
             await PlaySoundAsync((Sound)e.ClickedItem);
         }
 
-        private async void ContentRoot_DragOver(object sender, DragEventArgs e)
+        private async void SoundContentGrid_DragOver(object sender, DragEventArgs e)
         {
             if (!e.DataView.Contains("FileName")) return;
 
@@ -397,7 +447,7 @@ namespace UniversalSoundBoard.Pages
             deferral.Complete();
         }
 
-        private async void ContentRoot_Drop(object sender, DragEventArgs e)
+        private async void SoundContentGrid_Drop(object sender, DragEventArgs e)
         {
             if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
 
@@ -458,37 +508,6 @@ namespace UniversalSoundBoard.Pages
             UpdateSelectAllFlyoutText();
         }
 
-        private void HandleGrid_OnManipulationStarted(object sender, ManipulationStartedRoutedEventArgs e)
-        {
-            SolidColorBrush themeBrush = Application.Current.Resources["AppBarToggleButtonBackgroundCheckedPointerOver"] as SolidColorBrush;
-            if (themeBrush != null) HandleGrid.Background = themeBrush;
-        }
-
-        private void HandleGrid_OnManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
-        {
-            DrawerContentGrid.Height = DrawerContentGrid.ActualHeight + -e.Delta.Translation.Y;
-            if (DrawerContentGrid.Height > ActualHeight)
-                DrawerContentGrid.Height = ActualHeight;
-        }
-
-        private void HandleGrid_OnManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
-        {
-            SolidColorBrush themeBrush = Application.Current.Resources["AppBarBorderThemeBrush"] as SolidColorBrush;
-            if (themeBrush != null) HandleGrid.Background = themeBrush;
-        }
-
-        private void HandleGrid_Tapped(object sender, TappedRoutedEventArgs e)
-        {
-            if (DrawerContentGrid.Height == ActualHeight)
-                DrawerContentGrid.Height = HandleGrid.ActualHeight;
-            else if (DrawerContentGrid.Height > ActualHeight / 2)
-                DrawerContentGrid.Height = ActualHeight;
-            else if (DrawerContentGrid.Height <= HandleGrid.ActualHeight)
-                DrawerContentGrid.Height = ActualHeight;
-            else
-                DrawerContentGrid.Height = HandleGrid.ActualHeight;
-        }
-
         private void SoundGridViewPivot_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             Pivot pivot = (Pivot)sender;
@@ -518,16 +537,31 @@ namespace UniversalSoundBoard.Pages
             GridView gridView = (GridView)sender;
             double desiredWidth = 200;
             double innerWidth = gridView.ActualWidth - 10;  // Left margin = 10, right margin = (columns * (12 - columns))
-            double columns = Convert.ToInt32(innerWidth / desiredWidth);
+            int columns = Convert.ToInt32(innerWidth / desiredWidth);
 
             FileManager.itemViewHolder.SoundTileWidth = (innerWidth - columns * (12 - columns)) / columns;
             FileManager.itemViewHolder.TriggerSoundTileSizeChangedEvent(gridView, e);
         }
 
-        private void GridSplitter_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
+        private void PlayingSoundsBarGridSplitter_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
             // Calculate the width of the PlayingSoundsBar in percent
             FileManager.itemViewHolder.PlayingSoundsBarWidth = PlayingSoundsBar.ActualWidth / ContentRoot.ActualWidth;
+        }
+
+        private void BottomPlayingSoundsBarGridSplitter_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
+        {
+            // Set the height of the bottom bar to the height of the space below the GridSplitter
+            BottomPlayingSoundsBarContent.Height = BottomPlayingSoundsBarRowDef.ActualHeight;
+
+            // Calculate the height of BottomPlayingSoundsBarListView
+            double totalListViewHeight = 0;
+            for(int i = 0; i < BottomPlayingSoundsBarListView.Items.Count; i++)
+                totalListViewHeight += (BottomPlayingSoundsBarListView.ContainerFromIndex(i) as ListViewItem).ActualHeight;
+
+            BottomPlayingSoundsBarRowDef.MaxHeight = totalListViewHeight;
+
+            AdaptSoundListScrollViewerForBottomPlayingSoundsBar();
         }
         #endregion
     }
