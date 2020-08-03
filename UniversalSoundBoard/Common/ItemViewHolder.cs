@@ -116,7 +116,8 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Events
-        public event EventHandler SoundsLoadedEvent;                                 // Is triggered when the sounds at startup were loaded
+        public event EventHandler SoundsLoadedEvent;                                // Is triggered when the sounds at startup were loaded
+        public event EventHandler PlayingSoundsLoadedEvent;                         // Is triggered when the playing sounds at startup were loaded
         public event EventHandler CategoriesUpdatedEvent;                           // Is triggered when all categories were loaded into the Categories ObservableCollection
         public event EventHandler<Guid> CategoryUpdatedEvent;                       // Is triggered when a category was updated
         public event EventHandler<Guid> CategoryRemovedEvent;                       // Is triggered when a category was removed
@@ -796,6 +797,11 @@ namespace UniversalSoundBoard.Common
         public void TriggerSoundsLoadedEvent()
         {
             SoundsLoadedEvent?.Invoke(null, null);
+        }
+
+        public void TriggerPlayingSoundsLoadedEvent()
+        {
+            PlayingSoundsLoadedEvent?.Invoke(null, null);
         }
 
         public void TriggerCategoriesUpdatedEvent()

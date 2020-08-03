@@ -357,6 +357,8 @@ namespace UniversalSoundBoard.Components
 
         private void UpdateUI()
         {
+            if (PlayingSound == null) return;
+
             // Set the name of the current sound and set the favourite flyout item
             var currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
             PlayingSoundNameTextBlock.Text = currentSound.Name;

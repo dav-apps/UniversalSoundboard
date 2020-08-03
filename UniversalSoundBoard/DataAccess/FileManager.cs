@@ -1,5 +1,7 @@
 ﻿using davClassLibrary.DataAccess;
 using davClassLibrary.Models;
+using davClassLibrary.Providers;
+using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -58,7 +60,7 @@ namespace UniversalSoundBoard.DataAccess
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
         private const string WebsiteBaseUrlProduction = "https://dav-apps.herokuapp.com";
-        private const string WebsiteBaseUrlDevelopment = "https://e6f0a91c.ngrok.io";
+        private const string WebsiteBaseUrlDevelopment = "https://79da9c8d782c.ngrok.io";
         public static string WebsiteBaseUrl => Environment == DavEnvironment.Production ? WebsiteBaseUrlProduction : WebsiteBaseUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 4; Prod: 1
@@ -1098,7 +1100,6 @@ namespace UniversalSoundBoard.DataAccess
             NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
             {
                 Branding = NotificationsExtensions.Tiles.TileBranding.NameAndLogo,
-
                 Content = new NotificationsExtensions.Tiles.TileBindingContentAdaptive()
                 {
                     PeekImage = new NotificationsExtensions.Tiles.TilePeekImage()
@@ -1593,6 +1594,8 @@ namespace UniversalSoundBoard.DataAccess
                 if (allPlayingSounds.Where(p => p.Uuid == ps.Uuid).Count() == 0)
                     itemViewHolder.PlayingSounds.Remove(ps);
             }
+
+            itemViewHolder.TriggerPlayingSoundsLoadedEvent();
         }
 
         public static async Task ReloadPlayingSoundAsync(Guid uuid)
@@ -2714,6 +2717,20 @@ namespace UniversalSoundBoard.DataAccess
         public static ElementTheme GetRequestedTheme()
         {
             return itemViewHolder.CurrentTheme == AppTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
+        }
+
+        public static async Task LogException(Exception e)
+        {
+            string name = e.GetType().FullName;
+            string message = e.Message;
+            string stackTrace = e.StackTrace;
+
+            string appVersion = $"{SystemInformation.ApplicationVersion.Major}.{SystemInformation.ApplicationVersion.Minor}.{SystemInformation.ApplicationVersion.Build}";
+            string osVersion = SystemInformation.OperatingSystemVersion.ToString();
+            string deviceFamily = SystemInformation.DeviceFamily;
+            string locale = SystemInformation.Culture.Name;
+
+            await AppsController.CreateExceptionLog(AppId, ApiKey, name, message, stackTrace, appVersion, osVersion, deviceFamily, locale);
         }
         #endregion
 
