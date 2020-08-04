@@ -13,6 +13,7 @@
     SizeChanged="UserControl_SizeChanged">
 
     <UserControl.Resources>
+        <!-- Styles -->
         <Style x:Key="MediaControlButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
             <Setter Property="Height" Value="40" />
             <Setter Property="Width" Value="40" />
@@ -21,6 +22,36 @@
             <Setter Property="FontSize" Value="15" />
             <Setter Property="Margin" Value="1,0,1,0" />
         </Style>
+        
+        <!-- Storyboards -->
+        <Storyboard x:Name="ShowSoundsListViewStoryboard">
+            <DoubleAnimation
+                x:Name="ShowSoundsListViewStoryboardAnimation"
+                Storyboard.TargetName="SoundsListViewStackPanel"
+                Storyboard.TargetProperty="Height"
+                EnableDependentAnimation="True"
+                Duration="0:0:0.2">
+
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Name="HideSoundsListViewStoryboard">
+            <DoubleAnimation
+                x:Name="HideSoundsListViewStoryboardAnimation"
+                Storyboard.TargetName="SoundsListViewStackPanel"
+                Storyboard.TargetProperty="Height"
+                EnableDependentAnimation="True"
+                Duration="0:0:0.2"
+                To="0">
+
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
     </UserControl.Resources>
 
     <Grid Name="ContentRoot" Background="Transparent" Margin="0,6">
@@ -260,37 +291,41 @@
             </StackPanel>
         </RelativePanel>
 
-        <ListView
-            Name="SoundsListView"
+        <StackPanel
+            Name="SoundsListViewStackPanel"
             Grid.Row="2"
-            Margin="0,10,0,10"
-            SelectionMode="Single"
-            SelectionChanged="SoundsListView_SelectionChanged"
-            Visibility="Collapsed">
+            Height="0">
+            
+            <ListView
+                Name="SoundsListView"
+                Padding="0,10,0,10"
+                SelectionMode="Single"
+                SelectionChanged="SoundsListView_SelectionChanged">
 
-            <ListView.Resources>
-                <FontIconSource x:Key="RemoveIcon" Glyph="&#xE106;"/>
-            </ListView.Resources>
+                <ListView.Resources>
+                    <FontIconSource x:Key="RemoveIcon" Glyph="&#xE106;"/>
+                </ListView.Resources>
 
-            <ListView.ItemTemplate>
-                <DataTemplate x:DataType="models:Sound">
-                    <SwipeControl RightTapped="SwipeControl_RightTapped" Tag="{x:Bind Uuid}">
-                        <SwipeControl.RightItems>
-                            <SwipeItems Mode="Execute">
-                                <SwipeItem
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Sound">
+                        <SwipeControl RightTapped="SwipeControl_RightTapped" Tag="{x:Bind Uuid}">
+                            <SwipeControl.RightItems>
+                                <SwipeItems Mode="Execute">
+                                    <SwipeItem
                                     x:Name="SoundsListViewRemoveSwipeItem"
                                     x:Uid="RemoveButton"
                                     Text="Remove"
                                     Background="Red"
                                     IconSource="{StaticResource RemoveIcon}"
                                     Invoked="SoundsListViewRemoveSwipeItem_Invoked" />
-                            </SwipeItems>
-                        </SwipeControl.RightItems>
-                        
-                        <TextBlock Text="{x:Bind Name}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
-                    </SwipeControl>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
+                                </SwipeItems>
+                            </SwipeControl.RightItems>
+
+                            <TextBlock Text="{x:Bind Name}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+                        </SwipeControl>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </StackPanel>
     </Grid>
 </UserControl>

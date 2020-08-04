@@ -24,6 +24,7 @@ namespace UniversalSoundBoard.Components
         PlayingSoundItemLayoutType layoutType = PlayingSoundItemLayoutType.Small;
         private bool skipSoundsCollectionChanged = false;
         Guid selectedSoundUuid;
+        bool soundsListVisible = false;
 
         public PlayingSoundItemTemplate()
         {
@@ -84,16 +85,19 @@ namespace UniversalSoundBoard.Components
         #region Button events
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
-            if(SoundsListView.Visibility == Visibility.Collapsed)
+            if (soundsListVisible)
             {
-                SoundsListView.Visibility = Visibility.Visible;
-                ExpandButton.Content = "\uE098";
+                HideSoundsListViewStoryboard.Begin();
+                ExpandButton.Content = "\uE099";
             }
             else
             {
-                SoundsListView.Visibility = Visibility.Collapsed;
-                ExpandButton.Content = "\uE099";
+                ShowSoundsListViewStoryboardAnimation.To = SoundsListView.ActualHeight;
+                ShowSoundsListViewStoryboard.Begin();
+                ExpandButton.Content = "\uE098";
             }
+
+            soundsListVisible = !soundsListVisible;
         }
 
         private void VolumeButton_Click(object sender, RoutedEventArgs e)
