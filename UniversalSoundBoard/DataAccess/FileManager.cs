@@ -2,6 +2,7 @@
 using davClassLibrary.Models;
 using davClassLibrary.Providers;
 using Microsoft.Toolkit.Uwp.Helpers;
+using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1090,36 +1091,40 @@ namespace UniversalSoundBoard.DataAccess
             List<Sound> sounds = itemViewHolder.AllSounds.Where(s => s.HasImageFile()).ToList();
             if (sounds.Count == 0) return;
 
-            // Pick a random sound
+            // Pick up to 12 random sounds with images
+            List<StorageFile> images = new List<StorageFile>();
             Random random = new Random();
-            Sound soundWithImage = sounds[random.Next(sounds.Count)];
 
-            StorageFile imageFile = await soundWithImage.GetImageFileAsync();
-            if (imageFile == null) return;
-
-            NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
+            for (int i = 0; i < 12; i++)
             {
-                Branding = NotificationsExtensions.Tiles.TileBranding.NameAndLogo,
-                Content = new NotificationsExtensions.Tiles.TileBindingContentAdaptive()
-                {
-                    PeekImage = new NotificationsExtensions.Tiles.TilePeekImage()
-                    {
-                        Source = imageFile.Path
-                    },
-                    Children =
-                    {
-                        new NotificationsExtensions.AdaptiveText()
-                        {
-                            Text = soundWithImage.Name
-                        }
-                    },
-                    TextStacking = NotificationsExtensions.Tiles.TileTextStacking.Center
-                }
+                // Pick a random sound from the list
+                int selectedSoundIndex = random.Next(sounds.Count);
+
+                // Get the image of the sound and add it to the images list
+                var selectedSound = sounds.ElementAt(selectedSoundIndex);
+
+                StorageFile imageFile = await selectedSound.GetImageFileAsync();
+                if (imageFile != null) images.Add(imageFile);
+
+                // Remove the selected sound from the sounds list
+                sounds.RemoveAt(selectedSoundIndex);
+
+                if (sounds.Count == 0) break;
+            }
+
+            var photos = new TileBindingContentPhotos();
+            foreach(var image in images)
+                photos.Images.Add(new TileBasicImage() { Source = image.Path });
+
+            TileBinding binding = new TileBinding()
+            {
+                Branding = TileBranding.NameAndLogo,
+                Content = photos
             };
 
-            NotificationsExtensions.Tiles.TileContent content = new NotificationsExtensions.Tiles.TileContent()
+            TileContent content = new TileContent()
             {
-                Visual = new NotificationsExtensions.Tiles.TileVisual()
+                Visual = new TileVisual()
                 {
                     TileMedium = binding,
                     TileWide = binding,
