@@ -96,7 +96,7 @@ namespace UniversalSoundBoard
             {
                 Guid? soundUuid = FileManager.ConvertStringToGuid(e.Arguments);
                 if(soundUuid.HasValue)
-                    await SoundPage.PlaySoundAsync(await FileManager.GetSoundAsync(soundUuid.Value));
+                    await SoundPage.PlaySoundAfterPlayingSoundsLoadedAsync(await FileManager.GetSoundAsync(soundUuid.Value));
             }
 
             Window.Current.Activate();

@@ -28,7 +28,8 @@ namespace UniversalSoundBoard.Pages
         private bool skipSoundListSelectionChangedEvent = false;
         private bool isDragging = false;
         private VerticalPosition bottomPlayingSoundsBarPosition = VerticalPosition.Bottom;
-        private bool playingSoundsLoaded = false;
+        private bool bottomPlayingSoundsBarHeightSet = false;
+        private static bool playingSoundsLoaded = false;
         
         public SoundPage()
         {
@@ -59,6 +60,12 @@ namespace UniversalSoundBoard.Pages
         private async void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             await UpdatePlayingSoundsListAsync();
+
+            if(!bottomPlayingSoundsBarHeightSet && Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
+            {
+                bottomPlayingSoundsBarHeightSet = true;
+                await UpdateBottomPlayingSoundsMinMaxHeight(true);
+            }
         }
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -74,8 +81,13 @@ namespace UniversalSoundBoard.Pages
 
         private async void ItemViewHolder_PlayingSoundsLoadedEvent(object sender, EventArgs e)
         {
-            await UpdateBottomPlayingSoundsMinMaxHeight(true);
             playingSoundsLoaded = true;
+
+            if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
+            {
+                bottomPlayingSoundsBarHeightSet = true;
+                await UpdateBottomPlayingSoundsMinMaxHeight(true);
+            }
         }
 
         private void ItemViewHolder_SelectAllSoundsEvent(object sender, RoutedEventArgs e)
@@ -168,7 +180,11 @@ namespace UniversalSoundBoard.Pages
         {
             await UpdatePlayingSoundsListAsync();
 
-            if (!playingSoundsLoaded || bottomPlayingSoundsBarPosition == VerticalPosition.Bottom) return;
+            if (
+                !playingSoundsLoaded
+                || bottomPlayingSoundsBarPosition == VerticalPosition.Bottom
+                || Window.Current.Bounds.Width >= FileManager.mobileMaxWidth
+            ) return;
 
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
@@ -317,6 +333,18 @@ namespace UniversalSoundBoard.Pages
             };
             FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
             playingSound.MediaPlayer.Play();
+        }
+
+        public static async Task PlaySoundAfterPlayingSoundsLoadedAsync(Sound sound)
+        {
+            if (!playingSoundsLoaded)
+            {
+                await Task.Delay(10);
+                await PlaySoundAfterPlayingSoundsLoadedAsync(sound);
+                return;
+            }
+
+            await PlaySoundAsync(sound);
         }
 
         public static async Task PlaySoundsAsync(List<Sound> sounds, int repetitions, bool randomly)
@@ -514,7 +542,7 @@ namespace UniversalSoundBoard.Pages
             SnapBottomPlayingSoundsBarContentAnimation.KeyFrames.Clear();
 
             // Create the new key frames and add them to the storyboard
-            for (int i = 1; i < frames; i++)
+            for (int i = 0; i < frames; i++)
             {
                 SnapBottomPlayingSoundsBarRowDefAnimation.KeyFrames.Add(
                     new DiscreteObjectKeyFrame
