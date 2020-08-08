@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UniversalSoundboard.Models;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
+using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel.Resources;
 using Windows.Media.Playback;
 using Windows.UI.Core;
@@ -25,6 +26,8 @@ namespace UniversalSoundBoard.Components
         private bool skipSoundsCollectionChanged = false;
         Guid selectedSoundUuid;
         bool soundsListVisible = false;
+        bool showAnimationTriggered = false;
+        bool hideAnimationTriggered = false;
 
         public PlayingSoundItemTemplate()
         {
@@ -33,6 +36,29 @@ namespace UniversalSoundBoard.Components
 
             ContentRoot.DataContext = FileManager.itemViewHolder;
             DataContextChanged += PlayingSoundTemplate_DataContextChanged;
+
+            // Subscribe to events
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
+            FileManager.itemViewHolder.PlayingSoundItemStartSoundsListAnimationEvent += ItemViewHolder_PlayingSoundItemStartSoundsListAnimationEvent;
+        }
+
+        private void ItemViewHolder_PlayingSoundItemStartSoundsListAnimationEvent(object sender, EventArgs e)
+        {
+            if (showAnimationTriggered)
+            {
+                showAnimationTriggered = false;
+
+                // Start the animation
+                ShowSoundsListViewStoryboardAnimation.To = SoundsListView.ActualHeight;
+                ShowSoundsListViewStoryboard.Begin();
+            }
+            else if (hideAnimationTriggered)
+            {
+                hideAnimationTriggered = false;
+
+                // Start the animation
+                HideSoundsListViewStoryboard.Begin();
+            }
         }
 
         private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs eventArgs)
@@ -73,7 +99,6 @@ namespace UniversalSoundBoard.Components
             PlayingSound.MediaPlayer.CommandManager.PreviousReceived += CommandManager_PreviousReceived;
 
             // Subscribe to other events
-            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             PlayingSound.Sounds.CollectionChanged -= Sounds_CollectionChanged;
             PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
 
@@ -87,13 +112,22 @@ namespace UniversalSoundBoard.Components
         {
             if (soundsListVisible)
             {
-                HideSoundsListViewStoryboard.Begin();
+                hideAnimationTriggered = true;
+
+                // Trigger the event to start the animation and wait for SoundPage to start the animation
+                SoundPage.playingSoundHeightDifference = SoundsListView.ActualHeight;
+                FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationStartedEvent(this, PlayingSound.Uuid);
+                
                 ExpandButton.Content = "\uE099";
             }
             else
             {
-                ShowSoundsListViewStoryboardAnimation.To = SoundsListView.ActualHeight;
-                ShowSoundsListViewStoryboard.Begin();
+                showAnimationTriggered = true;
+
+                // Trigger the event to start the animation and wait for SoundPage to start the animation
+                SoundPage.playingSoundHeightDifference = SoundsListView.ActualHeight;
+                FileManager.itemViewHolder.TriggerPlayingSoundItemShowSoundsListAnimationStartedEvent(this, PlayingSound.Uuid);
+
                 ExpandButton.Content = "\uE098";
             }
 
@@ -543,6 +577,16 @@ namespace UniversalSoundBoard.Components
         private async void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             await MoveToSound(SoundsListView.SelectedIndex);
+        }
+
+        private void ShowSoundsListViewStoryboard_Completed(object sender, object e)
+        {
+            FileManager.itemViewHolder.TriggerPlayingSoundItemShowSoundsListAnimationEndedEvent(this, PlayingSound.Uuid);
+        }
+
+        private void HideSoundsListViewStoryboard_Completed(object sender, object e)
+        {
+            FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationEndedEvent(this, PlayingSound.Uuid);
         }
         #endregion
     }

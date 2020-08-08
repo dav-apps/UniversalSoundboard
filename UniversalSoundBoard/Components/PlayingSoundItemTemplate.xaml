@@ -24,7 +24,7 @@
         </Style>
         
         <!-- Storyboards -->
-        <Storyboard x:Name="ShowSoundsListViewStoryboard">
+        <Storyboard x:Name="ShowSoundsListViewStoryboard" Completed="ShowSoundsListViewStoryboard_Completed">
             <DoubleAnimation
                 x:Name="ShowSoundsListViewStoryboardAnimation"
                 Storyboard.TargetName="SoundsListViewStackPanel"
@@ -38,7 +38,7 @@
             </DoubleAnimation>
         </Storyboard>
 
-        <Storyboard x:Name="HideSoundsListViewStoryboard">
+        <Storyboard x:Name="HideSoundsListViewStoryboard" Completed="HideSoundsListViewStoryboard_Completed">
             <DoubleAnimation
                 x:Name="HideSoundsListViewStoryboardAnimation"
                 Storyboard.TargetName="SoundsListViewStackPanel"
@@ -113,7 +113,7 @@
                         <!-- RightMediaControlStackPanel -->
                         <Setter Target="RightMediaControlStackPanel.(RelativePanel.AlignRightWithPanel)" Value="True" />
 
-                        <!-- MoreButtonRemoveItem (RightMediaControlStackPanel) -->
+                        <!-- MoreButton (RightMediaControlStackPanel) -->
                         <Setter Target="MoreButtonRemoveFlyoutItem.Visibility" Value="Collapsed" />
 
                         <!-- MediaPlayerElement -->
