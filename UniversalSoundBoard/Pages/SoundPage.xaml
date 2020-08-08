@@ -461,16 +461,46 @@
         </Style>
 
         <!-- Storyboards -->
-        <Storyboard x:Name="SnapBottomPlayingSoundsBarStoryboard" Completed="SnapBottomPlayingSoundsBarStoryboard_Completed">
-            <ObjectAnimationUsingKeyFrames
-                x:Name="SnapBottomPlayingSoundsBarRowDefAnimation"
-                Storyboard.TargetName="BottomPlayingSoundsBarRowDef"
-                Storyboard.TargetProperty="(Height)" />
+        <Storyboard x:Name="ShowSoundsListViewStoryboard">
+            <DoubleAnimation
+                x:Name="ShowSoundsListViewStoryboardAnimation"
+                Storyboard.TargetName="BottomPlayingSoundsBar"
+                Storyboard.TargetProperty="Height"
+                EnableDependentAnimation="True"
+                Duration="0:0:0.2">
 
-            <ObjectAnimationUsingKeyFrames
-                x:Name="SnapBottomPlayingSoundsBarContentAnimation"
-                Storyboard.TargetName="BottomPlayingSoundsBarContent"
-                Storyboard.TargetProperty="Height" />
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Name="HideSoundsListViewStoryboard">
+            <DoubleAnimation
+                x:Name="HideSoundsListViewStoryboardAnimation"
+                Storyboard.TargetName="BottomPlayingSoundsBar"
+                Storyboard.TargetProperty="Height"
+                EnableDependentAnimation="True"
+                Duration="0:0:0.2">
+
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Name="SnapBottomPlayingSoundsBarStoryboard">
+            <DoubleAnimation
+                x:Name="SnapBottomPlayingSoundsBarStoryboardAnimation"
+                Storyboard.TargetName="BottomPlayingSoundsBar"
+                Storyboard.TargetProperty="Height"
+                EnableDependentAnimation="True"
+                Duration="0:0:0.2">
+
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
         </Storyboard>
     </Page.Resources>
 
@@ -798,8 +828,9 @@
             </Grid>
         </Grid>
 
+        <!-- GridSplitter + BottomPlayingSoundsBar -->
         <Grid
-            Name="BottomPlayingSoundsBar"
+            Name="GridSplitterGrid"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
@@ -808,21 +839,20 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
                 <RowDefinition Height="16" />
-                <RowDefinition Height="Auto" x:Name="BottomPlayingSoundsBarRowDef" />
+                <RowDefinition Height="*" x:Name="GridSplitterGridBottomRowDef" />
             </Grid.RowDefinitions>
 
-            <Grid Name="PseudoContentGrid" Width="0"></Grid>
-            
+            <Grid Name="TopPseudoContentGrid" Width="0" />
+
             <controls:GridSplitter
                 Name="BottomPlayingSoundsBarGridSplitter"
                 Grid.Row="1"
                 Height="16"
-                Margin="0,0,0,-3"
                 Background="Transparent"
-                GripperCursor="SizeNorthSouth"
+                ManipulationStarted="BottomPlayingSoundsBarGridSplitter_ManipulationStarted"
                 ManipulationDelta="BottomPlayingSoundsBarGridSplitter_ManipulationDelta"
                 ManipulationCompleted="BottomPlayingSoundsBarGridSplitter_ManipulationCompleted">
-                
+
                 <controls:GridSplitter.Element>
                     <Grid Height="16" Background="{StaticResource NavigationViewHeaderBackgroundBrush}">
                         <TextBlock
@@ -835,23 +865,32 @@
                 </controls:GridSplitter.Element>
             </controls:GridSplitter>
 
-            <RelativePanel
-                Name="BottomPlayingSoundsBarContent"
+            <Grid
+                Name="BottomPseudoContentGrid"
                 Grid.Row="2"
-                Background="{StaticResource NavigationViewHeaderBackgroundBrush}">
-
-                <ListView
-                    Name="BottomPlayingSoundsBarListView"
-                    ItemsSource="{Binding PlayingSounds}"
-                    SelectionMode="None">
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models1:PlayingSound">
-                            <components:PlayingSoundItemTemplate />
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </RelativePanel>
+                Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
+                SizeChanged="BottomPseudoContentGrid_SizeChanged" />
         </Grid>
+
+        <RelativePanel
+            Name="BottomPlayingSoundsBar"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True">
+
+            <ListView
+                Name="BottomPlayingSoundsBarListView"
+                RelativePanel.AlignBottomWithPanel="True"
+                ItemsSource="{Binding PlayingSounds}"
+                SelectionMode="None"
+                SizeChanged="BottomPlayingSoundsBarListView_SizeChanged">
+
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models1:PlayingSound">
+                        <components:PlayingSoundItemTemplate />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </RelativePanel>
     </RelativePanel>
 </Page>
