@@ -123,6 +123,11 @@ namespace UniversalSoundBoard.Common
         public event EventHandler<Guid> CategoryRemovedEvent;                       // Is triggered when a category was removed
         public event EventHandler<RoutedEventArgs> SelectAllSoundsEvent;            // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
         public event EventHandler<SizeChangedEventArgs> SoundTileSizeChangedEvent;  // This event is triggered when the size of the sound tiles in the GridViews has changed
+        public event EventHandler PlayingSoundItemStartSoundsListAnimationEvent;                // Is triggered from the SoundPage for starting the appropriate animation
+        public event EventHandler<Guid> PlayingSoundItemShowSoundsListAnimationStartedEvent;    // Is triggered when the animation of a PlayingSound item to show the sounds list started
+        public event EventHandler<Guid> PlayingSoundItemShowSoundsListAnimationEndedEvent;      // Is triggered when the animation of a PlayingSound item to show the sounds list ended
+        public event EventHandler<Guid> PlayingSoundItemHideSoundsListAnimationStartedEvent;    // Is triggered when the animation of a PlayingSound item to hide the sounds list started
+        public event EventHandler<Guid> PlayingSoundItemHideSoundsListAnimationEndedEvent;      // Is triggered when the animation of a PlayingSound item to hide the sounds list ended
         #endregion
 
         #region Local variables
@@ -827,6 +832,31 @@ namespace UniversalSoundBoard.Common
         public void TriggerSoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)
         {
             SoundTileSizeChangedEvent?.Invoke(sender, e);
+        }
+
+        public void TriggerPlayingSoundItemStartSoundsListAnimationEvent()
+        {
+            PlayingSoundItemStartSoundsListAnimationEvent?.Invoke(null, null);
+        }
+
+        public void TriggerPlayingSoundItemShowSoundsListAnimationStartedEvent(object sender, Guid uuid)
+        {
+            PlayingSoundItemShowSoundsListAnimationStartedEvent?.Invoke(sender, uuid);
+        }
+
+        public void TriggerPlayingSoundItemShowSoundsListAnimationEndedEvent(object sender, Guid uuid)
+        {
+            PlayingSoundItemShowSoundsListAnimationEndedEvent?.Invoke(sender, uuid);
+        }
+
+        public void TriggerPlayingSoundItemHideSoundsListAnimationStartedEvent(object sender, Guid uuid)
+        {
+            PlayingSoundItemHideSoundsListAnimationStartedEvent?.Invoke(sender, uuid);
+        }
+
+        public void TriggerPlayingSoundItemHideSoundsListAnimationEndedEvent(object sender, Guid uuid)
+        {
+            PlayingSoundItemHideSoundsListAnimationEndedEvent?.Invoke(sender, uuid);
         }
         #endregion
 
