@@ -30,7 +30,6 @@ namespace UniversalSoundBoard.Pages
         private static bool playingSoundsLoaded = false;
         public static double playingSoundHeightDifference = 0;
         bool isManipulatingBottomPlayingSoundsBar = false;
-        bool bottomPlayingSoundsBarInitialHeightSet = false;
         bool removePlayingSoundAfterAnimation = false;
         
         public SoundPage()
@@ -81,6 +80,15 @@ namespace UniversalSoundBoard.Pages
 
             // Update the min and max height of the bottom row def
             await UpdateGridSplitterRange();
+
+            if(BottomPlayingSoundsBarListView.Items.Count > 0)
+            {
+                // Get the height of the first PlayingSound item and set the height of the BottomPlayingSoundsBar
+                double firstItemHeight = await GetPlayingSoundItemContainerHeight(0);
+                BottomPlayingSoundsBar.Height = firstItemHeight;
+                GridSplitterGridBottomRowDef.MinHeight = firstItemHeight;
+                GridSplitterGridBottomRowDef.Height = new GridLength(firstItemHeight);
+            }
         }
 
         private void ItemViewHolder_SelectAllSoundsEvent(object sender, RoutedEventArgs e)
@@ -187,11 +195,7 @@ namespace UniversalSoundBoard.Pages
 
         private void ItemViewHolder_RemovePlayingSoundItemEvent(object sender, Guid e)
         {
-            if (
-                playingSoundsLoaded
-                && bottomPlayingSoundsBarInitialHeightSet
-                && bottomPlayingSoundsBarPosition == VerticalPosition.Top
-            )
+            if (playingSoundsLoaded && bottomPlayingSoundsBarPosition == VerticalPosition.Top)
             {
                 removePlayingSoundAfterAnimation = true;
 
@@ -243,22 +247,12 @@ namespace UniversalSoundBoard.Pages
         {
             await UpdatePlayingSoundsListAsync();
 
-            if (!playingSoundsLoaded && !bottomPlayingSoundsBarInitialHeightSet && BottomPlayingSoundsBarListView.Items.Count > 0)
+            if (playingSoundsLoaded)
             {
-                bottomPlayingSoundsBarInitialHeightSet = true;
-
-                // Get the height of the first PlayingSound item and set the height of the BottomPlayingSoundsBar
-                double firstItemHeight = await GetPlayingSoundItemContainerHeight(0);
-                BottomPlayingSoundsBar.Height = firstItemHeight;
-                GridSplitterGridBottomRowDef.MinHeight = firstItemHeight;
-                GridSplitterGridBottomRowDef.Height = new GridLength(firstItemHeight);
-            }
-            else if(playingSoundsLoaded && bottomPlayingSoundsBarInitialHeightSet)
-            {
-                if(bottomPlayingSoundsBarPosition == VerticalPosition.Top)
+                if (bottomPlayingSoundsBarPosition == VerticalPosition.Top)
                 {
                     // Show appropriate animation
-                    if(e.Action == NotifyCollectionChangedAction.Add)
+                    if (e.Action == NotifyCollectionChangedAction.Add)
                     {
                         await UpdateGridSplitterRange();
                         SnapBottomPlayingSoundsBar();
