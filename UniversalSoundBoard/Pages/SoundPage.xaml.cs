@@ -31,6 +31,7 @@ namespace UniversalSoundBoard.Pages
         public static double playingSoundHeightDifference = 0;
         bool isManipulatingBottomPlayingSoundsBar = false;
         bool bottomPlayingSoundsBarInitialHeightSet = false;
+        bool removePlayingSoundAfterAnimation = false;
         
         public SoundPage()
         {
@@ -45,6 +46,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationEndedEvent += ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEndedEvent;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStartedEvent += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStartedEvent;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEndedEvent += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEndedEvent;
+            FileManager.itemViewHolder.RemovePlayingSoundItemEvent += ItemViewHolder_RemovePlayingSoundItemEvent;
 
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
@@ -183,6 +185,25 @@ namespace UniversalSoundBoard.Pages
             await UpdateGridSplitterRange();
         }
 
+        private void ItemViewHolder_RemovePlayingSoundItemEvent(object sender, Guid e)
+        {
+            if (
+                playingSoundsLoaded
+                && bottomPlayingSoundsBarInitialHeightSet
+                && bottomPlayingSoundsBarPosition == VerticalPosition.Top
+            )
+            {
+                removePlayingSoundAfterAnimation = true;
+
+                // Start the animation
+                StartSnapBottomPlayingSoundsBarAnimation(BottomPlayingSoundsBar.ActualHeight, BottomPlayingSoundsBar.ActualHeight - playingSoundHeightDifference);
+            }
+            else
+            {
+                FileManager.itemViewHolder.TriggerRemovePlayingSoundItemCommitEvent();
+            }
+        }
+
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -231,6 +252,20 @@ namespace UniversalSoundBoard.Pages
                 BottomPlayingSoundsBar.Height = firstItemHeight;
                 GridSplitterGridBottomRowDef.MinHeight = firstItemHeight;
                 GridSplitterGridBottomRowDef.Height = new GridLength(firstItemHeight);
+            }
+            else if(playingSoundsLoaded && bottomPlayingSoundsBarInitialHeightSet)
+            {
+                if(bottomPlayingSoundsBarPosition == VerticalPosition.Top)
+                {
+                    // Show appropriate animation
+                    if(e.Action == NotifyCollectionChangedAction.Add)
+                    {
+                        await UpdateGridSplitterRange();
+                        SnapBottomPlayingSoundsBar();
+                    }
+                }
+
+                await UpdateGridSplitterRange();
             }
         }
         #endregion
@@ -757,6 +792,17 @@ namespace UniversalSoundBoard.Pages
         {
             if (isManipulatingBottomPlayingSoundsBar) return;
             GridSplitterGridBottomRowDef.Height = new GridLength(BottomPlayingSoundsBarListView.ActualHeight);
+        }
+
+        private async void SnapBottomPlayingSoundsBarStoryboard_Completed(object sender, object e)
+        {
+            if (removePlayingSoundAfterAnimation)
+            {
+                removePlayingSoundAfterAnimation = false;
+                FileManager.itemViewHolder.TriggerRemovePlayingSoundItemCommitEvent();
+            }
+
+            await UpdateGridSplitterRange();
         }
         #endregion
     }

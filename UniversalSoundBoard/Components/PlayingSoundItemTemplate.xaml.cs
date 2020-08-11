@@ -28,6 +28,7 @@ namespace UniversalSoundBoard.Components
         bool soundsListVisible = false;
         bool showAnimationTriggered = false;
         bool hideAnimationTriggered = false;
+        bool removePlayingSoundTriggered = false;
 
         public PlayingSoundItemTemplate()
         {
@@ -40,6 +41,7 @@ namespace UniversalSoundBoard.Components
             // Subscribe to events
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.PlayingSoundItemStartSoundsListAnimationEvent += ItemViewHolder_PlayingSoundItemStartSoundsListAnimationEvent;
+            FileManager.itemViewHolder.RemovePlayingSoundItemCommitEvent += ItemViewHolder_RemovePlayingSoundItemCommitEvent;
         }
 
         private void ItemViewHolder_PlayingSoundItemStartSoundsListAnimationEvent(object sender, EventArgs e)
@@ -58,6 +60,15 @@ namespace UniversalSoundBoard.Components
 
                 // Start the animation
                 HideSoundsListViewStoryboard.Begin();
+            }
+        }
+
+        private async void ItemViewHolder_RemovePlayingSoundItemCommitEvent(object sender, EventArgs e)
+        {
+            if (removePlayingSoundTriggered)
+            {
+                removePlayingSoundTriggered = false;
+                await RemovePlayingSound();
             }
         }
 
@@ -190,9 +201,9 @@ namespace UniversalSoundBoard.Components
             ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveNext();
         }
 
-        private async void RemoveButton_Click(object sender, RoutedEventArgs e)
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
-            await RemovePlayingSound();
+            TriggerRemovePlayingSound();
         }
 
         private void MenuFlyout_Opened(object sender, object e)
@@ -245,12 +256,12 @@ namespace UniversalSoundBoard.Components
             await FileManager.ReloadSound(currentSound.Uuid);
         }
 
-        private async void SoundsListViewRemoveSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
+        private void SoundsListViewRemoveSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
         {
             if (PlayingSound.Sounds.Count > 1)
                 RemoveSound((Guid)args.SwipeControl.Tag);
             else
-                await RemovePlayingSound();
+                TriggerRemovePlayingSound();
         }
         
         private void SwipeControl_RightTapped(object sender, RightTappedRoutedEventArgs e)
@@ -294,6 +305,15 @@ namespace UniversalSoundBoard.Components
                 // Move to the previous sound
                 ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MovePrevious();
             }
+        }
+
+        private void TriggerRemovePlayingSound()
+        {
+            // Set the height difference in SoundPage for the animation
+            SoundPage.playingSoundHeightDifference = ContentRoot.ActualHeight + 12;
+
+            removePlayingSoundTriggered = true;
+            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, PlayingSound.Uuid);
         }
 
         private async Task RemovePlayingSound()
@@ -463,7 +483,7 @@ namespace UniversalSoundBoard.Components
                 if (PlayingSound.Repetitions <= 0)
                 {
                     // Delete and remove the PlayingSound
-                    await RemovePlayingSound();
+                    TriggerRemovePlayingSound();
                     return;
                 }
 

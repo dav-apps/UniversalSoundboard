@@ -489,7 +489,7 @@
             </DoubleAnimation>
         </Storyboard>
 
-        <Storyboard x:Name="SnapBottomPlayingSoundsBarStoryboard">
+        <Storyboard x:Name="SnapBottomPlayingSoundsBarStoryboard" Completed="SnapBottomPlayingSoundsBarStoryboard_Completed">
             <DoubleAnimation
                 x:Name="SnapBottomPlayingSoundsBarStoryboardAnimation"
                 Storyboard.TargetName="BottomPlayingSoundsBar"
@@ -890,6 +890,14 @@
                         <components:PlayingSoundItemTemplate />
                     </DataTemplate>
                 </ListView.ItemTemplate>
+
+                <ListView.ItemContainerTransitions>
+                    <TransitionCollection>
+                        <ContentThemeTransition/>
+                        <ReorderThemeTransition/>
+                        <EntranceThemeTransition IsStaggeringEnabled="False"/>
+                    </TransitionCollection>
+                </ListView.ItemContainerTransitions>
             </ListView>
         </RelativePanel>
     </RelativePanel>
