@@ -9,6 +9,7 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
+    x:Name="PlayingSoundItemTemplateUserControl"
     Loaded="PlayingSoundTemplate_Loaded"
     SizeChanged="UserControl_SizeChanged">
 
@@ -42,6 +43,21 @@
             <DoubleAnimation
                 x:Name="HideSoundsListViewStoryboardAnimation"
                 Storyboard.TargetName="SoundsListViewStackPanel"
+                Storyboard.TargetProperty="Height"
+                EnableDependentAnimation="True"
+                Duration="0:0:0.2"
+                To="0">
+
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
+        <Storyboard x:Name="HidePlayingSoundItemStoryboard" Completed="HidePlayingSoundItemStoryboard_Completed">
+            <DoubleAnimation
+                x:Name="HidePlayingSoundItemStoryboardAnimation"
+                Storyboard.TargetName="PlayingSoundItemTemplateUserControl"
                 Storyboard.TargetProperty="Height"
                 EnableDependentAnimation="True"
                 Duration="0:0:0.2"
@@ -295,7 +311,7 @@
             Name="SoundsListViewStackPanel"
             Grid.Row="2"
             Height="0">
-            
+
             <ListView
                 Name="SoundsListView"
                 Padding="0,10,0,10"

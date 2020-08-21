@@ -124,7 +124,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+    
         <Style x:Name="SoundListViewStyle" TargetType="ListView">
             <!-- Custom Setters -->
             <Setter Property="IsItemClickEnabled" Value="True" />
@@ -198,7 +198,7 @@
                 </Setter.Value>
             </Setter>
         </Style>
-
+    
         <Style x:Name="CustomScrollViewerStyle" TargetType="ScrollViewer">
             <Setter Property="HorizontalScrollMode" Value="Auto" />
             <Setter Property="VerticalScrollMode" Value="Auto" />
@@ -881,9 +881,15 @@
             <ListView
                 Name="BottomPlayingSoundsBarListView"
                 RelativePanel.AlignBottomWithPanel="True"
-                ItemsSource="{Binding PlayingSounds}"
+                ItemsSource="{x:Bind reversedPlayingSounds}"
                 SelectionMode="None"
                 SizeChanged="BottomPlayingSoundsBarListView_SizeChanged">
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="MinHeight" Value="0" />
+                    </Style>
+                </ListView.ItemContainerStyle>
 
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models1:PlayingSound">

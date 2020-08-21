@@ -28,7 +28,6 @@ namespace UniversalSoundBoard.Components
         bool soundsListVisible = false;
         bool showAnimationTriggered = false;
         bool hideAnimationTriggered = false;
-        bool removePlayingSoundTriggered = false;
 
         public PlayingSoundItemTemplate()
         {
@@ -41,7 +40,6 @@ namespace UniversalSoundBoard.Components
             // Subscribe to events
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.PlayingSoundItemStartSoundsListAnimationEvent += ItemViewHolder_PlayingSoundItemStartSoundsListAnimationEvent;
-            FileManager.itemViewHolder.RemovePlayingSoundItemCommitEvent += ItemViewHolder_RemovePlayingSoundItemCommitEvent;
         }
 
         private void ItemViewHolder_PlayingSoundItemStartSoundsListAnimationEvent(object sender, EventArgs e)
@@ -63,19 +61,11 @@ namespace UniversalSoundBoard.Components
             }
         }
 
-        private async void ItemViewHolder_RemovePlayingSoundItemCommitEvent(object sender, EventArgs e)
-        {
-            if (removePlayingSoundTriggered)
-            {
-                removePlayingSoundTriggered = false;
-                await RemovePlayingSound();
-            }
-        }
-
         private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs eventArgs)
         {
             Init();
             AdjustLayout();
+            PlayingSoundItemTemplateUserControl.Height = double.NaN;
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -309,11 +299,9 @@ namespace UniversalSoundBoard.Components
 
         private void TriggerRemovePlayingSound()
         {
-            // Set the height difference in SoundPage for the animation
-            SoundPage.playingSoundHeightDifference = ContentRoot.ActualHeight + 12;
-
-            removePlayingSoundTriggered = true;
-            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, PlayingSound.Uuid);
+            // Start the animation for hiding the PlayingSoundItem
+            HidePlayingSoundItemStoryboardAnimation.From = PlayingSoundItemTemplateUserControl.ActualHeight;
+            HidePlayingSoundItemStoryboard.Begin();
         }
 
         private async Task RemovePlayingSound()
@@ -566,6 +554,8 @@ namespace UniversalSoundBoard.Components
         #region Other event handlers
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
+            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+
             if (e.PropertyName == "Volume")
                 PlayingSound.MediaPlayer.Volume = (double)PlayingSound.Volume / 100 * FileManager.itemViewHolder.Volume / 100;
             else if (e.PropertyName == "Muted")
@@ -607,6 +597,11 @@ namespace UniversalSoundBoard.Components
         private void HideSoundsListViewStoryboard_Completed(object sender, object e)
         {
             FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationEndedEvent(this, PlayingSound.Uuid);
+        }
+
+        private async void HidePlayingSoundItemStoryboard_Completed(object sender, object e)
+        {
+            await RemovePlayingSound();
         }
         #endregion
     }

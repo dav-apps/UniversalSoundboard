@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,7 +31,7 @@ namespace UniversalSoundBoard.Pages
         private static bool playingSoundsLoaded = false;
         public static double playingSoundHeightDifference = 0;
         bool isManipulatingBottomPlayingSoundsBar = false;
-        bool removePlayingSoundAfterAnimation = false;
+        ObservableCollection<PlayingSound> reversedPlayingSounds = new ObservableCollection<PlayingSound>();
         
         public SoundPage()
         {
@@ -45,7 +46,6 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationEndedEvent += ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEndedEvent;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStartedEvent += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStartedEvent;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEndedEvent += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEndedEvent;
-            FileManager.itemViewHolder.RemovePlayingSoundItemEvent += ItemViewHolder_RemovePlayingSoundItemEvent;
 
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
@@ -56,6 +56,11 @@ namespace UniversalSoundBoard.Pages
         async void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
             await UpdatePlayingSoundsListAsync();
+
+            // Load the reversedPlayingSounds list
+            reversedPlayingSounds.Clear();
+            for(int i = 0; i < FileManager.itemViewHolder.PlayingSounds.Count; i++)
+                reversedPlayingSounds.Add(FileManager.itemViewHolder.PlayingSounds[FileManager.itemViewHolder.PlayingSounds.Count - 1 - i]);
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -193,21 +198,6 @@ namespace UniversalSoundBoard.Pages
             await UpdateGridSplitterRange();
         }
 
-        private void ItemViewHolder_RemovePlayingSoundItemEvent(object sender, Guid e)
-        {
-            if (playingSoundsLoaded && bottomPlayingSoundsBarPosition == VerticalPosition.Top)
-            {
-                removePlayingSoundAfterAnimation = true;
-
-                // Start the animation
-                StartSnapBottomPlayingSoundsBarAnimation(BottomPlayingSoundsBar.ActualHeight, BottomPlayingSoundsBar.ActualHeight - playingSoundHeightDifference);
-            }
-            else
-            {
-                FileManager.itemViewHolder.TriggerRemovePlayingSoundItemCommitEvent();
-            }
-        }
-
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -246,6 +236,12 @@ namespace UniversalSoundBoard.Pages
         private async void PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             await UpdatePlayingSoundsListAsync();
+
+            // Update the reversedPlayingSounds list
+            if (e.Action == NotifyCollectionChangedAction.Add)
+                reversedPlayingSounds.Insert(0, e.NewItems[0] as PlayingSound);
+            else if(e.Action == NotifyCollectionChangedAction.Remove)
+                reversedPlayingSounds.Remove(e.OldItems[0] as PlayingSound);
 
             if (playingSoundsLoaded)
             {
@@ -579,7 +575,7 @@ namespace UniversalSoundBoard.Pages
 
         private async Task<double> GetPlayingSoundItemContainerHeight(int index)
         {
-            var item = BottomPlayingSoundsBarListView.ContainerFromIndex(index) as ListViewItem;
+            ListViewItem item = BottomPlayingSoundsBarListView.ContainerFromIndex(index) as ListViewItem;
 
             if(item == null)
             {
@@ -790,12 +786,6 @@ namespace UniversalSoundBoard.Pages
 
         private async void SnapBottomPlayingSoundsBarStoryboard_Completed(object sender, object e)
         {
-            if (removePlayingSoundAfterAnimation)
-            {
-                removePlayingSoundAfterAnimation = false;
-                FileManager.itemViewHolder.TriggerRemovePlayingSoundItemCommitEvent();
-            }
-
             await UpdateGridSplitterRange();
         }
         #endregion
