@@ -54,6 +54,21 @@
             </DoubleAnimation>
         </Storyboard>
 
+        <Storyboard x:Name="ShowPlayingSoundItemStoryboard" Completed="ShowPlayingSoundItemStoryboard_Completed">
+            <DoubleAnimation
+                x:Name="ShowPlayingSoundItemStoryboardAnimation"
+                Storyboard.TargetName="PlayingSoundItemTemplateUserControl"
+                Storyboard.TargetProperty="Height"
+                EnableDependentAnimation="True"
+                Duration="0:0:0.2"
+                From="0">
+
+                <DoubleAnimation.EasingFunction>
+                    <CubicEase EasingMode="EaseOut" />
+                </DoubleAnimation.EasingFunction>
+            </DoubleAnimation>
+        </Storyboard>
+
         <Storyboard x:Name="HidePlayingSoundItemStoryboard" Completed="HidePlayingSoundItemStoryboard_Completed">
             <DoubleAnimation
                 x:Name="HidePlayingSoundItemStoryboardAnimation"

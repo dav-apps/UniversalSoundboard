@@ -66,6 +66,18 @@ namespace UniversalSoundBoard.Components
             Init();
             AdjustLayout();
             PlayingSoundItemTemplateUserControl.Height = double.NaN;
+
+            if (SoundPage.showPlayingSoundItemAnimation)
+            {
+                // Show the animation
+                double contentHeight = ContentRoot.ActualHeight + ContentRoot.Margin.Top + ContentRoot.Margin.Bottom;
+
+                SoundPage.playingSoundHeightDifference = contentHeight;
+                ShowPlayingSoundItemStoryboardAnimation.To = contentHeight;
+                ShowPlayingSoundItemStoryboard.Begin();
+
+                FileManager.itemViewHolder.TriggerShowPlayingSoundItemStartedEvent(this, PlayingSound.Uuid);
+            }
         }
 
         private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -605,6 +617,12 @@ namespace UniversalSoundBoard.Components
         private void HideSoundsListViewStoryboard_Completed(object sender, object e)
         {
             FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationEndedEvent(this, PlayingSound.Uuid);
+        }
+
+        private void ShowPlayingSoundItemStoryboard_Completed(object sender, object e)
+        {
+            PlayingSoundItemTemplateUserControl.Height = double.NaN;
+            FileManager.itemViewHolder.TriggerShowPlayingSoundItemEndedEvent(this, PlayingSound.Uuid);
         }
 
         private async void HidePlayingSoundItemStoryboard_Completed(object sender, object e)

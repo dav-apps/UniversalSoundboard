@@ -29,6 +29,7 @@ namespace UniversalSoundBoard.Pages
         private bool isDragging = false;
         private VerticalPosition bottomPlayingSoundsBarPosition = VerticalPosition.Bottom;
         private static bool playingSoundsLoaded = false;
+        public static bool showPlayingSoundItemAnimation = false;
         public static double playingSoundHeightDifference = 0;
         bool isManipulatingBottomPlayingSoundsBar = false;
         ObservableCollection<PlayingSound> reversedPlayingSounds = new ObservableCollection<PlayingSound>();
@@ -46,6 +47,8 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationEndedEvent += ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEndedEvent;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStartedEvent += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStartedEvent;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEndedEvent += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEndedEvent;
+            FileManager.itemViewHolder.ShowPlayingSoundItemStartedEvent += ItemViewHolder_ShowPlayingSoundItemStartedEvent;
+            FileManager.itemViewHolder.ShowPlayingSoundItemEndedEvent += ItemViewHolder_ShowPlayingSoundItemEndedEvent;
             FileManager.itemViewHolder.RemovePlayingSoundItemEvent += ItemViewHolder_RemovePlayingSoundItemEvent;
 
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
@@ -199,6 +202,17 @@ namespace UniversalSoundBoard.Pages
             await UpdateGridSplitterRange();
         }
 
+        private void ItemViewHolder_ShowPlayingSoundItemStartedEvent(object sender, Guid e)
+        {
+            GridSplitterGridBottomRowDef.MaxHeight = BottomPlayingSoundsBar.ActualHeight + playingSoundHeightDifference;
+            StartSnapBottomPlayingSoundsBarAnimation(BottomPlayingSoundsBar.ActualHeight, BottomPlayingSoundsBar.ActualHeight + playingSoundHeightDifference);
+        }
+
+        private void ItemViewHolder_ShowPlayingSoundItemEndedEvent(object sender, Guid e)
+        {
+            showPlayingSoundItemAnimation = false;
+        }
+
         private void ItemViewHolder_RemovePlayingSoundItemEvent(object sender, Guid e)
         {
             if (reversedPlayingSounds.Count != 1) return;
@@ -248,13 +262,13 @@ namespace UniversalSoundBoard.Pages
             // Update the reversedPlayingSounds list
             if (e.Action == NotifyCollectionChangedAction.Add)
                 reversedPlayingSounds.Insert(0, e.NewItems[0] as PlayingSound);
-            else if(e.Action == NotifyCollectionChangedAction.Remove)
+            else if (e.Action == NotifyCollectionChangedAction.Remove)
                 reversedPlayingSounds.Remove(e.OldItems[0] as PlayingSound);
-
-            await UpdatePlayingSoundsListAsync();
 
             if (playingSoundsLoaded)
             {
+                await UpdatePlayingSoundsListAsync();
+
                 if (
                     e.Action == NotifyCollectionChangedAction.Add
                     && reversedPlayingSounds.Count == 1
@@ -267,16 +281,21 @@ namespace UniversalSoundBoard.Pages
                 } else if (
                     bottomPlayingSoundsBarPosition == VerticalPosition.Top
                     && e.Action == NotifyCollectionChangedAction.Add
+                    && reversedPlayingSounds.Count > 1
                 )
                 {
                     // Show appropriate animation
-                    await UpdateGridSplitterRange();
-                    SnapBottomPlayingSoundsBar();
+                    showPlayingSoundItemAnimation = true;
                 }
                 else
                 {
                     await UpdateGridSplitterRange();
                 }
+            }
+            else
+            {
+                await UpdatePlayingSoundsListAsync();
+                await UpdateGridSplitterRange();
             }
         }
         #endregion
