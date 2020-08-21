@@ -307,6 +307,9 @@ namespace UniversalSoundBoard.Components
             // Start the animation for hiding the PlayingSoundItem
             HidePlayingSoundItemStoryboardAnimation.From = PlayingSoundItemTemplateUserControl.ActualHeight;
             HidePlayingSoundItemStoryboard.Begin();
+
+            // Trigger the animation in SoundPage for the BottomPlayingSoundsBar, if necessary
+            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, PlayingSound.Uuid);
         }
 
         private async Task RemovePlayingSound()

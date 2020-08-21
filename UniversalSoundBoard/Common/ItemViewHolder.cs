@@ -128,6 +128,7 @@ namespace UniversalSoundBoard.Common
         public event EventHandler<Guid> PlayingSoundItemShowSoundsListAnimationEndedEvent;      // Is triggered when the animation of a PlayingSound item to show the sounds list ended
         public event EventHandler<Guid> PlayingSoundItemHideSoundsListAnimationStartedEvent;    // Is triggered when the animation of a PlayingSound item to hide the sounds list started
         public event EventHandler<Guid> PlayingSoundItemHideSoundsListAnimationEndedEvent;      // Is triggered when the animation of a PlayingSound item to hide the sounds list ended
+        public event EventHandler<Guid> RemovePlayingSoundItemEvent;                            // Is triggered when the user wants to remove a PlayingSound, to start the BottomPlayingSoundsBar animation
         #endregion
 
         #region Local variables
@@ -857,6 +858,11 @@ namespace UniversalSoundBoard.Common
         public void TriggerPlayingSoundItemHideSoundsListAnimationEndedEvent(object sender, Guid uuid)
         {
             PlayingSoundItemHideSoundsListAnimationEndedEvent?.Invoke(sender, uuid);
+        }
+
+        public void TriggerRemovePlayingSoundItemEvent(object sender, Guid uuid)
+        {
+            RemovePlayingSoundItemEvent?.Invoke(sender, uuid);
         }
         #endregion
 

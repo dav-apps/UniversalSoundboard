@@ -46,6 +46,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationEndedEvent += ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEndedEvent;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStartedEvent += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStartedEvent;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEndedEvent += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEndedEvent;
+            FileManager.itemViewHolder.RemovePlayingSoundItemEvent += ItemViewHolder_RemovePlayingSoundItemEvent;
 
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
@@ -198,6 +199,15 @@ namespace UniversalSoundBoard.Pages
             await UpdateGridSplitterRange();
         }
 
+        private void ItemViewHolder_RemovePlayingSoundItemEvent(object sender, Guid e)
+        {
+            if (reversedPlayingSounds.Count != 1) return;
+
+            // Start the animation for hiding the BottomPlayingSoundsBar background / BottomPseudoContentGrid
+            GridSplitterGridBottomRowDef.MinHeight = 0;
+            StartSnapBottomPlayingSoundsBarAnimation(GridSplitterGridBottomRowDef.ActualHeight, 0);
+        }
+
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Remove)
@@ -245,17 +255,19 @@ namespace UniversalSoundBoard.Pages
 
             if (playingSoundsLoaded)
             {
-                if (bottomPlayingSoundsBarPosition == VerticalPosition.Top)
+                if (
+                    bottomPlayingSoundsBarPosition == VerticalPosition.Top
+                    && e.Action == NotifyCollectionChangedAction.Add
+                )
                 {
                     // Show appropriate animation
-                    if (e.Action == NotifyCollectionChangedAction.Add)
-                    {
-                        await UpdateGridSplitterRange();
-                        SnapBottomPlayingSoundsBar();
-                    }
+                    await UpdateGridSplitterRange();
+                    SnapBottomPlayingSoundsBar();
                 }
-
-                await UpdateGridSplitterRange();
+                else
+                {
+                    await UpdateGridSplitterRange();
+                }
             }
         }
         #endregion
