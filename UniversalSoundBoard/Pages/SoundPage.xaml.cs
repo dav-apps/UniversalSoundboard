@@ -235,13 +235,13 @@ namespace UniversalSoundBoard.Pages
 
         private async void PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            await UpdatePlayingSoundsListAsync();
-
             // Update the reversedPlayingSounds list
             if (e.Action == NotifyCollectionChangedAction.Add)
                 reversedPlayingSounds.Insert(0, e.NewItems[0] as PlayingSound);
             else if(e.Action == NotifyCollectionChangedAction.Remove)
                 reversedPlayingSounds.Remove(e.OldItems[0] as PlayingSound);
+
+            await UpdatePlayingSoundsListAsync();
 
             if (playingSoundsLoaded)
             {
@@ -315,12 +315,12 @@ namespace UniversalSoundBoard.Pages
                     GridSplitterColDef.Width = new GridLength(0);
 
                     // Update the visibility of the BottomPlayingSoundsBar
-                    if(FileManager.itemViewHolder.PlayingSounds.Count == 0)
+                    if(reversedPlayingSounds.Count == 0)
                     {
                         BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                         GridSplitterGrid.Visibility = Visibility.Collapsed;
                     }
-                    else if(FileManager.itemViewHolder.PlayingSounds.Count == 1)
+                    else if(reversedPlayingSounds.Count == 1)
                     {
                         BottomPlayingSoundsBar.Visibility = Visibility.Visible;
                         GridSplitterGrid.Visibility = Visibility.Visible;

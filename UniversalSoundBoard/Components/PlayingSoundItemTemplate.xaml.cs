@@ -86,6 +86,11 @@ namespace UniversalSoundBoard.Components
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
 
+            // Hide the sounds list
+            soundsListVisible = false;
+            SoundsListViewStackPanel.Height = 0;
+            ExpandButton.Content = "\uE099";
+
             // Set the media player for the media player element
             MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
 
