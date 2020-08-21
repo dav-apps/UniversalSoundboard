@@ -256,6 +256,15 @@ namespace UniversalSoundBoard.Pages
             if (playingSoundsLoaded)
             {
                 if (
+                    e.Action == NotifyCollectionChangedAction.Add
+                    && reversedPlayingSounds.Count == 1
+                )
+                {
+                    double itemHeight = await GetPlayingSoundItemContainerHeight(0);
+                    GridSplitterGridBottomRowDef.Height = new GridLength(0);
+                    GridSplitterGridBottomRowDef.MaxHeight = itemHeight;
+                    StartSnapBottomPlayingSoundsBarAnimation(0, itemHeight);
+                } else if (
                     bottomPlayingSoundsBarPosition == VerticalPosition.Top
                     && e.Action == NotifyCollectionChangedAction.Add
                 )
