@@ -48,7 +48,6 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStartedEvent += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStartedEvent;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEndedEvent += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEndedEvent;
             FileManager.itemViewHolder.ShowPlayingSoundItemStartedEvent += ItemViewHolder_ShowPlayingSoundItemStartedEvent;
-            FileManager.itemViewHolder.ShowPlayingSoundItemEndedEvent += ItemViewHolder_ShowPlayingSoundItemEndedEvent;
             FileManager.itemViewHolder.RemovePlayingSoundItemEvent += ItemViewHolder_RemovePlayingSoundItemEvent;
 
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
@@ -204,13 +203,8 @@ namespace UniversalSoundBoard.Pages
 
         private void ItemViewHolder_ShowPlayingSoundItemStartedEvent(object sender, Guid e)
         {
-            GridSplitterGridBottomRowDef.MaxHeight = BottomPlayingSoundsBar.ActualHeight + playingSoundHeightDifference;
-            StartSnapBottomPlayingSoundsBarAnimation(BottomPlayingSoundsBar.ActualHeight, BottomPlayingSoundsBar.ActualHeight + playingSoundHeightDifference);
-        }
-
-        private void ItemViewHolder_ShowPlayingSoundItemEndedEvent(object sender, Guid e)
-        {
-            showPlayingSoundItemAnimation = false;
+            // Update the animation with the actual PlayingSoundItem height
+            AnimateIncreasingBottomPlayingSoundBar(playingSoundHeightDifference);
         }
 
         private void ItemViewHolder_RemovePlayingSoundItemEvent(object sender, Guid e)
@@ -286,6 +280,9 @@ namespace UniversalSoundBoard.Pages
                 {
                     // Show appropriate animation
                     showPlayingSoundItemAnimation = true;
+
+                    // Start the animation with most likely pre-defined added height (88 = standard height of PlayingSoundItem with one row of text)
+                    AnimateIncreasingBottomPlayingSoundBar(88);
                 }
                 else
                 {
@@ -542,6 +539,12 @@ namespace UniversalSoundBoard.Pages
             SnapBottomPlayingSoundsBarStoryboardAnimation.From = start;
             SnapBottomPlayingSoundsBarStoryboardAnimation.To = end;
             SnapBottomPlayingSoundsBarStoryboard.Begin();
+        }
+
+        private void AnimateIncreasingBottomPlayingSoundBar(double addedHeight)
+        {
+            GridSplitterGridBottomRowDef.MaxHeight = BottomPlayingSoundsBar.ActualHeight + addedHeight;
+            StartSnapBottomPlayingSoundsBarAnimation(BottomPlayingSoundsBar.ActualHeight, BottomPlayingSoundsBar.ActualHeight + addedHeight);
         }
 
         private void AdaptSoundListScrollViewerForBottomPlayingSoundsBar()
