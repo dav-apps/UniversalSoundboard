@@ -31,6 +31,7 @@ namespace UniversalSoundBoard.Pages
         private static bool playingSoundsLoaded = false;
         public static bool showPlayingSoundItemAnimation = false;
         public static double playingSoundHeightDifference = 0;
+        private double maxBottomPlayingSoundsBarHeight = 500;
         bool isManipulatingBottomPlayingSoundsBar = false;
         ObservableCollection<PlayingSound> reversedPlayingSounds = new ObservableCollection<PlayingSound>();
         
@@ -73,6 +74,7 @@ namespace UniversalSoundBoard.Pages
 
         private async void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            maxBottomPlayingSoundsBarHeight = Window.Current.Bounds.Height * 0.6;
             await UpdatePlayingSoundsListAsync();
         }
 
@@ -153,18 +155,27 @@ namespace UniversalSoundBoard.Pages
         private void ItemViewHolder_PlayingSoundItemShowSoundsListAnimationStartedEvent(object sender, Guid e)
         {
             // Update the max height for the GridSplitter with the new height
-            GridSplitterGridBottomRowDef.MaxHeight = BottomPlayingSoundsBarListView.ActualHeight + playingSoundHeightDifference;
+            double newMaxHeight = BottomPlayingSoundsBarListView.ActualHeight + playingSoundHeightDifference;
+            if (newMaxHeight >= maxBottomPlayingSoundsBarHeight) newMaxHeight = maxBottomPlayingSoundsBarHeight;
+
+            GridSplitterGridBottomRowDef.MaxHeight = newMaxHeight;
 
             if (bottomPlayingSoundsBarPosition == VerticalPosition.Top)
             {
                 // Update the BottomPlayingSoundsBar height and the bottom row def max height to the new height, so that the animation is able to play
-                BottomPlayingSoundsBar.Height = BottomPlayingSoundsBarListView.ActualHeight + playingSoundHeightDifference;
+                double newHeight = BottomPlayingSoundsBarListView.ActualHeight + playingSoundHeightDifference;
+                if (newHeight >= maxBottomPlayingSoundsBarHeight) newHeight = maxBottomPlayingSoundsBarHeight;
+
+                BottomPlayingSoundsBar.Height = newHeight;
             }
             else
             {
                 // Setup and start the animation for increasing the height of the BottomPlayingSoundsBar
+                double newHeight = BottomPlayingSoundsBarListView.ActualHeight + playingSoundHeightDifference;
+                if (newHeight >= maxBottomPlayingSoundsBarHeight) newHeight = maxBottomPlayingSoundsBarHeight;
+
                 ShowSoundsListViewStoryboardAnimation.From = BottomPlayingSoundsBarListView.ActualHeight;
-                ShowSoundsListViewStoryboardAnimation.To = BottomPlayingSoundsBarListView.ActualHeight + playingSoundHeightDifference;
+                ShowSoundsListViewStoryboardAnimation.To = newHeight;
                 ShowSoundsListViewStoryboard.Begin();
             }
 
@@ -187,7 +198,7 @@ namespace UniversalSoundBoard.Pages
             {
                 // Setup and start the animation for decreasing the height of the BottomPlayingSoundsBar
                 HideSoundsListViewStoryboardAnimation.From = BottomPlayingSoundsBarListView.ActualHeight;
-                HideSoundsListViewStoryboardAnimation.To = BottomPlayingSoundsBarListView.ActualHeight - playingSoundHeightDifference;
+                HideSoundsListViewStoryboardAnimation.To = playingSoundHeightDifference;
                 HideSoundsListViewStoryboard.Begin();
             }
 
@@ -536,6 +547,8 @@ namespace UniversalSoundBoard.Pages
 
         private void StartSnapBottomPlayingSoundsBarAnimation(double start, double end)
         {
+            if (end >= maxBottomPlayingSoundsBarHeight) end = maxBottomPlayingSoundsBarHeight;
+
             SnapBottomPlayingSoundsBarStoryboardAnimation.From = start;
             SnapBottomPlayingSoundsBarStoryboardAnimation.To = end;
             SnapBottomPlayingSoundsBarStoryboard.Begin();
@@ -599,10 +612,14 @@ namespace UniversalSoundBoard.Pages
 
             // Set the max height of the bottom row def
             double totalHeight = await GetTotalPlayingSoundListContentHeight();
+            if (totalHeight >= maxBottomPlayingSoundsBarHeight) totalHeight = maxBottomPlayingSoundsBarHeight;
+
             GridSplitterGridBottomRowDef.MaxHeight = totalHeight;
 
             // Set the min height of the bottom row def
             double firstItemHeight = await GetPlayingSoundItemContainerHeight(0);
+            if (firstItemHeight >= maxBottomPlayingSoundsBarHeight) firstItemHeight = GridSplitterGridBottomRowDef.ActualHeight;
+
             GridSplitterGridBottomRowDef.MinHeight = firstItemHeight;
         }
 

@@ -135,7 +135,7 @@ namespace UniversalSoundBoard.Components
                 hideAnimationTriggered = true;
 
                 // Trigger the event to start the animation and wait for SoundPage to start the animation
-                SoundPage.playingSoundHeightDifference = SoundsListView.ActualHeight;
+                SoundPage.playingSoundHeightDifference = ContentRoot.ActualHeight + ContentRoot.Margin.Top + ContentRoot.Margin.Bottom - SoundsListView.ActualHeight;
                 FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationStartedEvent(this, PlayingSound.Uuid);
                 
                 ExpandButton.Content = "\uE099";
