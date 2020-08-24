@@ -439,6 +439,9 @@ namespace UniversalSoundBoard.Components
             // Set the selected item of the sounds list
             SoundsListView.SelectedIndex = PlayingSound.Current;
 
+            // Set the Play Pause button icon
+            UpdatePlayPauseButton();
+
             // Set the volume icon
             if (layoutType == PlayingSoundItemLayoutType.Large)
                 VolumeButton.Content = UniversalSoundboard.Components.VolumeControl.GetVolumeIcon(PlayingSound.Volume, PlayingSound.Muted);
