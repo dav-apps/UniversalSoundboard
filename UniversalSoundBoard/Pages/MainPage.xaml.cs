@@ -83,12 +83,12 @@ namespace UniversalSoundBoard.Pages
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("Page") || e.PropertyName.Equals("AppState"))
+            if (e.PropertyName.Equals(ItemViewHolder.PageKey) || e.PropertyName.Equals(ItemViewHolder.AppStateKey))
             {
                 bool navigationViewHeaderVisible = FileManager.itemViewHolder.AppState == FileManager.AppState.Normal || FileManager.itemViewHolder.Page != typeof(SoundPage);
                 NavigationViewHeader.Visibility = navigationViewHeaderVisible ? Visibility.Visible : Visibility.Collapsed;
             }
-            else if(e.PropertyName.Equals("CurrentTheme"))
+            else if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 SetThemeColors();
         }
 

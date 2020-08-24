@@ -1,4 +1,5 @@
-﻿using UniversalSoundBoard.DataAccess;
+﻿using UniversalSoundBoard.Common;
+using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -29,7 +30,7 @@ namespace UniversalSoundboard.Components
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals("CurrentTheme"))
+            if (e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
             {
                 RequestedTheme = FileManager.GetRequestedTheme();
 

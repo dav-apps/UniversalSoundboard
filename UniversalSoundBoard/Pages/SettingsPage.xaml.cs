@@ -46,7 +46,7 @@ namespace UniversalSoundBoard.Pages
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName.Equals("CurrentTheme"))
+            if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 SetThemeColors();
         }
 
@@ -91,7 +91,7 @@ namespace UniversalSoundBoard.Pages
 
             SavePlayingSoundsStackPanel.Visibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
 
-            await FileManager.AddOrRemoveAllPlayingSoundsAsync();
+            //await FileManager.AddOrRemoveAllPlayingSoundsAsync();
         }
         #endregion
 
@@ -215,7 +215,7 @@ namespace UniversalSoundBoard.Pages
             if (!initialized) return;
             FileManager.itemViewHolder.SavePlayingSounds = SavePlayingSoundsToggle.IsOn;
 
-            await FileManager.AddOrRemoveAllPlayingSoundsAsync();
+            //await FileManager.AddOrRemoveAllPlayingSoundsAsync();
         }
         #endregion
 

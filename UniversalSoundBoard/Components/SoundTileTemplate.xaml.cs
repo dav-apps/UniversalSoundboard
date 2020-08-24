@@ -8,6 +8,7 @@ using UniversalSoundBoard.DataAccess;
 using Windows.Foundation;
 using UniversalSoundboard.Components;
 using Windows.UI.Xaml.Media.Imaging;
+using UniversalSoundBoard.Common;
 
 namespace UniversalSoundBoard.Components
 {
@@ -45,7 +46,7 @@ namespace UniversalSoundBoard.Components
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName.Equals("CurrentTheme"))
+            if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 SetThemeColors();
         }
 

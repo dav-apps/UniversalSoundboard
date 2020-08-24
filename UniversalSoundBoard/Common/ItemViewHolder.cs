@@ -285,6 +285,7 @@ namespace UniversalSoundBoard.Common
 
         #region Access Modifiers
         #region State
+        public const string AppStateKey = "AppState";
         public FileManager.AppState AppState
         {
             get => _appState;
@@ -292,10 +293,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_appState.Equals(value)) return;
                 _appState = value;
-                NotifyPropertyChanged("AppState");
+                NotifyPropertyChanged(AppStateKey);
             }
         }
 
+        public const string TitleKey = "Title";
         public string Title
         {
             get => _title;
@@ -303,10 +305,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_title.Equals(value)) return;
                 _title = value;
-                NotifyPropertyChanged("Title");
+                NotifyPropertyChanged(TitleKey);
             }
         }
 
+        public const string PageKey = "Page";
         public Type Page
         {
             get => _page;
@@ -314,10 +317,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_page.Equals(value)) return;
                 _page = value;
-                NotifyPropertyChanged("Page");
+                NotifyPropertyChanged(PageKey);
             }
         }
 
+        public const string SearchQueryKey = "SearchQuery";
         public string SearchQuery
         {
             get => _searchQuery;
@@ -325,10 +329,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_searchQuery.Equals(value)) return;
                 _searchQuery = value;
-                NotifyPropertyChanged("SearchQuery");
+                NotifyPropertyChanged(SearchQueryKey);
             }
         }
 
+        public const string AllSoundsChangedKey = "AllSoundsChanged";
         public bool AllSoundsChanged
         {
             get => _allSoundsChanged;
@@ -336,10 +341,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_allSoundsChanged.Equals(value)) return;
                 _allSoundsChanged = value;
-                NotifyPropertyChanged("AllSoundsChanged");
+                NotifyPropertyChanged(AllSoundsChangedKey);
             }
         }
 
+        public const string SelectedCategoryKey = "SelectedCategory";
         public Guid SelectedCategory
         {
             get => _selectedCategory;
@@ -347,10 +353,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_selectedCategory.Equals(value)) return;
                 _selectedCategory = value;
-                NotifyPropertyChanged("SelectedCategory");
+                NotifyPropertyChanged(SelectedCategoryKey);
             }
         }
 
+        public const string UserKey = "User";
         public DavUser User
         {
             get => _user;
@@ -358,10 +365,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_user.Equals(value)) return;
                 _user = value;
-                NotifyPropertyChanged("User");
+                NotifyPropertyChanged(UserKey);
             }
         }
 
+        public const string ExportingKey = "Exporting";
         public bool Exporting
         {
             get => _exporting;
@@ -369,10 +377,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_exporting.Equals(value)) return;
                 _exporting = value;
-                NotifyPropertyChanged("Exporting");
+                NotifyPropertyChanged(ExportingKey);
             }
         }
 
+        public const string ExportedKey = "Exported";
         public bool Exported
         {
             get => _exported;
@@ -380,10 +389,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_exported.Equals(value)) return;
                 _exported = value;
-                NotifyPropertyChanged("Exported");
+                NotifyPropertyChanged(ExportedKey);
             }
         }
 
+        public const string ImportingKey = "Importing";
         public bool Importing
         {
             get => _importing;
@@ -391,10 +401,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_importing.Equals(value)) return;
                 _importing = value;
-                NotifyPropertyChanged("Importing");
+                NotifyPropertyChanged(ImportingKey);
             }
         }
 
+        public const string ImportedKey = "Imported";
         public bool Imported
         {
             get => _imported;
@@ -402,10 +413,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_imported.Equals(value)) return;
                 _imported = value;
-                NotifyPropertyChanged("Imported");
+                NotifyPropertyChanged(ImportedKey);
             }
         }
 
+        public const string ExportMessageKey = "ExportMessage";
         public string ExportMessage
         {
             get => _exportMessage;
@@ -413,10 +425,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_exportMessage.Equals(value)) return;
                 _exportMessage = value;
-                NotifyPropertyChanged("ExportMessage");
+                NotifyPropertyChanged(ExportMessageKey);
             }
         }
 
+        public const string ImportMessageKey = "ImportMessage";
         public string ImportMessage
         {
             get => _importMessage;
@@ -424,10 +437,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_importMessage.Equals(value)) return;
                 _importMessage = value;
-                NotifyPropertyChanged("ImportMessage");
+                NotifyPropertyChanged(ImportMessageKey);
             }
         }
 
+        public const string SoundboardSizeKey = "SoundboardSize";
         public string SoundboardSize
         {
             get => _soundboardSize;
@@ -435,12 +449,13 @@ namespace UniversalSoundBoard.Common
             {
                 if (_soundboardSize.Equals(value)) return;
                 _soundboardSize = value;
-                NotifyPropertyChanged("SoundboardSize");
+                NotifyPropertyChanged(SoundboardSizeKey);
             }
         }
         #endregion
 
         #region Layout & Design
+        public const string CurrentThemeKey = "CurrentTheme";
         public FileManager.AppTheme CurrentTheme
         {
             get => _currentTheme;
@@ -448,10 +463,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_currentTheme.Equals(value)) return;
                 _currentTheme = value;
-                NotifyPropertyChanged("CurrentTheme");
+                NotifyPropertyChanged(CurrentThemeKey);
             }
         }
 
+        public const string ProgressRingIsActiveKey = "ProgressRingIsActive";
         public bool ProgressRingIsActive
         {
             get => _progressRingIsActive;
@@ -459,10 +475,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_progressRingIsActive.Equals(value)) return;
                 _progressRingIsActive = value;
-                NotifyPropertyChanged("ProgressRingIsActive");
+                NotifyPropertyChanged(ProgressRingIsActiveKey);
             }
         }
 
+        public const string LoadingScreenVisibleKey = "LoadingScreenVisible";
         public bool LoadingScreenVisible
         {
             get => _loadingScreenVisible;
@@ -470,10 +487,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_loadingScreenVisible.Equals(value)) return;
                 _loadingScreenVisible = value;
-                NotifyPropertyChanged("LoadingScreenVisible");
+                NotifyPropertyChanged(LoadingScreenVisibleKey);
             }
         }
 
+        public const string LoadingScreenMessageKey = "LoadingScreenMessage";
         public string LoadingScreenMessage
         {
             get => _loadingScreenMessage;
@@ -481,10 +499,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_loadingScreenMessage.Equals(value)) return;
                 _loadingScreenMessage = value;
-                NotifyPropertyChanged("LoadingScreenMessage");
+                NotifyPropertyChanged(LoadingScreenMessageKey);
             }
         }
 
+        public const string BackButtonEnabledKey = "BackButtonEnabled";
         public bool BackButtonEnabled
         {
             get => _backButtonEnabled;
@@ -492,10 +511,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_backButtonEnabled.Equals(value)) return;
                 _backButtonEnabled = value;
-                NotifyPropertyChanged("BackButtonEnabled");
+                NotifyPropertyChanged(BackButtonEnabledKey);
             }
         }
 
+        public const string MultiSelectionEnabledKey = "MultiSelectionEnabled";
         public bool MultiSelectionEnabled
         {
             get => _multiSelectionEnabled;
@@ -503,10 +523,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_multiSelectionEnabled.Equals(value)) return;
                 _multiSelectionEnabled = value;
-                NotifyPropertyChanged("MultiSelectionEnabled");
+                NotifyPropertyChanged(MultiSelectionEnabledKey);
             }
         }
 
+        public const string PlayAllButtonVisibleKey = "PlayAllButtonVisible";
         public bool PlayAllButtonVisible
         {
             get => _playAllButtonVisible;
@@ -514,10 +535,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_playAllButtonVisible.Equals(value)) return;
                 _playAllButtonVisible = value;
-                NotifyPropertyChanged("PlayAllButtonVisible");
+                NotifyPropertyChanged(PlayAllButtonVisibleKey);
             }
         }
 
+        public const string EditButtonVisibleKey = "EditButtonVisible";
         public bool EditButtonVisible
         {
             get => _editButtonVisible;
@@ -525,10 +547,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_editButtonVisible.Equals(value)) return;
                 _editButtonVisible = value;
-                NotifyPropertyChanged("EditButtonVisible");
+                NotifyPropertyChanged(EditButtonVisibleKey);
             }
         }
 
+        public const string TopButtonCollapsedKey = "TopButtonsCollapsed";
         public bool TopButtonsCollapsed
         {
             get => _topButtonsCollapsed;
@@ -536,10 +559,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_topButtonsCollapsed.Equals(value)) return;
                 _topButtonsCollapsed = value;
-                NotifyPropertyChanged("TopButtonsCollapsed");
+                NotifyPropertyChanged(TopButtonCollapsedKey);
             }
         }
 
+        public const string SearchAutoSuggestBoxVisibleKey = "SearchAutoSuggestBoxVisible";
         public bool SearchAutoSuggestBoxVisible
         {
             get => _searchAutoSuggestBoxVisible;
@@ -547,10 +571,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_searchAutoSuggestBoxVisible.Equals(value)) return;
                 _searchAutoSuggestBoxVisible = value;
-                NotifyPropertyChanged("SearchAutoSuggestBoxVisible");
+                NotifyPropertyChanged(SearchAutoSuggestBoxVisibleKey);
             }
         }
 
+        public const string SearchButtonVisibleKey = "SearchButtonVisible";
         public bool SearchButtonVisible
         {
             get => _searchButtonVisible;
@@ -558,10 +583,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_searchButtonVisible.Equals(value)) return;
                 _searchButtonVisible = value;
-                NotifyPropertyChanged("SearchButtonVisible");
+                NotifyPropertyChanged(SearchButtonVisibleKey);
             }
         }
 
+        public const string SelectAllFlyoutTextKey = "SelectAllFlyoutText";
         public string SelectAllFlyoutText
         {
             get => _selectAllFlyoutText;
@@ -569,10 +595,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_selectAllFlyoutText.Equals(value)) return;
                 _selectAllFlyoutText = value;
-                NotifyPropertyChanged("SelectAllFlyoutText");
+                NotifyPropertyChanged(SelectAllFlyoutTextKey);
             }
         }
 
+        public const string SelectAllFlyoutIconKey = "SelectAllFlyoutIcon";
         public SymbolIcon SelectAllFlyoutIcon
         {
             get => _selectAllFlyoutIcon;
@@ -580,10 +607,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_selectAllFlyoutIcon.Equals(value)) return;
                 _selectAllFlyoutIcon = value;
-                NotifyPropertyChanged("SelectAllFlyoutIcon");
+                NotifyPropertyChanged(SelectAllFlyoutIconKey);
             }
         }
 
+        public const string SoundTileWidthKey = "SoundTileWidth";
         public double SoundTileWidth
         {
             get => _soundTileWidth;
@@ -591,10 +619,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_soundTileWidth.Equals(value)) return;
                 _soundTileWidth = value;
-                NotifyPropertyChanged("SoundTileWidth");
+                NotifyPropertyChanged(SoundTileWidthKey);
             }
         }
 
+        public const string PlayingSoundsBarAcrylicBackgroundBrushKey = "PlayingSoundsBarAcrylicBackgroundBrush";
         public AcrylicBrush PlayingSoundsBarAcrylicBackgroundBrush
         {
             get => _playingSoundsBarAcrylicBackgroundBrush;
@@ -602,10 +631,11 @@ namespace UniversalSoundBoard.Common
             {
                 if (_playingSoundsBarAcrylicBackgroundBrush.Equals(value)) return;
                 _playingSoundsBarAcrylicBackgroundBrush = value;
-                NotifyPropertyChanged("PlayingSoundsBarAcrylicBackgroundBrush");
+                NotifyPropertyChanged(PlayingSoundsBarAcrylicBackgroundBrushKey);
             }
         }
 
+        public const string ExportAndImportButtonsEnabledKey = "ExportAndImportButtonsEnabled";
         public bool ExportAndImportButtonsEnabled
         {
             get => _exportAndImportButtonsEnabled;
@@ -613,13 +643,14 @@ namespace UniversalSoundBoard.Common
             {
                 if (_exportAndImportButtonsEnabled.Equals(value)) return;
                 _exportAndImportButtonsEnabled = value;
-                NotifyPropertyChanged("ExportAndImportButtonsEnabled");
+                NotifyPropertyChanged(ExportAndImportButtonsEnabledKey);
             }
         }
         #endregion
         #endregion
 
         #region Settings
+        public const string ThemeKey = "Theme";
         public FileManager.AppTheme Theme
         {
             get => _theme;
@@ -639,10 +670,11 @@ namespace UniversalSoundBoard.Common
 
                 localSettings.Values[themeKey] = themeString;
                 _theme = value;
-                NotifyPropertyChanged("Theme");
+                NotifyPropertyChanged(ThemeKey);
             }
         }
 
+        public const string PlayingSoundsListVisibleKey = "PlayingSoundsListVisible";
         public bool PlayingSoundsListVisible
         {
             get => _playingSoundsListVisible;
@@ -651,10 +683,11 @@ namespace UniversalSoundBoard.Common
                 if (_playingSoundsListVisible.Equals(value)) return;
                 localSettings.Values[playingSoundsListVisibleKey] = value;
                 _playingSoundsListVisible = value;
-                NotifyPropertyChanged("PlayingSoundsListVisible");
+                NotifyPropertyChanged(PlayingSoundsListVisibleKey);
             }
         }
 
+        public const string PlayingSoundsBarWidthKey = "PlayingSoundsBarWidth";
         public double PlayingSoundsBarWidth
         {
             get => _playingSoundsBarWidth;
@@ -663,10 +696,11 @@ namespace UniversalSoundBoard.Common
                 if (_playingSoundsBarWidth.Equals(value)) return;
                 localSettings.Values[playingSoundsBarWidthKey] = value;
                 _playingSoundsBarWidth = value;
-                NotifyPropertyChanged("PlayingSoundsBarWidth");
+                NotifyPropertyChanged(PlayingSoundsBarWidthKey);
             }
         }
 
+        public const string PlayOneSoundAtOnceKey = "PlayOneSoundAtOnce";
         public bool PlayOneSoundAtOnce
         {
             get => _playOneSoundAtOnce;
@@ -675,10 +709,11 @@ namespace UniversalSoundBoard.Common
                 if (_playOneSoundAtOnce.Equals(value)) return;
                 localSettings.Values[playOneSoundAtOnceKey] = value;
                 _playOneSoundAtOnce = value;
-                NotifyPropertyChanged("PlayOneSoundAtOnce");
+                NotifyPropertyChanged(PlayOneSoundAtOnceKey);
             }
         }
 
+        public const string LiveTileEnabledKey = "LiveTileEnabled";
         public bool LiveTileEnabled
         {
             get => _liveTileEnabled;
@@ -687,10 +722,11 @@ namespace UniversalSoundBoard.Common
                 if (_liveTileEnabled.Equals(value)) return;
                 localSettings.Values[liveTileKey] = value;
                 _liveTileEnabled = value;
-                NotifyPropertyChanged("LiveTileEnabled");
+                NotifyPropertyChanged(LiveTileEnabledKey);
             }
         }
 
+        public const string ShowListViewKey = "ShowListView";
         public bool ShowListView
         {
             get => _showListView;
@@ -699,10 +735,11 @@ namespace UniversalSoundBoard.Common
                 if (_showListView.Equals(value)) return;
                 localSettings.Values[showListViewKey] = value;
                 _showListView = value;
-                NotifyPropertyChanged("ShowListView");
+                NotifyPropertyChanged(ShowListViewKey);
             }
         }
 
+        public const string ShowCategoryIconKey = "ShowCategoryIcon";
         public bool ShowCategoryIcon
         {
             get => _showCategoryIcon;
@@ -711,10 +748,11 @@ namespace UniversalSoundBoard.Common
                 if (_showCategoryIcon.Equals(value)) return;
                 localSettings.Values[showCategoryIconKey] = value;
                 _showCategoryIcon = value;
-                NotifyPropertyChanged("ShowCategoryIcon");
+                NotifyPropertyChanged(ShowCategoryIconKey);
             }
         }
 
+        public const string ShowSoundsPivotKey = "ShowSoundsPivot";
         public bool ShowSoundsPivot
         {
             get => _showSoundsPivot;
@@ -723,10 +761,11 @@ namespace UniversalSoundBoard.Common
                 if (_showSoundsPivot.Equals(value)) return;
                 localSettings.Values[showSoundsPivotKey] = value;
                 _showSoundsPivot = value;
-                NotifyPropertyChanged("ShowSoundsPivot");
+                NotifyPropertyChanged(ShowSoundsPivotKey);
             }
         }
 
+        public const string SavePlayingSoundsKey = "SavePlayingSounds";
         public bool SavePlayingSounds
         {
             get => _savePlayingSounds;
@@ -735,10 +774,11 @@ namespace UniversalSoundBoard.Common
                 if (_savePlayingSounds.Equals(value)) return;
                 localSettings.Values[savePlayingSoundsKey] = value;
                 _savePlayingSounds = value;
-                NotifyPropertyChanged("SavePlayingSounds");
+                NotifyPropertyChanged(SavePlayingSoundsKey);
             }
         }
 
+        public const string VolumeKey = "Volume";
         public int Volume
         {
             get => _volume;
@@ -747,10 +787,11 @@ namespace UniversalSoundBoard.Common
                 if (_volume.Equals(value)) return;
                 localSettings.Values[volumeKey] = value;
                 _volume = value;
-                NotifyPropertyChanged("Volume");
+                NotifyPropertyChanged(VolumeKey);
             }
         }
 
+        public const string MutedKey = "Muted";
         public bool Muted
         {
             get => _muted;
@@ -759,10 +800,11 @@ namespace UniversalSoundBoard.Common
                 if (_muted.Equals(value)) return;
                 localSettings.Values[mutedKey] = value;
                 _muted = value;
-                NotifyPropertyChanged("Muted");
+                NotifyPropertyChanged(MutedKey);
             }
         }
 
+        public const string ShowAcrylicBackgroundKey = "ShowAcrylicBackground";
         public bool ShowAcrylicBackground
         {
             get => _showAcrylicBackground;
@@ -771,10 +813,11 @@ namespace UniversalSoundBoard.Common
                 if (_showAcrylicBackground.Equals(value)) return;
                 localSettings.Values[showAcrylicBackgroundKey] = value;
                 _showAcrylicBackground = value;
-                NotifyPropertyChanged("ShowAcrylicBackground");
+                NotifyPropertyChanged(ShowAcrylicBackgroundKey);
             }
         }
 
+        public const string SoundOrderKey = "SoundOrder";
         public FileManager.SoundOrder SoundOrder
         {
             get => _soundOrder;
@@ -783,10 +826,11 @@ namespace UniversalSoundBoard.Common
                 if (_soundOrder.Equals(value)) return;
                 localSettings.Values[soundOrderKey] = (int)value;
                 _soundOrder = value;
-                NotifyPropertyChanged("SoundOrder");
+                NotifyPropertyChanged(SoundOrderKey);
             }
         }
 
+        public const string SoundOrderReversedKey = "SoundOrderReversed";
         public bool SoundOrderReversed
         {
             get => _soundOrderReversed;
@@ -795,7 +839,7 @@ namespace UniversalSoundBoard.Common
                 if (_soundOrderReversed.Equals(value)) return;
                 localSettings.Values[soundOrderReversedKey] = value;
                 _soundOrderReversed = value;
-                NotifyPropertyChanged("SoundOrderReversed");
+                NotifyPropertyChanged(SoundOrderReversedKey);
             }
         }
         #endregion

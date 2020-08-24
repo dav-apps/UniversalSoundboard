@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UniversalSoundboard.Components;
+using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
@@ -46,7 +47,7 @@ namespace UniversalSoundBoard.Pages
 
         private async void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName.Equals("CurrentTheme"))
+            if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 await currentDispatcher.RunAsync(CoreDispatcherPriority.Low, () => SetThemeColors());
         }
 

@@ -31,7 +31,7 @@ namespace UniversalSoundboard.Pages
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName.Equals("CurrentTheme"))
+            if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 SetThemeColors();
         }
 

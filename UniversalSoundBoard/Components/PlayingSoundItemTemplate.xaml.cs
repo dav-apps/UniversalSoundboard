@@ -4,6 +4,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Models;
+using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using UniversalSoundBoard.Pages;
@@ -581,9 +582,9 @@ namespace UniversalSoundBoard.Components
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
 
-            if (e.PropertyName == "Volume")
+            if (e.PropertyName == ItemViewHolder.VolumeKey)
                 PlayingSound.MediaPlayer.Volume = (double)PlayingSound.Volume / 100 * FileManager.itemViewHolder.Volume / 100;
-            else if (e.PropertyName == "Muted")
+            else if (e.PropertyName == ItemViewHolder.MutedKey)
                 PlayingSound.MediaPlayer.IsMuted = PlayingSound.Muted || FileManager.itemViewHolder.Muted;
         }
 
