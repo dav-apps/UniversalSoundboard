@@ -22,6 +22,7 @@ namespace UniversalSoundBoard.Common
         private const string playingSoundsListVisibleKey = "playingSoundsListVisible";
         private const string playingSoundsBarWidthKey = "playingSoundsBarWidth";
         private const string playOneSoundAtOnceKey = "playOneSoundAtOnce";
+        private const string multiSoundPlaybackKey = "multiSoundPlayback";
         private const string liveTileKey = "liveTile";
         private const string showListViewKey = "showListView";
         private const string showCategoryIconKey = "showCategoryIcon";
@@ -39,6 +40,7 @@ namespace UniversalSoundBoard.Common
         private const bool playingSoundsListVisibleDefault = true;
         private const double playingSoundsBarWidthDefault = 0.35;
         private const bool playOneSoundAtOnceDefault = false;
+        private const bool multiSoundPlaybackDefault = false;
         private const bool liveTileDefault = true;
         private const bool showListViewDefault = false;
         private const bool showCategoryIconDefault = true;
@@ -103,6 +105,7 @@ namespace UniversalSoundBoard.Common
         private bool _playingSoundsListVisible;                             // If true shows the Playing Sounds list at the right
         private double _playingSoundsBarWidth;                              // The relative width of the PlayingSoundsBar in percent
         private bool _playOneSoundAtOnce;                                   // If true plays only one sound at a time
+        private bool _multiSoundPlayback;                                   // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
         private bool _liveTileEnabled;                                      // If true, show the live tile
         private bool _showListView;                                         // If true, shows the sounds on the SoundPage in a ListView
         private bool _showCategoryIcon;                                     // If true shows the icon of the category on the sound tile
@@ -185,6 +188,7 @@ namespace UniversalSoundBoard.Common
             #endregion
 
             #region Settings
+            // theme
             if (localSettings.Values[themeKey] == null)
                 _theme = themeDefault;
             else
@@ -203,46 +207,61 @@ namespace UniversalSoundBoard.Common
                 }
             }
 
+            // playingSoundsListVisible
             if (localSettings.Values[playingSoundsListVisibleKey] == null)
                 _playingSoundsListVisible = playingSoundsListVisibleDefault;
             else
                 _playingSoundsListVisible = (bool)localSettings.Values[playingSoundsListVisibleKey];
 
+            // playingSoundsBarWidth
             if (localSettings.Values[playingSoundsBarWidthKey] == null)
                 _playingSoundsBarWidth = playingSoundsBarWidthDefault;
             else
                 _playingSoundsBarWidth = (double)localSettings.Values[playingSoundsBarWidthKey];
 
+            // playOneSoundAtOnce
             if (localSettings.Values[playOneSoundAtOnceKey] == null)
                 _playOneSoundAtOnce = playOneSoundAtOnceDefault;
             else
                 _playOneSoundAtOnce = (bool)localSettings.Values[playOneSoundAtOnceKey];
 
+            // multiSoundPlayback
+            if (localSettings.Values[multiSoundPlaybackKey] == null)
+                _multiSoundPlayback = multiSoundPlaybackDefault;
+            else
+                _multiSoundPlayback = (bool)localSettings.Values[multiSoundPlaybackKey];
+
+            // liveTile
             if (localSettings.Values[liveTileKey] == null)
                 _liveTileEnabled = liveTileDefault;
             else
                 _liveTileEnabled = (bool)localSettings.Values[liveTileKey];
 
+            // showListView
             if (localSettings.Values[showListViewKey] == null)
                 _showListView = showListViewDefault;
             else
                 _showListView = (bool)localSettings.Values[showListViewKey];
 
+            // showCategoryIcon
             if (localSettings.Values[showCategoryIconKey] == null)
                 _showCategoryIcon = showCategoryIconDefault;
             else
                 _showCategoryIcon = (bool)localSettings.Values[showCategoryIconKey];
 
+            // showSoundsPivot
             if (localSettings.Values[showSoundsPivotKey] == null)
                 _showSoundsPivot = showSoundsPivotDefault;
             else
                 _showSoundsPivot = (bool)localSettings.Values[showSoundsPivotKey];
 
+            // savePlayingSounds
             if (localSettings.Values[savePlayingSoundsKey] == null)
                 _savePlayingSounds = savePlayingSoundsDefault;
             else
                 _savePlayingSounds = (bool)localSettings.Values[savePlayingSoundsKey];
 
+            // volume
             if (localSettings.Values[volumeKey] == null)
                 _volume = volumeDefault;
             else
@@ -261,21 +280,25 @@ namespace UniversalSoundBoard.Common
                 }
             }
 
+            // muted
             if (localSettings.Values[mutedKey] == null)
                 _muted = mutedDefault;
             else
                 _muted = (bool)localSettings.Values[mutedKey];
 
+            // showAcrylicBackground
             if (localSettings.Values[showAcrylicBackgroundKey] == null)
                 _showAcrylicBackground = showAcrylicBackgroundDefault;
             else
                 _showAcrylicBackground = (bool)localSettings.Values[showAcrylicBackgroundKey];
 
+            // soundOrder
             if (localSettings.Values[soundOrderKey] == null)
                 _soundOrder = soundOrderDefault;
             else
                 _soundOrder = (FileManager.SoundOrder)localSettings.Values[soundOrderKey];
 
+            // soundOrderReversed
             if (localSettings.Values[soundOrderReversedKey] == null)
                 _soundOrderReversed = soundOrderReversedDefault;
             else
@@ -710,6 +733,19 @@ namespace UniversalSoundBoard.Common
                 localSettings.Values[playOneSoundAtOnceKey] = value;
                 _playOneSoundAtOnce = value;
                 NotifyPropertyChanged(PlayOneSoundAtOnceKey);
+            }
+        }
+
+        public const string MultiSoundPlaybackKey = "MultiSoundPlayback";
+        public bool MultiSoundPlayback
+        {
+            get => _multiSoundPlayback;
+            set
+            {
+                if (_multiSoundPlayback.Equals(value)) return;
+                localSettings.Values[multiSoundPlaybackKey] = value;
+                _multiSoundPlayback = value;
+                NotifyPropertyChanged(MultiSoundPlaybackKey);
             }
         }
 

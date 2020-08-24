@@ -38,17 +38,22 @@
                     <StackPanel Name="SettingsGeneralStackPanel" Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch
-                                Name="PlayOneSoundAtOnceToggle" 
-                                x:Uid="PlayOneSoundAtOnceToggle" 
-                                Header="Play one sound at once" 
+                                Name="PlayOneSoundAtOnceToggle"
+                                x:Uid="PlayOneSoundAtOnceToggle"
                                 Toggled="PlayOneSoundAtOnceToggle_Toggled" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch
-                                Name="ShowSoundsPivotToggle" 
-                                x:Uid="SettingsEntry-ShowSoundsPivot" 
-                                Header="Show Favourites Tab"
+                                Name="MultiSoundPlaybackToggle"
+                                x:Uid="SettingsEntry-MultiSoundPlayback"
+                                Toggled="MultiSoundPlaybackToggle_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                            <ToggleSwitch
+                                Name="ShowSoundsPivotToggle"
+                                x:Uid="SettingsEntry-ShowSoundsPivot"
                                 Toggled="ShowSoundsPivotToggle_Toggled" />
                         </StackPanel>
 

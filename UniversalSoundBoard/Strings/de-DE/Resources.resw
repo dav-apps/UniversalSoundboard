@@ -577,4 +577,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Blog-Link.Content" xml:space="preserve">
     <value>Neuigkeiten und Updates</value>
   </data>
+  <data name="SettingsEntry-MultiSoundPlayback.Header" xml:space="preserve">
+    <value>Erlaube das Abspielen von mehreren Sounds gleichzeitig</value>
+  </data>
 </root>

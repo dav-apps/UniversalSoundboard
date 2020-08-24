@@ -578,4 +578,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="Blog-Link.Content" xml:space="preserve">
     <value>Nouvelles et mises à jour</value>
   </data>
+  <data name="SettingsEntry-MultiSoundPlayback.Header" xml:space="preserve">
+    <value>Permettre la lecture de plusieurs sons en même temps</value>
+  </data>
 </root>

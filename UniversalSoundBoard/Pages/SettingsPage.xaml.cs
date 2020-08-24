@@ -33,6 +33,7 @@ namespace UniversalSoundBoard.Pages
             SetLiveTileToggle();
             SetPlayingSoundsListVisibilityToggle();
             SetPlayOneSoundAtOnceToggle();
+            SetMultiSoundPlaybackToggle();
             SetShowListViewToggle();
             SetShowCategoryIconToggle();
             SetShowAcrylicBackgroundToggle();
@@ -105,6 +106,19 @@ namespace UniversalSoundBoard.Pages
         {
             if (!initialized) return;
             FileManager.itemViewHolder.PlayOneSoundAtOnce = PlayOneSoundAtOnceToggle.IsOn;
+        }
+        #endregion
+
+        #region MultiSoundPlayback
+        private void SetMultiSoundPlaybackToggle()
+        {
+            MultiSoundPlaybackToggle.IsOn = FileManager.itemViewHolder.MultiSoundPlayback;
+        }
+
+        private void MultiSoundPlaybackToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!initialized) return;
+            FileManager.itemViewHolder.MultiSoundPlayback = MultiSoundPlaybackToggle.IsOn;
         }
         #endregion
 
