@@ -575,4 +575,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="Remove" xml:space="preserve">
     <value>Supprimer</value>
   </data>
+  <data name="Blog-Link.Content" xml:space="preserve">
+    <value>Nouvelles et mises à jour</value>
+  </data>
 </root>

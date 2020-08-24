@@ -576,4 +576,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
+  <data name="Blog-Link.Content" xml:space="preserve">
+    <value>News and updates</value>
+  </data>
 </root>

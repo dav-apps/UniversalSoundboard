@@ -574,4 +574,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Remove" xml:space="preserve">
     <value>Entfernen</value>
   </data>
+  <data name="Blog-Link.Content" xml:space="preserve">
+    <value>Neuigkeiten und Updates</value>
+  </data>
 </root>
