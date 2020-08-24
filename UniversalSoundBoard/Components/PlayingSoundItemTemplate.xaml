@@ -343,12 +343,12 @@
                             <SwipeControl.RightItems>
                                 <SwipeItems Mode="Execute">
                                     <SwipeItem
-                                    x:Name="SoundsListViewRemoveSwipeItem"
-                                    x:Uid="RemoveButton"
-                                    Text="Remove"
-                                    Background="Red"
-                                    IconSource="{StaticResource RemoveIcon}"
-                                    Invoked="SoundsListViewRemoveSwipeItem_Invoked" />
+                                        x:Name="SoundsListViewRemoveSwipeItem"
+                                        x:Uid="RemoveButton"
+                                        Text="Remove"
+                                        Background="Red"
+                                        IconSource="{StaticResource RemoveIcon}"
+                                        Invoked="SoundsListViewRemoveSwipeItem_Invoked" />
                                 </SwipeItems>
                             </SwipeControl.RightItems>
 

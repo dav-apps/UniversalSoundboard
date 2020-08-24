@@ -390,6 +390,9 @@ namespace UniversalSoundBoard.Components
             PreviousButton.Visibility = PlayingSound.Current > 0 ? Visibility.Visible : Visibility.Collapsed;
             NextButton.Visibility = PlayingSound.Current != PlayingSound.Sounds.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
 
+            // Set the visibility of the Expand button
+            ExpandButton.Visibility = PlayingSound.Sounds.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
+
             // Set the appropriate layout for the PlayingSoundItem
             double windowWidth = Window.Current.Bounds.Width;
             double itemWidth = ContentRoot.ActualWidth;
@@ -591,7 +594,10 @@ namespace UniversalSoundBoard.Components
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
                 // Remove the item at the start position of the removed items
-                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items.RemoveAt(e.OldStartingIndex);
+                try
+                {
+                    ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items.RemoveAt(e.OldStartingIndex);
+                } catch { }
 
                 if (e.OldStartingIndex <= PlayingSound.Current && PlayingSound.Current > 0)
                 {
