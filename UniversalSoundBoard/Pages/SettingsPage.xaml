@@ -155,7 +155,7 @@
                             <ToggleSwitch
                                 Name="ShowListViewToggle"
                                 x:Uid="SettingsEntry-ShowListViewToggle"
-                                Toggled="ListViewToggle_Toggled" />
+                                Toggled="ShowListViewToggle_Toggled" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">

@@ -18,39 +18,39 @@ namespace UniversalSoundBoard.Common
     public class ItemViewHolder : INotifyPropertyChanged
     {
         #region Constants for the localSettings keys
-        private const string themeKey = "theme";
         private const string playingSoundsListVisibleKey = "playingSoundsListVisible";
-        private const string playingSoundsBarWidthKey = "playingSoundsBarWidth";
+        private const string savePlayingSoundsKey = "savePlayingSounds";
         private const string openMultipleSoundsKey = "openMultipleSounds";
         private const string multiSoundPlaybackKey = "multiSoundPlayback";
-        private const string liveTileKey = "liveTile";
-        private const string showListViewKey = "showListView";
-        private const string showCategoryIconKey = "showCategoryIcon";
         private const string showSoundsPivotKey = "showSoundsPivot";
-        private const string savePlayingSoundsKey = "savePlayingSounds";
-        private const string volumeKey = "volume";
-        private const string mutedKey = "muted";
-        private const string showAcrylicBackgroundKey = "showAcrylicBackground";
         private const string soundOrderKey = "soundOrder";
         private const string soundOrderReversedKey = "soundOrderReversed";
+        private const string showListViewKey = "showListView";
+        private const string showCategoryIconKey = "showCategoryIcon";
+        private const string showAcrylicBackgroundKey = "showAcrylicBackground";
+        private const string liveTileKey = "liveTile";
+        private const string themeKey = "theme";
+        private const string playingSoundsBarWidthKey = "playingSoundsBarWidth";
+        private const string mutedKey = "muted";
+        private const string volumeKey = "volume";
         #endregion
 
         #region Constants for localSettings defaults
-        private const FileManager.AppTheme themeDefault = FileManager.AppTheme.System;
         private const bool playingSoundsListVisibleDefault = true;
-        private const double playingSoundsBarWidthDefault = 0.35;
+        private const bool savePlayingSoundsDefault = true;
         private const bool openMultipleSoundsDefault = true;
         private const bool multiSoundPlaybackDefault = false;
-        private const bool liveTileDefault = true;
-        private const bool showListViewDefault = false;
-        private const bool showCategoryIconDefault = true;
         private const bool showSoundsPivotDefault = true;
-        private const bool savePlayingSoundsDefault = true;
-        private const int volumeDefault = 100;
-        private const bool mutedDefault = false;
-        private const bool showAcrylicBackgroundDefault = true;
         private const FileManager.SoundOrder soundOrderDefault = FileManager.SoundOrder.Custom;
         private const bool soundOrderReversedDefault = false;
+        private const bool showListViewDefault = false;
+        private const bool showCategoryIconDefault = true;
+        private const bool showAcrylicBackgroundDefault = true;
+        private const bool liveTileDefault = true;
+        private const FileManager.AppTheme themeDefault = FileManager.AppTheme.System;
+        private const double playingSoundsBarWidthDefault = 0.35;
+        private const bool mutedDefault = false;
+        private const int volumeDefault = 100;
         #endregion
 
         #region Variables
@@ -101,21 +101,21 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Settings
-        private FileManager.AppTheme _theme;                                // The design theme of the app
         private bool _playingSoundsListVisible;                             // If true shows the Playing Sounds list at the right
-        private double _playingSoundsBarWidth;                              // The relative width of the PlayingSoundsBar in percent
+        private bool _savePlayingSounds;                                    // If true saves the PlayingSounds and loads them when starting the app
         private bool _openMultipleSounds;                                   // If false, removes all PlayingSounds whenever the user opens a new one; if true, adds new opened sounds to existing PlayingSounds
         private bool _multiSoundPlayback;                                   // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
-        private bool _liveTileEnabled;                                      // If true, show the live tile
-        private bool _showListView;                                         // If true, shows the sounds on the SoundPage in a ListView
-        private bool _showCategoryIcon;                                     // If true shows the icon of the category on the sound tile
         private bool _showSoundsPivot;                                      // If true shows the pivot to select Sounds or Favourite sounds
-        private bool _savePlayingSounds;                                    // If true saves the PlayingSounds and loads them when starting the app
-        private int _volume;                                                // The volume of the entire app, between 0 and 100
-        private bool _muted;                                                // If true, the volume is muted
-        private bool _showAcrylicBackground;                                // If true the acrylic background is visible
         private FileManager.SoundOrder _soundOrder;                         // The selected sound order in the settings
         private bool _soundOrderReversed;                                   // If the sound order is descending (false) or ascending (true)
+        private bool _showListView;                                         // If true, shows the sounds on the SoundPage in a ListView
+        private bool _showCategoryIcon;                                     // If true shows the icon of the category on the sound tile
+        private bool _showAcrylicBackground;                                // If true the acrylic background is visible
+        private bool _liveTileEnabled;                                      // If true, show the live tile
+        private FileManager.AppTheme _theme;                                // The design theme of the app
+        private double _playingSoundsBarWidth;                              // The relative width of the PlayingSoundsBar in percent
+        private bool _muted;                                                // If true, the volume is muted
+        private int _volume;                                                // The volume of the entire app, between 0 and 100
         #endregion
 
         #region Events
@@ -188,7 +188,84 @@ namespace UniversalSoundBoard.Common
             #endregion
 
             #region Settings
-            // theme
+            #region playingSoundsListVisible
+            if (localSettings.Values[playingSoundsListVisibleKey] == null)
+                _playingSoundsListVisible = playingSoundsListVisibleDefault;
+            else
+                _playingSoundsListVisible = (bool)localSettings.Values[playingSoundsListVisibleKey];
+            #endregion
+
+            #region savePlayingSounds
+            if (localSettings.Values[savePlayingSoundsKey] == null)
+                _savePlayingSounds = savePlayingSoundsDefault;
+            else
+                _savePlayingSounds = (bool)localSettings.Values[savePlayingSoundsKey];
+            #endregion
+
+            #region openMultipleSounds
+            if (localSettings.Values[openMultipleSoundsKey] == null)
+                _openMultipleSounds = openMultipleSoundsDefault;
+            else
+                _openMultipleSounds = (bool)localSettings.Values[openMultipleSoundsKey];
+            #endregion
+
+            #region multiSoundPlayback
+            if (localSettings.Values[multiSoundPlaybackKey] == null)
+                _multiSoundPlayback = multiSoundPlaybackDefault;
+            else
+                _multiSoundPlayback = (bool)localSettings.Values[multiSoundPlaybackKey];
+            #endregion
+
+            #region showSoundsPivot
+            if (localSettings.Values[showSoundsPivotKey] == null)
+                _showSoundsPivot = showSoundsPivotDefault;
+            else
+                _showSoundsPivot = (bool)localSettings.Values[showSoundsPivotKey];
+            #endregion
+
+            #region soundOrder
+            if (localSettings.Values[soundOrderKey] == null)
+                _soundOrder = soundOrderDefault;
+            else
+                _soundOrder = (FileManager.SoundOrder)localSettings.Values[soundOrderKey];
+            #endregion
+
+            #region soundOrderReversed
+            if (localSettings.Values[soundOrderReversedKey] == null)
+                _soundOrderReversed = soundOrderReversedDefault;
+            else
+                _soundOrderReversed = (bool)localSettings.Values[soundOrderReversedKey];
+            #endregion
+
+            #region showListView
+            if (localSettings.Values[showListViewKey] == null)
+                _showListView = showListViewDefault;
+            else
+                _showListView = (bool)localSettings.Values[showListViewKey];
+            #endregion
+
+            #region showCategoryIcon
+            if (localSettings.Values[showCategoryIconKey] == null)
+                _showCategoryIcon = showCategoryIconDefault;
+            else
+                _showCategoryIcon = (bool)localSettings.Values[showCategoryIconKey];
+            #endregion
+
+            #region showAcrylicBackground
+            if (localSettings.Values[showAcrylicBackgroundKey] == null)
+                _showAcrylicBackground = showAcrylicBackgroundDefault;
+            else
+                _showAcrylicBackground = (bool)localSettings.Values[showAcrylicBackgroundKey];
+            #endregion
+
+            #region liveTile
+            if (localSettings.Values[liveTileKey] == null)
+                _liveTileEnabled = liveTileDefault;
+            else
+                _liveTileEnabled = (bool)localSettings.Values[liveTileKey];
+            #endregion
+
+            #region theme
             if (localSettings.Values[themeKey] == null)
                 _theme = themeDefault;
             else
@@ -206,62 +283,23 @@ namespace UniversalSoundBoard.Common
                         break;
                 }
             }
+            #endregion
 
-            // playingSoundsListVisible
-            if (localSettings.Values[playingSoundsListVisibleKey] == null)
-                _playingSoundsListVisible = playingSoundsListVisibleDefault;
-            else
-                _playingSoundsListVisible = (bool)localSettings.Values[playingSoundsListVisibleKey];
-
-            // playingSoundsBarWidth
+            #region playingSoundsBarWidth
             if (localSettings.Values[playingSoundsBarWidthKey] == null)
                 _playingSoundsBarWidth = playingSoundsBarWidthDefault;
             else
                 _playingSoundsBarWidth = (double)localSettings.Values[playingSoundsBarWidthKey];
+            #endregion
 
-            // openMultipleSounds
-            if (localSettings.Values[openMultipleSoundsKey] == null)
-                _openMultipleSounds = openMultipleSoundsDefault;
+            #region muted
+            if (localSettings.Values[mutedKey] == null)
+                _muted = mutedDefault;
             else
-                _openMultipleSounds = (bool)localSettings.Values[openMultipleSoundsKey];
+                _muted = (bool)localSettings.Values[mutedKey];
+            #endregion
 
-            // multiSoundPlayback
-            if (localSettings.Values[multiSoundPlaybackKey] == null)
-                _multiSoundPlayback = multiSoundPlaybackDefault;
-            else
-                _multiSoundPlayback = (bool)localSettings.Values[multiSoundPlaybackKey];
-
-            // liveTile
-            if (localSettings.Values[liveTileKey] == null)
-                _liveTileEnabled = liveTileDefault;
-            else
-                _liveTileEnabled = (bool)localSettings.Values[liveTileKey];
-
-            // showListView
-            if (localSettings.Values[showListViewKey] == null)
-                _showListView = showListViewDefault;
-            else
-                _showListView = (bool)localSettings.Values[showListViewKey];
-
-            // showCategoryIcon
-            if (localSettings.Values[showCategoryIconKey] == null)
-                _showCategoryIcon = showCategoryIconDefault;
-            else
-                _showCategoryIcon = (bool)localSettings.Values[showCategoryIconKey];
-
-            // showSoundsPivot
-            if (localSettings.Values[showSoundsPivotKey] == null)
-                _showSoundsPivot = showSoundsPivotDefault;
-            else
-                _showSoundsPivot = (bool)localSettings.Values[showSoundsPivotKey];
-
-            // savePlayingSounds
-            if (localSettings.Values[savePlayingSoundsKey] == null)
-                _savePlayingSounds = savePlayingSoundsDefault;
-            else
-                _savePlayingSounds = (bool)localSettings.Values[savePlayingSoundsKey];
-
-            // volume
+            #region volume
             if (localSettings.Values[volumeKey] == null)
                 _volume = volumeDefault;
             else
@@ -279,35 +317,13 @@ namespace UniversalSoundBoard.Common
                     _volume = volumeDefault;
                 }
             }
-
-            // muted
-            if (localSettings.Values[mutedKey] == null)
-                _muted = mutedDefault;
-            else
-                _muted = (bool)localSettings.Values[mutedKey];
-
-            // showAcrylicBackground
-            if (localSettings.Values[showAcrylicBackgroundKey] == null)
-                _showAcrylicBackground = showAcrylicBackgroundDefault;
-            else
-                _showAcrylicBackground = (bool)localSettings.Values[showAcrylicBackgroundKey];
-
-            // soundOrder
-            if (localSettings.Values[soundOrderKey] == null)
-                _soundOrder = soundOrderDefault;
-            else
-                _soundOrder = (FileManager.SoundOrder)localSettings.Values[soundOrderKey];
-
-            // soundOrderReversed
-            if (localSettings.Values[soundOrderReversedKey] == null)
-                _soundOrderReversed = soundOrderReversedDefault;
-            else
-                _soundOrderReversed = (bool)localSettings.Values[soundOrderReversedKey];
+            #endregion
             #endregion
         }
 
         #region Access Modifiers
         #region State
+        #region AppState
         public const string AppStateKey = "AppState";
         public FileManager.AppState AppState
         {
@@ -319,7 +335,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(AppStateKey);
             }
         }
+        #endregion
 
+        #region Title
         public const string TitleKey = "Title";
         public string Title
         {
@@ -331,7 +349,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(TitleKey);
             }
         }
+        #endregion
 
+        #region Page
         public const string PageKey = "Page";
         public Type Page
         {
@@ -343,7 +363,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(PageKey);
             }
         }
+        #endregion
 
+        #region SearchQuery
         public const string SearchQueryKey = "SearchQuery";
         public string SearchQuery
         {
@@ -355,7 +377,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(SearchQueryKey);
             }
         }
+        #endregion
 
+        #region AllSoundsChanged
         public const string AllSoundsChangedKey = "AllSoundsChanged";
         public bool AllSoundsChanged
         {
@@ -367,7 +391,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(AllSoundsChangedKey);
             }
         }
+        #endregion
 
+        #region SelectedCategory
         public const string SelectedCategoryKey = "SelectedCategory";
         public Guid SelectedCategory
         {
@@ -379,7 +405,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(SelectedCategoryKey);
             }
         }
+        #endregion
 
+        #region User
         public const string UserKey = "User";
         public DavUser User
         {
@@ -391,7 +419,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(UserKey);
             }
         }
+        #endregion
 
+        #region Exporting
         public const string ExportingKey = "Exporting";
         public bool Exporting
         {
@@ -403,7 +433,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(ExportingKey);
             }
         }
+        #endregion
 
+        #region Exported
         public const string ExportedKey = "Exported";
         public bool Exported
         {
@@ -415,7 +447,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(ExportedKey);
             }
         }
+        #endregion
 
+        #region Importing
         public const string ImportingKey = "Importing";
         public bool Importing
         {
@@ -427,7 +461,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(ImportingKey);
             }
         }
+        #endregion
 
+        #region Imported
         public const string ImportedKey = "Imported";
         public bool Imported
         {
@@ -439,7 +475,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(ImportedKey);
             }
         }
+        #endregion
 
+        #region ExportMessage
         public const string ExportMessageKey = "ExportMessage";
         public string ExportMessage
         {
@@ -451,7 +489,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(ExportMessageKey);
             }
         }
+        #endregion
 
+        #region ImportMessage
         public const string ImportMessageKey = "ImportMessage";
         public string ImportMessage
         {
@@ -463,7 +503,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(ImportMessageKey);
             }
         }
+        #endregion
 
+        #region SoundboardSize
         public const string SoundboardSizeKey = "SoundboardSize";
         public string SoundboardSize
         {
@@ -476,8 +518,10 @@ namespace UniversalSoundBoard.Common
             }
         }
         #endregion
+        #endregion
 
         #region Layout & Design
+        #region CurrentTheme
         public const string CurrentThemeKey = "CurrentTheme";
         public FileManager.AppTheme CurrentTheme
         {
@@ -489,7 +533,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(CurrentThemeKey);
             }
         }
+        #endregion
 
+        #region ProgressRingIsActive
         public const string ProgressRingIsActiveKey = "ProgressRingIsActive";
         public bool ProgressRingIsActive
         {
@@ -501,7 +547,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(ProgressRingIsActiveKey);
             }
         }
+        #endregion
 
+        #region LoadingScreenVisible
         public const string LoadingScreenVisibleKey = "LoadingScreenVisible";
         public bool LoadingScreenVisible
         {
@@ -513,7 +561,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(LoadingScreenVisibleKey);
             }
         }
+        #endregion
 
+        #region LoadingScreenMessage
         public const string LoadingScreenMessageKey = "LoadingScreenMessage";
         public string LoadingScreenMessage
         {
@@ -525,7 +575,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(LoadingScreenMessageKey);
             }
         }
+        #endregion
 
+        #region BackButtonEnabled
         public const string BackButtonEnabledKey = "BackButtonEnabled";
         public bool BackButtonEnabled
         {
@@ -537,7 +589,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(BackButtonEnabledKey);
             }
         }
+        #endregion
 
+        #region MultiSelectionEnabled
         public const string MultiSelectionEnabledKey = "MultiSelectionEnabled";
         public bool MultiSelectionEnabled
         {
@@ -549,7 +603,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(MultiSelectionEnabledKey);
             }
         }
+        #endregion
 
+        #region PlayAllButtonVisible
         public const string PlayAllButtonVisibleKey = "PlayAllButtonVisible";
         public bool PlayAllButtonVisible
         {
@@ -561,7 +617,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(PlayAllButtonVisibleKey);
             }
         }
+        #endregion
 
+        #region EditButtonVisible
         public const string EditButtonVisibleKey = "EditButtonVisible";
         public bool EditButtonVisible
         {
@@ -573,7 +631,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(EditButtonVisibleKey);
             }
         }
+        #endregion
 
+        #region TopButtonsCollapsed
         public const string TopButtonCollapsedKey = "TopButtonsCollapsed";
         public bool TopButtonsCollapsed
         {
@@ -585,7 +645,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(TopButtonCollapsedKey);
             }
         }
+        #endregion
 
+        #region SearchAutoSuggestBoxVisible
         public const string SearchAutoSuggestBoxVisibleKey = "SearchAutoSuggestBoxVisible";
         public bool SearchAutoSuggestBoxVisible
         {
@@ -597,7 +659,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(SearchAutoSuggestBoxVisibleKey);
             }
         }
+        #endregion
 
+        #region SearchButtonVisible
         public const string SearchButtonVisibleKey = "SearchButtonVisible";
         public bool SearchButtonVisible
         {
@@ -609,7 +673,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(SearchButtonVisibleKey);
             }
         }
+        #endregion
 
+        #region SelectAllFlyoutText
         public const string SelectAllFlyoutTextKey = "SelectAllFlyoutText";
         public string SelectAllFlyoutText
         {
@@ -621,7 +687,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(SelectAllFlyoutTextKey);
             }
         }
+        #endregion
 
+        #region SelectAllFlyoutIcon
         public const string SelectAllFlyoutIconKey = "SelectAllFlyoutIcon";
         public SymbolIcon SelectAllFlyoutIcon
         {
@@ -633,7 +701,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(SelectAllFlyoutIconKey);
             }
         }
+        #endregion
 
+        #region SoundTileWidth
         public const string SoundTileWidthKey = "SoundTileWidth";
         public double SoundTileWidth
         {
@@ -645,7 +715,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(SoundTileWidthKey);
             }
         }
+        #endregion
 
+        #region PlayingSoundsBarAcrylicBackgroundBrush
         public const string PlayingSoundsBarAcrylicBackgroundBrushKey = "PlayingSoundsBarAcrylicBackgroundBrush";
         public AcrylicBrush PlayingSoundsBarAcrylicBackgroundBrush
         {
@@ -657,7 +729,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(PlayingSoundsBarAcrylicBackgroundBrushKey);
             }
         }
+        #endregion
 
+        #region ExportAndImportButtonsEnabled
         public const string ExportAndImportButtonsEnabledKey = "ExportAndImportButtonsEnabled";
         public bool ExportAndImportButtonsEnabled
         {
@@ -671,8 +745,175 @@ namespace UniversalSoundBoard.Common
         }
         #endregion
         #endregion
+        #endregion
 
         #region Settings
+        #region PlayingSoundsListVisible
+        public const string PlayingSoundsListVisibleKey = "PlayingSoundsListVisible";
+        public bool PlayingSoundsListVisible
+        {
+            get => _playingSoundsListVisible;
+            set
+            {
+                if (_playingSoundsListVisible.Equals(value)) return;
+                localSettings.Values[playingSoundsListVisibleKey] = value;
+                _playingSoundsListVisible = value;
+                NotifyPropertyChanged(PlayingSoundsListVisibleKey);
+            }
+        }
+        #endregion
+
+        #region SavePlayingSounds
+        public const string SavePlayingSoundsKey = "SavePlayingSounds";
+        public bool SavePlayingSounds
+        {
+            get => _savePlayingSounds;
+            set
+            {
+                if (_savePlayingSounds.Equals(value)) return;
+                localSettings.Values[savePlayingSoundsKey] = value;
+                _savePlayingSounds = value;
+                NotifyPropertyChanged(SavePlayingSoundsKey);
+            }
+        }
+        #endregion
+
+        #region OpenMultipleSounds
+        public const string OpenMultipleSoundsKey = "OpenMultipleSounds";
+        public bool OpenMultipleSounds
+        {
+            get => _openMultipleSounds;
+            set
+            {
+                if (_openMultipleSounds.Equals(value)) return;
+                localSettings.Values[openMultipleSoundsKey] = value;
+                _openMultipleSounds = value;
+                NotifyPropertyChanged(OpenMultipleSoundsKey);
+            }
+        }
+        #endregion
+
+        #region MultiSoundPlayback
+        public const string MultiSoundPlaybackKey = "MultiSoundPlayback";
+        public bool MultiSoundPlayback
+        {
+            get => _multiSoundPlayback;
+            set
+            {
+                if (_multiSoundPlayback.Equals(value)) return;
+                localSettings.Values[multiSoundPlaybackKey] = value;
+                _multiSoundPlayback = value;
+                NotifyPropertyChanged(MultiSoundPlaybackKey);
+            }
+        }
+        #endregion
+
+        #region ShowSoundsPivot
+        public const string ShowSoundsPivotKey = "ShowSoundsPivot";
+        public bool ShowSoundsPivot
+        {
+            get => _showSoundsPivot;
+            set
+            {
+                if (_showSoundsPivot.Equals(value)) return;
+                localSettings.Values[showSoundsPivotKey] = value;
+                _showSoundsPivot = value;
+                NotifyPropertyChanged(ShowSoundsPivotKey);
+            }
+        }
+        #endregion
+
+        #region SoundOrder
+        public const string SoundOrderKey = "SoundOrder";
+        public FileManager.SoundOrder SoundOrder
+        {
+            get => _soundOrder;
+            set
+            {
+                if (_soundOrder.Equals(value)) return;
+                localSettings.Values[soundOrderKey] = (int)value;
+                _soundOrder = value;
+                NotifyPropertyChanged(SoundOrderKey);
+            }
+        }
+        #endregion
+
+        #region SoundOrderReversed
+        public const string SoundOrderReversedKey = "SoundOrderReversed";
+        public bool SoundOrderReversed
+        {
+            get => _soundOrderReversed;
+            set
+            {
+                if (_soundOrderReversed.Equals(value)) return;
+                localSettings.Values[soundOrderReversedKey] = value;
+                _soundOrderReversed = value;
+                NotifyPropertyChanged(SoundOrderReversedKey);
+            }
+        }
+        #endregion
+
+        #region ShowListView
+        public const string ShowListViewKey = "ShowListView";
+        public bool ShowListView
+        {
+            get => _showListView;
+            set
+            {
+                if (_showListView.Equals(value)) return;
+                localSettings.Values[showListViewKey] = value;
+                _showListView = value;
+                NotifyPropertyChanged(ShowListViewKey);
+            }
+        }
+        #endregion
+
+        #region ShowCategoryIcon
+        public const string ShowCategoryIconKey = "ShowCategoryIcon";
+        public bool ShowCategoryIcon
+        {
+            get => _showCategoryIcon;
+            set
+            {
+                if (_showCategoryIcon.Equals(value)) return;
+                localSettings.Values[showCategoryIconKey] = value;
+                _showCategoryIcon = value;
+                NotifyPropertyChanged(ShowCategoryIconKey);
+            }
+        }
+        #endregion
+
+        #region ShowAcrylicBackground
+        public const string ShowAcrylicBackgroundKey = "ShowAcrylicBackground";
+        public bool ShowAcrylicBackground
+        {
+            get => _showAcrylicBackground;
+            set
+            {
+                if (_showAcrylicBackground.Equals(value)) return;
+                localSettings.Values[showAcrylicBackgroundKey] = value;
+                _showAcrylicBackground = value;
+                NotifyPropertyChanged(ShowAcrylicBackgroundKey);
+            }
+        }
+        #endregion
+
+        #region LiveTileEnabled
+        public const string LiveTileEnabledKey = "LiveTileEnabled";
+        public bool LiveTileEnabled
+        {
+            get => _liveTileEnabled;
+            set
+            {
+                if (_liveTileEnabled.Equals(value)) return;
+                localSettings.Values[liveTileKey] = value;
+                _liveTileEnabled = value;
+                NotifyPropertyChanged(LiveTileEnabledKey);
+            }
+        }
+        #endregion
+
+        #region Theme
         public const string ThemeKey = "Theme";
         public FileManager.AppTheme Theme
         {
@@ -696,20 +937,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(ThemeKey);
             }
         }
+        #endregion
 
-        public const string PlayingSoundsListVisibleKey = "PlayingSoundsListVisible";
-        public bool PlayingSoundsListVisible
-        {
-            get => _playingSoundsListVisible;
-            set
-            {
-                if (_playingSoundsListVisible.Equals(value)) return;
-                localSettings.Values[playingSoundsListVisibleKey] = value;
-                _playingSoundsListVisible = value;
-                NotifyPropertyChanged(PlayingSoundsListVisibleKey);
-            }
-        }
-
+        #region PlayingSoundsBarWidth
         public const string PlayingSoundsBarWidthKey = "PlayingSoundsBarWidth";
         public double PlayingSoundsBarWidth
         {
@@ -722,111 +952,9 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(PlayingSoundsBarWidthKey);
             }
         }
+        #endregion
 
-        public const string OpenMultipleSoundsKey = "OpenMultipleSounds";
-        public bool OpenMultipleSounds
-        {
-            get => _openMultipleSounds;
-            set
-            {
-                if (_openMultipleSounds.Equals(value)) return;
-                localSettings.Values[openMultipleSoundsKey] = value;
-                _openMultipleSounds = value;
-                NotifyPropertyChanged(OpenMultipleSoundsKey);
-            }
-        }
-
-        public const string MultiSoundPlaybackKey = "MultiSoundPlayback";
-        public bool MultiSoundPlayback
-        {
-            get => _multiSoundPlayback;
-            set
-            {
-                if (_multiSoundPlayback.Equals(value)) return;
-                localSettings.Values[multiSoundPlaybackKey] = value;
-                _multiSoundPlayback = value;
-                NotifyPropertyChanged(MultiSoundPlaybackKey);
-            }
-        }
-
-        public const string LiveTileEnabledKey = "LiveTileEnabled";
-        public bool LiveTileEnabled
-        {
-            get => _liveTileEnabled;
-            set
-            {
-                if (_liveTileEnabled.Equals(value)) return;
-                localSettings.Values[liveTileKey] = value;
-                _liveTileEnabled = value;
-                NotifyPropertyChanged(LiveTileEnabledKey);
-            }
-        }
-
-        public const string ShowListViewKey = "ShowListView";
-        public bool ShowListView
-        {
-            get => _showListView;
-            set
-            {
-                if (_showListView.Equals(value)) return;
-                localSettings.Values[showListViewKey] = value;
-                _showListView = value;
-                NotifyPropertyChanged(ShowListViewKey);
-            }
-        }
-
-        public const string ShowCategoryIconKey = "ShowCategoryIcon";
-        public bool ShowCategoryIcon
-        {
-            get => _showCategoryIcon;
-            set
-            {
-                if (_showCategoryIcon.Equals(value)) return;
-                localSettings.Values[showCategoryIconKey] = value;
-                _showCategoryIcon = value;
-                NotifyPropertyChanged(ShowCategoryIconKey);
-            }
-        }
-
-        public const string ShowSoundsPivotKey = "ShowSoundsPivot";
-        public bool ShowSoundsPivot
-        {
-            get => _showSoundsPivot;
-            set
-            {
-                if (_showSoundsPivot.Equals(value)) return;
-                localSettings.Values[showSoundsPivotKey] = value;
-                _showSoundsPivot = value;
-                NotifyPropertyChanged(ShowSoundsPivotKey);
-            }
-        }
-
-        public const string SavePlayingSoundsKey = "SavePlayingSounds";
-        public bool SavePlayingSounds
-        {
-            get => _savePlayingSounds;
-            set
-            {
-                if (_savePlayingSounds.Equals(value)) return;
-                localSettings.Values[savePlayingSoundsKey] = value;
-                _savePlayingSounds = value;
-                NotifyPropertyChanged(SavePlayingSoundsKey);
-            }
-        }
-
-        public const string VolumeKey = "Volume";
-        public int Volume
-        {
-            get => _volume;
-            set
-            {
-                if (_volume.Equals(value)) return;
-                localSettings.Values[volumeKey] = value;
-                _volume = value;
-                NotifyPropertyChanged(VolumeKey);
-            }
-        }
-
+        #region Muted
         public const string MutedKey = "Muted";
         public bool Muted
         {
@@ -839,45 +967,22 @@ namespace UniversalSoundBoard.Common
                 NotifyPropertyChanged(MutedKey);
             }
         }
+        #endregion
 
-        public const string ShowAcrylicBackgroundKey = "ShowAcrylicBackground";
-        public bool ShowAcrylicBackground
+        #region Volume
+        public const string VolumeKey = "Volume";
+        public int Volume
         {
-            get => _showAcrylicBackground;
+            get => _volume;
             set
             {
-                if (_showAcrylicBackground.Equals(value)) return;
-                localSettings.Values[showAcrylicBackgroundKey] = value;
-                _showAcrylicBackground = value;
-                NotifyPropertyChanged(ShowAcrylicBackgroundKey);
+                if (_volume.Equals(value)) return;
+                localSettings.Values[volumeKey] = value;
+                _volume = value;
+                NotifyPropertyChanged(VolumeKey);
             }
         }
-
-        public const string SoundOrderKey = "SoundOrder";
-        public FileManager.SoundOrder SoundOrder
-        {
-            get => _soundOrder;
-            set
-            {
-                if (_soundOrder.Equals(value)) return;
-                localSettings.Values[soundOrderKey] = (int)value;
-                _soundOrder = value;
-                NotifyPropertyChanged(SoundOrderKey);
-            }
-        }
-
-        public const string SoundOrderReversedKey = "SoundOrderReversed";
-        public bool SoundOrderReversed
-        {
-            get => _soundOrderReversed;
-            set
-            {
-                if (_soundOrderReversed.Equals(value)) return;
-                localSettings.Values[soundOrderReversedKey] = value;
-                _soundOrderReversed = value;
-                NotifyPropertyChanged(SoundOrderReversedKey);
-            }
-        }
+        #endregion
         #endregion
 
         #region Events
