@@ -21,7 +21,7 @@ namespace UniversalSoundBoard.Common
         private const string themeKey = "theme";
         private const string playingSoundsListVisibleKey = "playingSoundsListVisible";
         private const string playingSoundsBarWidthKey = "playingSoundsBarWidth";
-        private const string playOneSoundAtOnceKey = "playOneSoundAtOnce";
+        private const string openMultipleSoundsKey = "openMultipleSounds";
         private const string multiSoundPlaybackKey = "multiSoundPlayback";
         private const string liveTileKey = "liveTile";
         private const string showListViewKey = "showListView";
@@ -39,7 +39,7 @@ namespace UniversalSoundBoard.Common
         private const FileManager.AppTheme themeDefault = FileManager.AppTheme.System;
         private const bool playingSoundsListVisibleDefault = true;
         private const double playingSoundsBarWidthDefault = 0.35;
-        private const bool playOneSoundAtOnceDefault = false;
+        private const bool openMultipleSoundsDefault = true;
         private const bool multiSoundPlaybackDefault = false;
         private const bool liveTileDefault = true;
         private const bool showListViewDefault = false;
@@ -104,7 +104,7 @@ namespace UniversalSoundBoard.Common
         private FileManager.AppTheme _theme;                                // The design theme of the app
         private bool _playingSoundsListVisible;                             // If true shows the Playing Sounds list at the right
         private double _playingSoundsBarWidth;                              // The relative width of the PlayingSoundsBar in percent
-        private bool _playOneSoundAtOnce;                                   // If true plays only one sound at a time
+        private bool _openMultipleSounds;                                   // If false, removes all PlayingSounds whenever the user opens a new one; if true, adds new opened sounds to existing PlayingSounds
         private bool _multiSoundPlayback;                                   // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
         private bool _liveTileEnabled;                                      // If true, show the live tile
         private bool _showListView;                                         // If true, shows the sounds on the SoundPage in a ListView
@@ -219,11 +219,11 @@ namespace UniversalSoundBoard.Common
             else
                 _playingSoundsBarWidth = (double)localSettings.Values[playingSoundsBarWidthKey];
 
-            // playOneSoundAtOnce
-            if (localSettings.Values[playOneSoundAtOnceKey] == null)
-                _playOneSoundAtOnce = playOneSoundAtOnceDefault;
+            // openMultipleSounds
+            if (localSettings.Values[openMultipleSoundsKey] == null)
+                _openMultipleSounds = openMultipleSoundsDefault;
             else
-                _playOneSoundAtOnce = (bool)localSettings.Values[playOneSoundAtOnceKey];
+                _openMultipleSounds = (bool)localSettings.Values[openMultipleSoundsKey];
 
             // multiSoundPlayback
             if (localSettings.Values[multiSoundPlaybackKey] == null)
@@ -723,16 +723,16 @@ namespace UniversalSoundBoard.Common
             }
         }
 
-        public const string PlayOneSoundAtOnceKey = "PlayOneSoundAtOnce";
-        public bool PlayOneSoundAtOnce
+        public const string OpenMultipleSoundsKey = "OpenMultipleSounds";
+        public bool OpenMultipleSounds
         {
-            get => _playOneSoundAtOnce;
+            get => _openMultipleSounds;
             set
             {
-                if (_playOneSoundAtOnce.Equals(value)) return;
-                localSettings.Values[playOneSoundAtOnceKey] = value;
-                _playOneSoundAtOnce = value;
-                NotifyPropertyChanged(PlayOneSoundAtOnceKey);
+                if (_openMultipleSounds.Equals(value)) return;
+                localSettings.Values[openMultipleSoundsKey] = value;
+                _openMultipleSounds = value;
+                NotifyPropertyChanged(OpenMultipleSoundsKey);
             }
         }
 
