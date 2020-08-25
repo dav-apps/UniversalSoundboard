@@ -67,13 +67,13 @@ namespace UniversalSoundBoard.Pages
             LiveTileToggle.IsOn = FileManager.itemViewHolder.LiveTileEnabled;
         }
 
-        private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
+        private async void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
             FileManager.itemViewHolder.LiveTileEnabled = LiveTileToggle.IsOn;
 
             if (LiveTileToggle.IsOn)
-                Task.Run(FileManager.UpdateLiveTileAsync);
+                await FileManager.UpdateLiveTileAsync();
             else
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();
         }
@@ -91,6 +91,8 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.PlayingSoundsListVisible = ShowPlayingSoundsListToggle.IsOn;
 
             SavePlayingSoundsStackPanel.Visibility = ShowPlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+            OpenMultipleSoundsStackPanel.Visibility = ShowPlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
+            UpdateMultiSoundPlaybackVisibility();
         }
         #endregion
 
@@ -98,12 +100,15 @@ namespace UniversalSoundBoard.Pages
         private void SetOpenMultipleSoundsToggle()
         {
             OpenMultipleSoundsToggle.IsOn = FileManager.itemViewHolder.OpenMultipleSounds;
+            OpenMultipleSoundsStackPanel.Visibility = FileManager.itemViewHolder.PlayingSoundsListVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void OpenMultipleSoundsToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
             FileManager.itemViewHolder.OpenMultipleSounds = OpenMultipleSoundsToggle.IsOn;
+
+            UpdateMultiSoundPlaybackVisibility();
         }
         #endregion
 
@@ -111,12 +116,18 @@ namespace UniversalSoundBoard.Pages
         private void SetMultiSoundPlaybackToggle()
         {
             MultiSoundPlaybackToggle.IsOn = FileManager.itemViewHolder.MultiSoundPlayback;
+            UpdateMultiSoundPlaybackVisibility();
         }
 
         private void MultiSoundPlaybackToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
             FileManager.itemViewHolder.MultiSoundPlayback = MultiSoundPlaybackToggle.IsOn;
+        }
+
+        private void UpdateMultiSoundPlaybackVisibility()
+        {
+            MultiSoundPlaybackStackPanel.Visibility = !FileManager.itemViewHolder.PlayingSoundsListVisible || (FileManager.itemViewHolder.PlayingSoundsListVisible && FileManager.itemViewHolder.OpenMultipleSounds) ? Visibility.Visible : Visibility.Collapsed;
         }
         #endregion
 
@@ -222,12 +233,10 @@ namespace UniversalSoundBoard.Pages
             SavePlayingSoundsStackPanel.Visibility = FileManager.itemViewHolder.PlayingSoundsListVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private async void SavePlayingSoundsToggle_Toggled(object sender, RoutedEventArgs e)
+        private void SavePlayingSoundsToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
             FileManager.itemViewHolder.SavePlayingSounds = SavePlayingSoundsToggle.IsOn;
-
-            //await FileManager.AddOrRemoveAllPlayingSoundsAsync();
         }
         #endregion
 

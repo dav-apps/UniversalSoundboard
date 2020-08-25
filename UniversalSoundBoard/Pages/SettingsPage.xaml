@@ -53,14 +53,20 @@
                                 Toggled="SavePlayingSoundsToggle_Toggled" />
                         </StackPanel>
 
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                        <StackPanel
+                            Name="OpenMultipleSoundsStackPanel"
+                            Style="{StaticResource SettingsEntryStyle}">
+
                             <ToggleSwitch
                                 Name="OpenMultipleSoundsToggle"
                                 x:Uid="SettingsEntry-OpenMultipleSoundsToggle"
                                 Toggled="OpenMultipleSoundsToggle_Toggled" />
                         </StackPanel>
 
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                        <StackPanel
+                            Name="MultiSoundPlaybackStackPanel"
+                            Style="{StaticResource SettingsEntryStyle}">
+                            
                             <ToggleSwitch
                                 Name="MultiSoundPlaybackToggle"
                                 x:Uid="SettingsEntry-MultiSoundPlaybackToggle"
@@ -151,7 +157,7 @@
                                 x:Uid="SettingsEntry-ShowListViewToggle"
                                 Toggled="ListViewToggle_Toggled" />
                         </StackPanel>
-                        
+
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch
                                 Name="ShowCategoriesIconsToggle"
@@ -161,16 +167,16 @@
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch
-                                Name="LiveTileToggle"
-                                x:Uid="SettingsEntry-LiveTileToggle"
-                                Toggled="LiveTileToggle_Toggled" />
+                                Name="ShowAcrylicBackgroundToggle"
+                                x:Uid="SettingsEntry-ShowAcrylicBackgroundToggle"
+                                Toggled="ShowAcrylicBackgroundToggle_Toggled" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch
-                                Name="ShowAcrylicBackgroundToggle"
-                                x:Uid="SettingsEntry-ShowAcrylicBackgroundToggle"
-                                Toggled="ShowAcrylicBackgroundToggle_Toggled" />
+                                Name="LiveTileToggle"
+                                x:Uid="SettingsEntry-LiveTileToggle"
+                                Toggled="LiveTileToggle_Toggled" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
