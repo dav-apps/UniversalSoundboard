@@ -35,7 +35,7 @@ namespace UniversalSoundBoard.Pages
             SetOpenMultipleSoundsToggle();
             SetMultiSoundPlaybackToggle();
             SetShowListViewToggle();
-            SetShowCategoryIconToggle();
+            SetShowCategoriesIconsToggle();
             SetShowAcrylicBackgroundToggle();
             SetShowSoundsPivotToggle();
             SetThemeRadioButton();
@@ -79,20 +79,18 @@ namespace UniversalSoundBoard.Pages
         }
         #endregion
 
-        #region PlayingSoundsListVisibility
+        #region ShowPlayingSoundsList
         private void SetPlayingSoundsListVisibilityToggle()
         {
-            PlayingSoundsListToggle.IsOn = FileManager.itemViewHolder.PlayingSoundsListVisible;
+            ShowPlayingSoundsListToggle.IsOn = FileManager.itemViewHolder.PlayingSoundsListVisible;
         }
 
-        private async void PlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
+        private void ShowPlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            FileManager.itemViewHolder.PlayingSoundsListVisible = PlayingSoundsListToggle.IsOn;
+            FileManager.itemViewHolder.PlayingSoundsListVisible = ShowPlayingSoundsListToggle.IsOn;
 
-            SavePlayingSoundsStackPanel.Visibility = PlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
-
-            //await FileManager.AddOrRemoveAllPlayingSoundsAsync();
+            SavePlayingSoundsStackPanel.Visibility = ShowPlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
         }
         #endregion
 
@@ -135,16 +133,16 @@ namespace UniversalSoundBoard.Pages
         }
         #endregion
 
-        #region ShowCategories
-        private void SetShowCategoryIconToggle()
+        #region ShowCategoriesIcons
+        private void SetShowCategoriesIconsToggle()
         {
-            ShowCategoryToggle.IsOn = FileManager.itemViewHolder.ShowCategoryIcon;
+            ShowCategoriesIconsToggle.IsOn = FileManager.itemViewHolder.ShowCategoryIcon;
         }
 
-        private void ShowCategoryToggle_Toggled(object sender, RoutedEventArgs e)
+        private void ShowCategoriesIconsToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            FileManager.itemViewHolder.ShowCategoryIcon = ShowCategoryToggle.IsOn;
+            FileManager.itemViewHolder.ShowCategoryIcon = ShowCategoriesIconsToggle.IsOn;
         }
         #endregion
 

@@ -213,7 +213,7 @@
   <data name="MoreButton-Repeat.Text" xml:space="preserve">
     <value>Wiederholen</value>
   </data>
-  <data name="PlayingSoundsListToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowPlayingSoundsListToggle.Header" xml:space="preserve">
     <value>Geöffnete Sounds anzeigen</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetFavourite" xml:space="preserve">
@@ -228,7 +228,7 @@
   <data name="SoundsPivotHeader.Header" xml:space="preserve">
     <value>Sounds</value>
   </data>
-  <data name="SettingsEntry-ShowCategoryIcon.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowCategoriesIconsToggle.Header" xml:space="preserve">
     <value>Icons der Kategorien an Sounds anzeigen</value>
   </data>
   <data name="SettingsPivot-Data.Header" xml:space="preserve">
@@ -243,8 +243,8 @@
   <data name="SettingsSoundBoardSize" xml:space="preserve">
     <value>Die Größe deines Soundboards beträgt {0}.</value>
   </data>
-  <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
-    <value>Favoriten anzeigen</value>
+  <data name="SettingsEntry-ShowSoundsPivotToggle.Header" xml:space="preserve">
+    <value>Favoriten-Tab anzeigen</value>
   </data>
   <data name="SettingsEntry-ExportDataButton.Content" xml:space="preserve">
     <value>Soundboard exportieren</value>
@@ -340,7 +340,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SettingsEntry-SystemThemeRadioButton.Content" xml:space="preserve">
     <value>Systemeinstellung verwenden</value>
   </data>
-  <data name="SettingsEntry-Theme.Text" xml:space="preserve">
+  <data name="SettingsEntry-ThemeTextBlock.Text" xml:space="preserve">
     <value>Thema</value>
   </data>
   <data name="ShareTarget-AddButton.Content" xml:space="preserve">
@@ -361,7 +361,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="ShareDialog-Title" xml:space="preserve">
     <value>Geteilt mit UniversalSoundboard</value>
   </data>
-  <data name="SettingsEntry-SavePlayingSounds.Header" xml:space="preserve">
+  <data name="SettingsEntry-SavePlayingSoundsToggle.Header" xml:space="preserve">
     <value>Geöffnete Sounds speichern</value>
   </data>
   <data name="Pin" xml:space="preserve">
@@ -460,7 +460,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="DeleteSoundsMessage" xml:space="preserve">
     <value>Sounds werden gelöscht...</value>
   </data>
-  <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowAcrylicBackgroundToggle.Header" xml:space="preserve">
     <value>Transparenz-Effekte</value>
   </data>
   <data name="ContentDialog-Save" xml:space="preserve">
@@ -496,7 +496,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="UpdateSoundsMessage" xml:space="preserve">
     <value>Sounds werden aktualisiert...</value>
   </data>
-  <data name="SettingsEntry-ShowListView.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowListViewToggle.Header" xml:space="preserve">
     <value>Sounds als Liste anzeigen</value>
   </data>
   <data name="CategoryOptionsFlyout-AddSubCategory" xml:space="preserve">
@@ -574,13 +574,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Blog-Link.Content" xml:space="preserve">
     <value>Neuigkeiten und Updates</value>
   </data>
-  <data name="SettingsEntry-MultiSoundPlayback.Header" xml:space="preserve">
+  <data name="SettingsEntry-MultiSoundPlaybackToggle.Header" xml:space="preserve">
     <value>Erlaube das Abspielen von mehreren Sounds gleichzeitig</value>
   </data>
-  <data name="SettingsEntry-LiveTile.Header" xml:space="preserve">
+  <data name="SettingsEntry-LiveTileToggle.Header" xml:space="preserve">
     <value>Live-Kachel</value>
   </data>
-  <data name="SettingsEntry-OpenMultipleSounds.Header" xml:space="preserve">
+  <data name="SettingsEntry-OpenMultipleSoundsToggle.Header" xml:space="preserve">
     <value>Erlaube mehrere geöffnete Sounds</value>
   </data>
 </root>
