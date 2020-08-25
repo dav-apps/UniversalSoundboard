@@ -217,10 +217,7 @@
     <value>Répéter</value>
   </data>
   <data name="PlayingSoundsListToggle.Header" xml:space="preserve">
-    <value>Afficher la liste des sons</value>
-  </data>
-  <data name="PlayOneSoundAtOnceToggle.Header" xml:space="preserve">
-    <value>Jouer un seul son à la fois</value>
+    <value>Afficher les sons ouverts</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetFavourite" xml:space="preserve">
     <value>Ajouter aux favoris</value>
@@ -366,7 +363,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Partagé avec UniversalSoundboard</value>
   </data>
   <data name="SettingsEntry-SavePlayingSounds.Header" xml:space="preserve">
-    <value>Sauvegarder les sons en train d'être joués</value>
+    <value>Sauvegarde des sons ouverts</value>
   </data>
   <data name="Pin" xml:space="preserve">
     <value>Epingler au menu démarrer</value>
@@ -465,7 +462,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Supprimer des sons...</value>
   </data>
   <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
-    <value>Afficher un fond acrylique (~transparent)</value>
+    <value>Effets de transparence</value>
   </data>
   <data name="ContentDialog-Save" xml:space="preserve">
     <value>Sauvegarder</value>
@@ -580,5 +577,11 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="SettingsEntry-MultiSoundPlayback.Header" xml:space="preserve">
     <value>Permettre la lecture de plusieurs sons en même temps</value>
+  </data>
+  <data name="SettingsEntry-LiveTile.Header" xml:space="preserve">
+    <value>Vignette dynamique</value>
+  </data>
+  <data name="SettingsEntry-OpenMultipleSounds.Header" xml:space="preserve">
+    <value>Permettre plusieurs sons ouverts</value>
   </data>
 </root>

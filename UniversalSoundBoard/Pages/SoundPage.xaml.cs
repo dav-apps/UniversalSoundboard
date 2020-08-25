@@ -416,8 +416,8 @@ namespace UniversalSoundBoard.Pages
             MediaPlayer player = await FileManager.CreateMediaPlayerAsync(soundList, 0);
             if (player == null) return;
 
-            // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
-            if (FileManager.itemViewHolder.PlayOneSoundAtOnce)
+            // If OpenMultipleSounds is false, remove all sounds from PlayingSounds List
+            if (!FileManager.itemViewHolder.OpenMultipleSounds)
             {
                 List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
                 foreach (PlayingSound pSound in FileManager.itemViewHolder.PlayingSounds)
@@ -458,8 +458,8 @@ namespace UniversalSoundBoard.Pages
             MediaPlayer player = await FileManager.CreateMediaPlayerAsync(sounds, 0);
             if (player == null) return;
 
-            // If PlayOneSoundAtOnce is true, remove all sounds from PlayingSounds List
-            if (FileManager.itemViewHolder.PlayOneSoundAtOnce)
+            // If OpenMultipleSounds is false, remove all sounds from PlayingSounds List
+            if (!FileManager.itemViewHolder.OpenMultipleSounds)
             {
                 List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
                 foreach (PlayingSound pSound in FileManager.itemViewHolder.PlayingSounds)

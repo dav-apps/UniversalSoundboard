@@ -32,7 +32,7 @@ namespace UniversalSoundBoard.Pages
             // Init the settings UI elements
             SetLiveTileToggle();
             SetPlayingSoundsListVisibilityToggle();
-            SetPlayOneSoundAtOnceToggle();
+            SetOpenMultipleSoundsToggle();
             SetMultiSoundPlaybackToggle();
             SetShowListViewToggle();
             SetShowCategoryIconToggle();
@@ -96,16 +96,16 @@ namespace UniversalSoundBoard.Pages
         }
         #endregion
 
-        #region PlayOneSoundAtOnce
-        private void SetPlayOneSoundAtOnceToggle()
+        #region OpenMultipleSounds
+        private void SetOpenMultipleSoundsToggle()
         {
-            PlayOneSoundAtOnceToggle.IsOn = FileManager.itemViewHolder.PlayOneSoundAtOnce;
+            OpenMultipleSoundsToggle.IsOn = FileManager.itemViewHolder.OpenMultipleSounds;
         }
 
-        private void PlayOneSoundAtOnceToggle_Toggled(object sender, RoutedEventArgs e)
+        private void OpenMultipleSoundsToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            FileManager.itemViewHolder.PlayOneSoundAtOnce = PlayOneSoundAtOnceToggle.IsOn;
+            FileManager.itemViewHolder.OpenMultipleSounds = OpenMultipleSoundsToggle.IsOn;
         }
         #endregion
 

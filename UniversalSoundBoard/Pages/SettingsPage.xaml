@@ -38,16 +38,33 @@
                     <StackPanel Name="SettingsGeneralStackPanel" Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch
-                                Name="PlayOneSoundAtOnceToggle"
-                                x:Uid="PlayOneSoundAtOnceToggle"
-                                Toggled="PlayOneSoundAtOnceToggle_Toggled" />
+                                Name="MultiSoundPlaybackToggle"
+                                x:Uid="SettingsEntry-MultiSoundPlayback"
+                                Toggled="MultiSoundPlaybackToggle_Toggled" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch
-                                Name="MultiSoundPlaybackToggle"
-                                x:Uid="SettingsEntry-MultiSoundPlayback"
-                                Toggled="MultiSoundPlaybackToggle_Toggled" />
+                                Name="PlayingSoundsListToggle"
+                                x:Uid="PlayingSoundsListToggle"
+                                Toggled="PlayingSoundsListToggle_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel
+                            Name="SavePlayingSoundsStackPanel"
+                            Style="{StaticResource SettingsEntryStyle}">
+
+                            <ToggleSwitch
+                                Name="SavePlayingSoundsToggle"
+                                x:Uid="SettingsEntry-SavePlayingSounds"
+                                Toggled="SavePlayingSoundsToggle_Toggled" />
+                        </StackPanel>
+
+                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                            <ToggleSwitch
+                                Name="OpenMultipleSoundsToggle"
+                                x:Uid="SettingsEntry-OpenMultipleSounds"
+                                Toggled="OpenMultipleSoundsToggle_Toggled" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
@@ -58,28 +75,16 @@
                         </StackPanel>
 
                         <StackPanel
-                            Name="SavePlayingSoundsStackPanel"
-                            Style="{StaticResource SettingsEntryStyle}">
-
-                            <ToggleSwitch
-                                Name="SavePlayingSoundsToggle"
-                                x:Uid="SettingsEntry-SavePlayingSounds"
-                                Header="Save playing sounds"
-                                Toggled="SavePlayingSoundsToggle_Toggled" />
-                        </StackPanel>
-
-                        <StackPanel
                             Name="SoundOrderStackPanel"
                             Style="{StaticResource SettingsEntryStyle}"
                             Margin="0,10,0,5">
                             
                             <TextBlock
-                                Name="SoundOrderHeaderTextBlock" 
-                                x:Uid="SettingsEntry-SoundOrderHeaderTextBlock"
-                                Text="Sort sounds by" />
+                                Name="SoundOrderHeaderTextBlock"
+                                x:Uid="SettingsEntry-SoundOrderHeaderTextBlock" />
 
                             <ComboBox
-                                Name="SoundOrderComboBox" 
+                                Name="SoundOrderComboBox"
                                 SelectedIndex="0"
                                 Margin="0,10,0,0"
                                 SelectionChanged="SoundOrderComboBox_SelectionChanged">
@@ -105,7 +110,7 @@
 
                             <HyperlinkButton
                                 x:Uid="Blog-Link"
-                                NavigateUri="https://blog.dav-apps.tech/tag/universalsoundboard/" />
+                                NavigateUri="https://blog.dav-apps.tech/tag/universalsoundboard" />
 
                             <HyperlinkButton
                                 x:Uid="Github-Link"
@@ -122,12 +127,12 @@
                                 Margin="0,7,0,0">
                                 
                                 <TextBlock
-                                    Text="Version" 
-                                    IsTextSelectionEnabled="True" 
+                                    Text="Version"
+                                    IsTextSelectionEnabled="True"
                                     Margin="0,0,4,0" />
                                 
                                 <TextBlock
-                                    x:Uid="Version" 
+                                    x:Uid="Version"
                                     IsTextSelectionEnabled="True" />
                             </StackPanel>
                             
@@ -144,30 +149,20 @@
                             <ToggleSwitch
                                 Name="ShowListViewToggle"
                                 x:Uid="SettingsEntry-ShowListView"
-                                Header="Sounds als Liste anzeigen"
                                 Toggled="ListViewToggle_Toggled" />
                         </StackPanel>
                         
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch
-                                Name="PlayingSoundsListToggle" 
-                                x:Uid="PlayingSoundsListToggle" 
-                                Header="Show list of playing sounds" 
-                                Toggled="PlayingSoundsListToggle_Toggled" />
-                        </StackPanel>
-
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <ToggleSwitch
-                                Name="ShowCategoryToggle" 
-                                x:Uid="SettingsEntry-ShowCategoryIcon" 
-                                Header="Show Category Icon of a Sound" 
+                                Name="ShowCategoryToggle"
+                                x:Uid="SettingsEntry-ShowCategoryIcon"
                                 Toggled="ShowCategoryToggle_Toggled" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch
-                                Name="LiveTileToggle" 
-                                Header="Live Tile"
+                                Name="LiveTileToggle"
+                                x:Uid="SettingsEntry-LiveTile"
                                 Toggled="LiveTileToggle_Toggled" />
                         </StackPanel>
 
@@ -175,23 +170,22 @@
                             <ToggleSwitch
                                 Name="ShowAcrylicBackgroundToggle"
                                 x:Uid="SettingsEntry-ShowAcrylicBackground"
-                                Header="Show acrylic Background"
                                 Toggled="ShowAcrylicBackgroundToggle_Toggled" />
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <TextBlock
-                                x:Uid="SettingsEntry-Theme" 
-                                FontSize="16" 
+                                x:Uid="SettingsEntry-Theme"
+                                FontSize="16"
                                 Margin="0,0,0,5" />
                             
                             <RadioButton
-                                Name="LightThemeRadioButton" 
+                                Name="LightThemeRadioButton"
                                 x:Uid="SettingsEntry-LightThemeRadioButton"
                                 Checked="ThemeRadioButton_Checked" />
                             
                             <RadioButton
-                                Name="DarkThemeRadioButton" 
+                                Name="DarkThemeRadioButton"
                                 x:Uid="SettingsEntry-DarkThemeRadioButton"
                                 Checked="ThemeRadioButton_Checked" />
 

@@ -214,10 +214,7 @@
     <value>Wiederholen</value>
   </data>
   <data name="PlayingSoundsListToggle.Header" xml:space="preserve">
-    <value>Liste spielender Sounds anzeigen</value>
-  </data>
-  <data name="PlayOneSoundAtOnceToggle.Header" xml:space="preserve">
-    <value>Nur einen Sound auf einmal abspielen</value>
+    <value>Geöffnete Sounds anzeigen</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetFavourite" xml:space="preserve">
     <value>Zu Favoriten hinzufügen</value>
@@ -365,7 +362,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>Geteilt mit UniversalSoundboard</value>
   </data>
   <data name="SettingsEntry-SavePlayingSounds.Header" xml:space="preserve">
-    <value>Speichere spielende Sounds</value>
+    <value>Geöffnete Sounds speichern</value>
   </data>
   <data name="Pin" xml:space="preserve">
     <value>An Start anheften</value>
@@ -464,7 +461,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>Sounds werden gelöscht...</value>
   </data>
   <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
-    <value>Zeige transparenten Hintergrund</value>
+    <value>Transparenz-Effekte</value>
   </data>
   <data name="ContentDialog-Save" xml:space="preserve">
     <value>Speichern</value>
@@ -579,5 +576,11 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="SettingsEntry-MultiSoundPlayback.Header" xml:space="preserve">
     <value>Erlaube das Abspielen von mehreren Sounds gleichzeitig</value>
+  </data>
+  <data name="SettingsEntry-LiveTile.Header" xml:space="preserve">
+    <value>Live-Kachel</value>
+  </data>
+  <data name="SettingsEntry-OpenMultipleSounds.Header" xml:space="preserve">
+    <value>Erlaube mehrere geöffnete Sounds</value>
   </data>
 </root>
