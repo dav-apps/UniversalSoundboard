@@ -96,6 +96,12 @@ namespace UniversalSoundBoard.Components
             // Set the media player for the media player element
             MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
 
+            // Stop all other PlayingSounds if this PlayingSound was just started
+            if (
+                PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing
+                || PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Opening
+            ) StopAllOtherPlayingSounds();
+
             // Subscribe to MediaPlayer events
             PlayingSound.MediaPlayer.MediaEnded -= MediaPlayer_MediaEnded;
             PlayingSound.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
@@ -302,6 +308,37 @@ namespace UniversalSoundBoard.Components
         #endregion
 
         #region Functionality
+        /**
+         * Toggles the MediaPlayer from Playing -> Paused or from Paused -> Playing
+         */
+        private void TogglePlayPause()
+        {
+            if (PlayingSound.MediaPlayer == null) return;
+
+            if (PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Opening || PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
+                PlayingSound.MediaPlayer.Pause();
+            else
+            {
+                PlayingSound.MediaPlayer.Play();
+                StopAllOtherPlayingSounds();
+            }
+        }
+
+        /**
+         * Stops all other PlayingSounds if MultiSoundPlayback is disabled
+         */
+        private void StopAllOtherPlayingSounds()
+        {
+            if (FileManager.itemViewHolder.MultiSoundPlayback) return;
+
+            // Cause all other PlayingSounds to stop playback
+            foreach (var playingSound in FileManager.itemViewHolder.PlayingSounds)
+            {
+                if (playingSound.MediaPlayer == null || playingSound.Uuid.Equals(PlayingSound.Uuid) || !playingSound.MediaPlayer.PlaybackSession.CanPause) continue;
+                playingSound.MediaPlayer.Pause();
+            }
+        }
+
         private void MoveToPrevious()
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
@@ -445,19 +482,6 @@ namespace UniversalSoundBoard.Components
             // Set the volume icon
             if (layoutType == PlayingSoundItemLayoutType.Large)
                 VolumeButton.Content = UniversalSoundboard.Components.VolumeControl.GetVolumeIcon(PlayingSound.Volume, PlayingSound.Muted);
-        }
-
-        /**
-         * Toggles the MediaPlayer from Playing -> Paused or from Paused -> Playing
-         */
-        private void TogglePlayPause()
-        {
-            if (PlayingSound.MediaPlayer == null) return;
-
-            if (PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Opening || PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
-                PlayingSound.MediaPlayer.Pause();
-            else
-                PlayingSound.MediaPlayer.Play();
         }
 
         private void UpdatePlayPauseButton()
