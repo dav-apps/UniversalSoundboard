@@ -390,6 +390,7 @@ namespace UniversalSoundBoard.Pages
                 // Hide the BottomPlayingSoundsBar
                 BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                 GridSplitterGrid.Visibility = Visibility.Collapsed;
+                AdaptSoundListScrollViewerForBottomPlayingSoundsBar();
             }
         }
         #endregion

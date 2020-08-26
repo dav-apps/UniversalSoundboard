@@ -1555,11 +1555,19 @@ namespace UniversalSoundBoard.DataAccess
         public static async Task LoadPlayingSoundsAsync()
         {
             var allPlayingSounds = await GetAllPlayingSoundsAsync();
-            foreach (PlayingSound ps in allPlayingSounds)
+            foreach (PlayingSound playingSound in allPlayingSounds)
             {
-                if (ps.MediaPlayer != null)
+                // Delete each PlayingSound if the PlayingSoundBar is hidden or if the user doesn't want to save PlayingSounds
+                if(
+                    !itemViewHolder.PlayingSoundsListVisible
+                    || !itemViewHolder.SavePlayingSounds
+                )
                 {
-                    var currentPlayingSoundList = itemViewHolder.PlayingSounds.Where(p => p.Uuid == ps.Uuid);
+                    await DeletePlayingSoundAsync(playingSound.Uuid);
+                }
+                else if (playingSound.MediaPlayer != null)
+                {
+                    var currentPlayingSoundList = itemViewHolder.PlayingSounds.Where(p => p.Uuid == playingSound.Uuid);
 
                     if (currentPlayingSoundList.Count() > 0)
                     {
@@ -1571,23 +1579,23 @@ namespace UniversalSoundBoard.DataAccess
                         {
                             // Check if the playing sound changed
                             bool soundWasUpdated = (
-                                currentPlayingSound.Randomly != ps.Randomly
-                                || currentPlayingSound.Repetitions != ps.Repetitions
-                                || currentPlayingSound.Sounds.Count != ps.Sounds.Count
+                                currentPlayingSound.Randomly != playingSound.Randomly
+                                || currentPlayingSound.Repetitions != playingSound.Repetitions
+                                || currentPlayingSound.Sounds.Count != playingSound.Sounds.Count
                             );
 
-                            if (currentPlayingSound.MediaPlayer != null && ps.MediaPlayer != null && !soundWasUpdated)
-                                soundWasUpdated = currentPlayingSound.MediaPlayer.Volume != ps.MediaPlayer.Volume;
+                            if (currentPlayingSound.MediaPlayer != null && playingSound.MediaPlayer != null && !soundWasUpdated)
+                                soundWasUpdated = currentPlayingSound.MediaPlayer.Volume != playingSound.MediaPlayer.Volume;
 
                             // Replace the playing sound if it has changed
                             if (soundWasUpdated)
-                                itemViewHolder.PlayingSounds[index] = ps;
+                                itemViewHolder.PlayingSounds[index] = playingSound;
                         }
                     }
                     else
                     {
                         // Add the new playing sound
-                        itemViewHolder.PlayingSounds.Add(ps);
+                        itemViewHolder.PlayingSounds.Add(playingSound);
                     }
                 }
             }
@@ -1802,11 +1810,6 @@ namespace UniversalSoundBoard.DataAccess
         #region PlayingSound CRUD methods
         public static async Task<Guid> CreatePlayingSoundAsync(Guid? uuid, List<Sound> sounds, int current, int repetitions, bool randomly)
         {
-            if (
-                !itemViewHolder.SavePlayingSounds
-                || !itemViewHolder.PlayingSoundsListVisible
-            ) return uuid.GetValueOrDefault();
-
             List<Guid> soundUuids = new List<Guid>();
             foreach (Sound sound in sounds)
                 soundUuids.Add(sound.Uuid);
