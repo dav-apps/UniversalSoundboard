@@ -194,13 +194,13 @@ namespace UniversalSoundBoard.Pages
         #region LiveTile
         private void SetLiveTileToggle()
         {
-            LiveTileToggle.IsOn = FileManager.itemViewHolder.LiveTileEnabled;
+            LiveTileToggle.IsOn = FileManager.itemViewHolder.LiveTile;
         }
 
         private async void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            FileManager.itemViewHolder.LiveTileEnabled = LiveTileToggle.IsOn;
+            FileManager.itemViewHolder.LiveTile = LiveTileToggle.IsOn;
 
             if (LiveTileToggle.IsOn)
                 await FileManager.UpdateLiveTileAsync();

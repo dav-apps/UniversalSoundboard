@@ -26,7 +26,7 @@ namespace UniversalSoundBoard.Common
         private const string soundOrderKey = "soundOrder";
         private const string soundOrderReversedKey = "soundOrderReversed";
         private const string showListViewKey = "showListView";
-        private const string showCategoryIconKey = "showCategoryIcon";
+        private const string showCategoriesIconsKey = "showCategoryIcon";
         private const string showAcrylicBackgroundKey = "showAcrylicBackground";
         private const string liveTileKey = "liveTile";
         private const string themeKey = "theme";
@@ -44,7 +44,7 @@ namespace UniversalSoundBoard.Common
         private const FileManager.SoundOrder soundOrderDefault = FileManager.SoundOrder.Custom;
         private const bool soundOrderReversedDefault = false;
         private const bool showListViewDefault = false;
-        private const bool showCategoryIconDefault = true;
+        private const bool showCategoriesIconsDefault = false;
         private const bool showAcrylicBackgroundDefault = true;
         private const bool liveTileDefault = true;
         private const FileManager.AppTheme themeDefault = FileManager.AppTheme.System;
@@ -109,9 +109,9 @@ namespace UniversalSoundBoard.Common
         private FileManager.SoundOrder _soundOrder;                         // The selected sound order in the settings
         private bool _soundOrderReversed;                                   // If the sound order is descending (false) or ascending (true)
         private bool _showListView;                                         // If true, shows the sounds on the SoundPage in a ListView
-        private bool _showCategoryIcon;                                     // If true shows the icon of the category on the sound tile
+        private bool _showCategoriesIcons;                                  // If true shows the icon of the category on the sound tile
         private bool _showAcrylicBackground;                                // If true the acrylic background is visible
-        private bool _liveTileEnabled;                                      // If true, show the live tile
+        private bool _liveTile;                                             // If true, shows the live tile
         private FileManager.AppTheme _theme;                                // The design theme of the app
         private double _playingSoundsBarWidth;                              // The relative width of the PlayingSoundsBar in percent
         private bool _muted;                                                // If true, the volume is muted
@@ -244,11 +244,11 @@ namespace UniversalSoundBoard.Common
                 _showListView = (bool)localSettings.Values[showListViewKey];
             #endregion
 
-            #region showCategoryIcon
-            if (localSettings.Values[showCategoryIconKey] == null)
-                _showCategoryIcon = showCategoryIconDefault;
+            #region showCategoriesIcons
+            if (localSettings.Values[showCategoriesIconsKey] == null)
+                _showCategoriesIcons = showCategoriesIconsDefault;
             else
-                _showCategoryIcon = (bool)localSettings.Values[showCategoryIconKey];
+                _showCategoriesIcons = (bool)localSettings.Values[showCategoriesIconsKey];
             #endregion
 
             #region showAcrylicBackground
@@ -260,9 +260,9 @@ namespace UniversalSoundBoard.Common
 
             #region liveTile
             if (localSettings.Values[liveTileKey] == null)
-                _liveTileEnabled = liveTileDefault;
+                _liveTile = liveTileDefault;
             else
-                _liveTileEnabled = (bool)localSettings.Values[liveTileKey];
+                _liveTile = (bool)localSettings.Values[liveTileKey];
             #endregion
 
             #region theme
@@ -868,17 +868,17 @@ namespace UniversalSoundBoard.Common
         }
         #endregion
 
-        #region ShowCategoryIcon
-        public const string ShowCategoryIconKey = "ShowCategoryIcon";
+        #region ShowCategoriesIcons
+        public const string ShowCategoriesIconsKey = "ShowCategoriesIcons";
         public bool ShowCategoryIcon
         {
-            get => _showCategoryIcon;
+            get => _showCategoriesIcons;
             set
             {
-                if (_showCategoryIcon.Equals(value)) return;
-                localSettings.Values[showCategoryIconKey] = value;
-                _showCategoryIcon = value;
-                NotifyPropertyChanged(ShowCategoryIconKey);
+                if (_showCategoriesIcons.Equals(value)) return;
+                localSettings.Values[showCategoriesIconsKey] = value;
+                _showCategoriesIcons = value;
+                NotifyPropertyChanged(ShowCategoriesIconsKey);
             }
         }
         #endregion
@@ -898,17 +898,17 @@ namespace UniversalSoundBoard.Common
         }
         #endregion
 
-        #region LiveTileEnabled
-        public const string LiveTileEnabledKey = "LiveTileEnabled";
-        public bool LiveTileEnabled
+        #region LiveTile
+        public const string LiveTileKey = "LiveTile";
+        public bool LiveTile
         {
-            get => _liveTileEnabled;
+            get => _liveTile;
             set
             {
-                if (_liveTileEnabled.Equals(value)) return;
+                if (_liveTile.Equals(value)) return;
                 localSettings.Values[liveTileKey] = value;
-                _liveTileEnabled = value;
-                NotifyPropertyChanged(LiveTileEnabledKey);
+                _liveTile = value;
+                NotifyPropertyChanged(LiveTileKey);
             }
         }
         #endregion

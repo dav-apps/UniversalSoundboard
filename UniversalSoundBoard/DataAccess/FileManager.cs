@@ -1081,7 +1081,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task UpdateLiveTileAsync()
         {
-            if (itemViewHolder.AllSounds.Count == 0 || !itemViewHolder.LiveTileEnabled)
+            if (itemViewHolder.AllSounds.Count == 0 || !itemViewHolder.LiveTile)
             {
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();
                 return;
