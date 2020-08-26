@@ -9,33 +9,42 @@
 
     <Page.Resources>
         <!-- Styles -->
+        <Style TargetType="PivotItem">
+            <Setter Property="Margin" Value="0" />
+        </Style>
+        
+        <Style x:Key="SettingsPageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
+            <Setter Property="Padding" Value="0,123,0,0" />
+        </Style>
+        
         <Style x:Key="SettingsContentStyle" TargetType="StackPanel">
             <Setter Property="Orientation" Value="Vertical" />
-            <Setter Property="Background" Value="{ThemeResource ApplicationPageBackgroundThemeBrush}" />
-            <Setter Property="Padding" Value="15,15,0,0" />
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="Padding" Value="8,123,0,0" />
         </Style>
 
         <Style x:Key="SettingsEntryStyle" TargetType="StackPanel">
             <Setter Property="Margin" Value="0,5,0,5" />
         </Style>
-
-        <Style TargetType="PivotItem">
-            <Setter Property="Margin" Value="2,28,0,0" />
-        </Style>
     </Page.Resources>
 
-    <Grid Name="ContentRoot" Margin="0,85,0,0">
+    <Grid Name="ContentRoot">
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
         </Grid.RowDefinitions>
 
         <Pivot
-            Name="SettingsPivot" 
-            Style="{StaticResource CustomPivotStyle}">
+            Name="SettingsPivot"
+            Style="{StaticResource CustomPivotStyle}"
+            Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
+            Padding="0,85,0,0">
 
             <PivotItem x:Uid="SettingsPivot-General">
-                <ScrollViewer>
-                    <StackPanel Name="SettingsGeneralStackPanel" Style="{StaticResource SettingsContentStyle}">
+                <ScrollViewer Style="{StaticResource SettingsPageScrollViewerStyle}">
+                    <StackPanel
+                        Name="SettingsGeneralStackPanel"
+                        Style="{StaticResource SettingsContentStyle}">
+                        
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch
                                 Name="ShowPlayingSoundsListToggle"
@@ -66,7 +75,7 @@
                         <StackPanel
                             Name="MultiSoundPlaybackStackPanel"
                             Style="{StaticResource SettingsEntryStyle}">
-                            
+
                             <ToggleSwitch
                                 Name="MultiSoundPlaybackToggle"
                                 x:Uid="SettingsEntry-MultiSoundPlaybackToggle"
@@ -84,7 +93,7 @@
                             Name="SoundOrderStackPanel"
                             Style="{StaticResource SettingsEntryStyle}"
                             Margin="0,10,0,5">
-                            
+
                             <TextBlock
                                 Name="SoundOrderHeaderTextBlock"
                                 x:Uid="SettingsEntry-SoundOrderHeaderTextBlock" />
@@ -94,7 +103,7 @@
                                 SelectedIndex="0"
                                 Margin="0,10,0,0"
                                 SelectionChanged="SoundOrderComboBox_SelectionChanged">
-                                
+
                                 <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-Custom">Custom</ComboBoxItem>
                                 <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-Name">Name</ComboBoxItem>
                                 <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-CreationDate">Creation Date</ComboBoxItem>
@@ -105,7 +114,7 @@
                                 SelectedIndex="0"
                                 Margin="0,10,0,0"
                                 SelectionChanged="SoundOrderReversedComboBox_SelectionChanged">
-                                
+
                                 <ComboBoxItem x:Uid="SettingsEntry-SoundOrderReversedComboBox-Ascending">Ascending</ComboBoxItem>
                                 <ComboBoxItem x:Uid="SettingsEntry-SoundOrderReversedComboBox-Descending">Descending</ComboBoxItem>
                             </ComboBox>
@@ -122,7 +131,7 @@
                                 x:Uid="Github-Link"
                                 NavigateUri="https://github.com/dav-apps/UniversalSoundboard"
                                 Margin="0,-8,0,0" />
-                            
+
                             <HyperlinkButton
                                 x:Uid="PrivacyPolicy-Link"
                                 NavigateUri="https://dav-apps.tech/privacy"
@@ -131,17 +140,17 @@
                             <StackPanel
                                 Orientation="Horizontal"
                                 Margin="0,7,0,0">
-                                
+
                                 <TextBlock
                                     Text="Version"
                                     IsTextSelectionEnabled="True"
                                     Margin="0,0,4,0" />
-                                
+
                                 <TextBlock
                                     x:Uid="Version"
                                     IsTextSelectionEnabled="True" />
                             </StackPanel>
-                            
+
                             <TextBlock Text="Copyright © 2020 by dav" />
                         </StackPanel>
                     </StackPanel>
@@ -149,7 +158,7 @@
             </PivotItem>
             
             <PivotItem x:Uid="SettingsPivot-Design">
-                <ScrollViewer>
+                <ScrollViewer Style="{StaticResource SettingsPageScrollViewerStyle}">
                     <StackPanel Name="SettingsDesignStackPanel" Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
                             <ToggleSwitch
@@ -205,7 +214,7 @@
             </PivotItem>
             
             <PivotItem x:Uid="SettingsPivot-Data">
-                <ScrollViewer>
+                <ScrollViewer Style="{StaticResource SettingsPageScrollViewerStyle}">
                     <StackPanel Name="SettingsDataStackPanel" Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Margin="0,5,0,0">
                             <StackPanel Orientation="Horizontal">
