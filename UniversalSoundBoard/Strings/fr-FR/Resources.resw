@@ -584,4 +584,13 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="SettingsEntry-OpenMultipleSoundsToggle.Header" xml:space="preserve">
     <value>Permettre plusieurs sons ouverts</value>
   </data>
+  <data name="CategoryDeleteButton.Text" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="CategoryEditButton.Text" xml:space="preserve">
+    <value>Editer</value>
+  </data>
+  <data name="CategoryPlayAllButton.Text" xml:space="preserve">
+    <value>Jouer</value>
+  </data>
 </root>

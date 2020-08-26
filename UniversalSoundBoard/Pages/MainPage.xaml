@@ -149,21 +149,36 @@
                                         Style="{StaticResource SmallTopButtonStyle}"
                                         Content="&#xE104;"
                                         Visibility="{Binding EditButtonVisible}"
-                                        Click="CategoryEditButton_Click" />
+                                        Click="CategoryEditButton_Click">
+
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="CategoryEditButton" />
+                                        </ToolTipService.ToolTip>
+                                    </Button>
 
                                     <Button
                                         Name="CategoryDeleteButton"
                                         Style="{StaticResource SmallTopButtonStyle}"
                                         Content="&#xE107;"
                                         Visibility="{Binding EditButtonVisible}"
-                                        Click="CategoryDeleteButton_Click" />
+                                        Click="CategoryDeleteButton_Click">
+
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="CategoryDeleteButton" />
+                                        </ToolTipService.ToolTip>
+                                    </Button>
 
                                     <Button
                                         Name="CategoryPlayAllButton"
                                         Style="{StaticResource SmallTopButtonStyle}"
                                         Content="&#xEDB5;"
                                         Visibility="{Binding PlayAllButtonVisible}"
-                                        Click="CategoryPlayAllButton_Click" />
+                                        Click="CategoryPlayAllButton_Click">
+
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="CategoryPlayAllButton" />
+                                        </ToolTipService.ToolTip>
+                                    </Button>
                                 </StackPanel>
                             </RelativePanel>
 
