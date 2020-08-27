@@ -435,8 +435,10 @@ namespace UniversalSoundBoard.Components
             double windowWidth = Window.Current.Bounds.Width;
             double itemWidth = ContentRoot.ActualWidth;
 
-            if (windowWidth <= FileManager.mobileMaxWidth)
-                layoutType = PlayingSoundItemLayoutType.Compact;
+            if (
+                (FileManager.itemViewHolder.PlayingSoundsListVisible && !FileManager.itemViewHolder.OpenMultipleSounds)
+                || windowWidth < FileManager.mobileMaxWidth
+            ) layoutType = PlayingSoundItemLayoutType.Compact;
             else if (itemWidth <= 210)
                 layoutType = PlayingSoundItemLayoutType.Mini;
             else if (itemWidth <= 300)

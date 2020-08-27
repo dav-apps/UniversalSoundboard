@@ -337,7 +337,10 @@ namespace UniversalSoundBoard.Pages
                 // Set the max width of the sounds list and playing sounds list columns
                 PlayingSoundsBarColDef.MaxWidth = ContentRoot.ActualWidth / 2;
                 
-                if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
+                if (
+                    (FileManager.itemViewHolder.PlayingSoundsListVisible && !FileManager.itemViewHolder.OpenMultipleSounds)
+                    || Window.Current.Bounds.Width < FileManager.mobileMaxWidth
+                )
                 {
                     // Hide the PlayingSoundsBar and the GridSplitter
                     PlayingSoundsBarColDef.Width = new GridLength(0);
