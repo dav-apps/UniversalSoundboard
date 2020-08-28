@@ -204,6 +204,7 @@ namespace UniversalSoundBoard.Components
         private void PreviousButton_Click(object sender, RoutedEventArgs e)
         {
             MoveToPrevious();
+            UpdateUI();
         }
 
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
@@ -215,6 +216,7 @@ namespace UniversalSoundBoard.Components
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
             ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveNext();
+            UpdateUI();
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
@@ -418,7 +420,7 @@ namespace UniversalSoundBoard.Components
             PlayingSound.Sounds.RemoveAt(index);
         }
         #endregion
-
+        
         #region UI methods
         private void AdjustLayout()
         {
@@ -435,10 +437,10 @@ namespace UniversalSoundBoard.Components
             double windowWidth = Window.Current.Bounds.Width;
             double itemWidth = ContentRoot.ActualWidth;
 
-            if (
-                (FileManager.itemViewHolder.PlayingSoundsListVisible && !FileManager.itemViewHolder.OpenMultipleSounds)
-                || windowWidth < FileManager.mobileMaxWidth
-            ) layoutType = PlayingSoundItemLayoutType.Compact;
+            if (FileManager.itemViewHolder.PlayingSoundsListVisible && !FileManager.itemViewHolder.OpenMultipleSounds)
+                layoutType = PlayingSoundItemLayoutType.SingleSoundSmall;
+            else if (windowWidth < FileManager.mobileMaxWidth)
+                layoutType = PlayingSoundItemLayoutType.Compact;
             else if (itemWidth <= 210)
                 layoutType = PlayingSoundItemLayoutType.Mini;
             else if (itemWidth <= 300)
@@ -448,6 +450,9 @@ namespace UniversalSoundBoard.Components
 
             switch (layoutType)
             {
+                case PlayingSoundItemLayoutType.SingleSoundSmall:
+                    VisualStateManager.GoToState(this, "LayoutSizeSingleSoundSmall", false);
+                    break;
                 case PlayingSoundItemLayoutType.Compact:
                     VisualStateManager.GoToState(this, "LayoutSizeCompact", false);
                     break;
@@ -464,6 +469,7 @@ namespace UniversalSoundBoard.Components
 
             // Set the visibility of the time texts in the TransportControls
             BasicMediaTransportControls.TimesVisible = layoutType != PlayingSoundItemLayoutType.Compact;
+            BasicMediaTransportControls.TimelineLayoutCompact = layoutType == PlayingSoundItemLayoutType.SingleSoundSmall;
         }
 
         private void UpdateUI()
@@ -672,6 +678,7 @@ namespace UniversalSoundBoard.Components
 
     enum PlayingSoundItemLayoutType
     {
+        SingleSoundSmall,
         Compact,
         Mini,
         Small,
