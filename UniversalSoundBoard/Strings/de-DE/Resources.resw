@@ -592,4 +592,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="CategoryPlayAllButton.Text" xml:space="preserve">
     <value>Abspielen</value>
   </data>
+  <data name="CollapseButtonTooltip" xml:space="preserve">
+    <value>Sounds ausblenden</value>
+  </data>
+  <data name="ExpandButtonTooltip" xml:space="preserve">
+    <value>Sounds einblenden</value>
+  </data>
 </root>

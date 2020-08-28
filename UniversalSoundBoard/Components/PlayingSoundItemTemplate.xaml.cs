@@ -92,6 +92,7 @@ namespace UniversalSoundBoard.Components
             soundsListVisible = false;
             SoundsListViewStackPanel.Height = 0;
             ExpandButton.Content = "\uE099";
+            ExpandButtonToolTip.Text = loader.GetString("ExpandButtonTooltip");
 
             // Set the media player for the media player element
             MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
@@ -146,6 +147,7 @@ namespace UniversalSoundBoard.Components
                 FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationStartedEvent(this, PlayingSound.Uuid);
                 
                 ExpandButton.Content = "\uE099";
+                ExpandButtonToolTip.Text = loader.GetString("ExpandButtonTooltip");
             }
             else
             {
@@ -156,6 +158,7 @@ namespace UniversalSoundBoard.Components
                 FileManager.itemViewHolder.TriggerPlayingSoundItemShowSoundsListAnimationStartedEvent(this, PlayingSound.Uuid);
 
                 ExpandButton.Content = "\uE098";
+                ExpandButtonToolTip.Text = loader.GetString("CollapseButtonTooltip");
             }
 
             soundsListVisible = !soundsListVisible;

@@ -594,4 +594,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="CategoryPlayAllButton.Text" xml:space="preserve">
     <value>Play</value>
   </data>
+  <data name="CollapseButtonTooltip" xml:space="preserve">
+    <value>Hide sounds</value>
+  </data>
+  <data name="ExpandButtonTooltip" xml:space="preserve">
+    <value>Show sounds</value>
+  </data>
 </root>

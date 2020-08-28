@@ -227,7 +227,12 @@
                 CornerRadius="18"
                 Background="Transparent"
                 Content="&#xE099;"
-                Click="ExpandButton_Click" />
+                Click="ExpandButton_Click">
+
+                <ToolTipService.ToolTip>
+                    <TextBlock Name="ExpandButtonToolTip" Text="Expand" />
+                </ToolTipService.ToolTip>
+            </Button>
         </Grid>
 
         <RelativePanel

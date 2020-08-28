@@ -593,4 +593,10 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="CategoryPlayAllButton.Text" xml:space="preserve">
     <value>Jouer</value>
   </data>
+  <data name="CollapseButtonTooltip" xml:space="preserve">
+    <value>Cacher les sons</value>
+  </data>
+  <data name="ExpandButtonTooltip" xml:space="preserve">
+    <value>Afficher les sons</value>
+  </data>
 </root>
