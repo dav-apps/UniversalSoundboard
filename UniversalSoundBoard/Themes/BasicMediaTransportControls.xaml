@@ -404,7 +404,7 @@
                                         <Setter Target="BufferingProgressBar.Visibility" Value="Visible" />
                                     </VisualState.Setters>
                                 </VisualState>
-                                
+
                                 <VisualState x:Name="Loading">
                                     <VisualState.Setters>
                                         <Setter Target="BufferingProgressBar.Visibility" Value="Visible" />
@@ -416,12 +416,6 @@
                                             To="0"
                                             Duration="0" />
                                     </Storyboard>
-                                </VisualState>
-                                
-                                <VisualState x:Name="Error">
-                                    <VisualState.Setters>
-                                        <Setter Target="ErrorBorder.Visibility" Value="Visible" />
-                                    </VisualState.Setters>
                                 </VisualState>
 
                                 <VisualState x:Name="Disabled">
@@ -493,63 +487,33 @@
                                     <RowDefinition Height="Auto" />
                                 </Grid.RowDefinitions>
 
-                                <Border x:Name="ErrorBorder"
-                                    Width="320"
-                                    Height="96"
-                                    Grid.ColumnSpan="3"
-                                    HorizontalAlignment="Center"
-                                    Background="{ThemeResource MediaTransportControlsPanelBackground}"
-                                    Visibility="Collapsed">
-
-                                    <TextBlock x:Name="ErrorTextBlock"
-                                        Style="{StaticResource MediaTextBlockStyle}"
-                                        TextWrapping="WrapWholeWords"
-                                        Margin="12" />
-                                </Border>
-
                                 <Border x:Name="MediaTransportControls_Timeline_Border" Grid.Column="1" Grid.Row="1">
-                                    <Grid x:Name="MediaTransportControls_Timeline_Grid">
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition />
-                                        </Grid.ColumnDefinitions>
-                                        <Grid.RowDefinitions>
-                                            <RowDefinition />
-                                            <RowDefinition Height="Auto" />
-                                        </Grid.RowDefinitions>
-                                        <Slider x:Name="ProgressSlider"
+                                    <RelativePanel x:Name="MediaTransportControls_Timeline_RelativePanel">
+                                        <Slider
+                                            x:Name="ProgressSlider"
                                             Style="{StaticResource MediaSliderStyle}"
-                                            Margin="0"
                                             MinWidth="80"
-                                            Height="33"
                                             VerticalAlignment="Center"
                                             IsThumbToolTipEnabled="False" />
 
-                                        <ProgressBar x:Name="BufferingProgressBar"
+                                        <ProgressBar
+                                            x:Name="BufferingProgressBar"
+                                            RelativePanel.AlignVerticalCenterWith="TimeElapsedElement"
                                             Height="4"
                                             IsIndeterminate="True"
                                             IsHitTestVisible="False"
-                                            VerticalAlignment="Top"
-                                            Margin="0,2,0,0"
                                             Visibility="Collapsed" />
 
-                                        <Grid x:Name="TimeTextGrid"
-                                            Margin="0"
-                                            Grid.Row="1">
+                                        <TextBlock
+                                            x:Name="TimeElapsedElement"
+                                            Style="{StaticResource MediaTextBlockStyle}"
+                                            Text="00:00" />
 
-                                            <TextBlock x:Name="TimeElapsedElement"
-                                                Style="{StaticResource MediaTextBlockStyle}"
-                                                Margin="0"
-                                                Text="00:00"
-                                                HorizontalAlignment="Left"
-                                                VerticalAlignment="Bottom"/>
-
-                                            <TextBlock x:Name="TimeRemainingElement"
-                                                Style="{StaticResource MediaTextBlockStyle}"
-                                                Text="00:00"
-                                                HorizontalAlignment="Right"
-                                                VerticalAlignment="Bottom" />
-                                        </Grid>
-                                    </Grid>
+                                        <TextBlock
+                                            x:Name="TimeRemainingElement"
+                                            Style="{StaticResource MediaTextBlockStyle}"
+                                            Text="00:00" />
+                                    </RelativePanel>
                                 </Border>
                             </Grid>
                         </Border>
