@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
@@ -78,6 +79,7 @@ namespace UniversalSoundBoard.Common
         public ObservableCollection<Sound> FavouriteSounds { get; }         // A list of the favourite sound which are displayed when the Favourite pivot is selected, sorted by the selected sort option
         public ObservableCollection<Sound> SelectedSounds { get; }          // A list of the sounds which are selected
         public ObservableCollection<PlayingSound> PlayingSounds { get; }    // A list of the Playing Sounds which are displayed in the right menu
+        public List<PlayingSoundItem> PlayingSoundItems { get; }            // A list of all PlayingSoundItems
         #endregion
 
         #region Layout & Design
@@ -167,6 +169,7 @@ namespace UniversalSoundBoard.Common
             FavouriteSounds = new ObservableCollection<Sound>();
             SelectedSounds = new ObservableCollection<Sound>();
             PlayingSounds = new ObservableCollection<PlayingSound>();
+            PlayingSoundItems = new List<PlayingSoundItem>();
             #endregion
 
             #region Layout & Design
