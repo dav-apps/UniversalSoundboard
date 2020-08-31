@@ -33,6 +33,7 @@ namespace UniversalSoundBoard.Pages
         public static double playingSoundHeightDifference = 0;
         private double maxBottomPlayingSoundsBarHeight = 500;
         bool isManipulatingBottomPlayingSoundsBar = false;
+        private int getContainerHeightCount = 0;
         AdvancedCollectionView reversedPlayingSounds = new AdvancedCollectionView(FileManager.itemViewHolder.PlayingSounds);
         
         public SoundPage()
@@ -640,9 +641,21 @@ namespace UniversalSoundBoard.Pages
 
             if(item == null)
             {
-                // Call this methods again after some time
-                await Task.Delay(10);
-                return await GetPlayingSoundItemContainerHeight(index);
+                if(getContainerHeightCount > 15)
+                {
+                    getContainerHeightCount = 0;
+
+                    // Return the default item height
+                    return 88;
+                }
+                else
+                {
+                    getContainerHeightCount++;
+
+                    // Call this methods again after some time
+                    await Task.Delay(15);
+                    return await GetPlayingSoundItemContainerHeight(index);
+                }
             }
 
             return item.ActualHeight;
