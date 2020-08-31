@@ -128,6 +128,8 @@ namespace UniversalSoundBoard.Components
             PreviousButton.Visibility = e.PreviousButtonVisibility;
             NextButton.Visibility = e.NextButtonVisibility;
             ExpandButton.Visibility = e.ExpandButtonVisibility;
+
+            UpdatePlayPauseButtonMargin();
         }
 
         private void PlayingSoundItem_ExpandButtonContentChanged(object sender, ExpandButtonContentChangedEventArgs e)
@@ -393,6 +395,19 @@ namespace UniversalSoundBoard.Components
                 PlayPauseButton.Content = "\uE102";
                 PlayPauseButtonToolTip.Text = loader.GetString("PlayButtonToolTip");
             }
+        }
+
+        private void UpdatePlayPauseButtonMargin()
+        {
+            // If a single sound is allowed, move the PlayPauseButton to the right so that the buttons don't move when the Previous or Next button disappear
+            if (
+                layoutType == PlayingSoundItemLayoutType.SingleSoundSmall
+                && PreviousButton.Visibility == Visibility.Collapsed
+            ) PlayPauseButton.Margin = new Thickness(52, 0, 10, 0);
+            else if (layoutType == PlayingSoundItemLayoutType.SingleSoundSmall)
+                PlayPauseButton.Margin = new Thickness(10, 0, 10, 0);
+            else
+                PlayPauseButton.Margin = new Thickness(1, 0, 1, 0);
         }
 
         private void SetFavouriteFlyoutItemText(bool fav)
