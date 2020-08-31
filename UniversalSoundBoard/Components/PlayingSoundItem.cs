@@ -93,6 +93,13 @@ namespace UniversalSoundboard.Components
             UpdateButtonVisibility();
             UpdateFavouriteFlyoutItem();
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(false));
+            PlaybackStateChanged?.Invoke(
+                this,
+                new PlaybackStateChangedEventArgs(
+                    PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing
+                    || PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Opening
+                )
+            );
         }
 
         #region ItemViewHolder event handlers
