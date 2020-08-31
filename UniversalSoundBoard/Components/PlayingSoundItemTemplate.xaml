@@ -101,8 +101,7 @@
 
                         <!-- MiddleMediaControlStackPanel -->
                         <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.Above)" Value="MediaPlayerElement" />
-                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.RightOf)" Value="LeftMediaControlStackPanel" />
-                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.LeftOf)" Value="RightMediaControlStackPanel" />
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True" />
                         <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignVerticalCenterWith)" Value="RightMediaControlStackPanel" />
                         <Setter Target="MiddleMediaControlStackPanel.Width" Value="154" />
 
@@ -139,8 +138,7 @@
 
                         <!-- MiddleMediaControlStackPanel -->
                         <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.Above)" Value="MediaPlayerElement" />
-                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.RightOf)" Value="LeftMediaControlStackPanel" />
-                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.LeftOf)" Value="RightMediaControlStackPanel" />
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True" />
                         <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignVerticalCenterWith)" Value="RightMediaControlStackPanel" />
                         <Setter Target="MiddleMediaControlStackPanel.Width" Value="154" />
 
@@ -359,9 +357,9 @@
 
             <StackPanel
                 Name="VolumeControlStackPanel"
-                RelativePanel.AlignVerticalCenterWith="MiddleMediaControlStackPanel"
+                RelativePanel.AlignVerticalCenterWith="RightMediaControlStackPanel"
                 RelativePanel.AlignRightWith="RightMediaControlStackPanel"
-                Margin="0,0,46,0"
+                Margin="0,-2,46,0"
                 Visibility="Collapsed">
 
                 <components:VolumeControl
