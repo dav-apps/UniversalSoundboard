@@ -88,6 +88,47 @@
     <Grid Name="ContentRoot" Background="Transparent" Margin="0,6">
         <VisualStateManager.VisualStateGroups>
             <VisualStateGroup>
+                <VisualState x:Name="LayoutSizeSingleSoundLarge">
+                    <VisualState.Setters>
+                        <!-- MediaPlayerElement -->
+                        <Setter Target="MediaPlayerElement.(RelativePanel.AlignBottomWithPanel)" Value="True" />
+
+                        <!-- LeftMediaControlStackPanel -->
+                        <Setter Target="LeftMediaControlStackPanel.Visibility" Value="Collapsed" />
+
+                        <!-- VolumeControlStackPanel -->
+                        <Setter Target="VolumeControlStackPanel.Visibility" Value="Visible" />
+
+                        <!-- MiddleMediaControlStackPanel -->
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.Above)" Value="MediaPlayerElement" />
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.RightOf)" Value="LeftMediaControlStackPanel" />
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.LeftOf)" Value="RightMediaControlStackPanel" />
+                        <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignVerticalCenterWith)" Value="RightMediaControlStackPanel" />
+                        <Setter Target="MiddleMediaControlStackPanel.Width" Value="154" />
+
+                        <Setter Target="PreviousButton.CornerRadius" Value="20" />
+                        <Setter Target="PlayPauseButton.CornerRadius" Value="30" />
+                        <Setter Target="NextButton.CornerRadius" Value="20" />
+
+                        <Setter Target="PlayPauseButton.Height" Value="50" />
+                        <Setter Target="PlayPauseButton.Width" Value="50" />
+                        <Setter Target="PlayPauseButton.FontSize" Value="20" />
+
+                        <!-- RightMediaControlStackPanel -->
+                        <Setter Target="RightMediaControlStackPanel.(RelativePanel.Above)" Value="MediaPlayerElement" />
+
+                        <!-- RemoveButton (RightMediaControlStackPanel) -->
+                        <Setter Target="RemoveButton.Visibility" Value="Collapsed" />
+
+                        <!-- MoreButton (RightMediaControlStackPanel) -->
+                        <Setter Target="MoreButtonVolumeFlyoutItem.Visibility" Value="Collapsed" />
+
+                        <!-- PlayingSoundNameTextBlock -->
+                        <Setter Target="PlayingSoundNameTextBlock.HorizontalAlignment" Value="Center" />
+                        <Setter Target="PlayingSoundNameTextBlock.TextAlignment" Value="Center" />
+                        <Setter Target="PlayingSoundNameTextBlock.Margin" Value="8,0" />
+                    </VisualState.Setters>
+                </VisualState>
                 <VisualState x:Name="LayoutSizeSingleSoundSmall">
                     <VisualState.Setters>
                         <!-- MediaPlayerElement -->
@@ -316,6 +357,21 @@
                 </Button>
             </StackPanel>
 
+            <StackPanel
+                Name="VolumeControlStackPanel"
+                RelativePanel.AlignVerticalCenterWith="MiddleMediaControlStackPanel"
+                RelativePanel.AlignRightWith="RightMediaControlStackPanel"
+                Margin="0,0,46,0"
+                Visibility="Collapsed">
+
+                <components:VolumeControl
+                    x:Name="VolumeControl2"
+                    ValueChanged="VolumeControl_ValueChanged"
+                    IconChanged="VolumeControl_IconChanged"
+                    LostFocus="VolumeControl_LostFocus"
+                    MuteChanged="VolumeControl_MuteChanged" />
+            </StackPanel>
+            
             <StackPanel
                 Name="RightMediaControlStackPanel"
                 RelativePanel.AlignRightWithPanel="True"

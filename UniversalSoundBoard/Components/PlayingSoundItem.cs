@@ -53,8 +53,9 @@ namespace UniversalSoundboard.Components
         public event EventHandler<EventArgs> ShowSoundsList;
         public event EventHandler<EventArgs> HideSoundsList;
         public event EventHandler<FavouriteChangedEventArgs> FavouriteChanged;
+        public event EventHandler<VolumeChangedEventArgs> VolumeChanged;
+        public event EventHandler<MutedChangedEventArgs> MutedChanged;
         public event EventHandler<EventArgs> RemovePlayingSound;
-        
         #endregion
 
         public PlayingSoundItem(PlayingSound playingSound, CoreDispatcher dispatcher)
@@ -92,6 +93,7 @@ namespace UniversalSoundboard.Components
             // Set the correct visibilities and icons for the buttons
             UpdateButtonVisibility();
             UpdateFavouriteFlyoutItem();
+            UpdateVolumeControl();
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(false));
             PlaybackStateChanged?.Invoke(
                 this,
@@ -311,6 +313,20 @@ namespace UniversalSoundboard.Components
             FavouriteChanged?.Invoke(this, new FavouriteChangedEventArgs(currentSound.Favourite));
         }
 
+        private void UpdateVolumeControl()
+        {
+            if (PlayingSound == null) return;
+
+            VolumeChanged?.Invoke(
+                this,
+                new VolumeChangedEventArgs(PlayingSound.Volume)
+            );
+            MutedChanged?.Invoke(
+                this,
+                new MutedChangedEventArgs(PlayingSound.Muted)
+            );
+        }
+
         private void TriggerButtonVisibilityChangedEvent()
         {
             ButtonVisibilityChanged?.Invoke(
@@ -392,15 +408,26 @@ namespace UniversalSoundboard.Components
 
         public async Task SetVolume(int volume)
         {
-            // Save the new volume
             PlayingSound.Volume = volume;
+            VolumeChanged?.Invoke(
+                this,
+                new VolumeChangedEventArgs(volume)
+            );
+
+            // Save the new volume
             await FileManager.SetVolumeOfPlayingSoundAsync(PlayingSound.Uuid, volume);
         }
 
         public async Task SetMuted(bool muted)
         {
-            // Save the new muted
             PlayingSound.Muted = muted;
+            PlayingSound.MediaPlayer.IsMuted = muted || FileManager.itemViewHolder.Muted;
+            MutedChanged?.Invoke(
+                this,
+                new MutedChangedEventArgs(muted)
+            );
+
+            // Save the new muted
             await FileManager.SetMutedOfPlayingSoundAsync(PlayingSound.Uuid, muted);
         }
 
@@ -504,6 +531,26 @@ namespace UniversalSoundboard.Components
         public FavouriteChangedEventArgs(bool favourite)
         {
             Favourite = favourite;
+        }
+    }
+
+    public class VolumeChangedEventArgs : EventArgs
+    {
+        public int Volume { get; }
+
+        public VolumeChangedEventArgs(int volume)
+        {
+            Volume = volume;
+        }
+    }
+
+    public class MutedChangedEventArgs : EventArgs
+    {
+        public bool Muted { get; }
+
+        public MutedChangedEventArgs(bool muted)
+        {
+            Muted = muted;
         }
     }
 }

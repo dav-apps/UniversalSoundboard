@@ -60,6 +60,10 @@ namespace UniversalSoundBoard.Components
             PlayingSoundItem.HideSoundsList += PlayingSoundItem_HideSoundsList;
             PlayingSoundItem.FavouriteChanged -= PlayingSoundItem_FavouriteChanged;
             PlayingSoundItem.FavouriteChanged += PlayingSoundItem_FavouriteChanged;
+            PlayingSoundItem.VolumeChanged -= PlayingSoundItem_VolumeChanged;
+            PlayingSoundItem.VolumeChanged += PlayingSoundItem_VolumeChanged;
+            PlayingSoundItem.MutedChanged -= PlayingSoundItem_MutedChanged;
+            PlayingSoundItem.MutedChanged += PlayingSoundItem_MutedChanged;
             PlayingSoundItem.RemovePlayingSound -= PlayingSoundItem_RemovePlayingSound;
             PlayingSoundItem.RemovePlayingSound += PlayingSoundItem_RemovePlayingSound;
             PlayingSoundItem.Init();
@@ -164,6 +168,16 @@ namespace UniversalSoundBoard.Components
             SetFavouriteFlyoutItemText(e.Favourite);
         }
 
+        private void PlayingSoundItem_VolumeChanged(object sender, VolumeChangedEventArgs e)
+        {
+            VolumeControl2.Value = e.Volume;
+        }
+
+        private void PlayingSoundItem_MutedChanged(object sender, MutedChangedEventArgs e)
+        {
+            VolumeControl2.Muted = e.Muted;
+        }
+
         private void PlayingSoundItem_RemovePlayingSound(object sender, EventArgs e)
         {
             TriggerRemovePlayingSound();
@@ -203,7 +217,13 @@ namespace UniversalSoundBoard.Components
 
         private void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            double value = layoutType == PlayingSoundItemLayoutType.Large ? VolumeControl.Value : MoreButtonVolumeFlyoutItem.VolumeControlValue;
+            double value;
+            if (layoutType == PlayingSoundItemLayoutType.Large)
+                value = VolumeControl.Value;
+            else if (layoutType == PlayingSoundItemLayoutType.SingleSoundLarge)
+                value = VolumeControl2.Value;
+            else
+                value = MoreButtonVolumeFlyoutItem.VolumeControlValue;
 
             // Apply the new volume
             PlayingSound.MediaPlayer.Volume = value / 100 * FileManager.itemViewHolder.Volume / 100;
@@ -217,15 +237,20 @@ namespace UniversalSoundBoard.Components
 
         private async void VolumeControl_LostFocus(object sender, RoutedEventArgs e)
         {
-            double value = layoutType == PlayingSoundItemLayoutType.Large ? VolumeControl.Value : MoreButtonVolumeFlyoutItem.VolumeControlValue;
-            int volume = Convert.ToInt32(value);
+            double value;
+            if (layoutType == PlayingSoundItemLayoutType.Large)
+                value = VolumeControl.Value;
+            else if (layoutType == PlayingSoundItemLayoutType.SingleSoundLarge)
+                value = VolumeControl2.Value;
+            else
+                value = MoreButtonVolumeFlyoutItem.VolumeControlValue;
 
+            int volume = Convert.ToInt32(value);
             await PlayingSoundItem.SetVolume(volume);
         }
 
         private async void VolumeControl_MuteChanged(object sender, bool muted)
         {
-            PlayingSound.MediaPlayer.IsMuted = muted || FileManager.itemViewHolder.Muted;
             await PlayingSoundItem.SetMuted(muted);
         }
 
@@ -332,7 +357,12 @@ namespace UniversalSoundBoard.Components
             double itemWidth = ContentRoot.ActualWidth;
 
             if (FileManager.itemViewHolder.PlayingSoundsListVisible && !FileManager.itemViewHolder.OpenMultipleSounds)
-                layoutType = PlayingSoundItemLayoutType.SingleSoundSmall;
+            {
+                if (windowWidth <= 900)
+                    layoutType = PlayingSoundItemLayoutType.SingleSoundSmall;
+                else
+                    layoutType = PlayingSoundItemLayoutType.SingleSoundLarge;
+            }
             else if (windowWidth < FileManager.mobileMaxWidth)
                 layoutType = PlayingSoundItemLayoutType.Compact;
             else if (itemWidth <= 210)
@@ -346,6 +376,9 @@ namespace UniversalSoundBoard.Components
             {
                 case PlayingSoundItemLayoutType.SingleSoundSmall:
                     VisualStateManager.GoToState(this, "LayoutSizeSingleSoundSmall", false);
+                    break;
+                case PlayingSoundItemLayoutType.SingleSoundLarge:
+                    VisualStateManager.GoToState(this, "LayoutSizeSingleSoundLarge", false);
                     break;
                 case PlayingSoundItemLayoutType.Compact:
                     VisualStateManager.GoToState(this, "LayoutSizeCompact", false);
@@ -363,7 +396,7 @@ namespace UniversalSoundBoard.Components
 
             // Set the visibility of the time texts in the TransportControls
             BasicMediaTransportControls.TimesVisible = layoutType != PlayingSoundItemLayoutType.Compact;
-            BasicMediaTransportControls.TimelineLayoutCompact = layoutType == PlayingSoundItemLayoutType.SingleSoundSmall;
+            BasicMediaTransportControls.TimelineLayoutCompact = layoutType == PlayingSoundItemLayoutType.SingleSoundSmall || layoutType == PlayingSoundItemLayoutType.SingleSoundLarge;
         }
 
         private void UpdateUI()
@@ -450,6 +483,7 @@ namespace UniversalSoundBoard.Components
     enum PlayingSoundItemLayoutType
     {
         SingleSoundSmall,
+        SingleSoundLarge,
         Compact,
         Mini,
         Small,
