@@ -592,4 +592,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="ExpandButtonTooltip" xml:space="preserve">
     <value>Sounds einblenden</value>
   </data>
+  <data name="SoundItemOptionsFlyout-Properties" xml:space="preserve">
+    <value>Eigenschaften</value>
+  </data>
 </root>

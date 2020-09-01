@@ -593,4 +593,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="ExpandButtonTooltip" xml:space="preserve">
     <value>Afficher les sons</value>
   </data>
+  <data name="SoundItemOptionsFlyout-Properties" xml:space="preserve">
+    <value>Propriétés</value>
+  </data>
 </root>

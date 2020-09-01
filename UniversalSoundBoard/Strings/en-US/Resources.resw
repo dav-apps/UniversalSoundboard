@@ -594,4 +594,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="ExpandButtonTooltip" xml:space="preserve">
     <value>Show sounds</value>
   </data>
+  <data name="SoundItemOptionsFlyout-Properties" xml:space="preserve">
+    <value>Properties</value>
+  </data>
 </root>
