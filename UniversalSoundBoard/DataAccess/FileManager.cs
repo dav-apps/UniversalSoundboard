@@ -2709,10 +2709,7 @@ namespace UniversalSoundBoard.DataAccess
                 return player;
 
             if (mediaPlaybackList.Items.Count >= current + 1)
-            {
-                try { mediaPlaybackList.MoveTo(Convert.ToUInt32(current)); }
-                catch { }
-            }
+                mediaPlaybackList.MoveTo(Convert.ToUInt32(current));
 
             return player;
         }

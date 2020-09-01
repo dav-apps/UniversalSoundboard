@@ -641,7 +641,41 @@ namespace UniversalSoundBoard.Pages
             await playSoundsSuccessivelyContentDialog.ShowAsync();
         }
 
-        private async void PlaySoundsSuccessivelyFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void PlaySoundsButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Check if Flyout with option to play sounds simultaneously should be shown
+            if(
+                (FileManager.itemViewHolder.PlayingSoundsListVisible && FileManager.itemViewHolder.OpenMultipleSounds && FileManager.itemViewHolder.MultiSoundPlayback)
+                || (!FileManager.itemViewHolder.PlayingSoundsListVisible && FileManager.itemViewHolder.MultiSoundPlayback)
+            )
+            {
+                // Show flyout
+                MenuFlyout flyout = new MenuFlyout();
+
+                MenuFlyoutItem playSoundsSuccessivelyFlyoutItem = new MenuFlyoutItem
+                {
+                    Text = loader.GetString("PlaySoundsSuccessively")
+                };
+                playSoundsSuccessivelyFlyoutItem.Click += PlaySoundsSuccessivelyFlyoutItem_Click;
+                flyout.Items.Add(playSoundsSuccessivelyFlyoutItem);
+
+                MenuFlyoutItem playSoundsSimultaneouslyFlyouItem = new MenuFlyoutItem
+                {
+                    Text = loader.GetString("PlaySoundsSimultaneously"),
+                    IsEnabled = FileManager.itemViewHolder.SelectedSounds.Count <=5
+                };
+                playSoundsSimultaneouslyFlyouItem.Click += PlaySoundsSimultaneouslyFlyoutItem_Click;
+
+                flyout.Items.Add(playSoundsSimultaneouslyFlyouItem);
+                flyout.ShowAt(PlaySoundsButton, new FlyoutShowOptions { Placement = FlyoutPlacementMode.Bottom });
+            }
+            else
+            {
+                await ShowPlaySelectedSoundsSuccessivelyDialog();
+            }
+        }
+
+        private async Task ShowPlaySelectedSoundsSuccessivelyDialog()
         {
             List<Sound> sounds = new List<Sound>();
             foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
@@ -653,6 +687,11 @@ namespace UniversalSoundBoard.Pages
             var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(sounds, template, listViewItemStyle);
             playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
             await playSoundsSuccessivelyContentDialog.ShowAsync();
+        }
+
+        private async void PlaySoundsSuccessivelyFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            await ShowPlaySelectedSoundsSuccessivelyDialog();
         }
 
         private async void PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -668,13 +707,8 @@ namespace UniversalSoundBoard.Pages
 
         private async void PlaySoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            bool oldPlayOneSoundAtOnce = FileManager.itemViewHolder.PlayOneSoundAtOnce;
-
-            FileManager.itemViewHolder.PlayOneSoundAtOnce = false;
             foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
                 await SoundPage.PlaySoundAsync(sound);
-
-            FileManager.itemViewHolder.PlayOneSoundAtOnce = oldPlayOneSoundAtOnce;
         }
         #endregion
 

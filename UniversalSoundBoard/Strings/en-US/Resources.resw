@@ -177,10 +177,10 @@
   <data name="NewCategoryContentDialog-Title" xml:space="preserve">
     <value>New category</value>
   </data>
-  <data name="PlaySoundsSimultaneously.Text" xml:space="preserve">
+  <data name="PlaySoundsSimultaneously" xml:space="preserve">
     <value>Play simultaneously</value>
   </data>
-  <data name="PlaySoundsSuccessively.Text" xml:space="preserve">
+  <data name="PlaySoundsSuccessively" xml:space="preserve">
     <value>Play one after another</value>
   </data>
   <data name="RenameSoundContentDialog-PrimaryButton" xml:space="preserve">

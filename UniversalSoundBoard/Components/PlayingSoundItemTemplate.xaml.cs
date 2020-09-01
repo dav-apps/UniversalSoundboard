@@ -308,6 +308,11 @@ namespace UniversalSoundBoard.Components
                 TriggerRemovePlayingSound();
         }
 
+        private async void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            await PlayingSoundItem.MoveToSound(SoundsListView.SelectedIndex);
+        }
+
         private void SwipeControl_RightTapped(object sender, RightTappedRoutedEventArgs e)
         {
             MenuFlyout flyout = new MenuFlyout();
@@ -450,12 +455,7 @@ namespace UniversalSoundBoard.Components
         }
         #endregion
 
-        #region Other event handlers
-        private async void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            await PlayingSoundItem.MoveToSound(SoundsListView.SelectedIndex);
-        }
-
+        #region Storyboard event handlers
         private async void HidePlayingSoundItemStoryboard_Completed(object sender, object e)
         {
             await PlayingSoundItem.Remove();
