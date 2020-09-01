@@ -597,4 +597,16 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SoundItemOptionsFlyout-Properties" xml:space="preserve">
     <value>Properties</value>
   </data>
+  <data name="ContentDialog-Close" xml:space="preserve">
+    <value>Close</value>
+  </data>
+  <data name="PropertiesContentDialog-FileType" xml:space="preserve">
+    <value>File type:</value>
+  </data>
+  <data name="PropertiesContentDialog-Name" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="PropertiesContentDialog-Size" xml:space="preserve">
+    <value>Size:</value>
+  </data>
 </root>

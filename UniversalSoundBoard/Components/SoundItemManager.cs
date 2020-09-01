@@ -47,6 +47,7 @@ namespace UniversalSoundboard.Components
             flyout.SetImageFlyoutItemClick += OptionsFlyout_SetImageFlyoutItemClick;
             flyout.RenameFlyoutItemClick += OptionsFlyout_RenameFlyoutItemClick;
             flyout.DeleteFlyoutItemClick += OptionsFlyout_DeleteFlyoutItemClick;
+            flyout.PropertiesFlyoutItemClick += Flyout_PropertiesFlyoutItemClick;
 
             flyout.ShowAt(sender as UIElement, position);
         }
@@ -274,6 +275,14 @@ namespace UniversalSoundboard.Components
         {
             await FileManager.DeleteSoundAsync(sound.Uuid);
             FileManager.RemoveSound(sound.Uuid);
+        }
+        #endregion
+
+        #region Properties
+        private async void Flyout_PropertiesFlyoutItemClick(object sender, RoutedEventArgs e)
+        {
+            var propertiesContentDialog = ContentDialogs.CreatePropertiesContentDialog(sound);
+            await propertiesContentDialog.ShowAsync();
         }
         #endregion
 
