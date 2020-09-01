@@ -23,8 +23,9 @@
             <AcrylicBrush
                 x:Name="NavigationViewHeaderBackgroundBrush"
                 BackgroundSource="Backdrop"
+                FallbackColor="White"
                 TintOpacity="0.75"
-                TintColor="#0d1221" />
+                TintColor="White" />
 
             <!-- Pivot styles -->
             <DataTemplate x:Key="PivotHeaderTemplate">

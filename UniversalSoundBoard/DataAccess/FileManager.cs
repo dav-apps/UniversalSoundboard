@@ -2603,6 +2603,7 @@ namespace UniversalSoundBoard.DataAccess
 
             // Set the color for the NavigationViewHeader background
             (Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush).TintColor = appThemeColor;
+            (Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush).FallbackColor = appThemeColor;
         }
 
         public static void NavigateToAccountPage()
