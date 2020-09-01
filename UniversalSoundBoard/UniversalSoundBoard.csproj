@@ -225,6 +225,8 @@
     <Content Include="Assets\Icons\Wide310x150Logo.scale-150.png" />
     <Content Include="Assets\Icons\Wide310x150Logo.scale-200.png" />
     <Content Include="Assets\Icons\Wide310x150Logo.scale-400.png" />
+    <Content Include="Assets\Images\dav-logo-text-white.png" />
+    <Content Include="Assets\Images\dav-logo-text.png" />
     <Content Include="Assets\Images\default-dark.png" />
     <Content Include="Assets\Images\default.png" />
     <None Include="Package.StoreAssociation.xml">

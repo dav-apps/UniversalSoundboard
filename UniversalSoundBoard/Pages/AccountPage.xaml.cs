@@ -6,9 +6,11 @@ using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundboard.Pages
 {
@@ -39,6 +41,11 @@ namespace UniversalSoundboard.Pages
         {
             RequestedTheme = FileManager.GetRequestedTheme();
             ContentRoot.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
+
+            // Set the dav logo
+            DavLogoImage.Source = new BitmapImage(new Uri(
+                RequestedTheme == ElementTheme.Dark ? "ms-appx:///Assets/Images/dav-logo-text-white.png" : "ms-appx:///Assets/Images/dav-logo-text.png"
+            ));
         }
 
         private void UpdateUserLayout()
@@ -148,6 +155,21 @@ namespace UniversalSoundboard.Pages
         private async void SignupButton_Click(object sender, RoutedEventArgs e)
         {
             await Windows.System.Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/signup"));
+        }
+
+        private async void DavLogoImage_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        {
+            await Windows.System.Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech"));
+        }
+
+        private void DavLogoImage_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 0);
+        }
+
+        private void DavLogoImage_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        {
+            Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
         }
     }
 }

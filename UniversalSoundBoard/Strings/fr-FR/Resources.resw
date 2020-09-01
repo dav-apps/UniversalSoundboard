@@ -401,12 +401,6 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="Account-LandingText-Header.Text" xml:space="preserve">
     <value>Synchronisez votre Soundboard et accédez-y de n'importe où.</value>
   </data>
-  <data name="Account-TryOut.Text" xml:space="preserve">
-    <value>Essayer gratuitement</value>
-  </data>
-  <data name="Account-VisitWebsiteLink.Content" xml:space="preserve">
-    <value>Visiter dav-apps.tech</value>
-  </data>
   <data name="SignupButton.Content" xml:space="preserve">
     <value>Créer un compte</value>
   </data>

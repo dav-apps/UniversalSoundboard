@@ -402,12 +402,6 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Account-LandingText-Header.Text" xml:space="preserve">
     <value>Save your Soundboard and access it from anywhere</value>
   </data>
-  <data name="Account-TryOut.Text" xml:space="preserve">
-    <value>Try it out for free</value>
-  </data>
-  <data name="Account-VisitWebsiteLink.Content" xml:space="preserve">
-    <value>Visit dav-apps.tech</value>
-  </data>
   <data name="SignupButton.Content" xml:space="preserve">
     <value>Sign up</value>
   </data>
