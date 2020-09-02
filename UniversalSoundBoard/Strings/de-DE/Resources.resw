@@ -616,4 +616,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Sizes-MB" xml:space="preserve">
     <value>MB</value>
   </data>
+  <data name="PropertiesContentDialog-ImageSize" xml:space="preserve">
+    <value>Größe des Bildes:</value>
+  </data>
 </root>

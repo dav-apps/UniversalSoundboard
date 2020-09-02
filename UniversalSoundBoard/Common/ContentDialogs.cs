@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Threading.Tasks;
 using UniversalSoundboard.Components;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
@@ -796,7 +797,7 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Properties
-        public static ContentDialog CreatePropertiesContentDialog(Sound sound)
+        public static async Task<ContentDialog> CreatePropertiesContentDialog(Sound sound)
         {
             PropertiesContentDialog = new ContentDialog
             {
@@ -812,22 +813,18 @@ namespace UniversalSoundBoard.Common
             };
 
             // Create the columns
-            var firstColumn = new ColumnDefinition { Width = new GridLength(120, GridUnitType.Pixel) };
+            var firstColumn = new ColumnDefinition { Width = new GridLength(130, GridUnitType.Pixel) };
             var secondColumn = new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) };
 
             contentGrid.ColumnDefinitions.Add(firstColumn);
             contentGrid.ColumnDefinitions.Add(secondColumn);
 
-            // Create the rows
-            var firstRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
-            var secondRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
-            var thirdRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+            #region Name
+            // Add the row
+            var nameRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+            contentGrid.RowDefinitions.Add(nameRow);
 
-            contentGrid.RowDefinitions.Add(firstRow);
-            contentGrid.RowDefinitions.Add(secondRow);
-            contentGrid.RowDefinitions.Add(thirdRow);
-
-            // Name header
+            // Header
             StackPanel nameHeaderStackPanel = new StackPanel();
             Grid.SetRow(nameHeaderStackPanel, 0);
             Grid.SetColumn(nameHeaderStackPanel, 0);
@@ -835,12 +832,13 @@ namespace UniversalSoundBoard.Common
             TextBlock nameHeaderTextBlock = new TextBlock
             {
                 Text = loader.GetString("PropertiesContentDialog-Name"),
-                FontSize = fontSize
+                FontSize = fontSize,
+                TextWrapping = TextWrapping.WrapWholeWords
             };
 
             nameHeaderStackPanel.Children.Add(nameHeaderTextBlock);
 
-            // Name data
+            // Data
             StackPanel nameDataStackPanel = new StackPanel();
             Grid.SetRow(nameDataStackPanel, 0);
             Grid.SetColumn(nameDataStackPanel, 1);
@@ -855,7 +853,16 @@ namespace UniversalSoundBoard.Common
 
             nameDataStackPanel.Children.Add(nameDataTextBlock);
 
-            // File type header
+            contentGrid.Children.Add(nameHeaderStackPanel);
+            contentGrid.Children.Add(nameDataStackPanel);
+            #endregion
+
+            #region File type
+            // Add the row
+            var fileTypeRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+            contentGrid.RowDefinitions.Add(fileTypeRow);
+
+            // Header
             StackPanel fileTypeHeaderStackPanel = new StackPanel
             {
                 Margin = new Thickness(0, 10, 0, 0)
@@ -866,12 +873,13 @@ namespace UniversalSoundBoard.Common
             TextBlock fileTypeHeaderTextBlock = new TextBlock
             {
                 Text = loader.GetString("PropertiesContentDialog-FileType"),
-                FontSize = fontSize
+                FontSize = fontSize,
+                TextWrapping = TextWrapping.WrapWholeWords
             };
 
             fileTypeHeaderStackPanel.Children.Add(fileTypeHeaderTextBlock);
 
-            // File type data
+            // Data
             StackPanel fileTypeDataStackPanel = new StackPanel
             {
                 Margin = new Thickness(0, 10, 0, 0)
@@ -889,47 +897,106 @@ namespace UniversalSoundBoard.Common
 
             fileTypeDataStackPanel.Children.Add(fileTypeDataTextBlock);
 
-            // Size header
-            StackPanel sizeHeaderStackPanel = new StackPanel
-            {
-                Margin = new Thickness(0, 10, 0, 0)
-            };
-            Grid.SetRow(sizeHeaderStackPanel, 2);
-            Grid.SetColumn(sizeHeaderStackPanel, 0);
-
-            TextBlock sizeHeaderTextBlock = new TextBlock
-            {
-                Text = loader.GetString("PropertiesContentDialog-Size"),
-                FontSize = fontSize
-            };
-
-            sizeHeaderStackPanel.Children.Add(sizeHeaderTextBlock);
-
-            // Size data
-            StackPanel sizeDataStackPanel = new StackPanel
-            {
-                Margin = new Thickness(0, 10, 0, 0)
-            };
-            Grid.SetRow(sizeDataStackPanel, 2);
-            Grid.SetColumn(sizeDataStackPanel, 1);
-
-            TextBlock sizeDataTextBlock = new TextBlock
-            {
-                Text = "123 MB",
-                FontSize = fontSize,
-                IsTextSelectionEnabled = true,
-                TextWrapping = TextWrapping.WrapWholeWords
-            };
-
-            sizeDataStackPanel.Children.Add(sizeDataTextBlock);
-
-            contentGrid.Children.Add(nameHeaderStackPanel);
-            contentGrid.Children.Add(nameDataStackPanel);
             contentGrid.Children.Add(fileTypeHeaderStackPanel);
             contentGrid.Children.Add(fileTypeDataStackPanel);
-            contentGrid.Children.Add(sizeHeaderStackPanel);
-            contentGrid.Children.Add(sizeDataStackPanel);
+            #endregion
 
+            #region Size
+            var audioFile = await sound.GetAudioFileAsync();
+            if (audioFile != null)
+            {
+                // Add the row
+                var sizeRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+                contentGrid.RowDefinitions.Add(sizeRow);
+
+                // Header
+                StackPanel sizeHeaderStackPanel = new StackPanel
+                {
+                    Margin = new Thickness(0, 10, 0, 0)
+                };
+                Grid.SetRow(sizeHeaderStackPanel, 2);
+                Grid.SetColumn(sizeHeaderStackPanel, 0);
+
+                TextBlock sizeHeaderTextBlock = new TextBlock
+                {
+                    Text = loader.GetString("PropertiesContentDialog-Size"),
+                    FontSize = fontSize,
+                    TextWrapping = TextWrapping.WrapWholeWords
+                };
+
+                sizeHeaderStackPanel.Children.Add(sizeHeaderTextBlock);
+
+                // Data
+                StackPanel sizeDataStackPanel = new StackPanel
+                {
+                    Margin = new Thickness(0, 10, 0, 0)
+                };
+                Grid.SetRow(sizeDataStackPanel, 2);
+                Grid.SetColumn(sizeDataStackPanel, 1);
+
+                TextBlock sizeDataTextBlock = new TextBlock
+                {
+                    Text = FileManager.GetFormattedSize(await FileManager.GetFileSizeAsync(audioFile)),
+                    FontSize = fontSize,
+                    IsTextSelectionEnabled = true,
+                    TextWrapping = TextWrapping.WrapWholeWords
+                };
+
+                sizeDataStackPanel.Children.Add(sizeDataTextBlock);
+
+                contentGrid.Children.Add(sizeHeaderStackPanel);
+                contentGrid.Children.Add(sizeDataStackPanel);
+            }
+            #endregion
+
+            #region Image size
+            var imageFile = await sound.GetImageFileAsync();
+            if(imageFile != null)
+            {
+                // Add the row
+                var imageSizeRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+                contentGrid.RowDefinitions.Add(imageSizeRow);
+
+                // Image size header
+                StackPanel imageSizeHeaderStackPanel = new StackPanel
+                {
+                    Margin = new Thickness(0, 10, 0, 0)
+                };
+                Grid.SetRow(imageSizeHeaderStackPanel, 3);
+                Grid.SetColumn(imageSizeHeaderStackPanel, 0);
+
+                TextBlock imageSizeHeaderTextBlock = new TextBlock
+                {
+                    Text = loader.GetString("PropertiesContentDialog-ImageSize"),
+                    FontSize = fontSize,
+                    TextWrapping = TextWrapping.WrapWholeWords
+                };
+
+                imageSizeHeaderStackPanel.Children.Add(imageSizeHeaderTextBlock);
+
+                // Image size data
+                StackPanel imageSizeDataStackPanel = new StackPanel
+                {
+                    Margin = new Thickness(0, 10, 0, 0)
+                };
+                Grid.SetRow(imageSizeDataStackPanel, 3);
+                Grid.SetColumn(imageSizeDataStackPanel, 1);
+
+                TextBlock imageSizeDataTextBlock = new TextBlock
+                {
+                    Text = FileManager.GetFormattedSize(await FileManager.GetFileSizeAsync(imageFile)),
+                    FontSize = fontSize,
+                    IsTextSelectionEnabled = true,
+                    TextWrapping = TextWrapping.WrapWholeWords
+                };
+
+                imageSizeDataStackPanel.Children.Add(imageSizeDataTextBlock);
+
+                contentGrid.Children.Add(imageSizeHeaderStackPanel);
+                contentGrid.Children.Add(imageSizeDataStackPanel);
+            }
+            #endregion
+            
             PropertiesContentDialog.Content = contentGrid;
 
             return PropertiesContentDialog;

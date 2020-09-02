@@ -2671,13 +2671,13 @@ namespace UniversalSoundBoard.DataAccess
             {
                 // GB
                 double gb = size / gbMin;
-                return string.Format("{0} {1}", gb.ToString("N1"), loader.GetString("Sizes-GB"));
+                return string.Format("{0} {1}", gb.ToString("N2"), loader.GetString("Sizes-GB"));
             }
             else if (size > mbMin)
             {
                 // MB
                 double mb = size / (double)mbMin;
-                return string.Format("{0} {1}", mb.ToString("N0"), loader.GetString("Sizes-MB"));
+                return string.Format("{0} {1}", mb.ToString("N1"), loader.GetString("Sizes-MB"));
             }
             else
             {

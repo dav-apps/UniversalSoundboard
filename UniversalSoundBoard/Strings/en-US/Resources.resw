@@ -618,4 +618,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Sizes-MB" xml:space="preserve">
     <value>MB</value>
   </data>
+  <data name="PropertiesContentDialog-ImageSize" xml:space="preserve">
+    <value>Size of the image:</value>
+  </data>
 </root>

@@ -281,7 +281,7 @@ namespace UniversalSoundboard.Components
         #region Properties
         private async void Flyout_PropertiesFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            var propertiesContentDialog = ContentDialogs.CreatePropertiesContentDialog(sound);
+            var propertiesContentDialog = await ContentDialogs.CreatePropertiesContentDialog(sound);
             await propertiesContentDialog.ShowAsync();
         }
         #endregion

@@ -617,4 +617,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="Sizes-MB" xml:space="preserve">
     <value>Mo</value>
   </data>
+  <data name="PropertiesContentDialog-ImageSize" xml:space="preserve">
+    <value>Taille de l'image :</value>
+  </data>
 </root>
