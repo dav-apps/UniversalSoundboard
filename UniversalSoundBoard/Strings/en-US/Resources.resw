@@ -609,4 +609,13 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PropertiesContentDialog-Size" xml:space="preserve">
     <value>Size:</value>
   </data>
+  <data name="Sizes-GB" xml:space="preserve">
+    <value>GB</value>
+  </data>
+  <data name="Sizes-KB" xml:space="preserve">
+    <value>KB</value>
+  </data>
+  <data name="Sizes-MB" xml:space="preserve">
+    <value>MB</value>
+  </data>
 </root>

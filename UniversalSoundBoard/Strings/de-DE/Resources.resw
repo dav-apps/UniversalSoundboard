@@ -607,4 +607,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PropertiesContentDialog-Size" xml:space="preserve">
     <value>Größe:</value>
   </data>
+  <data name="Sizes-GB" xml:space="preserve">
+    <value>GB</value>
+  </data>
+  <data name="Sizes-KB" xml:space="preserve">
+    <value>KB</value>
+  </data>
+  <data name="Sizes-MB" xml:space="preserve">
+    <value>MB</value>
+  </data>
 </root>

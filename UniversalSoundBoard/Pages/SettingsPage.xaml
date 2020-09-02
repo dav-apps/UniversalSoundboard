@@ -282,11 +282,12 @@
                         
                         <StackPanel
                             Style="{StaticResource SettingsEntryStyle}" 
-                            Margin="0,15,5,5">
+                            Margin="0,15,5,0">
                             
                             <TextBlock
                                 Name="SoundBoardSizeTextBlock" 
-                                Text="{Binding SoundboardSize}" />
+                                Text="{x:Bind soundboardSize}"
+                                IsTextSelectionEnabled="True" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

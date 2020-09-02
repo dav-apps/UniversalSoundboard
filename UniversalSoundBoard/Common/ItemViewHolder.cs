@@ -69,7 +69,7 @@ namespace UniversalSoundBoard.Common
         private bool _imported;                                             // If true a soundboard was import in the app session
         private string _exportMessage;                                      // The text describing the status of the export
         private string _importMessage;                                      // The text describing the status of the import
-        private string _soundboardSize;                                     // The text shown on the settings page which describes the size of the soundboard
+        private ulong _soundboardSize;                                      // The size of the entire soundboard in byte
         #endregion
 
         #region Lists
@@ -159,7 +159,7 @@ namespace UniversalSoundBoard.Common
             _imported = false;
             _exportMessage = "";
             _importMessage = "";
-            _soundboardSize = "";
+            _soundboardSize = 0;
             #endregion
 
             #region Lists
@@ -510,7 +510,7 @@ namespace UniversalSoundBoard.Common
 
         #region SoundboardSize
         public const string SoundboardSizeKey = "SoundboardSize";
-        public string SoundboardSize
+        public ulong SoundboardSize
         {
             get => _soundboardSize;
             set

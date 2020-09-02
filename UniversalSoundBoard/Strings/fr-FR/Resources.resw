@@ -608,4 +608,13 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="PropertiesContentDialog-Size" xml:space="preserve">
     <value>Taille :</value>
   </data>
+  <data name="Sizes-GB" xml:space="preserve">
+    <value>Go</value>
+  </data>
+  <data name="Sizes-KB" xml:space="preserve">
+    <value>Ko</value>
+  </data>
+  <data name="Sizes-MB" xml:space="preserve">
+    <value>Mo</value>
+  </data>
 </root>

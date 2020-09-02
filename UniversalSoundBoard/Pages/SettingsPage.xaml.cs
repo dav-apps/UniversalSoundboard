@@ -1,6 +1,7 @@
 ﻿using System;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
+using Windows.ApplicationModel.Resources;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -10,7 +11,9 @@ namespace UniversalSoundBoard.Pages
 {
     public sealed partial class SettingsPage : Page
     {
+        readonly ResourceLoader loader = new ResourceLoader();
         bool initialized = false;
+        string soundboardSize = "";
 
         public SettingsPage()
         {
@@ -23,9 +26,11 @@ namespace UniversalSoundBoard.Pages
             ContentRoot.DataContext = FileManager.itemViewHolder;
             SetThemeColors();
             InitSettings();
-            await FileManager.SetSoundBoardSizeTextAsync();
+
+            await FileManager.CalculateSoundboardSizeAsync();
         }
 
+        #region Functionality
         private void SetThemeColors()
         {
             RequestedTheme = FileManager.GetRequestedTheme();
@@ -53,6 +58,17 @@ namespace UniversalSoundBoard.Pages
             SetThemeRadioButton();
             initialized = true;
         }
+
+        private void UpdateSoundboardSizeText()
+        {
+            if (FileManager.itemViewHolder.SoundboardSize == 0)
+                soundboardSize = "";
+            else
+                soundboardSize = string.Format(loader.GetString("SettingsSoundBoardSize"), FileManager.GetFormattedSize(FileManager.itemViewHolder.SoundboardSize));
+
+            Bindings.Update();
+        }
+        #endregion
 
         #region ShowPlayingSoundsList
         private void SetShowPlayingSoundsListToggle()
@@ -254,6 +270,8 @@ namespace UniversalSoundBoard.Pages
         {
             if (e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 SetThemeColors();
+            else if (e.PropertyName.Equals(ItemViewHolder.SoundboardSizeKey))
+                UpdateSoundboardSizeText();
         }
 
         private void SoundOrderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)

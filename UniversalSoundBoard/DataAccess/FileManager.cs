@@ -25,7 +25,6 @@ using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
-using Windows.Storage.FileProperties;
 using Windows.Storage.Streams;
 using Windows.UI;
 using Windows.UI.Core;
@@ -169,6 +168,7 @@ namespace UniversalSoundBoard.DataAccess
 
         private static readonly ResourceLoader loader = new ResourceLoader();
         internal static bool syncFinished = false;
+        private static bool isCalculatingSoundboardSize = false;
 
         // Save the custom order of the sounds in all categories to load them faster
         private static readonly Dictionary<Guid, List<Guid>> CustomSoundOrder = new Dictionary<Guid, List<Guid>>();
@@ -467,7 +467,7 @@ namespace UniversalSoundBoard.DataAccess
             await LoadCategoriesAsync();
             await LoadAllSoundsAsync();
             await LoadPlayingSoundsAsync();
-            await SetSoundBoardSizeTextAsync();
+            await CalculateSoundboardSizeAsync();
         }
 
         private static void SetImportMessage(string message, bool startMessage)
@@ -2626,37 +2626,65 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region General methods
-        public static async Task SetSoundBoardSizeTextAsync()
+        public static async Task CalculateSoundboardSizeAsync()
         {
-            // TODO
-            if (itemViewHolder.ProgressRingIsActive)
+            if (isCalculatingSoundboardSize) return;
+            else if (itemViewHolder.AppState != AppState.Normal)
             {
-                await Task.Delay(1000);
-                await SetSoundBoardSizeTextAsync();
+                // Call this method again after some time
+                await Task.Delay(3000);
+                await CalculateSoundboardSizeAsync();
                 return;
             }
 
-            // Copy AllSounds
-            List<Sound> allSounds = new List<Sound>();
+            isCalculatingSoundboardSize = true;
+
+            // Get all sounds
+            List<Sound> sounds = new List<Sound>();
             foreach (var sound in itemViewHolder.AllSounds)
-                allSounds.Add(sound);
+                sounds.Add(sound);
 
-            double totalSize = 0;
-            foreach (Sound sound in allSounds)
+            // Calculate the size of each sound
+            itemViewHolder.SoundboardSize = 0;
+
+            foreach(var sound in sounds)
             {
-                double size = 0;
-                var soundAudioFile = await sound.GetAudioFileAsync();
-                if(soundAudioFile != null)
-                    size = await GetFileSizeInGBAsync(soundAudioFile);
+                var audioFile = await sound.GetAudioFileAsync();
+                if (audioFile != null)
+                    itemViewHolder.SoundboardSize += await GetFileSizeAsync(audioFile);
 
-                var soundImageFile = await sound.GetImageFileAsync();
-                if(soundImageFile != null)
-                    size += await GetFileSizeInGBAsync(soundImageFile);
-
-                totalSize += size;
+                var imageFile = await sound.GetImageFileAsync();
+                if (imageFile != null)
+                    itemViewHolder.SoundboardSize += await GetFileSizeAsync(imageFile);
             }
 
-            itemViewHolder.SoundboardSize = string.Format(loader.GetString("SettingsSoundBoardSize"), totalSize.ToString("n2") + " GB");
+            isCalculatingSoundboardSize = false;
+        }
+
+        public static string GetFormattedSize(ulong size)
+        {
+            ulong gbMin = 1000000000;
+            ulong mbMin = 1000000;
+            ulong kbMin = 1000;
+
+            if (size > gbMin)
+            {
+                // GB
+                double gb = size / gbMin;
+                return string.Format("{0} {1}", gb.ToString("N1"), loader.GetString("Sizes-GB"));
+            }
+            else if (size > mbMin)
+            {
+                // MB
+                double mb = size / (double)mbMin;
+                return string.Format("{0} {1}", mb.ToString("N0"), loader.GetString("Sizes-MB"));
+            }
+            else
+            {
+                // KB
+                double kb = size / kbMin;
+                return string.Format("{0} {1}", kb.ToString("N0"), loader.GetString("Sizes-KB"));
+            }
         }
 
         public static async Task<MediaPlayer> CreateMediaPlayerAsync(List<Sound> sounds, int current)
@@ -2741,10 +2769,9 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Helper Methods
-        public static async Task<double> GetFileSizeInGBAsync(StorageFile file)
+        public static async Task<ulong> GetFileSizeAsync(StorageFile file)
         {
-            BasicProperties pro = await file.GetBasicPropertiesAsync();
-            return pro.Size / 1000000000.0;
+            return (await file.GetBasicPropertiesAsync()).Size;
         }
 
         public static List<string> GetIconsList()
