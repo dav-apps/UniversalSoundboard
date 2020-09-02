@@ -285,6 +285,14 @@ namespace UniversalSoundBoard.DataAccess
             return soundFileTableObject.GetPropertyValue(TableObjectExtPropertyName);
         }
 
+        public static async Task<string> GetImageFileExtensionAsync(Guid soundUuid)
+        {
+            var imageFileTableObject = await GetImageFileTableObjectAsync(soundUuid);
+            if (imageFileTableObject == null || imageFileTableObject.File == null) return null;
+
+            return imageFileTableObject.GetPropertyValue(TableObjectExtPropertyName);
+        }
+
         public static async Task<StorageFile> GetImageFileOfSoundAsync(Guid soundUuid)
         {
             var imageFileTableObject = await GetImageFileTableObjectAsync(soundUuid);
@@ -339,7 +347,7 @@ namespace UniversalSoundBoard.DataAccess
             }
         }
 
-        private static async Task<TableObject> GetSoundFileTableObjectAsync(Guid soundUuid)
+        public static async Task<TableObject> GetSoundFileTableObjectAsync(Guid soundUuid)
         {
             var soundTableObject = await DatabaseOperations.GetTableObjectAsync(soundUuid);
             if (soundTableObject == null) return null;

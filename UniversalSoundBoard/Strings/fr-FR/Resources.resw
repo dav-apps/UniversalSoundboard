@@ -620,4 +620,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="PropertiesContentDialog-ImageSize" xml:space="preserve">
     <value>Taille de l'image :</value>
   </data>
+  <data name="PropertiesContentDialog-ImageFileType" xml:space="preserve">
+    <value>Type de fichier d'image :</value>
+  </data>
 </root>

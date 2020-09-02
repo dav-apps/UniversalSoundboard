@@ -62,18 +62,6 @@ namespace UniversalSoundBoard.Models
             return await FileManager.GetAudioStreamOfSoundAsync(Uuid);
         }
 
-        public bool HasImageFile()
-        {
-            return
-                Image.UriSource.ToString() != DefaultLightSoundImageUri
-                && Image.UriSource.ToString() != DefaultDarkSoundImageUri;
-        }
-
-        public async Task<StorageFile> GetImageFileAsync()
-        {
-            return await FileManager.GetImageFileOfSoundAsync(Uuid);
-        }
-
         public async Task<string> GetAudioFileExtensionAsync()
         {
             return await FileManager.GetAudioFileExtensionAsync(Uuid);
@@ -87,6 +75,23 @@ namespace UniversalSoundBoard.Models
         public async Task<DownloadStatus> GetAudioFileDownloadStatusAsync()
         {
             return await FileManager.GetSoundFileDownloadStatusAsync(Uuid);
+        }
+
+        public bool HasImageFile()
+        {
+            return
+                Image.UriSource.ToString() != DefaultLightSoundImageUri
+                && Image.UriSource.ToString() != DefaultDarkSoundImageUri;
+        }
+
+        public async Task<StorageFile> GetImageFileAsync()
+        {
+            return await FileManager.GetImageFileOfSoundAsync(Uuid);
+        }
+
+        public async Task<string> GetImageFileExtensionAsync()
+        {
+            return await FileManager.GetImageFileExtensionAsync(Uuid);
         }
 
         public static Uri GetDefaultImageUri()
