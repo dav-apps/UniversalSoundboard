@@ -61,6 +61,10 @@ namespace UniversalSoundBoard.Pages
             await FileManager.LoadCategoriesAsync();
             LoadMenuItems();
 
+            // Select the first menu item
+            await Task.Delay(2);
+            SelectCategory(Guid.Empty);
+
             // Load the PlayingSounds
             await FileManager.LoadPlayingSoundsAsync();
 
@@ -180,6 +184,12 @@ namespace UniversalSoundBoard.Pages
         {
             await FileManager.GoBackAsync();
             AdjustLayout();
+
+            if (FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty))
+            {
+                await Task.Delay(2);
+                SelectCategory(Guid.Empty);
+            }
         }
 
         private void SelectCategory(Guid categoryUuid)
@@ -823,7 +833,7 @@ namespace UniversalSoundBoard.Pages
             await FileManager.ShowCategoryAsync(categoryUuid);
 
             // Select the new category in the SideBar
-            await Task.Delay(10);
+            await Task.Delay(2);
             SelectCategory(categoryUuid);
         }
         #endregion
