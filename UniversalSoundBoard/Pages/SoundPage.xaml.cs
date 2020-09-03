@@ -433,7 +433,9 @@ namespace UniversalSoundBoard.Pages
 
             PlayingSound playingSound = new PlayingSound(player, sound)
             {
-                Uuid = await FileManager.CreatePlayingSoundAsync(null, soundList, 0, 0, false)
+                Uuid = await FileManager.CreatePlayingSoundAsync(null, soundList, 0, 0, false, sound.DefaultVolume, sound.DefaultMuted),
+                Volume = sound.DefaultVolume,
+                Muted = sound.DefaultMuted
             };
             FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
             playingSound.MediaPlayer.Play();
@@ -475,7 +477,7 @@ namespace UniversalSoundBoard.Pages
 
             PlayingSound playingSound = new PlayingSound(Guid.Empty, player, sounds, 0, repetitions, randomly)
             {
-                Uuid = await FileManager.CreatePlayingSoundAsync(null, sounds, 0, repetitions, randomly)
+                Uuid = await FileManager.CreatePlayingSoundAsync(null, sounds, 0, repetitions, randomly, null, null)
             };
             FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
             playingSound.MediaPlayer.Play();

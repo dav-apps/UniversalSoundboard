@@ -1839,13 +1839,13 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region PlayingSound CRUD methods
-        public static async Task<Guid> CreatePlayingSoundAsync(Guid? uuid, List<Sound> sounds, int current, int repetitions, bool randomly)
+        public static async Task<Guid> CreatePlayingSoundAsync(Guid? uuid, List<Sound> sounds, int current, int repetitions, bool randomly, int? volume, bool? muted)
         {
             List<Guid> soundUuids = new List<Guid>();
             foreach (Sound sound in sounds)
                 soundUuids.Add(sound.Uuid);
 
-            return (await DatabaseOperations.CreatePlayingSoundAsync(uuid ?? Guid.NewGuid(), soundUuids, current, repetitions, randomly, 100)).Uuid;
+            return (await DatabaseOperations.CreatePlayingSoundAsync(uuid ?? Guid.NewGuid(), soundUuids, current, repetitions, randomly, volume ?? 100, muted ?? false)).Uuid;
         }
 
         public static async Task<List<PlayingSound>> GetAllPlayingSoundsAsync()
@@ -1945,14 +1945,20 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             // Get the properties of the table object
+            int current = 0;
             string currentString = tableObject.GetPropertyValue(PlayingSoundTableCurrentPropertyName);
-            int.TryParse(currentString, out int current);
+            if(!string.IsNullOrEmpty(currentString))
+                int.TryParse(currentString, out current);
 
+            int repetitions = 1;
             string repetitionsString = tableObject.GetPropertyValue(PlayingSoundTableRepetitionsPropertyName);
-            int.TryParse(repetitionsString, out int repetitions);
+            if(!string.IsNullOrEmpty(repetitionsString))
+                int.TryParse(repetitionsString, out repetitions);
 
+            bool randomly = false;
             string randomlyString = tableObject.GetPropertyValue(PlayingSoundTableRandomlyPropertyName);
-            bool.TryParse(randomlyString, out bool randomly);
+            if(!string.IsNullOrEmpty(randomlyString))
+                bool.TryParse(randomlyString, out randomly);
 
             // Backwards compatibility for volume saved as double
             // Read from volume (double, 0 - 1), save to volume2 (int, 0 - 100)
@@ -1961,18 +1967,20 @@ namespace UniversalSoundBoard.DataAccess
             double volume = 100;
 
             // Use volume2 if it exists, otherwise use volume
-            if(volume2String != null)
+            if(!string.IsNullOrEmpty(volume2String))
             {
                 double.TryParse(volume2String, out volume);
             }
-            else if(volumeString != null)
+            else if(!string.IsNullOrEmpty(volumeString))
             {
                 double.TryParse(volumeString, out volume);
                 volume *= 100;
             }
 
+            bool muted = false;
             string mutedString = tableObject.GetPropertyValue(PlayingSoundTableMutedPropertyName);
-            bool.TryParse(mutedString, out bool muted);
+            if(!string.IsNullOrEmpty(mutedString))
+                bool.TryParse(mutedString, out muted);
 
             // Create the media player
             MediaPlayer player = await CreateMediaPlayerAsync(sounds, current);
@@ -2761,7 +2769,16 @@ namespace UniversalSoundBoard.DataAccess
             player.AutoPlay = false;
 
             // Set the volume
-            player.Volume = itemViewHolder.Volume;
+            double appVolume = ((double)itemViewHolder.Volume) / 100;
+
+            if (sounds.Count == 1)
+            {
+                double defaultSoundVolume = ((double)sounds[0].DefaultVolume) / 100;
+                player.Volume = appVolume * defaultSoundVolume;
+                player.IsMuted = sounds[0].DefaultMuted;
+            }
+            else
+                player.Volume = appVolume;
             
             if (mediaPlaybackList.Items.Count == 0)
                 return null;
