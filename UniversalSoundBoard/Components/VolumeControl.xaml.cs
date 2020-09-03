@@ -22,15 +22,9 @@ namespace UniversalSoundboard.Components
                 UpdateVolumeIcon();
             }
         }
-
-        public event EventHandler<RangeBaseValueChangedEventArgs> ValueChanged;
-        public event EventHandler<string> IconChanged;
-        public new event EventHandler<RoutedEventArgs> LostFocus;
-        public event EventHandler<bool> MuteChanged;
-
-        public double Value
+        public int Value
         {
-            get => VolumeSlider.Value;
+            get => Convert.ToInt32(VolumeSlider.Value);
             set
             {
                 skipVolumeSliderValueChanged = true;
@@ -38,6 +32,19 @@ namespace UniversalSoundboard.Components
                 skipVolumeSliderValueChanged = false;
             }
         }
+        public double SliderWidth
+        {
+            get => VolumeSlider.Width;
+            set
+            {
+                VolumeSlider.Width = value;
+            }
+        }
+
+        public event EventHandler<RangeBaseValueChangedEventArgs> ValueChanged;
+        public event EventHandler<string> IconChanged;
+        public new event EventHandler<RoutedEventArgs> LostFocus;
+        public event EventHandler<bool> MuteChanged;
 
         public VolumeControl()
         {
@@ -58,7 +65,7 @@ namespace UniversalSoundboard.Components
             ValueChanged?.Invoke(sender, e);
         }
 
-        private void VolumeSlider_LostFocus(object sender, RoutedEventArgs e) => LostFocus?.Invoke(sender, e);
+        private void VolumeSlider_LostFocus(object sender, RoutedEventArgs e) => LostFocus?.Invoke(this, e);
 
         private void MuteButton_Click(object sender, RoutedEventArgs e)
         {

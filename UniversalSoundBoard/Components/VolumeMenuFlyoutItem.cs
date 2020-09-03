@@ -10,7 +10,7 @@ namespace UniversalSoundboard.Components
     {
         private VolumeControl volumeControl;
 
-        public double VolumeControlValue
+        public int VolumeControlValue
         {
             get => volumeControl == null ? 1 : volumeControl.Value;
             set
