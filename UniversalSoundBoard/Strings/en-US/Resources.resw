@@ -624,4 +624,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PropertiesContentDialog-ImageFileType" xml:space="preserve">
     <value>Image file type:</value>
   </data>
+  <data name="PropertiesContentDialog-Volume" xml:space="preserve">
+    <value>Default volume:</value>
+  </data>
 </root>

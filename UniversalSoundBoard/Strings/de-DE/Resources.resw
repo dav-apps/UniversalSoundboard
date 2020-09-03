@@ -622,4 +622,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PropertiesContentDialog-ImageFileType" xml:space="preserve">
     <value>Dateityp des Bildes:</value>
   </data>
+  <data name="PropertiesContentDialog-Volume" xml:space="preserve">
+    <value>Standard-Lautstärke:</value>
+  </data>
 </root>

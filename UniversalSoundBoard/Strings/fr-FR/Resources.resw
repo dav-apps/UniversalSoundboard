@@ -623,4 +623,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="PropertiesContentDialog-ImageFileType" xml:space="preserve">
     <value>Type de fichier d'image :</value>
   </data>
+  <data name="PropertiesContentDialog-Volume" xml:space="preserve">
+    <value>Volume par défaut :</value>
+  </data>
 </root>

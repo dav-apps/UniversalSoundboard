@@ -22,6 +22,11 @@ namespace UniversalSoundBoard.Common
         #region Variables
         private static readonly ResourceLoader loader = new ResourceLoader();
 
+        private static Sound selectedPropertiesSound;
+        private static VolumeControl PropertiesVolumeControl;
+        private static bool propertiesDefaultVolumeChanged = false;
+        private static bool propertiesDefaultMutedChanged = false;
+
         public static TextBox NewCategoryTextBox;
         public static Guid NewCategoryParentUuid;
         public static TextBox EditCategoryTextBox;
@@ -799,6 +804,10 @@ namespace UniversalSoundBoard.Common
         #region Properties
         public static async Task<ContentDialog> CreatePropertiesContentDialog(Sound sound)
         {
+            selectedPropertiesSound = sound;
+            propertiesDefaultVolumeChanged = false;
+            propertiesDefaultMutedChanged = false;
+
             PropertiesContentDialog = new ContentDialog
             {
                 Title = loader.GetString("SoundItemOptionsFlyout-Properties"),
@@ -806,15 +815,17 @@ namespace UniversalSoundBoard.Common
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
+            PropertiesContentDialog.CloseButtonClick += PropertiesContentDialog_CloseButtonClick;
+
             int fontSize = 15;
             int row = 0;
             Grid contentGrid = new Grid
             {
-                Width = 350
+                Width = 500
             };
 
             // Create the columns
-            var firstColumn = new ColumnDefinition { Width = new GridLength(120, GridUnitType.Pixel) };
+            var firstColumn = new ColumnDefinition { Width = new GridLength(160, GridUnitType.Pixel) };
             var secondColumn = new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) };
 
             contentGrid.ColumnDefinitions.Add(firstColumn);
@@ -830,7 +841,8 @@ namespace UniversalSoundBoard.Common
                 0,
                 loader.GetString("PropertiesContentDialog-Name"),
                 fontSize,
-                false
+                false,
+                null
             );
 
             StackPanel nameDataStackPanel = GenerateTableCell(
@@ -838,7 +850,8 @@ namespace UniversalSoundBoard.Common
                 1,
                 sound.Name,
                 fontSize,
-                true
+                true,
+                null
             );
 
             row++;
@@ -859,7 +872,8 @@ namespace UniversalSoundBoard.Common
                     0,
                     loader.GetString("PropertiesContentDialog-FileType"),
                     fontSize,
-                    false
+                    false,
+                    null
                 );
 
                 StackPanel fileTypeDataStackPanel = GenerateTableCell(
@@ -867,7 +881,8 @@ namespace UniversalSoundBoard.Common
                     1,
                     audioFileType,
                     fontSize,
-                    true
+                    true,
+                    null
                 );
 
                 row++;
@@ -889,7 +904,8 @@ namespace UniversalSoundBoard.Common
                     0,
                     loader.GetString("PropertiesContentDialog-ImageFileType"),
                     fontSize,
-                    false
+                    false,
+                    null
                 );
 
                 StackPanel imageFileTypeDataStackPanel = GenerateTableCell(
@@ -897,7 +913,8 @@ namespace UniversalSoundBoard.Common
                     1,
                     imageFileType,
                     fontSize,
-                    true
+                    true,
+                    null
                 );
 
                 row++;
@@ -919,7 +936,8 @@ namespace UniversalSoundBoard.Common
                     0,
                     loader.GetString("PropertiesContentDialog-Size"),
                     fontSize,
-                    false
+                    false,
+                    null
                 );
 
                 StackPanel sizeDataStackPanel = GenerateTableCell(
@@ -927,7 +945,8 @@ namespace UniversalSoundBoard.Common
                     1,
                     FileManager.GetFormattedSize(await FileManager.GetFileSizeAsync(audioFile)),
                     fontSize,
-                    true
+                    true,
+                    null
                 );
 
                 row++;
@@ -949,7 +968,8 @@ namespace UniversalSoundBoard.Common
                     0,
                     loader.GetString("PropertiesContentDialog-ImageSize"),
                     fontSize,
-                    false
+                    false,
+                    null
                 );
 
                 StackPanel imageSizeDataStackPanel = GenerateTableCell(
@@ -957,7 +977,8 @@ namespace UniversalSoundBoard.Common
                     1,
                     FileManager.GetFormattedSize(await FileManager.GetFileSizeAsync(imageFile)),
                     fontSize,
-                    true
+                    true,
+                    null
                 );
 
                 row++;
@@ -965,13 +986,72 @@ namespace UniversalSoundBoard.Common
                 contentGrid.Children.Add(imageSizeDataStackPanel);
             }
             #endregion
-            
+
+            #region Volume
+            // Add the row
+            var volumeRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+            contentGrid.RowDefinitions.Add(volumeRow);
+
+            StackPanel volumeHeaderStackPanel = GenerateTableCell(
+                row,
+                0,
+                loader.GetString("PropertiesContentDialog-Volume"),
+                fontSize,
+                false,
+                new Thickness(0, 17, 0, 0)
+            );
+
+            StackPanel volumeDataStackPanel = new StackPanel();
+            Grid.SetRow(volumeDataStackPanel, row);
+            Grid.SetColumn(volumeDataStackPanel, 1);
+
+            RelativePanel volumeRelativePanel = new RelativePanel();
+            volumeDataStackPanel.Children.Add(volumeRelativePanel);
+
+            PropertiesVolumeControl = new VolumeControl
+            {
+                Value = sound.DefaultVolume,
+                Muted = sound.DefaultMuted,
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+            PropertiesVolumeControl.ValueChanged += VolumeControl_ValueChanged;
+            PropertiesVolumeControl.MuteChanged += VolumeControl_MuteChanged;
+
+            volumeRelativePanel.Children.Add(PropertiesVolumeControl);
+
+            contentGrid.Children.Add(volumeHeaderStackPanel);
+            contentGrid.Children.Add(volumeDataStackPanel);
+            #endregion
+
             PropertiesContentDialog.Content = contentGrid;
 
             return PropertiesContentDialog;
         }
 
-        private static StackPanel GenerateTableCell(int row, int column, string text, int fontSize, bool isTextSelectionEnabled)
+        private static void VolumeControl_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        {
+            propertiesDefaultVolumeChanged = true;
+        }
+
+        private static void VolumeControl_MuteChanged(object sender, bool e)
+        {
+            propertiesDefaultMutedChanged = true;
+        }
+
+        private static async void PropertiesContentDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            if (!propertiesDefaultVolumeChanged && !propertiesDefaultMutedChanged) return;
+
+            // Set the new values and update the DefaultVolume and DefaultMuted of all Sounds in all lists in ItemViewHolder
+            selectedPropertiesSound.DefaultVolume = PropertiesVolumeControl.Value;
+            selectedPropertiesSound.DefaultMuted = PropertiesVolumeControl.Muted;
+            FileManager.ReloadSound(selectedPropertiesSound);
+
+            // Update the sound in the database
+            await FileManager.SetDefaultVolumeOfSoundAsync(selectedPropertiesSound.Uuid, PropertiesVolumeControl.Value, PropertiesVolumeControl.Muted);
+        }
+
+        private static StackPanel GenerateTableCell(int row, int column, string text, int fontSize, bool isTextSelectionEnabled, Thickness? margin)
         {
             StackPanel contentStackPanel = new StackPanel();
             Grid.SetRow(contentStackPanel, row);
@@ -980,7 +1060,7 @@ namespace UniversalSoundBoard.Common
             TextBlock contentTextBlock = new TextBlock
             {
                 Text = text,
-                Margin = new Thickness(0, 10, 0, 0),
+                Margin = margin ?? new Thickness(0, 10, 0, 0),
                 FontSize = fontSize,
                 TextWrapping = TextWrapping.WrapWholeWords,
                 IsTextSelectionEnabled = isTextSelectionEnabled
