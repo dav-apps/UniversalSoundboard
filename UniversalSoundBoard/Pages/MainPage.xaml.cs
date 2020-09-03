@@ -19,6 +19,8 @@ using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using UniversalSoundboard.Components;
 using Windows.UI.Xaml.Controls.Primitives;
+using System.ComponentModel;
+using System.Collections.Specialized;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -81,7 +83,7 @@ namespace UniversalSoundBoard.Pages
             AdjustLayout();
         }
 
-        private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals(ItemViewHolder.PageKey) || e.PropertyName.Equals(ItemViewHolder.AppStateKey))
             {
@@ -92,7 +94,7 @@ namespace UniversalSoundBoard.Pages
                 SetThemeColors();
         }
 
-        private void SelectedSounds_CollectionChanged(object sender, System.Collections.Specialized.NotifyCollectionChangedEventArgs e)
+        private void SelectedSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             selectionButtonsEnabled = FileManager.itemViewHolder.SelectedSounds.Count > 0;
             Bindings.Update();
@@ -116,6 +118,7 @@ namespace UniversalSoundBoard.Pages
         }
         #endregion
 
+        #region General methods
         private void CustomiseTitleBar()
         {
             ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
@@ -173,6 +176,26 @@ namespace UniversalSoundBoard.Pages
             CustomiseTitleBar();
         }
 
+        private async Task GoBack()
+        {
+            await FileManager.GoBackAsync();
+            AdjustLayout();
+        }
+
+        private void SelectCategory(Guid categoryUuid)
+        {
+            foreach (WinUI.NavigationViewItem item in SideBar.MenuItems)
+            {
+                if ((Guid)item.Tag == categoryUuid)
+                {
+                    item.IsSelected = true;
+                    return;
+                }
+            }
+        }
+        #endregion
+
+        #region MenuItem methods
         private void LoadMenuItems()
         {
             SideBar.MenuItems.Clear();
@@ -510,12 +533,7 @@ namespace UniversalSoundBoard.Pages
             }
             return false;
         }
-
-        private async Task GoBack()
-        {
-            await FileManager.GoBackAsync();
-            AdjustLayout();
-        }
+        #endregion
 
         #region SideBar
         private async void SideBar_ItemInvoked(WinUI.NavigationView sender, WinUI.NavigationViewItemInvokedEventArgs args)
@@ -797,13 +815,16 @@ namespace UniversalSoundBoard.Pages
 
             // Add the category to the Categories list
             FileManager.AddCategory(newCategory, Guid.Empty);
-            FileManager.itemViewHolder.TriggerCategoriesUpdatedEvent();
 
             // Add the category to the SideBar
             AddCategoryMenuItem(SideBar.MenuItems, newCategory, Guid.Empty);
 
             // Navigate to the new category
             await FileManager.ShowCategoryAsync(categoryUuid);
+
+            // Select the new category in the SideBar
+            await Task.Delay(10);
+            SelectCategory(categoryUuid);
         }
         #endregion
 
@@ -1267,17 +1288,5 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.LoadingScreenVisible = false;
         }
         #endregion
-
-        private void SelectCategory(Guid categoryUuid)
-        {
-            foreach (WinUI.NavigationViewItem item in SideBar.MenuItems)
-            {
-                if ((Guid)item.Tag == categoryUuid)
-                {
-                    item.IsSelected = true;
-                    return;
-                }
-            }
-        }
     }
 }

@@ -1664,6 +1664,71 @@ namespace UniversalSoundBoard.DataAccess
             // Remove the playing sound
             itemViewHolder.PlayingSounds.Remove(playingSound);
         }
+
+        public static async Task<MediaPlayer> CreateMediaPlayerAsync(List<Sound> sounds, int current)
+        {
+            if (sounds.Count == 0) return null;
+
+            MediaPlayer player = new MediaPlayer();
+            MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
+
+            foreach (Sound sound in sounds)
+            {
+                // Create the MediaPlaybackItem using the audio file path
+                string audioFilePath = await sound.GetAudioFilePathAsync();
+                MediaPlaybackItem mediaPlaybackItem;
+
+                if (audioFilePath == null)
+                {
+                    Uri soundUri = await sound.GetAudioUriAsync();
+                    if (soundUri == null) continue;
+
+                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(soundUri));
+                }
+                else
+                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri(audioFilePath)));
+
+                MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
+                props.Type = MediaPlaybackType.Music;
+                props.MusicProperties.Title = sound.Name;
+
+                if (sound.Categories.Count > 0)
+                    props.MusicProperties.Artist = sound.Categories.First().Name;
+
+                var imageFile = await sound.GetImageFileAsync();
+                if (imageFile != null)
+                    props.Thumbnail = RandomAccessStreamReference.CreateFromFile(imageFile);
+
+                mediaPlaybackItem.ApplyDisplayProperties(props);
+
+                mediaPlaybackList.Items.Add(mediaPlaybackItem);
+            }
+
+            player.Source = mediaPlaybackList;
+            player.AutoPlay = false;
+
+            // Set the volume
+            double appVolume = ((double)itemViewHolder.Volume) / 100;
+
+            if (sounds.Count == 1)
+            {
+                double defaultSoundVolume = ((double)sounds[0].DefaultVolume) / 100;
+                player.Volume = appVolume * defaultSoundVolume;
+                player.IsMuted = sounds[0].DefaultMuted;
+            }
+            else
+                player.Volume = appVolume;
+
+            if (mediaPlaybackList.Items.Count == 0)
+                return null;
+            else if (mediaPlaybackList.Items.Count == 1)
+                return player;
+
+            if (mediaPlaybackList.Items.Count >= current + 1)
+                mediaPlaybackList.MoveTo(Convert.ToUInt32(current));
+
+            return player;
+        }
         #endregion
 
         #region Sound CRUD methods
@@ -2001,42 +2066,6 @@ namespace UniversalSoundBoard.DataAccess
                 return null;
             }
         }
-
-        /*
-        public static async Task AddOrRemoveAllPlayingSoundsAsync()
-        {
-            if (itemViewHolder.SavePlayingSounds && itemViewHolder.PlayingSoundsListVisible)
-            {
-                // Save all PlayingSounds
-                foreach (PlayingSound ps in itemViewHolder.PlayingSounds)
-                {
-                    // Check, if the playingSound is already saved
-                    if (await DatabaseOperations.GetTableObjectAsync(ps.Uuid) == null)
-                    {
-                        // Add the playingSound
-                        List<Guid> soundUuids = new List<Guid>();
-                        foreach (Sound sound in ps.Sounds)
-                            soundUuids.Add(sound.Uuid);
-
-                        await DatabaseOperations.CreatePlayingSoundAsync(
-                            ps.Uuid,
-                            soundUuids,
-                            (int)((MediaPlaybackList)ps.MediaPlayer.Source).CurrentItemIndex,
-                            ps.Repetitions,
-                            ps.Randomly,
-                            ps.MediaPlayer.Volume
-                        );
-                    }
-                }
-            }
-            else
-            {
-                // Delete all PlayingSounds
-                foreach (PlayingSound ps in itemViewHolder.PlayingSounds)
-                    await DatabaseOperations.DeletePlayingSound(ps.Uuid);
-            }
-        }
-        */
         #endregion
 
         #region Category order methods
@@ -2724,71 +2753,6 @@ namespace UniversalSoundBoard.DataAccess
                 double kb = size / kbMin;
                 return string.Format("{0} {1}", kb.ToString("N0"), loader.GetString("Sizes-KB"));
             }
-        }
-
-        public static async Task<MediaPlayer> CreateMediaPlayerAsync(List<Sound> sounds, int current)
-        {
-            if (sounds.Count == 0) return null;
-
-            MediaPlayer player = new MediaPlayer();
-            MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
-
-            foreach (Sound sound in sounds)
-            {
-                // Create the MediaPlaybackItem using the audio file path
-                string audioFilePath = await sound.GetAudioFilePathAsync();
-                MediaPlaybackItem mediaPlaybackItem;
-
-                if (audioFilePath == null)
-                {
-                    Uri soundUri = await sound.GetAudioUriAsync();
-                    if (soundUri == null) continue;
-
-                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(soundUri));
-                }
-                else
-                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri(audioFilePath)));
-
-                MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
-                props.Type = MediaPlaybackType.Music;
-                props.MusicProperties.Title = sound.Name;
-
-                if(sound.Categories.Count > 0)
-                    props.MusicProperties.Artist = sound.Categories.First().Name;
-
-                var imageFile = await sound.GetImageFileAsync();
-                if (imageFile != null)
-                    props.Thumbnail = RandomAccessStreamReference.CreateFromFile(imageFile);
-
-                mediaPlaybackItem.ApplyDisplayProperties(props);
-
-                mediaPlaybackList.Items.Add(mediaPlaybackItem);
-            }
-
-            player.Source = mediaPlaybackList;
-            player.AutoPlay = false;
-
-            // Set the volume
-            double appVolume = ((double)itemViewHolder.Volume) / 100;
-
-            if (sounds.Count == 1)
-            {
-                double defaultSoundVolume = ((double)sounds[0].DefaultVolume) / 100;
-                player.Volume = appVolume * defaultSoundVolume;
-                player.IsMuted = sounds[0].DefaultMuted;
-            }
-            else
-                player.Volume = appVolume;
-            
-            if (mediaPlaybackList.Items.Count == 0)
-                return null;
-            else if (mediaPlaybackList.Items.Count == 1)
-                return player;
-
-            if (mediaPlaybackList.Items.Count >= current + 1)
-                mediaPlaybackList.MoveTo(Convert.ToUInt32(current));
-
-            return player;
         }
 
         public static Color GetApplicationThemeColor()
