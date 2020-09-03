@@ -16,6 +16,8 @@ namespace UniversalSoundBoard.Models
         public string Name { get; set; }
         public List<Category> Categories { get; set; }
         public bool Favourite { get; set; }
+        public int DefaultVolume { get; set; }
+        public bool DefaultMuted { get; set; }
         public BitmapImage Image { get; set; }
 
         public Sound()

@@ -61,7 +61,7 @@ namespace UniversalSoundBoard.DataAccess
             return await Dav.Database.GetAllTableObjectsAsync(FileManager.SoundTableId, false);
         }
 
-        public static async Task UpdateSoundAsync(Guid uuid, string name, bool? favourite, Guid? imageUuid, List<Guid> categoryUuids)
+        public static async Task UpdateSoundAsync(Guid uuid, string name, bool? favourite, int? defaultVolume, bool? defaultMuted, Guid? imageUuid, List<Guid> categoryUuids)
         {
             // Get the sound table object
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
@@ -71,6 +71,10 @@ namespace UniversalSoundBoard.DataAccess
                 await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableNamePropertyName, name);
             if (favourite.HasValue)
                 await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableFavouritePropertyName, favourite.Value.ToString());
+            if (defaultVolume.HasValue)
+                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableDefaultVolumePropertyName, defaultVolume.ToString());
+            if (defaultMuted.HasValue)
+                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableDefaultMutedPropertyName, defaultMuted.ToString());
             if (imageUuid.HasValue)
                 await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableImageUuidPropertyName, imageUuid.Value.ToString());
             if (categoryUuids != null)
