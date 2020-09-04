@@ -9,12 +9,13 @@ using Windows.Foundation;
 using UniversalSoundboard.Components;
 using Windows.UI.Xaml.Media.Imaging;
 using UniversalSoundBoard.Common;
+using System.Threading.Tasks;
 
 namespace UniversalSoundBoard.Components
 {
     public sealed partial class SoundTileTemplate : UserControl
     {
-        public Sound Sound { get => DataContext as Sound; }
+        Sound Sound { get; set; }
         SoundItem soundItem;
         private double visibleNameMarginBottom = 0;
         double soundTileNameContainerHeight = 0;
@@ -37,11 +38,17 @@ namespace UniversalSoundBoard.Components
             SetThemeColors();
         }
 
-        private void SoundTileTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        private async void SoundTileTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
+            if (DataContext == null) return;
+
+            Sound = DataContext as Sound;
             soundItem = new SoundItem(Sound);
             soundItem.ImageUpdated += SoundItem_ImageUpdated;
             Bindings.Update();
+
+            await Task.Delay(1);
+            SetupNameAnimations();
         }
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
