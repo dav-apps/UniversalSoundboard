@@ -746,12 +746,18 @@ namespace UniversalSoundBoard.Pages
                 int.TryParse(ContentDialogs.RepeatsComboBox.SelectedValue.ToString(), out rounds);
 
             await SoundPage.PlaySoundsAsync(ContentDialogs.SoundsList.ToList(), rounds, randomly);
+
+            // Disable multi-selection mode
+            FileManager.itemViewHolder.MultiSelectionEnabled = false;
         }
 
         private async void PlaySoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
                 await SoundPage.PlaySoundAsync(sound);
+
+            // Disable multi-selection mode
+            FileManager.itemViewHolder.MultiSelectionEnabled = false;
         }
         #endregion
 
@@ -963,6 +969,7 @@ namespace UniversalSoundBoard.Pages
 
             DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
             dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            dataTransferManager.TargetApplicationChosen += DataTransferManager_TargetApplicationChosen;
             DataTransferManager.ShowShareUI();
         }
 
@@ -978,6 +985,12 @@ namespace UniversalSoundBoard.Pages
             request.Data.SetStorageItems(sharedFiles);
             request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
             request.Data.Properties.Description = description;
+        }
+
+        private void DataTransferManager_TargetApplicationChosen(DataTransferManager sender, TargetApplicationChosenEventArgs args)
+        {
+            // Disable multi-selection mode
+            FileManager.itemViewHolder.MultiSelectionEnabled = false;
         }
         #endregion
 
@@ -1086,6 +1099,9 @@ namespace UniversalSoundBoard.Pages
             }
 
             FileManager.itemViewHolder.LoadingScreenVisible = false;
+
+            // Disable multi-selection mode
+            FileManager.itemViewHolder.MultiSelectionEnabled = false;
         }
         #endregion
 
@@ -1286,6 +1302,9 @@ namespace UniversalSoundBoard.Pages
 
         private async void ExportSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            // Disable multi-selection mode
+            FileManager.itemViewHolder.MultiSelectionEnabled = false;
+
             await FileManager.ExportSoundsAsync(ContentDialogs.SoundsList.ToList(), ContentDialogs.ExportSoundsAsZipCheckBox.IsChecked.Value, ContentDialogs.ExportSoundsFolder);
         }
         #endregion
@@ -1320,6 +1339,9 @@ namespace UniversalSoundBoard.Pages
             // Clear selected sounds list
             FileManager.itemViewHolder.SelectedSounds.Clear();
             FileManager.itemViewHolder.LoadingScreenVisible = false;
+
+            // Disable multi-selection mode
+            FileManager.itemViewHolder.MultiSelectionEnabled = false;
         }
         #endregion
     }
