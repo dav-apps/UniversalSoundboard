@@ -195,12 +195,21 @@ namespace UniversalSoundBoard.Pages
         private void SelectCategory(Guid categoryUuid)
         {
             foreach (WinUI.NavigationViewItem item in SideBar.MenuItems)
+                SelectSubCategory(item, categoryUuid);
+        }
+
+        private void SelectSubCategory(WinUI.NavigationViewItem parent, Guid categoryUuid)
+        {
+            if (((Guid)parent.Tag).Equals(categoryUuid))
             {
-                if ((Guid)item.Tag == categoryUuid)
-                {
-                    item.IsSelected = true;
-                    return;
-                }
+                parent.IsSelected = true;
+                return;
+            }
+
+            foreach (var menuItem in parent.MenuItems)
+            {
+                WinUI.NavigationViewItem item = (WinUI.NavigationViewItem)menuItem;
+                SelectSubCategory(item, categoryUuid);
             }
         }
         #endregion
@@ -1231,13 +1240,16 @@ namespace UniversalSoundBoard.Pages
 
             // Add the category to the categories list
             FileManager.AddCategory(newCategory, selectedCategory);
-            FileManager.itemViewHolder.TriggerCategoriesUpdatedEvent();
 
             // Add the category to the MenuItems of the SideBar
             AddCategoryMenuItem(SideBar.MenuItems, newCategory, selectedCategory);
 
             // Navigate to the new category
             await FileManager.ShowCategoryAsync(selectedCategory);
+
+            // Select the new category in the SideBar
+            await Task.Delay(2);
+            SelectCategory(categoryUuid);
         }
         #endregion
         #endregion
