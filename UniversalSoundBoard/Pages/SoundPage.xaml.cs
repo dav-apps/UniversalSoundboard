@@ -26,7 +26,7 @@ namespace UniversalSoundBoard.Pages
         ResourceLoader loader = new ResourceLoader();
         public static bool soundsPivotSelected = true;
         private bool skipSoundListSelectionChangedEvent = false;
-        private bool isDragging = false;
+        Guid reorderedItem = Guid.Empty;
         private VerticalPosition bottomPlayingSoundsBarPosition = VerticalPosition.Bottom;
         private static bool playingSoundsLoaded = false;
         public static bool showPlayingSoundItemAnimation = false;
@@ -218,37 +218,12 @@ namespace UniversalSoundBoard.Pages
 
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Remove)
-                isDragging = true;
-
-            if(
-                (
-                    e.Action == NotifyCollectionChangedAction.Add
-                    || e.Action == NotifyCollectionChangedAction.Move
-                )
-                && isDragging
-            )
-            {
-                await UpdateSoundOrder(false);
-                isDragging = false;
-            }
+            await HandleSoundsCollectionChanged(e, false);
         }
 
         private async void ItemViewHolder_FavouriteSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (e.Action == NotifyCollectionChangedAction.Remove) isDragging = true;
-
-            if (
-                (
-                    e.Action == NotifyCollectionChangedAction.Add
-                    || e.Action == NotifyCollectionChangedAction.Move
-                )
-                && isDragging
-            )
-            {
-                await UpdateSoundOrder(true);
-                isDragging = false;
-            }
+            await HandleSoundsCollectionChanged(e, true);
         }
 
         private async void PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -400,6 +375,25 @@ namespace UniversalSoundBoard.Pages
         #endregion
 
         #region Functionality
+        private async Task HandleSoundsCollectionChanged(NotifyCollectionChangedEventArgs e, bool favourites)
+        {
+            switch (e.Action)
+            {
+                case NotifyCollectionChangedAction.Remove:
+                    reorderedItem = (e.OldItems[0] as Sound).Uuid;
+                    break;
+                case NotifyCollectionChangedAction.Add:
+                    Sound addedSound = e.NewItems[0] as Sound;
+
+                    // The user reordered the sounds as the item was first removed and now added again
+                    if (reorderedItem.Equals(addedSound.Uuid))
+                        await UpdateSoundOrder(favourites);
+
+                    reorderedItem = Guid.Empty;
+                    break;
+            }
+        }
+
         private async Task UpdateSoundOrder(bool showFavourites)
         {
             // Get the current category uuid
