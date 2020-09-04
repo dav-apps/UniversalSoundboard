@@ -212,6 +212,12 @@ namespace UniversalSoundBoard.Pages
                 SelectSubCategory(item, categoryUuid);
             }
         }
+
+        private async Task SelectCurrentCategory()
+        {
+            await Task.Delay(2);
+            SelectCategory(FileManager.itemViewHolder.SelectedCategory);
+        }
         #endregion
 
         #region MenuItem methods
@@ -1188,36 +1194,42 @@ namespace UniversalSoundBoard.Pages
         {
             MoveCategoryMenuItem(SideBar.MenuItems, selectedCategory, true);
             await FileManager.MoveCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, Guid.Empty, true);
+            await SelectCurrentCategory();
         }
 
         private async void MoveDownFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             MoveCategoryMenuItem(SideBar.MenuItems, selectedCategory, false);
             await FileManager.MoveCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, Guid.Empty, false);
+            await SelectCurrentCategory();
         }
 
         private async void MoveToCategoryAboveItem_Click(object sender, RoutedEventArgs e)
         {
             MoveCategoryMenuItemToMenuItem(SideBar.MenuItems, selectedCategory, true);
             await FileManager.MoveCategoryToCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, true);
+            await SelectCurrentCategory();
         }
 
         private async void MoveToCategoryBelowItem_Click(object sender, RoutedEventArgs e)
         {
             MoveCategoryMenuItemToMenuItem(SideBar.MenuItems, selectedCategory, false);
             await FileManager.MoveCategoryToCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, false);
+            await SelectCurrentCategory();
         }
 
         private async void MoveToParentCategoryAboveItem_Click(object sender, RoutedEventArgs e)
         {
             MoveCategoryMenuItemToParent(SideBar.MenuItems, selectedCategory, true);
             await FileManager.MoveCategoryToParentAndSaveOrderAsync(FileManager.itemViewHolder.Categories, Guid.Empty, selectedCategory, true);
+            await SelectCurrentCategory();
         }
 
         private async void MoveToParentCategoryBelowItem_Click(object sender, RoutedEventArgs e)
         {
             MoveCategoryMenuItemToParent(SideBar.MenuItems, selectedCategory, false);
             await FileManager.MoveCategoryToParentAndSaveOrderAsync(FileManager.itemViewHolder.Categories, Guid.Empty, selectedCategory, false);
+            await SelectCurrentCategory();
         }
         #endregion
 
