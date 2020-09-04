@@ -120,7 +120,7 @@
     <Compile Include="Common\Converters.cs" />
     <Compile Include="Components\BasicMediaTransportControls.cs" />
     <Compile Include="Components\PlayingSoundItem.cs" />
-    <Compile Include="Components\SoundItemManager.cs" />
+    <Compile Include="Components\SoundItem.cs" />
     <Compile Include="Components\SoundListItemTemplate.xaml.cs">
       <DependentUpon>SoundListItemTemplate.xaml</DependentUpon>
     </Compile>
@@ -312,7 +312,7 @@
       <Version>14332.0.2</Version>
     </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
-      <Version>1.4.118</Version>
+      <Version>1.7.335</Version>
     </PackageReference>
     <PackageReference Include="Websockets.Net">
       <Version>1.0.1</Version>
