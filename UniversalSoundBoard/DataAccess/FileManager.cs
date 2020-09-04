@@ -930,7 +930,7 @@ namespace UniversalSoundBoard.DataAccess
 
             foreach(var sound in itemViewHolder.AllSounds)
             {
-                if (!sound.Name.StartsWith(name)) continue;
+                if (!sound.Name.ToLower().Contains(name)) continue;
 
                 itemViewHolder.Sounds.Add(sound);
                 if (sound.Favourite) itemViewHolder.FavouriteSounds.Add(sound);
