@@ -376,7 +376,6 @@
                                 </VisualStateManager.VisualStateGroups>
 
                                 <Grid Background="{TemplateBinding Background}">
-
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="*" />
                                         <ColumnDefinition Width="Auto" />
@@ -386,15 +385,18 @@
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
+                                    
                                     <ScrollContentPresenter x:Name="ScrollContentPresenter"
                                         Grid.RowSpan="2"
                                         Grid.ColumnSpan="2"
-                                        Margin="10,0,10,0"
+                                        Margin="0,6"
                                         ContentTemplate="{TemplateBinding ContentTemplate}" />
+                                    
                                     <Grid
                                         Grid.RowSpan="2"
                                         Grid.ColumnSpan="2" />
-                                        <ScrollBar x:Name="VerticalScrollBar"
+
+                                    <ScrollBar x:Name="VerticalScrollBar"
                                         Grid.Column="1"
                                         IsTabStop="False"
                                         Maximum="{TemplateBinding ScrollableHeight}"
@@ -404,7 +406,7 @@
                                         Value="{TemplateBinding VerticalOffset}"
                                         ViewportSize="{TemplateBinding ViewportHeight}"
                                         HorizontalAlignment="Right" />
-                                        <ScrollBar x:Name="HorizontalScrollBar"
+                                    <ScrollBar x:Name="HorizontalScrollBar"
                                         IsTabStop="False"
                                         Maximum="{TemplateBinding ScrollableWidth}"
                                         Orientation="Horizontal"
@@ -412,6 +414,7 @@
                                         Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
                                         Value="{TemplateBinding HorizontalOffset}"
                                         ViewportSize="{TemplateBinding ViewportWidth}" />
+
                                     <Border x:Name="ScrollBarSeparator"
                                         Grid.Row="1"
                                         Grid.Column="1"
@@ -419,7 +422,6 @@
                                         Background="{ThemeResource ScrollViewerScrollBarSeparatorBackground}" />
                                 </Grid>
                             </Border>
-
                         </ControlTemplate>
                     </Setter.Value>
                 </Setter>
