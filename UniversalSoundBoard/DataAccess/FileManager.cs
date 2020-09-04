@@ -1032,13 +1032,26 @@ namespace UniversalSoundBoard.DataAccess
         public static async Task ReloadSound(Guid uuid)
         {
             var sound = await GetSoundAsync(uuid);
-            if(sound != null) ReloadSound(sound);
+            if(sound != null) await ReloadSound(sound);
         }
 
-        public static void ReloadSound(Sound updatedSound)
+        public static async Task ReloadSound(Sound updatedSound)
         {
-            // Check if the sound belongs to the selected category
-            bool soundBelongsToSelectedCategory = itemViewHolder.SelectedCategory == Guid.Empty || updatedSound.Categories.Exists(c => c.Uuid == itemViewHolder.SelectedCategory);
+            bool soundBelongsToSelectedCategory = true;
+
+            if (!itemViewHolder.SelectedCategory.Equals(Guid.Empty))
+            {
+                // Get the subcategories of the selected category
+                List<Guid> selectedCategoryChildren = new List<Guid>();
+
+                foreach (var subcategory in await GetSubCategoriesOfCategory(itemViewHolder.SelectedCategory))
+                    selectedCategoryChildren.Add(subcategory);
+
+                // Check if the sound belongs to the selected category or a child of the selected category
+                soundBelongsToSelectedCategory = updatedSound.Categories.Exists(c => 
+                    selectedCategoryChildren.Exists(uuid => 
+                        uuid.Equals(c.Uuid)));
+            }
 
             // Replace in AllSounds
             int i = itemViewHolder.AllSounds.ToList().FindIndex(s => s.Uuid == updatedSound.Uuid);
@@ -1334,8 +1347,7 @@ namespace UniversalSoundBoard.DataAccess
 
         private static async Task<List<Guid>> GetSubCategoriesOfCategory(Guid categoryUuid)
         {
-            List<Guid> subcategories = new List<Guid>();
-            subcategories.Add(categoryUuid);
+            List<Guid> subcategories = new List<Guid> { categoryUuid };
 
             // Get the category
             Category category = await GetCategoryAsync(categoryUuid);

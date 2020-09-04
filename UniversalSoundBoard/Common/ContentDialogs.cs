@@ -1045,7 +1045,7 @@ namespace UniversalSoundBoard.Common
             // Set the new values and update the DefaultVolume and DefaultMuted of all Sounds in all lists in ItemViewHolder
             selectedPropertiesSound.DefaultVolume = PropertiesVolumeControl.Value;
             selectedPropertiesSound.DefaultMuted = PropertiesVolumeControl.Muted;
-            FileManager.ReloadSound(selectedPropertiesSound);
+            await FileManager.ReloadSound(selectedPropertiesSound);
 
             // Update the sound in the database
             await FileManager.SetDefaultVolumeOfSoundAsync(selectedPropertiesSound.Uuid, PropertiesVolumeControl.Value, PropertiesVolumeControl.Muted);
