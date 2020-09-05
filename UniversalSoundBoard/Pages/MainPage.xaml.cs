@@ -597,6 +597,8 @@ namespace UniversalSoundBoard.Pages
 
         private void LogInMenuItem_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
         {
+            SideBar.SelectedItem = null;
+
             // Show the Account page
             FileManager.NavigateToAccountPage();
 
@@ -864,11 +866,14 @@ namespace UniversalSoundBoard.Pages
         {
             if (args.Reason == AutoSuggestionBoxTextChangeReason.ProgrammaticChange) return;
 
+            SelectCategory(Guid.Empty);
             string text = sender.Text;
+
             if (string.IsNullOrEmpty(text))
             {
                 // Show all sounds
                 await FileManager.ShowAllSoundsAsync();
+                SearchAutoSuggestBox.Focus(FocusState.Programmatic);
             }
             else
             {
@@ -880,7 +885,8 @@ namespace UniversalSoundBoard.Pages
                 FileManager.itemViewHolder.EditButtonVisible = false;
 
                 // Update the suggestions
-                Suggestions = FileManager.itemViewHolder.AllSounds.Where(p => p.Name.ToLower().StartsWith(text.ToLower())).Select(p => p.Name).ToList();
+                Suggestions = FileManager.itemViewHolder.AllSounds.Where(s => s.Name.ToLower().Contains(text.ToLower())).Select(s => s.Name).ToList();
+                Bindings.Update();
 
                 // Load the searched sounds
                 await FileManager.LoadSoundsByNameAsync(text);
@@ -892,7 +898,10 @@ namespace UniversalSoundBoard.Pages
 
         private async void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
+            if (args.ChosenSuggestion != null) return;
+
             string text = sender.Text;
+            SelectCategory(Guid.Empty);
 
             if (string.IsNullOrEmpty(text))
             {
@@ -916,10 +925,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.SearchButtonVisible = false;
             FileManager.itemViewHolder.SearchAutoSuggestBoxVisible = true;
 
-            // slightly delay setting focus
-            Task.Factory.StartNew(
-                () => Dispatcher.RunAsync(CoreDispatcherPriority.Low,
-                    () => SearchAutoSuggestBox.Focus(FocusState.Programmatic)));
+            SearchAutoSuggestBox.Focus(FocusState.Programmatic);
         }
         #endregion
 

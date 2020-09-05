@@ -77,14 +77,14 @@
 
             <muxc:NavigationView.PaneFooter>
                 <StackPanel>
-                    <NavigationViewItem
+                    <muxc:NavigationViewItem
                         Name="LoginMenuItem"
                         x:Uid="LoginButton"
                         Icon="Contact"
                         Visibility="{Binding User.IsLoggedIn, Converter={StaticResource InvertBooleanConverter}}"
                         Tapped="LogInMenuItem_Tapped" />
 
-                    <NavigationViewItem
+                    <muxc:NavigationViewItem
                         Name="AccountMenuItem"
                         Visibility="{Binding User.IsLoggedIn}"
                         Tapped="LogInMenuItem_Tapped">
@@ -100,7 +100,7 @@
                                 Margin="15,0,0,0" 
                                 VerticalAlignment="Center" />
                         </StackPanel>
-                    </NavigationViewItem>
+                    </muxc:NavigationViewItem>
                 </StackPanel>
             </muxc:NavigationView.PaneFooter>
 
