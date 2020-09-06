@@ -112,6 +112,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\GeneralMethods.cs" />
     <Compile Include="Common\LocalDataSettings.cs" />
     <Compile Include="Common\RetrieveConstants.cs" />

@@ -13,6 +13,7 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
@@ -1213,7 +1214,7 @@ namespace UniversalSoundBoard.DataAccess
             foreach (Category cat in await GetAllCategoriesAsync())
                 itemViewHolder.Categories.Add(cat);
 
-            itemViewHolder.TriggerCategoriesUpdatedEvent();
+            itemViewHolder.TriggerCategoriesUpdatedEvent(null);
         }
 
         /**
@@ -1266,7 +1267,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             // Replace the category in the categories list with the updated category
             ReplaceCategory(itemViewHolder.Categories, updatedCategory);
-            itemViewHolder.TriggerCategoryUpdatedEvent(new CategoryEventArgs(updatedCategory.Uuid));
+            itemViewHolder.TriggerCategoryUpdatedEvent(null, new CategoryEventArgs(updatedCategory.Uuid));
         }
 
         private static bool ReplaceCategory(List<Category> categoriesList, Category updatedCategory)
@@ -1291,7 +1292,7 @@ namespace UniversalSoundBoard.DataAccess
         public static void RemoveCategory(Guid uuid)
         {
             RemoveCategoryInList(itemViewHolder.Categories, uuid);
-            itemViewHolder.TriggerCategoryRemovedEvent(new CategoryEventArgs(uuid));
+            itemViewHolder.TriggerCategoryRemovedEvent(null, new CategoryEventArgs(uuid));
         }
 
         private static bool RemoveCategoryInList(List<Category> categoriesList, Guid uuid)
@@ -1646,7 +1647,7 @@ namespace UniversalSoundBoard.DataAccess
                     itemViewHolder.PlayingSounds.Remove(ps);
             }
 
-            itemViewHolder.TriggerPlayingSoundsLoadedEvent();
+            itemViewHolder.TriggerPlayingSoundsLoadedEvent(null);
         }
 
         public static async Task ReloadPlayingSoundAsync(Guid uuid)

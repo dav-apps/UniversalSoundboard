@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
-using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel.Resources;

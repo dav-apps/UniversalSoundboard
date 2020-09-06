@@ -21,6 +21,7 @@ using UniversalSoundboard.Components;
 using Windows.UI.Xaml.Controls.Primitives;
 using System.ComponentModel;
 using System.Collections.Specialized;
+using UniversalSoundboard.Common;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -47,9 +48,9 @@ namespace UniversalSoundBoard.Pages
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
-            FileManager.itemViewHolder.CategoriesUpdatedEvent += ItemViewHolder_CategoriesUpdatedEvent;
-            FileManager.itemViewHolder.CategoryUpdatedEvent += ItemViewHolder_CategoryUpdatedEvent;
-            FileManager.itemViewHolder.CategoryRemovedEvent += ItemViewHolder_CategoryRemovedEvent;
+            FileManager.itemViewHolder.CategoriesUpdated += ItemViewHolder_CategoriesUpdated;
+            FileManager.itemViewHolder.CategoryUpdated += ItemViewHolder_CategoryUpdated;
+            FileManager.itemViewHolder.CategoryRemoved += ItemViewHolder_CategoryRemoved;
         }
 
         #region Page event handlers
@@ -70,7 +71,7 @@ namespace UniversalSoundBoard.Pages
 
             // Load the Sounds
             await FileManager.ShowAllSoundsAsync();
-            FileManager.itemViewHolder.TriggerSoundsLoadedEvent();
+            FileManager.itemViewHolder.TriggerSoundsLoadedEvent(this);
 
             // Load the user details and start the sync
             await FileManager.itemViewHolder.User.InitAsync();
@@ -104,18 +105,18 @@ namespace UniversalSoundBoard.Pages
             Bindings.Update();
         }
 
-        private void ItemViewHolder_CategoriesUpdatedEvent(object sender, EventArgs e)
+        private void ItemViewHolder_CategoriesUpdated(object sender, EventArgs e)
         {
             LoadMenuItems();
         }
 
-        private async void ItemViewHolder_CategoryUpdatedEvent(object sender, CategoryEventArgs args)
+        private async void ItemViewHolder_CategoryUpdated(object sender, CategoryEventArgs args)
         {
             // Update the text and icon of the menu item of the category
             UpdateCategoryMenuItem(SideBar.MenuItems, await FileManager.GetCategoryAsync(args.Uuid));
         }
 
-        private void ItemViewHolder_CategoryRemovedEvent(object sender, CategoryEventArgs args)
+        private void ItemViewHolder_CategoryRemoved(object sender, CategoryEventArgs args)
         {
             // Remove the category from the SideBar
             RemoveCategoryMenuItem(SideBar.MenuItems, args.Uuid);

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
 using UniversalSoundBoard.DataAccess;
@@ -121,20 +122,20 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Events
-        public event EventHandler SoundsLoadedEvent;                                            // Is triggered when the sounds at startup were loaded
-        public event EventHandler PlayingSoundsLoadedEvent;                                     // Is triggered when the playing sounds at startup were loaded
-        public event EventHandler CategoriesUpdatedEvent;                                       // Is triggered when all categories were loaded into the Categories ObservableCollection
-        public event EventHandler<CategoryEventArgs> CategoryUpdatedEvent;                      // Is triggered when a category was updated
-        public event EventHandler<CategoryEventArgs> CategoryRemovedEvent;                      // Is triggered when a category was removed
-        public event EventHandler<RoutedEventArgs> SelectAllSoundsEvent;                        // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
-        public event EventHandler<SizeChangedEventArgs> SoundTileSizeChangedEvent;              // This event is triggered when the size of the sound tiles in the GridViews has changed
-        public event EventHandler PlayingSoundItemStartSoundsListAnimationEvent;                // Is triggered from the SoundPage for starting the appropriate animation
-        public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemShowSoundsListAnimationStartedEvent;    // Is triggered when the animation of a PlayingSound item to show the sounds list started
-        public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemShowSoundsListAnimationEndedEvent;      // Is triggered when the animation of a PlayingSound item to show the sounds list ended
-        public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemHideSoundsListAnimationStartedEvent;    // Is triggered when the animation of a PlayingSound item to hide the sounds list started
-        public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemHideSoundsListAnimationEndedEvent;      // Is triggered when the animation of a PlayingSound item to hide the sounds list ended
-        public event EventHandler<PlayingSoundItemEventArgs> ShowPlayingSoundItemStartedEvent;                       // Is triggered when the PlayingSound appearing animation has started
-        public event EventHandler<PlayingSoundItemEventArgs> RemovePlayingSoundItemEvent;                            // Is triggered when the user wants to remove a PlayingSound, to start the BottomPlayingSoundsBar animation
+        public event EventHandler<EventArgs> SoundsLoaded;                                                      // Is triggered when the sounds at startup were loaded
+        public event EventHandler<EventArgs> PlayingSoundsLoaded;                                               // Is triggered when the playing sounds at startup were loaded
+        public event EventHandler<EventArgs> CategoriesUpdated;                                                 // Is triggered when all categories were loaded into the Categories ObservableCollection
+        public event EventHandler<CategoryEventArgs> CategoryUpdated;                                           // Is triggered when a category was updated
+        public event EventHandler<CategoryEventArgs> CategoryRemoved;                                           // Is triggered when a category was removed
+        public event EventHandler<RoutedEventArgs> SelectAllSounds;                                             // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
+        public event EventHandler<SizeChangedEventArgs> SoundTileSizeChanged;                                   // Is triggered when the size of the sound tiles in the GridViews has changed
+        public event EventHandler<EventArgs> PlayingSoundItemStartSoundsListAnimation;                          // Is triggered from the SoundPage for starting the appropriate animation
+        public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemShowSoundsListAnimationStarted;    // Is triggered when the animation of a PlayingSound item to show the sounds list started
+        public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemShowSoundsListAnimationEnded;      // Is triggered when the animation of a PlayingSound item to show the sounds list ended
+        public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemHideSoundsListAnimationStarted;    // Is triggered when the animation of a PlayingSound item to hide the sounds list started
+        public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemHideSoundsListAnimationEnded;      // Is triggered when the animation of a PlayingSound item to hide the sounds list ended
+        public event EventHandler<PlayingSoundItemEventArgs> ShowPlayingSoundItemStarted;                       // Is triggered when the PlayingSound appearing animation has started
+        public event EventHandler<PlayingSoundItemEventArgs> RemovePlayingSoundItem;                            // Is triggered when the user wants to remove a PlayingSound, to start the BottomPlayingSoundsBar animation
         #endregion
 
         #region Local variables
@@ -989,74 +990,74 @@ namespace UniversalSoundBoard.Common
         #endregion
 
         #region Events
-        public void TriggerSoundsLoadedEvent()
+        public void TriggerSoundsLoadedEvent(object sender)
         {
-            SoundsLoadedEvent?.Invoke(null, null);
+            SoundsLoaded?.Invoke(sender, new EventArgs());
         }
 
-        public void TriggerPlayingSoundsLoadedEvent()
+        public void TriggerPlayingSoundsLoadedEvent(object sender)
         {
-            PlayingSoundsLoadedEvent?.Invoke(null, null);
+            PlayingSoundsLoaded?.Invoke(sender, new EventArgs());
         }
 
-        public void TriggerCategoriesUpdatedEvent()
+        public void TriggerCategoriesUpdatedEvent(object sender)
         {
-            CategoriesUpdatedEvent?.Invoke(null, null);
+            CategoriesUpdated?.Invoke(sender, new EventArgs());
         }
 
-        public void TriggerCategoryUpdatedEvent(CategoryEventArgs args)
+        public void TriggerCategoryUpdatedEvent(object sender, CategoryEventArgs args)
         {
-            CategoryUpdatedEvent?.Invoke(null, args);
+            CategoryUpdated?.Invoke(sender, args);
         }
 
-        public void TriggerCategoryRemovedEvent(CategoryEventArgs args)
+        public void TriggerCategoryRemovedEvent(object sender, CategoryEventArgs args)
         {
-            CategoryRemovedEvent?.Invoke(null, args);
+            CategoryRemoved?.Invoke(sender, args);
         }
 
         public void TriggerSelectAllSoundsEvent(object sender, RoutedEventArgs e)
         {
-            SelectAllSoundsEvent?.Invoke(sender, e);
+            SelectAllSounds?.Invoke(sender, e);
         }
 
         public void TriggerSoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)
         {
-            SoundTileSizeChangedEvent?.Invoke(sender, e);
+            SoundTileSizeChanged?.Invoke(sender, e);
         }
 
-        public void TriggerPlayingSoundItemStartSoundsListAnimationEvent()
+        public void TriggerPlayingSoundItemStartSoundsListAnimationEvent(object sender)
         {
-            PlayingSoundItemStartSoundsListAnimationEvent?.Invoke(null, null);
+            PlayingSoundItemStartSoundsListAnimation?.Invoke(sender, new EventArgs());
         }
 
         public void TriggerPlayingSoundItemShowSoundsListAnimationStartedEvent(object sender, PlayingSoundItemEventArgs args)
         {
-            PlayingSoundItemShowSoundsListAnimationStartedEvent?.Invoke(sender, args);
+            PlayingSoundItemShowSoundsListAnimationStarted?.Invoke(sender, args);
         }
 
         public void TriggerPlayingSoundItemShowSoundsListAnimationEndedEvent(object sender, PlayingSoundItemEventArgs args)
         {
-            PlayingSoundItemShowSoundsListAnimationEndedEvent?.Invoke(sender, args);
+            PlayingSoundItemShowSoundsListAnimationEnded?.Invoke(sender, args);
         }
 
         public void TriggerPlayingSoundItemHideSoundsListAnimationStartedEvent(object sender, PlayingSoundItemEventArgs args)
         {
-            PlayingSoundItemHideSoundsListAnimationStartedEvent?.Invoke(sender, args);
+            PlayingSoundItemHideSoundsListAnimationStarted?.Invoke(sender, args);
         }
 
         public void TriggerPlayingSoundItemHideSoundsListAnimationEndedEvent(object sender, PlayingSoundItemEventArgs args)
         {
-            PlayingSoundItemHideSoundsListAnimationEndedEvent?.Invoke(sender, args);
+            PlayingSoundItemHideSoundsListAnimationEnded?.Invoke(sender, args);
         }
 
         public void TriggerShowPlayingSoundItemStartedEvent(object sender, PlayingSoundItemEventArgs args)
         {
-            ShowPlayingSoundItemStartedEvent?.Invoke(sender, args);
+            ShowPlayingSoundItemStarted?.Invoke(sender, args);
         }
 
         public void TriggerRemovePlayingSoundItemEvent(object sender, PlayingSoundItemEventArgs args)
         {
-            RemovePlayingSoundItemEvent?.Invoke(sender, args);
+            RemovePlayingSoundItem?.Invoke(sender, args);
         }
         #endregion
 
@@ -1068,33 +1069,5 @@ namespace UniversalSoundBoard.Common
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
         #endregion
-    }
-
-    public class CategoryEventArgs : EventArgs
-    {
-        public Guid Uuid { get; set; }
-
-        public CategoryEventArgs(Guid uuid)
-        {
-            Uuid = uuid;
-        }
-    }
-
-    public class PlayingSoundItemEventArgs : EventArgs
-    {
-        public Guid Uuid { get; set; }
-        public double HeightDifference { get; set; }
-
-        public PlayingSoundItemEventArgs(Guid uuid)
-        {
-            Uuid = uuid;
-            HeightDifference = 0;
-        }
-
-        public PlayingSoundItemEventArgs(Guid uuid, double heightDifference)
-        {
-            Uuid = uuid;
-            HeightDifference = heightDifference;
-        }
     }
 }

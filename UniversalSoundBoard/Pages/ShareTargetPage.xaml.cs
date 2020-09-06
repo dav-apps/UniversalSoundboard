@@ -25,7 +25,7 @@ namespace UniversalSoundBoard.Pages
         {
             InitializeComponent();
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
-            FileManager.itemViewHolder.CategoriesUpdatedEvent += ItemViewHolder_CategoriesUpdated;
+            FileManager.itemViewHolder.CategoriesUpdated += ItemViewHolder_CategoriesUpdated;
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)

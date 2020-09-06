@@ -3,11 +3,11 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Models;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
-using UniversalSoundBoard.Pages;
 using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -72,7 +72,7 @@ namespace UniversalSoundboard.Components
 
                 // Subscribe to ItemViewHolder events
                 FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
-                FileManager.itemViewHolder.PlayingSoundItemStartSoundsListAnimationEvent += ItemViewHolder_PlayingSoundItemStartSoundsListAnimationEvent;
+                FileManager.itemViewHolder.PlayingSoundItemStartSoundsListAnimation += ItemViewHolder_PlayingSoundItemStartSoundsListAnimation;
 
                 // Subscribe to MediaPlayer events
                 PlayingSound.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
@@ -115,7 +115,7 @@ namespace UniversalSoundboard.Components
                 PlayingSound.MediaPlayer.IsMuted = PlayingSound.Muted || FileManager.itemViewHolder.Muted;
         }
 
-        private void ItemViewHolder_PlayingSoundItemStartSoundsListAnimationEvent(object sender, EventArgs e)
+        private void ItemViewHolder_PlayingSoundItemStartSoundsListAnimation(object sender, EventArgs e)
         {
             if (showSoundsListAnimationTriggered)
             {
@@ -484,83 +484,5 @@ namespace UniversalSoundboard.Components
             PlayingSound.Sounds.RemoveAt(index);
         }
         #endregion
-    }
-
-    public class PlaybackStateChangedEventArgs : EventArgs
-    {
-        public bool IsPlaying { get; }
-
-        public PlaybackStateChangedEventArgs(bool isPlaying)
-        {
-            IsPlaying = isPlaying;
-        }
-    }
-
-    public class CurrentSoundChangedEventArgs : EventArgs
-    {
-        public int CurrentSound { get; }
-
-        public CurrentSoundChangedEventArgs(int currentSound)
-        {
-            CurrentSound = currentSound;
-        }
-    }
-
-    public class ButtonVisibilityChangedEventArgs : EventArgs
-    {
-        public Visibility PreviousButtonVisibility { get; }
-        public Visibility NextButtonVisibility { get; }
-        public Visibility ExpandButtonVisibility { get; }
-
-        public ButtonVisibilityChangedEventArgs(
-            Visibility previousButtonVisibility,
-            Visibility nextButtonVisibility,
-            Visibility expandButtonVisibility
-        )
-        {
-            PreviousButtonVisibility = previousButtonVisibility;
-            NextButtonVisibility = nextButtonVisibility;
-            ExpandButtonVisibility = expandButtonVisibility;
-        }
-    }
-
-    public class ExpandButtonContentChangedEventArgs : EventArgs
-    {
-        public bool Expanded { get; }
-
-        public ExpandButtonContentChangedEventArgs(bool expanded)
-        {
-            Expanded = expanded;
-        }
-    }
-
-    public class FavouriteChangedEventArgs : EventArgs
-    {
-        public bool Favourite { get; }
-
-        public FavouriteChangedEventArgs(bool favourite)
-        {
-            Favourite = favourite;
-        }
-    }
-
-    public class VolumeChangedEventArgs : EventArgs
-    {
-        public int Volume { get; }
-
-        public VolumeChangedEventArgs(int volume)
-        {
-            Volume = volume;
-        }
-    }
-
-    public class MutedChangedEventArgs : EventArgs
-    {
-        public bool Muted { get; }
-
-        public MutedChangedEventArgs(bool muted)
-        {
-            Muted = muted;
-        }
     }
 }

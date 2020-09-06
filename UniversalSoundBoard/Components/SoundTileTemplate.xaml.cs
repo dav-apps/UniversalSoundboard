@@ -29,7 +29,7 @@ namespace UniversalSoundBoard.Components
 
             DataContextChanged += SoundTileTemplate_DataContextChanged;
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
-            FileManager.itemViewHolder.SoundTileSizeChangedEvent += ItemViewHolder_SoundTileSizeChangedEvent;
+            FileManager.itemViewHolder.SoundTileSizeChanged += ItemViewHolder_SoundTileSizeChanged;
         }
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
@@ -57,7 +57,7 @@ namespace UniversalSoundBoard.Components
                 SetThemeColors();
         }
 
-        private void ItemViewHolder_SoundTileSizeChangedEvent(object sender, SizeChangedEventArgs e)
+        private void ItemViewHolder_SoundTileSizeChanged(object sender, SizeChangedEventArgs e)
         {
             UpdateSizes();
         }
