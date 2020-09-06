@@ -1266,7 +1266,7 @@ namespace UniversalSoundBoard.DataAccess
         {
             // Replace the category in the categories list with the updated category
             ReplaceCategory(itemViewHolder.Categories, updatedCategory);
-            itemViewHolder.TriggerCategoryUpdatedEvent(updatedCategory.Uuid);
+            itemViewHolder.TriggerCategoryUpdatedEvent(new CategoryEventArgs(updatedCategory.Uuid));
         }
 
         private static bool ReplaceCategory(List<Category> categoriesList, Category updatedCategory)
@@ -1291,7 +1291,7 @@ namespace UniversalSoundBoard.DataAccess
         public static void RemoveCategory(Guid uuid)
         {
             RemoveCategoryInList(itemViewHolder.Categories, uuid);
-            itemViewHolder.TriggerCategoryRemovedEvent(uuid);
+            itemViewHolder.TriggerCategoryRemovedEvent(new CategoryEventArgs(uuid));
         }
 
         private static bool RemoveCategoryInList(List<Category> categoriesList, Guid uuid)

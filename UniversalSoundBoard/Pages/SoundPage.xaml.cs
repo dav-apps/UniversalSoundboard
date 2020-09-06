@@ -30,7 +30,6 @@ namespace UniversalSoundBoard.Pages
         private VerticalPosition bottomPlayingSoundsBarPosition = VerticalPosition.Bottom;
         private static bool playingSoundsLoaded = false;
         public static bool showPlayingSoundItemAnimation = false;
-        public static double playingSoundHeightDifference = 0;
         private double maxBottomPlayingSoundsBarHeight = 500;
         bool isManipulatingBottomPlayingSoundsBar = false;
         private int getContainerHeightCount = 0;
@@ -141,10 +140,10 @@ namespace UniversalSoundBoard.Pages
             UpdateSelectAllFlyoutText();
         }
 
-        private void ItemViewHolder_PlayingSoundItemShowSoundsListAnimationStartedEvent(object sender, Guid e)
+        private void ItemViewHolder_PlayingSoundItemShowSoundsListAnimationStartedEvent(object sender, PlayingSoundItemEventArgs args)
         {
             // Update the max height for the GridSplitter with the new height
-            double newMaxHeight = BottomPlayingSoundsBarListView.ActualHeight + playingSoundHeightDifference;
+            double newMaxHeight = BottomPlayingSoundsBarListView.ActualHeight + args.HeightDifference;
             if (newMaxHeight >= maxBottomPlayingSoundsBarHeight) newMaxHeight = maxBottomPlayingSoundsBarHeight;
 
             GridSplitterGridBottomRowDef.MaxHeight = newMaxHeight;
@@ -152,7 +151,7 @@ namespace UniversalSoundBoard.Pages
             if (bottomPlayingSoundsBarPosition == VerticalPosition.Top)
             {
                 // Update the BottomPlayingSoundsBar height and the bottom row def max height to the new height, so that the animation is able to play
-                double newHeight = BottomPlayingSoundsBarListView.ActualHeight + playingSoundHeightDifference;
+                double newHeight = BottomPlayingSoundsBarListView.ActualHeight + args.HeightDifference;
                 if (newHeight >= maxBottomPlayingSoundsBarHeight) newHeight = maxBottomPlayingSoundsBarHeight;
 
                 BottomPlayingSoundsBar.Height = newHeight;
@@ -160,7 +159,7 @@ namespace UniversalSoundBoard.Pages
             else
             {
                 // Setup and start the animation for increasing the height of the BottomPlayingSoundsBar
-                double newHeight = BottomPlayingSoundsBarListView.ActualHeight + playingSoundHeightDifference;
+                double newHeight = BottomPlayingSoundsBarListView.ActualHeight + args.HeightDifference;
                 if (newHeight >= maxBottomPlayingSoundsBarHeight) newHeight = maxBottomPlayingSoundsBarHeight;
 
                 ShowSoundsListViewStoryboardAnimation.From = BottomPlayingSoundsBarListView.ActualHeight;
@@ -172,13 +171,13 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.TriggerPlayingSoundItemStartSoundsListAnimationEvent();
         }
 
-        private async void ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEndedEvent(object sender, Guid e)
+        private async void ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEndedEvent(object sender, PlayingSoundItemEventArgs args)
         {
             // Update the min and max height of the bottom row def
             await UpdateGridSplitterRange();
         }
 
-        private void ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStartedEvent(object sender, Guid e)
+        private void ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStartedEvent(object sender, PlayingSoundItemEventArgs args)
         {
             // Set the min height of the splitter to 0, so that the animation is able to play
             GridSplitterGridBottomRowDef.MinHeight = 0;
@@ -187,7 +186,7 @@ namespace UniversalSoundBoard.Pages
             {
                 // Setup and start the animation for decreasing the height of the BottomPlayingSoundsBar
                 HideSoundsListViewStoryboardAnimation.From = BottomPlayingSoundsBarListView.ActualHeight;
-                HideSoundsListViewStoryboardAnimation.To = playingSoundHeightDifference;
+                HideSoundsListViewStoryboardAnimation.To = args.HeightDifference;
                 HideSoundsListViewStoryboard.Begin();
             }
 
@@ -195,19 +194,19 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.TriggerPlayingSoundItemStartSoundsListAnimationEvent();
         }
 
-        private async void ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEndedEvent(object sender, Guid e)
+        private async void ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEndedEvent(object sender, PlayingSoundItemEventArgs args)
         {
             // Update the min and max height of the bottom row def
             await UpdateGridSplitterRange();
         }
 
-        private void ItemViewHolder_ShowPlayingSoundItemStartedEvent(object sender, Guid e)
+        private void ItemViewHolder_ShowPlayingSoundItemStartedEvent(object sender, PlayingSoundItemEventArgs args)
         {
             // Update the animation with the actual PlayingSoundItem height
-            AnimateIncreasingBottomPlayingSoundBar(playingSoundHeightDifference);
+            AnimateIncreasingBottomPlayingSoundBar(args.HeightDifference);
         }
 
-        private void ItemViewHolder_RemovePlayingSoundItemEvent(object sender, Guid e)
+        private void ItemViewHolder_RemovePlayingSoundItemEvent(object sender, PlayingSoundItemEventArgs args)
         {
             if (FileManager.itemViewHolder.PlayingSounds.Count != 1) return;
 

@@ -385,8 +385,13 @@ namespace UniversalSoundboard.Components
             showSoundsListAnimationTriggered = true;
 
             // Trigger the event to start the animation and wait for SoundPage to start the animation
-            SoundPage.playingSoundHeightDifference = heightDifference;
-            FileManager.itemViewHolder.TriggerPlayingSoundItemShowSoundsListAnimationStartedEvent(this, PlayingSound.Uuid);
+            FileManager.itemViewHolder.TriggerPlayingSoundItemShowSoundsListAnimationStartedEvent(
+                this,
+                new PlayingSoundItemEventArgs(
+                    PlayingSound.Uuid,
+                    heightDifference
+                )
+            );
 
             // Update the ExpandButton content
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(true));
@@ -399,8 +404,13 @@ namespace UniversalSoundboard.Components
             hideSoundsListAnimationTriggered = true;
 
             // Trigger the event to start the animation and wait for SoundPage to start the animation
-            SoundPage.playingSoundHeightDifference = heightDifference;
-            FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationStartedEvent(this, PlayingSound.Uuid);
+            FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationStartedEvent(
+                this,
+                new PlayingSoundItemEventArgs(
+                    PlayingSound.Uuid,
+                    heightDifference
+                )
+            );
 
             // Update the ExpandButton content
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(false));

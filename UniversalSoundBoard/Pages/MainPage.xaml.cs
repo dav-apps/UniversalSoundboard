@@ -109,16 +109,16 @@ namespace UniversalSoundBoard.Pages
             LoadMenuItems();
         }
 
-        private async void ItemViewHolder_CategoryUpdatedEvent(object sender, Guid uuid)
+        private async void ItemViewHolder_CategoryUpdatedEvent(object sender, CategoryEventArgs args)
         {
             // Update the text and icon of the menu item of the category
-            UpdateCategoryMenuItem(SideBar.MenuItems, await FileManager.GetCategoryAsync(uuid));
+            UpdateCategoryMenuItem(SideBar.MenuItems, await FileManager.GetCategoryAsync(args.Uuid));
         }
 
-        private void ItemViewHolder_CategoryRemovedEvent(object sender, Guid uuid)
+        private void ItemViewHolder_CategoryRemovedEvent(object sender, CategoryEventArgs args)
         {
             // Remove the category from the SideBar
-            RemoveCategoryMenuItem(SideBar.MenuItems, uuid);
+            RemoveCategoryMenuItem(SideBar.MenuItems, args.Uuid);
         }
         #endregion
 

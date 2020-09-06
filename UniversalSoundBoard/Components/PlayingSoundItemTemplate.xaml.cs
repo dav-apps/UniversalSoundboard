@@ -2,6 +2,7 @@
 using System.Linq;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
+using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel.Resources;
@@ -84,8 +85,13 @@ namespace UniversalSoundBoard.Components
                 double contentHeight = 88;  // (88 = standard height of PlayingSoundItem with one row of text)
                 if (ContentRoot.ActualHeight > 0) contentHeight = ContentRoot.ActualHeight + ContentRoot.Margin.Top + ContentRoot.Margin.Bottom;
 
-                SoundPage.playingSoundHeightDifference = contentHeight;
-                FileManager.itemViewHolder.TriggerShowPlayingSoundItemStartedEvent(this, PlayingSound.Uuid);
+                FileManager.itemViewHolder.TriggerShowPlayingSoundItemStartedEvent(
+                    this,
+                    new PlayingSoundItemEventArgs(
+                        PlayingSound.Uuid,
+                        contentHeight
+                    )
+                );
 
                 ShowPlayingSoundItemStoryboardAnimation.To = contentHeight;
                 ShowPlayingSoundItemStoryboard.Begin();
@@ -348,7 +354,7 @@ namespace UniversalSoundBoard.Components
             HidePlayingSoundItemStoryboard.Begin();
 
             // Trigger the animation in SoundPage for the BottomPlayingSoundsBar, if necessary
-            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, PlayingSound.Uuid);
+            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
         }
         #endregion
 
@@ -464,12 +470,12 @@ namespace UniversalSoundBoard.Components
 
         private void ShowSoundsListViewStoryboard_Completed(object sender, object e)
         {
-            FileManager.itemViewHolder.TriggerPlayingSoundItemShowSoundsListAnimationEndedEvent(this, PlayingSound.Uuid);
+            FileManager.itemViewHolder.TriggerPlayingSoundItemShowSoundsListAnimationEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
         }
 
         private void HideSoundsListViewStoryboard_Completed(object sender, object e)
         {
-            FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationEndedEvent(this, PlayingSound.Uuid);
+            FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
         }
 
         private void ShowPlayingSoundItemStoryboard_Completed(object sender, object e)
