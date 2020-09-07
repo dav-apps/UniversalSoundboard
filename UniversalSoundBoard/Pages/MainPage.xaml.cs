@@ -662,6 +662,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.RemoveCategory(FileManager.itemViewHolder.SelectedCategory);
 
             // Navigate to all Sounds
+            SelectCategory(Guid.Empty);
             await FileManager.ShowAllSoundsAsync();
         }
         #endregion

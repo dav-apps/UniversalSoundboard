@@ -1908,11 +1908,29 @@ namespace UniversalSoundBoard.DataAccess
             await DatabaseOperations.UpdateCategoryAsync(uuid, null, null, parent);
         }
 
-        public static async Task DeleteCategoryAsync(Guid categoryUuid)
+        public static async Task DeleteCategoryAsync(Guid uuid)
         {
-            await DatabaseOperations.DeleteCategoryAsync(categoryUuid);
-            // TODO: Delete SoundOrder table objects
-            // TODO: Update categories list
+            await DeleteSubCategoryAsync(uuid);
+        }
+
+        private static async Task DeleteSubCategoryAsync(Guid uuid)
+        {
+            // Get the category and its children
+            Category category = await GetCategoryAsync(uuid);
+
+            // Call this method for each children
+            foreach (var subCategory in category.Children)
+                await DeleteSubCategoryAsync(subCategory.Uuid);
+
+            // Delete the SoundOrder table objects
+            await DatabaseOperations.DeleteSoundOrderAsync(uuid, false);
+            await DatabaseOperations.DeleteSoundOrderAsync(uuid, true);
+
+            // Delete the CategoryOrder table objects
+            await DatabaseOperations.DeleteCategoryOrderAsync(uuid);
+
+            // Delete the category itself
+            await DatabaseOperations.DeleteCategoryAsync(uuid);
         }
         #endregion
 
@@ -2104,7 +2122,8 @@ namespace UniversalSoundBoard.DataAccess
                     // Return true if the object belongs to no category and the searched category is the root category
                     return rootCategories;
                 }
-                else return cUuid.Value.Equals(parentCategoryUuid);
+                
+                return cUuid.Value.Equals(parentCategoryUuid);
             });
 
             if (categoryOrderTableObjects.Count > 0)
@@ -2185,7 +2204,7 @@ namespace UniversalSoundBoard.DataAccess
                 }
 
                 if (saveNewOrder)
-                    await DatabaseOperations.SetCategoryOrderAsync(uuids, parentCategoryUuid);
+                    await DatabaseOperations.SetCategoryOrderAsync(parentCategoryUuid, uuids);
 
                 return sortedCategories;
             }
@@ -2197,7 +2216,7 @@ namespace UniversalSoundBoard.DataAccess
                 foreach (var category in categories)
                     uuids.Add(category.Uuid);
 
-                await DatabaseOperations.SetCategoryOrderAsync(uuids, parentCategoryUuid);
+                await DatabaseOperations.SetCategoryOrderAsync(parentCategoryUuid, uuids);
                 return categories;
             }
         }
@@ -2213,7 +2232,7 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task UpdateCustomCategoriesOrder(List<Guid> categoryUuids, Guid parentCategoryUuid)
         {
-            await DatabaseOperations.SetCategoryOrderAsync(categoryUuids, parentCategoryUuid);
+            await DatabaseOperations.SetCategoryOrderAsync(parentCategoryUuid, categoryUuids);
         }
         #endregion
 

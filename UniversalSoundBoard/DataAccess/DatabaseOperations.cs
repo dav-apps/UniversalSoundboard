@@ -242,7 +242,7 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region CategoryOrder
-        public static async Task SetCategoryOrderAsync(List<Guid> uuids, Guid parentCategoryUuid)
+        public static async Task SetCategoryOrderAsync(Guid parentCategoryUuid, List<Guid> uuids)
         {
             // Check if the order already exists
             List<TableObject> tableObjects = await GetAllOrdersAsync();
@@ -305,6 +305,30 @@ namespace UniversalSoundBoard.DataAccess
                 for (int j = 0; j < removedProperties.Count; j++)
                     await tableObject.RemovePropertyAsync(removedProperties[j]);
             }
+        }
+
+        public static async Task DeleteCategoryOrderAsync(Guid parentCategoryUuid)
+        {
+            if (parentCategoryUuid.Equals(Guid.Empty)) return;
+
+            // Find the table object
+            List<TableObject> tableObjects = await GetAllOrdersAsync();
+            TableObject tableObject = tableObjects.Find(obj =>
+            {
+                // Check if the object is of type Category
+                if (obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) != FileManager.CategoryOrderType) return false;
+
+                string categoryUuidString = obj.GetPropertyValue(FileManager.OrderTableCategoryPropertyName);
+                Guid? cUuid = FileManager.ConvertStringToGuid(categoryUuidString);
+                if (!cUuid.HasValue) return false;
+
+                return cUuid.Value.Equals(parentCategoryUuid);
+            });
+
+            if (tableObject == null) return;
+
+            // Delete the table object
+            await tableObject.DeleteAsync();
         }
         #endregion
 
@@ -379,6 +403,33 @@ namespace UniversalSoundBoard.DataAccess
                         await tableObject.RemovePropertyAsync(removedProperties[j]);
                 }
             }
+        }
+
+        public static async Task DeleteSoundOrderAsync(Guid categoryUuid, bool favourite)
+        {
+            if (categoryUuid.Equals(Guid.Empty)) return;
+
+            // Find the table object
+            List<TableObject> tableObjects = await GetAllOrdersAsync();
+            TableObject tableObject = tableObjects.Find((TableObject obj) => {
+                // Check if the object is of type Sound
+                if (obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) != FileManager.SoundOrderType) return false;
+
+                // Check if the object has the right category uuid
+                string categoryUuidString = obj.GetPropertyValue(FileManager.OrderTableCategoryPropertyName);
+                Guid? cUuid = FileManager.ConvertStringToGuid(categoryUuidString);
+                if (!cUuid.HasValue) return false;
+
+                string favString = obj.GetPropertyValue(FileManager.OrderTableFavouritePropertyName);
+                bool.TryParse(favString, out bool fav);
+
+                return Equals(categoryUuid, cUuid) && favourite == fav;
+            });
+
+            if (tableObject == null) return;
+
+            // Delete the table object
+            await tableObject.DeleteAsync();
         }
         #endregion
         
