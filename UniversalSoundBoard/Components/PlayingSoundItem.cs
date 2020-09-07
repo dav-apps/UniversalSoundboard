@@ -255,8 +255,16 @@ namespace UniversalSoundboard.Components
                     await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Current);
                 }
 
-                // Update the PlayingSound
-                await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds.ToList());
+                if(PlayingSound.Sounds.Count == 0)
+                {
+                    // Delete the PlayingSound
+                    await Remove();
+                }
+                else
+                {
+                    // Update the PlayingSound
+                    await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds.ToList());
+                }
             }
         }
         #endregion
