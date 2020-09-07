@@ -1117,6 +1117,8 @@ namespace UniversalSoundBoard.DataAccess
                 if (i != -1)
                     playingSound.Sounds.RemoveAt(i);
             }
+
+            itemViewHolder.TriggerSoundDeletedEvent(null, new SoundEventArgs(uuid));
         }
 
         public static async Task UpdateLiveTileAsync()
@@ -1292,7 +1294,7 @@ namespace UniversalSoundBoard.DataAccess
         public static void RemoveCategory(Guid uuid)
         {
             RemoveCategoryInList(itemViewHolder.Categories, uuid);
-            itemViewHolder.TriggerCategoryRemovedEvent(null, new CategoryEventArgs(uuid));
+            itemViewHolder.TriggerCategoryDeletedEvent(null, new CategoryEventArgs(uuid));
         }
 
         private static bool RemoveCategoryInList(List<Category> categoriesList, Guid uuid)
@@ -1738,7 +1740,10 @@ namespace UniversalSoundBoard.DataAccess
                 return player;
 
             if (mediaPlaybackList.Items.Count >= current + 1)
-                mediaPlaybackList.MoveTo(Convert.ToUInt32(current));
+            {
+                try { mediaPlaybackList.MoveTo(Convert.ToUInt32(current)); }
+                catch { }
+            }
 
             return player;
         }

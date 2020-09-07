@@ -14,6 +14,16 @@ namespace UniversalSoundboard.Common
         }
     }
 
+    public class SoundEventArgs
+    {
+        public Guid Uuid { get; set; }
+
+        public SoundEventArgs(Guid uuid)
+        {
+            Uuid = uuid;
+        }
+    }
+
     public class PlayingSoundItemEventArgs : EventArgs
     {
         public Guid Uuid { get; set; }

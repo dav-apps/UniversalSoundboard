@@ -50,7 +50,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
             FileManager.itemViewHolder.CategoriesUpdated += ItemViewHolder_CategoriesUpdated;
             FileManager.itemViewHolder.CategoryUpdated += ItemViewHolder_CategoryUpdated;
-            FileManager.itemViewHolder.CategoryRemoved += ItemViewHolder_CategoryRemoved;
+            FileManager.itemViewHolder.CategoryDeleted += ItemViewHolder_CategoryDeleted;
         }
 
         #region Page event handlers
@@ -116,7 +116,7 @@ namespace UniversalSoundBoard.Pages
             UpdateCategoryMenuItem(SideBar.MenuItems, await FileManager.GetCategoryAsync(args.Uuid));
         }
 
-        private void ItemViewHolder_CategoryRemoved(object sender, CategoryEventArgs args)
+        private void ItemViewHolder_CategoryDeleted(object sender, CategoryEventArgs args)
         {
             // Remove the category from the SideBar
             RemoveCategoryMenuItem(SideBar.MenuItems, args.Uuid);

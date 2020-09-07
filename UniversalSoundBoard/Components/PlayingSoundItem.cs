@@ -72,6 +72,7 @@ namespace UniversalSoundboard.Components
 
                 // Subscribe to ItemViewHolder events
                 FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
+                FileManager.itemViewHolder.SoundDeleted += ItemViewHolder_SoundDeleted;
                 FileManager.itemViewHolder.PlayingSoundItemStartSoundsListAnimation += ItemViewHolder_PlayingSoundItemStartSoundsListAnimation;
 
                 // Subscribe to MediaPlayer events
@@ -113,6 +114,16 @@ namespace UniversalSoundboard.Components
                 PlayingSound.MediaPlayer.Volume = (double)PlayingSound.Volume / 100 * FileManager.itemViewHolder.Volume / 100;
             else if (e.PropertyName == ItemViewHolder.MutedKey)
                 PlayingSound.MediaPlayer.IsMuted = PlayingSound.Muted || FileManager.itemViewHolder.Muted;
+        }
+
+        private void ItemViewHolder_SoundDeleted(object sender, SoundEventArgs e)
+        {
+            // Find the deleted sound in the Sounds list of the PlayingSound
+            int i = PlayingSound.Sounds.ToList().FindIndex(s => s.Uuid.Equals(e.Uuid));
+            if (i == -1) return;
+
+            // Remove the sound from the list
+            PlayingSound.Sounds.RemoveAt(i);
         }
 
         private void ItemViewHolder_PlayingSoundItemStartSoundsListAnimation(object sender, EventArgs e)

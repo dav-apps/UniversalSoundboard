@@ -126,7 +126,8 @@ namespace UniversalSoundBoard.Common
         public event EventHandler<EventArgs> PlayingSoundsLoaded;                                               // Is triggered when the playing sounds at startup were loaded
         public event EventHandler<EventArgs> CategoriesUpdated;                                                 // Is triggered when all categories were loaded into the Categories ObservableCollection
         public event EventHandler<CategoryEventArgs> CategoryUpdated;                                           // Is triggered when a category was updated
-        public event EventHandler<CategoryEventArgs> CategoryRemoved;                                           // Is triggered when a category was removed
+        public event EventHandler<CategoryEventArgs> CategoryDeleted;                                           // Is triggered when a category was deleted
+        public event EventHandler<SoundEventArgs> SoundDeleted;                                                 // Is triggered when a sound was deleted
         public event EventHandler<RoutedEventArgs> SelectAllSounds;                                             // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
         public event EventHandler<SizeChangedEventArgs> SoundTileSizeChanged;                                   // Is triggered when the size of the sound tiles in the GridViews has changed
         public event EventHandler<EventArgs> PlayingSoundItemStartSoundsListAnimation;                          // Is triggered from the SoundPage for starting the appropriate animation
@@ -1010,9 +1011,14 @@ namespace UniversalSoundBoard.Common
             CategoryUpdated?.Invoke(sender, args);
         }
 
-        public void TriggerCategoryRemovedEvent(object sender, CategoryEventArgs args)
+        public void TriggerCategoryDeletedEvent(object sender, CategoryEventArgs args)
         {
-            CategoryRemoved?.Invoke(sender, args);
+            CategoryDeleted?.Invoke(sender, args);
+        }
+
+        public void TriggerSoundDeletedEvent(object sender, SoundEventArgs args)
+        {
+            SoundDeleted?.Invoke(sender, args);
         }
 
         public void TriggerSelectAllSoundsEvent(object sender, RoutedEventArgs e)
