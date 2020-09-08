@@ -28,14 +28,18 @@ namespace UniversalSoundBoard.Pages
     public sealed partial class MainPage : Page
     {
         readonly ResourceLoader loader = new ResourceLoader();
-        public static CoreDispatcher dispatcher;    // Dispatcher for ShareTargetPage
-        private Guid selectedCategory = Guid.Empty; // The category that was right clicked for the flyout
-        private List<string> Suggestions = new List<string>();  // The suggestions for the SearchAutoSuggestBox
+        public static CoreDispatcher dispatcher;                            // Dispatcher for ShareTargetPage
+        bool initizalized = false;
+        private Guid selectedCategory = Guid.Empty;                         // The category that was right clicked for the flyout
+        private List<string> Suggestions = new List<string>();              // The suggestions for the SearchAutoSuggestBox
         private List<StorageFile> sharedFiles = new List<StorageFile>();    // The files that get shared
-        bool selectionButtonsEnabled = false;               // If true, the buttons for multi selection are enabled
+        bool selectionButtonsEnabled = false;                               // If true, the buttons for multi selection are enabled
         private bool downloadFileIsExecuting = false;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
+        string title = FileManager.itemViewHolder.Title;                    // The visible title, possibly truncated
+        bool isTruncatingTitle = false;                                     // If true, TruncateTitleAsync is currently running
+        int titleTruncatedChars = 0;                                        // The number of characters the title was truncated
 
         public MainPage()
         {
@@ -47,16 +51,17 @@ namespace UniversalSoundBoard.Pages
 
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
-            FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
             FileManager.itemViewHolder.CategoriesUpdated += ItemViewHolder_CategoriesUpdated;
             FileManager.itemViewHolder.CategoryUpdated += ItemViewHolder_CategoryUpdated;
             FileManager.itemViewHolder.CategoryDeleted += ItemViewHolder_CategoryDeleted;
+            FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
         }
 
         #region Page event handlers
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             AdjustLayout();
+            initizalized = true;
 
             // Load the Categories and the menu items
             await FileManager.LoadCategoriesAsync();
@@ -83,12 +88,15 @@ namespace UniversalSoundBoard.Pages
             e.Handled = true;
         }
 
-        private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
+        private async void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             AdjustLayout();
+
+            if(initizalized)
+                await TruncateTitleAsync();
         }
 
-        private void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private async void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals(ItemViewHolder.PageKey) || e.PropertyName.Equals(ItemViewHolder.AppStateKey))
             {
@@ -97,12 +105,17 @@ namespace UniversalSoundBoard.Pages
             }
             else if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 SetThemeColors();
-        }
+            else if (e.PropertyName.Equals(ItemViewHolder.TitleKey))
+            {
+                title = FileManager.itemViewHolder.Title;
+                Bindings.Update();
 
-        private void SelectedSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            selectionButtonsEnabled = FileManager.itemViewHolder.SelectedSounds.Count > 0;
-            Bindings.Update();
+                // Wait for the layout to update
+                await Task.Delay(8);
+
+                titleTruncatedChars = 0;
+                await TruncateTitleAsync();
+            }
         }
 
         private void ItemViewHolder_CategoriesUpdated(object sender, EventArgs e)
@@ -120,6 +133,12 @@ namespace UniversalSoundBoard.Pages
         {
             // Remove the category from the SideBar
             RemoveCategoryMenuItem(SideBar.MenuItems, args.Uuid);
+        }
+
+        private void SelectedSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            selectionButtonsEnabled = FileManager.itemViewHolder.SelectedSounds.Count > 0;
+            Bindings.Update();
         }
         #endregion
 
@@ -172,6 +191,51 @@ namespace UniversalSoundBoard.Pages
                 TitleBar.Width = Window.Current.Bounds.Width - 40;
                 WindowTitleTextBlock.Margin = new Thickness(57, 12, 0, 0);
             }
+        }
+
+        private async Task TruncateTitleAsync()
+        {
+            if (isTruncatingTitle) return;
+            isTruncatingTitle = true;
+
+            double titleWidth = TitleStackPanel.Margin.Left + TitleTextBlock.ActualWidth + TitleButtonStackPanel.ActualWidth;
+            double optionsWidth = OptionsRelativePanel.Margin.Right + OptionsRelativePanel.ActualWidth;
+
+            while (titleWidth > NavigationViewHeader.ActualWidth - optionsWidth - 20 && title.Length > 6)
+            {
+                // Remove the last 4 characters and append ...
+                title = title.Substring(0, title.Length - 4) + "...";
+                Bindings.Update();
+
+                // Wait for the layout to update
+                await Task.Delay(1);
+
+                // Update titleWidth
+                titleWidth = TitleStackPanel.Margin.Left + TitleTextBlock.ActualWidth + TitleButtonStackPanel.ActualWidth;
+                titleTruncatedChars++;
+            }
+
+            while(titleWidth < NavigationViewHeader.ActualWidth - optionsWidth - 60 && titleTruncatedChars > 0)
+            {
+                titleTruncatedChars--;
+
+                // Remove the ... from the end of the title and add the next 1 or 4 chars of the title
+                title = title.Substring(0, title.Length - 3);
+                title += FileManager.itemViewHolder.Title.Substring(title.Length, titleTruncatedChars == 0 ? 4 : 1);
+
+                if (titleTruncatedChars > 0)
+                    title += "...";
+
+                Bindings.Update();
+
+                // Wait for the layout to update
+                await Task.Delay(1);
+
+                // Update titleWidth
+                titleWidth = TitleStackPanel.Margin.Left + TitleTextBlock.ActualWidth + TitleButtonStackPanel.ActualWidth;
+            }
+
+            isTruncatingTitle = false;
         }
 
         private void SetThemeColors()
@@ -1129,6 +1193,11 @@ namespace UniversalSoundBoard.Pages
             // Create and show the MenuFlyout
             MenuFlyout flyout = new MenuFlyout();
 
+            // Create subcategory
+            MenuFlyoutItem createSubCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-AddSubCategory") };
+            createSubCategoryFlyoutItem.Click += CreateSubCategoryFlyoutItem_Click;
+            flyout.Items.Add(createSubCategoryFlyoutItem);
+
             // Position
             MenuFlyoutSubItem positionSubFlyoutItem = new MenuFlyoutSubItem { Text = loader.GetString("CategoryOptionsFlyout-Position") };
 
@@ -1205,13 +1274,40 @@ namespace UniversalSoundBoard.Pages
             if(positionSubFlyoutItem.Items.Count > 0)
                 flyout.Items.Add(positionSubFlyoutItem);
 
-            // Create subcategory
-            MenuFlyoutItem createSubCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-AddSubCategory") };
-            createSubCategoryFlyoutItem.Click += CreateSubCategoryFlyoutItem_Click;
-            flyout.Items.Add(createSubCategoryFlyoutItem);
-
             flyout.ShowAt(sender, position);
         }
+
+        #region Create SubCategory
+        private async void CreateSubCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var newSubCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(selectedCategory);
+            newSubCategoryContentDialog.PrimaryButtonClick += NewSubCategoryContentDialog_PrimaryButtonClick;
+            await newSubCategoryContentDialog.ShowAsync();
+        }
+
+        private async void NewSubCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Get combobox value
+            ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
+            string icon = typeItem.Content.ToString();
+
+            Guid categoryUuid = await FileManager.CreateCategoryAsync(null, selectedCategory, ContentDialogs.NewCategoryTextBox.Text, icon);
+            Category newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
+
+            // Add the category to the categories list
+            FileManager.AddCategory(newCategory, selectedCategory);
+
+            // Add the category to the MenuItems of the SideBar
+            AddCategoryMenuItem(SideBar.MenuItems, newCategory, selectedCategory);
+
+            // Navigate to the new category
+            await FileManager.ShowCategoryAsync(selectedCategory);
+
+            // Select the new category in the SideBar
+            await Task.Delay(2);
+            SelectCategory(categoryUuid);
+        }
+        #endregion
 
         #region Position
         private async void MoveUpFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -1254,38 +1350,6 @@ namespace UniversalSoundBoard.Pages
             MoveCategoryMenuItemToParent(SideBar.MenuItems, selectedCategory, false);
             await FileManager.MoveCategoryToParentAndSaveOrderAsync(FileManager.itemViewHolder.Categories, Guid.Empty, selectedCategory, false);
             await SelectCurrentCategory();
-        }
-        #endregion
-
-        #region Create SubCategory
-        private async void CreateSubCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            var newSubCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(selectedCategory);
-            newSubCategoryContentDialog.PrimaryButtonClick += NewSubCategoryContentDialog_PrimaryButtonClick;
-            await newSubCategoryContentDialog.ShowAsync();
-        }
-
-        private async void NewSubCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            // Get combobox value
-            ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
-            string icon = typeItem.Content.ToString();
-
-            Guid categoryUuid = await FileManager.CreateCategoryAsync(null, selectedCategory, ContentDialogs.NewCategoryTextBox.Text, icon);
-            Category newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
-
-            // Add the category to the categories list
-            FileManager.AddCategory(newCategory, selectedCategory);
-
-            // Add the category to the MenuItems of the SideBar
-            AddCategoryMenuItem(SideBar.MenuItems, newCategory, selectedCategory);
-
-            // Navigate to the new category
-            await FileManager.ShowCategoryAsync(selectedCategory);
-
-            // Select the new category in the SideBar
-            await Task.Delay(2);
-            SelectCategory(categoryUuid);
         }
         #endregion
         #endregion

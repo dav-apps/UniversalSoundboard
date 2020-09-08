@@ -136,10 +136,16 @@
                                     Name="TitleTextBlock" 
                                     Style="{StaticResource TitleTextBlockStyle}"
                                     RelativePanel.AlignVerticalCenterWithPanel="True"
-                                    Text="{Binding Title}"
-                                    Margin="0,0,10,0" />
+                                    Text="{x:Bind title}"
+                                    Margin="0,0,10,0">
+                                    
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock Text="{Binding Title}" />
+                                    </ToolTipService.ToolTip>
+                                </TextBlock>
 
                                 <StackPanel
+                                    Name="TitleButtonStackPanel"
                                     Orientation="Horizontal"
                                     RelativePanel.RightOf="TitleTextBlock"
                                     RelativePanel.AlignVerticalCenterWithPanel="True">
