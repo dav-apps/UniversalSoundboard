@@ -36,7 +36,7 @@ namespace UniversalSoundBoard.Pages
         private int getContainerHeightCount = 0;
         AdvancedCollectionView reversedPlayingSounds = new AdvancedCollectionView(FileManager.itemViewHolder.PlayingSounds);
         Visibility startMessageVisibility = Visibility.Collapsed;
-        Visibility categoryEmptyMessageVisibility = Visibility.Collapsed;
+        Visibility emptyCategoryMessageVisibility = Visibility.Collapsed;
         
         public SoundPage()
         {
@@ -669,7 +669,12 @@ namespace UniversalSoundBoard.Pages
                     && FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty)
                 ) ? Visibility.Visible : Visibility.Collapsed;
 
-            categoryEmptyMessageVisibility = (
+            if(FileManager.itemViewHolder.AllSounds.Count > 0)
+                EmptyCategoryMessageRelativePanel.Margin = new Thickness(0, 260, 0, 25);
+            else
+                EmptyCategoryMessageRelativePanel.Margin = new Thickness(0, 150, 0, 25);
+
+            emptyCategoryMessageVisibility = (
                 !FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty)
                 && FileManager.itemViewHolder.Sounds.Count == 0
             ) ? Visibility.Visible : Visibility.Collapsed;

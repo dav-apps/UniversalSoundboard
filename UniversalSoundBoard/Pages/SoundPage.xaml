@@ -385,13 +385,14 @@
                 x:Name="EmptyCategoryMessageScrollViewer"
                 Grid.Row="0"
                 Grid.Column="0"
-                Visibility="{x:Bind categoryEmptyMessageVisibility}"
-                Canvas.ZIndex="3"
+                Visibility="{x:Bind emptyCategoryMessageVisibility}"
+                Canvas.ZIndex="2"
                 AllowDrop="True"
                 DragOver="SoundContentGrid_DragOver"
                 Drop="SoundContentGrid_Drop">
 
                 <RelativePanel
+                    Name="EmptyCategoryMessageRelativePanel"
                     Margin="0,150,0,25">
 
                     <Image
