@@ -21,7 +21,6 @@
         <converters:BooleanToSelectionMode x:Name="BooleanToSelectionMode" />
         <converters:GridViewReorderItemsConverter x:Name="GridViewReorderItemsConverter" />
         <converters:LogoImageSourceConverter x:Name="LogoImageSourceConverter" />
-        <converters:AppStateEmptyConverter x:Name="AppStateEmptyConverter" />
         <converters:AppStateLoadingOrInitialSyncConverter x:Name="AppStateLoadingOrInitialSyncConverter" />
         <converters:AppStateNormalConverter x:Name="AppStateNormalConverter" />
 
@@ -281,11 +280,12 @@
                 Name="StartMessageScrollViewer"
                 Grid.Row="0"
                 Grid.Column="0"
-                Visibility="{Binding AppState, Converter={StaticResource AppStateEmptyConverter}}">
+                Visibility="{x:Bind startMessageVisibility}"
+                AllowDrop="True"
+                DragOver="SoundContentGrid_DragOver"
+                Drop="SoundContentGrid_Drop">
             
                 <RelativePanel
-                    RelativePanel.AlignRightWithPanel="True"
-                    RelativePanel.AlignLeftWithPanel="True"
                     Margin="0,150,0,25">
 
                     <Image
@@ -297,7 +297,7 @@
 
                     <TextBlock
                         Name="StartMessageTitleTextBlock"
-                        x:Uid="StartMessage-Title"
+                        x:Uid="StartMessageTitleTextBlock"
                         Style="{StaticResource StartMessageTitleStyle}"
                         RelativePanel.Below="LogoImage"
                         RelativePanel.AlignHorizontalCenterWithPanel="True" />
@@ -317,7 +317,7 @@
                                 FontFamily="Segoe MDL2 Assets" />
 
                             <TextBlock
-                                x:Uid="StartMessage-AddFirstSound"
+                                x:Uid="StartMessageAddFirstSoundButton"
                                 FontFamily="Segoe UI"
                                 FontSize="18"
                                 Margin="15,-3,0,0"/>
@@ -326,7 +326,7 @@
 
                     <TextBlock
                         Name="StartMessageExistingSoundboardTitleTextBlock"
-                        x:Uid="StartMessage-ExistingSoundboardTitle"
+                        x:Uid="StartMessageExistingSoundboardTitleTextBlock"
                         Style="{StaticResource StartMessageTitleStyle}"
                         RelativePanel.Below="StartMessageAddFirstSoundButton"
                         RelativePanel.AlignHorizontalCenterWithPanel="True" />
@@ -351,7 +351,7 @@
                                     FontFamily="Segoe MDL2 Assets" />
 
                                 <TextBlock
-                                    x:Uid="StartMessage-Login"
+                                    x:Uid="StartMessageLoginButton"
                                     FontFamily="Segoe UI"
                                     FontSize="18"
                                     Margin="15,-3,0,0"/>
@@ -371,7 +371,7 @@
                                     FontFamily="Segoe MDL2 Assets" />
 
                                 <TextBlock
-                                    x:Uid="StartMessage-ImportExistingSoundboard"
+                                    x:Uid="StartMessageImportExistingSoundboardButton"
                                     FontFamily="Segoe UI"
                                     FontSize="18"
                                     Margin="15,-3,0,0" />
@@ -381,14 +381,65 @@
                 </RelativePanel>
             </ScrollViewer>
 
+            <ScrollViewer
+                x:Name="EmptyCategoryMessageScrollViewer"
+                Grid.Row="0"
+                Grid.Column="0"
+                Visibility="{x:Bind categoryEmptyMessageVisibility}"
+                Canvas.ZIndex="3"
+                AllowDrop="True"
+                DragOver="SoundContentGrid_DragOver"
+                Drop="SoundContentGrid_Drop">
+
+                <RelativePanel
+                    Margin="0,150,0,25">
+
+                    <Image
+                        Name="EmptyCategoryImage"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True"
+                        Source="{Binding CurrentTheme, Converter={StaticResource LogoImageSourceConverter}}"
+                        Width="90"
+                        Height="90" />
+
+                    <TextBlock
+                        Name="EmptyCategoryMessageTitleTextBlock"
+                        x:Uid="EmptyCategoryMessageTitleTextBlock"
+                        Style="{StaticResource StartMessageTitleStyle}"
+                        RelativePanel.Below="EmptyCategoryImage"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True" />
+
+                    <Button
+                        Name="EmptyCategoryMessageAddFirstSoundButton"
+                        Style="{StaticResource StartMessageButtonStyle}"
+                        RelativePanel.Below="EmptyCategoryMessageTitleTextBlock"
+                        RelativePanel.AlignHorizontalCenterWithPanel="True"
+                        Margin="0,25,0,0"
+                        Click="StartMessageAddFirstSoundButton_Click">
+
+                        <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
+                            <TextBlock
+                                Text="&#xE109;"
+                                FontSize="18"
+                                FontFamily="Segoe MDL2 Assets" />
+
+                            <TextBlock
+                                x:Uid="StartMessageAddFirstSoundButton"
+                                FontFamily="Segoe UI"
+                                FontSize="18"
+                                Margin="15,-3,0,0"/>
+                        </StackPanel>
+                    </Button>
+                </RelativePanel>
+            </ScrollViewer>
+
             <Grid
                 Name="SoundContentGrid"
                 Grid.Row="0"
                 Grid.Column="0"
                 Visibility="{Binding AppState, Converter={StaticResource AppStateNormalConverter}}"
-                AllowDrop="True" 
-                Drop="SoundContentGrid_Drop" 
-                DragOver="SoundContentGrid_DragOver">
+                AllowDrop="True"
+                DragOver="SoundContentGrid_DragOver"
+                Drop="SoundContentGrid_Drop">
 
                 <Grid
                     Visibility="{Binding ShowSoundsPivot}">

@@ -523,19 +523,19 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="CategoryOptionsFlyout-Position-MoveUp" xml:space="preserve">
     <value>Nach oben verschieben</value>
   </data>
-  <data name="StartMessage-AddFirstSound.Text" xml:space="preserve">
+  <data name="StartMessageAddFirstSoundButton.Text" xml:space="preserve">
     <value>Füge deinen ersten Sound hinzu</value>
   </data>
-  <data name="StartMessage-ExistingSoundboardTitle.Text" xml:space="preserve">
+  <data name="StartMessageExistingSoundboardTitleTextBlock.Text" xml:space="preserve">
     <value>Du hast bereits ein Soundboard?</value>
   </data>
-  <data name="StartMessage-ImportExistingSoundboard.Text" xml:space="preserve">
+  <data name="StartMessageImportExistingSoundboardButton.Text" xml:space="preserve">
     <value>Soundboard importieren</value>
   </data>
-  <data name="StartMessage-Login.Text" xml:space="preserve">
+  <data name="StartMessageLoginButton.Text" xml:space="preserve">
     <value>Anmelden</value>
   </data>
-  <data name="StartMessage-Title.Text" xml:space="preserve">
+  <data name="StartMessageTitleTextBlock.Text" xml:space="preserve">
     <value>Willkommen bei UniversalSoundboard!</value>
   </data>
   <data name="StartMessageImportDataContentDialog-Text2" xml:space="preserve">
@@ -624,5 +624,8 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="PropertiesContentDialog-Volume" xml:space="preserve">
     <value>Standard-Lautstärke:</value>
+  </data>
+  <data name="EmptyCategoryMessageTitleTextBlock.Text" xml:space="preserve">
+    <value>Diese Kategorie ist leer...</value>
   </data>
 </root>

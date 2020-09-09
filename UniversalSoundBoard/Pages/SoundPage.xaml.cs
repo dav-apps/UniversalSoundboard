@@ -35,6 +35,8 @@ namespace UniversalSoundBoard.Pages
         bool isManipulatingBottomPlayingSoundsBar = false;
         private int getContainerHeightCount = 0;
         AdvancedCollectionView reversedPlayingSounds = new AdvancedCollectionView(FileManager.itemViewHolder.PlayingSounds);
+        Visibility startMessageVisibility = Visibility.Collapsed;
+        Visibility categoryEmptyMessageVisibility = Visibility.Collapsed;
         
         public SoundPage()
         {
@@ -82,6 +84,8 @@ namespace UniversalSoundBoard.Pages
         {
             if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 RequestedTheme = FileManager.GetRequestedTheme();
+            else if (e.PropertyName.Equals(ItemViewHolder.AppStateKey) || e.PropertyName.Equals(ItemViewHolder.SelectedCategoryKey))
+                UpdateMessagesVisibilities();
         }
 
         private async void ItemViewHolder_PlayingSoundsLoaded(object sender, EventArgs e)
@@ -219,6 +223,7 @@ namespace UniversalSoundBoard.Pages
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             await HandleSoundsCollectionChanged(e, false);
+            UpdateMessagesVisibilities();
         }
 
         private async void ItemViewHolder_FavouriteSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -655,6 +660,21 @@ namespace UniversalSoundBoard.Pages
             }
 
             return item.ActualHeight;
+        }
+
+        private void UpdateMessagesVisibilities()
+        {
+            startMessageVisibility = (
+                    FileManager.itemViewHolder.AppState == FileManager.AppState.Empty
+                    && FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty)
+                ) ? Visibility.Visible : Visibility.Collapsed;
+
+            categoryEmptyMessageVisibility = (
+                !FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty)
+                && FileManager.itemViewHolder.Sounds.Count == 0
+            ) ? Visibility.Visible : Visibility.Collapsed;
+
+            Bindings.Update();
         }
         #endregion
 

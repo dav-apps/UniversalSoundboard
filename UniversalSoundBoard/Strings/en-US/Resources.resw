@@ -525,19 +525,19 @@ This may take some time, depending on how large the import file is.</value>
   <data name="CategoryOptionsFlyout-Position-MoveUp" xml:space="preserve">
     <value>Move up</value>
   </data>
-  <data name="StartMessage-AddFirstSound.Text" xml:space="preserve">
+  <data name="StartMessageAddFirstSoundButton.Text" xml:space="preserve">
     <value>Add your first sound</value>
   </data>
-  <data name="StartMessage-ExistingSoundboardTitle.Text" xml:space="preserve">
+  <data name="StartMessageExistingSoundboardTitleTextBlock.Text" xml:space="preserve">
     <value>You already have a soundboard?</value>
   </data>
-  <data name="StartMessage-ImportExistingSoundboard.Text" xml:space="preserve">
+  <data name="StartMessageImportExistingSoundboardButton.Text" xml:space="preserve">
     <value>Import a soundboard</value>
   </data>
-  <data name="StartMessage-Login.Text" xml:space="preserve">
+  <data name="StartMessageLoginButton.Text" xml:space="preserve">
     <value>Log in</value>
   </data>
-  <data name="StartMessage-Title.Text" xml:space="preserve">
+  <data name="StartMessageTitleTextBlock.Text" xml:space="preserve">
     <value>Welcome to UniversalSoundboard!</value>
   </data>
   <data name="StartMessageImportDataContentDialog-Text2" xml:space="preserve">
@@ -626,5 +626,8 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="PropertiesContentDialog-Volume" xml:space="preserve">
     <value>Default volume:</value>
+  </data>
+  <data name="EmptyCategoryMessageTitleTextBlock.Text" xml:space="preserve">
+    <value>This category is empty...</value>
   </data>
 </root>

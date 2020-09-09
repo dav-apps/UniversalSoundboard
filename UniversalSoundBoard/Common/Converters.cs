@@ -173,19 +173,6 @@ namespace UniversalSoundBoard.Converters
         }
     }
 
-    public class AppStateEmptyConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return FileManager.itemViewHolder.AppState == FileManager.AppState.Empty;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return null;
-        }
-    }
-
     public class AppStateNormalConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

@@ -1025,6 +1025,9 @@ namespace UniversalSoundBoard.DataAccess
             // Add to the current sounds
             if (soundBelongsToSelectedCategory && !itemViewHolder.Sounds.ToList().Exists(s => s.Uuid == sound.Uuid))
                 itemViewHolder.Sounds.Add(sound);
+
+            if (itemViewHolder.AllSounds.Count > 0 && itemViewHolder.AppState == AppState.Empty)
+                itemViewHolder.AppState = AppState.Normal;
         }
 
         /**
@@ -1111,6 +1114,9 @@ namespace UniversalSoundBoard.DataAccess
                 itemViewHolder.FavouriteSounds.RemoveAt(i);
 
             itemViewHolder.TriggerSoundDeletedEvent(null, new SoundEventArgs(uuid));
+
+            if (itemViewHolder.AllSounds.Count == 0 && itemViewHolder.AppState == AppState.Normal)
+                itemViewHolder.AppState = AppState.Empty;
         }
 
         public static async Task UpdateLiveTileAsync()
