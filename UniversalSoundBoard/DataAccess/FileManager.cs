@@ -1135,7 +1135,7 @@ namespace UniversalSoundBoard.DataAccess
             List<StorageFile> images = new List<StorageFile>();
             Random random = new Random();
 
-            for (int i = 0; i < 12; i++)
+            for (int i = 0; i < 9; i++)
             {
                 // Pick a random sound from the list
                 int selectedSoundIndex = random.Next(sounds.Count);
