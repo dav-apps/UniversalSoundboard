@@ -341,6 +341,7 @@
                         <Button
                             Name="StartMessageLoginButton"
                             Style="{StaticResource StartMessageButtonStyle}"
+                            Visibility="{Binding User.IsLoggedIn, Converter={StaticResource InvertBooleanConverter}}"
                             Margin="0,0,8,0"
                             Click="StartMessageLoginButton_Click">
 
