@@ -8,6 +8,8 @@ using UniversalSoundboard.Models;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
+using Windows.Media;
+using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -44,9 +46,11 @@ namespace UniversalSoundboard.Components
         private Visibility NextButtonVisibility = Visibility.Visible;
         private Visibility ExpandButtonVisibility = Visibility.Visible;
         #endregion
-
+        
         #region Events
         public event EventHandler<PlaybackStateChangedEventArgs> PlaybackStateChanged;
+        public event EventHandler<PositionChangedEventArgs> PositionChanged;
+        public event EventHandler<DurationChangedEventArgs> DurationChanged;
         public event EventHandler<CurrentSoundChangedEventArgs> CurrentSoundChanged;
         public event EventHandler<ButtonVisibilityChangedEventArgs> ButtonVisibilityChanged;
         public event EventHandler<ExpandButtonContentChangedEventArgs> ExpandButtonContentChanged;
@@ -70,6 +74,11 @@ namespace UniversalSoundboard.Components
             {
                 initialized = true;
 
+                if (PlayingSound.Current >= PlayingSound.Sounds.Count)
+                    PlayingSound.Current = PlayingSound.Sounds.Count - 1;
+                else if (PlayingSound.Current < 0)
+                    PlayingSound.Current = 0;
+
                 // Subscribe to ItemViewHolder events
                 FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
                 FileManager.itemViewHolder.SoundDeleted += ItemViewHolder_SoundDeleted;
@@ -78,8 +87,8 @@ namespace UniversalSoundboard.Components
                 // Subscribe to MediaPlayer events
                 PlayingSound.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
                 PlayingSound.MediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
-                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemChanged += PlayingSoundItem_CurrentItemChanged;
-                PlayingSound.MediaPlayer.CommandManager.PreviousReceived += CommandManager_PreviousReceived;
+                PlayingSound.MediaPlayer.TimelineController.PositionChanged += TimelineController_PositionChanged;
+                ((MediaSource)PlayingSound.MediaPlayer.Source).OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
 
                 // Subscribe to other event handlers
                 PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
@@ -146,64 +155,67 @@ namespace UniversalSoundboard.Components
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
             {
-                PlayingSound.Repetitions--;
-
-                if (PlayingSound.Repetitions <= 0)
+                // Check if the end of the sounds list was reached
+                if(PlayingSound.Current + 1 < PlayingSound.Sounds.Count)
                 {
-                    // Remove the PlayingSound
-                    RemovePlayingSound?.Invoke(this, new EventArgs());
-                    return;
+                    // Move to the next sound
+                    await MoveToSound(PlayingSound.Current + 1);
                 }
-
-                // Set the new repetitions
-                await FileManager.SetRepetitionsOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Repetitions);
-
-                if (PlayingSound.Sounds.Count > 1)
+                else
                 {
-                    // If randomly is true, shuffle sounds
-                    if (PlayingSound.Randomly)
+                    // Move to the beginning of the sounds list
+                    PlayingSound.Repetitions--;
+
+                    if (PlayingSound.Repetitions <= 0)
                     {
-                        Random random = new Random();
-                        skipSoundsCollectionChanged = true;
-                        int soundsCount = PlayingSound.Sounds.Count;
-
-                        // Copy the sounds
-                        List<Sound> sounds = new List<Sound>();
-                        foreach (var sound in PlayingSound.Sounds)
-                            sounds.Add(sound);
-
-                        // Copy the MediaPlaybackList
-                        List<MediaPlaybackItem> mediaPlaybackItems = new List<MediaPlaybackItem>();
-                        foreach (var item in ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items)
-                            mediaPlaybackItems.Add(item);
-
-                        PlayingSound.Sounds.Clear();
-                        ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items.Clear();
-
-                        // Add the sounds in random order
-                        for (int i = 0; i < soundsCount; i++)
-                        {
-                            // Take a random sound from the sounds list and add it to the original sounds list
-                            int randomIndex = random.Next(sounds.Count);
-
-                            PlayingSound.Sounds.Add(sounds.ElementAt(randomIndex));
-                            sounds.RemoveAt(randomIndex);
-
-                            ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items.Add(mediaPlaybackItems.ElementAt(randomIndex));
-                            mediaPlaybackItems.RemoveAt(randomIndex);
-                        }
-
-                        // Set the new sound order
-                        await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds.ToList());
-
-                        skipSoundsCollectionChanged = false;
+                        // Remove the PlayingSound
+                        RemovePlayingSound?.Invoke(this, new EventArgs());
+                        return;
                     }
 
-                    ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveTo(0);
-                    await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, 0);
-                }
+                    // Set the new repetitions
+                    await FileManager.SetRepetitionsOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Repetitions);
 
-                PlayingSound.MediaPlayer.Play();
+                    if (PlayingSound.Sounds.Count > 1)
+                    {
+                        // If randomly is true, shuffle sounds
+                        if (PlayingSound.Randomly)
+                        {
+                            Random random = new Random();
+                            skipSoundsCollectionChanged = true;
+                            int soundsCount = PlayingSound.Sounds.Count;
+
+                            // Copy the sounds
+                            List<Sound> sounds = new List<Sound>();
+                            foreach (var sound in PlayingSound.Sounds)
+                                sounds.Add(sound);
+
+                            PlayingSound.Sounds.Clear();
+
+                            // Add the sounds in random order
+                            for (int i = 0; i < soundsCount; i++)
+                            {
+                                // Take a random sound from the sounds list and add it to the original sounds list
+                                int randomIndex = random.Next(sounds.Count);
+
+                                PlayingSound.Sounds.Add(sounds.ElementAt(randomIndex));
+                                sounds.RemoveAt(randomIndex);
+                            }
+
+                            // Set the new sound order
+                            await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds.ToList());
+
+                            skipSoundsCollectionChanged = false;
+                        }
+
+                        await MoveToSound(0);
+                    }
+                    else
+                    {
+                        PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0);
+                        PlayingSound.MediaPlayer.TimelineController.Start();
+                    }
+                }
             });
         }
 
@@ -223,48 +235,64 @@ namespace UniversalSoundboard.Components
             });
         }
 
-        private async void PlayingSoundItem_CurrentItemChanged(MediaPlaybackList sender, CurrentMediaPlaybackItemChangedEventArgs args)
+        private async void TimelineController_PositionChanged(MediaTimelineController sender, object args)
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+            await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
-                await MoveToSound((int)sender.CurrentItemIndex);
+                PositionChanged?.Invoke(this, new PositionChangedEventArgs(sender.Position));
             });
         }
 
-        private void CommandManager_PreviousReceived(MediaPlaybackCommandManager sender, MediaPlaybackCommandManagerPreviousReceivedEventArgs args)
+        private async void PlayingSoundItem_OpenOperationCompleted(MediaSource sender, MediaSourceOpenOperationCompletedEventArgs args)
         {
-            args.Handled = true;
-            MoveToPrevious();
+            await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            {
+                DurationChanged?.Invoke(this, new DurationChangedEventArgs(sender.Duration.GetValueOrDefault()));
+            });
         }
         #endregion
 
         #region Other event handlers
         private async void Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
-            if (PlayingSound.MediaPlayer == null || skipSoundsCollectionChanged) return;
+            if (PlayingSound == null || PlayingSound.MediaPlayer == null || skipSoundsCollectionChanged) return;
 
             if (e.Action == NotifyCollectionChangedAction.Remove)
             {
-                // Remove the item at the start position of the removed items
-                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).Items.RemoveAt(e.OldStartingIndex);
+                if (PlayingSound.Sounds.Count == 0)
+                {
+                    // Delete the PlayingSound
+                    await Remove();
+                    return;
+                }
 
-                if (e.OldStartingIndex <= PlayingSound.Current && PlayingSound.Current > 0)
+                if(e.OldStartingIndex < PlayingSound.Current)
                 {
                     PlayingSound.Current--;
                     CurrentSoundChanged?.Invoke(this, new CurrentSoundChangedEventArgs(PlayingSound.Current));
                     await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Current);
                 }
+                else if(e.OldStartingIndex == PlayingSound.Current)
+                {
+                    if(PlayingSound.Current == PlayingSound.Sounds.Count)
+                    {
+                        // Move to the previous sound
+                        await MoveToSound(PlayingSound.Current - 1);
+                    }
+                    else
+                    {
+                        // Move to the new current sound
+                        await MoveToSound(PlayingSound.Current);
+                    }
+                }
+                else if (PlayingSound.Sounds.Count == 1)
+                {
+                    if (e.OldStartingIndex == 0 && PlayingSound.Current == 0)
+                        await MoveToSound(0);
+                }
 
-                if(PlayingSound.Sounds.Count == 0)
-                {
-                    // Delete the PlayingSound
-                    await Remove();
-                }
-                else
-                {
-                    // Update the PlayingSound
-                    await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds.ToList());
-                }
+                // Update the PlayingSound
+                await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds.ToList());
             }
         }
         #endregion
@@ -273,8 +301,7 @@ namespace UniversalSoundboard.Components
         public async Task MoveToSound(int index)
         {
             if (
-                PlayingSound.Sounds.Count <= 1
-                || PlayingSound.Current == index
+                PlayingSound.Sounds.Count == 0
                 || index >= PlayingSound.Sounds.Count
                 || index < 0
             ) return;
@@ -282,9 +309,11 @@ namespace UniversalSoundboard.Components
             // Update PlayingSound.Current
             PlayingSound.Current = index;
 
-            // Move to the selected sound
-            if (((MediaPlaybackList)PlayingSound.MediaPlayer.Source).CurrentItemIndex != index)
-                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveTo(Convert.ToUInt32(index));
+            // Set the new source of the MediaPlayer
+            var newSource = MediaSource.CreateFromUri(new Uri(await PlayingSound.Sounds[PlayingSound.Current].GetAudioFilePathAsync()));
+            newSource.OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
+            PlayingSound.MediaPlayer.Source = newSource;
+            PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0);
 
             // Update the text of the current sound
             CurrentSoundChanged?.Invoke(
@@ -310,8 +339,8 @@ namespace UniversalSoundboard.Components
             // Cause all other PlayingSounds to stop playback
             foreach (var playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
             {
-                if (playingSoundItem.PlayingSound.MediaPlayer == null || playingSoundItem.Uuid.Equals(PlayingSound.Uuid) || !playingSoundItem.PlayingSound.MediaPlayer.PlaybackSession.CanPause) continue;
-                playingSoundItem.PlayingSound.MediaPlayer.Pause();
+                if (playingSoundItem.PlayingSound.MediaPlayer == null || playingSoundItem.Uuid.Equals(PlayingSound.Uuid)) continue;
+                playingSoundItem.PlayingSound.MediaPlayer.TimelineController.Pause();
             }
         }
 
@@ -365,36 +394,37 @@ namespace UniversalSoundboard.Components
          */
         public void TogglePlayPause()
         {
-            if (PlayingSound.MediaPlayer == null) return;
+            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
 
             if (PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Opening || PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
-                PlayingSound.MediaPlayer.Pause();
+                PlayingSound.MediaPlayer.TimelineController.Pause();
             else
             {
-                PlayingSound.MediaPlayer.Play();
+                PlayingSound.MediaPlayer.TimelineController.Resume();
                 StopAllOtherPlayingSounds();
             }
         }
 
-        public void MoveToPrevious()
+        public async Task MoveToPrevious()
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+
             if (PlayingSound.MediaPlayer.PlaybackSession.Position.Seconds >= 5)
             {
                 // Move to the start of the sound
-                PlayingSound.MediaPlayer.PlaybackSession.Position = new TimeSpan(0);
+                PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0);
             }
             else
             {
                 // Move to the previous sound
-                ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MovePrevious();
+                await MoveToSound(PlayingSound.Current - 1);
             }
         }
 
-        public void MoveToNext()
+        public async Task MoveToNext()
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
-            ((MediaPlaybackList)PlayingSound.MediaPlayer.Source).MoveNext();
+            await MoveToSound(PlayingSound.Current + 1);
         }
 
         public void ExpandSoundsList(double heightDifference)
@@ -433,6 +463,11 @@ namespace UniversalSoundboard.Components
 
             // Update the ExpandButton content
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(false));
+        }
+
+        public void SetPosition(int position)
+        {
+            PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0, 0, position);
         }
 
         public async Task SetVolume(int volume)
@@ -486,8 +521,7 @@ namespace UniversalSoundboard.Components
             // Disable the MediaPlayer
             if (PlayingSound.MediaPlayer != null)
             {
-                PlayingSound.MediaPlayer.Pause();
-                PlayingSound.MediaPlayer.SystemMediaTransportControls.IsEnabled = false;
+                PlayingSound.MediaPlayer.TimelineController.Pause();
                 PlayingSound.MediaPlayer = null;
             }
 

@@ -1678,72 +1678,39 @@ namespace UniversalSoundBoard.DataAccess
             itemViewHolder.PlayingSounds.Remove(playingSound);
         }
 
-        public static async Task<MediaPlayer> CreateMediaPlayerAsync(List<Sound> sounds, int current)
+        public static async Task<(MediaPlayer, List<Sound>)> CreateMediaPlayerAsync(List<Sound> sounds, int current)
         {
-            if (sounds.Count == 0) return null;
+            if (sounds.Count == 0) return (null, null);
+
+            if (current >= sounds.Count)
+                current = sounds.Count - 1;
+            else if (current < 0)
+                current = 0;
 
             MediaPlayer player = new MediaPlayer();
-            MediaPlaybackList mediaPlaybackList = new MediaPlaybackList();
+            List<Sound> newSounds = new List<Sound>();
 
             foreach (Sound sound in sounds)
-            {
-                // Create the MediaPlaybackItem using the audio file path
-                string audioFilePath = await sound.GetAudioFilePathAsync();
-                MediaPlaybackItem mediaPlaybackItem;
+                if (await sound.GetAudioFileDownloadStatusAsync() != DownloadStatus.NoFileOrNotLoggedIn)
+                    newSounds.Add(sound);
 
-                if (audioFilePath == null)
-                {
-                    Uri soundUri = await sound.GetAudioUriAsync();
-                    if (soundUri == null) continue;
-
-                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(soundUri));
-                }
-                else
-                    mediaPlaybackItem = new MediaPlaybackItem(MediaSource.CreateFromUri(new Uri(audioFilePath)));
-
-                MediaItemDisplayProperties props = mediaPlaybackItem.GetDisplayProperties();
-                props.Type = MediaPlaybackType.Music;
-                props.MusicProperties.Title = sound.Name;
-
-                if (sound.Categories.Count > 0)
-                    props.MusicProperties.Artist = sound.Categories.First().Name;
-
-                var imageFile = await sound.GetImageFileAsync();
-                if (imageFile != null)
-                    props.Thumbnail = RandomAccessStreamReference.CreateFromFile(imageFile);
-
-                mediaPlaybackItem.ApplyDisplayProperties(props);
-
-                mediaPlaybackList.Items.Add(mediaPlaybackItem);
-            }
-
-            player.Source = mediaPlaybackList;
-            player.AutoPlay = false;
+            player.CommandManager.IsEnabled = false;
+            player.TimelineController = new MediaTimelineController();
+            player.Source = MediaSource.CreateFromUri(new Uri(await newSounds[current].GetAudioFilePathAsync()));
 
             // Set the volume
             double appVolume = ((double)itemViewHolder.Volume) / 100;
 
-            if (sounds.Count == 1)
+            if (newSounds.Count == 1)
             {
-                double defaultSoundVolume = ((double)sounds[0].DefaultVolume) / 100;
+                double defaultSoundVolume = ((double)newSounds[0].DefaultVolume) / 100;
                 player.Volume = appVolume * defaultSoundVolume;
-                player.IsMuted = sounds[0].DefaultMuted;
+                player.IsMuted = newSounds[0].DefaultMuted;
             }
             else
                 player.Volume = appVolume;
 
-            if (mediaPlaybackList.Items.Count == 0)
-                return null;
-            else if (mediaPlaybackList.Items.Count == 1)
-                return player;
-
-            if (mediaPlaybackList.Items.Count >= current + 1)
-            {
-                try { mediaPlaybackList.MoveTo(Convert.ToUInt32(current)); }
-                catch { }
-            }
-
-            return player;
+            return (player, newSounds);
         }
         #endregion
 
@@ -2082,15 +2049,16 @@ namespace UniversalSoundBoard.DataAccess
                 bool.TryParse(mutedString, out muted);
 
             // Create the media player
-            MediaPlayer player = await CreateMediaPlayerAsync(sounds, current);
+            var createMediaPlayerResult = await CreateMediaPlayerAsync(sounds, current);
+            MediaPlayer player = createMediaPlayerResult.Item1;
+            List<Sound> newSounds = createMediaPlayerResult.Item2;
 
             if (player != null)
             {
-                player.AutoPlay = false;
                 player.Volume = (double)itemViewHolder.Volume / 100 * (volume / 100);
                 player.IsMuted = itemViewHolder.Muted || muted;
 
-                PlayingSound playingSound = new PlayingSound(tableObject.Uuid, player, sounds, current, repetitions, randomly, Convert.ToInt32(volume), muted);
+                PlayingSound playingSound = new PlayingSound(tableObject.Uuid, player, newSounds, current, repetitions, randomly, Convert.ToInt32(volume), muted);
                 return playingSound;
             }
             else

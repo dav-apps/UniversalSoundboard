@@ -22,6 +22,7 @@ namespace UniversalSoundBoard.Components
         private readonly ResourceLoader loader = new ResourceLoader();
         PlayingSoundItemLayoutType layoutType = PlayingSoundItemLayoutType.Small;
         Guid selectedSoundUuid;
+        private bool skipSoundsListViewSelectionChanged;
 
         public PlayingSoundItemTemplate()
         {
@@ -49,6 +50,10 @@ namespace UniversalSoundBoard.Components
 
             PlayingSoundItem.PlaybackStateChanged -= PlayingSoundItem_PlaybackStateChanged;
             PlayingSoundItem.PlaybackStateChanged += PlayingSoundItem_PlaybackStateChanged;
+            PlayingSoundItem.PositionChanged -= PlayingSoundItem_PositionChanged;
+            PlayingSoundItem.PositionChanged += PlayingSoundItem_PositionChanged;
+            PlayingSoundItem.DurationChanged -= PlayingSoundItem_DurationChanged;
+            PlayingSoundItem.DurationChanged += PlayingSoundItem_DurationChanged;
             PlayingSoundItem.ButtonVisibilityChanged -= PlayingSoundItem_ButtonVisibilityChanged;
             PlayingSoundItem.ButtonVisibilityChanged += PlayingSoundItem_ButtonVisibilityChanged;
             PlayingSoundItem.CurrentSoundChanged -= PlayingSoundItem_CurrentSoundChanged;
@@ -71,10 +76,6 @@ namespace UniversalSoundBoard.Components
 
             // Hide the sounds list
             SoundsListViewStackPanel.Height = 0;
-
-            // Set the media player for the media player element
-            MediaPlayerElement.SetMediaPlayer(PlayingSound.MediaPlayer);
-
             SoundsListView.ItemsSource = PlayingSound.Sounds;
 
             UpdateUI();
@@ -126,6 +127,26 @@ namespace UniversalSoundBoard.Components
         private void PlayingSoundItem_PlaybackStateChanged(object sender, PlaybackStateChangedEventArgs e)
         {
             UpdatePlayPauseButton(e.IsPlaying);
+        }
+
+        private void PlayingSoundItem_PositionChanged(object sender, PositionChangedEventArgs e)
+        {
+            if(e.Position.Hours == 0)
+                RemainingTimeElement.Text = $"{e.Position.Minutes:D2}:{e.Position.Seconds:D2}";
+            else
+                RemainingTimeElement.Text = $"{e.Position.Hours:D2}:{e.Position.Minutes:D2}:{e.Position.Seconds:D2}";
+
+            ProgressSlider.Value = e.Position.TotalSeconds;
+        }
+
+        private void PlayingSoundItem_DurationChanged(object sender, DurationChangedEventArgs e)
+        {
+            if (e.Duration.Hours == 0)
+                TotalTimeElement.Text = $"{e.Duration.Minutes:D2}:{e.Duration.Seconds:D2}";
+            else
+                TotalTimeElement.Text = $"{e.Duration.Hours:D2}:{e.Duration.Minutes:D2}:{e.Duration.Seconds:D2}";
+
+            ProgressSlider.Maximum = e.Duration.TotalSeconds;
         }
 
         private void PlayingSoundItem_CurrentSoundChanged(object sender, CurrentSoundChangedEventArgs e)
@@ -265,6 +286,13 @@ namespace UniversalSoundBoard.Components
             TriggerRemovePlayingSound();
         }
 
+        private void ProgressSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            double diff = e.NewValue - e.OldValue;
+            if (diff > 0.6 || diff < -0.6)
+                PlayingSoundItem.SetPosition(Convert.ToInt32(e.NewValue));
+        }
+
         private void MenuFlyout_Opened(object sender, object e)
         {
             if (layoutType != PlayingSoundItemLayoutType.Large)
@@ -316,6 +344,7 @@ namespace UniversalSoundBoard.Components
 
         private async void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (skipSoundsListViewSelectionChanged) return;
             await PlayingSoundItem.MoveToSound(SoundsListView.SelectedIndex);
         }
 
@@ -406,8 +435,10 @@ namespace UniversalSoundBoard.Components
             }
 
             // Set the visibility of the time texts in the TransportControls
-            BasicMediaTransportControls.TimesVisible = layoutType != PlayingSoundItemLayoutType.Compact;
-            BasicMediaTransportControls.TimelineLayoutCompact = layoutType == PlayingSoundItemLayoutType.SingleSoundSmall || layoutType == PlayingSoundItemLayoutType.SingleSoundLarge;
+            SetTimelineLayout(
+                layoutType == PlayingSoundItemLayoutType.SingleSoundSmall || layoutType == PlayingSoundItemLayoutType.SingleSoundLarge,
+                layoutType != PlayingSoundItemLayoutType.Compact
+            );
         }
 
         private void UpdateUI()
@@ -420,11 +451,94 @@ namespace UniversalSoundBoard.Components
             SetFavouriteFlyoutItemText(currentSound.Favourite);
 
             // Set the selected item of the sounds list
+            skipSoundsListViewSelectionChanged = true;
             SoundsListView.SelectedIndex = PlayingSound.Current;
+            skipSoundsListViewSelectionChanged = false;
 
             // Set the volume icon
             if (layoutType == PlayingSoundItemLayoutType.Large)
                 VolumeButton.Content = VolumeControl.GetVolumeIcon(PlayingSound.Volume, PlayingSound.Muted);
+        }
+
+        private void SetTimelineLayout(bool compact, bool timesVisible)
+        {
+            if (compact)
+            {
+                // ProgressSlider
+                RelativePanel.SetAlignLeftWithPanel(ProgressSlider, false);
+                RelativePanel.SetAlignRightWithPanel(ProgressSlider, false);
+
+                RelativePanel.SetRightOf(ProgressSlider, RemainingTimeElement);
+                RelativePanel.SetLeftOf(ProgressSlider, TotalTimeElement);
+
+                ProgressSlider.Margin = new Thickness(8, 0, 8, 0);
+                ProgressSlider.Height = 37;
+
+                // BufferingProgressBar
+                RelativePanel.SetAlignLeftWithPanel(BufferingProgressBar, false);
+                RelativePanel.SetAlignRightWithPanel(BufferingProgressBar, false);
+                RelativePanel.SetAlignTopWithPanel(BufferingProgressBar, false);
+
+                RelativePanel.SetRightOf(BufferingProgressBar, RemainingTimeElement);
+                RelativePanel.SetLeftOf(BufferingProgressBar, TotalTimeElement);
+                RelativePanel.SetAlignVerticalCenterWith(BufferingProgressBar, RemainingTimeElement);
+
+                BufferingProgressBar.Margin = new Thickness(8, 2, 8, 0);
+
+                // TimeElapsedElement
+                RelativePanel.SetAlignBottomWith(RemainingTimeElement, null);
+                RelativePanel.SetAlignLeftWithPanel(RemainingTimeElement, true);
+                RelativePanel.SetAlignVerticalCenterWithPanel(RemainingTimeElement, true);
+
+                RemainingTimeElement.Margin = new Thickness(0);
+
+                // TimeRemainingElement
+                RelativePanel.SetAlignBottomWith(TotalTimeElement, null);
+                RelativePanel.SetAlignRightWithPanel(TotalTimeElement, true);
+                RelativePanel.SetAlignVerticalCenterWithPanel(TotalTimeElement, true);
+
+                TotalTimeElement.Margin = new Thickness(0);
+            }
+            else
+            {
+                // ProgressSlider
+                RelativePanel.SetAlignLeftWithPanel(ProgressSlider, true);
+                RelativePanel.SetAlignRightWithPanel(ProgressSlider, true);
+
+                RelativePanel.SetRightOf(ProgressSlider, null);
+                RelativePanel.SetLeftOf(ProgressSlider, null);
+
+                ProgressSlider.Margin = new Thickness(0, 0, 0, timesVisible ? 14 : 0);
+                ProgressSlider.Height = 33;
+
+                // BufferingProgressBar
+                RelativePanel.SetAlignLeftWithPanel(BufferingProgressBar, true);
+                RelativePanel.SetAlignRightWithPanel(BufferingProgressBar, true);
+                RelativePanel.SetAlignTopWithPanel(BufferingProgressBar, true);
+
+                RelativePanel.SetRightOf(BufferingProgressBar, null);
+                RelativePanel.SetLeftOf(BufferingProgressBar, null);
+                RelativePanel.SetAlignVerticalCenterWith(BufferingProgressBar, null);
+
+                BufferingProgressBar.Margin = new Thickness(0, 18, 0, timesVisible ? 14 : 0);
+
+                // TimeElapsedElement
+                RelativePanel.SetAlignBottomWith(RemainingTimeElement, ProgressSlider);
+                RelativePanel.SetAlignLeftWithPanel(RemainingTimeElement, true);
+                RelativePanel.SetAlignVerticalCenterWithPanel(RemainingTimeElement, false);
+
+                RemainingTimeElement.Margin = new Thickness(0);
+
+                // TimeRemainingElement
+                RelativePanel.SetAlignBottomWith(TotalTimeElement, ProgressSlider);
+                RelativePanel.SetAlignRightWithPanel(TotalTimeElement, true);
+                RelativePanel.SetAlignVerticalCenterWithPanel(TotalTimeElement, false);
+
+                TotalTimeElement.Margin = new Thickness(0);
+            }
+
+            RemainingTimeElement.Visibility = timesVisible ? Visibility.Visible : Visibility.Collapsed;
+            TotalTimeElement.Visibility = timesVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void UpdatePlayPauseButton(bool isPlaying)
@@ -465,7 +579,6 @@ namespace UniversalSoundBoard.Components
         private async void HidePlayingSoundItemStoryboard_Completed(object sender, object e)
         {
             await PlayingSoundItem.Remove();
-            MediaPlayerElement.SetMediaPlayer(null);
         }
 
         private void ShowSoundsListViewStoryboard_Completed(object sender, object e)

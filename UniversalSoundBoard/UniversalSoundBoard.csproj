@@ -119,7 +119,6 @@
     <Compile Include="Common\TriggerAction.cs" />
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
-    <Compile Include="Components\BasicMediaTransportControls.cs" />
     <Compile Include="Components\PlayingSoundItem.cs" />
     <Compile Include="Components\SoundItem.cs" />
     <Compile Include="Components\SoundListItemTemplate.xaml.cs">
@@ -274,10 +273,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\SoundTileTemplate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Themes\BasicMediaTransportControls.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

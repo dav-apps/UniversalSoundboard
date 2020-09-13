@@ -417,8 +417,10 @@ namespace UniversalSoundBoard.Pages
         {
             List<Sound> soundList = new List<Sound> { sound };
 
-            MediaPlayer player = await FileManager.CreateMediaPlayerAsync(soundList, 0);
-            if (player == null) return;
+            var createMediaPlayerResult = await FileManager.CreateMediaPlayerAsync(soundList, 0);
+            MediaPlayer player = createMediaPlayerResult.Item1;
+            List<Sound> newSounds = createMediaPlayerResult.Item2;
+            if (player == null || newSounds == null) return;
 
             // If OpenMultipleSounds is false, remove all sounds from PlayingSounds List
             if (!FileManager.itemViewHolder.OpenMultipleSounds)
@@ -432,12 +434,12 @@ namespace UniversalSoundBoard.Pages
 
             PlayingSound playingSound = new PlayingSound(player, sound)
             {
-                Uuid = await FileManager.CreatePlayingSoundAsync(null, soundList, 0, 0, false, sound.DefaultVolume, sound.DefaultMuted),
+                Uuid = await FileManager.CreatePlayingSoundAsync(null, newSounds, 0, 0, false, sound.DefaultVolume, sound.DefaultMuted),
                 Volume = sound.DefaultVolume,
                 Muted = sound.DefaultMuted
             };
             FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
-            playingSound.MediaPlayer.Play();
+            playingSound.MediaPlayer.TimelineController.Start();
         }
 
         public static async Task PlaySoundAfterPlayingSoundsLoadedAsync(Sound sound)
@@ -461,8 +463,10 @@ namespace UniversalSoundBoard.Pages
                 sounds = sounds.OrderBy(a => random.Next()).ToList();
             }
 
-            MediaPlayer player = await FileManager.CreateMediaPlayerAsync(sounds, 0);
-            if (player == null) return;
+            var createMediaPlayerResult = await FileManager.CreateMediaPlayerAsync(sounds, 0);
+            MediaPlayer player = createMediaPlayerResult.Item1;
+            List<Sound> newSounds = createMediaPlayerResult.Item2;
+            if (player == null || newSounds == null) return;
 
             // If OpenMultipleSounds is false, remove all sounds from PlayingSounds List
             if (!FileManager.itemViewHolder.OpenMultipleSounds)
@@ -474,12 +478,12 @@ namespace UniversalSoundBoard.Pages
                 await RemoveSoundsFromPlayingSoundsListAsync(removedPlayingSounds);
             }
 
-            PlayingSound playingSound = new PlayingSound(Guid.Empty, player, sounds, 0, repetitions, randomly)
+            PlayingSound playingSound = new PlayingSound(Guid.Empty, player, newSounds, 0, repetitions, randomly)
             {
-                Uuid = await FileManager.CreatePlayingSoundAsync(null, sounds, 0, repetitions, randomly, null, null)
+                Uuid = await FileManager.CreatePlayingSoundAsync(null, newSounds, 0, repetitions, randomly, null, null)
             };
             FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
-            playingSound.MediaPlayer.Play();
+            playingSound.MediaPlayer.TimelineController.Start();
         }
 
         public static async Task RemovePlayingSoundAsync(PlayingSound playingSound)

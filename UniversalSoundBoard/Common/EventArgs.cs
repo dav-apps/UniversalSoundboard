@@ -54,6 +54,26 @@ namespace UniversalSoundboard.Common
         }
     }
 
+    public class PositionChangedEventArgs : EventArgs
+    {
+        public TimeSpan Position { get; set; }
+
+        public PositionChangedEventArgs(TimeSpan position)
+        {
+            Position = position;
+        }
+    }
+
+    public class DurationChangedEventArgs : EventArgs
+    {
+        public TimeSpan Duration { get; set; }
+
+        public DurationChangedEventArgs(TimeSpan duration)
+        {
+            Duration = duration;
+        }
+    }
+
     public class CurrentSoundChangedEventArgs : EventArgs
     {
         public int CurrentSound { get; }

@@ -185,4 +185,22 @@ namespace UniversalSoundBoard.Converters
             return null;
         }
     }
+
+    public class MediaElementSliderTooltipConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            int totalSeconds = System.Convert.ToInt32(value);
+
+            int minutes = totalSeconds / 60;
+            int seconds = totalSeconds % 60;
+
+            return $"{minutes:D2}:{seconds:D2}";
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
