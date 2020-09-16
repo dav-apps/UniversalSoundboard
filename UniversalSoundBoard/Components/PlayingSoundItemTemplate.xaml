@@ -612,18 +612,20 @@
                     x:Name="ProgressSlider"
                     Style="{StaticResource MediaSliderStyle}"
                     MinWidth="80"
+                    Visibility="Visible"
                     VerticalAlignment="Center"
                     IsThumbToolTipEnabled="True"
                     ThumbToolTipValueConverter="{StaticResource MediaElementSliderTooltipConverter}"
                     ValueChanged="ProgressSlider_ValueChanged" />
 
                 <ProgressBar
-                    x:Name="BufferingProgressBar"
+                    x:Name="DownloadProgressBar"
                     RelativePanel.AlignVerticalCenterWith="RemainingTimeElement"
                     Height="4"
+                    Visibility="Collapsed"
                     IsIndeterminate="True"
-                    IsHitTestVisible="False"
-                    Visibility="Collapsed" />
+                    Value="0"
+                    IsHitTestVisible="False" />
 
                 <TextBlock
                     x:Name="RemainingTimeElement"

@@ -13,6 +13,7 @@ using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using static davClassLibrary.Models.TableObject;
 
 namespace UniversalSoundboard.Components
 {
@@ -41,6 +42,8 @@ namespace UniversalSoundboard.Components
         private bool soundsListVisible = false;
         private bool showSoundsListAnimationTriggered = false;
         private bool hideSoundsListAnimationTriggered = false;
+        private bool currentSoundIsDownloading = false;
+        readonly List<(Guid, int)> DownloadProgressList = new List<(Guid, int)>();
 
         private Visibility PreviousButtonVisibility = Visibility.Visible;
         private Visibility NextButtonVisibility = Visibility.Visible;
@@ -60,6 +63,7 @@ namespace UniversalSoundboard.Components
         public event EventHandler<VolumeChangedEventArgs> VolumeChanged;
         public event EventHandler<MutedChangedEventArgs> MutedChanged;
         public event EventHandler<EventArgs> RemovePlayingSound;
+        public event EventHandler<DownloadStatusChangedEventArgs> DownloadStatusChanged;
         #endregion
 
         public PlayingSoundItem(PlayingSound playingSound, CoreDispatcher dispatcher)
@@ -88,16 +92,53 @@ namespace UniversalSoundboard.Components
                 PlayingSound.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
                 PlayingSound.MediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
                 PlayingSound.MediaPlayer.TimelineController.PositionChanged += TimelineController_PositionChanged;
-                ((MediaSource)PlayingSound.MediaPlayer.Source).OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
+                if(PlayingSound.MediaPlayer.Source != null)
+                    ((MediaSource)PlayingSound.MediaPlayer.Source).OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
 
                 // Subscribe to other event handlers
                 PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
 
                 // Stop all other PlayingSounds if this PlayingSound was just started
-                if (
-                    PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing
-                    || PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Opening
-                ) StopAllOtherPlayingSounds();
+                if (PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running)
+                    StopAllOtherPlayingSounds();
+
+                if (FileManager.itemViewHolder.User.IsLoggedIn)
+                {
+                    // Add each sound file that is not downloaded to the download queue
+                    List<int> fileDownloads = new List<int>();
+
+                    for (int i = 0; i < PlayingSound.Sounds.Count; i++)
+                    {
+                        // Check the download status of the file
+                        if (PlayingSound.Sounds[i].AudioFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.Downloaded)
+                            continue;
+
+                        if (i == 0)
+                        {
+                            fileDownloads.Add(PlayingSound.Current);
+                            continue;
+                        }
+
+                        // First, add the next sound
+                        int nextSoundIndex = PlayingSound.Current + i;
+                        if (nextSoundIndex < PlayingSound.Sounds.Count)
+                            fileDownloads.Add(nextSoundIndex);
+
+                        // Second, add the previous sound
+                        int previousSoundIndex = PlayingSound.Current - i;
+                        if (previousSoundIndex >= 0)
+                            fileDownloads.Add(previousSoundIndex);
+                    }
+
+                    fileDownloads.Reverse();
+                    foreach (int i in fileDownloads)
+                        AddSoundToDownloadQueue(i);
+
+                    if(!CheckFileDownload() && PlayingSound.StartPlaying)
+                        PlayingSound.MediaPlayer.TimelineController.Start();
+                }
+                else if (PlayingSound.StartPlaying)
+                    PlayingSound.MediaPlayer.TimelineController.Start();
             }
 
             // Set the correct visibilities and icons for the buttons
@@ -107,10 +148,7 @@ namespace UniversalSoundboard.Components
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(false));
             PlaybackStateChanged?.Invoke(
                 this,
-                new PlaybackStateChangedEventArgs(
-                    PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing
-                    || PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Opening
-                )
+                new PlaybackStateChangedEventArgs(PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running)
             );
         }
 
@@ -227,10 +265,7 @@ namespace UniversalSoundboard.Components
 
                 PlaybackStateChanged?.Invoke(
                     this,
-                    new PlaybackStateChangedEventArgs(
-                        PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Opening
-                        || PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing
-                    )
+                    new PlaybackStateChangedEventArgs(PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running)
                 );
             });
         }
@@ -309,12 +344,6 @@ namespace UniversalSoundboard.Components
             // Update PlayingSound.Current
             PlayingSound.Current = index;
 
-            // Set the new source of the MediaPlayer
-            var newSource = MediaSource.CreateFromUri(new Uri(await PlayingSound.Sounds[PlayingSound.Current].GetAudioFilePathAsync()));
-            newSource.OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
-            PlayingSound.MediaPlayer.Source = newSource;
-            PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0);
-
             // Update the text of the current sound
             CurrentSoundChanged?.Invoke(
                 this,
@@ -324,6 +353,21 @@ namespace UniversalSoundboard.Components
             // Update the visibility of the buttons
             UpdateButtonVisibility();
             UpdateFavouriteFlyoutItem();
+
+            if (CheckFileDownload()) return;
+
+            // Set the new source of the MediaPlayer
+            var filePath = await PlayingSound.Sounds[PlayingSound.Current].GetAudioFilePathAsync();
+            if(filePath == null)
+            {
+                await MoveToNext();
+                return;
+            }
+
+            var newSource = MediaSource.CreateFromUri(new Uri(filePath));
+            newSource.OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
+            PlayingSound.MediaPlayer.Source = newSource;
+            PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0);
 
             // Save the new Current
             await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, index);
@@ -386,6 +430,117 @@ namespace UniversalSoundboard.Components
                 )
             );
         }
+
+        private void AddSoundToDownloadQueue(int i)
+        {
+            if (PlayingSound.Sounds[i].AudioFileTableObject.FileDownloadStatus != TableObjectFileDownloadStatus.Downloaded)
+            {
+                DownloadProgressList.Add((PlayingSound.Sounds[i].AudioFileTableObject.Uuid, -2));
+                PlayingSound.Sounds[i].AudioFileTableObject.ScheduleFileDownload(new Progress<(Guid, int)>(DownloadProgress));
+            }
+        }
+
+        /**
+         * Checks the current sound file download status and returns true, if the file is currently downloading
+         */
+        private bool CheckFileDownload()
+        {
+            Guid currentSoundUuid = PlayingSound.Sounds[PlayingSound.Current].AudioFileTableObject.Uuid;
+
+            // Get the current sound file download progress
+            int i = DownloadProgressList.FindIndex(progress => progress.Item1.Equals(currentSoundUuid));
+            if (i == -1)
+            {
+                DownloadStatusChanged?.Invoke(
+                    this,
+                    new DownloadStatusChangedEventArgs(false, 0)
+                );
+                currentSoundIsDownloading = false;
+                return false;
+            }
+
+            int value = DownloadProgressList[i].Item2;
+
+            if (value == -1 || value == 101)
+            {
+                DownloadStatusChanged?.Invoke(
+                    this,
+                    new DownloadStatusChangedEventArgs(false, 0)
+                );
+                currentSoundIsDownloading = false;
+                return false;
+            }
+
+            // Update the download progress bar for the current sound
+            DownloadStatusChanged?.Invoke(
+                this,
+                new DownloadStatusChangedEventArgs(true, value)
+            );
+            currentSoundIsDownloading = true;
+
+            return true;
+        }
+
+        private async void DownloadProgress((Guid, int) value)
+        {
+            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+
+            // Find the file in the download progress list
+            int i = DownloadProgressList.FindIndex(progress => progress.Item1.Equals(value.Item1));
+            if (i == -1) return;
+
+            // Update the progress in the download progress list
+            DownloadProgressList[i] = value;
+
+            // Check if the download progress belongs to the current sound
+            if (PlayingSound.Sounds[PlayingSound.Current].AudioFileTableObject.Uuid.Equals(value.Item1))
+            {
+                // Show the download progress bar as the file is still downloading
+                DownloadStatusChanged?.Invoke(
+                    this,
+                    new DownloadStatusChangedEventArgs(true, value.Item2)
+                );
+
+                if (value.Item2 == 101)
+                {
+                    currentSoundIsDownloading = false;
+
+                    // Set the source of the current sound
+                    var filePath = await PlayingSound.Sounds[PlayingSound.Current].GetAudioFilePathAsync();
+                    if (filePath != null)
+                    {
+                        var newSource = MediaSource.CreateFromUri(new Uri(filePath));
+                        newSource.OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
+                        PlayingSound.MediaPlayer.Source = newSource;
+                    }
+
+                    // Start the current sound
+                    if (PlayingSound.StartPlaying)
+                    {
+                        PlayingSound.MediaPlayer.TimelineController.Start();
+                        StopAllOtherPlayingSounds();
+                    }
+                }
+                else if (value.Item2 == -1)
+                {
+                    currentSoundIsDownloading = false;
+
+                    // Move to the next sound
+                    await MoveToNext();
+                }
+                else
+                {
+                    currentSoundIsDownloading = true;
+                    return;
+                }
+            }
+            else if (value.Item2 != 101 && value.Item2 != -1)
+                return;
+
+            // The file (not the current file) was successfully downloaded
+            // Remove the file download progress from the list
+            DownloadProgressList.RemoveAt(i);
+        }
         #endregion
 
         #region Public methods
@@ -396,7 +551,19 @@ namespace UniversalSoundboard.Components
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
 
-            if (PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Opening || PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing)
+            // Check if the file is currently downloading
+            if (currentSoundIsDownloading)
+            {
+                PlayingSound.MediaPlayer.TimelineController.Pause();
+                PlayingSound.StartPlaying = !PlayingSound.StartPlaying;
+                PlaybackStateChanged?.Invoke(
+                    this,
+                    new PlaybackStateChangedEventArgs(PlayingSound.StartPlaying)
+                );
+                return;
+            }
+
+            if (PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running)
                 PlayingSound.MediaPlayer.TimelineController.Pause();
             else
             {
@@ -409,7 +576,7 @@ namespace UniversalSoundboard.Components
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
 
-            if (PlayingSound.MediaPlayer.PlaybackSession.Position.Seconds >= 5)
+            if (PlayingSound.MediaPlayer.TimelineController.Position.Seconds >= 5)
             {
                 // Move to the start of the sound
                 PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0);

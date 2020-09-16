@@ -141,5 +141,17 @@ namespace UniversalSoundboard.Common
             Muted = muted;
         }
     }
+
+    public class DownloadStatusChangedEventArgs : EventArgs
+    {
+        public bool IsDownloading { get; set; }
+        public int DownloadProgress { get; set; }
+
+        public DownloadStatusChangedEventArgs(bool isDownloading, int downloadProgress)
+        {
+            IsDownloading = isDownloading;
+            DownloadProgress = downloadProgress;
+        }
+    }
     #endregion
 }
