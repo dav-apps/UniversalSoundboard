@@ -295,7 +295,7 @@ namespace UniversalSoundboard.Components
             {
                 // Download the file and show the download dialog
                 downloadFileIsExecuting = true;
-                Progress<int> progress = new Progress<int>(FileDownloadProgress);
+                Progress<(Guid, int)> progress = new Progress<(Guid, int)>(FileDownloadProgress);
                 await sound.DownloadFileAsync(progress);
 
                 ContentDialogs.CreateDownloadFileContentDialog(string.Format("{0}.{1}", sound.Name, sound.GetAudioFileExtensionAsync()));
@@ -320,18 +320,18 @@ namespace UniversalSoundboard.Components
             return true;
         }
 
-        private void FileDownloadProgress(int value)
+        private void FileDownloadProgress((Guid, int) value)
         {
             if (!downloadFileIsExecuting) return;
 
-            if (value < 0)
+            if (value.Item2 < 0)
             {
                 // There was an error
                 downloadFileThrewError = true;
                 downloadFileIsExecuting = false;
                 ContentDialogs.DownloadFileContentDialog.Hide();
             }
-            else if (value > 100)
+            else if (value.Item2 > 100)
             {
                 // Hide the download dialog
                 ContentDialogs.DownloadFileContentDialog.Hide();

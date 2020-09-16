@@ -312,9 +312,6 @@ namespace UniversalSoundBoard.Pages
         {
             if (FileManager.itemViewHolder.PlayingSoundsListVisible)
             {
-                // Remove unused PlayingSounds
-                await RemoveUnusedSoundsAsync();
-
                 // Set the max width of the sounds list and playing sounds list columns
                 PlayingSoundsBarColDef.MaxWidth = ContentRoot.ActualWidth / 2;
                 
@@ -436,7 +433,8 @@ namespace UniversalSoundBoard.Pages
             {
                 Uuid = await FileManager.CreatePlayingSoundAsync(null, newSounds, 0, 0, false, sound.DefaultVolume, sound.DefaultMuted),
                 Volume = sound.DefaultVolume,
-                Muted = sound.DefaultMuted
+                Muted = sound.DefaultMuted,
+                StartPlaying = true
             };
             FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
             playingSound.MediaPlayer.TimelineController.Start();
@@ -478,10 +476,15 @@ namespace UniversalSoundBoard.Pages
                 await RemoveSoundsFromPlayingSoundsListAsync(removedPlayingSounds);
             }
 
-            PlayingSound playingSound = new PlayingSound(Guid.Empty, player, newSounds, 0, repetitions, randomly)
-            {
-                Uuid = await FileManager.CreatePlayingSoundAsync(null, newSounds, 0, repetitions, randomly, null, null)
-            };
+            PlayingSound playingSound = new PlayingSound(
+                await FileManager.CreatePlayingSoundAsync(null, newSounds, 0, repetitions, randomly, null, null),
+                player,
+                newSounds,
+                0,
+                repetitions,
+                randomly
+            );
+            playingSound.StartPlaying = true;
             FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
             playingSound.MediaPlayer.TimelineController.Start();
         }
@@ -492,27 +495,11 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.PlayingSounds.Remove(playingSound);
         }
 
-        private static async Task RemoveUnusedSoundsAsync()
-        {
-            List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
-            foreach (PlayingSound playingSound in FileManager.itemViewHolder.PlayingSounds)
-            {
-                if (
-                    playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Playing
-                    && playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Paused
-                    && playingSound.MediaPlayer.PlaybackSession.PlaybackState != MediaPlaybackState.Opening
-                ) removedPlayingSounds.Add(playingSound);
-            }
-
-            await RemoveSoundsFromPlayingSoundsListAsync(removedPlayingSounds);
-        }
-
         private static async Task RemoveSoundsFromPlayingSoundsListAsync(List<PlayingSound> removedPlayingSounds)
         {
             for (int i = 0; i < removedPlayingSounds.Count; i++)
             {
-                removedPlayingSounds[i].MediaPlayer.Pause();
-                removedPlayingSounds[i].MediaPlayer.SystemMediaTransportControls.IsEnabled = false;
+                removedPlayingSounds[i].MediaPlayer.TimelineController.Pause();
                 removedPlayingSounds[i].MediaPlayer = null;
                 await RemovePlayingSoundAsync(removedPlayingSounds[i]);
             }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using davClassLibrary.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -19,29 +20,16 @@ namespace UniversalSoundBoard.Models
         public int DefaultVolume { get; set; }
         public bool DefaultMuted { get; set; }
         public BitmapImage Image { get; set; }
+        public TableObject AudioFileTableObject { get; set; }
+        public StorageFile AudioFile { get; set; }
+        public TableObject ImageFileTableObject { get; set; }
+        public StorageFile ImageFile { get; set; }
 
-        public Sound()
-        {
-            Categories = new List<Category>();
-        }
-
-        public Sound(Guid uuid)
-        {
-            Uuid = uuid;
-            Categories = new List<Category>();
-        }
-
-        public Sound(string name, List<Category> categories){
-            Name = name;
-            Categories = categories;
-            Favourite = false;
-        }
-
-        public Sound(Guid uuid, string name, bool favourite)
+        public Sound(Guid uuid, string name)
         {
             Uuid = uuid;
             Name = name;
-            Favourite = favourite;
+            Categories = new List<Category>();
         }
 
         public async Task<StorageFile> GetAudioFileAsync()
@@ -69,7 +57,7 @@ namespace UniversalSoundBoard.Models
             return await FileManager.GetAudioFileExtensionAsync(Uuid);
         }
 
-        public async Task DownloadFileAsync(Progress<int> progress)
+        public async Task DownloadFileAsync(Progress<(Guid, int)> progress)
         {
             await FileManager.DownloadAudioFileOfSoundAsync(Uuid, progress);
         }
