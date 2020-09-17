@@ -90,9 +90,9 @@ namespace UniversalSoundboard.Components
             // Copy the file into the temp folder
             soundFiles.Clear();
             StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            var audioFile = await sound.GetAudioFileAsync();
+            var audioFile = sound.AudioFile;
             if (audioFile == null) return;
-            string ext = await sound.GetAudioFileExtensionAsync();
+            string ext = sound.GetAudioFileExtension();
 
             if (string.IsNullOrEmpty(ext))
                 ext = "mp3";
@@ -127,7 +127,7 @@ namespace UniversalSoundboard.Components
                 SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary
             };
 
-            string ext = await sound.GetAudioFileExtensionAsync();
+            string ext = sound.GetAudioFileExtension();
 
             if (string.IsNullOrEmpty(ext))
                 ext = "mp3";
@@ -142,7 +142,7 @@ namespace UniversalSoundboard.Components
             if (file != null)
             {
                 CachedFileManager.DeferUpdates(file);
-                var audioFile = await sound.GetAudioFileAsync();
+                var audioFile = sound.AudioFile;
                 await FileIO.WriteBytesAsync(file, await FileManager.GetBytesAsync(audioFile));
                 await CachedFileManager.CompleteUpdatesAsync(file);
             }
@@ -185,7 +185,7 @@ namespace UniversalSoundboard.Components
                 if (!await tile.RequestCreateAsync()) return;
 
                 // Update the tile with the image of the sound
-                var imageFile = await sound.GetImageFileAsync();
+                var imageFile = sound.ImageFile;
                 if (imageFile == null)
                     imageFile = await StorageFile.GetFileFromApplicationUriAsync(Sound.GetDefaultImageUri());
 
@@ -288,7 +288,7 @@ namespace UniversalSoundboard.Components
         #region File download
         private async Task<bool> DownloadFile()
         {
-            var downloadStatus = await sound.GetAudioFileDownloadStatusAsync();
+            var downloadStatus = sound.GetAudioFileDownloadStatus();
             if (downloadStatus == DownloadStatus.NoFileOrNotLoggedIn) return false;
 
             if (downloadStatus != DownloadStatus.Downloaded)
@@ -296,9 +296,9 @@ namespace UniversalSoundboard.Components
                 // Download the file and show the download dialog
                 downloadFileIsExecuting = true;
                 Progress<(Guid, int)> progress = new Progress<(Guid, int)>(FileDownloadProgress);
-                await sound.DownloadFileAsync(progress);
+                sound.ScheduleAudioFileDownload(progress);
 
-                ContentDialogs.CreateDownloadFileContentDialog(string.Format("{0}.{1}", sound.Name, sound.GetAudioFileExtensionAsync()));
+                ContentDialogs.CreateDownloadFileContentDialog(string.Format("{0}.{1}", sound.Name, sound.GetAudioFileExtension()));
                 ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
                 ContentDialogs.DownloadFileContentDialog.SecondaryButtonClick += DownloadFileContentDialog_SecondaryButtonClick;
                 await ContentDialogs.DownloadFileContentDialog.ShowAsync();

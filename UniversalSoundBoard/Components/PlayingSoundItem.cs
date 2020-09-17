@@ -357,12 +357,13 @@ namespace UniversalSoundboard.Components
             if (CheckFileDownload()) return;
 
             // Set the new source of the MediaPlayer
-            var filePath = await PlayingSound.Sounds[PlayingSound.Current].GetAudioFilePathAsync();
-            if(filePath == null)
+            var audioFile = PlayingSound.Sounds[PlayingSound.Current].AudioFile;
+            if(audioFile == null)
             {
                 await MoveToNext();
                 return;
             }
+            var filePath = audioFile.Path;
 
             var newSource = MediaSource.CreateFromUri(new Uri(filePath));
             newSource.OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
@@ -506,10 +507,10 @@ namespace UniversalSoundboard.Components
                     currentSoundIsDownloading = false;
 
                     // Set the source of the current sound
-                    var filePath = await PlayingSound.Sounds[PlayingSound.Current].GetAudioFilePathAsync();
-                    if (filePath != null)
+                    var audioFile = PlayingSound.Sounds[PlayingSound.Current].AudioFile;
+                    if(audioFile != null)
                     {
-                        var newSource = MediaSource.CreateFromUri(new Uri(filePath));
+                        var newSource = MediaSource.CreateFromUri(new Uri(audioFile.Path));
                         newSource.OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
                         PlayingSound.MediaPlayer.Source = newSource;
                     }

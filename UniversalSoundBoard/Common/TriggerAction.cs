@@ -34,6 +34,22 @@ namespace UniversalSoundboard.Common
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadCategory(tableObject.Uuid));
             else if(tableObject.TableId == FileManager.PlayingSoundTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadPlayingSoundAsync(tableObject.Uuid));
+            else if(
+                fileDownloaded
+                && (
+                    tableObject.TableId == FileManager.SoundFileTableId
+                    || tableObject.TableId == FileManager.ImageFileTableId
+                )
+            )
+            {
+                FileManager.itemViewHolder.TriggerTableObjectFileDownloadCompletedEvent(
+                    this,
+                    new TableObjectFileDownloadCompletedEventArgs(
+                        tableObject.Uuid,
+                        tableObject.File
+                    )
+                );
+            }
         }
 
         public async void DeleteTableObject(TableObject tableObject)

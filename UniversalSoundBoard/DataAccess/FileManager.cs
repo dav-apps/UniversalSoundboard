@@ -244,139 +244,6 @@ namespace UniversalSoundBoard.DataAccess
 
             return dataModel;
         }
-
-        private static async Task<string> GetTableObjectFilePathAsync(Guid uuid)
-        {
-            var fileTableObject = await DatabaseOperations.GetTableObjectAsync(uuid);
-
-            if (
-                fileTableObject == null
-                || !fileTableObject.IsFile
-                || fileTableObject.File == null
-            ) return null;
-
-            return fileTableObject.File.FullName;
-        }
-
-        public static async Task<StorageFile> GetAudioFileOfSoundAsync(Guid soundUuid)
-        {
-            var soundFileTableObject = await GetSoundFileTableObjectAsync(soundUuid);
-            if (soundFileTableObject == null || soundFileTableObject.File == null) return null;
-
-            if (File.Exists(soundFileTableObject.File.FullName))
-                return await StorageFile.GetFileFromPathAsync(soundFileTableObject.File.FullName);
-            else
-                return null;
-        }
-
-        public static async Task<string> GetAudioFilePathOfSoundAsync(Guid soundUuid)
-        {
-            var soundFileTableObject = await GetSoundFileTableObjectAsync(soundUuid);
-            if (soundFileTableObject == null || soundFileTableObject.File == null) return null;
-
-            if (File.Exists(soundFileTableObject.File.FullName))
-                return soundFileTableObject.File.FullName;
-            else
-                return null;
-        }
-
-        public static async Task<string> GetAudioFileExtensionAsync(Guid soundUuid)
-        {
-            var soundFileTableObject = await GetSoundFileTableObjectAsync(soundUuid);
-            if (soundFileTableObject == null) return null;
-
-            return soundFileTableObject.GetPropertyValue(TableObjectExtPropertyName);
-        }
-
-        public static async Task<string> GetImageFileExtensionAsync(Guid soundUuid)
-        {
-            var imageFileTableObject = await GetImageFileTableObjectAsync(soundUuid);
-            if (imageFileTableObject == null || imageFileTableObject.File == null) return null;
-
-            return imageFileTableObject.GetPropertyValue(TableObjectExtPropertyName);
-        }
-
-        public static async Task<StorageFile> GetImageFileOfSoundAsync(Guid soundUuid)
-        {
-            var imageFileTableObject = await GetImageFileTableObjectAsync(soundUuid);
-            if (imageFileTableObject == null || imageFileTableObject.File == null) return null;
-
-            if (File.Exists(imageFileTableObject.File.FullName))
-                return await StorageFile.GetFileFromPathAsync(imageFileTableObject.File.FullName);
-            else
-                return null;
-        }
-
-        public static async Task<Uri> GetAudioUriOfSoundAsync(Guid soundUuid)
-        {
-            var soundTableObject = await GetSoundFileTableObjectAsync(soundUuid);
-            if (soundTableObject == null) return null;
-
-            return soundTableObject.GetFileUri();
-        }
-
-        public static async Task<MemoryStream> GetAudioStreamOfSoundAsync(Guid soundUuid)
-        {
-            var soundTableObject = await GetSoundFileTableObjectAsync(soundUuid);
-            if (soundTableObject == null) return null;
-
-            return await soundTableObject.GetFileStreamAsync();
-        }
-
-        public static async Task DownloadAudioFileOfSoundAsync(Guid soundUuid, Progress<(Guid, int)> progress)
-        {
-            var soundTableObject = await GetSoundFileTableObjectAsync(soundUuid);
-            if (soundTableObject != null)
-                soundTableObject.DownloadFile(progress);
-        }
-
-        public static async Task<DownloadStatus> GetSoundFileDownloadStatusAsync(Guid soundUuid)
-        {
-            var soundTableObject = await GetSoundFileTableObjectAsync(soundUuid);
-            if (soundTableObject == null) return DownloadStatus.NoFileOrNotLoggedIn;
-
-            switch (soundTableObject.FileDownloadStatus)
-            {
-                case TableObject.TableObjectFileDownloadStatus.NoFileOrNotLoggedIn:
-                    return DownloadStatus.NoFileOrNotLoggedIn;
-                case TableObject.TableObjectFileDownloadStatus.NotDownloaded:
-                    return DownloadStatus.NotDownloaded;
-                case TableObject.TableObjectFileDownloadStatus.Downloading:
-                    return DownloadStatus.Downloading;
-                case TableObject.TableObjectFileDownloadStatus.Downloaded:
-                    return DownloadStatus.Downloaded;
-                default:
-                    return DownloadStatus.NoFileOrNotLoggedIn;
-            }
-        }
-
-        public static async Task<TableObject> GetSoundFileTableObjectAsync(Guid soundUuid)
-        {
-            var soundTableObject = await DatabaseOperations.GetTableObjectAsync(soundUuid);
-            if (soundTableObject == null) return null;
-
-            Guid soundFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName)) ?? Guid.Empty;
-            if (Equals(soundFileUuid, Guid.Empty)) return null;
-
-            var soundFileTableObject = await DatabaseOperations.GetTableObjectAsync(soundFileUuid);
-            if (soundFileTableObject == null) return null;
-
-            return soundFileTableObject;
-        }
-
-        private static async Task<TableObject> GetImageFileTableObjectAsync(Guid soundUuid)
-        {
-            var soundTableObject = await DatabaseOperations.GetTableObjectAsync(soundUuid);
-            if (soundTableObject == null) return null;
-
-            Guid imageFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName)) ?? Guid.Empty;
-            if (Equals(imageFileUuid, Guid.Empty)) return null;
-
-            var imageFileTableObject = await DatabaseOperations.GetTableObjectAsync(imageFileUuid);
-            if (imageFileTableObject == null) return null;
-
-            return imageFileTableObject;
-        }
         #endregion
 
         #region Export / Import
@@ -737,13 +604,13 @@ namespace UniversalSoundBoard.DataAccess
 
         private static async Task CopySoundFileIntoFolderAsync(Sound sound, StorageFolder destinationFolder)
         {
-            string ext = await sound.GetAudioFileExtensionAsync();
+            string ext = sound.GetAudioFileExtension();
 
             if (string.IsNullOrEmpty(ext))
                 ext = "mp3";
 
             StorageFile soundFile = await destinationFolder.CreateFileAsync(string.Format("{0}.{1}", sound.Name, ext), CreationCollisionOption.GenerateUniqueName);
-            await FileIO.WriteBytesAsync(soundFile, await GetBytesAsync(await sound.GetAudioFileAsync()));
+            await FileIO.WriteBytesAsync(soundFile, await GetBytesAsync(sound.AudioFile));
         }
         #endregion
 
@@ -920,7 +787,7 @@ namespace UniversalSoundBoard.DataAccess
 
             // Update the LiveTile if the Sounds were just loaded
             if(soundsLoaded)
-                await UpdateLiveTileAsync();
+                UpdateLiveTileAsync();
         }
 
         /**
@@ -1158,7 +1025,7 @@ namespace UniversalSoundBoard.DataAccess
                 itemViewHolder.AppState = AppState.Empty;
         }
 
-        public static async Task UpdateLiveTileAsync()
+        public static void UpdateLiveTileAsync()
         {
             if (itemViewHolder.AllSounds.Count == 0 || !itemViewHolder.LiveTile)
             {
@@ -1167,7 +1034,7 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             // Get all sounds with an image
-            List<Sound> sounds = itemViewHolder.AllSounds.Where(s => s.HasImageFile()).ToList();
+            List<Sound> sounds = itemViewHolder.AllSounds.Where(s => s.ImageFileTableObject != null).ToList();
             if (sounds.Count == 0) return;
 
             // Pick up to 12 random sounds with images
@@ -1182,7 +1049,7 @@ namespace UniversalSoundBoard.DataAccess
                 // Get the image of the sound and add it to the images list
                 var selectedSound = sounds.ElementAt(selectedSoundIndex);
 
-                StorageFile imageFile = await selectedSound.GetImageFileAsync();
+                StorageFile imageFile = selectedSound.ImageFile;
                 if (imageFile != null) images.Add(imageFile);
 
                 // Remove the selected sound from the sounds list
@@ -1223,11 +1090,11 @@ namespace UniversalSoundBoard.DataAccess
             // Get each sound and check if the file exists
             foreach (var sound in itemViewHolder.AllSounds)
             {
-                var soundFileTableObject = await GetSoundFileTableObjectAsync(sound.Uuid);
+                var soundFileTableObject = sound.AudioFileTableObject;
                 if (soundFileTableObject != null && soundFileTableObject.FileDownloaded()) continue;
 
                 // Completely remove the sound from the database so that it won't be deleted when the user logs in again
-                var imageFileTableObject = await GetImageFileTableObjectAsync(sound.Uuid);
+                var imageFileTableObject = sound.ImageFileTableObject;
                 var soundTableObject = await DatabaseOperations.GetTableObjectAsync(sound.Uuid);
 
                 if (soundFileTableObject != null)
@@ -1717,7 +1584,7 @@ namespace UniversalSoundBoard.DataAccess
             itemViewHolder.PlayingSounds.Remove(playingSound);
         }
 
-        public static async Task<(MediaPlayer, List<Sound>)> CreateMediaPlayerAsync(List<Sound> sounds, int current)
+        public static (MediaPlayer, List<Sound>) CreateMediaPlayer(List<Sound> sounds, int current)
         {
             if (sounds.Count == 0) return (null, null);
 
@@ -1730,13 +1597,13 @@ namespace UniversalSoundBoard.DataAccess
             List<Sound> newSounds = new List<Sound>();
 
             foreach (Sound sound in sounds)
-                if (await sound.GetAudioFileDownloadStatusAsync() != DownloadStatus.NoFileOrNotLoggedIn)
+                if (sound.GetAudioFileDownloadStatus() != DownloadStatus.NoFileOrNotLoggedIn)
                     newSounds.Add(sound);
 
             player.CommandManager.IsEnabled = false;
             player.TimelineController = new MediaTimelineController();
-            if(await newSounds[current].GetAudioFileDownloadStatusAsync() == DownloadStatus.Downloaded)
-                player.Source = MediaSource.CreateFromUri(new Uri(await newSounds[current].GetAudioFilePathAsync()));
+            if(newSounds[current].AudioFile != null)
+                player.Source = MediaSource.CreateFromStorageFile(newSounds[current].AudioFile);
 
             // Set the volume
             double appVolume = ((double)itemViewHolder.Volume) / 100;
@@ -2089,7 +1956,7 @@ namespace UniversalSoundBoard.DataAccess
                 bool.TryParse(mutedString, out muted);
 
             // Create the media player
-            var createMediaPlayerResult = await CreateMediaPlayerAsync(sounds, current);
+            var createMediaPlayerResult = CreateMediaPlayer(sounds, current);
             MediaPlayer player = createMediaPlayerResult.Item1;
             List<Sound> newSounds = createMediaPlayerResult.Item2;
 
@@ -2760,11 +2627,11 @@ namespace UniversalSoundBoard.DataAccess
 
             foreach(var sound in sounds)
             {
-                var audioFile = await sound.GetAudioFileAsync();
+                var audioFile = sound.AudioFile;
                 if (audioFile != null)
                     itemViewHolder.SoundboardSize += await GetFileSizeAsync(audioFile);
 
-                var imageFile = await sound.GetImageFileAsync();
+                var imageFile = sound.ImageFile;
                 if (imageFile != null)
                     itemViewHolder.SoundboardSize += await GetFileSizeAsync(imageFile);
             }

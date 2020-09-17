@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Windows.UI.Xaml;
 
 namespace UniversalSoundboard.Common
@@ -39,6 +40,18 @@ namespace UniversalSoundboard.Common
         {
             Uuid = uuid;
             HeightDifference = heightDifference;
+        }
+    }
+
+    public class TableObjectFileDownloadCompletedEventArgs
+    {
+        public Guid Uuid { get; set; }
+        public FileInfo File { get; set; }
+
+        public TableObjectFileDownloadCompletedEventArgs(Guid uuid, FileInfo file)
+        {
+            Uuid = uuid;
+            File = file;
         }
     }
     #endregion

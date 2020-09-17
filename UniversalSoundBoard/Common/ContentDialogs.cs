@@ -860,7 +860,7 @@ namespace UniversalSoundBoard.Common
             #endregion
 
             #region File type
-            string audioFileType = await sound.GetAudioFileExtensionAsync();
+            string audioFileType = sound.GetAudioFileExtension();
             if(audioFileType != null)
             {
                 // Add the row
@@ -892,7 +892,7 @@ namespace UniversalSoundBoard.Common
             #endregion
 
             #region Image file type
-            string imageFileType = await sound.GetImageFileExtensionAsync();
+            string imageFileType = sound.GetImageFileExtension();
             if(imageFileType != null)
             {
                 // Add the row
@@ -924,7 +924,7 @@ namespace UniversalSoundBoard.Common
             #endregion
 
             #region Size
-            var audioFile = await sound.GetAudioFileAsync();
+            var audioFile = sound.AudioFile;
             if (audioFile != null)
             {
                 // Add the row
@@ -956,7 +956,7 @@ namespace UniversalSoundBoard.Common
             #endregion
 
             #region Image size
-            var imageFile = await sound.GetImageFileAsync();
+            var imageFile = sound.ImageFile;
             if(imageFile != null)
             {
                 // Add the row

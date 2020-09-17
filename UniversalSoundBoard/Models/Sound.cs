@@ -1,8 +1,6 @@
 ﻿using davClassLibrary.Models;
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Threading.Tasks;
 using UniversalSoundBoard.DataAccess;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
@@ -30,58 +28,67 @@ namespace UniversalSoundBoard.Models
             Uuid = uuid;
             Name = name;
             Categories = new List<Category>();
+
+            FileManager.itemViewHolder.TableObjectFileDownloadCompleted += ItemViewHolder_TableObjectFileDownloadCompleted;
         }
 
-        public async Task<StorageFile> GetAudioFileAsync()
+        private async void ItemViewHolder_TableObjectFileDownloadCompleted(object sender, UniversalSoundboard.Common.TableObjectFileDownloadCompletedEventArgs e)
         {
-            return await FileManager.GetAudioFileOfSoundAsync(Uuid);
+            if (AudioFileTableObject != null && e.Uuid.Equals(AudioFileTableObject.Uuid))
+            {
+                // Set the new audio file
+                try
+                {
+                    AudioFile = await StorageFile.GetFileFromPathAsync(e.File.FullName);
+                }
+                catch { }
+            }
+            else if (ImageFileTableObject != null && e.Uuid.Equals(ImageFileTableObject.Uuid))
+            {
+                // Set the new image file
+                try
+                {
+                    ImageFile = await StorageFile.GetFileFromPathAsync(e.File.FullName);
+                }
+                catch { }
+            }
         }
 
-        public async Task<string> GetAudioFilePathAsync()
+        public string GetAudioFileExtension()
         {
-            return await FileManager.GetAudioFilePathOfSoundAsync(Uuid);
+            if (AudioFileTableObject == null) return null;
+            return AudioFileTableObject.GetPropertyValue(FileManager.TableObjectExtPropertyName);
         }
 
-        public async Task<Uri> GetAudioUriAsync()
+        public void ScheduleAudioFileDownload(Progress<(Guid, int)> progress)
         {
-            return await FileManager.GetAudioUriOfSoundAsync(Uuid);
+            if (AudioFileTableObject == null) return;
+            AudioFileTableObject.ScheduleFileDownload(progress);
         }
 
-        public async Task<MemoryStream> GetAudioStreamAsync()
+        public DownloadStatus GetAudioFileDownloadStatus()
         {
-            return await FileManager.GetAudioStreamOfSoundAsync(Uuid);
+            if (AudioFileTableObject == null) return DownloadStatus.NoFileOrNotLoggedIn;
+
+            switch (AudioFileTableObject.FileDownloadStatus)
+            {
+                case TableObject.TableObjectFileDownloadStatus.NoFileOrNotLoggedIn:
+                    return DownloadStatus.NoFileOrNotLoggedIn;
+                case TableObject.TableObjectFileDownloadStatus.NotDownloaded:
+                    return DownloadStatus.NotDownloaded;
+                case TableObject.TableObjectFileDownloadStatus.Downloading:
+                    return DownloadStatus.Downloading;
+                case TableObject.TableObjectFileDownloadStatus.Downloaded:
+                    return DownloadStatus.Downloaded;
+                default:
+                    return DownloadStatus.NoFileOrNotLoggedIn;
+            }
         }
 
-        public async Task<string> GetAudioFileExtensionAsync()
+        public string GetImageFileExtension()
         {
-            return await FileManager.GetAudioFileExtensionAsync(Uuid);
-        }
-
-        public async Task DownloadFileAsync(Progress<(Guid, int)> progress)
-        {
-            await FileManager.DownloadAudioFileOfSoundAsync(Uuid, progress);
-        }
-
-        public async Task<DownloadStatus> GetAudioFileDownloadStatusAsync()
-        {
-            return await FileManager.GetSoundFileDownloadStatusAsync(Uuid);
-        }
-
-        public bool HasImageFile()
-        {
-            return
-                Image.UriSource.ToString() != DefaultLightSoundImageUri
-                && Image.UriSource.ToString() != DefaultDarkSoundImageUri;
-        }
-
-        public async Task<StorageFile> GetImageFileAsync()
-        {
-            return await FileManager.GetImageFileOfSoundAsync(Uuid);
-        }
-
-        public async Task<string> GetImageFileExtensionAsync()
-        {
-            return await FileManager.GetImageFileExtensionAsync(Uuid);
+            if (ImageFileTableObject == null) return null;
+            return ImageFileTableObject.GetPropertyValue(FileManager.TableObjectExtPropertyName);
         }
 
         public static Uri GetDefaultImageUri()

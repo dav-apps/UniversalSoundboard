@@ -1029,10 +1029,10 @@ namespace UniversalSoundBoard.Pages
             // Copy the files into the temp folder
             foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
             {
-                StorageFile audioFile = await sound.GetAudioFileAsync();
+                StorageFile audioFile = sound.AudioFile;
                 if (audioFile == null) return;
 
-                string ext = await sound.GetAudioFileExtensionAsync();
+                string ext = sound.GetAudioFileExtension();
                 if (string.IsNullOrEmpty(ext)) ext = "mp3";
 
                 StorageFile tempFile = await audioFile.CopyAsync(tempFolder, sound.Name + "." + ext, NameCollisionOption.ReplaceExisting);
@@ -1074,7 +1074,7 @@ namespace UniversalSoundBoard.Pages
             // Download each file that is not available locally
             foreach (var sound in selectedSounds)
             {
-                var downloadStatus = await sound.GetAudioFileDownloadStatusAsync();
+                var downloadStatus = sound.GetAudioFileDownloadStatus();
                 if (downloadStatus == DownloadStatus.NoFileOrNotLoggedIn) continue;
 
                 if (downloadStatus != DownloadStatus.Downloaded)
@@ -1082,9 +1082,9 @@ namespace UniversalSoundBoard.Pages
                     // Download the file and show the download dialog
                     downloadFileIsExecuting = true;
                     Progress<(Guid, int)> progress = new Progress<(Guid, int)>(FileDownloadProgress);
-                    await sound.DownloadFileAsync(progress);
+                    sound.ScheduleAudioFileDownload(progress);
 
-                    ContentDialogs.CreateDownloadFileContentDialog(sound.Name + "." + sound.GetAudioFileExtensionAsync());
+                    ContentDialogs.CreateDownloadFileContentDialog(sound.Name + "." + sound.GetAudioFileExtension());
                     ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
                     ContentDialogs.DownloadFileContentDialog.SecondaryButtonClick += DownloadFileContentDialog_SecondaryButtonClick;
                     await ContentDialogs.DownloadFileContentDialog.ShowAsync();

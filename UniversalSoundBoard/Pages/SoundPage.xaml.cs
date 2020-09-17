@@ -414,7 +414,7 @@ namespace UniversalSoundBoard.Pages
         {
             List<Sound> soundList = new List<Sound> { sound };
 
-            var createMediaPlayerResult = await FileManager.CreateMediaPlayerAsync(soundList, 0);
+            var createMediaPlayerResult = FileManager.CreateMediaPlayer(soundList, 0);
             MediaPlayer player = createMediaPlayerResult.Item1;
             List<Sound> newSounds = createMediaPlayerResult.Item2;
             if (player == null || newSounds == null) return;
@@ -461,7 +461,7 @@ namespace UniversalSoundBoard.Pages
                 sounds = sounds.OrderBy(a => random.Next()).ToList();
             }
 
-            var createMediaPlayerResult = await FileManager.CreateMediaPlayerAsync(sounds, 0);
+            var createMediaPlayerResult = FileManager.CreateMediaPlayer(sounds, 0);
             MediaPlayer player = createMediaPlayerResult.Item1;
             List<Sound> newSounds = createMediaPlayerResult.Item2;
             if (player == null || newSounds == null) return;

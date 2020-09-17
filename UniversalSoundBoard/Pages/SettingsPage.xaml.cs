@@ -213,13 +213,13 @@ namespace UniversalSoundBoard.Pages
             LiveTileToggle.IsOn = FileManager.itemViewHolder.LiveTile;
         }
 
-        private async void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
+        private void LiveTileToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
             FileManager.itemViewHolder.LiveTile = LiveTileToggle.IsOn;
 
             if (LiveTileToggle.IsOn)
-                await FileManager.UpdateLiveTileAsync();
+                FileManager.UpdateLiveTileAsync();
             else
                 TileUpdateManager.CreateTileUpdaterForApplication().Clear();
         }
