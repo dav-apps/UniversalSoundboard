@@ -22,6 +22,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using System.ComponentModel;
 using System.Collections.Specialized;
 using UniversalSoundboard.Common;
+using static davClassLibrary.Models.TableObject;
 
 namespace UniversalSoundBoard.Pages
 {
@@ -1075,9 +1076,9 @@ namespace UniversalSoundBoard.Pages
             foreach (var sound in selectedSounds)
             {
                 var downloadStatus = sound.GetAudioFileDownloadStatus();
-                if (downloadStatus == DownloadStatus.NoFileOrNotLoggedIn) continue;
+                if (downloadStatus == TableObjectFileDownloadStatus.NoFileOrNotLoggedIn) continue;
 
-                if (downloadStatus != DownloadStatus.Downloaded)
+                if (downloadStatus != TableObjectFileDownloadStatus.Downloaded)
                 {
                     // Download the file and show the download dialog
                     downloadFileIsExecuting = true;

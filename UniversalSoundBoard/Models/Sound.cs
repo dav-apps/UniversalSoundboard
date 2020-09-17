@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UniversalSoundBoard.DataAccess;
 using Windows.Storage;
 using Windows.UI.Xaml.Media.Imaging;
+using static davClassLibrary.Models.TableObject;
 
 namespace UniversalSoundBoard.Models
 {
@@ -66,23 +67,10 @@ namespace UniversalSoundBoard.Models
             AudioFileTableObject.ScheduleFileDownload(progress);
         }
 
-        public DownloadStatus GetAudioFileDownloadStatus()
+        public TableObjectFileDownloadStatus GetAudioFileDownloadStatus()
         {
-            if (AudioFileTableObject == null) return DownloadStatus.NoFileOrNotLoggedIn;
-
-            switch (AudioFileTableObject.FileDownloadStatus)
-            {
-                case TableObject.TableObjectFileDownloadStatus.NoFileOrNotLoggedIn:
-                    return DownloadStatus.NoFileOrNotLoggedIn;
-                case TableObject.TableObjectFileDownloadStatus.NotDownloaded:
-                    return DownloadStatus.NotDownloaded;
-                case TableObject.TableObjectFileDownloadStatus.Downloading:
-                    return DownloadStatus.Downloading;
-                case TableObject.TableObjectFileDownloadStatus.Downloaded:
-                    return DownloadStatus.Downloaded;
-                default:
-                    return DownloadStatus.NoFileOrNotLoggedIn;
-            }
+            if (AudioFileTableObject == null) return TableObjectFileDownloadStatus.NoFileOrNotLoggedIn;
+            return AudioFileTableObject.FileDownloadStatus;
         }
 
         public string GetImageFileExtension()
@@ -100,13 +88,5 @@ namespace UniversalSoundBoard.Models
                 defaultImageUri = new Uri(DefaultLightSoundImageUri, UriKind.Absolute);
             return defaultImageUri;
         }
-    }
-
-    public enum DownloadStatus
-    {
-        NoFileOrNotLoggedIn = 0,
-        NotDownloaded = 1,
-        Downloading = 2,
-        Downloaded = 3
     }
 }

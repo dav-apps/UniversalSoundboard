@@ -33,6 +33,7 @@ using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using static davClassLibrary.Models.TableObject;
 
 namespace UniversalSoundBoard.DataAccess
 {
@@ -1597,7 +1598,7 @@ namespace UniversalSoundBoard.DataAccess
             List<Sound> newSounds = new List<Sound>();
 
             foreach (Sound sound in sounds)
-                if (sound.GetAudioFileDownloadStatus() != DownloadStatus.NoFileOrNotLoggedIn)
+                if (sound.GetAudioFileDownloadStatus() != TableObjectFileDownloadStatus.NoFileOrNotLoggedIn)
                     newSounds.Add(sound);
 
             player.CommandManager.IsEnabled = false;

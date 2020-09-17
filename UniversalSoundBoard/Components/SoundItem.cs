@@ -13,6 +13,7 @@ using Windows.UI.Notifications;
 using Windows.UI.StartScreen;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using static davClassLibrary.Models.TableObject;
 
 namespace UniversalSoundboard.Components
 {
@@ -289,9 +290,9 @@ namespace UniversalSoundboard.Components
         private async Task<bool> DownloadFile()
         {
             var downloadStatus = sound.GetAudioFileDownloadStatus();
-            if (downloadStatus == DownloadStatus.NoFileOrNotLoggedIn) return false;
+            if (downloadStatus == TableObjectFileDownloadStatus.NoFileOrNotLoggedIn) return false;
 
-            if (downloadStatus != DownloadStatus.Downloaded)
+            if (downloadStatus != TableObjectFileDownloadStatus.Downloaded)
             {
                 // Download the file and show the download dialog
                 downloadFileIsExecuting = true;
