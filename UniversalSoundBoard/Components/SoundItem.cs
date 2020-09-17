@@ -299,7 +299,7 @@ namespace UniversalSoundboard.Components
                 Progress<(Guid, int)> progress = new Progress<(Guid, int)>(FileDownloadProgress);
                 sound.ScheduleAudioFileDownload(progress);
 
-                ContentDialogs.CreateDownloadFileContentDialog(string.Format("{0}.{1}", sound.Name, sound.GetAudioFileExtension()));
+                ContentDialogs.CreateDownloadFileContentDialog($"{sound.Name}.{sound.GetAudioFileExtension()}");
                 ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
                 ContentDialogs.DownloadFileContentDialog.SecondaryButtonClick += DownloadFileContentDialog_SecondaryButtonClick;
                 await ContentDialogs.DownloadFileContentDialog.ShowAsync();
@@ -318,6 +318,7 @@ namespace UniversalSoundboard.Components
                 downloadFileThrewError = false;
                 return false;
             }
+
             return true;
         }
 
@@ -334,8 +335,15 @@ namespace UniversalSoundboard.Components
             }
             else if (value.Item2 > 100)
             {
-                // Hide the download dialog
+                // Download was successful
+                downloadFileThrewError = false;
+                downloadFileIsExecuting = false;
                 ContentDialogs.DownloadFileContentDialog.Hide();
+            }
+            else
+            {
+                ContentDialogs.downloadFileProgressBar.IsIndeterminate = false;
+                ContentDialogs.downloadFileProgressBar.Value = value.Item2;
             }
         }
 
