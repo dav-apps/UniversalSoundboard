@@ -628,4 +628,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="EmptyCategoryMessageTitleTextBlock.Text" xml:space="preserve">
     <value>Diese Kategorie ist leer...</value>
   </data>
+  <data name="DownloadFilesContentDialog-Title" xml:space="preserve">
+    <value>Dateien herunterladen...</value>
+  </data>
 </root>

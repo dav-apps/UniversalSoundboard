@@ -35,9 +35,8 @@ namespace UniversalSoundBoard.Pages
         private List<string> Suggestions = new List<string>();              // The suggestions for the SearchAutoSuggestBox
         private List<StorageFile> sharedFiles = new List<StorageFile>();    // The files that get shared
         bool selectionButtonsEnabled = false;                               // If true, the buttons for multi selection are enabled
-        private bool downloadFileIsExecuting = false;
-        private bool downloadFileWasCanceled = false;
-        private bool downloadFileThrewError = false;
+        bool downloadFilesDialogIsVisible = false;
+        bool downloadFilesCanceled = false;
         string title = FileManager.itemViewHolder.Title;                    // The visible title, possibly truncated
         bool isTruncatingTitle = false;                                     // If true, TruncateTitleAsync is currently running
         int titleTruncatedChars = 0;                                        // The number of characters the title was truncated
@@ -55,6 +54,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.CategoriesUpdated += ItemViewHolder_CategoriesUpdated;
             FileManager.itemViewHolder.CategoryUpdated += ItemViewHolder_CategoryUpdated;
             FileManager.itemViewHolder.CategoryDeleted += ItemViewHolder_CategoryDeleted;
+            FileManager.itemViewHolder.TableObjectFileDownloadCompleted += ItemViewHolder_TableObjectFileDownloadCompleted;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
         }
 
@@ -134,6 +134,38 @@ namespace UniversalSoundBoard.Pages
         {
             // Remove the category from the SideBar
             RemoveCategoryMenuItem(SideBar.MenuItems, args.Uuid);
+        }
+
+        private async void ItemViewHolder_TableObjectFileDownloadCompleted(object sender, TableObjectFileDownloadCompletedEventArgs e)
+        {
+            if (downloadFilesDialogIsVisible)
+            {
+                bool isDownloading = false;
+
+                // Check if all files were downloaded
+                foreach(var sound in ContentDialogs.downloadingFilesSoundsList)
+                {
+                    var downloadStatus = sound.GetAudioFileDownloadStatus();
+
+                    if (
+                        downloadStatus == TableObjectFileDownloadStatus.Downloading
+                        || downloadStatus == TableObjectFileDownloadStatus.NotDownloaded
+                    )
+                    {
+                        isDownloading = true;
+                        break;
+                    }
+                }
+
+                if (!isDownloading)
+                {
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        // Close the download files dialog
+                        ContentDialogs.DownloadFilesContentDialog.Hide();
+                    });
+                }
+            }
         }
 
         private void SelectedSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -1071,68 +1103,51 @@ namespace UniversalSoundBoard.Pages
         private async Task<bool> DownloadSelectedFiles()
         {
             var selectedSounds = FileManager.itemViewHolder.SelectedSounds;
+            bool showDownloadFilesDialog = false;
 
-            // Download each file that is not available locally
-            foreach (var sound in selectedSounds)
+            if (FileManager.itemViewHolder.User.IsLoggedIn)
             {
-                var downloadStatus = sound.GetAudioFileDownloadStatus();
-                if (downloadStatus == TableObjectFileDownloadStatus.NoFileOrNotLoggedIn) continue;
-
-                if (downloadStatus != TableObjectFileDownloadStatus.Downloaded)
+                // Check if any of the sounds needs to be downloaded
+                foreach(var sound in selectedSounds)
                 {
-                    // Download the file and show the download dialog
-                    downloadFileIsExecuting = true;
-                    Progress<(Guid, int)> progress = new Progress<(Guid, int)>(FileDownloadProgress);
-                    sound.ScheduleAudioFileDownload(progress);
+                    var downloadStatus = sound.GetAudioFileDownloadStatus();
 
-                    ContentDialogs.CreateDownloadFileContentDialog(sound.Name + "." + sound.GetAudioFileExtension());
-                    ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
-                    ContentDialogs.DownloadFileContentDialog.SecondaryButtonClick += DownloadFileContentDialog_SecondaryButtonClick;
-                    await ContentDialogs.DownloadFileContentDialog.ShowAsync();
+                    if (
+                        downloadStatus == TableObjectFileDownloadStatus.Downloading
+                        || downloadStatus == TableObjectFileDownloadStatus.NotDownloaded
+                    )
+                    {
+                        showDownloadFilesDialog = true;
+                        break;
+                    }
                 }
-
-                if (downloadFileWasCanceled)
-                {
-                    downloadFileWasCanceled = false;
-                    return false;
-                }
-
-                if (downloadFileThrewError) break;
             }
 
-            if (downloadFileThrewError)
+            if (showDownloadFilesDialog)
             {
-                var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
-                await errorContentDialog.ShowAsync();
-                downloadFileThrewError = false;
-                return false;
+                var itemTemplate = (DataTemplate)Resources["SoundFileDownloadProgressTemplate"];
+                var itemStyle = Resources["ListViewItemStyle"] as Style;
+
+                var downloadFilesContentDialog = ContentDialogs.CreateDownloadFilesContentDialog(selectedSounds.ToList(), itemTemplate, itemStyle);
+                downloadFilesContentDialog.SecondaryButtonClick += DownloadFilesContentDialog_SecondaryButtonClick;
+
+                downloadFilesDialogIsVisible = true;
+                await downloadFilesContentDialog.ShowAsync();
+                downloadFilesDialogIsVisible = false;
+
+                if (downloadFilesCanceled)
+                {
+                    downloadFilesCanceled = false;
+                    return false;
+                }
             }
 
             return true;
         }
 
-        private void FileDownloadProgress((Guid, int) value)
+        private void DownloadFilesContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (!downloadFileIsExecuting) return;
-
-            if (value.Item2< 0)
-            {
-                // There was an error
-                downloadFileThrewError = true;
-                downloadFileIsExecuting = false;
-                ContentDialogs.DownloadFileContentDialog.Hide();
-            }
-            else if (value.Item2 > 100)
-            {
-                // Hide the download dialog
-                ContentDialogs.DownloadFileContentDialog.Hide();
-            }
-        }
-
-        private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            downloadFileWasCanceled = true;
-            downloadFileIsExecuting = false;
+            downloadFilesCanceled = true;
         }
         #endregion
 

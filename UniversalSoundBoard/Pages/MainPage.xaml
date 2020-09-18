@@ -25,7 +25,11 @@
             <components:SoundItemTemplate />
         </DataTemplate>
 
-        <!-- NavigationViewHeader styles -->
+        <DataTemplate x:Key="SoundFileDownloadProgressTemplate" x:DataType="models:Sound">
+            <components1:SoundFileDownloadProgressTemplate />
+        </DataTemplate>
+
+        <!-- Styles -->
         <Style TargetType="ListViewItem" x:Key="ListViewItemStyle">
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>

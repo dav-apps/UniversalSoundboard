@@ -120,6 +120,9 @@
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
     <Compile Include="Components\PlayingSoundItem.cs" />
+    <Compile Include="Components\SoundFileDownloadProgressTemplate.xaml.cs">
+      <DependentUpon>SoundFileDownloadProgressTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\SoundItem.cs" />
     <Compile Include="Components\SoundListItemTemplate.xaml.cs">
       <DependentUpon>SoundListItemTemplate.xaml</DependentUpon>
@@ -240,6 +243,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Components\SoundFileDownloadProgressTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\SoundListItemTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

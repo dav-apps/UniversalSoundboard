@@ -41,6 +41,7 @@ namespace UniversalSoundBoard.Common
         public static ComboBox RepeatsComboBox;
         public static ObservableCollection<Sound> SoundsList = new ObservableCollection<Sound>();
         public static ProgressBar downloadFileProgressBar;
+        public static List<Sound> downloadingFilesSoundsList = new List<Sound>();
         public static ListView ExportSoundsListView;
         public static TextBox ExportSoundsFolderTextBox;
         public static CheckBox ExportSoundsAsZipCheckBox;
@@ -58,6 +59,7 @@ namespace UniversalSoundBoard.Common
         public static ContentDialog PlaySoundsSuccessivelyContentDialog;
         public static ContentDialog LogoutContentDialog;
         public static ContentDialog DownloadFileContentDialog;
+        public static ContentDialog DownloadFilesContentDialog;
         public static ContentDialog DownloadFileErrorContentDialog;
         public static ContentDialog ExportSoundsContentDialog;
         public static ContentDialog SetCategoryContentDialog;
@@ -634,6 +636,38 @@ namespace UniversalSoundBoard.Common
             };
 
             return DownloadFileErrorContentDialog;
+        }
+        #endregion
+
+        #region DownloadFiles
+        public static ContentDialog CreateDownloadFilesContentDialog(List<Sound> sounds, DataTemplate itemTemplate, Style itemStyle)
+        {
+            downloadingFilesSoundsList = sounds;
+
+            DownloadFilesContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("DownloadFilesContentDialog-Title"),
+                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+
+            ListView progressListView = new ListView
+            {
+                ItemTemplate = itemTemplate,
+                ItemsSource = sounds,
+                ItemContainerStyle = itemStyle,
+                SelectionMode = ListViewSelectionMode.None
+            };
+
+            Grid containerGrid = new Grid
+            {
+                Width = 500
+            };
+
+            containerGrid.Children.Add(progressListView);
+            DownloadFilesContentDialog.Content = containerGrid;
+
+            return DownloadFilesContentDialog;
         }
         #endregion
 
