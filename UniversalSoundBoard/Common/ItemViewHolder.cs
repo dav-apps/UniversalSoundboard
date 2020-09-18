@@ -71,6 +71,7 @@ namespace UniversalSoundBoard.Common
         private string _exportMessage;                                      // The text describing the status of the export
         private string _importMessage;                                      // The text describing the status of the import
         private ulong _soundboardSize;                                      // The size of the entire soundboard in byte
+        private Guid _activePlayingSound;                                   // The PlayingSound that was last activated and is currently visible in SystemMediaTransportControls
         #endregion
 
         #region Lists
@@ -163,6 +164,7 @@ namespace UniversalSoundBoard.Common
             _exportMessage = "";
             _importMessage = "";
             _soundboardSize = 0;
+            _activePlayingSound = Guid.Empty;
             #endregion
 
             #region Lists
@@ -521,6 +523,20 @@ namespace UniversalSoundBoard.Common
                 if (_soundboardSize.Equals(value)) return;
                 _soundboardSize = value;
                 NotifyPropertyChanged(SoundboardSizeKey);
+            }
+        }
+        #endregion
+
+        #region ActivePlayingSound
+        public const string ActivePlayingSoundKey = "ActivePlayingSound";
+        public Guid ActivePlayingSound
+        {
+            get => _activePlayingSound;
+            set
+            {
+                if (_activePlayingSound.Equals(value)) return;
+                _activePlayingSound = value;
+                NotifyPropertyChanged(ActivePlayingSoundKey);
             }
         }
         #endregion

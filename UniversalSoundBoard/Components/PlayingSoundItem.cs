@@ -11,6 +11,7 @@ using UniversalSoundBoard.Models;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using static davClassLibrary.Models.TableObject;
@@ -45,9 +46,11 @@ namespace UniversalSoundboard.Components
         private bool currentSoundIsDownloading = false;
         readonly List<(Guid, int)> DownloadProgressList = new List<(Guid, int)>();
 
-        private Visibility PreviousButtonVisibility = Visibility.Visible;
-        private Visibility NextButtonVisibility = Visibility.Visible;
-        private Visibility ExpandButtonVisibility = Visibility.Visible;
+        private Visibility previousButtonVisibility = Visibility.Visible;
+        private Visibility nextButtonVisibility = Visibility.Visible;
+        private Visibility expandButtonVisibility = Visibility.Visible;
+
+        private SystemMediaTransportControls systemMediaTransportControls;
         #endregion
         
         #region Events
@@ -83,6 +86,10 @@ namespace UniversalSoundboard.Components
                 else if (PlayingSound.Current < 0)
                     PlayingSound.Current = 0;
 
+                systemMediaTransportControls = SystemMediaTransportControls.GetForCurrentView();
+                systemMediaTransportControls.IsPlayEnabled = true;
+                systemMediaTransportControls.IsPauseEnabled = true;
+
                 // Subscribe to ItemViewHolder events
                 FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
                 FileManager.itemViewHolder.SoundDeleted += ItemViewHolder_SoundDeleted;
@@ -94,6 +101,8 @@ namespace UniversalSoundboard.Components
                 PlayingSound.MediaPlayer.TimelineController.PositionChanged += TimelineController_PositionChanged;
                 if(PlayingSound.MediaPlayer.Source != null)
                     ((MediaSource)PlayingSound.MediaPlayer.Source).OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
+
+                systemMediaTransportControls.ButtonPressed += SystemMediaTransportControls_ButtonPressed;
 
                 // Subscribe to other event handlers
                 PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
@@ -150,6 +159,7 @@ namespace UniversalSoundboard.Components
                 this,
                 new PlaybackStateChangedEventArgs(PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running)
             );
+            UpdateSystemMediaTransportControls();
         }
 
         #region ItemViewHolder event handlers
@@ -262,11 +272,14 @@ namespace UniversalSoundboard.Components
             await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
                 if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+                bool isPlaying = PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running;
 
                 PlaybackStateChanged?.Invoke(
                     this,
-                    new PlaybackStateChangedEventArgs(PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running)
+                    new PlaybackStateChangedEventArgs(isPlaying)
                 );
+
+                systemMediaTransportControls.PlaybackStatus = isPlaying ? MediaPlaybackStatus.Playing : MediaPlaybackStatus.Paused;
             });
         }
 
@@ -283,6 +296,27 @@ namespace UniversalSoundboard.Components
             await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
                 DurationChanged?.Invoke(this, new DurationChangedEventArgs(sender.Duration.GetValueOrDefault()));
+            });
+        }
+
+        private async void SystemMediaTransportControls_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
+        {
+            if (!PlayingSound.Uuid.Equals(FileManager.itemViewHolder.ActivePlayingSound)) return;
+
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                switch (args.Button)
+                {
+                    case SystemMediaTransportControlsButton.Previous:
+                        await MoveToPrevious();
+                        break;
+                    case SystemMediaTransportControlsButton.Next:
+                        await MoveToNext();
+                        break;
+                    default:
+                        TogglePlayPause();
+                        break;
+                }
             });
         }
         #endregion
@@ -354,6 +388,9 @@ namespace UniversalSoundboard.Components
             UpdateButtonVisibility();
             UpdateFavouriteFlyoutItem();
 
+            // Update the SystemMediaTransportControls
+            UpdateSystemMediaTransportControls();
+
             if (CheckFileDownload()) return;
 
             // Set the new source of the MediaPlayer
@@ -391,9 +428,9 @@ namespace UniversalSoundboard.Components
 
         private void UpdateButtonVisibility()
         {
-            PreviousButtonVisibility = PlayingSound.Current > 0 ? Visibility.Visible : Visibility.Collapsed;
-            NextButtonVisibility = PlayingSound.Current != PlayingSound.Sounds.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
-            ExpandButtonVisibility = PlayingSound.Sounds.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
+            previousButtonVisibility = PlayingSound.Current > 0 ? Visibility.Visible : Visibility.Collapsed;
+            nextButtonVisibility = PlayingSound.Current != PlayingSound.Sounds.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
+            expandButtonVisibility = PlayingSound.Sounds.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
 
             TriggerButtonVisibilityChangedEvent();
         }
@@ -425,11 +462,35 @@ namespace UniversalSoundboard.Components
             ButtonVisibilityChanged?.Invoke(
                 this,
                 new ButtonVisibilityChangedEventArgs(
-                    PreviousButtonVisibility,
-                    NextButtonVisibility,
-                    ExpandButtonVisibility
+                    previousButtonVisibility,
+                    nextButtonVisibility,
+                    expandButtonVisibility
                 )
             );
+        }
+
+        private void UpdateSystemMediaTransportControls()
+        {
+            Sound currentSound = PlayingSound.Sounds[PlayingSound.Current];
+
+            var updater = systemMediaTransportControls.DisplayUpdater;
+            updater.ClearAll();
+
+            updater.Type = MediaPlaybackType.Music;
+            updater.MusicProperties.Title = currentSound.Name;
+
+            if (currentSound.Categories.Count > 0)
+                updater.MusicProperties.Artist = currentSound.Categories.First().Name;
+
+            if (currentSound.ImageFileTableObject != null)
+                updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(currentSound.ImageFile);
+
+            updater.Update();
+
+            systemMediaTransportControls.IsPreviousEnabled = PlayingSound.Current != 0 && PlayingSound.Sounds.Count > 1;
+            systemMediaTransportControls.IsNextEnabled = PlayingSound.Current != PlayingSound.Sounds.Count - 1;
+
+            FileManager.itemViewHolder.ActivePlayingSound = PlayingSound.Uuid;
         }
 
         private void AddSoundToDownloadQueue(int i)
