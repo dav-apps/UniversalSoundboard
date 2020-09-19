@@ -319,6 +319,7 @@ namespace UniversalSoundBoard.Components
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
+            PlayingSoundItem.StartRemove();
             TriggerRemovePlayingSound();
         }
 

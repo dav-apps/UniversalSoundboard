@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.Models;
 using UniversalSoundBoard.Common;
@@ -45,6 +46,12 @@ namespace UniversalSoundboard.Components
         private bool hideSoundsListAnimationTriggered = false;
         private bool currentSoundIsDownloading = false;
         readonly List<(Guid, int)> DownloadProgressList = new List<(Guid, int)>();
+
+        Timer fadeOutTimer;
+        const int fadeOutTime = 300;
+        const int fadeOutFrames = 10;
+        int currentFadeOutFrame = 0;
+        double fadeOutVolumeDiff;
 
         private Visibility previousButtonVisibility = Visibility.Visible;
         private Visibility nextButtonVisibility = Visibility.Visible;
@@ -603,6 +610,47 @@ namespace UniversalSoundboard.Components
             // Remove the file download progress from the list
             DownloadProgressList.RemoveAt(i);
         }
+
+        private void StartFadeOut()
+        {
+            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+
+            if (PlayingSound.MediaPlayer.TimelineController.State != MediaTimelineControllerState.Running)
+            {
+                PlayingSound.MediaPlayer = null;
+                return;
+            }
+
+            currentFadeOutFrame = 0;
+            double interval = fadeOutTime / (double)fadeOutFrames;
+            fadeOutVolumeDiff = PlayingSound.MediaPlayer.Volume / fadeOutFrames;
+
+            fadeOutTimer = new Timer();
+            fadeOutTimer.Elapsed += (object sender, ElapsedEventArgs e) => FadeOut();
+
+            fadeOutTimer.Interval = interval;
+            fadeOutTimer.Start();
+
+            FadeOut();
+        }
+
+        private void FadeOut()
+        {
+            if (currentFadeOutFrame >= fadeOutFrames || PlayingSound.MediaPlayer == null)
+            {
+                if (PlayingSound.MediaPlayer != null)
+                    PlayingSound.MediaPlayer.TimelineController.Pause();
+
+                PlayingSound.MediaPlayer = null;
+                fadeOutTimer.Stop();
+            }
+            else
+            {
+                // Decrease the volume
+                PlayingSound.MediaPlayer.Volume -= fadeOutVolumeDiff;
+                currentFadeOutFrame++;
+            }
+        }
         #endregion
 
         #region Public methods
@@ -742,17 +790,15 @@ namespace UniversalSoundboard.Components
             FavouriteChanged?.Invoke(this, new FavouriteChangedEventArgs(currentSound.Favourite));
         }
 
+        public void StartRemove()
+        {
+            StartFadeOut();
+        }
+
         public async Task Remove()
         {
             // Remove the PlayingSound from the list
             FileManager.itemViewHolder.PlayingSounds.Remove(PlayingSound);
-
-            // Disable the MediaPlayer
-            if (PlayingSound.MediaPlayer != null)
-            {
-                PlayingSound.MediaPlayer.TimelineController.Pause();
-                PlayingSound.MediaPlayer = null;
-            }
 
             // Delete the PlayingSound
             await FileManager.DeletePlayingSoundAsync(PlayingSound.Uuid);
