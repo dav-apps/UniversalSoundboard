@@ -406,9 +406,6 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="DownloadFileContentDialog-Title" xml:space="preserve">
     <value>{0} wird heruntergeladen...</value>
   </data>
-  <data name="ContentDialog-Okay" xml:space="preserve">
-    <value>Fertig</value>
-  </data>
   <data name="DownloadFileErrorContentDialog-Message" xml:space="preserve">
     <value>Bitte überprüfe deine Internetverbindung und versuche es erneut.</value>
   </data>

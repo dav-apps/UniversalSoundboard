@@ -624,19 +624,6 @@ namespace UniversalSoundBoard.Common
 
             return DownloadFileContentDialog;
         }
-
-        public static ContentDialog CreateDownloadFileErrorContentDialog()
-        {
-            DownloadFileErrorContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("DownloadFileErrorContentDialog-Title"),
-                Content = loader.GetString("DownloadFileErrorContentDialog-Message"),
-                CloseButtonText = loader.GetString("ContentDialog-Okay"),
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return DownloadFileErrorContentDialog;
-        }
         #endregion
 
         #region DownloadFiles
@@ -668,6 +655,21 @@ namespace UniversalSoundBoard.Common
             DownloadFilesContentDialog.Content = containerGrid;
 
             return DownloadFilesContentDialog;
+        }
+        #endregion
+
+        #region DownloadFileError
+        public static ContentDialog CreateDownloadFileErrorContentDialog()
+        {
+            DownloadFileErrorContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("DownloadFileErrorContentDialog-Title"),
+                Content = loader.GetString("DownloadFileErrorContentDialog-Message"),
+                CloseButtonText = loader.GetString("ContentDialog-Close"),
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+
+            return DownloadFileErrorContentDialog;
         }
         #endregion
 

@@ -408,9 +408,6 @@ This may take some time, depending on how large the import file is.</value>
   <data name="DownloadFileContentDialog-Title" xml:space="preserve">
     <value>Downloading file {0}...</value>
   </data>
-  <data name="ContentDialog-Okay" xml:space="preserve">
-    <value>Okay</value>
-  </data>
   <data name="DownloadFileErrorContentDialog-Message" xml:space="preserve">
     <value>Please check your internet connection and try again.</value>
   </data>

@@ -407,9 +407,6 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="DownloadFileContentDialog-Title" xml:space="preserve">
     <value>Téléchargement du fichier {0}...</value>
   </data>
-  <data name="ContentDialog-Okay" xml:space="preserve">
-    <value>D'accord</value>
-  </data>
   <data name="DownloadFileErrorContentDialog-Message" xml:space="preserve">
     <value>Merci de vérifier votre connexion et de réessayer.</value>
   </data>
@@ -596,9 +593,6 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="SoundItemOptionsFlyout-Properties" xml:space="preserve">
     <value>Propriétés</value>
   </data>
-  <data name="ContentDialog-Close" xml:space="preserve">
-    <value>Fermer</value>
-  </data>
   <data name="PropertiesContentDialog-FileType" xml:space="preserve">
     <value>Type du fichier :</value>
   </data>
@@ -631,5 +625,8 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="DownloadFilesContentDialog-Title" xml:space="preserve">
     <value>Télécharger des fichiers...</value>
+  </data>
+  <data name="ContentDialog-Close" xml:space="preserve">
+    <value>Fermer</value>
   </data>
 </root>
