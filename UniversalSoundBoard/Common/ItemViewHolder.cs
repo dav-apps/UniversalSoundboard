@@ -138,6 +138,7 @@ namespace UniversalSoundBoard.Common
         public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemHideSoundsListAnimationEnded;      // Is triggered when the animation of a PlayingSound item to hide the sounds list ended
         public event EventHandler<PlayingSoundItemEventArgs> ShowPlayingSoundItemStarted;                       // Is triggered when the PlayingSound appearing animation has started
         public event EventHandler<PlayingSoundItemEventArgs> RemovePlayingSoundItem;                            // Is triggered when the user wants to remove a PlayingSound, to start the BottomPlayingSoundsBar animation
+        public event EventHandler<TableObjectFileDownloadProgressChangedEventArgs> TableObjectFileDownloadProgressChanged;  // Is triggered when the file of a TableObject is being downloaded and the progress changed
         public event EventHandler<TableObjectFileDownloadCompletedEventArgs> TableObjectFileDownloadCompleted;  // Is triggered from TriggerAction when the file of a TableObject was finished
         #endregion
 
@@ -1081,6 +1082,11 @@ namespace UniversalSoundBoard.Common
         public void TriggerRemovePlayingSoundItemEvent(object sender, PlayingSoundItemEventArgs args)
         {
             RemovePlayingSoundItem?.Invoke(sender, args);
+        }
+
+        public void TriggerTableObjectFileDownloadProgressChangedEvent(object sender, TableObjectFileDownloadProgressChangedEventArgs args)
+        {
+            TableObjectFileDownloadProgressChanged?.Invoke(sender, args);
         }
 
         public void TriggerTableObjectFileDownloadCompletedEvent(object sender, TableObjectFileDownloadCompletedEventArgs args)

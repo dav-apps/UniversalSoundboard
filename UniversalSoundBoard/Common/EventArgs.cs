@@ -43,7 +43,19 @@ namespace UniversalSoundboard.Common
         }
     }
 
-    public class TableObjectFileDownloadCompletedEventArgs
+    public class TableObjectFileDownloadProgressChangedEventArgs : EventArgs
+    {
+        public Guid Uuid { get; set; }
+        public int Value { get; set; }
+
+        public TableObjectFileDownloadProgressChangedEventArgs(Guid uuid, int value)
+        {
+            Uuid = uuid;
+            Value = value;
+        }
+    }
+
+    public class TableObjectFileDownloadCompletedEventArgs : EventArgs
     {
         public Guid Uuid { get; set; }
         public FileInfo File { get; set; }

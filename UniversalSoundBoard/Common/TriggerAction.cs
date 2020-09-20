@@ -64,6 +64,17 @@ namespace UniversalSoundboard.Common
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () => FileManager.RemovePlayingSound(tableObject.Uuid));
         }
 
+        public void TableObjectDownloadProgress(TableObject tableObject, int value)
+        {
+            FileManager.itemViewHolder.TriggerTableObjectFileDownloadProgressChangedEvent(
+                this,
+                new TableObjectFileDownloadProgressChangedEventArgs(
+                    tableObject.Uuid,
+                    value
+                )
+            );
+        }
+
         public void SyncFinished()
         {
             FileManager.syncFinished = true;

@@ -37,6 +37,7 @@ namespace UniversalSoundBoard.Pages
         bool selectionButtonsEnabled = false;                               // If true, the buttons for multi selection are enabled
         bool downloadFilesDialogIsVisible = false;
         bool downloadFilesCanceled = false;
+        bool downloadFilesFailed = false;
         string title = FileManager.itemViewHolder.Title;                    // The visible title, possibly truncated
         bool isTruncatingTitle = false;                                     // If true, TruncateTitleAsync is currently running
         int titleTruncatedChars = 0;                                        // The number of characters the title was truncated
@@ -54,6 +55,7 @@ namespace UniversalSoundBoard.Pages
             FileManager.itemViewHolder.CategoriesUpdated += ItemViewHolder_CategoriesUpdated;
             FileManager.itemViewHolder.CategoryUpdated += ItemViewHolder_CategoryUpdated;
             FileManager.itemViewHolder.CategoryDeleted += ItemViewHolder_CategoryDeleted;
+            FileManager.itemViewHolder.TableObjectFileDownloadProgressChanged += ItemViewHolder_TableObjectFileDownloadProgressChanged;
             FileManager.itemViewHolder.TableObjectFileDownloadCompleted += ItemViewHolder_TableObjectFileDownloadCompleted;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
         }
@@ -136,9 +138,29 @@ namespace UniversalSoundBoard.Pages
             RemoveCategoryMenuItem(SideBar.MenuItems, args.Uuid);
         }
 
+        private async void ItemViewHolder_TableObjectFileDownloadProgressChanged(object sender, TableObjectFileDownloadProgressChangedEventArgs e)
+        {
+            if(e.Value == -1)
+            {
+                // Check if this value belongs to a sound in the Download dialog
+                int i = ContentDialogs.downloadingFilesSoundsList.FindIndex(sound => sound.AudioFileTableObject.Uuid.Equals(e.Uuid));
+                if(i != -1)
+                {
+                    // Show download error dialog
+                    downloadFilesFailed = true;
+
+                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        // Close the download files dialog
+                        ContentDialogs.DownloadFilesContentDialog.Hide();
+                    });
+                }
+            }
+        }
+
         private async void ItemViewHolder_TableObjectFileDownloadCompleted(object sender, TableObjectFileDownloadCompletedEventArgs e)
         {
-            if (downloadFilesDialogIsVisible)
+            if (downloadFilesDialogIsVisible && !downloadFilesFailed)
             {
                 bool isDownloading = false;
 
@@ -1138,6 +1160,16 @@ namespace UniversalSoundBoard.Pages
                 if (downloadFilesCanceled)
                 {
                     downloadFilesCanceled = false;
+                    return false;
+                }
+                else if (downloadFilesFailed)
+                {
+                    downloadFilesFailed = false;
+
+                    // Show the error dialog
+                    var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
+                    await errorContentDialog.ShowAsync();
+
                     return false;
                 }
             }
