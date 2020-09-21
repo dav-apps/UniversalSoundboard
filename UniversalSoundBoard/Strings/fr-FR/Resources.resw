@@ -381,7 +381,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Se connecter</value>
   </data>
   <data name="Account-UsedStorage" xml:space="preserve">
-    <value>{0} GB sur {1} GB utilisé</value>
+    <value>{0} sur {1} utilisé</value>
   </data>
   <data name="Account-LogoutMessage" xml:space="preserve">
     <value>Êtes-vous sûr(e) de vouloir vous déconnecter ?</value>
@@ -628,5 +628,17 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="ContentDialog-Close" xml:space="preserve">
     <value>Fermer</value>
+  </data>
+  <data name="Account-Card-SelectButton.Content" xml:space="preserve">
+    <value>Choisir</value>
+  </data>
+  <data name="Account-PlusCard-Feature1TextBlock.Text" xml:space="preserve">
+    <value>15 Go espace de stockage en ligne</value>
+  </data>
+  <data name="Account-PlusCard-Feature2TextBlock.Text" xml:space="preserve">
+    <value>Soutenir le développement de nouvelles fonctionnalités</value>
+  </data>
+  <data name="Account-PlusCard-PriceTextBlock.Text" xml:space="preserve">
+    <value>3 € par mois</value>
   </data>
 </root>

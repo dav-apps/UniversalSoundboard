@@ -62,7 +62,7 @@ namespace UniversalSoundBoard.DataAccess
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
         private const string WebsiteBaseUrlProduction = "https://dav-apps.herokuapp.com";
-        private const string WebsiteBaseUrlDevelopment = "https://808c2f310dbd.ngrok.io";
+        private const string WebsiteBaseUrlDevelopment = "https://1fb71f8e0ab2.ngrok.io";
         public static string WebsiteBaseUrl => Environment == DavEnvironment.Production ? WebsiteBaseUrlProduction : WebsiteBaseUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 4; Prod: 1
@@ -2640,7 +2640,7 @@ namespace UniversalSoundBoard.DataAccess
             isCalculatingSoundboardSize = false;
         }
 
-        public static string GetFormattedSize(ulong size)
+        public static string GetFormattedSize(ulong size, bool rounded = false) 
         {
             ulong gbMin = 1000000000;
             ulong mbMin = 1000000;
@@ -2649,19 +2649,19 @@ namespace UniversalSoundBoard.DataAccess
             if (size > gbMin)
             {
                 // GB
-                double gb = size / gbMin;
-                return string.Format("{0} {1}", gb.ToString("N2"), loader.GetString("Sizes-GB"));
+                double gb = size / (double)gbMin;
+                return string.Format("{0} {1}", gb.ToString(rounded ? "N0" : "N2"), loader.GetString("Sizes-GB"));
             }
             else if (size > mbMin)
             {
                 // MB
                 double mb = size / (double)mbMin;
-                return string.Format("{0} {1}", mb.ToString("N1"), loader.GetString("Sizes-MB"));
+                return string.Format("{0} {1}", mb.ToString(rounded ? "N0" : "N1"), loader.GetString("Sizes-MB"));
             }
             else
             {
                 // KB
-                double kb = size / kbMin;
+                double kb = size / (double)kbMin;
                 return string.Format("{0} {1}", kb.ToString("N0"), loader.GetString("Sizes-KB"));
             }
         }

@@ -4,13 +4,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:converters="using:UniversalSoundBoard.Converters"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
     <Page.Resources>
         <!-- Converters -->
+        <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
+        <converters:DavPlanToStringConverter x:Name="DavPlanToStringConverter" />
+        <converters:DavPlanFreeConverter x:Name="DavPlanFreeConverter" />
 
         <!-- Styles -->
         <Style TargetType="FontIcon" x:Key="LandingIconStyle">
@@ -32,49 +36,156 @@
 
         <ScrollViewer>
             <StackPanel Padding="5">
-                <StackPanel Name="LoggedInContent" Visibility="Collapsed" Margin="30,30,0,0">
-                    <StackPanel Name="UserInformationStackPanel" Orientation="Horizontal">
-                        <PersonPicture
-                            Name="AvatarPicture"
-                            Width="150"
-                            Height="150"
-                            ProfilePicture="{Binding User.Avatar, Converter={StaticResource FileToBitmapImageConverter}}" />
+                <StackPanel
+                    Name="LoggedInContent"
+                    Orientation="Vertical">
 
-                        <TextBlock
-                            Name="UsernameTextBlock"
-                            Text="{Binding User.Username}"
-                            FontSize="33"
-                            Margin="30,0,0,0" />
-                    </StackPanel>
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Left">
-                        <ProgressBar
-                            Name="StorageProgressBar"
-                            Value="0" 
-                            Width="250"
-                            Margin="0,40,0,0" />
-                        
-                        <TextBlock
-                            Name="StorageTextBlock"
-                            Text=""
-                            Margin="0,10,0,0" />
-                        
-                        <HyperlinkButton
-                            Name="UpgradeLink"
-                            NavigateUri="http://dav-apps.tech/pricing"
-                            x:Uid="Account-UpgradeLink"
-                            Visibility="Collapsed" />
-                    </StackPanel>
+                    <StackPanel.Resources>
+                        <ThemeShadow x:Name="SharedShadow" />
+                    </StackPanel.Resources>
 
-                    <Button Name="LogoutButton"
-                            x:Uid="LogoutButton"
-                            Style="{StaticResource ButtonRevealStyle}"
-                            Visibility="Collapsed"
-                            Click="LogoutButton_Click" />
+                    <RelativePanel
+                        Name="UserProfileRelativePanel"
+                        HorizontalAlignment="Center"
+                        Margin="0,40,0,0">
+
+                        <Grid
+                            Name="TopBackgroundGrid"
+                            RelativePanel.AlignBottomWithPanel="True"
+                            RelativePanel.AlignTopWithPanel="True"
+                            RelativePanel.AlignLeftWithPanel="True"
+                            RelativePanel.AlignRightWithPanel="True" />
+
+                        <StackPanel
+                            Name="UserProfileContentStackPanel"
+                            Orientation="Horizontal">
+
+                            <controls:DropShadowPanel OffsetX="0" OffsetY="2" BlurRadius="16" ShadowOpacity="0.8">
+                                <Ellipse Name="Avatar" Height="150" Width="150">
+                                    <Ellipse.Fill>
+                                        <ImageBrush ImageSource="{Binding User.Avatar, Converter={StaticResource FileToBitmapImageConverter}}" />
+                                    </Ellipse.Fill>
+                                </Ellipse>
+                            </controls:DropShadowPanel>
+
+                            <StackPanel
+                                Name="UserInfoStackPanel"
+                                Orientation="Vertical"
+                                Width="250"
+                                Margin="40,0,0,0">
+
+                                <TextBlock
+                                    Name="UsernameTextBlock"
+                                    Text="{Binding User.Username}"
+                                    FontSize="24" />
+
+                                <TextBlock
+                                    Name="PlanTextBlock"
+                                    Text="{Binding User.Plan, Converter={StaticResource DavPlanToStringConverter}}"
+                                    FontSize="15"
+                                    FontWeight="Light" />
+
+                                <ProgressBar
+                                    Name="StorageProgressBar"
+                                    HorizontalAlignment="Left"
+                                    Value="0" 
+                                    Width="200"
+                                    Margin="0,18,0,0" />
+
+                                <TextBlock
+                                    Name="StorageTextBlock"
+                                    FontSize="16"
+                                    TextWrapping="WrapWholeWords"
+                                    Margin="0,8,0,2" />
+
+                                <Button
+                                    Name="LogoutButton"
+                                    x:Uid="LogoutButton"
+                                    Style="{StaticResource ButtonRevealStyle}"
+                                    FontSize="14"
+                                    Margin="0,8,0,0"
+                                    Click="LogoutButton_Click" />
+                            </StackPanel>
+                        </StackPanel>
+                    </RelativePanel>
+
+                    <RelativePanel>
+                        <Grid
+                            Name="BottomBackgroundGrid"
+                            RelativePanel.AlignBottomWithPanel="True"
+                            RelativePanel.AlignTopWithPanel="True"
+                            RelativePanel.AlignLeftWithPanel="True"
+                            RelativePanel.AlignRightWithPanel="True" />
+
+                        <StackPanel
+                            Name="PlusCardStackPanel"
+                            RelativePanel.AlignHorizontalCenterWithPanel="True"
+                            Visibility="{Binding User.Plan, Converter={StaticResource DavPlanFreeConverter}}"
+                            Background="White"
+                            Width="300"
+                            Margin="0,90,0,40"
+                            CornerRadius="4"
+                            BorderBrush="LightGray"
+                            BorderThickness="1"
+                            Shadow="{StaticResource SharedShadow}"
+                            Translation="0,0,20">
+
+                            <StackPanel Orientation="Vertical" Margin="20">
+                                <TextBlock
+                                    Text="dav Plus"
+                                    FontSize="24"
+                                    HorizontalAlignment="Center" />
+
+                                <TextBlock
+                                    Name="PlusCardPriceTextBlock"
+                                    x:Uid="Account-PlusCard-PriceTextBlock"
+                                    FontSize="16"
+                                    FontWeight="Light"
+                                    HorizontalAlignment="Center"
+                                    Margin="0,2,0,0" />
+                            </StackPanel>
+
+                            <StackPanel BorderBrush="LightGray" BorderThickness="0.5" />
+
+                            <StackPanel Padding="20,12">
+                                <TextBlock
+                                    Name="PlusCardFeature1"
+                                    x:Uid="Account-PlusCard-Feature1TextBlock"
+                                    FontSize="16"
+                                    TextWrapping="WrapWholeWords"
+                                    TextAlignment="Center"
+                                    HorizontalAlignment="Center" />
+                            </StackPanel>
+
+                            <StackPanel BorderBrush="LightGray" BorderThickness="0.5" />
+
+                            <StackPanel Padding="20,12">
+                                <TextBlock
+                                    Name="PlusCardFeature2"
+                                    x:Uid="Account-PlusCard-Feature2TextBlock"
+                                    FontSize="16"
+                                    TextWrapping="WrapWholeWords"
+                                    TextAlignment="Center"
+                                    HorizontalAlignment="Center" />
+                            </StackPanel>
+
+                            <StackPanel BorderBrush="LightGray" BorderThickness="0.5" />
+
+                            <StackPanel Padding="20,12">
+                                <Button
+                                    Name="PlusCardSelectButton"
+                                    x:Uid="Account-Card-SelectButton"
+                                    Style="{StaticResource ButtonRevealStyle}"
+                                    HorizontalAlignment="Center"
+                                    FontSize="16"
+                                    Click="PlusCardSelectButton_Click" />
+                            </StackPanel>
+                        </StackPanel>
+                    </RelativePanel>
                 </StackPanel>
 
                 <StackPanel
                     Name="LoggedOutContent" 
-                    Visibility="Visible"
                     Margin="0,30,0,0">
                     
                     <TextBlock

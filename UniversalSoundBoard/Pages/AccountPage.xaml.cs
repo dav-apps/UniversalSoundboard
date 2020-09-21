@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using UniversalSoundBoard.Common;
@@ -29,6 +28,9 @@ namespace UniversalSoundboard.Pages
             ContentRoot.DataContext = FileManager.itemViewHolder;
             SetThemeColors();
             UpdateUserLayout();
+
+            SharedShadow.Receivers.Add(TopBackgroundGrid);
+            SharedShadow.Receivers.Add(BottomBackgroundGrid);
         }
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -50,10 +52,12 @@ namespace UniversalSoundboard.Pages
 
         private void UpdateUserLayout()
         {
-            ShowLoggedInContent();
-
             if (FileManager.itemViewHolder.User.IsLoggedIn)
                 SetUsedStorageTextBlock();
+
+            // Set the visibilities for the content elements
+            LoggedInContent.Visibility = FileManager.itemViewHolder.User.IsLoggedIn ? Visibility.Visible : Visibility.Collapsed;
+            LoggedOutContent.Visibility = FileManager.itemViewHolder.User.IsLoggedIn ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public static async Task<bool> Login()
@@ -77,15 +81,7 @@ namespace UniversalSoundboard.Pages
                     FileManager.itemViewHolder.User = user;
                     return true;
                 }
-                catch (Exception e)
-                {
-                    Debug.WriteLine("Can't connect to the server");
-                    Debug.WriteLine(e);
-                }
-            }
-            else
-            {
-                Debug.WriteLine("No internet connection");
+                catch { }
             }
 
             return false;
@@ -97,39 +93,15 @@ namespace UniversalSoundboard.Pages
             {
                 string message = loader.GetString("Account-UsedStorage");
 
-                double usedStorageGB = Math.Round(FileManager.itemViewHolder.User.UsedStorage / 1000000000.0, 1);
-                double totalStorageGB = Math.Round(FileManager.itemViewHolder.User.TotalStorage / 1000000000.0, 1);
-
-                double percentage = usedStorageGB / totalStorageGB * 100;
+                string usedStorage = FileManager.GetFormattedSize(Convert.ToUInt64(FileManager.itemViewHolder.User.UsedStorage));
+                string totalStorage = FileManager.GetFormattedSize(Convert.ToUInt64(FileManager.itemViewHolder.User.TotalStorage), true);
+                double percentage = FileManager.itemViewHolder.User.UsedStorage / (double)FileManager.itemViewHolder.User.TotalStorage * 100;
 
                 StorageProgressBar.Value = percentage;
-                StorageTextBlock.Text = string.Format(message, usedStorageGB.ToString(), totalStorageGB.ToString());
-
-                if (totalStorageGB < 50)
-                    UpgradeLink.Visibility = Visibility.Visible;
+                StorageTextBlock.Text = string.Format(message, usedStorage, totalStorage);
             }
         }
         
-        private void ShowLoggedInContent()
-        {
-            if (FileManager.itemViewHolder.User.IsLoggedIn)
-            {
-                LoggedInContent.Visibility = Visibility.Visible;
-                LoggedOutContent.Visibility = Visibility.Collapsed;
-
-                LoginButton.Visibility = Visibility.Collapsed;
-                LogoutButton.Visibility = Visibility.Visible;
-            }
-            else
-            {
-                LoggedInContent.Visibility = Visibility.Collapsed;
-                LoggedOutContent.Visibility = Visibility.Visible;
-
-                LoginButton.Visibility = Visibility.Visible;
-                LogoutButton.Visibility = Visibility.Collapsed;
-            }
-        }
-
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
             await Login();
@@ -155,6 +127,11 @@ namespace UniversalSoundboard.Pages
         private async void SignupButton_Click(object sender, RoutedEventArgs e)
         {
             await Windows.System.Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/signup"));
+        }
+
+        private async void PlusCardSelectButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Windows.System.Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/login?redirect=user%23plans%0A"));
         }
 
         private async void DavLogoImage_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)

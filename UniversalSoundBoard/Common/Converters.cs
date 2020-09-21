@@ -203,4 +203,40 @@ namespace UniversalSoundBoard.Converters
             throw new NotImplementedException();
         }
     }
+
+    public class DavPlanToStringConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            int plan = (int)value;
+
+            switch (plan)
+            {
+                case 1:
+                    return "Plus";
+                case 2:
+                    return "Pro";
+                default:
+                    return "Free";
+            }
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class DavPlanFreeConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return (int)value == 0;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
 }
