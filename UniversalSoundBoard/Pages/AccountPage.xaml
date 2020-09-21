@@ -121,11 +121,9 @@
                             Name="PlusCardStackPanel"
                             RelativePanel.AlignHorizontalCenterWithPanel="True"
                             Visibility="{Binding User.Plan, Converter={StaticResource DavPlanFreeConverter}}"
-                            Background="White"
                             Width="300"
                             Margin="0,90,0,40"
                             CornerRadius="4"
-                            BorderBrush="LightGray"
                             BorderThickness="1"
                             Shadow="{StaticResource SharedShadow}"
                             Translation="0,0,20">
@@ -145,7 +143,7 @@
                                     Margin="0,2,0,0" />
                             </StackPanel>
 
-                            <StackPanel BorderBrush="LightGray" BorderThickness="0.5" />
+                            <StackPanel Name="PlusCardBorder1" BorderThickness="0.5" />
 
                             <StackPanel Padding="20,12">
                                 <TextBlock
@@ -157,7 +155,7 @@
                                     HorizontalAlignment="Center" />
                             </StackPanel>
 
-                            <StackPanel BorderBrush="LightGray" BorderThickness="0.5" />
+                            <StackPanel Name="PlusCardBorder2" BorderThickness="0.5" />
 
                             <StackPanel Padding="20,12">
                                 <TextBlock
@@ -169,7 +167,7 @@
                                     HorizontalAlignment="Center" />
                             </StackPanel>
 
-                            <StackPanel BorderBrush="LightGray" BorderThickness="0.5" />
+                            <StackPanel Name="PlusCardBorder3" BorderThickness="0.5" />
 
                             <StackPanel Padding="20,12">
                                 <Button

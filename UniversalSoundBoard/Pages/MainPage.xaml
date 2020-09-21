@@ -98,10 +98,11 @@
                                 ProfilePicture="{Binding User.Avatar, Converter={StaticResource FileToBitmapImageConverter}}" 
                                 Height="23"
                                 Width="23" 
-                                Margin="-6,0,0,0" />
+                                Margin="-7,0,0,0" />
+                            
                             <TextBlock
                                 Text="{Binding User.Username}" 
-                                Margin="15,0,0,0" 
+                                Margin="8,0,0,0" 
                                 VerticalAlignment="Center" />
                         </StackPanel>
                     </muxc:NavigationViewItem>

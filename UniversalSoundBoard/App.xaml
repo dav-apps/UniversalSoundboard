@@ -13,8 +13,13 @@
 
             <SolidColorBrush x:Key="LightThemeButtonColor" Color="#EAEAEA" />
             <SolidColorBrush x:Key="DarkThemeButtonColor" Color="DimGray" />
-            <Color x:Key="DarkThemeBackgroundColor">#0d1221</Color>
+            
+            <Color x:Key="LightThemeBorderColor">LightGray</Color>
+            <Color x:Key="DarkThemeBorderColor">#373c4d</Color>
+
             <Color x:Key="LightThemeBackgroundColor">White</Color>
+            <Color x:Key="DarkThemeBackgroundColor">#0d1221</Color>
+            <Color x:Key="DarkThemeSecondaryBackgroundColor">#161C2B</Color>
 
             <!-- Override the background of the MediaTransportControls -->
             <SolidColorBrush x:Key="MediaTransportControlsPanelBackground" Color="Transparent" />

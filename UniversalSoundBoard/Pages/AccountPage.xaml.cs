@@ -5,6 +5,7 @@ using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
 using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
+using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -48,6 +49,29 @@ namespace UniversalSoundboard.Pages
             DavLogoImage.Source = new BitmapImage(new Uri(
                 RequestedTheme == ElementTheme.Dark ? "ms-appx:///Assets/Images/dav-logo-text-white.png" : "ms-appx:///Assets/Images/dav-logo-text.png"
             ));
+
+            // Set the colors for the dav Plus card
+            if (RequestedTheme == ElementTheme.Dark)
+            {
+                var backgroundColorBrush = new SolidColorBrush((Color)Application.Current.Resources["DarkThemeSecondaryBackgroundColor"]);
+                PlusCardStackPanel.Background = backgroundColorBrush;
+
+                var borderBrush = new SolidColorBrush((Color)Application.Current.Resources["DarkThemeBorderColor"]);
+                PlusCardStackPanel.BorderBrush = backgroundColorBrush;
+                PlusCardBorder1.BorderBrush = borderBrush;
+                PlusCardBorder2.BorderBrush = borderBrush;
+                PlusCardBorder3.BorderBrush = borderBrush;
+            }
+            else
+            {
+                PlusCardStackPanel.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
+
+                var borderBrush = new SolidColorBrush((Color)Application.Current.Resources["LightThemeBorderColor"]);
+                PlusCardStackPanel.BorderBrush = borderBrush;
+                PlusCardBorder1.BorderBrush = borderBrush;
+                PlusCardBorder2.BorderBrush = borderBrush;
+                PlusCardBorder3.BorderBrush = borderBrush;
+            }
         }
 
         private void UpdateUserLayout()
