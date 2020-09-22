@@ -173,6 +173,8 @@ namespace UniversalSoundBoard.DataAccess
         private static readonly ResourceLoader loader = new ResourceLoader();
         internal static bool syncFinished = false;
         private static bool isCalculatingSoundboardSize = false;
+        private static bool isShowAllSoundsOrCategoryRunning = false;
+        private static Guid nextCategoryToShow = Guid.Empty;
 
         // Save the custom order of the sounds in all categories to load them faster
         private static readonly Dictionary<Guid, List<Guid>> CustomSoundOrder = new Dictionary<Guid, List<Guid>>();
@@ -851,6 +853,10 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task ShowAllSoundsAsync()
         {
+            nextCategoryToShow = Guid.Empty;
+            if (isShowAllSoundsOrCategoryRunning) return;
+            isShowAllSoundsOrCategoryRunning = true;
+
             itemViewHolder.Page = typeof(SoundPage);
             itemViewHolder.Title = loader.GetString("AllSounds");
             itemViewHolder.SelectedCategory = Guid.Empty;
@@ -860,18 +866,28 @@ namespace UniversalSoundBoard.DataAccess
 
             await LoadAllSoundsAsync();
             UpdatePlayAllButtonVisibility();
+
+            isShowAllSoundsOrCategoryRunning = false;
+            if (!nextCategoryToShow.Equals(Guid.Empty))
+            {
+                // If ShowAllSoundsAsync or ShowCategoryAsync was called in the meantime, run the appropriate method again
+                await ShowCategoryAsync(nextCategoryToShow);
+            }
         }
 
         public static async Task ShowCategoryAsync(Guid uuid)
         {
             // Get the category from the database
             var category = await GetCategoryAsync(uuid, false);
-
             if (category == null)
             {
                 await ShowAllSoundsAsync();
                 return;
             }
+
+            nextCategoryToShow = uuid;
+            if (isShowAllSoundsOrCategoryRunning) return;
+            isShowAllSoundsOrCategoryRunning = true;
 
             // Show the category
             itemViewHolder.Page = typeof(SoundPage);
@@ -884,6 +900,16 @@ namespace UniversalSoundBoard.DataAccess
             // Load the sounds of the category
             await LoadSoundsOfCategoryAsync(category.Uuid);
             UpdatePlayAllButtonVisibility();
+
+            isShowAllSoundsOrCategoryRunning = false;
+            if (!nextCategoryToShow.Equals(uuid))
+            {
+                // If ShowAllSoundsAsync or ShowCategoryAsync was called in the meantime, run the appropriate method again
+                if (nextCategoryToShow.Equals(Guid.Empty))
+                    await ShowAllSoundsAsync();
+                else
+                    await ShowCategoryAsync(nextCategoryToShow);
+            }
         }
 
         public static async Task AddAllSounds()
