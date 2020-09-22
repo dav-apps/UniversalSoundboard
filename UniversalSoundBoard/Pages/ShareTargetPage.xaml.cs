@@ -25,7 +25,10 @@ namespace UniversalSoundBoard.Pages
         {
             InitializeComponent();
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
-            FileManager.itemViewHolder.CategoriesUpdated += ItemViewHolder_CategoriesUpdated;
+            FileManager.itemViewHolder.CategoriesLoaded += ItemViewHolder_CategoriesLoaded;
+            FileManager.itemViewHolder.CategoryAdded += ItemViewHolder_CategoryAdded;
+            FileManager.itemViewHolder.CategoryUpdated += ItemViewHolder_CategoryUpdated;
+            FileManager.itemViewHolder.CategoryDeleted += ItemViewHolder_CategoryDeleted;
         }
 
         protected async override void OnNavigatedTo(NavigationEventArgs e)
@@ -51,7 +54,22 @@ namespace UniversalSoundBoard.Pages
                 await currentDispatcher.RunAsync(CoreDispatcherPriority.Low, () => SetThemeColors());
         }
 
-        private async void ItemViewHolder_CategoriesUpdated(object sender, EventArgs e)
+        private async void ItemViewHolder_CategoriesLoaded(object sender, EventArgs e)
+        {
+            await currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, LoadCategories);
+        }
+
+        private async void ItemViewHolder_CategoryAdded(object sender, UniversalSoundboard.Common.CategoryEventArgs e)
+        {
+            await currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, LoadCategories);
+        }
+
+        private async void ItemViewHolder_CategoryUpdated(object sender, UniversalSoundboard.Common.CategoryEventArgs e)
+        {
+            await currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, LoadCategories);
+        }
+
+        private async void ItemViewHolder_CategoryDeleted(object sender, UniversalSoundboard.Common.CategoryEventArgs e)
         {
             await currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, LoadCategories);
         }

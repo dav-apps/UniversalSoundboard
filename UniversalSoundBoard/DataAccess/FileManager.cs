@@ -1153,7 +1153,7 @@ namespace UniversalSoundBoard.DataAccess
             foreach (Category cat in await GetAllCategoriesAsync())
                 itemViewHolder.Categories.Add(cat);
 
-            itemViewHolder.TriggerCategoriesUpdatedEvent(null);
+            itemViewHolder.TriggerCategoriesLoadedEvent(null);
         }
 
         /**
@@ -1191,6 +1191,8 @@ namespace UniversalSoundBoard.DataAccess
                 if (!CustomFavouriteSoundOrder.ContainsKey(category.Uuid))
                     CustomFavouriteSoundOrder[category.Uuid] = new List<Guid>();
             }
+
+            itemViewHolder.TriggerCategoryAddedEvent(null, new CategoryEventArgs(category.Uuid));
         }
 
         /**

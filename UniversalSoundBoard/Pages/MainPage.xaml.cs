@@ -52,7 +52,7 @@ namespace UniversalSoundBoard.Pages
 
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
-            FileManager.itemViewHolder.CategoriesUpdated += ItemViewHolder_CategoriesUpdated;
+            FileManager.itemViewHolder.CategoriesLoaded += ItemViewHolder_CategoriesLoaded;
             FileManager.itemViewHolder.CategoryUpdated += ItemViewHolder_CategoryUpdated;
             FileManager.itemViewHolder.CategoryDeleted += ItemViewHolder_CategoryDeleted;
             FileManager.itemViewHolder.TableObjectFileDownloadProgressChanged += ItemViewHolder_TableObjectFileDownloadProgressChanged;
@@ -121,7 +121,7 @@ namespace UniversalSoundBoard.Pages
             }
         }
 
-        private void ItemViewHolder_CategoriesUpdated(object sender, EventArgs e)
+        private void ItemViewHolder_CategoriesLoaded(object sender, EventArgs e)
         {
             LoadMenuItems();
         }

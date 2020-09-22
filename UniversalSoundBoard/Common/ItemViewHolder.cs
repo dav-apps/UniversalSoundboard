@@ -125,7 +125,8 @@ namespace UniversalSoundBoard.Common
         #region Events
         public event EventHandler<EventArgs> SoundsLoaded;                                                      // Is triggered when the sounds at startup were loaded
         public event EventHandler<EventArgs> PlayingSoundsLoaded;                                               // Is triggered when the playing sounds at startup were loaded
-        public event EventHandler<EventArgs> CategoriesUpdated;                                                 // Is triggered when all categories were loaded into the Categories ObservableCollection
+        public event EventHandler<EventArgs> CategoriesLoaded;                                                  // Is triggered when all categories were loaded into the Categories List
+        public event EventHandler<CategoryEventArgs> CategoryAdded;                                             // Is triggered when a category was added
         public event EventHandler<CategoryEventArgs> CategoryUpdated;                                           // Is triggered when a category was updated
         public event EventHandler<CategoryEventArgs> CategoryDeleted;                                           // Is triggered when a category was deleted
         public event EventHandler<SoundEventArgs> SoundDeleted;                                                 // Is triggered when a sound was deleted
@@ -1019,9 +1020,14 @@ namespace UniversalSoundBoard.Common
             PlayingSoundsLoaded?.Invoke(sender, new EventArgs());
         }
 
-        public void TriggerCategoriesUpdatedEvent(object sender)
+        public void TriggerCategoriesLoadedEvent(object sender)
         {
-            CategoriesUpdated?.Invoke(sender, new EventArgs());
+            CategoriesLoaded?.Invoke(sender, new EventArgs());
+        }
+
+        public void TriggerCategoryAddedEvent(object sender, CategoryEventArgs args)
+        {
+            CategoryAdded?.Invoke(sender, args);
         }
 
         public void TriggerCategoryUpdatedEvent(object sender, CategoryEventArgs args)
