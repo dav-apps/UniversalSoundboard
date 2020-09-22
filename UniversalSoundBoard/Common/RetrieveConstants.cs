@@ -27,8 +27,8 @@ namespace UniversalSoundboard.Common
             {
                 FileManager.OrderTableId,
                 FileManager.CategoryTableId,
-                FileManager.SoundTableId,
                 FileManager.SoundFileTableId,
+                FileManager.SoundTableId,
                 FileManager.PlayingSoundTableId,
                 FileManager.ImageFileTableId
             };
@@ -38,8 +38,8 @@ namespace UniversalSoundboard.Common
         {
             return new List<int>
             {
-                FileManager.SoundTableId,
-                FileManager.SoundFileTableId
+                FileManager.SoundFileTableId,
+                FileManager.SoundTableId
             };
         }
     }

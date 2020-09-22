@@ -35,6 +35,8 @@ namespace UniversalSoundBoard.Models
 
         private async void ItemViewHolder_TableObjectFileDownloadCompleted(object sender, UniversalSoundboard.Common.TableObjectFileDownloadCompletedEventArgs e)
         {
+            if (e.Uuid.Equals(Guid.Empty) || e.File == null) return;
+
             if (AudioFileTableObject != null && e.Uuid.Equals(AudioFileTableObject.Uuid))
             {
                 // Set the new audio file

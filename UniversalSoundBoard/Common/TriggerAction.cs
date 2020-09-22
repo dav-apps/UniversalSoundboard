@@ -19,9 +19,6 @@ namespace UniversalSoundboard.Common
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.LoadCategoriesAsync());
             else if (tableId == FileManager.PlayingSoundTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.LoadPlayingSoundsAsync());
-
-            if (FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync)
-                FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
         }
 
         public async void UpdateTableObject(TableObject tableObject, bool fileDownloaded)
@@ -78,6 +75,9 @@ namespace UniversalSoundboard.Common
         public void SyncFinished()
         {
             FileManager.syncFinished = true;
+
+            if (FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync)
+                FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
         }
     }
 }

@@ -62,7 +62,7 @@ namespace UniversalSoundBoard.DataAccess
         public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
 
         private const string WebsiteBaseUrlProduction = "https://dav-apps.herokuapp.com";
-        private const string WebsiteBaseUrlDevelopment = "https://1fb71f8e0ab2.ngrok.io";
+        private const string WebsiteBaseUrlDevelopment = "https://4de1c1ca4055.ngrok.io";
         public static string WebsiteBaseUrl => Environment == DavEnvironment.Production ? WebsiteBaseUrlProduction : WebsiteBaseUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 4; Prod: 1
@@ -665,7 +665,7 @@ namespace UniversalSoundBoard.DataAccess
 
                     if (
                         audioFileTableObject.IsFile
-                        && audioFileTableObject.File != null
+                        && audioFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.Downloaded
                     )
                     {
                         try
@@ -675,6 +675,10 @@ namespace UniversalSoundBoard.DataAccess
                                 sound.AudioFile = audioFile;
                         } catch { }
                     }
+                }
+                else
+                {
+                    return null;
                 }
             }
 
@@ -900,6 +904,8 @@ namespace UniversalSoundBoard.DataAccess
 
         public static void AddSound(Sound sound)
         {
+            if (sound == null) return;
+
             // Add to AllSounds
             if(!itemViewHolder.AllSounds.ToList().Exists(s => s.Uuid == sound.Uuid))
                 itemViewHolder.AllSounds.Add(sound);
@@ -1603,7 +1609,7 @@ namespace UniversalSoundBoard.DataAccess
 
             player.CommandManager.IsEnabled = false;
             player.TimelineController = new MediaTimelineController();
-            if(newSounds[current].AudioFile != null)
+            if(current < newSounds.Count && newSounds[current].AudioFile != null)
                 player.Source = MediaSource.CreateFromStorageFile(newSounds[current].AudioFile);
 
             // Set the volume
@@ -2646,13 +2652,13 @@ namespace UniversalSoundBoard.DataAccess
             ulong mbMin = 1000000;
             ulong kbMin = 1000;
 
-            if (size > gbMin)
+            if (size >= gbMin)
             {
                 // GB
                 double gb = size / (double)gbMin;
                 return string.Format("{0} {1}", gb.ToString(rounded ? "N0" : "N2"), loader.GetString("Sizes-GB"));
             }
-            else if (size > mbMin)
+            else if (size >= mbMin)
             {
                 // MB
                 double mb = size / (double)mbMin;
