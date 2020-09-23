@@ -143,12 +143,7 @@ namespace UniversalSoundBoard.Components
 
         private void PlayingSoundItem_DurationChanged(object sender, DurationChangedEventArgs e)
         {
-            if (e.Duration.Hours == 0)
-                TotalTimeElement.Text = $"{e.Duration.Minutes:D2}:{e.Duration.Seconds:D2}";
-            else
-                TotalTimeElement.Text = $"{e.Duration.Hours:D2}:{e.Duration.Minutes:D2}:{e.Duration.Seconds:D2}";
-
-            ProgressSlider.Maximum = e.Duration.TotalSeconds;
+            SetTotalDuration();
         }
 
         private void PlayingSoundItem_CurrentSoundChanged(object sender, CurrentSoundChangedEventArgs e)
@@ -422,6 +417,20 @@ namespace UniversalSoundBoard.Components
             // Trigger the animation in SoundPage for the BottomPlayingSoundsBar, if necessary
             FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
         }
+
+        private void SetTotalDuration()
+        {
+            var totalDuration = PlayingSoundItem.CurrentSoundTotalDuration;
+
+            // Set the total duration text
+            if (totalDuration.Hours == 0)
+                TotalTimeElement.Text = $"{totalDuration.Minutes:D2}:{totalDuration.Seconds:D2}";
+            else
+                TotalTimeElement.Text = $"{totalDuration.Hours:D2}:{totalDuration.Minutes:D2}:{totalDuration.Seconds:D2}";
+
+            // Set the maximum of the slider
+            ProgressSlider.Maximum = totalDuration.TotalSeconds;
+        }
         #endregion
 
         #region UI methods
@@ -495,6 +504,9 @@ namespace UniversalSoundBoard.Components
             // Set the volume icon
             if (layoutType == PlayingSoundItemLayoutType.Large)
                 VolumeButton.Content = VolumeControl.GetVolumeIcon(PlayingSound.Volume, PlayingSound.Muted);
+
+            // Set the total duration text
+            SetTotalDuration();
         }
 
         private void SetTimelineLayout(bool compact, bool timesVisible)

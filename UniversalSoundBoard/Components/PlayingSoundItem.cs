@@ -36,12 +36,14 @@ namespace UniversalSoundboard.Components
         private PlayingSound PlayingSound;
         public Guid Uuid { get => PlayingSound == null ? Guid.Empty : PlayingSound.Uuid; }
         public bool SoundsListVisible { get => soundsListVisible; }
+        public TimeSpan CurrentSoundTotalDuration { get => currentSoundTotalDuration; }
 
         #region Local variables
         private CoreDispatcher dispatcher;
         private bool initialized = false;
         private bool skipSoundsCollectionChanged = false;
         private bool soundsListVisible = false;
+        private TimeSpan currentSoundTotalDuration = TimeSpan.Zero;
         private bool showSoundsListAnimationTriggered = false;
         private bool hideSoundsListAnimationTriggered = false;
         private bool currentSoundIsDownloading = false;
@@ -302,6 +304,7 @@ namespace UniversalSoundboard.Components
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
+                currentSoundTotalDuration = sender.Duration.GetValueOrDefault();
                 DurationChanged?.Invoke(this, new DurationChangedEventArgs(sender.Duration.GetValueOrDefault()));
             });
         }
