@@ -13,6 +13,7 @@ using UniversalSoundBoard.DataAccess;
 using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
+using Windows.Foundation.Collections;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -34,7 +35,7 @@ namespace UniversalSoundBoard.Pages
         private double maxBottomPlayingSoundsBarHeight = 500;
         bool isManipulatingBottomPlayingSoundsBar = false;
         private int getContainerHeightCount = 0;
-        AdvancedCollectionView reversedPlayingSounds = new AdvancedCollectionView(FileManager.itemViewHolder.PlayingSounds);
+        AdvancedCollectionView reversedPlayingSounds;
         Visibility startMessageVisibility = Visibility.Collapsed;
         Visibility emptyCategoryMessageVisibility = Visibility.Collapsed;
         
@@ -43,7 +44,16 @@ namespace UniversalSoundBoard.Pages
             InitializeComponent();
             ContentRoot.DataContext = FileManager.itemViewHolder;
 
+            /// Initialize the reversedPlayingSounds list
+            reversedPlayingSounds = new AdvancedCollectionView(FileManager.itemViewHolder.PlayingSounds);
             reversedPlayingSounds.SortDescriptions.Add(new SortDescription(SortDirection.Ascending, new ReverserClass()));
+
+            reversedPlayingSounds.Filter = item =>
+            {
+                if (!playingSoundsLoaded) return false;
+                if (FileManager.itemViewHolder.PlayingSounds.Count == 0) return true;
+                return FileManager.itemViewHolder.OpenMultipleSounds || ((PlayingSound)item).Uuid.Equals(FileManager.itemViewHolder.PlayingSounds.Last().Uuid);
+            };
 
             // Subscribe to events
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
@@ -58,7 +68,8 @@ namespace UniversalSoundBoard.Pages
 
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
-            FileManager.itemViewHolder.PlayingSounds.CollectionChanged += PlayingSounds_CollectionChanged;
+
+            reversedPlayingSounds.VectorChanged += ReversedPlayingSounds_VectorChanged;
         }
 
         #region Page event handlers
@@ -90,8 +101,12 @@ namespace UniversalSoundBoard.Pages
 
         private async void ItemViewHolder_PlayingSoundsLoaded(object sender, EventArgs e)
         {
-            await InitBottomPlayingSoundsBarHeight();
             playingSoundsLoaded = true;
+
+            // Load the reversed playing sounds list
+            reversedPlayingSounds.RefreshFilter();
+
+            await InitBottomPlayingSoundsBarHeight();
         }
 
         private void ItemViewHolder_SelectAllSounds(object sender, RoutedEventArgs e)
@@ -231,7 +246,7 @@ namespace UniversalSoundBoard.Pages
             await HandleSoundsCollectionChanged(e, true);
         }
 
-        private async void PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private async void ReversedPlayingSounds_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs args)
         {
             if (!playingSoundsLoaded)
             {
@@ -243,7 +258,7 @@ namespace UniversalSoundBoard.Pages
             await UpdatePlayingSoundsListAsync();
 
             if (
-                e.Action == NotifyCollectionChangedAction.Add
+                args.CollectionChange == CollectionChange.ItemInserted
                 && FileManager.itemViewHolder.PlayingSounds.Count == 1
             )
             {
@@ -254,7 +269,7 @@ namespace UniversalSoundBoard.Pages
             }
             else if (
               bottomPlayingSoundsBarPosition == VerticalPosition.Top
-              && e.Action == NotifyCollectionChangedAction.Add
+              && args.CollectionChange == CollectionChange.ItemInserted
               && FileManager.itemViewHolder.PlayingSounds.Count > 1
           )
             {
@@ -326,12 +341,12 @@ namespace UniversalSoundBoard.Pages
                     GridSplitterColDef.Width = new GridLength(0);
 
                     // Update the visibility of the BottomPlayingSoundsBar
-                    if(FileManager.itemViewHolder.PlayingSounds.Count == 0)
+                    if(reversedPlayingSounds.Count == 0)
                     {
                         BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                         GridSplitterGrid.Visibility = Visibility.Collapsed;
                     }
-                    else if(FileManager.itemViewHolder.PlayingSounds.Count == 1)
+                    else if(reversedPlayingSounds.Count == 1)
                     {
                         BottomPlayingSoundsBar.Visibility = Visibility.Visible;
                         GridSplitterGrid.Visibility = Visibility.Visible;
