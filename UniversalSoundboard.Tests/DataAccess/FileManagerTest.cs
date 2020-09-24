@@ -40,17 +40,17 @@ namespace UniversalSoundboard.Tests.DataAccess
         }
         #endregion
 
-        #region SortSoundsListByCustomOrder
+        #region SortSoundsListByCustomOrderAsync
         [TestMethod]
-        public async Task SortSoundsListShouldCreateNewOrder()
+        public async Task SortSoundsListByCustomOrderAsyncShouldCreateNewOrder()
         {
             // Arrange
             Guid categoryUuid = Guid.NewGuid();
             List<Sound> sounds = new List<Sound>
             {
-                new Sound(Guid.NewGuid()),
-                new Sound(Guid.NewGuid()),
-                new Sound(Guid.NewGuid())
+                new Sound(Guid.NewGuid(), "TestSound"),
+                new Sound(Guid.NewGuid(), "TestSound"),
+                new Sound(Guid.NewGuid(), "TestSound")
             };
 
             // Act
@@ -71,15 +71,15 @@ namespace UniversalSoundboard.Tests.DataAccess
         }
 
         [TestMethod]
-        public async Task SortSoundsListByCustomOrderShouldSortTheListInTheCorrectOrder()
+        public async Task SortSoundsListByCustomOrderAsyncShouldSortTheListInTheCorrectOrder()
         {
             // Arrange
             Guid categoryUuid = Guid.NewGuid();
             List<Sound> soundsInCorrectOrder = new List<Sound>
             {
-                new Sound(Guid.NewGuid()),
-                new Sound(Guid.NewGuid()),
-                new Sound(Guid.NewGuid())
+                new Sound(Guid.NewGuid(), "TestSound"),
+                new Sound(Guid.NewGuid(), "TestSound"),
+                new Sound(Guid.NewGuid(), "TestSound")
             };
 
             // Create the sound order
@@ -112,23 +112,23 @@ namespace UniversalSoundboard.Tests.DataAccess
         }
 
         [TestMethod]
-        public async Task SortSoundsListShouldSaveNewSoundsAtTheEndOfTheOrder()
+        public async Task SortSoundsListByCustomOrderAsyncShouldSaveNewSoundsAtTheEndOfTheOrder()
         {
             // Arrange
             Guid categoryUuid = Guid.NewGuid();
             List<Sound> sounds = new List<Sound>
             {
-                new Sound(Guid.NewGuid()),
-                new Sound(Guid.NewGuid()),
-                new Sound(Guid.NewGuid())
+                new Sound(Guid.NewGuid(), "TestSound"),
+                new Sound(Guid.NewGuid(), "TestSound"),
+                new Sound(Guid.NewGuid(), "TestSound")
             };
 
             // Create the sound order
             await FileManager.SortSoundsListByCustomOrderAsync(sounds, categoryUuid, false);
 
             // Add some sounds to the list
-            sounds.Add(new Sound(Guid.NewGuid()));
-            sounds.Add(new Sound(Guid.NewGuid()));
+            sounds.Add(new Sound(Guid.NewGuid(), "TestSound"));
+            sounds.Add(new Sound(Guid.NewGuid(), "TestSound"));
 
             // Act
             List<Sound> sortedSounds = await FileManager.SortSoundsListByCustomOrderAsync(sounds, categoryUuid, false);
@@ -148,21 +148,21 @@ namespace UniversalSoundboard.Tests.DataAccess
         }
 
         [TestMethod]
-        public async Task SortSoundsListShouldMergeMultipleOrdersInTheCorrectOrder()
+        public async Task SortSoundsListByCustomOrderAsyncShouldMergeMultipleOrdersInTheCorrectOrder()
         {
             // Arrange
             Guid categoryUuid = Guid.NewGuid();
             List<Sound> firstSoundsList = new List<Sound>
             {
-                new Sound(Guid.NewGuid()),
-                new Sound(Guid.NewGuid()),
-                new Sound(Guid.NewGuid())
+                new Sound(Guid.NewGuid(), "TestSound"),
+                new Sound(Guid.NewGuid(), "TestSound"),
+                new Sound(Guid.NewGuid(), "TestSound")
             };
             List<Sound> secondSoundsList = new List<Sound>
             {
-                new Sound(Guid.NewGuid()),
-                new Sound(Guid.NewGuid()),
-                new Sound(Guid.NewGuid())
+                new Sound(Guid.NewGuid(), "TestSound"),
+                new Sound(Guid.NewGuid(), "TestSound"),
+                new Sound(Guid.NewGuid(), "TestSound")
             };
 
             // Create two sound orders

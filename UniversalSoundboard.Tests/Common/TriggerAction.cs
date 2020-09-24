@@ -5,16 +5,6 @@ namespace UniversalSoundboard.Tests.Common
 {
     class TriggerAction : ITriggerAction
     {
-        public void DeleteTableObject(TableObject tableObject)
-        {
-            
-        }
-
-        public void SyncFinished()
-        {
-            
-        }
-
         public void UpdateAllOfTable(int tableId)
         {
             
@@ -23,6 +13,21 @@ namespace UniversalSoundboard.Tests.Common
         public void UpdateTableObject(TableObject tableObject, bool fileDownloaded)
         {
             
+        }
+
+        public void DeleteTableObject(TableObject tableObject)
+        {
+
+        }
+
+        public void TableObjectDownloadProgress(TableObject tableObject, int progress)
+        {
+
+        }
+
+        public void SyncFinished()
+        {
+
         }
     }
 }
