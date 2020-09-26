@@ -17,6 +17,7 @@
     <Page.Resources>
         <!-- Converters -->
         <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
+        <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
         <converters:OptionsOnSoundPageVisibleConverter x:Name="OptionsOnSoundPageVisibleConverter" />
 
@@ -210,7 +211,8 @@
                                     <Button
                                         Name="AddButton"
                                         Style="{StaticResource TopButtonStyle}"
-                                        VerticalAlignment="Center">
+                                        VerticalAlignment="Center"
+                                        Visibility="{x:Bind mobileSearchVisible, Converter={StaticResource BooleanToInvertedVisibilityConverter}}">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                             <TextBlock
@@ -243,7 +245,8 @@
                                     <Button
                                         Name="VolumeButton"
                                         Style="{StaticResource TopButtonStyle}"
-                                        VerticalAlignment="Center">
+                                        VerticalAlignment="Center"
+                                        Visibility="{x:Bind mobileSearchVisible, Converter={StaticResource BooleanToInvertedVisibilityConverter}}">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                             <TextBlock
@@ -275,6 +278,7 @@
                                         Name="SelectButton" 
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
+                                        Visibility="{x:Bind mobileSearchVisible, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
                                         Click="SelectButton_Click">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">

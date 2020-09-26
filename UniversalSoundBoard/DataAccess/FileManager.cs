@@ -2483,17 +2483,16 @@ namespace UniversalSoundBoard.DataAccess
             // Is on mobile and search box visible?
             if (
                 Window.Current.Bounds.Width < hideSearchBoxMaxWidth
-                && itemViewHolder.SearchAutoSuggestBoxVisible == true
+                && itemViewHolder.SearchAutoSuggestBoxVisible
             )
             {
                 // Reset search
-                itemViewHolder.SearchQuery = "";
                 itemViewHolder.SearchAutoSuggestBoxVisible = false;
                 itemViewHolder.SearchButtonVisible = true;
                 UpdateBackButtonVisibility();
                 return;
             }
-
+            
             // Multi selection enabled?
             if(itemViewHolder.MultiSelectionEnabled)
             {
@@ -2505,7 +2504,10 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             // Search? or Category?
-            if(!Equals(itemViewHolder.SelectedCategory, Guid.Empty) || !string.IsNullOrEmpty(itemViewHolder.SearchQuery))
+            if(
+                !itemViewHolder.SelectedCategory.Equals(Guid.Empty)
+                || !string.IsNullOrEmpty(itemViewHolder.SearchQuery)
+            )
             {
                 // -> Go to all Sounds
                 itemViewHolder.SelectedCategory = Guid.Empty;
@@ -2534,8 +2536,8 @@ namespace UniversalSoundBoard.DataAccess
             return
                 !itemViewHolder.MultiSelectionEnabled
                 && (
-                    (itemViewHolder.SearchAutoSuggestBoxVisible && Window.Current.Bounds.Width >= hideSearchBoxMaxWidth)
-                    || (itemViewHolder.SearchButtonVisible && Window.Current.Bounds.Width < hideSearchBoxMaxWidth)
+                    (Window.Current.Bounds.Width >= hideSearchBoxMaxWidth && itemViewHolder.SearchAutoSuggestBoxVisible)
+                    || (Window.Current.Bounds.Width < hideSearchBoxMaxWidth && itemViewHolder.SearchButtonVisible)
                 );
         }
 

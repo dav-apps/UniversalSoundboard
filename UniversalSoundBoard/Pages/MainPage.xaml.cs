@@ -41,6 +41,7 @@ namespace UniversalSoundBoard.Pages
         string title = FileManager.itemViewHolder.Title;                    // The visible title, possibly truncated
         bool isTruncatingTitle = false;                                     // If true, TruncateTitleAsync is currently running
         int titleTruncatedChars = 0;                                        // The number of characters the title was truncated
+        bool mobileSearchVisible = false;                                   // If true, the app window is small, the search box is visible and the other top buttons are hidden
 
         public MainPage()
         {
@@ -101,23 +102,29 @@ namespace UniversalSoundBoard.Pages
 
         private async void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName.Equals(ItemViewHolder.PageKey) || e.PropertyName.Equals(ItemViewHolder.AppStateKey))
+            switch (e.PropertyName)
             {
-                bool navigationViewHeaderVisible = FileManager.itemViewHolder.AppState == FileManager.AppState.Normal || FileManager.itemViewHolder.Page != typeof(SoundPage);
-                NavigationViewHeader.Visibility = navigationViewHeaderVisible ? Visibility.Visible : Visibility.Collapsed;
-            }
-            else if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
-                SetThemeColors();
-            else if (e.PropertyName.Equals(ItemViewHolder.TitleKey))
-            {
-                title = FileManager.itemViewHolder.Title;
-                Bindings.Update();
+                case ItemViewHolder.PageKey:
+                case ItemViewHolder.AppStateKey:
+                    bool navigationViewHeaderVisible = FileManager.itemViewHolder.AppState == FileManager.AppState.Normal || FileManager.itemViewHolder.Page != typeof(SoundPage);
+                    NavigationViewHeader.Visibility = navigationViewHeaderVisible ? Visibility.Visible : Visibility.Collapsed;
+                    break;
+                case ItemViewHolder.CurrentThemeKey:
+                    SetThemeColors();
+                    break;
+                case ItemViewHolder.TitleKey:
+                    title = FileManager.itemViewHolder.Title;
+                    Bindings.Update();
 
-                // Wait for the layout to update
-                await Task.Delay(8);
+                    // Wait for the layout to update
+                    await Task.Delay(8);
 
-                titleTruncatedChars = 0;
-                await TruncateTitleAsync();
+                    titleTruncatedChars = 0;
+                    await TruncateTitleAsync();
+                    break;
+                case ItemViewHolder.SearchAutoSuggestBoxVisibleKey:
+                    UpdateTopButtonVisibilityForMobileSearch();
+                    break;
             }
         }
 
@@ -234,6 +241,7 @@ namespace UniversalSoundBoard.Pages
         private void AdjustLayout()
         {
             FileManager.AdjustLayout();
+            UpdateTopButtonVisibilityForMobileSearch();
 
             // Set the width of the title bar and the position of the title, depending on whether the Hamburger button of the NavigationView is visible
             if (SideBar.DisplayMode == WinUI.NavigationViewDisplayMode.Minimal)
@@ -298,6 +306,13 @@ namespace UniversalSoundBoard.Pages
             InitLayout();
             RequestedTheme = FileManager.GetRequestedTheme();
             CustomiseTitleBar();
+        }
+
+        private void UpdateTopButtonVisibilityForMobileSearch()
+        {
+            // Hide the top buttons if the app window is small and the search box is visible
+            mobileSearchVisible = Window.Current.Bounds.Width < FileManager.hideSearchBoxMaxWidth && FileManager.itemViewHolder.SearchAutoSuggestBoxVisible;
+            Bindings.Update();
         }
 
         private async Task GoBack()
