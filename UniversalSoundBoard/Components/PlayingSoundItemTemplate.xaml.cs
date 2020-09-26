@@ -23,6 +23,7 @@ namespace UniversalSoundBoard.Components
         PlayingSoundItemLayoutType layoutType = PlayingSoundItemLayoutType.Small;
         Guid selectedSoundUuid;
         private bool skipSoundsListViewSelectionChanged;
+        private bool skipProgressSliderValueChanged = false;
 
         public PlayingSoundItemTemplate()
         {
@@ -138,7 +139,9 @@ namespace UniversalSoundBoard.Components
             else
                 RemainingTimeElement.Text = $"{e.Position.Hours:D2}:{e.Position.Minutes:D2}:{e.Position.Seconds:D2}";
 
+            skipProgressSliderValueChanged = true;
             ProgressSlider.Value = e.Position.TotalSeconds;
+            skipProgressSliderValueChanged = false;
         }
 
         private void PlayingSoundItem_DurationChanged(object sender, DurationChangedEventArgs e)
@@ -242,7 +245,7 @@ namespace UniversalSoundBoard.Components
         }
         #endregion
 
-        #region Button events
+        #region Event handlers
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
             PlayingSoundItem.TogglePlayPause();
@@ -320,6 +323,8 @@ namespace UniversalSoundBoard.Components
 
         private void ProgressSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
+            if (skipProgressSliderValueChanged) return;
+
             double diff = e.NewValue - e.OldValue;
             if (diff > 0.6 || diff < -0.6)
                 PlayingSoundItem.SetPosition(Convert.ToInt32(e.NewValue));
