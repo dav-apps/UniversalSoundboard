@@ -191,10 +191,15 @@ namespace UniversalSoundBoard.Common
             _searchAutoSuggestBoxVisible = true;
             _searchButtonVisible = false;
             _selectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
-            _selectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll);
             _soundTileWidth = 200;
-            _playingSoundsBarAcrylicBackgroundBrush = new AcrylicBrush();
             _exportAndImportButtonsEnabled = true;
+
+            try
+            {
+                _selectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll);
+                _playingSoundsBarAcrylicBackgroundBrush = new AcrylicBrush();
+            }
+            catch { }
             #endregion
 
             #region Settings

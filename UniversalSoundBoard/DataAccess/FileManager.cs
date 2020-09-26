@@ -1812,12 +1812,12 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task UpdateCategoryAsync(Guid uuid, string name, string icon)
         {
-            await DatabaseOperations.UpdateCategoryAsync(uuid, name, icon, null);
+            await DatabaseOperations.UpdateCategoryAsync(uuid, null, name, icon);
         }
 
         public static async Task UpdateParentOfCategoryAsync(Guid uuid, Guid parent)
         {
-            await DatabaseOperations.UpdateCategoryAsync(uuid, null, null, parent);
+            await DatabaseOperations.UpdateCategoryAsync(uuid, parent, null, null);
         }
 
         public static async Task DeleteCategoryAsync(Guid uuid)

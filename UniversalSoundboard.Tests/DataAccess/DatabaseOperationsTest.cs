@@ -40,6 +40,7 @@ namespace UniversalSoundboard.Tests.DataAccess
         }
         #endregion
 
+        #region General Methods
         #region GetTableObjectAsync
         [TestMethod]
         public async Task GetTableObjectAsyncShouldReturnTheObject()
@@ -67,6 +68,45 @@ namespace UniversalSoundboard.Tests.DataAccess
 
             // Assert
             Assert.IsNull(tableObjectFromDatabase);
+        }
+        #endregion
+
+        #region GetTableObjectsByPropertyAsync
+        [TestMethod]
+        public async Task GetTableObjectsByPropertyAsyncShouldReturnTheCorrectTableObjects()
+        {
+            // Arrange
+            Guid firstTableObjectUuid = Guid.NewGuid();
+            Guid secondTableObjectUuid = Guid.NewGuid();
+            Guid thirdTableObjectUuid = Guid.NewGuid();
+
+            string searchedPropertyName = "test";
+            string searchedPropertyValue = "12345";
+
+            var firstTableObject = await TableObject.CreateAsync(firstTableObjectUuid, 12);
+            var secondTableObject = await TableObject.CreateAsync(secondTableObjectUuid, 12);
+            var thirdTableObject = await TableObject.CreateAsync(thirdTableObjectUuid, 12);
+
+            await Property.CreateAsync(firstTableObject.Id, searchedPropertyName, searchedPropertyValue);
+            await Property.CreateAsync(firstTableObject.Id, "bla", "testtest");
+
+            await Property.CreateAsync(secondTableObject.Id, "231", "asdasfaspgs");
+            await Property.CreateAsync(secondTableObject.Id, searchedPropertyName, "sadasdasd");
+
+            await Property.CreateAsync(thirdTableObject.Id, "98435", "asdasdasd");
+            await Property.CreateAsync(thirdTableObject.Id, searchedPropertyName, searchedPropertyValue);
+
+            // Act
+            var tableObjectsFromDatabase = await DatabaseOperations.GetTableObjectsByPropertyAsync(searchedPropertyName, searchedPropertyValue);
+
+            // Assert
+            Assert.AreEqual(2, tableObjectsFromDatabase.Count);
+
+            Assert.AreEqual(firstTableObjectUuid, tableObjectsFromDatabase[0].Uuid);
+            Assert.AreEqual(searchedPropertyValue, tableObjectsFromDatabase[0].GetPropertyValue(searchedPropertyName));
+
+            Assert.AreEqual(thirdTableObjectUuid, tableObjectsFromDatabase[1].Uuid);
+            Assert.AreEqual(searchedPropertyValue, tableObjectsFromDatabase[1].GetPropertyValue(searchedPropertyName));
         }
         #endregion
 
@@ -104,14 +144,21 @@ namespace UniversalSoundboard.Tests.DataAccess
         public async Task DeleteTableObjectAsyncShouldDeleteTheObjectImmediatelyIfTheUserIsNotLoggedIn()
         {
             // Arrange
+            Guid uuid = Guid.NewGuid();
             int tableId = 21;
-            var tableObject = await TableObject.CreateAsync(tableId);
+            await TableObject.CreateAsync(uuid, tableId);
+
+            // Assert (1)
+            var tableObjectFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(tableObjectFromDatabase);
+            Assert.AreEqual(uuid, tableObjectFromDatabase.Uuid);
+            Assert.AreEqual(tableId, tableObjectFromDatabase.TableId);
 
             // Act
-            await DatabaseOperations.DeleteTableObjectAsync(tableObject.Uuid);
+            await DatabaseOperations.DeleteTableObjectAsync(uuid);
 
-            // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(tableObject.Uuid);
+            // Assert (2)
+            tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
             Assert.IsNull(tableObjectFromDatabase);
         }
 
@@ -120,19 +167,30 @@ namespace UniversalSoundboard.Tests.DataAccess
         {
             // Arrange
             ProjectInterface.LocalDataSettings.SetValue(Dav.jwtKey, Constants.Jwt);
+            Guid uuid = Guid.NewGuid();
             int tableId = 21;
-            var tableObject = await TableObject.CreateAsync(tableId);
+            await TableObject.CreateAsync(uuid, tableId);
+
+            // Assert (1)
+            var tableObjectFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(tableObjectFromDatabase);
+            Assert.AreEqual(uuid, tableObjectFromDatabase.Uuid);
+            Assert.AreEqual(tableId, tableObjectFromDatabase.TableId);
 
             // Act
-            await DatabaseOperations.DeleteTableObjectAsync(tableObject.Uuid);
+            await DatabaseOperations.DeleteTableObjectAsync(uuid);
 
-            // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(tableObject.Uuid);
+            // Assert (2)
+            tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
             Assert.IsNotNull(tableObjectFromDatabase);
+            Assert.AreEqual(uuid, tableObjectFromDatabase.Uuid);
+            Assert.AreEqual(tableId, tableObjectFromDatabase.TableId);
             Assert.AreEqual(TableObject.TableObjectUploadStatus.Deleted, tableObjectFromDatabase.UploadStatus);
         }
         #endregion
+        #endregion
 
+        #region Sound
         #region CreateSoundAsync
         [TestMethod]
         public async Task CreateSoundAsyncShouldCreateTheSoundObjectWithTheCorrectProperties()
@@ -140,26 +198,29 @@ namespace UniversalSoundboard.Tests.DataAccess
             // Arrange
             var uuid = Guid.NewGuid();
             Guid soundFileUuid = Guid.NewGuid();
+            string name = "Phoenix Objection";
+            bool favourite = true;
             List<Guid> categoryUuids = new List<Guid>
             {
                 Guid.NewGuid(),
                 Guid.NewGuid()
             };
-            string name = "Phoenix Objection";
 
             // Act
-            await DatabaseOperations.CreateSoundAsync(uuid, name, false, soundFileUuid, categoryUuids);
+            await DatabaseOperations.CreateSoundAsync(uuid, name, favourite, soundFileUuid, categoryUuids);
 
             // Assert
             var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(tableObjectFromDatabase);
+            Assert.AreEqual(uuid, tableObjectFromDatabase.Uuid);
             Assert.AreEqual(FileManager.SoundTableId, tableObjectFromDatabase.TableId);
-            Assert.AreEqual(soundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
+            Assert.AreEqual(soundFileUuid.ToString(), tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
             Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
-            Assert.AreEqual(false, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.AreEqual(favourite, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
 
             int i = 0;
             string[] tableObjectCategoryUuids = tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(",");
-            foreach(var categoryUuid in categoryUuids)
+            foreach (var categoryUuid in categoryUuids)
             {
                 Assert.AreEqual(categoryUuid, Guid.Parse(tableObjectCategoryUuids[i]));
                 i++;
@@ -173,87 +234,85 @@ namespace UniversalSoundboard.Tests.DataAccess
             var uuid = Guid.NewGuid();
             Guid soundFileUuid = Guid.NewGuid();
             string name = "Godot Objection";
+            bool favourite = false;
 
             // Act
-            await DatabaseOperations.CreateSoundAsync(uuid, name, false, soundFileUuid, null);
+            await DatabaseOperations.CreateSoundAsync(uuid, name, favourite, soundFileUuid, null);
 
             // Assert
             var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
             Assert.AreEqual(FileManager.SoundTableId, tableObjectFromDatabase.TableId);
             Assert.AreEqual(soundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
             Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
-            Assert.AreEqual(false, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.AreEqual(favourite, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
             Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName));
         }
         #endregion
 
         #region GetAllSoundsAsync
         [TestMethod]
-        public async Task GetAllSoundAsyncShouldReturnAllSounds()
+        public async Task GetAllSoundsAsyncShouldReturnAllSounds()
         {
             // Arrange
-            var firstSoundUuid = Guid.NewGuid();
-            var secondSoundUuid = Guid.NewGuid();
-            var firstSoundFileUuid = Guid.NewGuid();
-            var secondSoundFileUuid = Guid.NewGuid();
-            string firstSoundName = "Phoenix Objection";
-            string secondSoundName = "Godot Hold it";
+            Guid firstSoundUuid = Guid.NewGuid();
+            Guid secondSoundUuid = Guid.NewGuid();
+            Guid thirdSoundUuid = Guid.NewGuid();
 
-            List<Guid> firstSoundCategoryUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> secondSoundCategoryUuids = new List<Guid>
-            {
-                Guid.NewGuid()
-            };
+            string firstSoundName = "TestSound 1";
+            string secondSoundName = "Second test sound";
+            string thirdSoundName = "3rd sound";
 
-            // Create the sounds
-            await DatabaseOperations.CreateSoundAsync(firstSoundUuid, firstSoundName, false, firstSoundFileUuid, firstSoundCategoryUuids);
-            await DatabaseOperations.CreateSoundAsync(secondSoundUuid, secondSoundName, false, secondSoundFileUuid, secondSoundCategoryUuids);
+            bool firstSoundFavourite = false;
+            bool secondSoundFavourite = true;
+            bool thirdSoundFavourite = true;
+
+            Guid firstSoundFileUuid = Guid.NewGuid();
+            Guid secondSoundFileUuid = Guid.NewGuid();
+            Guid thirdSoundFileUuid = Guid.NewGuid();
+
+            List<Guid> firstSoundCategories = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
+            List<Guid> secondSoundCategories = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+            List<Guid> thirdSoundCategories = new List<Guid> { Guid.NewGuid() };
+
+            await DatabaseOperations.CreateSoundAsync(firstSoundUuid, firstSoundName, firstSoundFavourite, firstSoundFileUuid, firstSoundCategories);
+            await DatabaseOperations.CreateSoundAsync(secondSoundUuid, secondSoundName, secondSoundFavourite, secondSoundFileUuid, secondSoundCategories);
+            await DatabaseOperations.CreateSoundAsync(thirdSoundUuid, thirdSoundName, thirdSoundFavourite, thirdSoundFileUuid, thirdSoundCategories);
 
             // Act
             List<TableObject> sounds = await DatabaseOperations.GetAllSoundsAsync();
 
             // Assert
-            Assert.AreEqual(2, sounds.Count);
+            Assert.AreEqual(3, sounds.Count);
 
-            // Test the first table object
             Assert.AreEqual(firstSoundUuid, sounds[0].Uuid);
-            Assert.AreEqual(firstSoundFileUuid, Guid.Parse(sounds[0].GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
             Assert.AreEqual(firstSoundName, sounds[0].GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(firstSoundFavourite, bool.Parse(sounds[0].GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.AreEqual(firstSoundFileUuid.ToString(), sounds[0].GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
 
-            int i = 0;
-            string[] firstTableObjectCategoryUuids = sounds[0].GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(",");
-            foreach (var categoryUuid in firstSoundCategoryUuids)
-            {
-                Assert.AreEqual(categoryUuid, Guid.Parse(firstTableObjectCategoryUuids[i]));
-                i++;
-            }
+            string[] firstSoundTableObjectCategories = sounds[0].GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(',');
+            Assert.AreEqual(firstSoundCategories.Count, firstSoundTableObjectCategories.Length);
+            for (int i = 0; i < firstSoundCategories.Count; i++)
+                Assert.AreEqual(firstSoundCategories[i].ToString(), firstSoundTableObjectCategories[i]);
 
-            // Test the second table object
             Assert.AreEqual(secondSoundUuid, sounds[1].Uuid);
-            Assert.AreEqual(secondSoundFileUuid, Guid.Parse(sounds[1].GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
             Assert.AreEqual(secondSoundName, sounds[1].GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(secondSoundFavourite, bool.Parse(sounds[1].GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.AreEqual(secondSoundFileUuid.ToString(), sounds[1].GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
 
-            i = 0;
-            string[] secondTableObjectCategoryUuids = sounds[1].GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(",");
-            foreach (var categoryUuid in secondSoundCategoryUuids)
-            {
-                Assert.AreEqual(categoryUuid, Guid.Parse(secondTableObjectCategoryUuids[i]));
-                i++;
-            }
-        }
+            string[] secondSoundTableObjectCategories = sounds[1].GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(',');
+            Assert.AreEqual(secondSoundCategories.Count, secondSoundTableObjectCategories.Length);
+            for (int i = 0; i < secondSoundCategories.Count; i++)
+                Assert.AreEqual(secondSoundCategories[i].ToString(), secondSoundTableObjectCategories[i]);
 
-        [TestMethod]
-        public async Task GetAllSoundsAsyncShouldReturnEmptyListIfThereAreNoSounds()
-        {
-            // Act
-            List<TableObject> sounds = await DatabaseOperations.GetAllSoundsAsync();
+            Assert.AreEqual(thirdSoundUuid, sounds[2].Uuid);
+            Assert.AreEqual(thirdSoundName, sounds[2].GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(thirdSoundFavourite, bool.Parse(sounds[2].GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.AreEqual(thirdSoundFileUuid.ToString(), sounds[2].GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
 
-            // Assert
-            Assert.AreEqual(0, sounds.Count);
+            string[] thirdSoundTableObjectCategories = sounds[2].GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(',');
+            Assert.AreEqual(thirdSoundCategories.Count, thirdSoundTableObjectCategories.Length);
+            for (int i = 0; i < thirdSoundCategories.Count; i++)
+                Assert.AreEqual(thirdSoundCategories[i].ToString(), thirdSoundTableObjectCategories[i]);
         }
         #endregion
 
@@ -261,148 +320,54 @@ namespace UniversalSoundboard.Tests.DataAccess
         [TestMethod]
         public async Task UpdateSoundAsyncShouldUpdateAllValuesOfTheSound()
         {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            var soundFileUuid = Guid.NewGuid();
-            string oldName = "Phoenix Objection";
-            string newName = "Godot Objection";
-            var imageFileUuid = Guid.NewGuid();
-            bool newFavourite = true;
-            List<Guid> oldCategoryUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> newCategoryUuids = new List<Guid>
-            {
-                Guid.NewGuid()
-            };
+            // Arrange (1)
+            Guid uuid = Guid.NewGuid();
+            string name = "Test-Sound";
+            bool favourite = false;
+            Guid fileUuid = Guid.NewGuid();
+            List<Guid> categoryUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
 
-            // Create the sound
-            await DatabaseOperations.CreateSoundAsync(uuid, oldName, false, soundFileUuid, oldCategoryUuids);
+            // Act (1)
+            await DatabaseOperations.CreateSoundAsync(uuid, name, favourite, fileUuid, categoryUuids);
 
-            // Act
-            await DatabaseOperations.UpdateSoundAsync(uuid, newName, newFavourite, null, null, imageFileUuid, newCategoryUuids);
+            // Assert (1)
+            TableObject soundFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(soundFromDatabase);
+            Assert.AreEqual(uuid, soundFromDatabase.Uuid);
+            Assert.AreEqual(name, soundFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(favourite, bool.Parse(soundFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.AreEqual(fileUuid.ToString(), soundFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
 
-            // Assert
-            var tableObjectFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
-            Assert.AreEqual(soundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
-            Assert.AreEqual(newName, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
-            Assert.AreEqual(imageFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName)));
-            Assert.AreEqual(newFavourite, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
-            Assert.AreEqual(newCategoryUuids[0], tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName));
-        }
+            string[] soundTableObjectCategories = soundFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(',');
+            Assert.AreEqual(categoryUuids.Count, soundTableObjectCategories.Length);
+            for (int i = 0; i < categoryUuids.Count; i++)
+                Assert.AreEqual(categoryUuids[i].ToString(), soundTableObjectCategories[i]);
 
-        [TestMethod]
-        public async Task UpdateSoundAsyncShouldUpdateTheNameOfTheSound()
-        {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            string oldName = "Phoenix Hold it";
-            string newName = "Godot Objection";
-            var soundFileUuid = Guid.NewGuid();
+            // Arrange (2)
+            string updatedName = "Updated Test-Sound name";
+            bool updatedFavourite = true;
+            int defaultVolume = 80;
+            bool defaultMuted = true;
+            Guid imageUuid = Guid.NewGuid();
+            List<Guid> updatedCategoryUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
 
-            // Create the sound
-            await DatabaseOperations.CreateSoundAsync(uuid, oldName, false, soundFileUuid, null);
+            // Act (2)
+            await DatabaseOperations.UpdateSoundAsync(uuid, updatedName, updatedFavourite, defaultVolume, defaultMuted, imageUuid, updatedCategoryUuids);
 
-            // Act
-            await DatabaseOperations.UpdateSoundAsync(uuid, newName, null, null, null, null, null);
+            // Assert (2)
+            soundFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(soundFromDatabase);
+            Assert.AreEqual(updatedName, soundFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
+            Assert.AreEqual(updatedFavourite, bool.Parse(soundFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
+            Assert.AreEqual(fileUuid.ToString(), soundFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
+            Assert.AreEqual(defaultVolume, int.Parse(soundFromDatabase.GetPropertyValue(FileManager.SoundTableDefaultVolumePropertyName)));
+            Assert.AreEqual(defaultMuted, bool.Parse(soundFromDatabase.GetPropertyValue(FileManager.SoundTableDefaultMutedPropertyName)));
+            Assert.AreEqual(imageUuid.ToString(), soundFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
 
-            // Assert
-            var tableObjectFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
-            Assert.AreEqual(newName, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
-            Assert.AreEqual(soundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
-            Assert.IsFalse(bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
-            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
-            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName));
-        }
-
-        [TestMethod]
-        public async Task UpdateSoundAsyncShouldUpdateTheFavouriteOfTheSound()
-        {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            string name = "Phoenix Objection";
-            bool newFavourite = true;
-            var soundFileUuid = Guid.NewGuid();
-
-            // Create the sound
-            await DatabaseOperations.CreateSoundAsync(uuid, name, false, soundFileUuid, null);
-
-            // Act
-            await DatabaseOperations.UpdateSoundAsync(uuid, null, newFavourite, null, null, null, null);
-
-            // Assert
-            var tableObjectFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
-            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
-            Assert.AreEqual(soundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
-            Assert.AreEqual(newFavourite, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
-            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
-            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName));
-        }
-
-        [TestMethod]
-        public async Task UpdateSoundAsyncShouldUpdateTheImageUuidOfTheSound()
-        {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            string name = "Phoenix Objection";
-            var soundFileUuid = Guid.NewGuid();
-            var newImageUuid = Guid.NewGuid();
-
-            // Create the sound
-            await DatabaseOperations.CreateSoundAsync(uuid, name, false, soundFileUuid, null);
-
-            // Act
-            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, null, newImageUuid, null);
-
-            // Assert
-            var tableObjectFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
-            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
-            Assert.AreEqual(soundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
-            Assert.IsFalse(bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
-            Assert.AreEqual(newImageUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName)));
-            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName));
-        }
-
-        [TestMethod]
-        public async Task UpdateSoundShouldUpdateTheCategoryUuidsOfTheSound()
-        {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            string name = "Phoenix Objection";
-            var soundFileUuid = Guid.NewGuid();
-            List<Guid> oldCategories = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> newCategories = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-
-            // Create the sound
-            await DatabaseOperations.CreateSoundAsync(uuid, name, false, soundFileUuid, oldCategories);
-
-            // Act
-            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, null, null, newCategories);
-
-            // Assert
-            var tableObjectFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
-            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
-            Assert.AreEqual(soundFileUuid, Guid.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName)));
-            Assert.IsFalse(bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
-            Assert.IsNull(tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
-
-            int i = 0;
-            string[] categoryUuids = tableObjectFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(",");
-            foreach (var categoryUuid in newCategories)
-            {
-                Assert.AreEqual(categoryUuid, Guid.Parse(categoryUuids[i]));
-                i++;
-            }
+            soundTableObjectCategories = soundFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(',');
+            Assert.AreEqual(updatedCategoryUuids.Count, soundTableObjectCategories.Length);
+            for (int i = 0; i < updatedCategoryUuids.Count; i++)
+                Assert.AreEqual(updatedCategoryUuids[i].ToString(), soundTableObjectCategories[i]);
         }
         #endregion
 
@@ -487,24 +452,49 @@ namespace UniversalSoundboard.Tests.DataAccess
             Assert.IsNull(imageFileFromDatabase);
         }
         #endregion
+        #endregion
 
+        #region Category
         #region CreateCategoryAsync
         [TestMethod]
-        public async Task CreateCategoryAsyncShouldCreateTheCategoryObjectWithTheCorrectProperties()
+        public async Task CreateCategoryAsyncShouldCreateTheCategoryTableObject()
         {
             // Arrange
-            var uuid = Guid.NewGuid();
-            string name = "Testcategory";
+            Guid uuid = Guid.NewGuid();
+            Guid parentUuid = Guid.NewGuid();
+            string name = "Sound name";
+            string icon = "icon";
+
+            // Act
+            await DatabaseOperations.CreateCategoryAsync(uuid, parentUuid, name, icon);
+
+            // Assert
+            TableObject categoryFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(categoryFromDatabase);
+            Assert.AreEqual(uuid, categoryFromDatabase.Uuid);
+            Assert.AreEqual(parentUuid.ToString(), categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableParentPropertyName));
+            Assert.AreEqual(name, categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(icon, categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
+        }
+
+        [TestMethod]
+        public async Task CreateCategoryAsyncShouldCreateTheCategoryTableObjectWithoutParent()
+        {
+            // Arrange
+            Guid uuid = Guid.NewGuid();
+            string name = "Category name";
             string icon = "icon";
 
             // Act
             await DatabaseOperations.CreateCategoryAsync(uuid, null, name, icon);
 
             // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
-            Assert.AreEqual(FileManager.CategoryTableId, tableObjectFromDatabase.TableId);
-            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
-            Assert.AreEqual(icon, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
+            TableObject categoryFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(categoryFromDatabase);
+            Assert.AreEqual(uuid, categoryFromDatabase.Uuid);
+            Assert.IsNull(categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableParentPropertyName));
+            Assert.AreEqual(name, categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(icon, categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
         }
         #endregion
 
@@ -513,16 +503,17 @@ namespace UniversalSoundboard.Tests.DataAccess
         public async Task GetAllCategoriesAsyncShouldReturnAllCategories()
         {
             // Arrange
-            var firstUuid = Guid.NewGuid();
-            var secondUuid = Guid.NewGuid();
-            string firstName = "FirstName";
-            string secondName = "SecondName";
-            string firstIcon = "FirstIcon";
-            string secondIcon = "SecondIcon";
+            Guid firstCategoryUuid = Guid.NewGuid();
+            Guid firstCategoryParentUuid = Guid.NewGuid();
+            string firstCategoryName = "First category name";
+            string firstCategoryIcon = "first category icon";
 
-            // Create the categories
-            await DatabaseOperations.CreateCategoryAsync(firstUuid, null, firstName, firstIcon);
-            await DatabaseOperations.CreateCategoryAsync(secondUuid, null, secondName, secondIcon);
+            Guid secondCategoryUuid = Guid.NewGuid();
+            string secondCategoryName = "Second category name";
+            string secondCategoryIcon = "second category icon";
+
+            await DatabaseOperations.CreateCategoryAsync(firstCategoryUuid, firstCategoryParentUuid, firstCategoryName, firstCategoryIcon);
+            await DatabaseOperations.CreateCategoryAsync(secondCategoryUuid, null, secondCategoryName, secondCategoryIcon);
 
             // Act
             List<TableObject> categories = await DatabaseOperations.GetAllCategoriesAsync();
@@ -530,23 +521,15 @@ namespace UniversalSoundboard.Tests.DataAccess
             // Assert
             Assert.AreEqual(2, categories.Count);
 
-            Assert.AreEqual(firstUuid, categories[0].Uuid);
-            Assert.AreEqual(firstName, categories[0].GetPropertyValue(FileManager.CategoryTableNamePropertyName));
-            Assert.AreEqual(firstIcon, categories[0].GetPropertyValue(FileManager.CategoryTableIconPropertyName));
+            Assert.AreEqual(firstCategoryUuid, categories[0].Uuid);
+            Assert.AreEqual(firstCategoryParentUuid.ToString(), categories[0].GetPropertyValue(FileManager.CategoryTableParentPropertyName));
+            Assert.AreEqual(firstCategoryName, categories[0].GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(firstCategoryIcon, categories[0].GetPropertyValue(FileManager.CategoryTableIconPropertyName));
 
-            Assert.AreEqual(secondUuid, categories[1].Uuid);
-            Assert.AreEqual(secondName, categories[1].GetPropertyValue(FileManager.CategoryTableNamePropertyName));
-            Assert.AreEqual(secondIcon, categories[1].GetPropertyValue(FileManager.CategoryTableIconPropertyName));
-        }
-
-        [TestMethod]
-        public async Task GetAllCategoriesAsyncShouldReturnEmptyListIfThereAreNoCategories()
-        {
-            // Act
-            List<TableObject> categories = await DatabaseOperations.GetAllCategoriesAsync();
-
-            // Assert
-            Assert.AreEqual(0, categories.Count);
+            Assert.AreEqual(secondCategoryUuid, categories[1].Uuid);
+            Assert.IsNull(categories[1].GetPropertyValue(FileManager.CategoryTableParentPropertyName));
+            Assert.AreEqual(secondCategoryName, categories[1].GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(secondCategoryIcon, categories[1].GetPropertyValue(FileManager.CategoryTableIconPropertyName));
         }
         #endregion
 
@@ -554,102 +537,89 @@ namespace UniversalSoundboard.Tests.DataAccess
         [TestMethod]
         public async Task UpdateCategoryAsyncShouldUpdateAllValuesOfTheCategory()
         {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            var oldName = "TestCategory";
-            var newName = "UpdatedCategory";
-            var oldIcon = "icon";
-            var newIcon = "updatedIcon";
+            // Arrange (1)
+            Guid uuid = Guid.NewGuid();
+            Guid parentUuid = Guid.NewGuid();
+            string name = "Test-Category";
+            string icon = "Test-Icon";
 
-            // Create the category
-            await DatabaseOperations.CreateCategoryAsync(uuid, null, oldName, oldIcon);
+            // Act (1)
+            await DatabaseOperations.CreateCategoryAsync(uuid, parentUuid, name, icon);
 
-            // Act
-            await DatabaseOperations.UpdateCategoryAsync(uuid, newName, newIcon, null);
+            // Assert (1)
+            TableObject categoryFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(categoryFromDatabase);
+            Assert.AreEqual(uuid, categoryFromDatabase.Uuid);
+            Assert.AreEqual(parentUuid.ToString(), categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableParentPropertyName));
+            Assert.AreEqual(name, categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(icon, categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
 
-            // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
-            Assert.AreEqual(newName, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
-            Assert.AreEqual(newIcon, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
-        }
+            // Arrange (2)
+            Guid updatedParentUuid = Guid.NewGuid();
+            string updatedName = "Updated category name";
+            string updatedIcon = "Updated category icon";
 
-        [TestMethod]
-        public async Task UpdateCategoryAsyncShouldUpdateTheNameOfTheCategory()
-        {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            var oldName = "Test category";
-            var newName = "Updated category";
-            var icon = "icon";
+            // Act (2)
+            await DatabaseOperations.UpdateCategoryAsync(uuid, updatedParentUuid, updatedName, updatedIcon);
 
-            // Create the category
-            await DatabaseOperations.CreateCategoryAsync(uuid, null, oldName, icon);
-
-            // Act
-            await DatabaseOperations.UpdateCategoryAsync(uuid, newName, null, null);
-
-            // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
-            Assert.AreEqual(newName, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
-            Assert.AreEqual(icon, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
-        }
-
-        [TestMethod]
-        public async Task UpdateCategoryAsyncShouldUpdateTheIconOfTheCategory()
-        {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            var name = "TestCategory";
-            var oldIcon = "icon";
-            var newIcon = "updated icon";
-
-            // Create the category
-            await DatabaseOperations.CreateCategoryAsync(uuid, null, name, oldIcon);
-
-            // Act
-            await DatabaseOperations.UpdateCategoryAsync(uuid, null, newIcon, null);
-
-            // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
-            Assert.AreEqual(name, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
-            Assert.AreEqual(newIcon, tableObjectFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
+            // Assert (2)
+            categoryFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(categoryFromDatabase);
+            Assert.AreEqual(uuid, categoryFromDatabase.Uuid);
+            Assert.AreEqual(updatedParentUuid.ToString(), categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableParentPropertyName));
+            Assert.AreEqual(updatedName, categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableNamePropertyName));
+            Assert.AreEqual(updatedIcon, categoryFromDatabase.GetPropertyValue(FileManager.CategoryTableIconPropertyName));
         }
         #endregion
 
+        #region DeleteCategoryAsync
+        [TestMethod]
+        public async Task DeleteCategoryAsyncShouldDeleteTheCategory()
+        {
+            // Arrange
+            Guid uuid = Guid.NewGuid();
+            await DatabaseOperations.CreateCategoryAsync(uuid, null, "test category", "test icon");
+
+            // Act
+            await DatabaseOperations.DeleteCategoryAsync(uuid);
+
+            // Assert
+            TableObject categoryFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNull(categoryFromDatabase);
+        }
+        #endregion
+        #endregion
+
+        #region PlayingSound
         #region CreatePlayingSoundAsync
         [TestMethod]
         public async Task CreatePlayingSoundAsyncShouldCreateThePlayingSoundObjectWithTheCorrectProperties()
         {
             // Arrange
-            var uuid = Guid.NewGuid();
-            List<Guid> soundUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            int current = 1;
-            int repetitions = 3;
+            Guid uuid = Guid.NewGuid();
+            List<Guid> soundUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+            int current = 2;
+            int repetitions = 12;
             bool randomly = true;
-            int volume = 40;
+            int volume = 78;
+            bool muted = true;
 
             // Act
-            await DatabaseOperations.CreatePlayingSoundAsync(uuid, soundUuids, current, repetitions, randomly, volume, false);
+            await DatabaseOperations.CreatePlayingSoundAsync(uuid, soundUuids, current, repetitions, randomly, volume, muted);
 
             // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
-            Assert.AreEqual(FileManager.PlayingSoundTableId, tableObjectFromDatabase.TableId);
-            Assert.AreEqual(current, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
-            Assert.AreEqual(repetitions, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
-            Assert.AreEqual(randomly, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(volume, double.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
+            TableObject playingSoundFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(playingSoundFromDatabase);
+            Assert.AreEqual(uuid, playingSoundFromDatabase.Uuid);
+            Assert.AreEqual(current, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
+            Assert.AreEqual(repetitions, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
+            Assert.AreEqual(randomly, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
+            Assert.AreEqual(volume, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(muted, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
 
-            int i = 0;
-            string[] tableObjectSoundUuids = tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(",");
-            foreach(var soundUuid in soundUuids)
-            {
-                Assert.AreEqual(soundUuid, tableObjectSoundUuids[i]);
-                i++;
-            }
+            string[] playingSoundTableObjectSoundUuids = playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(',');
+            for (int i = 0; i < soundUuids.Count; i++)
+                Assert.AreEqual(soundUuids[i].ToString(), playingSoundTableObjectSoundUuids[i]);
         }
         #endregion
 
@@ -658,73 +628,157 @@ namespace UniversalSoundboard.Tests.DataAccess
         public async Task GetAllPlayingSoundsAsyncShouldReturnAllPlayingSounds()
         {
             // Arrange
-            var firstUuid = Guid.NewGuid();
-            var secondUuid = Guid.NewGuid();
-            int firstCurrent = 0;
-            int secondCurrent = 1;
-            int firstRepetitions = 3;
-            int secondRepetitions = 1;
-            bool firstRandomly = true;
-            bool secondRandomly = false;
-            int firstVolume = 60;
-            int secondVolume = 20;
+            Guid firstPlayingSoundUuid = Guid.NewGuid();
+            Guid secondPlayingSoundUuid = Guid.NewGuid();
+            Guid thirdPlayingSoundUuid = Guid.NewGuid();
 
-            List<Guid> firstSoundUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> secondSoundUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
+            List<Guid> firstPlayingSoundSoundUuids = new List<Guid> { Guid.NewGuid() };
+            List<Guid> secondPlayingSoundSoundUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+            List<Guid> thirdPlayingSoundSoundUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
 
-            // Create the playing sounds
-            await DatabaseOperations.CreatePlayingSoundAsync(firstUuid, firstSoundUuids, firstCurrent, firstRepetitions, firstRandomly, firstVolume, false);
-            await DatabaseOperations.CreatePlayingSoundAsync(secondUuid, secondSoundUuids, secondCurrent, secondRepetitions, secondRandomly, secondVolume, false);
+            int firstPlayingSoundCurrent = 23;
+            int secondPlayingSoundCurrent = 12;
+            int thirdPlayingSoundCurrent = 0;
+
+            int firstPlayingSoundRepetitions = 12;
+            int secondPlayingSoundRepetitions = 2;
+            int thirdPlayingSoundRepetitions = 389;
+
+            bool firstPlayingSoundRandomly = false;
+            bool secondPlayingSoundRandomly = true;
+            bool thirdPlayingSoundRandomly = true;
+
+            int firstPlayingSoundVolume = 100;
+            int secondPlayingSoundVolume = 89;
+            int thirdPlayingSoundVolume = 76;
+
+            bool firstPlayingSoundMuted = false;
+            bool secondPlayingSoundMuted = false;
+            bool thirdPlayingSoundMuted = true;
+
+            await DatabaseOperations.CreatePlayingSoundAsync(
+                firstPlayingSoundUuid,
+                firstPlayingSoundSoundUuids,
+                firstPlayingSoundCurrent,
+                firstPlayingSoundRepetitions,
+                firstPlayingSoundRandomly,
+                firstPlayingSoundVolume,
+                firstPlayingSoundMuted
+            );
+            await DatabaseOperations.CreatePlayingSoundAsync(
+                secondPlayingSoundUuid,
+                secondPlayingSoundSoundUuids,
+                secondPlayingSoundCurrent,
+                secondPlayingSoundRepetitions,
+                secondPlayingSoundRandomly,
+                secondPlayingSoundVolume,
+                secondPlayingSoundMuted
+            );
+            await DatabaseOperations.CreatePlayingSoundAsync(
+                thirdPlayingSoundUuid,
+                thirdPlayingSoundSoundUuids,
+                thirdPlayingSoundCurrent,
+                thirdPlayingSoundRepetitions,
+                thirdPlayingSoundRandomly,
+                thirdPlayingSoundVolume,
+                thirdPlayingSoundMuted
+            );
 
             // Act
-            List<TableObject> playingSounds = await DatabaseOperations.GetAllPlayingSoundsAsync();
+            List<TableObject> playingSoundsFromDatabase = await DatabaseOperations.GetAllPlayingSoundsAsync();
 
             // Assert
-            Assert.AreEqual(2, playingSounds.Count);
+            Assert.AreEqual(3, playingSoundsFromDatabase.Count);
 
-            Assert.AreEqual(firstCurrent, int.Parse(playingSounds[0].GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
-            Assert.AreEqual(firstRepetitions, int.Parse(playingSounds[0].GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
-            Assert.AreEqual(firstRandomly, bool.Parse(playingSounds[0].GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(firstVolume, double.Parse(playingSounds[0].GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
+            Assert.AreEqual(firstPlayingSoundUuid, playingSoundsFromDatabase[0].Uuid);
+            Assert.AreEqual(firstPlayingSoundCurrent, int.Parse(playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
+            Assert.AreEqual(firstPlayingSoundRepetitions, int.Parse(playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
+            Assert.AreEqual(firstPlayingSoundRandomly, bool.Parse(playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
+            Assert.AreEqual(firstPlayingSoundVolume, int.Parse(playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(firstPlayingSoundMuted, bool.Parse(playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
 
-            int i = 0;
-            string[] firstTableObjectSoundUuids = playingSounds[0].GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(",");
-            foreach(var soundUuid in firstSoundUuids)
-            {
-                Assert.AreEqual(soundUuid, firstTableObjectSoundUuids[i]);
-                i++;
-            }
+            string[] firstPlayingSoundTableObjectSoundUuids = playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(',');
+            for (int i = 0; i < firstPlayingSoundSoundUuids.Count; i++)
+                Assert.AreEqual(firstPlayingSoundSoundUuids[i].ToString(), firstPlayingSoundTableObjectSoundUuids[i]);
 
-            Assert.AreEqual(secondCurrent, int.Parse(playingSounds[1].GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
-            Assert.AreEqual(secondRepetitions, int.Parse(playingSounds[1].GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
-            Assert.AreEqual(secondRandomly, bool.Parse(playingSounds[1].GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(secondVolume, double.Parse(playingSounds[1].GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
+            Assert.AreEqual(secondPlayingSoundUuid, playingSoundsFromDatabase[1].Uuid);
+            Assert.AreEqual(secondPlayingSoundCurrent, int.Parse(playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
+            Assert.AreEqual(secondPlayingSoundRepetitions, int.Parse(playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
+            Assert.AreEqual(secondPlayingSoundRandomly, bool.Parse(playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
+            Assert.AreEqual(secondPlayingSoundVolume, int.Parse(playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(secondPlayingSoundMuted, bool.Parse(playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
 
-            i = 0;
-            string[] secondTableObjectSoundUuids = playingSounds[1].GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(",");
-            foreach (var soundUuid in secondSoundUuids)
-            {
-                Assert.AreEqual(soundUuid, secondTableObjectSoundUuids[i]);
-                i++;
-            }
+            string[] secondPlayingSoundTableObjectSoundUuids = playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(',');
+            for (int i = 0; i < secondPlayingSoundSoundUuids.Count; i++)
+                Assert.AreEqual(secondPlayingSoundSoundUuids[i].ToString(), secondPlayingSoundTableObjectSoundUuids[i]);
+
+            Assert.AreEqual(thirdPlayingSoundUuid, playingSoundsFromDatabase[2].Uuid);
+            Assert.AreEqual(thirdPlayingSoundCurrent, int.Parse(playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
+            Assert.AreEqual(thirdPlayingSoundRepetitions, int.Parse(playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
+            Assert.AreEqual(thirdPlayingSoundRandomly, bool.Parse(playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
+            Assert.AreEqual(thirdPlayingSoundVolume, int.Parse(playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(thirdPlayingSoundMuted, bool.Parse(playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
+
+            string[] thirdPlayingSoundTableObjectSoundUuids = playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(',');
+            for (int i = 0; i < thirdPlayingSoundSoundUuids.Count; i++)
+                Assert.AreEqual(thirdPlayingSoundSoundUuids[i].ToString(), thirdPlayingSoundTableObjectSoundUuids[i]);
+        }
+        #endregion
+
+        #region GetPlayingSoundAsync
+        [TestMethod]
+        public async Task GetPlayingSoundAsyncShouldReturnThePlayingSound()
+        {
+            // Arrange
+            Guid uuid = Guid.NewGuid();
+            List<Guid> soundUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+            int current = 2;
+            int repetitions = 12;
+            bool randomly = true;
+            int volume = 78;
+            bool muted = true;
+
+            await DatabaseOperations.CreatePlayingSoundAsync(uuid, soundUuids, current, repetitions, randomly, volume, muted);
+
+            // Act
+            TableObject playingSoundFromDatabase = await DatabaseOperations.GetPlayingSoundAsync(uuid);
+
+            // Assert
+            Assert.IsNotNull(playingSoundFromDatabase);
+            Assert.AreEqual(uuid, playingSoundFromDatabase.Uuid);
+            Assert.AreEqual(current, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
+            Assert.AreEqual(repetitions, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
+            Assert.AreEqual(randomly, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
+            Assert.AreEqual(volume, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(muted, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
+
+            string[] playingSoundTableObjectSoundUuids = playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(',');
+            for (int i = 0; i < soundUuids.Count; i++)
+                Assert.AreEqual(soundUuids[i].ToString(), playingSoundTableObjectSoundUuids[i]);
         }
 
         [TestMethod]
-        public async Task GetAllPlayingSoundsAsyncShouldReturnEmptyListIfThereAreNoPlayingSounds()
+        public async Task GetPlayingSoundAsyncShouldReturnNullIfThePlayingSoundDoesNotExist()
         {
             // Act
-            List<TableObject> playingSounds = await DatabaseOperations.GetAllPlayingSoundsAsync();
+            TableObject playingSoundFromDatabase = await DatabaseOperations.GetPlayingSoundAsync(Guid.NewGuid());
 
             // Assert
-            Assert.AreEqual(0, playingSounds.Count);
+            Assert.IsNull(playingSoundFromDatabase);
+        }
+
+        [TestMethod]
+        public async Task GetPlayingSoundAsyncShouldReturnNullIfTheTableObjectIsNotAPlayingSound()
+        {
+            // Arrange
+            Guid uuid = Guid.NewGuid();
+            await Dav.Database.CreateTableObjectAsync(new TableObject(uuid, 123));
+
+            // Act
+            TableObject playingSoundFromDatabase = await DatabaseOperations.GetPlayingSoundAsync(uuid);
+
+            // Assert
+            Assert.IsNull(playingSoundFromDatabase);
         }
         #endregion
 
@@ -732,567 +786,284 @@ namespace UniversalSoundboard.Tests.DataAccess
         [TestMethod]
         public async Task UpdatePlayingSoundAsyncShouldUpdateAllValuesOfThePlayingSound()
         {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            List<Guid> oldSoundUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> newSoundUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            int oldCurrent = 0;
-            int newCurrent = 1;
-            int oldRepetitions = 3;
-            int newRepetitions = 5;
-            bool oldRandomly = true;
-            bool newRandomly = false;
-            int oldVolume = 40;
-            int newVolume = 96;
-
-            // Create the playing sound
-            await DatabaseOperations.CreatePlayingSoundAsync(uuid, oldSoundUuids, oldCurrent, oldRepetitions, oldRandomly, oldVolume, false);
-
-            // Act
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, newSoundUuids, newCurrent, newRepetitions, newRandomly, newVolume, null);
-
-            // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
-            Assert.AreEqual(newCurrent, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
-            Assert.AreEqual(newRepetitions, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
-            Assert.AreEqual(newRandomly, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(newVolume, double.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
-
-            int i = 0;
-            string[] tableObjectSoundUuids = tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(",");
-            foreach (var soundUuid in newSoundUuids)
-            {
-                Assert.AreEqual(soundUuid, tableObjectSoundUuids[i]);
-                i++;
-            }
-        }
-
-        [TestMethod]
-        public async Task UpdatePlayingSoundAsyncShouldUpdateTheSoundUuidsOfThePlayingSound()
-        {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            List<Guid> oldSoundUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> newSoundUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            int current = 1;
-            int repetitions = 2;
+            // Arrange (1)
+            Guid uuid = Guid.NewGuid();
+            List<Guid> soundUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+            int current = 23;
+            int repetitions = 10;
             bool randomly = true;
             int volume = 80;
+            bool muted = false;
 
-            // Create the playing sound
-            await DatabaseOperations.CreatePlayingSoundAsync(uuid, oldSoundUuids, current, repetitions, randomly, volume, false);
+            // Act (1)
+            await DatabaseOperations.CreatePlayingSoundAsync(
+                uuid,
+                soundUuids,
+                current,
+                repetitions,
+                randomly,
+                volume,
+                muted
+            );
 
-            // Act
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, newSoundUuids, null, null, null, null, null);
+            // Assert (1)
+            TableObject playingSoundFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(playingSoundFromDatabase);
+            Assert.AreEqual(uuid, playingSoundFromDatabase.Uuid);
+            Assert.AreEqual(current, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
+            Assert.AreEqual(repetitions, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
+            Assert.AreEqual(randomly, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
+            Assert.AreEqual(volume, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(muted, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
 
-            // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
-            Assert.AreEqual(current, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
-            Assert.AreEqual(repetitions, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
-            Assert.AreEqual(randomly, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(volume, double.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
+            string[] playingSoundTableObjectSoundUuids = playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(',');
+            for (int i = 0; i < soundUuids.Count; i++)
+                Assert.AreEqual(soundUuids[i].ToString(), playingSoundTableObjectSoundUuids[i]);
 
-            int i = 0;
-            string[] tableObjectSoundUuids = tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(",");
-            foreach (var soundUuid in newSoundUuids)
-            {
-                Assert.AreEqual(soundUuid, tableObjectSoundUuids[i]);
-                i++;
-            }
-        }
+            // Arrange (2)
+            List<Guid> updatedSoundUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
+            int updatedCurrent = 3;
+            int updatedRepetitions = 29;
+            bool updatedRandomly = false;
+            int updatedVolume = 43;
+            bool updatedMuted = true;
 
-        [TestMethod]
-        public async Task UpdatePlayingSoundAsyncShouldUpdateTheCurrentOfThePlayingSound()
-        {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            List<Guid> soundUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            int oldCurrent = 1;
-            int newCurrent = 0;
-            int repetitions = 2;
-            bool randomly = true;
-            int volume = 80;
+            // Act (2)
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid,
+                updatedSoundUuids,
+                updatedCurrent,
+                updatedRepetitions,
+                updatedRandomly,
+                updatedVolume,
+                updatedMuted
+            );
 
-            // Create the playing sound
-            await DatabaseOperations.CreatePlayingSoundAsync(uuid, soundUuids, oldCurrent, repetitions, randomly, volume, false);
-
-            // Act
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, newCurrent, null, null, null, null);
-
-            // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
-            Assert.AreEqual(newCurrent, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
-            Assert.AreEqual(repetitions, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
-            Assert.AreEqual(randomly, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(volume, double.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
-
-            int i = 0;
-            string[] tableObjectSoundUuids = tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(",");
-            foreach (var soundUuid in soundUuids)
-            {
-                Assert.AreEqual(soundUuid, tableObjectSoundUuids[i]);
-                i++;
-            }
-        }
-
-        [TestMethod]
-        public async Task UpdatePlayingSoundAsyncShouldUpdateTheRepetitionsOfThePlayingSound()
-        {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            List<Guid> soundUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            int current = 1;
-            int oldRepetitions = 2;
-            int newRepetitions = 4;
-            bool randomly = true;
-            int volume = 80;
-
-            // Create the playing sound
-            await DatabaseOperations.CreatePlayingSoundAsync(uuid, soundUuids, current, oldRepetitions, randomly, volume, false);
-
-            // Act
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, newRepetitions, null, null, null);
-
-            // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
-            Assert.AreEqual(current, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
-            Assert.AreEqual(newRepetitions, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
-            Assert.AreEqual(randomly, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(volume, double.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
-
-            int i = 0;
-            string[] tableObjectSoundUuids = tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(",");
-            foreach (var soundUuid in soundUuids)
-            {
-                Assert.AreEqual(soundUuid, tableObjectSoundUuids[i]);
-                i++;
-            }
-        }
-
-        [TestMethod]
-        public async Task UpdatePlayingSoundAsyncShouldUpdateTheRandomlyOfThePlayingSound()
-        {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            List<Guid> soundUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            int current = 1;
-            int repetitions = 2;
-            bool oldRandomly = false;
-            bool newRandomly = true;
-            int volume = 80;
-
-            // Create the playing sound
-            await DatabaseOperations.CreatePlayingSoundAsync(uuid, soundUuids, current, repetitions, oldRandomly, volume, false);
-
-            // Act
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, newRandomly, null, null);
-
-            // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
-            Assert.AreEqual(current, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
-            Assert.AreEqual(repetitions, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
-            Assert.AreEqual(newRandomly, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(volume, double.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
-
-            int i = 0;
-            string[] tableObjectSoundUuids = tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(",");
-            foreach (var soundUuid in soundUuids)
-            {
-                Assert.AreEqual(soundUuid, tableObjectSoundUuids[i]);
-                i++;
-            }
-        }
-
-        [TestMethod]
-        public async Task UpdatePlayingSoundAsyncShouldUpdateTheVolumeOfThePlayingSound()
-        {
-            // Arrange
-            var uuid = Guid.NewGuid();
-            List<Guid> soundUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            int current = 1;
-            int repetitions = 2;
-            bool randomly = true;
-            int oldVolume = 60;
-            int newVolume = 100;
-
-            // Create the playing sound
-            await DatabaseOperations.CreatePlayingSoundAsync(uuid, soundUuids, current, repetitions, randomly, oldVolume, false);
-
-            // Act
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, newVolume, null);
-
-            // Assert
-            var tableObjectFromDatabase = await Dav.Database.GetTableObjectAsync(uuid);
-            Assert.AreEqual(current, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
-            Assert.AreEqual(repetitions, int.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
-            Assert.AreEqual(randomly, bool.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(newVolume, double.Parse(tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
-
-            int i = 0;
-            string[] tableObjectSoundUuids = tableObjectFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(",");
-            foreach (var soundUuid in soundUuids)
-            {
-                Assert.AreEqual(soundUuid, tableObjectSoundUuids[i]);
-                i++;
-            }
+            // Assert (2)
+            playingSoundFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
+            Assert.IsNotNull(playingSoundFromDatabase);
+            Assert.AreEqual(uuid, playingSoundFromDatabase.Uuid);
+            Assert.AreEqual(updatedCurrent, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
+            Assert.AreEqual(updatedRepetitions, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
+            Assert.AreEqual(updatedRandomly, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
+            Assert.AreEqual(updatedVolume, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(updatedMuted, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
         }
         #endregion
+        #endregion
 
-        #region GetAllOrdersAsync
+        #region Order
         [TestMethod]
         public async Task GetAllOrdersAsyncShouldReturnAllOrders()
         {
             // Arrange
-            var firstUuid = Guid.NewGuid();
-            var secondUuid = Guid.NewGuid();
+            Guid categoryOrderParentUuid = Guid.NewGuid();
+            List<Guid> categoryOrderUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
 
-            // Create the orders
-            await TableObject.CreateAsync(firstUuid, FileManager.OrderTableId);
-            await TableObject.CreateAsync(secondUuid, FileManager.OrderTableId);
+            Guid soundOrderCategoryUuid = Guid.NewGuid();
+            bool soundOrderFavourite = false;
+            List<Guid> soundOrderUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+
+            await DatabaseOperations.SetCategoryOrderAsync(categoryOrderParentUuid, categoryOrderUuids);
+            await DatabaseOperations.SetSoundOrderAsync(soundOrderCategoryUuid, soundOrderFavourite, soundOrderUuids);
 
             // Act
-            List<TableObject> orders = await DatabaseOperations.GetAllOrdersAsync();
+            List<TableObject> ordersFromDatabase = await DatabaseOperations.GetAllOrdersAsync();
 
             // Assert
-            Assert.AreEqual(2, orders.Count);
-        }
+            Assert.AreEqual(2, ordersFromDatabase.Count);
 
-        [TestMethod]
-        public async Task GetAllOrdersAsyncShouldReturnEmptyListIfThereAreNoOrders()
-        {
-            // Act
-            List<TableObject> orders = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(FileManager.CategoryOrderType, ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(categoryOrderUuids[0].ToString(), ordersFromDatabase[0].GetPropertyValue("0"));
+            Assert.AreEqual(categoryOrderUuids[1].ToString(), ordersFromDatabase[0].GetPropertyValue("1"));
+            Assert.IsNull(ordersFromDatabase[0].GetPropertyValue("2"));
 
-            // Assert
-            Assert.AreEqual(0, orders.Count);
+            Assert.AreEqual(FileManager.SoundOrderType, ordersFromDatabase[1].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(soundOrderFavourite, bool.Parse(ordersFromDatabase[1].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
+            Assert.AreEqual(soundOrderUuids[0].ToString(), ordersFromDatabase[1].GetPropertyValue("0"));
+            Assert.AreEqual(soundOrderUuids[1].ToString(), ordersFromDatabase[1].GetPropertyValue("1"));
+            Assert.AreEqual(soundOrderUuids[2].ToString(), ordersFromDatabase[1].GetPropertyValue("2"));
+            Assert.IsNull(ordersFromDatabase[1].GetPropertyValue("3"));
         }
         #endregion
 
+        #region CategoryOrder
         #region SetCategoryOrderAsync
         [TestMethod]
-        public async Task SetCategoryOrderAsyncShouldCreateNewOrderWithTheCorrectProperties()
+        public async Task SetCategoryOrderAsyncShouldCreateNewCategoryOrder()
         {
             // Arrange
-            List<Guid> uuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
+            Guid parentUuid = Guid.NewGuid();
+            List<Guid> uuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
 
             // Act
-            await DatabaseOperations.SetCategoryOrderAsync(Guid.NewGuid(), uuids);
+            await DatabaseOperations.SetCategoryOrderAsync(parentUuid, uuids);
 
             // Assert
-            var tableObjects = await DatabaseOperations.GetAllOrdersAsync();
-            Assert.AreEqual(1, tableObjects.Count);
-            var categoryOrderTableObject = tableObjects.Find(obj => obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) == FileManager.CategoryOrderType);
-            Assert.IsNotNull(categoryOrderTableObject);
-            Assert.AreEqual(uuids.Count + 1, categoryOrderTableObject.Properties.Count);
-            
-            for(int i = 0; i < uuids.Count; i++)
-            {
-                string value = categoryOrderTableObject.GetPropertyValue(i.ToString());
-                Assert.AreEqual(uuids[i], Guid.Parse(value));
-            }
+            List<TableObject> ordersFromDatabase = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, ordersFromDatabase.Count);
+            Assert.AreEqual(FileManager.CategoryOrderType, ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(uuids[0].ToString(), ordersFromDatabase[0].GetPropertyValue("0"));
+            Assert.AreEqual(uuids[1].ToString(), ordersFromDatabase[0].GetPropertyValue("1"));
+            Assert.AreEqual(uuids[2].ToString(), ordersFromDatabase[0].GetPropertyValue("2"));
+            Assert.IsNull(ordersFromDatabase[0].GetPropertyValue("3"));
         }
 
         [TestMethod]
-        public async Task SetCategoryOrderAsyncShouldUpdateTheExistingOrderWithTheCorrectProperties()
+        public async Task SetCategoryOrderAsyncShouldUpdateExistingOrder()
         {
-            // Arrange
-            List<Guid> oldUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> newUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
+            // Arrange (1)
+            Guid parentUuid = Guid.NewGuid();
+            List<Guid> uuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
 
-            // Create the category order
-            await DatabaseOperations.SetCategoryOrderAsync(Guid.NewGuid(), oldUuids);
+            // Act (1)
+            await DatabaseOperations.SetCategoryOrderAsync(parentUuid, uuids);
 
-            // Act
-            await DatabaseOperations.SetCategoryOrderAsync(Guid.NewGuid(), newUuids);
+            // Assert (1)
+            List<TableObject> ordersFromDatabase = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, ordersFromDatabase.Count);
+            Assert.AreEqual(FileManager.CategoryOrderType, ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(uuids[0].ToString(), ordersFromDatabase[0].GetPropertyValue("0"));
+            Assert.AreEqual(uuids[1].ToString(), ordersFromDatabase[0].GetPropertyValue("1"));
+            Assert.AreEqual(uuids[2].ToString(), ordersFromDatabase[0].GetPropertyValue("2"));
+            Assert.IsNull(ordersFromDatabase[0].GetPropertyValue("3"));
 
-            // Assert
-            var tableObjects = await DatabaseOperations.GetAllOrdersAsync();
-            Assert.AreEqual(1, tableObjects.Count);
-            var categoryOrderTableObject = tableObjects.Find(obj => obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) == FileManager.CategoryOrderType);
-            Assert.IsNotNull(categoryOrderTableObject);
-            Assert.AreEqual(newUuids.Count + 1, categoryOrderTableObject.Properties.Count);
+            // Arrange (2)
+            List<Guid> updatedUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
 
-            for (int i = 0; i < newUuids.Count; i++)
-            {
-                string value = categoryOrderTableObject.GetPropertyValue(i.ToString());
-                Assert.AreEqual(newUuids[i], Guid.Parse(value));
-            }
-        }
+            // Act (2)
+            await DatabaseOperations.SetCategoryOrderAsync(parentUuid, updatedUuids);
 
-        [TestMethod]
-        public async Task SetCategoryOrderAsyncShouldUpdateTheExistingOrderAndRemoveTheRedundantUuids()
-        {
-            // Arrange
-            List<Guid> oldUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> newUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-
-            // Create the category order
-            await DatabaseOperations.SetCategoryOrderAsync(Guid.NewGuid(), oldUuids);
-
-            // Act
-            await DatabaseOperations.SetCategoryOrderAsync(Guid.NewGuid(), newUuids);
-
-            // Assert
-            var tableObjects = await DatabaseOperations.GetAllOrdersAsync();
-            Assert.AreEqual(1, tableObjects.Count);
-            var categoryOrderTableObject = tableObjects.Find(obj => obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) == FileManager.CategoryOrderType);
-            Assert.IsNotNull(categoryOrderTableObject);
-            Assert.AreEqual(newUuids.Count + 1, categoryOrderTableObject.Properties.Count);
-
-            for (int i = 0; i < newUuids.Count; i++)
-            {
-                string value = categoryOrderTableObject.GetPropertyValue(i.ToString());
-                Assert.AreEqual(newUuids[i], Guid.Parse(value));
-            }
+            // Assert (2)
+            ordersFromDatabase = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, ordersFromDatabase.Count);
+            Assert.AreEqual(FileManager.CategoryOrderType, ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(updatedUuids[0].ToString(), ordersFromDatabase[0].GetPropertyValue("0"));
+            Assert.AreEqual(updatedUuids[1].ToString(), ordersFromDatabase[0].GetPropertyValue("1"));
+            Assert.IsNull(ordersFromDatabase[0].GetPropertyValue("2"));
         }
         #endregion
 
+        #region DeleteCategoryOrderAsync
+        [TestMethod]
+        public async Task DeleteCategoryOrderAsyncShouldDeleteTheCategoryOrder()
+        {
+            // Arrange (1)
+            Guid parentUuid = Guid.NewGuid();
+            List<Guid> uuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+
+            // Act (1)
+            await DatabaseOperations.SetCategoryOrderAsync(parentUuid, uuids);
+
+            // Assert (1)
+            List<TableObject> ordersFromDatabase = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, ordersFromDatabase.Count);
+            Assert.AreEqual(FileManager.CategoryOrderType, ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(uuids[0].ToString(), ordersFromDatabase[0].GetPropertyValue("0"));
+            Assert.AreEqual(uuids[1].ToString(), ordersFromDatabase[0].GetPropertyValue("1"));
+            Assert.AreEqual(uuids[2].ToString(), ordersFromDatabase[0].GetPropertyValue("2"));
+            Assert.IsNull(ordersFromDatabase[0].GetPropertyValue("3"));
+
+            // Act (2)
+            await DatabaseOperations.DeleteCategoryOrderAsync(parentUuid);
+
+            // Assert (2)
+            ordersFromDatabase = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(0, ordersFromDatabase.Count);
+        }
+        #endregion
+        #endregion
+
+        #region SoundOrder
         #region SetSoundOrderAsync
         [TestMethod]
-        public async Task SetSoundOrderAsyncShouldCreateNewOrderForTheCategory()
+        public async Task SetSoundOrderAsyncShouldCreateNewSoundOrder()
         {
             // Arrange
-            var firstCategoryUuid = Guid.NewGuid();
-            var secondCategoryUuid = Guid.NewGuid();
-
-            List<Guid> firstCategoryUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> secondCategoryUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-
-            // Create the first sound order
-            await DatabaseOperations.SetSoundOrderAsync(firstCategoryUuid, false, firstCategoryUuids);
-            var orders = await DatabaseOperations.GetAllOrdersAsync();
-            Assert.AreEqual(1, orders.Count);
-            
-            // Create the second sound order
-            await DatabaseOperations.SetSoundOrderAsync(secondCategoryUuid, false, secondCategoryUuids);
-            orders = await DatabaseOperations.GetAllOrdersAsync();
-            Assert.AreEqual(2, orders.Count);
-
-            // Test the first sound order
-            Assert.AreEqual(FileManager.SoundOrderType, orders[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
-            Assert.AreEqual(firstCategoryUuid, Guid.Parse(orders[0].GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
-            Assert.IsFalse(bool.Parse(orders[0].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
-
-            for (int i = 0; i < firstCategoryUuids.Count; i++)
-            {
-                string value = orders[0].GetPropertyValue(i.ToString());
-                Assert.AreEqual(firstCategoryUuids[i], Guid.Parse(value));
-            }
-
-            // Test the second sound order
-            Assert.AreEqual(FileManager.SoundOrderType, orders[1].GetPropertyValue(FileManager.OrderTableTypePropertyName));
-            Assert.AreEqual(secondCategoryUuid, Guid.Parse(orders[1].GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
-            Assert.IsFalse(bool.Parse(orders[1].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
-
-            for (int i = 0; i < secondCategoryUuids.Count; i++)
-            {
-                string value = orders[1].GetPropertyValue(i.ToString());
-                Assert.AreEqual(secondCategoryUuids[i], Guid.Parse(value));
-            }
-        }
-
-        [TestMethod]
-        public async Task SetSoundOrderAsyncShouldCreateNewOrderForTheFavouritesOfTheCategory()
-        {
-            // Arrange
-            var categoryUuid = Guid.NewGuid();
-
-            List<Guid> normalUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> favouriteUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-
-            // Create the normal sound order
-            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, false, normalUuids);
-            var orders = await DatabaseOperations.GetAllOrdersAsync();
-            Assert.AreEqual(1, orders.Count);
-
-            // Create the favourites sound order
-            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, true, favouriteUuids);
-            orders = await DatabaseOperations.GetAllOrdersAsync();
-            Assert.AreEqual(2, orders.Count);
-
-            // Test the normal sound order
-            Assert.AreEqual(FileManager.SoundOrderType, orders[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
-            Assert.AreEqual(categoryUuid, Guid.Parse(orders[0].GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
-            Assert.IsFalse(bool.Parse(orders[0].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
-
-            for (int i = 0; i < normalUuids.Count; i++)
-            {
-                string value = orders[0].GetPropertyValue(i.ToString());
-                Assert.AreEqual(normalUuids[i], Guid.Parse(value));
-            }
-
-            // Test the favourites sound order
-            Assert.AreEqual(FileManager.SoundOrderType, orders[1].GetPropertyValue(FileManager.OrderTableTypePropertyName));
-            Assert.AreEqual(categoryUuid, Guid.Parse(orders[1].GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
-            Assert.IsTrue(bool.Parse(orders[1].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
-
-            for (int i = 0; i < favouriteUuids.Count; i++)
-            {
-                string value = orders[1].GetPropertyValue(i.ToString());
-                Assert.AreEqual(favouriteUuids[i], Guid.Parse(value));
-            }
-        }
-
-        [TestMethod]
-        public async Task SetSoundOrderAsyncShouldUpdateTheExistingOrderWithTheCorrectProperties()
-        {
-            // Arrange
-            var categoryUuid = Guid.NewGuid();
-            List<Guid> oldUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> newUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-
-            // Create the sound order
-            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, false, oldUuids);
-            var orders = await DatabaseOperations.GetAllOrdersAsync();
-            Assert.AreEqual(1, orders.Count);
+            Guid categoryUuid = Guid.NewGuid();
+            bool favourite = true;
+            List<Guid> uuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
 
             // Act
-            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, false, newUuids);
+            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, favourite, uuids);
 
             // Assert
-            orders = await DatabaseOperations.GetAllOrdersAsync();
-            Assert.AreEqual(1, orders.Count);
-
-            Assert.AreEqual(FileManager.SoundOrderType, orders[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
-            Assert.AreEqual(categoryUuid, Guid.Parse(orders[0].GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
-            Assert.IsFalse(bool.Parse(orders[0].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
-
-            for (int i = 0; i < newUuids.Count; i++)
-            {
-                string value = orders[0].GetPropertyValue(i.ToString());
-                Assert.AreEqual(newUuids[i], Guid.Parse(value));
-            }
+            List<TableObject> ordersFromDatabase = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, ordersFromDatabase.Count);
+            Assert.AreEqual(FileManager.SoundOrderType, ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(favourite, bool.Parse(ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
+            Assert.AreEqual(uuids[0].ToString(), ordersFromDatabase[0].GetPropertyValue("0"));
+            Assert.AreEqual(uuids[1].ToString(), ordersFromDatabase[0].GetPropertyValue("1"));
+            Assert.AreEqual(uuids[2].ToString(), ordersFromDatabase[0].GetPropertyValue("2"));
+            Assert.IsNull(ordersFromDatabase[0].GetPropertyValue("3"));
         }
 
         [TestMethod]
-        public async Task SetSoundOrderAsyncShouldUpdateTheExistingOrderAndRemoveTheRedundantUuids()
+        public async Task SetSoundOrderAsyncShouldUpdateExistingOrder()
         {
-            // Arrange
-            var categoryUuid = Guid.NewGuid();
-            List<Guid> oldUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
-            List<Guid> newUuids = new List<Guid>
-            {
-                Guid.NewGuid(),
-                Guid.NewGuid()
-            };
+            // Arrange (1)
+            Guid categoryUuid = Guid.NewGuid();
+            bool favourite = true;
+            List<Guid> uuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
 
-            // Create the sound order
-            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, false, oldUuids);
-            var orders = await DatabaseOperations.GetAllOrdersAsync();
-            Assert.AreEqual(1, orders.Count);
+            // Act (1)
+            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, favourite, uuids);
 
-            // Act
-            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, false, newUuids);
+            // Assert (1)
+            List<TableObject> ordersFromDatabase = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, ordersFromDatabase.Count);
+            Assert.AreEqual(FileManager.SoundOrderType, ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(favourite, bool.Parse(ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
+            Assert.AreEqual(uuids[0].ToString(), ordersFromDatabase[0].GetPropertyValue("0"));
+            Assert.AreEqual(uuids[1].ToString(), ordersFromDatabase[0].GetPropertyValue("1"));
+            Assert.AreEqual(uuids[2].ToString(), ordersFromDatabase[0].GetPropertyValue("2"));
+            Assert.IsNull(ordersFromDatabase[0].GetPropertyValue("3"));
 
-            // Assert
-            orders = await DatabaseOperations.GetAllOrdersAsync();
-            Assert.AreEqual(1, orders.Count);
+            // Arrange (2)
+            List<Guid> updatedUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
 
-            var soundOrderTableObject = orders[0];
-            Assert.AreEqual(newUuids.Count + 3, soundOrderTableObject.Properties.Count);
-            Assert.AreEqual(FileManager.SoundOrderType, soundOrderTableObject.GetPropertyValue(FileManager.OrderTableTypePropertyName));
-            Assert.AreEqual(categoryUuid, Guid.Parse(soundOrderTableObject.GetPropertyValue(FileManager.OrderTableCategoryPropertyName)));
-            Assert.IsFalse(bool.Parse(soundOrderTableObject.GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
+            // Act (2)
+            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, favourite, updatedUuids);
 
-            for (int i = 0; i < newUuids.Count; i++)
-            {
-                string value = soundOrderTableObject.GetPropertyValue(i.ToString());
-                Assert.AreEqual(newUuids[i], Guid.Parse(value));
-            }
+            // Assert (2)
+            ordersFromDatabase = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, ordersFromDatabase.Count);
+            Assert.AreEqual(FileManager.SoundOrderType, ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(favourite, bool.Parse(ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableFavouritePropertyName)));
+            Assert.AreEqual(updatedUuids[0].ToString(), ordersFromDatabase[0].GetPropertyValue("0"));
+            Assert.AreEqual(updatedUuids[1].ToString(), ordersFromDatabase[0].GetPropertyValue("1"));
+            Assert.IsNull(ordersFromDatabase[0].GetPropertyValue("2"));
         }
+        #endregion
+
+        #region DeleteSoundOrderAsync
+        [TestMethod]
+        public async Task DeleteSoundOrderAsyncShouldDeleteTheSoundOrder()
+        {
+            // Arrange (1)
+            Guid categoryUuid = Guid.NewGuid();
+            bool favourite = true;
+            List<Guid> uuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
+
+            // Act (1)
+            await DatabaseOperations.SetSoundOrderAsync(categoryUuid, favourite, uuids);
+
+            // Assert (1)
+            List<TableObject> ordersFromDatabase = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(1, ordersFromDatabase.Count);
+            Assert.AreEqual(FileManager.SoundOrderType, ordersFromDatabase[0].GetPropertyValue(FileManager.OrderTableTypePropertyName));
+            Assert.AreEqual(uuids[0].ToString(), ordersFromDatabase[0].GetPropertyValue("0"));
+            Assert.AreEqual(uuids[1].ToString(), ordersFromDatabase[0].GetPropertyValue("1"));
+            Assert.AreEqual(uuids[2].ToString(), ordersFromDatabase[0].GetPropertyValue("2"));
+            Assert.IsNull(ordersFromDatabase[0].GetPropertyValue("3"));
+
+            // Act (2)
+            await DatabaseOperations.DeleteSoundOrderAsync(categoryUuid, favourite);
+
+            // Assert (2)
+            ordersFromDatabase = await DatabaseOperations.GetAllOrdersAsync();
+            Assert.AreEqual(0, ordersFromDatabase.Count);
+        }
+        #endregion
         #endregion
     }
 }
