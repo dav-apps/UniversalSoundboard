@@ -162,7 +162,7 @@ namespace UniversalSoundBoard.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Light ? "ms-appx:///Assets/Icons/altform-lightunplated/Square44x44Logo.scale-400.png" : "ms-appx:///Assets/Icons/altform-unplated/Square44x44Logo.scale-400.png";
+            return FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Light ? "ms-appx:///Assets/Icons/Square71x71Logo.scale-400_theme-light.png" : "ms-appx:///Assets/Icons/Square71x71Logo.scale-400.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

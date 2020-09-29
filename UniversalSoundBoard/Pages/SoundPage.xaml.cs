@@ -676,9 +676,9 @@ namespace UniversalSoundBoard.Pages
                 ) ? Visibility.Visible : Visibility.Collapsed;
 
             if(FileManager.itemViewHolder.AllSounds.Count > 0)
-                EmptyCategoryMessageRelativePanel.Margin = new Thickness(0, 260, 0, 25);
+                EmptyCategoryMessageRelativePanel.Margin = new Thickness(0, 220, 0, 25);
             else
-                EmptyCategoryMessageRelativePanel.Margin = new Thickness(0, 150, 0, 25);
+                EmptyCategoryMessageRelativePanel.Margin = new Thickness(0, 110, 0, 25);
 
             emptyCategoryMessageVisibility = (
                 !FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty)

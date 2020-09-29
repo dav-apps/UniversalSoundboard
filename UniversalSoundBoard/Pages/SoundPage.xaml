@@ -34,8 +34,13 @@
         </DataTemplate>
 
         <!-- Styles -->
+        <Style x:Name="StartMessageLogoStyle" TargetType="Image">
+            <Setter Property="Height" Value="160" />
+            <Setter Property="Width" Value="160" />
+        </Style>
+        
         <Style x:Name="StartMessageTitleStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleTextBlockStyle}">
-            <Setter Property="Margin" Value="0,60,0,0" />
+            <Setter Property="Margin" Value="0,30,0,0" />
             <Setter Property="TextAlignment" Value="Center" />
         </Style>
         
@@ -286,14 +291,13 @@
                 Drop="SoundContentGrid_Drop">
             
                 <RelativePanel
-                    Margin="0,150,0,25">
+                    Margin="0,110,0,25">
 
                     <Image
                         Name="LogoImage"
                         RelativePanel.AlignHorizontalCenterWithPanel="True"
-                        Source="{Binding CurrentTheme, Converter={StaticResource LogoImageSourceConverter}}"
-                        Width="90"
-                        Height="90" />
+                        Style="{StaticResource StartMessageLogoStyle}"
+                        Source="{Binding CurrentTheme, Converter={StaticResource LogoImageSourceConverter}}" />
 
                     <TextBlock
                         Name="StartMessageTitleTextBlock"
@@ -394,14 +398,13 @@
 
                 <RelativePanel
                     Name="EmptyCategoryMessageRelativePanel"
-                    Margin="0,150,0,25">
+                    Margin="0,110,0,25">
 
                     <Image
                         Name="EmptyCategoryImage"
                         RelativePanel.AlignHorizontalCenterWithPanel="True"
-                        Source="{Binding CurrentTheme, Converter={StaticResource LogoImageSourceConverter}}"
-                        Width="90"
-                        Height="90" />
+                        Style="{StaticResource StartMessageLogoStyle}"
+                        Source="{Binding CurrentTheme, Converter={StaticResource LogoImageSourceConverter}}" />
 
                     <TextBlock
                         Name="EmptyCategoryMessageTitleTextBlock"
