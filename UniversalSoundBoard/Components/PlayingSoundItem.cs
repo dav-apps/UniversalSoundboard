@@ -109,7 +109,17 @@ namespace UniversalSoundboard.Components
                 PlayingSound.MediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
                 PlayingSound.MediaPlayer.TimelineController.PositionChanged += TimelineController_PositionChanged;
                 if(PlayingSound.MediaPlayer.Source != null)
-                    ((MediaSource)PlayingSound.MediaPlayer.Source).OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
+                {
+                    var mediaSource = (MediaSource)PlayingSound.MediaPlayer.Source;
+                    mediaSource.OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
+
+                    if (mediaSource.IsOpen)
+                    {
+                        // Set the total duration and call the DurationChanged event
+                        currentSoundTotalDuration = mediaSource.Duration.GetValueOrDefault();
+                        DurationChanged?.Invoke(this, new DurationChangedEventArgs(mediaSource.Duration.GetValueOrDefault()));
+                    }
+                }
 
                 systemMediaTransportControls.ButtonPressed += SystemMediaTransportControls_ButtonPressed;
 
