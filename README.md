@@ -1,22 +1,21 @@
 # UniversalSoundboard
 
-UniversalSoundboard is a customizable soundboard for your Windows 10 device.
-Add your sounds or music and sort them in categories. You can also add images to your favourite sounds.
+UniversalSoundboard is a customizable soundboard and music player app for Windows 10.
+Create your own soundboard by adding your sound and music files. Sort your sounds in categories and add images to them. There are many different settings and modes to adapt your soundboard to your liking.
 
-![](https://cfz0og.am.files.1drv.com/y4middfCYbw67Fnq_UpIiL6KjdRUVDDG8YCgtgP6szSPiKARG2WHpBuWDKcmjNDO4uraFuU7w-qpZohkUrIN1qZiFwSOSSw9tgQVHaNEng4UoA4StgMcgHEPqT3IPbPVKX-gfMwX2kGjt583SGRICPw9G3jWrUL-RStopLfkSLB9rVk4tyqJufuyKU6tAcmjYuC4cbna5Li2n57NGvVlZuwug/2019-07-21%20%281%29.png?psid=1)
+![](https://rp2pbg.am.files.1drv.com/y4mdv_ItUjzEEJdG-mBZ0g1_K4PxjmXN0hXJX2zjrO2AlQ1-3y9VglPX7bIxHfBVize9sjQtCVgi9WWWhO6CtuygyvFcwL3nBeHK03lQQDc8IWNq0XjIq71bgtc3uo4dTeQ7vfvAeODnHU2vP2F_9onVSYh7NFY_R96ScRzA5JVrw99x1O41Vztbm3Qu4PQYV6o1ZIYquVC7z7LJ4rpI9lLSg?width=1920&height=1080&cropmode=none)
 
 ## Getting started
 
-You can find UniversalSoundboard in the Microsoft Store: 
+You can find UniversalSoundboard in the Microsoft Store:
 
-<a href='//www.microsoft.com/store/apps/9nblggh51005?cid=storebadge&ocid=badge'><img src='https://assets.windowsphone.com/85864462-9c82-451e-9355-a3d5f874397a/English_get-it-from-MS_InvariantCulture_Default.png' alt='Microsoft Store badge' height="48" /></a>
+<a href='//www.microsoft.com/store/apps/9nblggh51005?cid=storebadge&ocid=badge'><img src='https://dav-apps.tech/assets/images/MicrosoftStoreBadge.png' alt='Microsoft Store badge' height="48" /></a>
 
 You can also download the project from here and open the solution in Visual Studio.
 
 ## Contributing
 
-If you'd like to contribute, please fork the repository and use a feature
-branch. Pull requests are always welcome!
+We are currently not accepting any contributions, but if you have any feature requests or ideas for how to improve the app, you can always create an issue.
 
 ## Licensing
 
