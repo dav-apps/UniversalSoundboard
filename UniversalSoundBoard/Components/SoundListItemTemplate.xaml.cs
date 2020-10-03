@@ -35,7 +35,7 @@ namespace UniversalSoundboard.Components
                 RequestedTheme = FileManager.GetRequestedTheme();
 
                 // Set the appropriate default image
-                if (Sound != null && Sound.ImageFileTableObject != null)
+                if (Sound != null && Sound.ImageFileTableObject == null)
                 {
                     Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
                     Bindings.Update();

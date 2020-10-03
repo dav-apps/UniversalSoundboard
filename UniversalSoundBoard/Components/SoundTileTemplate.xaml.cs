@@ -98,7 +98,7 @@ namespace UniversalSoundBoard.Components
             SoundTileNameContainerAcrylicBrush.TintColor = FileManager.GetApplicationThemeColor();
 
             // Set the appropriate default image
-            if(Sound != null && Sound.ImageFileTableObject != null)
+            if(Sound != null && Sound.ImageFileTableObject == null)
             {
                 Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
                 Bindings.Update();

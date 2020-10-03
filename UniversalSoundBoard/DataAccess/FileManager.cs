@@ -718,6 +718,8 @@ namespace UniversalSoundBoard.DataAccess
                 var imageFileTableObject = await DatabaseOperations.GetTableObjectAsync(imageFileUuid.Value);
                 if(imageFileTableObject != null)
                 {
+                    sound.ImageFileTableObject = imageFileTableObject;
+
                     if (
                         imageFileTableObject.IsFile
                         && imageFileTableObject.File != null
