@@ -281,6 +281,7 @@ namespace UniversalSoundBoard.Pages
             }
             else
             {
+                await Task.Delay(15);
                 await UpdateGridSplitterRange();
             }
         }
