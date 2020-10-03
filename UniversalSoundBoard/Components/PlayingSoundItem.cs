@@ -173,7 +173,7 @@ namespace UniversalSoundboard.Components
             UpdateButtonVisibility();
             UpdateFavouriteFlyoutItem();
             UpdateVolumeControl();
-            ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(false));
+            ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(soundsListVisible));
             PlaybackStateChanged?.Invoke(
                 this,
                 new PlaybackStateChangedEventArgs(PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running)

@@ -78,9 +78,10 @@ namespace UniversalSoundBoard.Components
             PlayingSoundItem.Init();
 
             // Hide the sounds list
-            SoundsListViewStackPanel.Height = 0;
-            SoundsListView.ItemsSource = PlayingSound.Sounds;
+            if(!PlayingSoundItem.SoundsListVisible)
+                SoundsListViewStackPanel.Height = 0;
 
+            SoundsListView.ItemsSource = PlayingSound.Sounds;
             UpdateUI();
 
             if (SoundPage.showPlayingSoundItemAnimation && PlayingSoundNameTextBlock.ActualWidth > 200)
