@@ -125,6 +125,11 @@ namespace UniversalSoundBoard.DataAccess
         public const string CategoryOrderType = "0";
         public const string SoundOrderType = "1";
 
+        public const string ImportFolderName = "import";
+        public const string ExportFolderName = "export";
+        public const string ImportZipFileName = "import.zip";
+        public const string ExportZipFileName = "export.zip";
+
         public static List<string> allowedFileTypes = new List<string>
         {
             ".mp3",
@@ -187,23 +192,21 @@ namespace UniversalSoundBoard.DataAccess
         private static async Task<StorageFolder> GetExportFolderAsync()
         {
             StorageFolder localFolder = ApplicationData.Current.LocalCacheFolder;
-            string exportFolderName = "export";
 
-            if (await localFolder.TryGetItemAsync(exportFolderName) == null)
-                return await localFolder.CreateFolderAsync(exportFolderName);
+            if (await localFolder.TryGetItemAsync(ExportFolderName) == null)
+                return await localFolder.CreateFolderAsync(ExportFolderName);
             else
-                return await localFolder.GetFolderAsync(exportFolderName);
+                return await localFolder.GetFolderAsync(ExportFolderName);
         }
 
         private async static Task<StorageFolder> GetImportFolderAsync()
         {
             StorageFolder localDataFolder = ApplicationData.Current.LocalCacheFolder;
-            string importFolderName = "import";
 
-            if (await localDataFolder.TryGetItemAsync(importFolderName) == null)
-                return await localDataFolder.CreateFolderAsync(importFolderName);
+            if (await localDataFolder.TryGetItemAsync(ImportFolderName) == null)
+                return await localDataFolder.CreateFolderAsync(ImportFolderName);
             else
-                return await localDataFolder.GetFolderAsync(importFolderName);
+                return await localDataFolder.GetFolderAsync(ImportFolderName);
         }
 
         public static string GetDavDataPath()
@@ -213,14 +216,38 @@ namespace UniversalSoundBoard.DataAccess
             return path;
         }
 
-        private static async Task ClearCacheAsync()
+        private static async Task ClearImportCacheAsync()
         {
-            if (itemViewHolder.Exporting || itemViewHolder.Importing)
-                return;
+            if (itemViewHolder.Importing) return;
 
             StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-            foreach (var item in await cacheFolder.GetItemsAsync())
-                await item.DeleteAsync();
+
+            // Delete the import folder
+            var importFolder = await cacheFolder.TryGetItemAsync(ImportFolderName);
+            if (importFolder != null)
+                await importFolder.DeleteAsync();
+
+            // Delete the import zip file
+            var importZipFile = await cacheFolder.TryGetItemAsync(ImportZipFileName);
+            if (importZipFile != null)
+                await importZipFile.DeleteAsync();
+        }
+
+        private static async Task ClearExportCacheAsync()
+        {
+            if (itemViewHolder.Exporting) return;
+
+            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
+
+            // Delete the export folder
+            var exportFolder = await cacheFolder.TryGetItemAsync(ExportFolderName);
+            if (exportFolder != null)
+                await exportFolder.DeleteAsync();
+
+            // Delete the export zip file
+            var exportZipFile = await cacheFolder.TryGetItemAsync(ExportZipFileName);
+            if (exportZipFile != null)
+                await exportZipFile.DeleteAsync();
         }
 
         private static async Task<DataModel> GetDataModelAsync(StorageFolder root)
@@ -252,7 +279,7 @@ namespace UniversalSoundBoard.DataAccess
         #region Export / Import
         public static async Task ExportDataAsync(StorageFolder destinationFolder)
         {
-            await ClearCacheAsync();
+            await ClearExportCacheAsync();
 
             itemViewHolder.Exported = false;
             itemViewHolder.Imported = false;
@@ -283,7 +310,7 @@ namespace UniversalSoundBoard.DataAccess
             itemViewHolder.ExportMessage = loader.GetString("ExportImportMessage-TidyUp");
             itemViewHolder.Exporting = false;
 
-            await ClearCacheAsync();
+            await ClearExportCacheAsync();
 
             itemViewHolder.ExportMessage = "";
             itemViewHolder.Exported = true;
@@ -297,7 +324,7 @@ namespace UniversalSoundBoard.DataAccess
             if (startMessage)
                 itemViewHolder.LoadingScreenVisible = true;
 
-            await ClearCacheAsync();
+            await ClearImportCacheAsync();
 
             // Extract the file into the local cache folder
             itemViewHolder.Importing = true;
@@ -310,7 +337,7 @@ namespace UniversalSoundBoard.DataAccess
 
             await Task.Run(async () =>
             {
-                StorageFile newZipFile = await zipFile.CopyAsync(localCacheFolder, "import.zip", NameCollisionOption.ReplaceExisting);
+                StorageFile newZipFile = await zipFile.CopyAsync(localCacheFolder, ImportZipFileName, NameCollisionOption.ReplaceExisting);
 
                 // Extract the zip file
                 ZipFile.ExtractToDirectory(newZipFile.Path, importFolder.Path);
@@ -335,7 +362,7 @@ namespace UniversalSoundBoard.DataAccess
             SetImportMessage(loader.GetString("ExportImportMessage-TidyUp"), startMessage);     // TidyUp
             itemViewHolder.Importing = false;
 
-            await ClearCacheAsync();
+            await ClearImportCacheAsync();
 
             SetImportMessage("", startMessage);
             itemViewHolder.Imported = true;
@@ -575,7 +602,7 @@ namespace UniversalSoundBoard.DataAccess
 
             if (saveAsZip)
             {
-                await ClearCacheAsync();
+                await ClearExportCacheAsync();
                 StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
                 StorageFolder exportFolder = await GetExportFolderAsync();
 
@@ -586,14 +613,14 @@ namespace UniversalSoundBoard.DataAccess
                 // Create the zip file from the export folder
                 StorageFile zipFile = await Task.Run(async () =>
                 {
-                    string exportFilePath = Path.Combine(localCacheFolder.Path, "export.zip");
+                    string exportFilePath = Path.Combine(localCacheFolder.Path, ExportZipFileName);
                     ZipFile.CreateFromDirectory(exportFolder.Path, exportFilePath);
                     return await StorageFile.GetFileFromPathAsync(exportFilePath);
                 });
 
                 // Move the zip file into the destination folder
                 await zipFile.MoveAsync(destinationFolder, string.Format("UniversalSoundboard {0}.zip", DateTime.Today.ToString("dd.MM.yyyy")), NameCollisionOption.GenerateUniqueName);
-                await ClearCacheAsync();
+                await ClearExportCacheAsync();
             }
             else
             {
@@ -1675,7 +1702,7 @@ namespace UniversalSoundBoard.DataAccess
             var soundFileTableObject = await DatabaseOperations.CreateSoundFileAsync(Guid.NewGuid(), newAudioFile);
             var soundTableObject = await DatabaseOperations.CreateSoundAsync(uuid ?? Guid.NewGuid(), name, false, soundFileTableObject.Uuid, categoryUuids);
 
-            await ClearCacheAsync();
+            await newAudioFile.DeleteAsync();
             return soundTableObject.Uuid;
         }
 
@@ -1719,6 +1746,9 @@ namespace UniversalSoundBoard.DataAccess
                 // Update the existing image file
                 await DatabaseOperations.UpdateImageFileAsync(imageUuid.Value, newImageFile);
             }
+
+            // Delete the image file
+            await newImageFile.DeleteAsync();
         }
 
         public static async Task DeleteSoundAsync(Guid uuid)
