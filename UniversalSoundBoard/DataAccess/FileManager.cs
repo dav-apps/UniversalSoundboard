@@ -126,9 +126,10 @@ namespace UniversalSoundBoard.DataAccess
         public const string SoundOrderType = "1";
 
         public const string ImportFolderName = "import";
-        public const string ExportFolderName = "export";
         public const string ImportZipFileName = "import.zip";
+        public const string ExportFolderName = "export";
         public const string ExportZipFileName = "export.zip";
+        public const string TileFolderName = "tile";
 
         public static List<string> allowedFileTypes = new List<string>
         {
@@ -189,24 +190,34 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region Filesystem methods
-        private static async Task<StorageFolder> GetExportFolderAsync()
-        {
-            StorageFolder localFolder = ApplicationData.Current.LocalCacheFolder;
-
-            if (await localFolder.TryGetItemAsync(ExportFolderName) == null)
-                return await localFolder.CreateFolderAsync(ExportFolderName);
-            else
-                return await localFolder.GetFolderAsync(ExportFolderName);
-        }
-
         private async static Task<StorageFolder> GetImportFolderAsync()
         {
-            StorageFolder localDataFolder = ApplicationData.Current.LocalCacheFolder;
+            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
 
-            if (await localDataFolder.TryGetItemAsync(ImportFolderName) == null)
-                return await localDataFolder.CreateFolderAsync(ImportFolderName);
+            if (await cacheFolder.TryGetItemAsync(ImportFolderName) == null)
+                return await cacheFolder.CreateFolderAsync(ImportFolderName);
             else
-                return await localDataFolder.GetFolderAsync(ImportFolderName);
+                return await cacheFolder.GetFolderAsync(ImportFolderName);
+        }
+
+        private static async Task<StorageFolder> GetExportFolderAsync()
+        {
+            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
+
+            if (await cacheFolder.TryGetItemAsync(ExportFolderName) == null)
+                return await cacheFolder.CreateFolderAsync(ExportFolderName);
+            else
+                return await cacheFolder.GetFolderAsync(ExportFolderName);
+        }
+
+        private static async Task<StorageFolder> GetTileFolderAsync()
+        {
+            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
+
+            if (await cacheFolder.TryGetItemAsync(TileFolderName) == null)
+                return await cacheFolder.CreateFolderAsync(TileFolderName);
+            else
+                return await cacheFolder.GetFolderAsync(TileFolderName);
         }
 
         public static string GetDavDataPath()
