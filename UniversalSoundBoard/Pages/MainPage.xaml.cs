@@ -31,6 +31,7 @@ namespace UniversalSoundBoard.Pages
         readonly ResourceLoader loader = new ResourceLoader();
         public static CoreDispatcher dispatcher;                            // Dispatcher for ShareTargetPage
         bool initizalized = false;
+        private Guid initialCategory = Guid.Empty;                          // The category that was selected before the sounds started loading
         private Guid selectedCategory = Guid.Empty;                         // The category that was right clicked for the flyout
         private List<string> Suggestions = new List<string>();              // The suggestions for the SearchAutoSuggestBox
         private List<StorageFile> sharedFiles = new List<StorageFile>();    // The files that get shared
@@ -42,6 +43,7 @@ namespace UniversalSoundBoard.Pages
         bool isTruncatingTitle = false;                                     // If true, TruncateTitleAsync is currently running
         int titleTruncatedChars = 0;                                        // The number of characters the title was truncated
         bool mobileSearchVisible = false;                                   // If true, the app window is small, the search box is visible and the other top buttons are hidden
+        bool playingSoundsLoaded = false;
 
         public MainPage()
         {
@@ -53,6 +55,7 @@ namespace UniversalSoundBoard.Pages
 
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
+            FileManager.itemViewHolder.PlayingSoundsLoaded += ItemViewHolder_PlayingSoundsLoaded;
             FileManager.itemViewHolder.CategoriesLoaded += ItemViewHolder_CategoriesLoaded;
             FileManager.itemViewHolder.CategoryUpdated += ItemViewHolder_CategoryUpdated;
             FileManager.itemViewHolder.CategoryDeleted += ItemViewHolder_CategoryDeleted;
@@ -79,7 +82,11 @@ namespace UniversalSoundBoard.Pages
             await FileManager.LoadPlayingSoundsAsync();
 
             // Load the Sounds
-            await FileManager.ShowAllSoundsAsync();
+            if (initialCategory.Equals(Guid.Empty))
+                await FileManager.ShowAllSoundsAsync();
+            else
+                await FileManager.ShowCategoryAsync(initialCategory);
+
             FileManager.itemViewHolder.TriggerSoundsLoadedEvent(this);
 
             // Load the user details and start the sync
@@ -106,8 +113,19 @@ namespace UniversalSoundBoard.Pages
             {
                 case ItemViewHolder.PageKey:
                 case ItemViewHolder.AppStateKey:
-                    bool navigationViewHeaderVisible = FileManager.itemViewHolder.AppState == FileManager.AppState.Normal || FileManager.itemViewHolder.Page != typeof(SoundPage);
-                    NavigationViewHeader.Visibility = navigationViewHeaderVisible ? Visibility.Visible : Visibility.Collapsed;
+                    // Set the visibility of the NavigationViewHeader
+                    var visibility = Visibility.Collapsed;
+
+                    if (
+                        FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync
+                        || FileManager.itemViewHolder.AppState == FileManager.AppState.Empty
+                    ) visibility = Visibility.Collapsed;
+                    else if (FileManager.itemViewHolder.AppState == FileManager.AppState.Normal)
+                        visibility = Visibility.Visible;
+                    else if(FileManager.itemViewHolder.AppState == FileManager.AppState.Loading)
+                        visibility = playingSoundsLoaded ? Visibility.Visible : Visibility.Collapsed;
+
+                    NavigationViewHeader.Visibility = visibility;
                     break;
                 case ItemViewHolder.CurrentThemeKey:
                     SetThemeColors();
@@ -126,6 +144,11 @@ namespace UniversalSoundBoard.Pages
                     UpdateTopButtonVisibilityForMobileSearch();
                     break;
             }
+        }
+
+        private void ItemViewHolder_PlayingSoundsLoaded(object sender, EventArgs e)
+        {
+            playingSoundsLoaded = true;
         }
 
         private void ItemViewHolder_CategoriesLoaded(object sender, EventArgs e)
@@ -721,7 +744,10 @@ namespace UniversalSoundBoard.Pages
                 Guid categoryUuid = (Guid)args.InvokedItemContainer.Tag;
                 if (categoryUuid.Equals(FileManager.itemViewHolder.SelectedCategory) && FileManager.itemViewHolder.Page == typeof(SoundPage)) return;
 
-                if (Equals(categoryUuid, Guid.Empty))
+                // Set initialCategory if the playing sounds weren't still loaded
+                if (FileManager.itemViewHolder.AppState == FileManager.AppState.Loading && !playingSoundsLoaded)
+                    initialCategory = categoryUuid;
+                else if (Equals(categoryUuid, Guid.Empty))
                     await FileManager.ShowAllSoundsAsync();
                 else
                     await FileManager.ShowCategoryAsync(categoryUuid);

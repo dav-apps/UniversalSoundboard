@@ -44,7 +44,7 @@ namespace UniversalSoundBoard.Pages
             InitializeComponent();
             ContentRoot.DataContext = FileManager.itemViewHolder;
 
-            /// Initialize the reversedPlayingSounds list
+            // Initialize the reversedPlayingSounds list
             reversedPlayingSounds = new AdvancedCollectionView(FileManager.itemViewHolder.PlayingSounds);
             reversedPlayingSounds.SortDescriptions.Add(new SortDescription(SortDirection.Ascending, new ReverserClass()));
 

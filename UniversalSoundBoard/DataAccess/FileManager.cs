@@ -803,7 +803,9 @@ namespace UniversalSoundBoard.DataAccess
         */
         public static async Task LoadAllSoundsAsync()
         {
-            itemViewHolder.AppState = AppState.Loading;
+            if(itemViewHolder.AppState != AppState.InitialSync)
+                itemViewHolder.AppState = AppState.Loading;
+
             bool soundsLoaded = await LoadSoundsFromDatabaseAsync();
 
             // Get all sounds and all favourite sounds
@@ -823,7 +825,8 @@ namespace UniversalSoundBoard.DataAccess
             itemViewHolder.FavouriteSounds.Clear();
 
             // Hide the progress ring
-            itemViewHolder.AppState = itemViewHolder.AllSounds.Count == 0 ? AppState.Empty : AppState.Normal;
+            if (itemViewHolder.AppState == AppState.Loading)
+                itemViewHolder.AppState = itemViewHolder.AllSounds.Count == 0 ? AppState.Empty : AppState.Normal;
 
             // Add the sounds to the lists
             foreach (var sound in sortedSounds)
@@ -842,6 +845,9 @@ namespace UniversalSoundBoard.DataAccess
         */
         public static async Task LoadSoundsOfCategoryAsync(Guid categoryUuid)
         {
+            if (itemViewHolder.AppState != AppState.InitialSync)
+                itemViewHolder.AppState = AppState.Loading;
+
             await LoadSoundsFromDatabaseAsync();
 
             List<Sound> sounds = new List<Sound>();
@@ -864,6 +870,9 @@ namespace UniversalSoundBoard.DataAccess
             itemViewHolder.Sounds.Clear();
             itemViewHolder.FavouriteSounds.Clear();
 
+            if (itemViewHolder.AppState == AppState.Loading)
+                itemViewHolder.AppState = AppState.Normal;
+
             // Add the sounds to the lists
             foreach (var sound in sortedSounds)
                 itemViewHolder.Sounds.Add(sound);
@@ -877,12 +886,18 @@ namespace UniversalSoundBoard.DataAccess
         */
         public static async Task LoadSoundsByNameAsync(string name)
         {
+            if (itemViewHolder.AppState != AppState.InitialSync)
+                itemViewHolder.AppState = AppState.Loading;
+
             await LoadSoundsFromDatabaseAsync();
 
             itemViewHolder.Sounds.Clear();
             itemViewHolder.FavouriteSounds.Clear();
 
-            foreach(var sound in itemViewHolder.AllSounds)
+            if (itemViewHolder.AppState == AppState.Loading)
+                itemViewHolder.AppState = AppState.Normal;
+
+            foreach (var sound in itemViewHolder.AllSounds)
             {
                 if (!sound.Name.ToLower().Contains(name.ToLower())) continue;
 
