@@ -31,6 +31,8 @@ namespace UniversalSoundboard.Components
 
         public SoundItem(Sound sound)
         {
+            if (sound == null) return;
+
             this.sound = sound;
             this.sound.ImageDownloaded += Sound_ImageDownloaded;
         }

@@ -1123,7 +1123,11 @@ namespace UniversalSoundBoard.DataAccess
 
             // Get all sounds with an image
             List<Sound> sounds = itemViewHolder.AllSounds.Where(s => s.ImageFileTableObject != null && s.ImageFile != null).ToList();
-            if (sounds.Count == 0) return;
+            if (sounds.Count == 0)
+            {
+                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+                return;
+            }
 
             // Pick up to 12 random sounds with images
             List<StorageFile> images = new List<StorageFile>();
