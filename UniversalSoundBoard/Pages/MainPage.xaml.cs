@@ -259,6 +259,14 @@ namespace UniversalSoundBoard.Pages
         private async Task TruncateTitleAsync()
         {
             if (isTruncatingTitle) return;
+
+            if(TitleTextBlock.ActualWidth == 0)
+            {
+                title = FileManager.itemViewHolder.Title;
+                titleTruncatedChars = 0;
+                return;
+            }
+
             isTruncatingTitle = true;
 
             double titleWidth = TitleStackPanel.Margin.Left + TitleTextBlock.ActualWidth + TitleButtonStackPanel.ActualWidth;

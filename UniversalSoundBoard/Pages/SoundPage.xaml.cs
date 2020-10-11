@@ -684,6 +684,7 @@ namespace UniversalSoundBoard.Pages
             emptyCategoryMessageVisibility = (
                 !FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty)
                 && FileManager.itemViewHolder.Sounds.Count == 0
+                && FileManager.itemViewHolder.AppState != FileManager.AppState.Loading
             ) ? Visibility.Visible : Visibility.Collapsed;
 
             Bindings.Update();
