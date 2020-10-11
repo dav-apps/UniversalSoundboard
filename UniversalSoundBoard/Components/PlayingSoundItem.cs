@@ -502,7 +502,7 @@ namespace UniversalSoundboard.Components
             if (currentSound.Categories.Count > 0)
                 updater.MusicProperties.Artist = currentSound.Categories.First().Name;
 
-            if (currentSound.ImageFileTableObject != null)
+            if (currentSound.ImageFileTableObject != null && currentSound.ImageFile != null)
                 updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(currentSound.ImageFile);
 
             updater.Update();

@@ -45,6 +45,7 @@ namespace UniversalSoundBoard.Components
             Sound = DataContext as Sound;
             soundItem = new SoundItem(Sound);
             soundItem.ImageUpdated += SoundItem_ImageUpdated;
+
             Bindings.Update();
 
             await Task.Delay(1);
@@ -53,8 +54,11 @@ namespace UniversalSoundBoard.Components
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
+            if (e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
+            {
                 SetThemeColors();
+                LoadImage();
+            }
         }
 
         private void ItemViewHolder_SoundTileSizeChanged(object sender, SizeChangedEventArgs e)
@@ -64,8 +68,7 @@ namespace UniversalSoundBoard.Components
 
         private void SoundItem_ImageUpdated(object sender, EventArgs e)
         {
-            Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
-            Bindings.Update();
+            LoadImage();
         }
 
         private void UpdateSizes()
@@ -96,13 +99,17 @@ namespace UniversalSoundBoard.Components
         {
             RequestedTheme = FileManager.GetRequestedTheme();
             SoundTileNameContainerAcrylicBrush.TintColor = FileManager.GetApplicationThemeColor();
+        }
+
+        private void LoadImage()
+        {
+            if (Sound == null) return;
 
             // Set the appropriate default image
-            if(Sound != null && Sound.ImageFileTableObject == null)
-            {
+            if (Sound.ImageFileTableObject == null)
                 Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
-                Bindings.Update();
-            }
+
+            Bindings.Update();
         }
 
         private void ContentRoot_RightTapped(object sender, RightTappedRoutedEventArgs e)

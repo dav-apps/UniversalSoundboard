@@ -2,7 +2,9 @@
 using System;
 using System.Collections.Generic;
 using UniversalSoundBoard.DataAccess;
+using Windows.ApplicationModel.Core;
 using Windows.Storage;
+using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 using static davClassLibrary.Models.TableObject;
 
@@ -23,6 +25,8 @@ namespace UniversalSoundBoard.Models
         public StorageFile AudioFile { get; set; }
         public TableObject ImageFileTableObject { get; set; }
         public StorageFile ImageFile { get; set; }
+
+        public event EventHandler<EventArgs> ImageDownloaded;
 
         public Sound(Guid uuid, string name)
         {
@@ -52,6 +56,13 @@ namespace UniversalSoundBoard.Models
                 try
                 {
                     ImageFile = await StorageFile.GetFileFromPathAsync(e.File.FullName);
+
+                    // Update the image in the sound lists
+                    await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    {
+                        Image = new BitmapImage { UriSource = new Uri(e.File.FullName) };
+                        ImageDownloaded?.Invoke(this, new EventArgs());
+                    });
                 }
                 catch { }
             }

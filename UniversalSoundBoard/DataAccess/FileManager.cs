@@ -760,7 +760,7 @@ namespace UniversalSoundBoard.DataAccess
 
                     if (
                         imageFileTableObject.IsFile
-                        && imageFileTableObject.File != null
+                        && imageFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.Downloaded
                     )
                     {
                         string imageFilePath = imageFileTableObject.File.FullName;
@@ -1122,7 +1122,7 @@ namespace UniversalSoundBoard.DataAccess
             }
 
             // Get all sounds with an image
-            List<Sound> sounds = itemViewHolder.AllSounds.Where(s => s.ImageFileTableObject != null).ToList();
+            List<Sound> sounds = itemViewHolder.AllSounds.Where(s => s.ImageFileTableObject != null && s.ImageFile != null).ToList();
             if (sounds.Count == 0) return;
 
             // Pick up to 12 random sounds with images
@@ -1136,9 +1136,7 @@ namespace UniversalSoundBoard.DataAccess
 
                 // Get the image of the sound and add it to the images list
                 var selectedSound = sounds.ElementAt(selectedSoundIndex);
-
-                StorageFile imageFile = selectedSound.ImageFile;
-                if (imageFile != null) images.Add(imageFile);
+                images.Add(selectedSound.ImageFile);
 
                 // Remove the selected sound from the sounds list
                 sounds.RemoveAt(selectedSoundIndex);

@@ -21,7 +21,7 @@ namespace UniversalSoundboard.Components
     {
         private Sound sound;
 
-        public event EventHandler ImageUpdated;
+        public event EventHandler<EventArgs> ImageUpdated;
 
         private readonly ResourceLoader loader = new ResourceLoader();
         private bool downloadFileWasCanceled = false;
@@ -32,6 +32,12 @@ namespace UniversalSoundboard.Components
         public SoundItem(Sound sound)
         {
             this.sound = sound;
+            this.sound.ImageDownloaded += Sound_ImageDownloaded;
+        }
+
+        private void Sound_ImageDownloaded(object sender, EventArgs e)
+        {
+            ImageUpdated?.Invoke(this, new EventArgs());
         }
 
         public void ShowFlyout(object sender, Point position)
@@ -239,7 +245,7 @@ namespace UniversalSoundboard.Components
             {
                 await FileManager.UpdateImageOfSoundAsync(sound.Uuid, file);
                 await FileManager.ReloadSound(sound.Uuid);
-                ImageUpdated?.Invoke(this, null);
+                ImageUpdated?.Invoke(this, new EventArgs());
             }
         }
         #endregion

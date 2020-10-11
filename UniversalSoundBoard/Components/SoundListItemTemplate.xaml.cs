@@ -25,6 +25,7 @@ namespace UniversalSoundboard.Components
         {
             soundItem = new SoundItem(Sound);
             soundItem.ImageUpdated += SoundItem_ImageUpdated;
+            
             Bindings.Update();
         }
 
@@ -33,19 +34,23 @@ namespace UniversalSoundboard.Components
             if (e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
             {
                 RequestedTheme = FileManager.GetRequestedTheme();
-
-                // Set the appropriate default image
-                if (Sound != null && Sound.ImageFileTableObject == null)
-                {
-                    Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
-                    Bindings.Update();
-                }
+                LoadImage();
             }
         }
 
         private void SoundItem_ImageUpdated(object sender, System.EventArgs e)
         {
-            Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
+            LoadImage();
+        }
+
+        private void LoadImage()
+        {
+            if (Sound == null) return;
+
+            // Set the appropriate default image
+            if (Sound.ImageFileTableObject == null)
+                Sound.Image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
+
             Bindings.Update();
         }
 
