@@ -162,7 +162,9 @@ namespace UniversalSoundboard.Components
                     foreach (int i in fileDownloads)
                         AddSoundToDownloadQueue(i);
 
-                    if(!CheckFileDownload() && PlayingSound.StartPlaying)
+                    if (CheckFileDownload())
+                        PlayingSound.MediaPlayer.TimelineController.Pause();
+                    else if(PlayingSound.StartPlaying)
                         PlayingSound.MediaPlayer.TimelineController.Start();
                 }
                 else if (PlayingSound.StartPlaying)
@@ -586,6 +588,7 @@ namespace UniversalSoundboard.Components
                 if (value.Item2 == 101)
                 {
                     currentSoundIsDownloading = false;
+                    await Task.Delay(5);
 
                     // Set the source of the current sound
                     var audioFile = PlayingSound.Sounds[PlayingSound.Current].AudioFile;
@@ -594,13 +597,13 @@ namespace UniversalSoundboard.Components
                         var newSource = MediaSource.CreateFromUri(new Uri(audioFile.Path));
                         newSource.OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
                         PlayingSound.MediaPlayer.Source = newSource;
-                    }
 
-                    // Start the current sound
-                    if (PlayingSound.StartPlaying)
-                    {
-                        PlayingSound.MediaPlayer.TimelineController.Start();
-                        StopAllOtherPlayingSounds();
+                        // Start the current sound
+                        if (PlayingSound.StartPlaying)
+                        {
+                            PlayingSound.MediaPlayer.TimelineController.Start();
+                            StopAllOtherPlayingSounds();
+                        }
                     }
                 }
                 else if (value.Item2 == -1)
@@ -757,6 +760,7 @@ namespace UniversalSoundboard.Components
 
         public void SetPosition(int position)
         {
+            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
             PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0, 0, position);
         }
 
