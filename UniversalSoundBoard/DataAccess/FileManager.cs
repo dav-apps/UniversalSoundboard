@@ -703,23 +703,22 @@ namespace UniversalSoundBoard.DataAccess
                 {
                     sound.AudioFileTableObject = audioFileTableObject;
 
-                    if (
-                        audioFileTableObject.IsFile
-                        && audioFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.Downloaded
-                    )
+                    if (!audioFileTableObject.IsFile) return null;
+
+                    if(audioFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.Downloaded)
                     {
                         try
                         {
                             var audioFile = await StorageFile.GetFileFromPathAsync(audioFileTableObject.File.FullName);
                             if (audioFile != null)
                                 sound.AudioFile = audioFile;
-                        } catch { }
-                    }
+                        }
+                        catch { }
+                    }else if(audioFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.NoFileOrNotLoggedIn)
+                        return null;
                 }
                 else
-                {
                     return null;
-                }
             }
 
             // Get favourite
