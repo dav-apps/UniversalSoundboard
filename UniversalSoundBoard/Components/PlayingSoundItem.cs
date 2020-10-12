@@ -336,7 +336,7 @@ namespace UniversalSoundboard.Components
                         await MoveToNext();
                         break;
                     default:
-                        TogglePlayPause();
+                        SetPlayPause(args.Button == SystemMediaTransportControlsButton.Play);
                         break;
                 }
             });
@@ -676,12 +676,21 @@ namespace UniversalSoundboard.Components
         public void TogglePlayPause()
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+            SetPlayPause(PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Paused);
+        }
+
+        /**
+         * Plays or pauses the MediaPlayer
+         */
+        public void SetPlayPause(bool play)
+        {
+            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
 
             // Check if the file is currently downloading
             if (currentSoundIsDownloading)
             {
                 PlayingSound.MediaPlayer.TimelineController.Pause();
-                PlayingSound.StartPlaying = !PlayingSound.StartPlaying;
+                PlayingSound.StartPlaying = play;
                 PlaybackStateChanged?.Invoke(
                     this,
                     new PlaybackStateChangedEventArgs(PlayingSound.StartPlaying)
@@ -689,13 +698,15 @@ namespace UniversalSoundboard.Components
                 return;
             }
 
-            if (PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running)
-                PlayingSound.MediaPlayer.TimelineController.Pause();
-            else
+            if (play)
             {
                 PlayingSound.MediaPlayer.TimelineController.Resume();
                 StopAllOtherPlayingSounds();
             }
+            else
+                PlayingSound.MediaPlayer.TimelineController.Pause();
+
+            UpdateSystemMediaTransportControls();
         }
 
         public async Task MoveToPrevious()
