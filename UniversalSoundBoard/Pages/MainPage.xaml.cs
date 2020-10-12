@@ -1426,6 +1426,9 @@ namespace UniversalSoundBoard.Pages
             MoveCategoryMenuItemToMenuItem(SideBar.MenuItems, selectedCategory, true);
             await FileManager.MoveCategoryToCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, true);
             await SelectCurrentCategory();
+
+            if (!FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty))
+                await FileManager.LoadSoundsOfCategoryAsync(FileManager.itemViewHolder.SelectedCategory);
         }
 
         private async void MoveToCategoryBelowItem_Click(object sender, RoutedEventArgs e)
@@ -1433,6 +1436,9 @@ namespace UniversalSoundBoard.Pages
             MoveCategoryMenuItemToMenuItem(SideBar.MenuItems, selectedCategory, false);
             await FileManager.MoveCategoryToCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, false);
             await SelectCurrentCategory();
+
+            if (!FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty))
+                await FileManager.LoadSoundsOfCategoryAsync(FileManager.itemViewHolder.SelectedCategory);
         }
 
         private async void MoveToParentCategoryAboveItem_Click(object sender, RoutedEventArgs e)
@@ -1440,6 +1446,9 @@ namespace UniversalSoundBoard.Pages
             MoveCategoryMenuItemToParent(SideBar.MenuItems, selectedCategory, true);
             await FileManager.MoveCategoryToParentAndSaveOrderAsync(FileManager.itemViewHolder.Categories, Guid.Empty, selectedCategory, true);
             await SelectCurrentCategory();
+
+            if (!FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty))
+                await FileManager.LoadSoundsOfCategoryAsync(FileManager.itemViewHolder.SelectedCategory);
         }
 
         private async void MoveToParentCategoryBelowItem_Click(object sender, RoutedEventArgs e)
@@ -1447,6 +1456,9 @@ namespace UniversalSoundBoard.Pages
             MoveCategoryMenuItemToParent(SideBar.MenuItems, selectedCategory, false);
             await FileManager.MoveCategoryToParentAndSaveOrderAsync(FileManager.itemViewHolder.Categories, Guid.Empty, selectedCategory, false);
             await SelectCurrentCategory();
+
+            if (!FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty))
+                await FileManager.LoadSoundsOfCategoryAsync(FileManager.itemViewHolder.SelectedCategory);
         }
         #endregion
         #endregion
