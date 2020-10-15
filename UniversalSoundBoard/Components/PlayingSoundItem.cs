@@ -74,6 +74,7 @@ namespace UniversalSoundboard.Components
         public event EventHandler<FavouriteChangedEventArgs> FavouriteChanged;
         public event EventHandler<VolumeChangedEventArgs> VolumeChanged;
         public event EventHandler<MutedChangedEventArgs> MutedChanged;
+        public event EventHandler<EventArgs> ShowPlayingSound;
         public event EventHandler<EventArgs> RemovePlayingSound;
         public event EventHandler<DownloadStatusChangedEventArgs> DownloadStatusChanged;
         #endregion
@@ -170,6 +171,8 @@ namespace UniversalSoundboard.Components
                 else if (PlayingSound.StartPlaying)
                     PlayingSound.MediaPlayer.TimelineController.Start();
             }
+
+            ShowPlayingSound?.Invoke(this, new EventArgs());
 
             // Set the correct visibilities and icons for the buttons
             UpdateButtonVisibility();

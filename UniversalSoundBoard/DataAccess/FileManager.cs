@@ -1703,7 +1703,7 @@ namespace UniversalSoundBoard.DataAccess
             {
                 double defaultSoundVolume = ((double)newSounds[0].DefaultVolume) / 100;
                 player.Volume = appVolume * defaultSoundVolume;
-                player.IsMuted = newSounds[0].DefaultMuted;
+                player.IsMuted = newSounds[0].DefaultMuted || itemViewHolder.Muted;
             }
             else
                 player.Volume = appVolume;

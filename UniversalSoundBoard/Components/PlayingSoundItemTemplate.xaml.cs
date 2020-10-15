@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
@@ -24,6 +25,8 @@ namespace UniversalSoundBoard.Components
         Guid selectedSoundUuid;
         private bool skipSoundsListViewSelectionChanged;
         private bool skipProgressSliderValueChanged = false;
+        private bool inBottomPlayingSoundsBar = false;
+        private bool playingSoundItemVisible = false;
 
         public PlayingSoundItemTemplate()
         {
@@ -36,6 +39,10 @@ namespace UniversalSoundBoard.Components
         private void Init()
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+            inBottomPlayingSoundsBar = Tag != null;
+
+            if(!inBottomPlayingSoundsBar)
+                PlayingSoundItemTemplateUserControl.Height = double.NaN;
 
             // Subscribe to the appropriate PlayingSoundItem
             int i = FileManager.itemViewHolder.PlayingSoundItems.FindIndex(item => item.Uuid.Equals(PlayingSound.Uuid));
@@ -71,6 +78,8 @@ namespace UniversalSoundBoard.Components
             PlayingSoundItem.VolumeChanged += PlayingSoundItem_VolumeChanged;
             PlayingSoundItem.MutedChanged -= PlayingSoundItem_MutedChanged;
             PlayingSoundItem.MutedChanged += PlayingSoundItem_MutedChanged;
+            PlayingSoundItem.ShowPlayingSound -= PlayingSoundItem_ShowPlayingSound;
+            PlayingSoundItem.ShowPlayingSound += PlayingSoundItem_ShowPlayingSound;
             PlayingSoundItem.RemovePlayingSound -= PlayingSoundItem_RemovePlayingSound;
             PlayingSoundItem.RemovePlayingSound += PlayingSoundItem_RemovePlayingSound;
             PlayingSoundItem.DownloadStatusChanged -= PlayingSoundItem_DownloadStatusChanged;
@@ -83,32 +92,11 @@ namespace UniversalSoundBoard.Components
 
             SoundsListView.ItemsSource = PlayingSound.Sounds;
             UpdateUI();
-
-            if (SoundPage.showPlayingSoundItemAnimation && PlayingSoundNameTextBlock.ActualWidth > 200)
-            {
-                // Show the animation for appearing PlayingSoundItem
-                double contentHeight = 88;  // (88 = standard height of PlayingSoundItem with one row of text)
-                if (ContentRoot.ActualHeight > 0) contentHeight = ContentRoot.ActualHeight + ContentRoot.Margin.Top + ContentRoot.Margin.Bottom;
-
-                FileManager.itemViewHolder.TriggerShowPlayingSoundItemStartedEvent(
-                    this,
-                    new PlayingSoundItemEventArgs(
-                        PlayingSound.Uuid,
-                        contentHeight
-                    )
-                );
-
-                ShowPlayingSoundItemStoryboardAnimation.To = contentHeight;
-                ShowPlayingSoundItemStoryboard.Begin();
-            }
         }
 
         #region UserControl event handlers
         private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs eventArgs)
         {
-            PlayingSoundItemTemplateUserControl.Height = double.NaN;
-
-            Init();
             AdjustLayout();
         }
 
@@ -204,6 +192,41 @@ namespace UniversalSoundBoard.Components
         private void PlayingSoundItem_MutedChanged(object sender, MutedChangedEventArgs e)
         {
             VolumeControl2.Muted = e.Muted;
+        }
+
+        private async void PlayingSoundItem_ShowPlayingSound(object sender, EventArgs e)
+        {
+            if (playingSoundItemVisible) return;
+            playingSoundItemVisible = true;
+
+            // Show the playing sound on the top of the extended list only if the PlayingSoundsBarPosition is top and the playing sounds are already loaded and visible / this is not a saved plaiyng sound
+            bool addPlayingSoundOnTopOfBottomPlayingSoundsBar = (
+                inBottomPlayingSoundsBar &&
+                (
+                    SoundPage.bottomPlayingSoundsBarPosition == VerticalPosition.Top
+                    || !SoundPage.playingSoundsRendered
+                )
+            );
+
+            await Task.Delay(5);
+
+            // (88 = standard height of PlayingSoundItem with one row of text)
+            double contentHeight = ContentRoot.ActualHeight > 0 ? ContentRoot.ActualHeight + ContentRoot.Margin.Top + ContentRoot.Margin.Bottom : 88;
+
+            if (addPlayingSoundOnTopOfBottomPlayingSoundsBar)
+            {
+                // Start playing the animation for appearing PlayingSoundItem
+                FileManager.itemViewHolder.TriggerShowPlayingSoundItemStartedEvent(
+                    this,
+                    new PlayingSoundItemEventArgs(
+                        PlayingSound.Uuid,
+                        contentHeight
+                    )
+                );
+            }
+
+            ShowPlayingSoundItemStoryboardAnimation.To = contentHeight;
+            ShowPlayingSoundItemStoryboard.Begin();
         }
 
         private void PlayingSoundItem_RemovePlayingSound(object sender, EventArgs e)
@@ -421,7 +444,7 @@ namespace UniversalSoundBoard.Components
             HidePlayingSoundItemStoryboard.Begin();
 
             // Trigger the animation in SoundPage for the BottomPlayingSoundsBar, if necessary
-            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
+            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemStartedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
         }
 
         private void SetTotalDuration()
@@ -631,11 +654,6 @@ namespace UniversalSoundBoard.Components
         #endregion
 
         #region Storyboard event handlers
-        private async void HidePlayingSoundItemStoryboard_Completed(object sender, object e)
-        {
-            await PlayingSoundItem.Remove();
-        }
-
         private void ShowSoundsListViewStoryboard_Completed(object sender, object e)
         {
             FileManager.itemViewHolder.TriggerPlayingSoundItemShowSoundsListAnimationEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
@@ -649,7 +667,16 @@ namespace UniversalSoundBoard.Components
         private void ShowPlayingSoundItemStoryboard_Completed(object sender, object e)
         {
             PlayingSoundItemTemplateUserControl.Height = double.NaN;
-            SoundPage.showPlayingSoundItemAnimation = false;
+            FileManager.itemViewHolder.TriggerShowPlayingSoundItemEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
+        }
+
+        private async void HidePlayingSoundItemStoryboard_Completed(object sender, object e)
+        {
+            playingSoundItemVisible = false;
+            await PlayingSoundItem.Remove();
+
+            // Trigger the animation in SoundPage for the BottomPlayingSoundsBar, if necessary
+            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
         }
         #endregion
     }
