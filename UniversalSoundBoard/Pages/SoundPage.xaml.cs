@@ -248,12 +248,9 @@ namespace UniversalSoundBoard.Pages
 
         private async void ItemViewHolder_RemovePlayingSoundItemEnded(object sender, PlayingSoundItemEventArgs e)
         {
-            if (FileManager.itemViewHolder.PlayingSounds.Count > 1)
-            {
-                // Snap the BottomPlayingSoundsBar; for the case that the height of the removed PlayingSound was different
-                await UpdateGridSplitterRange();
-                SnapBottomPlayingSoundsBar();
-            }
+            // Snap the BottomPlayingSoundsBar; for the case that the height of the removed PlayingSound was different
+            await UpdateGridSplitterRange();
+            SnapBottomPlayingSoundsBar();
         }
 
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -269,30 +266,9 @@ namespace UniversalSoundBoard.Pages
 
         private async void ReversedPlayingSounds_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs args)
         {
-            if (!playingSoundsLoaded)
-            {
-                await UpdatePlayingSoundsListAsync();
-                await UpdateGridSplitterRange();
-                return;
-            }
-
+            await Task.Delay(5);
             await UpdatePlayingSoundsListAsync();
-
-            if (
-                args.CollectionChange == CollectionChange.ItemInserted
-                && FileManager.itemViewHolder.PlayingSounds.Count == 1
-            )
-            {
-                double itemHeight = await GetPlayingSoundItemContainerHeight(0);
-                GridSplitterGridBottomRowDef.Height = new GridLength(0);
-                GridSplitterGridBottomRowDef.MaxHeight = itemHeight;
-                StartSnapBottomPlayingSoundsBarAnimation(0, itemHeight);
-            }
-            else
-            {
-                await Task.Delay(15);
-                await UpdateGridSplitterRange();
-            }
+            await UpdateGridSplitterRange();
         }
         #endregion
 

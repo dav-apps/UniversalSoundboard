@@ -201,8 +201,8 @@ namespace UniversalSoundBoard.Components
 
             // Show the playing sound on the top of the extended list only if the PlayingSoundsBarPosition is top and the playing sounds are already loaded and visible / this is not a saved plaiyng sound
             bool addPlayingSoundOnTopOfBottomPlayingSoundsBar = (
-                inBottomPlayingSoundsBar &&
-                (
+                inBottomPlayingSoundsBar
+                && (
                     SoundPage.bottomPlayingSoundsBarPosition == VerticalPosition.Top
                     || !SoundPage.playingSoundsRendered
                 )
@@ -213,7 +213,7 @@ namespace UniversalSoundBoard.Components
             // (88 = standard height of PlayingSoundItem with one row of text)
             double contentHeight = ContentRoot.ActualHeight > 0 ? ContentRoot.ActualHeight + ContentRoot.Margin.Top + ContentRoot.Margin.Bottom : 88;
 
-            if (addPlayingSoundOnTopOfBottomPlayingSoundsBar)
+            if (addPlayingSoundOnTopOfBottomPlayingSoundsBar && FileManager.itemViewHolder.PlayingSounds.Count != 2)
             {
                 // Start playing the animation for appearing PlayingSoundItem
                 FileManager.itemViewHolder.TriggerShowPlayingSoundItemStartedEvent(

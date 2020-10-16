@@ -1706,7 +1706,10 @@ namespace UniversalSoundBoard.DataAccess
                 player.IsMuted = newSounds[0].DefaultMuted || itemViewHolder.Muted;
             }
             else
+            {
                 player.Volume = appVolume;
+                player.IsMuted = itemViewHolder.Muted;
+            }
 
             return (player, newSounds);
         }
