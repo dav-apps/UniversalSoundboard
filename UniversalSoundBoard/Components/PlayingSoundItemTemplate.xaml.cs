@@ -59,7 +59,11 @@ namespace UniversalSoundBoard.Components
                 FileManager.itemViewHolder.PlayingSoundItems.Add(PlayingSoundItem);
             }
             else
+            {
                 PlayingSoundItem = FileManager.itemViewHolder.PlayingSoundItems.ElementAt(i);
+                if(PlayingSoundItem.CurrentSoundIsDownloading)
+                    ShowIndetermindateProgressBar();
+            }
 
             PlayingSoundItem.PlaybackStateChanged -= PlayingSoundItem_PlaybackStateChanged;
             PlayingSoundItem.PlaybackStateChanged += PlayingSoundItem_PlaybackStateChanged;
@@ -248,9 +252,7 @@ namespace UniversalSoundBoard.Components
                 if (e.DownloadProgress < 0)
                 {
                     // Show the indeterminate progress bar
-                    ProgressSlider.Visibility = Visibility.Collapsed;
-                    DownloadProgressBar.Visibility = Visibility.Visible;
-                    DownloadProgressBar.IsIndeterminate = true;
+                    ShowIndetermindateProgressBar();
                 }
                 else if (e.DownloadProgress > 100)
                 {
@@ -510,6 +512,12 @@ namespace UniversalSoundBoard.Components
                 layoutType == PlayingSoundItemLayoutType.SingleSoundSmall || layoutType == PlayingSoundItemLayoutType.SingleSoundLarge,
                 layoutType != PlayingSoundItemLayoutType.Compact
             );
+
+            // Remove the bottom margin in Single sound mode
+            if(layoutType == PlayingSoundItemLayoutType.SingleSoundSmall || layoutType == PlayingSoundItemLayoutType.SingleSoundLarge)
+                ContentRoot.Margin = new Thickness(0, 6, 0, 0);
+            else
+                ContentRoot.Margin = new Thickness(0, 6, 0, 6);
         }
 
         private void UpdateUI()
@@ -545,7 +553,7 @@ namespace UniversalSoundBoard.Components
                 RelativePanel.SetRightOf(ProgressSlider, RemainingTimeElement);
                 RelativePanel.SetLeftOf(ProgressSlider, TotalTimeElement);
 
-                ProgressSlider.Margin = new Thickness(8, 0, 8, 0);
+                ProgressSlider.Margin = new Thickness(16, -7, 16, 0);
                 ProgressSlider.Height = 37;
 
                 // BufferingProgressBar
@@ -557,21 +565,21 @@ namespace UniversalSoundBoard.Components
                 RelativePanel.SetLeftOf(DownloadProgressBar, TotalTimeElement);
                 RelativePanel.SetAlignVerticalCenterWith(DownloadProgressBar, RemainingTimeElement);
 
-                DownloadProgressBar.Margin = new Thickness(8, 2, 8, 0);
+                DownloadProgressBar.Margin = new Thickness(16, -7, 16, 0);
 
                 // TimeElapsedElement
                 RelativePanel.SetAlignBottomWith(RemainingTimeElement, null);
                 RelativePanel.SetAlignLeftWithPanel(RemainingTimeElement, true);
                 RelativePanel.SetAlignVerticalCenterWithPanel(RemainingTimeElement, true);
 
-                RemainingTimeElement.Margin = new Thickness(0);
+                RemainingTimeElement.Margin = new Thickness(1, 2, 0, 10);
 
                 // TimeRemainingElement
                 RelativePanel.SetAlignBottomWith(TotalTimeElement, null);
                 RelativePanel.SetAlignRightWithPanel(TotalTimeElement, true);
                 RelativePanel.SetAlignVerticalCenterWithPanel(TotalTimeElement, true);
 
-                TotalTimeElement.Margin = new Thickness(0);
+                TotalTimeElement.Margin = new Thickness(0, 2, 1, 10);
             }
             else
             {
@@ -582,7 +590,7 @@ namespace UniversalSoundBoard.Components
                 RelativePanel.SetRightOf(ProgressSlider, null);
                 RelativePanel.SetLeftOf(ProgressSlider, null);
 
-                ProgressSlider.Margin = new Thickness(0, 0, 0, timesVisible ? 14 : 0);
+                ProgressSlider.Margin = new Thickness(0, timesVisible ? 0 : 1, 0, timesVisible ? 14 : 0);
                 ProgressSlider.Height = 33;
 
                 // BufferingProgressBar
@@ -595,6 +603,7 @@ namespace UniversalSoundBoard.Components
                 RelativePanel.SetAlignVerticalCenterWith(DownloadProgressBar, null);
 
                 DownloadProgressBar.Margin = new Thickness(0, 18, 0, timesVisible ? 14 : 0);
+                DownloadProgressBar.Padding = new Thickness(0);
 
                 // TimeElapsedElement
                 RelativePanel.SetAlignBottomWith(RemainingTimeElement, ProgressSlider);
@@ -646,6 +655,13 @@ namespace UniversalSoundBoard.Components
         {
             MoreButtonFavouriteFlyoutItem.Text = loader.GetString(fav ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite");
             MoreButtonFavouriteFlyoutItem.Icon = new FontIcon { Glyph = fav ? "\uE195" : "\uE113" };
+        }
+
+        private void ShowIndetermindateProgressBar()
+        {
+            ProgressSlider.Visibility = Visibility.Collapsed;
+            DownloadProgressBar.Visibility = Visibility.Visible;
+            DownloadProgressBar.IsIndeterminate = true;
         }
         #endregion
 

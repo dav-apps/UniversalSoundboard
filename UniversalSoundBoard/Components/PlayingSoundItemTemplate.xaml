@@ -416,6 +416,7 @@
                     <VisualState.Setters>
                         <!-- MediaPlayerElement -->
                         <Setter Target="MediaPlayerElement.(RelativePanel.AlignBottomWithPanel)" Value="True" />
+                        <Setter Target="MediaPlayerElement.Margin" Value="0,6,0,0" />
 
                         <!-- LeftMediaControlStackPanel -->
                         <Setter Target="LeftMediaControlStackPanel.Visibility" Value="Collapsed" />
@@ -456,6 +457,7 @@
                     <VisualState.Setters>
                         <!-- MediaPlayerElement -->
                         <Setter Target="MediaPlayerElement.(RelativePanel.AlignBottomWithPanel)" Value="True" />
+                        <Setter Target="MediaPlayerElement.Margin" Value="0,6,0,0" />
                         
                         <!-- LeftMediaControlStackPanel -->
                         <Setter Target="LeftMediaControlStackPanel.Visibility" Value="Collapsed" />
@@ -607,7 +609,7 @@
                 Name="MediaPlayerElement"
                 RelativePanel.AlignLeftWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True"
-                Margin="0,0,0,5">
+                Margin="1,0,1,5">
 
                 <Slider
                     x:Name="ProgressSlider"

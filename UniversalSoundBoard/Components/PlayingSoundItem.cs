@@ -36,6 +36,7 @@ namespace UniversalSoundboard.Components
         private PlayingSound PlayingSound;
         public Guid Uuid { get => PlayingSound == null ? Guid.Empty : PlayingSound.Uuid; }
         public bool SoundsListVisible { get => soundsListVisible; }
+        public bool CurrentSoundIsDownloading { get => currentSoundIsDownloading; }
         public TimeSpan CurrentSoundTotalDuration { get => currentSoundTotalDuration; }
 
         #region Local variables

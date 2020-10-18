@@ -119,7 +119,7 @@ namespace UniversalSoundBoard.Pages
                     if (
                         FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync
                         || FileManager.itemViewHolder.AppState == FileManager.AppState.Empty
-                    ) visibility = Visibility.Collapsed;
+                    ) visibility = FileManager.itemViewHolder.Page == typeof(SoundPage) ? Visibility.Collapsed : Visibility.Visible;
                     else if (FileManager.itemViewHolder.AppState == FileManager.AppState.Normal)
                         visibility = Visibility.Visible;
                     else if(FileManager.itemViewHolder.AppState == FileManager.AppState.Loading)
