@@ -353,7 +353,7 @@ namespace UniversalSoundBoard.Pages
 
             if (FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty))
             {
-                await Task.Delay(2);
+                await Task.Delay(5);
                 SelectCategory(Guid.Empty);
             }
         }

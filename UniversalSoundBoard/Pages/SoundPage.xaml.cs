@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
+using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using UniversalSoundBoard.Common;
@@ -35,6 +36,7 @@ namespace UniversalSoundBoard.Pages
         private double maxBottomPlayingSoundsBarHeight = 500;
         private bool isManipulatingBottomPlayingSoundsBar = false;
         private bool snapBottomPlayingSoundsBarAnimationRunning = false;
+        private static PlayingSound nextSinglePlayingSoundToOpen;
         private int getContainerHeightCount = 0;
         AdvancedCollectionView reversedPlayingSounds;
         Visibility startMessageVisibility = Visibility.Collapsed;
@@ -238,7 +240,7 @@ namespace UniversalSoundBoard.Pages
 
         private void ItemViewHolder_RemovePlayingSoundItemStarted(object sender, PlayingSoundItemEventArgs args)
         {
-            if (FileManager.itemViewHolder.PlayingSounds.Count == 1)
+            if (!FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSounds.Count == 1)
             {
                 // Start the animation for hiding the BottomPlayingSoundsBar background / BottomPseudoContentGrid
                 GridSplitterGridBottomRowDef.MinHeight = 0;
@@ -248,9 +250,17 @@ namespace UniversalSoundBoard.Pages
 
         private async void ItemViewHolder_RemovePlayingSoundItemEnded(object sender, PlayingSoundItemEventArgs e)
         {
-            // Snap the BottomPlayingSoundsBar; for the case that the height of the removed PlayingSound was different
-            await UpdateGridSplitterRange();
-            SnapBottomPlayingSoundsBar();
+            if (nextSinglePlayingSoundToOpen != null)
+            {
+                FileManager.itemViewHolder.PlayingSounds.Add(nextSinglePlayingSoundToOpen);
+                nextSinglePlayingSoundToOpen = null;
+            }
+            else if(FileManager.itemViewHolder.OpenMultipleSounds)
+            {
+                // Snap the BottomPlayingSoundsBar; for the case that the height of the removed PlayingSound was different
+                await UpdateGridSplitterRange();
+                SnapBottomPlayingSoundsBar();
+            }
         }
 
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -345,7 +355,7 @@ namespace UniversalSoundBoard.Pages
                     {
                         BottomPlayingSoundsBar.Visibility = Visibility.Visible;
                         GridSplitterGrid.Visibility = Visibility.Visible;
-                        BottomPlayingSoundsBarGridSplitter.Visibility = Visibility.Visible;
+                        BottomPlayingSoundsBarGridSplitter.Visibility = FileManager.itemViewHolder.OpenMultipleSounds ? Visibility.Visible : Visibility.Collapsed;
                     }
                 }
                 else
@@ -420,16 +430,6 @@ namespace UniversalSoundBoard.Pages
             List<Sound> newSounds = createMediaPlayerResult.Item2;
             if (player == null || newSounds == null) return;
 
-            // If OpenMultipleSounds is false, remove all sounds from PlayingSounds List
-            if (!FileManager.itemViewHolder.OpenMultipleSounds)
-            {
-                List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
-                foreach (PlayingSound pSound in FileManager.itemViewHolder.PlayingSounds)
-                    removedPlayingSounds.Add(pSound);
-
-                await RemoveSoundsFromPlayingSoundsListAsync(removedPlayingSounds);
-            }
-
             PlayingSound playingSound = new PlayingSound(player, sound)
             {
                 Uuid = await FileManager.CreatePlayingSoundAsync(null, newSounds, 0, 0, false, sound.DefaultVolume, sound.DefaultMuted),
@@ -437,8 +437,18 @@ namespace UniversalSoundBoard.Pages
                 Muted = sound.DefaultMuted,
                 StartPlaying = true
             };
-            FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
-            playingSound.MediaPlayer.TimelineController.Start();
+
+            if (FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSoundItems.Count == 0)
+            {
+                FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
+            }
+            else
+            {
+                nextSinglePlayingSoundToOpen = playingSound;
+
+                foreach (PlayingSoundItem playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
+                    playingSoundItem.TriggerRemove();
+            }
         }
 
         public static async Task PlaySoundAfterPlayingSoundsLoadedAsync(Sound sound)
@@ -467,16 +477,6 @@ namespace UniversalSoundBoard.Pages
             List<Sound> newSounds = createMediaPlayerResult.Item2;
             if (player == null || newSounds == null) return;
 
-            // If OpenMultipleSounds is false, remove all sounds from PlayingSounds List
-            if (!FileManager.itemViewHolder.OpenMultipleSounds)
-            {
-                List<PlayingSound> removedPlayingSounds = new List<PlayingSound>();
-                foreach (PlayingSound pSound in FileManager.itemViewHolder.PlayingSounds)
-                    removedPlayingSounds.Add(pSound);
-
-                await RemoveSoundsFromPlayingSoundsListAsync(removedPlayingSounds);
-            }
-
             PlayingSound playingSound = new PlayingSound(
                 await FileManager.CreatePlayingSoundAsync(null, newSounds, 0, repetitions, randomly, null, null),
                 player,
@@ -486,23 +486,17 @@ namespace UniversalSoundBoard.Pages
                 randomly
             );
             playingSound.StartPlaying = true;
-            FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
-            playingSound.MediaPlayer.TimelineController.Start();
-        }
 
-        public static async Task RemovePlayingSoundAsync(PlayingSound playingSound)
-        {
-            await FileManager.DeletePlayingSoundAsync(playingSound.Uuid);
-            FileManager.itemViewHolder.PlayingSounds.Remove(playingSound);
-        }
-
-        private static async Task RemoveSoundsFromPlayingSoundsListAsync(List<PlayingSound> removedPlayingSounds)
-        {
-            for (int i = 0; i < removedPlayingSounds.Count; i++)
+            if (FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSoundItems.Count == 0)
             {
-                removedPlayingSounds[i].MediaPlayer.TimelineController.Pause();
-                removedPlayingSounds[i].MediaPlayer = null;
-                await RemovePlayingSoundAsync(removedPlayingSounds[i]);
+                FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
+            }
+            else
+            {
+                nextSinglePlayingSoundToOpen = playingSound;
+
+                foreach (PlayingSoundItem playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
+                    playingSoundItem.TriggerRemove();
             }
         }
         #endregion

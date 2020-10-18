@@ -48,6 +48,7 @@ namespace UniversalSoundboard.Components
         private bool hideSoundsListAnimationTriggered = false;
         private bool currentSoundIsDownloading = false;
         readonly List<(Guid, int)> DownloadProgressList = new List<(Guid, int)>();
+        private bool removed = false;
 
         Timer fadeOutTimer;
         const int fadeOutTime = 300;
@@ -128,7 +129,7 @@ namespace UniversalSoundboard.Components
                 PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
 
                 // Stop all other PlayingSounds if this PlayingSound was just started
-                if (PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running)
+                if(PlayingSound.StartPlaying)
                     StopAllOtherPlayingSounds();
 
                 if (FileManager.itemViewHolder.User.IsLoggedIn)
@@ -241,7 +242,7 @@ namespace UniversalSoundboard.Components
                     if (PlayingSound.Repetitions <= 0)
                     {
                         // Remove the PlayingSound
-                        RemovePlayingSound?.Invoke(this, new EventArgs());
+                        TriggerRemove();
                         return;
                     }
 
@@ -441,7 +442,7 @@ namespace UniversalSoundboard.Components
          */
         private void StopAllOtherPlayingSounds()
         {
-            if (FileManager.itemViewHolder.MultiSoundPlayback) return;
+            if (FileManager.itemViewHolder.MultiSoundPlayback || !FileManager.itemViewHolder.OpenMultipleSounds) return;
 
             // Cause all other PlayingSounds to stop playback
             foreach (var playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
@@ -635,10 +636,7 @@ namespace UniversalSoundboard.Components
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
 
             if (PlayingSound.MediaPlayer.TimelineController.State != MediaTimelineControllerState.Running)
-            {
-                PlayingSound.MediaPlayer = null;
                 return;
-            }
 
             currentFadeOutFrame = 0;
             double interval = fadeOutTime / (double)fadeOutFrames;
@@ -658,9 +656,11 @@ namespace UniversalSoundboard.Components
             if (currentFadeOutFrame >= fadeOutFrames || PlayingSound.MediaPlayer == null)
             {
                 if (PlayingSound.MediaPlayer != null)
+                {
                     PlayingSound.MediaPlayer.TimelineController.Pause();
+                    PlayingSound.MediaPlayer.TimelineController.Position = TimeSpan.Zero;
+                }
 
-                PlayingSound.MediaPlayer = null;
                 fadeOutTimer.Stop();
             }
             else
@@ -821,15 +821,37 @@ namespace UniversalSoundboard.Components
             FavouriteChanged?.Invoke(this, new FavouriteChangedEventArgs(currentSound.Favourite));
         }
 
-        public void StartRemove()
+        public void TriggerRemove()
         {
+            // Stop and reset the MediaPlayer
             StartFadeOut();
+
+            // Start the remove animation
+            RemovePlayingSound?.Invoke(this, new EventArgs());
+
+            // Trigger the animation in SoundPage for the BottomPlayingSoundsBar
+            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemStartedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
         }
 
         public async Task Remove()
         {
+            if (removed) return;
+            removed = true;
+
             // Remove the PlayingSound from the list
             FileManager.itemViewHolder.PlayingSounds.Remove(PlayingSound);
+
+            // Remove this PlayingSoundItem from the PlayingSoundItems list
+            FileManager.itemViewHolder.PlayingSoundItems.Remove(this);
+
+            if (PlayingSound.MediaPlayer != null && PlayingSound.MediaPlayer.TimelineController != null)
+            {
+                PlayingSound.MediaPlayer.TimelineController.Pause();
+                PlayingSound.MediaPlayer.TimelineController.Position = TimeSpan.Zero;
+            }
+
+            // Update the BottomPlayingSoundsBar in SoundPage
+            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
 
             // Delete the PlayingSound
             await FileManager.DeletePlayingSoundAsync(PlayingSound.Uuid);

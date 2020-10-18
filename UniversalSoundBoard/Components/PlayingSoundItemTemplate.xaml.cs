@@ -39,6 +39,11 @@ namespace UniversalSoundBoard.Components
         private void Init()
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+
+            // Check if the PlayingSound still exists
+            int j = FileManager.itemViewHolder.PlayingSounds.ToList().FindIndex(ps => ps.Uuid.Equals(PlayingSound.Uuid));
+            if (j == -1) return;
+
             inBottomPlayingSoundsBar = Tag != null;
 
             if(!inBottomPlayingSoundsBar)
@@ -47,7 +52,7 @@ namespace UniversalSoundBoard.Components
             // Subscribe to the appropriate PlayingSoundItem
             int i = FileManager.itemViewHolder.PlayingSoundItems.FindIndex(item => item.Uuid.Equals(PlayingSound.Uuid));
 
-            if(i == -1)
+            if (i == -1)
             {
                 // Create a new PlayingSoundItem
                 PlayingSoundItem = new PlayingSoundItem(PlayingSound, CoreWindow.GetForCurrentThread().Dispatcher);
@@ -231,7 +236,9 @@ namespace UniversalSoundBoard.Components
 
         private void PlayingSoundItem_RemovePlayingSound(object sender, EventArgs e)
         {
-            TriggerRemovePlayingSound();
+            // Start the animation for hiding the PlayingSoundItem
+            HidePlayingSoundItemStoryboardAnimation.From = PlayingSoundItemTemplateUserControl.ActualHeight;
+            HidePlayingSoundItemStoryboard.Begin();
         }
 
         private void PlayingSoundItem_DownloadStatusChanged(object sender, DownloadStatusChangedEventArgs e)
@@ -341,8 +348,7 @@ namespace UniversalSoundBoard.Components
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayingSoundItem.StartRemove();
-            TriggerRemovePlayingSound();
+            PlayingSoundItem.TriggerRemove();
         }
 
         private void ProgressSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -400,7 +406,7 @@ namespace UniversalSoundBoard.Components
             if (PlayingSound.Sounds.Count > 1)
                 PlayingSoundItem.RemoveSound((Guid)args.SwipeControl.Tag);
             else
-                TriggerRemovePlayingSound();
+                PlayingSoundItem.TriggerRemove();
         }
 
         private async void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -437,16 +443,6 @@ namespace UniversalSoundBoard.Components
         #endregion
 
         #region Functionality
-        private void TriggerRemovePlayingSound()
-        {
-            // Start the animation for hiding the PlayingSoundItem
-            HidePlayingSoundItemStoryboardAnimation.From = PlayingSoundItemTemplateUserControl.ActualHeight;
-            HidePlayingSoundItemStoryboard.Begin();
-
-            // Trigger the animation in SoundPage for the BottomPlayingSoundsBar, if necessary
-            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemStartedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
-        }
-
         private void SetTotalDuration()
         {
             var totalDuration = PlayingSoundItem.CurrentSoundTotalDuration;
@@ -674,9 +670,6 @@ namespace UniversalSoundBoard.Components
         {
             playingSoundItemVisible = false;
             await PlayingSoundItem.Remove();
-
-            // Trigger the animation in SoundPage for the BottomPlayingSoundsBar, if necessary
-            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
         }
         #endregion
     }
