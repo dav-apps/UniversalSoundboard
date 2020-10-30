@@ -109,7 +109,7 @@ namespace UniversalSoundboard.Components
 
                 // Subscribe to MediaPlayer events
                 PlayingSound.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
-                PlayingSound.MediaPlayer.PlaybackSession.PlaybackStateChanged += PlaybackSession_PlaybackStateChanged;
+                PlayingSound.MediaPlayer.TimelineController.StateChanged += TimelineController_StateChanged;
                 PlayingSound.MediaPlayer.TimelineController.PositionChanged += TimelineController_PositionChanged;
                 if(PlayingSound.MediaPlayer.Source != null)
                 {
@@ -227,7 +227,7 @@ namespace UniversalSoundboard.Components
         #region MediaPlayer event handlers
         private async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 // Check if the end of the sounds list was reached
                 if(PlayingSound.Current + 1 < PlayingSound.Sounds.Count)
@@ -286,14 +286,14 @@ namespace UniversalSoundboard.Components
                     }
                     else
                     {
-                        PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0);
+                        PlayingSound.MediaPlayer.TimelineController.Position = TimeSpan.Zero;
                         PlayingSound.MediaPlayer.TimelineController.Start();
                     }
                 }
             });
         }
 
-        private async void PlaybackSession_PlaybackStateChanged(MediaPlaybackSession sender, object args)
+        private async void TimelineController_StateChanged(MediaTimelineController sender, object args)
         {
             await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
@@ -319,6 +319,8 @@ namespace UniversalSoundboard.Components
 
         private async void PlayingSoundItem_OpenOperationCompleted(MediaSource sender, MediaSourceOpenOperationCompletedEventArgs args)
         {
+            PlayingSound.MediaPlayer.TimelineController.Position = TimeSpan.Zero;
+
             await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
                 currentSoundTotalDuration = sender.Duration.GetValueOrDefault();
@@ -431,8 +433,8 @@ namespace UniversalSoundboard.Components
 
             var newSource = MediaSource.CreateFromUri(new Uri(filePath));
             newSource.OpenOperationCompleted += PlayingSoundItem_OpenOperationCompleted;
+            PlayingSound.MediaPlayer.TimelineController.Position = TimeSpan.Zero;
             PlayingSound.MediaPlayer.Source = newSource;
-            PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0);
 
             // Save the new Current
             await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, index);
@@ -720,7 +722,7 @@ namespace UniversalSoundboard.Components
             if (PlayingSound.MediaPlayer.TimelineController.Position.Seconds >= 5)
             {
                 // Move to the start of the sound
-                PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0);
+                PlayingSound.MediaPlayer.TimelineController.Position = TimeSpan.Zero;
             }
             else
             {
@@ -776,6 +778,8 @@ namespace UniversalSoundboard.Components
         public void SetPosition(int position)
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+            if (position > currentSoundTotalDuration.TotalSeconds - 1) return;
+
             PlayingSound.MediaPlayer.TimelineController.Position = new TimeSpan(0, 0, position);
         }
 
