@@ -1649,18 +1649,23 @@ namespace UniversalSoundBoard.DataAccess
 
         public static async Task ReloadPlayingSoundAsync(Guid uuid)
         {
-            var playingSound = await GetPlayingSoundAsync(uuid);
-            if (playingSound == null) return;
+            int i = itemViewHolder.PlayingSoundItems.FindIndex(item => item.Uuid.Equals(uuid));
+            if (i == -1)
+            {
+                // Add the PlayingSound to the list
+                var playingSound = await GetPlayingSoundAsync(uuid);
+                if (playingSound == null) return;
 
-            var currentPlayingSoundList = itemViewHolder.PlayingSounds.Where(p => p.Uuid == playingSound.Uuid);
-            if (currentPlayingSoundList.Count() == 0) return;
+                // Check if the PlayingSound is already in the list
+                i = itemViewHolder.PlayingSounds.ToList().FindIndex(p => p.Uuid.Equals(uuid));
+                if (i != -1) return;
 
-            var currentPlayingSound = currentPlayingSoundList.First();
-            if (currentPlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running) return;
+                itemViewHolder.PlayingSounds.Add(playingSound);
+                return;
+            }
 
-            // Replace the playing sound
-            int index = itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
-            if (index != -1) itemViewHolder.PlayingSounds[index] = playingSound;
+            // Replace the PlayingSound in the PlayingSoundItem
+            await itemViewHolder.PlayingSoundItems.ElementAt(i).ReloadPlayingSound();
         }
 
         public static void RemovePlayingSound(Guid uuid)

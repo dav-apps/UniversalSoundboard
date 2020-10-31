@@ -33,7 +33,7 @@ namespace UniversalSoundboard.Components
      */
     public class PlayingSoundItem
     {
-        private PlayingSound PlayingSound;
+        public PlayingSound PlayingSound { get; private set; }
         public Guid Uuid { get => PlayingSound == null ? Guid.Empty : PlayingSound.Uuid; }
         public bool SoundsListVisible { get => soundsListVisible; }
         public bool CurrentSoundIsDownloading { get => currentSoundIsDownloading; }
@@ -676,6 +676,69 @@ namespace UniversalSoundboard.Components
         #endregion
 
         #region Public methods
+        public async Task ReloadPlayingSound()
+        {
+            var playingSound = await FileManager.GetPlayingSoundAsync(PlayingSound.Uuid);
+            if (playingSound == null) return;
+            if (PlayingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running) return;
+
+            // Update Current
+            if(PlayingSound.Current != playingSound.Current)
+                await MoveToSound(playingSound.Current);
+
+            // Update Volume
+            if (PlayingSound.Volume != playingSound.Volume)
+            {
+                PlayingSound.Volume = playingSound.Volume;
+                VolumeChanged?.Invoke(
+                    this,
+                    new VolumeChangedEventArgs(PlayingSound.Volume)
+                );
+            }
+
+            // Update Muted
+            if(PlayingSound.Muted != playingSound.Muted)
+            {
+                PlayingSound.Muted = playingSound.Muted;
+                PlayingSound.MediaPlayer.IsMuted = playingSound.Muted || FileManager.itemViewHolder.Muted;
+                MutedChanged?.Invoke(
+                    this,
+                    new MutedChangedEventArgs(playingSound.Muted)
+                );
+            }
+
+            // Update Repetitions
+            if (PlayingSound.Repetitions != playingSound.Repetitions)
+                PlayingSound.Repetitions = playingSound.Repetitions;
+
+            // Update Sounds
+            // Check if the sounds have changed
+            bool soundsChanged = PlayingSound.Sounds.Count != playingSound.Sounds.Count;
+
+            if (!soundsChanged)
+            {
+                int i = 0;
+                foreach(var sound in PlayingSound.Sounds)
+                {
+                    if (!sound.Uuid.Equals(playingSound.Sounds[i].Uuid))
+                    {
+                        soundsChanged = true;
+                        break;
+                    }
+
+                    i++;
+                }
+            }
+
+            if (soundsChanged)
+            {
+                // Reload the sounds
+                PlayingSound.Sounds.Clear();
+                foreach (var sound in playingSound.Sounds)
+                    PlayingSound.Sounds.Add(sound);
+            }
+        }
+
         /**
          * Toggles the MediaPlayer from Playing -> Paused or from Paused -> Playing
          */

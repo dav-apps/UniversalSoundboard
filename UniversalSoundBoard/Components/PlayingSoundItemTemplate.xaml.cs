@@ -17,7 +17,18 @@ namespace UniversalSoundBoard.Components
 {
     public sealed partial class PlayingSoundItemTemplate : UserControl
     {
-        PlayingSound PlayingSound { get; set; }
+        private PlayingSound _playingSound;
+        PlayingSound PlayingSound {
+            get
+            {
+                if (PlayingSoundItem == null) return null;
+                return PlayingSoundItem.PlayingSound;
+            }
+            set
+            {
+                _playingSound = value;
+            }
+        }
         PlayingSoundItem PlayingSoundItem;
 
         private readonly ResourceLoader loader = new ResourceLoader();
@@ -38,10 +49,10 @@ namespace UniversalSoundBoard.Components
 
         private void Init()
         {
-            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+            if (_playingSound == null || _playingSound.MediaPlayer == null) return;
 
             // Check if the PlayingSound still exists
-            int j = FileManager.itemViewHolder.PlayingSounds.ToList().FindIndex(ps => ps.Uuid.Equals(PlayingSound.Uuid));
+            int j = FileManager.itemViewHolder.PlayingSounds.ToList().FindIndex(ps => ps.Uuid.Equals(_playingSound.Uuid));
             if (j == -1) return;
 
             inBottomPlayingSoundsBar = Tag != null;
@@ -50,12 +61,12 @@ namespace UniversalSoundBoard.Components
                 PlayingSoundItemTemplateUserControl.Height = double.NaN;
 
             // Subscribe to the appropriate PlayingSoundItem
-            int i = FileManager.itemViewHolder.PlayingSoundItems.FindIndex(item => item.Uuid.Equals(PlayingSound.Uuid));
+            int i = FileManager.itemViewHolder.PlayingSoundItems.FindIndex(item => item.Uuid.Equals(_playingSound.Uuid));
 
             if (i == -1)
             {
                 // Create a new PlayingSoundItem
-                PlayingSoundItem = new PlayingSoundItem(PlayingSound, CoreWindow.GetForCurrentThread().Dispatcher);
+                PlayingSoundItem = new PlayingSoundItem(_playingSound, CoreWindow.GetForCurrentThread().Dispatcher);
                 FileManager.itemViewHolder.PlayingSoundItems.Add(PlayingSoundItem);
             }
             else
@@ -64,6 +75,7 @@ namespace UniversalSoundBoard.Components
                 if(PlayingSoundItem.CurrentSoundIsDownloading)
                     ShowIndetermindateProgressBar();
             }
+            _playingSound = null;
 
             PlayingSoundItem.PlaybackStateChanged -= PlayingSoundItem_PlaybackStateChanged;
             PlayingSoundItem.PlaybackStateChanged += PlayingSoundItem_PlaybackStateChanged;
@@ -95,10 +107,6 @@ namespace UniversalSoundBoard.Components
             PlayingSoundItem.DownloadStatusChanged += PlayingSoundItem_DownloadStatusChanged;
             PlayingSoundItem.Init();
 
-            // Hide the sounds list
-            if(!PlayingSoundItem.SoundsListVisible)
-                SoundsListViewStackPanel.Height = 0;
-
             SoundsListView.ItemsSource = PlayingSound.Sounds;
             UpdateUI();
         }
@@ -119,7 +127,7 @@ namespace UniversalSoundBoard.Components
         {
             if (DataContext == null) return;
 
-            PlayingSound = DataContext as PlayingSound;
+            _playingSound = DataContext as PlayingSound;
             Init();
         }
         #endregion
@@ -163,16 +171,7 @@ namespace UniversalSoundBoard.Components
 
         private void PlayingSoundItem_ExpandButtonContentChanged(object sender, ExpandButtonContentChangedEventArgs e)
         {
-            if (e.Expanded)
-            {
-                ExpandButton.Content = "\uE098";
-                ExpandButtonToolTip.Text = loader.GetString("CollapseButtonTooltip");
-            }
-            else
-            {
-                ExpandButton.Content = "\uE099";
-                ExpandButtonToolTip.Text = loader.GetString("ExpandButtonTooltip");
-            }
+            UpdateExpandButtonUI();
         }
 
         private void PlayingSoundItem_ShowSoundsList(object sender, EventArgs e)
@@ -649,6 +648,28 @@ namespace UniversalSoundBoard.Components
                 PlayPauseButton.Margin = new Thickness(10, 0, 10, 0);
             else
                 PlayPauseButton.Margin = new Thickness(1, 0, 1, 0);
+        }
+
+        private void UpdateExpandButtonUI()
+        {
+            if (PlayingSoundItem.SoundsListVisible)
+            {
+                // Set the icon for the expand button
+                ExpandButton.Content = "\uE098";
+                ExpandButtonToolTip.Text = loader.GetString("CollapseButtonTooltip");
+
+                // Show the sound list
+                SoundsListViewStackPanel.Height = SoundsListView.ActualHeight;
+            }
+            else
+            {
+                // Set the icon for the expand button
+                ExpandButton.Content = "\uE099";
+                ExpandButtonToolTip.Text = loader.GetString("ExpandButtonTooltip");
+
+                // Hide the sound list
+                SoundsListViewStackPanel.Height = 0;
+            }
         }
 
         private void SetFavouriteFlyoutItemText(bool fav)
