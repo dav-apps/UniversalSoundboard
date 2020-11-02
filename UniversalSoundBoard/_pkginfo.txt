@@ -1,1 +1,1 @@
-C:\Users\dav20\Documents\Projekte\UniversalSoundBoard\UniversalSoundBoard\bin\x64\Release\Upload\UniversalSoundBoard_2.0.1.0\UniversalSoundBoard_2.0.1.0_x86_x64.msixbundle
+C:\Users\dav20\Documents\Projekte\UniversalSoundBoard\UniversalSoundBoard\bin\x64\Release\Upload\UniversalSoundBoard_2.0.2.0\UniversalSoundBoard_2.0.2.0_x86_x64.msixbundle
