@@ -782,8 +782,6 @@ namespace UniversalSoundBoard.Common
             SetCategoryContentDialog = new ContentDialog
             {
                 Title = title,
-                PrimaryButtonText = loader.GetString("ContentDialog-Save"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
@@ -822,7 +820,12 @@ namespace UniversalSoundBoard.Common
                 CategoriesTreeView.SelectedNodes.Add(node);
 
             if(categories.Count > 0)
+            {
                 content.Children.Add(CategoriesTreeView);
+
+                SetCategoryContentDialog.PrimaryButtonText = loader.GetString("ContentDialog-Save");
+                SetCategoryContentDialog.SecondaryButtonText = loader.GetString("ContentDialog-Cancel");
+            }
             else
             {
                 TextBlock noCategoriesTextBlock = new TextBlock
@@ -830,6 +833,8 @@ namespace UniversalSoundBoard.Common
                     Text = loader.GetString("SetCategoryContentDialog-NoCategoriesText")
                 };
                 content.Children.Add(noCategoriesTextBlock);
+
+                SetCategoryContentDialog.SecondaryButtonText = loader.GetString("ContentDialog-Close");
             }
 
             SetCategoryContentDialog.Content = content;
