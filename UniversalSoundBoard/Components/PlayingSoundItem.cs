@@ -119,8 +119,16 @@ namespace UniversalSoundboard.Components
                     if (mediaSource.IsOpen)
                     {
                         // Set the total duration and call the DurationChanged event
-                        currentSoundTotalDuration = mediaSource.Duration.GetValueOrDefault();
-                        DurationChanged?.Invoke(this, new DurationChangedEventArgs(mediaSource.Duration.GetValueOrDefault()));
+                        TimeSpan duration = TimeSpan.FromMinutes(1);
+
+                        try
+                        {
+                            duration = mediaSource.Duration.GetValueOrDefault();
+                        }
+                        catch(Exception e) { }
+
+                        currentSoundTotalDuration = duration;
+                        DurationChanged?.Invoke(this, new DurationChangedEventArgs(duration));
                     }
                 }
 
