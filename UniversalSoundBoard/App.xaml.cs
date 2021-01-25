@@ -1,6 +1,10 @@
 ﻿using davClassLibrary.Common;
+using Microsoft.AppCenter;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using System;
 using System.Diagnostics;
+using UniversalSoundboard;
 using UniversalSoundboard.Common;
 using UniversalSoundBoard.Common;
 using UniversalSoundBoard.DataAccess;
@@ -28,6 +32,9 @@ namespace UniversalSoundBoard
         {
             InitializeComponent();
             Suspending += OnSuspending;
+
+            // Init AppCenter
+            AppCenter.Start(Env.AppCenterSecretKey, typeof(Analytics), typeof(Crashes));
 
             // Init Websocket
             Websockets.Net.WebsocketConnection.Link();
