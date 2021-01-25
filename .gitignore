@@ -243,3 +243,6 @@ ModelManifest.xml
 
 # FAKE - F# Make
 .fake/
+
+# File for environment variables
+UniversalSoundBoard/Strings/Env.cs

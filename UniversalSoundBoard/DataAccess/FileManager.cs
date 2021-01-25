@@ -13,6 +13,7 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
+using UniversalSoundboard;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
@@ -57,9 +58,7 @@ namespace UniversalSoundBoard.DataAccess
         #endregion
 
         #region dav Keys
-        private const string ApiKeyProduction = "gHgHKRbIjdguCM4cv5481hdiF5hZGWZ4x12Ur-7v";     // Prod
-        public const string ApiKeyDevelopment = "eUzs3PQZYweXvumcWvagRHjdUroGe5Mo7kN1inHm";     // Dev
-        public static string ApiKey => Environment == DavEnvironment.Production ? ApiKeyProduction : ApiKeyDevelopment;
+        public static string ApiKey => Environment == DavEnvironment.Production ? Env.DavApiKeyProd : Env.DavApiKeyDev;
 
         private const string WebsiteBaseUrlProduction = "https://dav-apps.herokuapp.com";
         private const string WebsiteBaseUrlDevelopment = "https://4de1c1ca4055.ngrok.io";
