@@ -1,11 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
-using UniversalSoundBoard.DataAccess;
-using Windows.Media.Playback;
 
-namespace UniversalSoundBoard.Models
+namespace UniversalSoundboard.Models
 {
     // The model for the old data.json file
     public class Data

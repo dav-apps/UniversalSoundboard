@@ -1,6 +1,6 @@
 ﻿using davClassLibrary.Common;
 using davClassLibrary.DataAccess;
-using UniversalSoundBoard.DataAccess;
+using UniversalSoundboard.DataAccess;
 using Windows.Networking.Connectivity;
 
 namespace UniversalSoundboard.Common

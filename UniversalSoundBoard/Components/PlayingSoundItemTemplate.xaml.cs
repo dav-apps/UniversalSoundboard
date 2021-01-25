@@ -2,10 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
-using UniversalSoundboard.Components;
+using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
-using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Pages;
+using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.Resources;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -13,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
 
-namespace UniversalSoundBoard.Components
+namespace UniversalSoundboard.Components
 {
     public sealed partial class PlayingSoundItemTemplate : UserControl
     {

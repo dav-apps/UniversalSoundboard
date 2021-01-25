@@ -1,9 +1,9 @@
-﻿using UniversalSoundBoard.Common;
-using UniversalSoundBoard.Models;
+﻿using UniversalSoundboard.Common;
+using UniversalSoundboard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
-namespace UniversalSoundBoard.Components
+namespace UniversalSoundboard.Components
 {
     public sealed partial class SoundItemTemplate : UserControl
     {

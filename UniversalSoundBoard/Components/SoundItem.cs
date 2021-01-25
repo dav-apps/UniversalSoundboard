@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using UniversalSoundBoard.Common;
-using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Models;
+using UniversalSoundboard.Common;
+using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Models;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;

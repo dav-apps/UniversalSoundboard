@@ -13,14 +13,10 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
-using UniversalSoundboard;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
-using UniversalSoundBoard.Common;
-using UniversalSoundBoard.Models;
-using UniversalSoundBoard.Pages;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
 using Windows.Media;
@@ -36,7 +32,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using static davClassLibrary.Models.TableObject;
 
-namespace UniversalSoundBoard.DataAccess
+namespace UniversalSoundboard.DataAccess
 {
     public class FileManager
     {

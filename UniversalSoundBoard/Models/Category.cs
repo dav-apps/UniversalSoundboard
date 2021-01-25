@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace UniversalSoundBoard.Models
+namespace UniversalSoundboard.Models
 {
     public class Category
     {

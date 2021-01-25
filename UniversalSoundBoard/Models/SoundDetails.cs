@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Windows.Storage;
 
-namespace UniversalSoundBoard.Models
+namespace UniversalSoundboard.Models
 {
     public class SoundDetails
     {

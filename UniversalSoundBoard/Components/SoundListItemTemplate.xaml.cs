@@ -1,6 +1,6 @@
-﻿using UniversalSoundBoard.Common;
-using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Models;
+﻿using UniversalSoundboard.Common;
+using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;

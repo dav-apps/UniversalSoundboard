@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using UniversalSoundBoard.Models;
 using Windows.Media.Playback;
 
 namespace UniversalSoundboard.Models

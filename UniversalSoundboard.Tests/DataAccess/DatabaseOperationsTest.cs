@@ -6,8 +6,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Tests.Common;
-using UniversalSoundBoard.DataAccess;
 
 namespace UniversalSoundboard.Tests.DataAccess
 {
@@ -23,7 +23,7 @@ namespace UniversalSoundboard.Tests.DataAccess
             ProjectInterface.LocalDataSettings = new LocalDataSettings();
             ProjectInterface.TriggerAction = new TriggerAction();
 
-            FileManager.itemViewHolder = new UniversalSoundBoard.Common.ItemViewHolder();
+            FileManager.itemViewHolder = new UniversalSoundboard.Common.ItemViewHolder();
         }
 
         [TestInitialize]

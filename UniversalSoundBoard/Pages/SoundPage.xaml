@@ -1,16 +1,14 @@
 ﻿<Page
-    x:Class="UniversalSoundBoard.Pages.SoundPage"
+    x:Class="UniversalSoundboard.Pages.SoundPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:components="using:UniversalSoundBoard.Components"
-    xmlns:components1="using:UniversalSoundboard.Components"
-    xmlns:converters="using:UniversalSoundBoard.Converters"
-    xmlns:models="using:UniversalSoundBoard.Models"
-    xmlns:models1="using:UniversalSoundboard.Models"
+    xmlns:converters="using:UniversalSoundboard.Converters"
+    xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     Loaded="SoundPage_Loaded"
     SizeChanged="SoundPage_SizeChanged">
@@ -30,7 +28,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="SoundListViewItemTemplate" x:DataType="models:Sound">
-            <components1:SoundListItemTemplate />
+            <components:SoundListItemTemplate />
         </DataTemplate>
 
         <!-- Styles -->
@@ -619,7 +617,7 @@
                     </ListView.ItemContainerStyle>
 
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models1:PlayingSound">
+                        <DataTemplate x:DataType="models:PlayingSound">
                             <components:PlayingSoundItemTemplate />
                         </DataTemplate>
                     </ListView.ItemTemplate>
@@ -691,7 +689,7 @@
                 </ListView.ItemContainerStyle>
 
                 <ListView.ItemTemplate>
-                    <DataTemplate x:DataType="models1:PlayingSound">
+                    <DataTemplate x:DataType="models:PlayingSound">
                         <components:PlayingSoundItemTemplate Tag="true" />
                     </DataTemplate>
                 </ListView.ItemTemplate>

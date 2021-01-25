@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Linq;
-using UniversalSoundBoard.Models;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -8,9 +7,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI;
 using Windows.ApplicationModel.Core;
 using Windows.UI.ViewManagement;
-using UniversalSoundBoard.DataAccess;
 using Windows.UI.Xaml.Media;
-using UniversalSoundBoard.Common;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
@@ -23,8 +20,10 @@ using System.ComponentModel;
 using System.Collections.Specialized;
 using UniversalSoundboard.Common;
 using static davClassLibrary.Models.TableObject;
+using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Models;
 
-namespace UniversalSoundBoard.Pages
+namespace UniversalSoundboard.Pages
 {
     public sealed partial class MainPage : Page
     {

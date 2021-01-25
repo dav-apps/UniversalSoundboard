@@ -4,11 +4,9 @@ using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using System;
 using System.Diagnostics;
-using UniversalSoundboard;
 using UniversalSoundboard.Common;
-using UniversalSoundBoard.Common;
-using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Pages;
+using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Pages;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.ApplicationModel.DataTransfer;
@@ -17,7 +15,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
 
-namespace UniversalSoundBoard
+namespace UniversalSoundboard
 {
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.

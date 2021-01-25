@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
-using UniversalSoundBoard.Common;
-using UniversalSoundBoard.DataAccess;
+using UniversalSoundboard.Common;
+using UniversalSoundboard.DataAccess;
 using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
 using Windows.UI;

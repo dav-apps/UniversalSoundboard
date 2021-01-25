@@ -7,11 +7,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
+using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
-using UniversalSoundboard.Pages;
-using UniversalSoundBoard.Common;
-using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Models;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation.Collections;
@@ -22,7 +19,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 
-namespace UniversalSoundBoard.Pages
+namespace UniversalSoundboard.Pages
 {
     public sealed partial class SoundPage : Page
     {

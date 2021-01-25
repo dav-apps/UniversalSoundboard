@@ -3,19 +3,17 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
+using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
-using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Models;
-using UniversalSoundBoard.Pages;
+using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace UniversalSoundBoard.Common
+namespace UniversalSoundboard.Common
 {
     public class ItemViewHolder : INotifyPropertyChanged
     {

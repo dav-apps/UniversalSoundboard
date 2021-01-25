@@ -1,13 +1,13 @@
 ﻿using System;
-using UniversalSoundBoard.Common;
-using UniversalSoundBoard.DataAccess;
+using UniversalSoundboard.Common;
+using UniversalSoundboard.DataAccess;
 using Windows.ApplicationModel.Resources;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
-namespace UniversalSoundBoard.Pages
+namespace UniversalSoundboard.Pages
 {
     public sealed partial class SettingsPage : Page
     {

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
-using UniversalSoundBoard.Common;
-using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Models;
+using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Models;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Storage;
 using Windows.UI.Core;
@@ -12,7 +12,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
-namespace UniversalSoundBoard.Pages
+namespace UniversalSoundboard.Pages
 {
     public sealed partial class ShareTargetPage : Page
     {

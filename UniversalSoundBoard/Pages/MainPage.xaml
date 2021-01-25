@@ -1,15 +1,14 @@
 ﻿<Page
-    x:Class="UniversalSoundBoard.Pages.MainPage"
+    x:Class="UniversalSoundboard.Pages.MainPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-    xmlns:converters="using:UniversalSoundBoard.Converters"
-    xmlns:components="using:UniversalSoundBoard.Components"
-    xmlns:components1="using:UniversalSoundboard.Components"
-    xmlns:models="using:UniversalSoundBoard.Models"
+    xmlns:converters="using:UniversalSoundboard.Converters"
+    xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     Loaded="MainPage_Loaded"
     SizeChanged="MainPage_SizeChanged">
@@ -27,7 +26,7 @@
         </DataTemplate>
 
         <DataTemplate x:Key="SoundFileDownloadProgressTemplate" x:DataType="models:Sound">
-            <components1:SoundFileDownloadProgressTemplate />
+            <components:SoundFileDownloadProgressTemplate />
         </DataTemplate>
 
         <!-- Styles -->
@@ -261,7 +260,7 @@
 
                                         <Button.Flyout>
                                             <Flyout>
-                                                <components1:VolumeControl
+                                                <components:VolumeControl
                                                     x:Name="VolumeControl"
                                                     ValueChanged="VolumeControl_ValueChanged"
                                                     IconChanged="VolumeControl_IconChanged"

@@ -1,14 +1,14 @@
 ﻿using davClassLibrary.Models;
 using System;
 using System.Collections.Generic;
-using UniversalSoundBoard.DataAccess;
+using UniversalSoundboard.DataAccess;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
 using static davClassLibrary.Models.TableObject;
 
-namespace UniversalSoundBoard.Models
+namespace UniversalSoundboard.Models
 {
     public class Sound{
         private const string DefaultLightSoundImageUri = "ms-appx:///Assets/Images/default.png";

@@ -4,8 +4,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Components;
-using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Models;
+using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Models;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
@@ -15,7 +15,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using WinUI = Microsoft.UI.Xaml.Controls;
 
-namespace UniversalSoundBoard.Common
+namespace UniversalSoundboard.Common
 {
     public class ContentDialogs
     {

@@ -1,17 +1,16 @@
 ﻿using System;
-using UniversalSoundBoard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Microsoft.Toolkit.Uwp.UI.Animations;
-using UniversalSoundBoard.DataAccess;
 using Windows.Foundation;
-using UniversalSoundboard.Components;
 using Windows.UI.Xaml.Media.Imaging;
-using UniversalSoundBoard.Common;
 using System.Threading.Tasks;
+using UniversalSoundboard.Models;
+using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Common;
 
-namespace UniversalSoundBoard.Components
+namespace UniversalSoundboard.Components
 {
     public sealed partial class SoundTileTemplate : UserControl
     {

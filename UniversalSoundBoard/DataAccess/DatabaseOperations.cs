@@ -7,10 +7,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using UniversalSoundboard.Models;
-using UniversalSoundBoard.Models;
 using Windows.Storage;
 
-namespace UniversalSoundBoard.DataAccess
+namespace UniversalSoundboard.DataAccess
 {
     public class DatabaseOperations
     {

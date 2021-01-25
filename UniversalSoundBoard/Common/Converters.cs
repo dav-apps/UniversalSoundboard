@@ -2,15 +2,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using UniversalSoundBoard.DataAccess;
-using UniversalSoundBoard.Models;
-using UniversalSoundBoard.Pages;
+using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Models;
+using UniversalSoundboard.Pages;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Media.Imaging;
 
-namespace UniversalSoundBoard.Converters
+namespace UniversalSoundboard.Converters
 {
     public class ValueConverterGroup : List<IValueConverter>, IValueConverter
     {
