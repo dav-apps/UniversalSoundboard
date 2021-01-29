@@ -1,7 +1,8 @@
 ﻿<Application
     x:Class="UniversalSoundboard.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:converters="using:UniversalSoundboard.Converters">
 
     <Application.Resources>
         <ResourceDictionary>
@@ -30,6 +31,10 @@
                 FallbackColor="White"
                 TintOpacity="0.75"
                 TintColor="White" />
+
+            <!-- Converters -->
+            <converters:TopOfThicknessToGridLengthConverter x:Name="TopOfThicknessToGridLengthConverter" />
+            <converters:BottomOfThicknessToGridLengthConverter x:Name="BottomOfThicknessToGridLengthConverter" />
 
             <!-- Pivot styles -->
             <DataTemplate x:Key="PivotHeaderTemplate">
@@ -190,10 +195,8 @@
 
                                 <VisualStateManager.VisualStateGroups>
                                     <VisualStateGroup x:Name="ScrollingIndicatorStates">
-
                                         <VisualStateGroup.Transitions>
                                             <VisualTransition From="MouseIndicator" To="NoIndicator">
-
                                                 <Storyboard>
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
                                                         <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDelay}">
@@ -211,8 +214,8 @@
                                                     </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                             </VisualTransition>
+
                                             <VisualTransition From="MouseIndicatorFull" To="NoIndicator">
-
                                                 <Storyboard>
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
                                                         <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDelay}">
@@ -230,8 +233,8 @@
                                                     </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                             </VisualTransition>
+
                                             <VisualTransition From="MouseIndicatorFull" To="MouseIndicator">
-
                                                 <Storyboard>
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
                                                         <DiscreteObjectKeyFrame KeyTime="{ThemeResource ScrollViewerSeparatorContractDelay}">
@@ -249,8 +252,8 @@
                                                     </ObjectAnimationUsingKeyFrames>
                                                 </Storyboard>
                                             </VisualTransition>
-                                            <VisualTransition From="TouchIndicator" To="NoIndicator">
 
+                                            <VisualTransition From="TouchIndicator" To="NoIndicator">
                                                 <Storyboard>
                                                     <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
                                                         <DiscreteObjectKeyFrame KeyTime="0:0:0.5">
@@ -269,9 +272,10 @@
                                                 </Storyboard>
                                             </VisualTransition>
                                         </VisualStateGroup.Transitions>
+                                        
                                         <VisualState x:Name="NoIndicator" />
+                                        
                                         <VisualState x:Name="TouchIndicator">
-
                                             <Storyboard>
                                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
                                                     <DiscreteObjectKeyFrame KeyTime="0">
@@ -289,8 +293,8 @@
                                                 </ObjectAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </VisualState>
+
                                         <VisualState x:Name="MouseIndicator">
-
                                             <Storyboard>
                                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
                                                     <DiscreteObjectKeyFrame KeyTime="0">
@@ -308,8 +312,8 @@
                                                 </ObjectAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </VisualState>
+
                                         <VisualState x:Name="MouseIndicatorFull">
-
                                             <Storyboard>
                                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
                                                     <DiscreteObjectKeyFrame KeyTime="0">
@@ -327,13 +331,11 @@
                                                 </ObjectAnimationUsingKeyFrames>
                                             </Storyboard>
                                         </VisualState>
-
                                     </VisualStateGroup>
-                                    <VisualStateGroup x:Name="ScrollBarSeparatorStates">
 
+                                    <VisualStateGroup x:Name="ScrollBarSeparatorStates">
                                         <VisualStateGroup.Transitions>
                                             <VisualTransition From="ScrollBarSeparatorExpanded" To="ScrollBarSeparatorCollapsed">
-
                                                 <Storyboard>
                                                     <DoubleAnimation Duration="{ThemeResource ScrollViewerSeparatorContractDuration}"
                                                         BeginTime="{ThemeResource ScrollViewerSeparatorContractBeginTime}"
@@ -343,9 +345,10 @@
                                                 </Storyboard>
                                             </VisualTransition>
                                         </VisualStateGroup.Transitions>
-                                        <VisualState x:Name="ScrollBarSeparatorCollapsed" />
-                                        <VisualState x:Name="ScrollBarSeparatorExpanded">
 
+                                        <VisualState x:Name="ScrollBarSeparatorCollapsed" />
+
+                                        <VisualState x:Name="ScrollBarSeparatorExpanded">
                                             <Storyboard>
                                                 <DoubleAnimation Duration="{ThemeResource ScrollViewerSeparatorExpandDuration}"
                                                     BeginTime="{ThemeResource ScrollViewerSeparatorExpandBeginTime}"
@@ -354,8 +357,8 @@
                                                     To="1" />
                                             </Storyboard>
                                         </VisualState>
-                                        <VisualState x:Name="ScrollBarSeparatorExpandedWithoutAnimation">
 
+                                        <VisualState x:Name="ScrollBarSeparatorExpandedWithoutAnimation">
                                             <Storyboard>
                                                 <DoubleAnimation Duration="0"
                                                     BeginTime="{ThemeResource ScrollViewerSeparatorExpandBeginTime}"
@@ -364,8 +367,8 @@
                                                     To="1" />
                                             </Storyboard>
                                         </VisualState>
-                                        <VisualState x:Name="ScrollBarSeparatorCollapsedWithoutAnimation">
 
+                                        <VisualState x:Name="ScrollBarSeparatorCollapsedWithoutAnimation">
                                             <Storyboard>
                                                 <DoubleAnimation Duration="0"
                                                     BeginTime="{ThemeResource ScrollViewerSeparatorContractBeginTime}"
@@ -374,9 +377,7 @@
                                                     To="0" />
                                             </Storyboard>
                                         </VisualState>
-
                                     </VisualStateGroup>
-
                                 </VisualStateManager.VisualStateGroups>
 
                                 <Grid Background="{TemplateBinding Background}">
@@ -395,21 +396,33 @@
                                         Grid.ColumnSpan="2"
                                         Margin="0,6"
                                         ContentTemplate="{TemplateBinding ContentTemplate}" />
-                                    
+
                                     <Grid
                                         Grid.RowSpan="2"
                                         Grid.ColumnSpan="2" />
 
-                                    <ScrollBar x:Name="VerticalScrollBar"
-                                        Grid.Column="1"
-                                        IsTabStop="False"
-                                        Maximum="{TemplateBinding ScrollableHeight}"
-                                        Margin="{TemplateBinding Padding}"
-                                        Orientation="Vertical"
-                                        Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                                        Value="{TemplateBinding VerticalOffset}"
-                                        ViewportSize="{TemplateBinding ViewportHeight}"
-                                        HorizontalAlignment="Right" />
+                                    <Grid Grid.Column="1">
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="{Binding Padding, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource TopOfThicknessToGridLengthConverter}}" />
+                                            <RowDefinition Height="*" />
+                                            <RowDefinition Height="{Binding Padding, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BottomOfThicknessToGridLengthConverter}}" />
+                                        </Grid.RowDefinitions>
+
+                                        <Grid></Grid>
+
+                                        <ScrollBar x:Name="VerticalScrollBar"
+                                            Grid.Row="1"
+                                            IsTabStop="False"
+                                            Maximum="{TemplateBinding ScrollableHeight}"
+                                            Orientation="Vertical"
+                                            Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                            Value="{TemplateBinding VerticalOffset}"
+                                            ViewportSize="{TemplateBinding ViewportHeight}"
+                                            HorizontalAlignment="Right" />
+
+                                        <Grid Grid.Row="2"></Grid>
+                                    </Grid>
+
                                     <ScrollBar x:Name="HorizontalScrollBar"
                                         IsTabStop="False"
                                         Maximum="{TemplateBinding ScrollableWidth}"

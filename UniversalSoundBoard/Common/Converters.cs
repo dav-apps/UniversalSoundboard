@@ -158,6 +158,32 @@ namespace UniversalSoundboard.Converters
         }
     }
 
+    public class TopOfThicknessToGridLengthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return new GridLength(((Thickness)value).Top, GridUnitType.Pixel);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class BottomOfThicknessToGridLengthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return new GridLength(((Thickness)value).Bottom, GridUnitType.Pixel);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
     public class LogoImageSourceConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
