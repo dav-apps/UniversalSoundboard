@@ -700,6 +700,7 @@ namespace UniversalSoundboard.Pages
         {
             FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
             await FileManager.ImportDataAsync(ContentDialogs.ImportFile, true);
+            FileManager.UpdatePlayAllButtonVisibility();
         }
         #endregion
 

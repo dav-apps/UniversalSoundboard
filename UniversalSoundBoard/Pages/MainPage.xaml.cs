@@ -993,6 +993,8 @@ namespace UniversalSoundboard.Pages
             }
 
             FileManager.itemViewHolder.LoadingScreenVisible = false;
+            FileManager.UpdatePlayAllButtonVisibility();
+
             if (FileManager.itemViewHolder.AppState == FileManager.AppState.Empty && files.Any())
                 FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
         }
