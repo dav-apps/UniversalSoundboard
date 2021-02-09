@@ -522,6 +522,12 @@ namespace UniversalSoundboard.Components
         {
             if (PlayingSound == null) return;
 
+            // Correct PlayingSound.Current if necessary
+            if (PlayingSound.Current < 0)
+                PlayingSound.Current = 0;
+            else if (PlayingSound.Current >= PlayingSound.Sounds.Count)
+                PlayingSound.Current = PlayingSound.Sounds.Count - 1;
+
             // Set the name of the current sound and set the favourite flyout item
             var currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
             PlayingSoundNameTextBlock.Text = currentSound.Name;

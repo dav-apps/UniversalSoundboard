@@ -1,6 +1,7 @@
 ﻿using davClassLibrary.DataAccess;
 using davClassLibrary.Models;
 using davClassLibrary.Providers;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
@@ -1166,7 +1167,14 @@ namespace UniversalSoundboard.DataAccess
             var notification = new TileNotification(content.GetXml());
 
             // Send the notification
-            TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
+            try
+            {
+                TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
+            }
+            catch(Exception e)
+            {
+                Crashes.TrackError(e);
+            }
         }
 
         public static async Task RemoveNotLocallySavedSoundsAsync()
