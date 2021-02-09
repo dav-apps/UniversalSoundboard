@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Package xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10" xmlns:mp="http://schemas.microsoft.com/appx/2014/phone/manifest" xmlns:uap="http://schemas.microsoft.com/appx/manifest/uap/windows10" xmlns:uap3="http://schemas.microsoft.com/appx/manifest/uap/windows10/3" IgnorableNamespaces="uap uap3 mp">
-  <Identity Name="49427davSoftwareDevelopme.UniversalSoundBoard" Publisher="CN=34761CCA-A79E-46B8-A1BC-D17F44039844" Version="2.0.5.0" />
+  <Identity Name="49427davSoftwareDevelopme.UniversalSoundBoard" Publisher="CN=34761CCA-A79E-46B8-A1BC-D17F44039844" Version="2.0.6.0" />
   <mp:PhoneIdentity PhoneProductId="7f4933bf-68e5-4484-8d10-685389e26ae0" PhonePublisherId="00000000-0000-0000-0000-000000000000" />
   <Properties>
     <DisplayName>UniversalSoundBoard</DisplayName>
@@ -19,9 +19,9 @@
         <uap:LockScreen Notification="badge" BadgeLogo="Assets\Icons\BadgeLogo.png" />
         <uap:DefaultTile Wide310x150Logo="Assets\Icons\Wide310x150Logo.png" ShortName="UniversalSoundboard" Square310x310Logo="Assets\Icons\Square310x310Logo.png" Square71x71Logo="Assets\Icons\Square71x71Logo.png">
           <uap:ShowNameOnTiles>
-            <uap:ShowOn Tile="square150x150Logo"/>
-            <uap:ShowOn Tile="wide310x150Logo"/>
-            <uap:ShowOn Tile="square310x310Logo"/>
+            <uap:ShowOn Tile="square150x150Logo" />
+            <uap:ShowOn Tile="wide310x150Logo" />
+            <uap:ShowOn Tile="square310x310Logo" />
           </uap:ShowNameOnTiles>
         </uap:DefaultTile>
         <uap:SplashScreen Image="Assets\Icons\SplashScreen.png" />
