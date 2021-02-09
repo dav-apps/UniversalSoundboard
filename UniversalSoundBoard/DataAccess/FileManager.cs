@@ -2781,20 +2781,6 @@ namespace UniversalSoundboard.DataAccess
         {
             return itemViewHolder.CurrentTheme == AppTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
         }
-
-        public static async Task LogException(Exception e)
-        {
-            string name = e.GetType().FullName;
-            string message = e.Message;
-            string stackTrace = e.StackTrace;
-
-            string appVersion = $"{SystemInformation.ApplicationVersion.Major}.{SystemInformation.ApplicationVersion.Minor}.{SystemInformation.ApplicationVersion.Build}";
-            string osVersion = SystemInformation.OperatingSystemVersion.ToString();
-            string deviceFamily = SystemInformation.DeviceFamily;
-            string locale = SystemInformation.Culture.Name;
-
-            await AppsController.CreateExceptionLog(AppId, ApiKey, name, message, stackTrace, appVersion, osVersion, deviceFamily, locale);
-        }
         #endregion
 
         #region Helper Methods

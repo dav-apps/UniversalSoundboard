@@ -1,5 +1,6 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Models;
+using Microsoft.AppCenter.Crashes;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -515,7 +516,7 @@ namespace UniversalSoundboard.DataAccess
                     }
                     catch (Exception innerException)
                     {
-                        await FileManager.LogException(innerException);
+                        Crashes.TrackError(innerException);
                     }
 
                     i++;
@@ -528,7 +529,7 @@ namespace UniversalSoundboard.DataAccess
             }
             catch(Exception outerException)
             {
-                await FileManager.LogException(outerException);
+                Crashes.TrackError(outerException);
             }
         }
 
@@ -568,7 +569,7 @@ namespace UniversalSoundboard.DataAccess
                     }
                     catch(Exception innerException)
                     {
-                        await FileManager.LogException(innerException);
+                        Crashes.TrackError(innerException);
                     }
 
                     i++;
@@ -577,7 +578,7 @@ namespace UniversalSoundboard.DataAccess
             }
             catch(Exception outerException)
             {
-                await FileManager.LogException(outerException);
+                Crashes.TrackError(outerException);
             }
         }
         #endregion
