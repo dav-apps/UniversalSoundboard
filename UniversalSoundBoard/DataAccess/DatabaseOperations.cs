@@ -373,10 +373,7 @@ namespace UniversalSoundboard.DataAccess
                 }
                 await tableObject.SetPropertyValuesAsync(newProperties);
                 
-                bool removeNonExistentSounds =
-                    FileManager.itemViewHolder.User == null
-                    || !FileManager.itemViewHolder.User.IsLoggedIn
-                    || (FileManager.itemViewHolder.User.IsLoggedIn && FileManager.syncFinished);
+                bool removeNonExistentSounds = !Dav.IsLoggedIn || (Dav.IsLoggedIn && FileManager.syncFinished);
 
                 if (removeNonExistentSounds)
                 {
@@ -524,7 +521,7 @@ namespace UniversalSoundboard.DataAccess
                 }
 
                 // Write the list of tableObjects as json
-                StorageFile dataFile = await exportFolder.CreateFileAsync(Dav.ExportDataFileName, CreationCollisionOption.ReplaceExisting);
+                StorageFile dataFile = await exportFolder.CreateFileAsync(FileManager.ExportDataFileName, CreationCollisionOption.ReplaceExisting);
                 await FileManager.WriteFileAsync(dataFile, tableObjectDataList);
             }
             catch(Exception outerException)
@@ -537,7 +534,7 @@ namespace UniversalSoundboard.DataAccess
         {
             try
             {
-                StorageFile dataFile = await importFolder.GetFileAsync(Dav.ExportDataFileName);
+                StorageFile dataFile = await importFolder.GetFileAsync(FileManager.ExportDataFileName);
                 if (dataFile == null) return;
 
                 List<TableObjectData> tableObjectDataList = await FileManager.GetTableObjectDataFromFile(dataFile);
@@ -547,8 +544,8 @@ namespace UniversalSoundboard.DataAccess
                 {
                     try
                     {
-                        TableObject tableObject = TableObject.ConvertTableObjectDataToTableObject(tableObjectData);
-                        tableObject.UploadStatus = TableObject.TableObjectUploadStatus.New;
+                        TableObject tableObject = tableObjectData.ToTableObject();
+                        tableObject.UploadStatus = TableObjectUploadStatus.New;
 
                         if (!await Dav.Database.TableObjectExistsAsync(tableObject.Uuid))
                         {

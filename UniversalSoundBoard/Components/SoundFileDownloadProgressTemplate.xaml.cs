@@ -1,8 +1,8 @@
-﻿using System;
+﻿using davClassLibrary;
+using System;
 using UniversalSoundboard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using static davClassLibrary.Models.TableObject;
 
 namespace UniversalSoundboard.Components
 {

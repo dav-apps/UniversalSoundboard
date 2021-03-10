@@ -22,6 +22,7 @@ using UniversalSoundboard.Common;
 using static davClassLibrary.Models.TableObject;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
+using davClassLibrary;
 
 namespace UniversalSoundboard.Pages
 {
@@ -87,9 +88,6 @@ namespace UniversalSoundboard.Pages
                 await FileManager.ShowCategoryAsync(initialCategory);
 
             FileManager.itemViewHolder.TriggerSoundsLoadedEvent(this);
-
-            // Load the user details and start the sync
-            await FileManager.itemViewHolder.User.InitAsync();
         }
 
         async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
@@ -1177,7 +1175,7 @@ namespace UniversalSoundboard.Pages
             var selectedSounds = FileManager.itemViewHolder.SelectedSounds;
             bool showDownloadFilesDialog = false;
 
-            if (FileManager.itemViewHolder.User.IsLoggedIn)
+            if (Dav.IsLoggedIn)
             {
                 // Check if any of the sounds needs to be downloaded
                 foreach(var sound in selectedSounds)

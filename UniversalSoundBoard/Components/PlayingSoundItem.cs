@@ -1,4 +1,5 @@
-﻿using System;
+﻿using davClassLibrary;
+using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
@@ -13,7 +14,6 @@ using Windows.Media.Playback;
 using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
-using static davClassLibrary.Models.TableObject;
 
 namespace UniversalSoundboard.Components
 {
@@ -139,7 +139,7 @@ namespace UniversalSoundboard.Components
                 if(PlayingSound.StartPlaying)
                     StopAllOtherPlayingSounds();
 
-                if (FileManager.itemViewHolder.User.IsLoggedIn)
+                if (Dav.IsLoggedIn)
                 {
                     // Add each sound file that is not downloaded to the download queue
                     List<int> fileDownloads = new List<int>();
