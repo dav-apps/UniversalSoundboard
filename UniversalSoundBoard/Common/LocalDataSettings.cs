@@ -8,39 +8,59 @@ namespace UniversalSoundboard.Common
         private readonly ApplicationDataContainer localSettings = ApplicationData.Current.LocalSettings;
         private const string davKey = "dav";
 
-        public string GetValue(string key)
+        public void Set(string key, string value)
         {
-            var davComposite = GetComposite();
-
-            // Save all values of the davClassLibrary in a separate composite
-            if (davComposite != null)
-            {
-                var value = davComposite[key];
-
-                if (value != null)
-                    return value.ToString();
-                else
-                    return null;
-            }
-            else
-                return null;
+            SetObject(key, value);
         }
 
-        public void SetValue(string key, string value)
+        public void Set(string key, int value)
         {
-            // Save all values of the davClassLibrary in a separate composite
-            var davComposite = GetComposite();
+            SetObject(key, value);
+        }
+
+        public void Set(string key, long value)
+        {
+            SetObject(key, value);
+        }
+
+        public string GetString(string key)
+        {
+            var value = GetDavComposite()[key];
+            return value != null ? (string)value : null;
+        }
+
+        public int GetInt(string key)
+        {
+            var value = GetDavComposite()[key];
+            return value != null ? (int)value : 0;
+        }
+
+        public long GetLong(string key)
+        {
+            var value = GetDavComposite()[key];
+            return value != null ? (long)value : 0;
+        }
+
+        public void Remove(string key)
+        {
+            GetDavComposite().Remove(key);
+        }
+
+        private void SetObject(string key, object value)
+        {
+            var davComposite = GetDavComposite();
             davComposite[key] = value;
-            SetComposite(davComposite);
+            SetDavComposite(davComposite);
         }
 
-        private ApplicationDataCompositeValue GetComposite()
+        private ApplicationDataCompositeValue GetDavComposite()
         {
+            // Save all values of davClassLibrary in a separate composite
             var composite = (ApplicationDataCompositeValue)localSettings.Values[davKey];
             return composite ?? new ApplicationDataCompositeValue();
         }
 
-        private void SetComposite(ApplicationDataCompositeValue composite)
+        private void SetDavComposite(ApplicationDataCompositeValue composite)
         {
             localSettings.Values[davKey] = composite;
         }
