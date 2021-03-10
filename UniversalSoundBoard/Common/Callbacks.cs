@@ -72,6 +72,11 @@ namespace UniversalSoundboard.Common
             );
         }
 
+        public void UserSyncFinished()
+        {
+            FileManager.itemViewHolder.TriggerUserSyncFinished(this, new EventArgs());
+        }
+
         public void SyncFinished()
         {
             FileManager.syncFinished = true;

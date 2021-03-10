@@ -1,4 +1,5 @@
-﻿using System;
+﻿using davClassLibrary;
+using System;
 using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
@@ -22,6 +23,7 @@ namespace UniversalSoundboard.Pages
         {
             InitializeComponent();
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
+            FileManager.itemViewHolder.UserSyncFinished += ItemViewHolder_UserSyncFinished;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -38,6 +40,12 @@ namespace UniversalSoundboard.Pages
         {
             if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 SetThemeColors();
+        }
+
+        private void ItemViewHolder_UserSyncFinished(object sender, EventArgs e)
+        {
+            Bindings.Update();
+            UpdateUserLayout();
         }
 
         private void SetThemeColors()
@@ -76,12 +84,12 @@ namespace UniversalSoundboard.Pages
 
         private void UpdateUserLayout()
         {
-            if (FileManager.itemViewHolder.User.IsLoggedIn)
+            if (Dav.IsLoggedIn)
                 SetUsedStorageTextBlock();
 
             // Set the visibilities for the content elements
-            LoggedInContent.Visibility = FileManager.itemViewHolder.User.IsLoggedIn ? Visibility.Visible : Visibility.Collapsed;
-            LoggedOutContent.Visibility = FileManager.itemViewHolder.User.IsLoggedIn ? Visibility.Collapsed : Visibility.Visible;
+            LoggedInContent.Visibility = Dav.IsLoggedIn ? Visibility.Visible : Visibility.Collapsed;
+            LoggedOutContent.Visibility = Dav.IsLoggedIn ? Visibility.Collapsed : Visibility.Visible;
         }
 
         public static async Task<bool> Login()
@@ -113,13 +121,13 @@ namespace UniversalSoundboard.Pages
 
         private void SetUsedStorageTextBlock()
         {
-            if(FileManager.itemViewHolder.User.TotalStorage > 0)
+            if(Dav.User.TotalStorage > 0)
             {
                 string message = loader.GetString("Account-UsedStorage");
 
-                string usedStorage = FileManager.GetFormattedSize(Convert.ToUInt64(FileManager.itemViewHolder.User.UsedStorage));
-                string totalStorage = FileManager.GetFormattedSize(Convert.ToUInt64(FileManager.itemViewHolder.User.TotalStorage), true);
-                double percentage = FileManager.itemViewHolder.User.UsedStorage / (double)FileManager.itemViewHolder.User.TotalStorage * 100;
+                string usedStorage = FileManager.GetFormattedSize(Convert.ToUInt64(Dav.User.UsedStorage));
+                string totalStorage = FileManager.GetFormattedSize(Convert.ToUInt64(Dav.User.TotalStorage), true);
+                double percentage = Dav.User.UsedStorage / (double)Dav.User.TotalStorage * 100;
 
                 StorageProgressBar.Value = percentage;
                 StorageTextBlock.Text = string.Format(message, usedStorage, totalStorage);
@@ -141,7 +149,7 @@ namespace UniversalSoundboard.Pages
 
         private async void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            FileManager.itemViewHolder.User.Logout();
+            Dav.Logout();
             UpdateUserLayout();
 
             // Remove the sounds that are not saved locally
