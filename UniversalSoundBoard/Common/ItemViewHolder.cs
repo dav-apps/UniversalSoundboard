@@ -1,5 +1,4 @@
-﻿using davClassLibrary.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -61,7 +60,6 @@ namespace UniversalSoundboard.Common
         private string _searchQuery;                                        // The string entered into the search box
         private bool _allSoundsChanged;                                     // If there was made change to one or multiple sounds so that a reload of the sounds is required
         private Guid _selectedCategory;                                     // The index of the currently selected category in the category list
-        private DavUser _user;                                              // The User object with username and avatar
         private bool _exporting;                                            // If true the soundboard is currently being exported
         private bool _exported;                                             // If true the soundboard was exported in the app session
         private bool _importing;                                            // If true a soundboard is currently being imported
@@ -158,7 +156,6 @@ namespace UniversalSoundboard.Common
             _searchQuery = "";
             _allSoundsChanged = true;
             _selectedCategory = Guid.Empty;
-            _user = new DavUser();
             _exporting = false;
             _exported = false;
             _importing = false;
@@ -418,20 +415,6 @@ namespace UniversalSoundboard.Common
                 if (_selectedCategory.Equals(value)) return;
                 _selectedCategory = value;
                 NotifyPropertyChanged(SelectedCategoryKey);
-            }
-        }
-        #endregion
-
-        #region User
-        public const string UserKey = "User";
-        public DavUser User
-        {
-            get => _user;
-            set
-            {
-                if (_user.Equals(value)) return;
-                _user = value;
-                NotifyPropertyChanged(UserKey);
             }
         }
         #endregion

@@ -1,8 +1,10 @@
-﻿using davClassLibrary.Common;
+﻿using davClassLibrary;
+using davClassLibrary.Common;
 using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
@@ -38,10 +40,28 @@ namespace UniversalSoundboard
             Websockets.Net.WebsocketConnection.Link();
 
             // Initialize Dav settings
-            ProjectInterface.RetrieveConstants = new RetrieveConstants();
             ProjectInterface.LocalDataSettings = new LocalDataSettings();
-            ProjectInterface.TriggerAction = new UniversalSoundboard.Common.TriggerAction();
-            ProjectInterface.GeneralMethods = new GeneralMethods();
+            ProjectInterface.Callbacks = new Callbacks();
+
+            Dav.Init(
+                FileManager.Environment,
+                FileManager.AppId,
+                new List<int>
+                {
+                    FileManager.OrderTableId,
+                    FileManager.CategoryTableId,
+                    FileManager.SoundFileTableId,
+                    FileManager.SoundTableId,
+                    FileManager.PlayingSoundTableId,
+                    FileManager.ImageFileTableId
+                },
+                new List<int>
+                {
+                    FileManager.SoundFileTableId,
+                    FileManager.SoundTableId
+                },
+                FileManager.GetDavDataPath()
+            );
 
             // Init itemViewHolder
             FileManager.itemViewHolder = new ItemViewHolder();

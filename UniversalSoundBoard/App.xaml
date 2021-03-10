@@ -14,7 +14,7 @@
 
             <SolidColorBrush x:Key="LightThemeButtonColor" Color="#EAEAEA" />
             <SolidColorBrush x:Key="DarkThemeButtonColor" Color="DimGray" />
-            
+
             <Color x:Key="LightThemeBorderColor">LightGray</Color>
             <Color x:Key="DarkThemeBorderColor">#373c4d</Color>
 
