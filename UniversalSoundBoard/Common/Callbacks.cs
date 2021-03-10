@@ -7,9 +7,9 @@ using Windows.UI.Core;
 
 namespace UniversalSoundboard.Common
 {
-    public class TriggerAction : ITriggerAction
+    public class Callbacks : ICallbacks
     {
-        public async void UpdateAllOfTable(int tableId)
+        public async void UpdateAllOfTable(int tableId, bool changed)
         {
             CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
@@ -49,16 +49,16 @@ namespace UniversalSoundboard.Common
             }
         }
 
-        public async void DeleteTableObject(TableObject tableObject)
+        public async void DeleteTableObject(Guid uuid, int tableId)
         {
             CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
-            if (tableObject.TableId == FileManager.SoundTableId)
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () => FileManager.RemoveSound(tableObject.Uuid));
-            else if (tableObject.TableId == FileManager.CategoryTableId)
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () => FileManager.RemoveCategory(tableObject.Uuid));
-            else if (tableObject.TableId == FileManager.PlayingSoundTableId)
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () => FileManager.RemovePlayingSound(tableObject.Uuid));
+            if (tableId == FileManager.SoundTableId)
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () => FileManager.RemoveSound(uuid));
+            else if (tableId == FileManager.CategoryTableId)
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () => FileManager.RemoveCategory(uuid));
+            else if (tableId == FileManager.PlayingSoundTableId)
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, () => FileManager.RemovePlayingSound(uuid));
         }
 
         public void TableObjectDownloadProgress(TableObject tableObject, int value)
