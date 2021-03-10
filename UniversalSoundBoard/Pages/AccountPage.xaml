@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:davClassLibrary="using:davClassLibrary"
     xmlns:converters="using:UniversalSoundboard.Converters"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
@@ -12,9 +13,15 @@
     <Page.Resources>
         <!-- Converters -->
         <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
+        <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
         <converters:DavPlanToStringConverter x:Name="DavPlanToStringConverter" />
         <converters:DavPlanFreeConverter x:Name="DavPlanFreeConverter" />
+
+        <converters:ValueConverterGroup x:Name="DavPlanFreeVisibilityConverter">
+            <converters:DavPlanFreeConverter />
+            <converters:BooleanToVisibilityConverter />
+        </converters:ValueConverterGroup>
 
         <!-- Styles -->
         <Style TargetType="FontIcon" x:Key="LandingIconStyle">
@@ -63,7 +70,7 @@
                             <controls:DropShadowPanel OffsetX="0" OffsetY="2" BlurRadius="16" ShadowOpacity="0.8">
                                 <Ellipse Name="Avatar" Height="150" Width="150">
                                     <Ellipse.Fill>
-                                        <ImageBrush ImageSource="{Binding User.Avatar, Converter={StaticResource FileToBitmapImageConverter}}" />
+                                        <ImageBrush ImageSource="{x:Bind davClassLibrary:Dav.User.ProfileImage, Converter={StaticResource FileToBitmapImageConverter}}" />
                                     </Ellipse.Fill>
                                 </Ellipse>
                             </controls:DropShadowPanel>
@@ -76,12 +83,12 @@
 
                                 <TextBlock
                                     Name="UsernameTextBlock"
-                                    Text="{Binding User.Username}"
+                                    Text="{x:Bind davClassLibrary:Dav.User.FirstName}"
                                     FontSize="24" />
 
                                 <TextBlock
                                     Name="PlanTextBlock"
-                                    Text="{Binding User.Plan, Converter={StaticResource DavPlanToStringConverter}}"
+                                    Text="{x:Bind davClassLibrary:Dav.User.Plan, Converter={StaticResource DavPlanToStringConverter}}"
                                     FontSize="15"
                                     FontWeight="Light" />
 
@@ -120,7 +127,7 @@
                         <StackPanel
                             Name="PlusCardStackPanel"
                             RelativePanel.AlignHorizontalCenterWithPanel="True"
-                            Visibility="{Binding User.Plan, Converter={StaticResource DavPlanFreeConverter}}"
+                            Visibility="{x:Bind davClassLibrary:Dav.User.Plan, Converter={StaticResource DavPlanFreeVisibilityConverter}}"
                             Width="300"
                             Margin="0,90,0,40"
                             CornerRadius="4"

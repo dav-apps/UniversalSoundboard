@@ -113,10 +113,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\EventArgs.cs" />
-    <Compile Include="Common\GeneralMethods.cs" />
     <Compile Include="Common\LocalDataSettings.cs" />
-    <Compile Include="Common\RetrieveConstants.cs" />
-    <Compile Include="Common\TriggerAction.cs" />
+    <Compile Include="Common\Callbacks.cs" />
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
     <Compile Include="Components\PlayingSoundItem.cs" />

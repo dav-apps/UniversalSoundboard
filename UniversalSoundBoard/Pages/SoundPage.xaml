@@ -8,6 +8,7 @@
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:davClassLibrary="using:davClassLibrary"
     xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     Loaded="SoundPage_Loaded"
@@ -16,6 +17,7 @@
     <Page.Resources>
         <!-- Converters -->
         <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
+        <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
         <converters:BooleanToSelectionMode x:Name="BooleanToSelectionMode" />
         <converters:GridViewReorderItemsConverter x:Name="GridViewReorderItemsConverter" />
         <converters:LogoImageSourceConverter x:Name="LogoImageSourceConverter" />
@@ -343,7 +345,7 @@
                         <Button
                             Name="StartMessageLoginButton"
                             Style="{StaticResource StartMessageButtonStyle}"
-                            Visibility="{Binding User.IsLoggedIn, Converter={StaticResource InvertBooleanConverter}}"
+                            Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
                             Margin="0,0,8,0"
                             Click="StartMessageLoginButton_Click">
 

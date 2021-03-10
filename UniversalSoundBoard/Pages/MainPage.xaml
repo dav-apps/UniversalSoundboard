@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:davClassLibrary="using:davClassLibrary"
     xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
     xmlns:models="using:UniversalSoundboard.Models"
@@ -16,6 +17,7 @@
     <Page.Resources>
         <!-- Converters -->
         <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
+        <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
         <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
         <converters:OptionsOnSoundPageVisibleConverter x:Name="OptionsOnSoundPageVisibleConverter" />
@@ -85,23 +87,23 @@
                         Name="LoginMenuItem"
                         x:Uid="LoginButton"
                         Icon="Contact"
-                        Visibility="{Binding User.IsLoggedIn, Converter={StaticResource InvertBooleanConverter}}"
+                        Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
                         Tapped="LogInMenuItem_Tapped" />
 
                     <muxc:NavigationViewItem
                         Name="AccountMenuItem"
-                        Visibility="{Binding User.IsLoggedIn}"
+                        Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Tapped="LogInMenuItem_Tapped">
 
                         <StackPanel Orientation="Horizontal">
                             <PersonPicture
-                                ProfilePicture="{Binding User.Avatar, Converter={StaticResource FileToBitmapImageConverter}}" 
+                                ProfilePicture="{x:Bind davClassLibrary:Dav.User.ProfileImage, Converter={StaticResource FileToBitmapImageConverter}}" 
                                 Height="23"
                                 Width="23" 
                                 Margin="-7,0,0,0" />
 
                             <TextBlock
-                                Text="{Binding User.Username}" 
+                                Text="{x:Bind davClassLibrary:Dav.User.FirstName}" 
                                 Margin="8,0,0,0" 
                                 VerticalAlignment="Center" />
                         </StackPanel>
