@@ -1,8 +1,6 @@
-﻿using davClassLibrary.DataAccess;
+﻿using davClassLibrary;
 using davClassLibrary.Models;
-using davClassLibrary.Providers;
 using Microsoft.AppCenter.Crashes;
-using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections.Generic;
@@ -55,39 +53,39 @@ namespace UniversalSoundboard.DataAccess
         #endregion
 
         #region dav Keys
-        public static string ApiKey => Environment == DavEnvironment.Production ? Env.DavApiKeyProd : Env.DavApiKeyDev;
+        public static string ApiKey => Environment == davClassLibrary.Environment.Production ? Env.DavApiKeyProd : Env.DavApiKeyDev;
 
         private const string WebsiteBaseUrlProduction = "https://dav-apps.herokuapp.com";
         private const string WebsiteBaseUrlDevelopment = "https://4de1c1ca4055.ngrok.io";
-        public static string WebsiteBaseUrl => Environment == DavEnvironment.Production ? WebsiteBaseUrlProduction : WebsiteBaseUrlDevelopment;
+        public static string WebsiteBaseUrl => Environment == davClassLibrary.Environment.Production ? WebsiteBaseUrlProduction : WebsiteBaseUrlDevelopment;
 
-        private const int AppIdProduction = 1;                 // Dev: 4; Prod: 1
-        private const int AppIdDevelopment = 4;
-        public static int AppId => Environment == DavEnvironment.Production ? AppIdProduction : AppIdDevelopment;
+        private const int AppIdProduction = 1;                 // Dev: 2; Prod: 1
+        private const int AppIdDevelopment = 2;
+        public static int AppId => Environment == davClassLibrary.Environment.Production ? AppIdProduction : AppIdDevelopment;
 
-        private const int SoundFileTableIdProduction = 6;      // Dev: 6; Prod: 6
-        private const int SoundFileTableIdDevelopment = 6;
-        public static int SoundFileTableId => Environment == DavEnvironment.Production ? SoundFileTableIdProduction : SoundFileTableIdDevelopment;
+        private const int SoundFileTableIdProduction = 6;      // Dev: 2; Prod: 6
+        private const int SoundFileTableIdDevelopment = 2;
+        public static int SoundFileTableId => Environment == davClassLibrary.Environment.Production ? SoundFileTableIdProduction : SoundFileTableIdDevelopment;
 
-        private const int ImageFileTableIdProduction = 7;      // Dev: 7; Prod: 7
-        private const int ImageFileTableIdDevelopment = 7;
-        public static int ImageFileTableId => Environment == DavEnvironment.Production ? ImageFileTableIdProduction : ImageFileTableIdDevelopment;
+        private const int ImageFileTableIdProduction = 7;      // Dev: 3; Prod: 7
+        private const int ImageFileTableIdDevelopment = 3;
+        public static int ImageFileTableId => Environment == davClassLibrary.Environment.Production ? ImageFileTableIdProduction : ImageFileTableIdDevelopment;
 
-        private const int CategoryTableIdProduction = 8;       // Dev: 8; Prod: 8
-        private const int CategoryTableIdDevelopment = 8;
-        public static int CategoryTableId => Environment == DavEnvironment.Production ? CategoryTableIdProduction : CategoryTableIdDevelopment;
+        private const int CategoryTableIdProduction = 8;        // Dev: 4; Prod: 8
+        private const int CategoryTableIdDevelopment = 4;
+        public static int CategoryTableId => Environment == davClassLibrary.Environment.Production ? CategoryTableIdProduction : CategoryTableIdDevelopment;
 
-        private const int SoundTableIdProduction = 5;          // Dev: 5; Prod: 5
-        private const int SoundTableIdDevelopment = 5;
-        public static int SoundTableId => Environment == DavEnvironment.Production ? SoundTableIdProduction : SoundTableIdDevelopment;
+        private const int SoundTableIdProduction = 5;           // Dev: 1; Prod: 5
+        private const int SoundTableIdDevelopment = 1;
+        public static int SoundTableId => Environment == davClassLibrary.Environment.Production ? SoundTableIdProduction : SoundTableIdDevelopment;
 
-        private const int PlayingSoundTableIdProduction = 9;   // Dev: 9; Prod: 9
-        private const int PlayingSoundTableIdDevelopment = 9;
-        public static int PlayingSoundTableId => Environment == DavEnvironment.Production ? PlayingSoundTableIdProduction : PlayingSoundTableIdDevelopment;
+        private const int PlayingSoundTableIdProduction = 9;    // Dev: 5; Prod: 9
+        private const int PlayingSoundTableIdDevelopment = 5;
+        public static int PlayingSoundTableId => Environment == davClassLibrary.Environment.Production ? PlayingSoundTableIdProduction : PlayingSoundTableIdDevelopment;
 
-        private const int OrderTableIdProduction = 12;  // Dev: 10; Prod: 12
-        private const int OrderTableIdDevelopment = 10;
-        public static int OrderTableId => Environment == DavEnvironment.Production ? OrderTableIdProduction : OrderTableIdDevelopment;
+        private const int OrderTableIdProduction = 12;          // Dev: 6; Prod: 12
+        private const int OrderTableIdDevelopment = 6;
+        public static int OrderTableId => Environment == davClassLibrary.Environment.Production ? OrderTableIdProduction : OrderTableIdDevelopment;
         #endregion
 
         #region Table property names
@@ -125,6 +123,7 @@ namespace UniversalSoundboard.DataAccess
         public const string ImportZipFileName = "import.zip";
         public const string ExportFolderName = "export";
         public const string ExportZipFileName = "export.zip";
+        public const string ExportDataFileName = "data.json";
         public const string TileFolderName = "tile";
 
         public static List<string> allowedFileTypes = new List<string>
@@ -170,7 +169,7 @@ namespace UniversalSoundboard.DataAccess
 
         #region Local variables
         public static ItemViewHolder itemViewHolder;
-        public static DavEnvironment Environment = DavEnvironment.Production;
+        public static davClassLibrary.Environment Environment = davClassLibrary.Environment.Production;
 
         private static readonly ResourceLoader loader = new ResourceLoader();
         internal static bool syncFinished = false;
@@ -2399,9 +2398,7 @@ namespace UniversalSoundboard.DataAccess
             if (soundOrderTableObjects.Count > 0)
             {
                 // Remove sounds from the order if [the user is not logged in] or [the user is logged in and the sounds are synced]
-                bool removeNonExistentSounds =
-                    !itemViewHolder.User.IsLoggedIn
-                    || (itemViewHolder.User.IsLoggedIn && syncFinished);
+                bool removeNonExistentSounds = !Dav.IsLoggedIn || (Dav.IsLoggedIn && syncFinished);
 
                 bool saveNewOrder = false;
                 TableObject lastOrderTableObject = soundOrderTableObjects.Last();
