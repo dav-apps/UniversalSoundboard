@@ -29,7 +29,6 @@ using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using static davClassLibrary.Models.TableObject;
 
 namespace UniversalSoundboard.DataAccess
 {

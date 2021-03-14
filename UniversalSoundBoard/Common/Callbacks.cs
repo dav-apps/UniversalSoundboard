@@ -61,12 +61,12 @@ namespace UniversalSoundboard.Common
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () => FileManager.RemovePlayingSound(uuid));
         }
 
-        public void TableObjectDownloadProgress(TableObject tableObject, int value)
+        public void TableObjectDownloadProgress(Guid uuid, int value)
         {
             FileManager.itemViewHolder.TriggerTableObjectFileDownloadProgressChangedEvent(
                 this,
                 new TableObjectFileDownloadProgressChangedEventArgs(
-                    tableObject.Uuid,
+                    uuid,
                     value
                 )
             );
