@@ -1,13 +1,10 @@
 ﻿using davClassLibrary;
-using davClassLibrary.Common;
 using davClassLibrary.Models;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using UniversalSoundboard.DataAccess;
-using UniversalSoundboard.Tests.Common;
 
 namespace UniversalSoundboard.Tests.DataAccess
 {
@@ -18,25 +15,13 @@ namespace UniversalSoundboard.Tests.DataAccess
         [ClassInitialize]
         public static void ClassInit(TestContext context)
         {
-            ProjectInterface.RetrieveConstants = new RetrieveConstants();
-            ProjectInterface.GeneralMethods = new GeneralMethods();
-            ProjectInterface.LocalDataSettings = new LocalDataSettings();
-            ProjectInterface.TriggerAction = new TriggerAction();
-
-            FileManager.itemViewHolder = new UniversalSoundboard.Common.ItemViewHolder();
+            Utils.GlobalSetup();
         }
 
         [TestInitialize]
         public async Task TestInit()
         {
-            // Delete all files and folders in the test folder except the database file
-            var davFolder = new DirectoryInfo(FileManager.GetDavDataPath());
-            foreach (var folder in davFolder.GetDirectories())
-                folder.Delete(true);
-            
-            // Clear the database
-            var database = new davClassLibrary.DataAccess.DavDatabase();
-            await database.DropAsync();
+            await Utils.Setup();
         }
         #endregion
 
@@ -166,7 +151,9 @@ namespace UniversalSoundboard.Tests.DataAccess
         public async Task DeleteTableObjectAsyncShouldSetTheUploadStatusToDeletedIfTheUserIsLoggedIn()
         {
             // Arrange
-            ProjectInterface.LocalDataSettings.SetValue(Dav.jwtKey, Constants.Jwt);
+            Dav.IsLoggedIn = true;
+            Dav.AccessToken = Constants.testerXTestAppAccessToken;
+
             Guid uuid = Guid.NewGuid();
             int tableId = 21;
             await TableObject.CreateAsync(uuid, tableId);
@@ -185,7 +172,7 @@ namespace UniversalSoundboard.Tests.DataAccess
             Assert.IsNotNull(tableObjectFromDatabase);
             Assert.AreEqual(uuid, tableObjectFromDatabase.Uuid);
             Assert.AreEqual(tableId, tableObjectFromDatabase.TableId);
-            Assert.AreEqual(TableObject.TableObjectUploadStatus.Deleted, tableObjectFromDatabase.UploadStatus);
+            Assert.AreEqual(TableObjectUploadStatus.Deleted, tableObjectFromDatabase.UploadStatus);
         }
         #endregion
         #endregion
