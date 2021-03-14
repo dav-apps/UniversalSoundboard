@@ -1,12 +1,9 @@
-﻿using davClassLibrary.Common;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Threading.Tasks;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
-using UniversalSoundboard.Tests.Common;
 
 namespace UniversalSoundboard.Tests.DataAccess
 {
@@ -17,26 +14,13 @@ namespace UniversalSoundboard.Tests.DataAccess
         [ClassInitialize]
         public static void ClassInit(TestContext context)
         {
-            ProjectInterface.RetrieveConstants = new RetrieveConstants();
-            ProjectInterface.GeneralMethods = new GeneralMethods();
-            ProjectInterface.LocalDataSettings = new LocalDataSettings();
-            ProjectInterface.TriggerAction = new TriggerAction();
-
-            FileManager.itemViewHolder = new UniversalSoundboard.Common.ItemViewHolder();
-            FileManager.itemViewHolder.User = new davClassLibrary.Models.DavUser();
+            Utils.GlobalSetup();
         }
 
         [TestInitialize]
         public async Task TestInit()
         {
-            // Delete all files and folders in the test folder except the database file
-            var davFolder = new DirectoryInfo(FileManager.GetDavDataPath());
-            foreach (var folder in davFolder.GetDirectories())
-                folder.Delete(true);
-
-            // Clear the database
-            var database = new davClassLibrary.DataAccess.DavDatabase();
-            await database.DropAsync();
+            await Utils.Setup();
         }
         #endregion
 
