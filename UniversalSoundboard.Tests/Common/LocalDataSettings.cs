@@ -5,18 +5,47 @@ namespace UniversalSoundboard.Tests.Common
 {
     class LocalDataSettings : ILocalDataSettings
     {
-        private Dictionary<string, string> dataStore = new Dictionary<string, string>();
-
-        public string GetValue(string key)
-        {
-            string value = null;
-            dataStore.TryGetValue(key, out value);
-            return value;
-        }
-
-        public void SetValue(string key, string value)
+        private readonly Dictionary<string, object> dataStore = new Dictionary<string, object>();
+        
+        public void Set(string key, string value)
         {
             dataStore[key] = value;
+        }
+
+        public void Set(string key, int value)
+        {
+            dataStore[key] = value;
+        }
+
+        public void Set(string key, long value)
+        {
+            dataStore[key] = value;
+        }
+
+        public string GetString(string key)
+        {
+            if (dataStore.ContainsKey(key))
+                return (string)dataStore[key];
+            return null;
+        }
+
+        public int GetInt(string key)
+        {
+            if (dataStore.ContainsKey(key))
+                return (int)dataStore[key];
+            return 0;
+        }
+
+        public long GetLong(string key)
+        {
+            if (dataStore.ContainsKey(key))
+                return (long)dataStore[key];
+            return 0;
+        }
+
+        public void Remove(string key)
+        {
+            dataStore.Remove(key);
         }
     }
 }

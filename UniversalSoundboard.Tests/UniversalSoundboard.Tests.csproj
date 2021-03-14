@@ -121,10 +121,8 @@
     <SDKReference Include="TestPlatform.Universal, Version=$(UnitTestPlatformVersion)" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Common\GeneralMethods.cs" />
     <Compile Include="Common\LocalDataSettings.cs" />
-    <Compile Include="Common\RetrieveConstants.cs" />
-    <Compile Include="Common\TriggerAction.cs" />
+    <Compile Include="Common\Callbacks.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="DataAccess\DatabaseOperationsTest.cs" />
     <Compile Include="DataAccess\FileManagerTest.cs" />
@@ -132,6 +130,7 @@
     <Compile Include="UnitTestApp.xaml.cs">
       <DependentUpon>UnitTestApp.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <ApplicationDefinition Include="UnitTestApp.xaml">
@@ -157,16 +156,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
-      <Version>6.2.11</Version>
+      <Version>6.2.12</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestAdapter">
-      <Version>2.1.2</Version>
+      <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestFramework">
-      <Version>2.1.2</Version>
+      <Version>2.2.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk">
-      <Version>16.8.3</Version>
+      <Version>16.9.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
