@@ -54,8 +54,8 @@ namespace UniversalSoundboard.DataAccess
         #region dav Keys
         public static string ApiKey => Environment == davClassLibrary.Environment.Production ? Env.DavApiKeyProd : Env.DavApiKeyDev;
 
-        private const string WebsiteBaseUrlProduction = "https://dav-apps.herokuapp.com";
-        private const string WebsiteBaseUrlDevelopment = "https://4de1c1ca4055.ngrok.io";
+        private const string WebsiteBaseUrlProduction = "https://dav-login-7ymir.ondigitalocean.app";
+        private const string WebsiteBaseUrlDevelopment = "https://2361f4e2f9f3.ngrok.io";
         public static string WebsiteBaseUrl => Environment == davClassLibrary.Environment.Production ? WebsiteBaseUrlProduction : WebsiteBaseUrlDevelopment;
 
         private const int AppIdProduction = 1;                 // Dev: 2; Prod: 1
