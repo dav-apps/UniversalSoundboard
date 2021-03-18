@@ -363,11 +363,13 @@
   <ProductReservedInfo>
     <MainPackageIdentityName>49427davSoftwareDevelopme.UniversalSoundBoard</MainPackageIdentityName>
     <ReservedNames>
-      <ReservedName>UniversalSoundBoard</ReservedName>
+      <ReservedName>UniversalSoundboard</ReservedName>
     </ReservedNames>
   </ProductReservedInfo>
   <AccountPackageIdentityNames>
+    <MainPackageIdentityName>49427davSoftwareDevelopme.535827F3C0F1</MainPackageIdentityName>
     <MainPackageIdentityName>49427davSoftwareDevelopme.Calend</MainPackageIdentityName>
+    <MainPackageIdentityName>49427davSoftwareDevelopme.41075CF84D27</MainPackageIdentityName>
   </AccountPackageIdentityNames>
   <PackageInfoList LandingUrl="https://developer.microsoft.com/dashboard/Application?appId=9NBLGGH51005" />
 </StoreAssociation>
