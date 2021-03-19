@@ -327,7 +327,7 @@ namespace UniversalSoundboard.Components
         {
             PlayingSound.MediaPlayer.TimelineController.Position = TimeSpan.Zero;
 
-            await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 currentSoundTotalDuration = sender.Duration.GetValueOrDefault();
                 DurationChanged?.Invoke(this, new DurationChangedEventArgs(sender.Duration.GetValueOrDefault()));

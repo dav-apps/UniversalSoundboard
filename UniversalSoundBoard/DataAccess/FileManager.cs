@@ -1108,9 +1108,21 @@ namespace UniversalSoundboard.DataAccess
 
         public static void UpdateLiveTileAsync()
         {
+            TileUpdater tileUpdater;
+
+            try
+            {
+                tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
+            }
+            catch(Exception e)
+            {
+                Crashes.TrackError(e);
+                return;
+            }
+
             if (itemViewHolder.AllSounds.Count == 0 || !itemViewHolder.LiveTile)
             {
-                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+                tileUpdater.Clear();
                 return;
             }
 
@@ -1118,11 +1130,11 @@ namespace UniversalSoundboard.DataAccess
             List<Sound> sounds = itemViewHolder.AllSounds.Where(s => s.ImageFileTableObject != null && s.ImageFile != null).ToList();
             if (sounds.Count == 0)
             {
-                TileUpdateManager.CreateTileUpdaterForApplication().Clear();
+                tileUpdater.Clear();
                 return;
             }
 
-            // Pick up to 12 random sounds with images
+            // Pick up to 9 random sounds with images
             List<StorageFile> images = new List<StorageFile>();
             Random random = new Random();
 
@@ -1165,14 +1177,7 @@ namespace UniversalSoundboard.DataAccess
             var notification = new TileNotification(content.GetXml());
 
             // Send the notification
-            try
-            {
-                TileUpdateManager.CreateTileUpdaterForApplication().Update(notification);
-            }
-            catch(Exception e)
-            {
-                Crashes.TrackError(e);
-            }
+            tileUpdater.Update(notification);
         }
 
         public static async Task RemoveNotLocallySavedSoundsAsync()
