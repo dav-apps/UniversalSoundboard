@@ -1204,10 +1204,12 @@ namespace UniversalSoundboard.DataAccess
         #region Category methods
         public static async Task LoadCategoriesAsync()
         {
+            var categories = await GetAllCategoriesAsync();
+
             itemViewHolder.Categories.Clear();
             itemViewHolder.Categories.Add(new Category(Guid.Empty, loader.GetString("AllSounds"), "\uE10F"));
 
-            foreach (Category cat in await GetAllCategoriesAsync())
+            foreach (Category cat in categories)
                 itemViewHolder.Categories.Add(cat);
 
             itemViewHolder.TriggerCategoriesLoadedEvent(null);

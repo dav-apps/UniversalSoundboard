@@ -72,9 +72,12 @@ namespace UniversalSoundboard.Common
             );
         }
 
-        public void UserSyncFinished()
+        public async void UserSyncFinished()
         {
-            FileManager.itemViewHolder.TriggerUserSyncFinished(this, new EventArgs());
+            await CoreApplication.MainView.CoreWindow.Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                FileManager.itemViewHolder.TriggerUserSyncFinished(this, new EventArgs());
+            });
         }
 
         public void SyncFinished()

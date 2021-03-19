@@ -88,6 +88,8 @@ namespace UniversalSoundboard.Pages
                 await FileManager.ShowCategoryAsync(initialCategory);
 
             FileManager.itemViewHolder.TriggerSoundsLoadedEvent(this);
+
+            await Dav.SyncData();
         }
 
         async void MainPage_BackRequested(object sender, BackRequestedEventArgs e)
