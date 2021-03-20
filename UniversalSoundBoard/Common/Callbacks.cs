@@ -11,6 +11,7 @@ namespace UniversalSoundboard.Common
     {
         public async void UpdateAllOfTable(int tableId, bool changed)
         {
+            if (!changed) return;
             CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
             if (tableId == FileManager.SoundTableId)
