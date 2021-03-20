@@ -579,7 +579,7 @@
             </Grid>
 
             <controls:GridSplitter
-                Name="PlayingSoundsBarGridSplitter"
+                x:Name="PlayingSoundsBarGridSplitter"
                 Grid.Column="1"
                 Width="12"
                 Padding="0,123,0,0"
@@ -644,7 +644,7 @@
             <Grid Name="TopPseudoContentGrid" Width="0" />
 
             <controls:GridSplitter
-                Name="BottomPlayingSoundsBarGridSplitter"
+                x:Name="BottomPlayingSoundsBarGridSplitter"
                 Grid.Row="1"
                 Height="16"
                 Background="Transparent"

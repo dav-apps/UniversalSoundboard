@@ -74,7 +74,7 @@
 
     <Grid Name="RootGrid">
         <muxc:NavigationView
-            Name="SideBar"
+            x:Name="SideBar"
             IsTitleBarAutoPaddingEnabled="False"
             IsBackEnabled="{Binding BackButtonEnabled}"
             ItemInvoked="SideBar_ItemInvoked"
@@ -84,14 +84,14 @@
             <muxc:NavigationView.PaneFooter>
                 <StackPanel>
                     <muxc:NavigationViewItem
-                        Name="LoginMenuItem"
+                        x:Name="LoginMenuItem"
                         x:Uid="LoginButton"
                         Icon="Contact"
                         Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
                         Tapped="LogInMenuItem_Tapped" />
 
                     <muxc:NavigationViewItem
-                        Name="AccountMenuItem"
+                        x:Name="AccountMenuItem"
                         Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Tapped="LogInMenuItem_Tapped">
 
