@@ -67,7 +67,15 @@
                             Name="UserProfileContentStackPanel"
                             Orientation="Horizontal">
 
-                            <controls:DropShadowPanel OffsetX="0" OffsetY="2" BlurRadius="16" ShadowOpacity="0.8">
+                            <controls:DropShadowPanel
+                                OffsetX="0"
+                                OffsetY="2"
+                                BlurRadius="16"
+                                ShadowOpacity="0.8"
+                                PointerEntered="Image_PointerEntered"
+                                PointerExited="Image_PointerExited"
+                                Tapped="DropShadowPanel_Tapped">
+                                
                                 <Ellipse Name="Avatar" Height="150" Width="150">
                                     <Ellipse.Fill>
                                         <ImageBrush ImageSource="{x:Bind davClassLibrary:Dav.User.ProfileImage, Converter={StaticResource FileToBitmapImageConverter}}" />
@@ -244,8 +252,8 @@
                                 Name="DavLogoImage"
                                 Source="ms-appx:///Assets/Images/dav-logo-text.png"
                                 Width="130"
-                                PointerEntered="DavLogoImage_PointerEntered"
-                                PointerExited="DavLogoImage_PointerExited"
+                                PointerEntered="Image_PointerEntered"
+                                PointerExited="Image_PointerExited"
                                 Tapped="DavLogoImage_Tapped" />
 
                             <StackPanel

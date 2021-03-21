@@ -159,22 +159,27 @@ namespace UniversalSoundboard.Pages
             UpdateUserLayout();
         }
 
-        private async void PlusCardSelectButton_Click(object sender, RoutedEventArgs e)
-        {
-            await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/login?redirect=user%23plans%0A"));
-        }
-
         private async void DavLogoImage_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech"));
         }
 
-        private void DavLogoImage_PointerEntered(object sender, PointerRoutedEventArgs e)
+        private async void DropShadowPanel_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/login?redirect=user"));
+        }
+
+        private async void PlusCardSelectButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/login?redirect=user%23plans%0A"));
+        }
+
+        private void Image_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 0);
         }
 
-        private void DavLogoImage_PointerExited(object sender, PointerRoutedEventArgs e)
+        private void Image_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
         }
