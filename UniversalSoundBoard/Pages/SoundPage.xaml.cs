@@ -684,7 +684,7 @@ namespace UniversalSoundboard.Pages
 
         private async void StartMessageLoginButton_Click(object sender, RoutedEventArgs e)
         {
-            if (await AccountPage.Login() && FileManager.itemViewHolder.AppState == FileManager.AppState.Empty)
+            if (await AccountPage.ShowLoginPage() && FileManager.itemViewHolder.AppState == FileManager.AppState.Empty)
                 FileManager.itemViewHolder.AppState = FileManager.AppState.InitialSync;
         }
 

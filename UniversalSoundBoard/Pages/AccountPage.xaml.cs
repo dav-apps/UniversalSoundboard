@@ -1,15 +1,16 @@
 ﻿using davClassLibrary;
 using System;
-using System.Net.NetworkInformation;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using Windows.ApplicationModel.Resources;
 using Windows.Security.Authentication.Web;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -92,27 +93,25 @@ namespace UniversalSoundboard.Pages
             LoggedOutContent.Visibility = Dav.IsLoggedIn ? Visibility.Collapsed : Visibility.Visible;
         }
 
-        public static async Task<bool> Login()
+        public static async Task<bool> ShowLoginPage(bool showSignup = false)
         {
-            if (NetworkInterface.GetIsNetworkAvailable())
+            try
             {
-                try
-                {
-                    Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
-                    Uri requestUrl = new Uri(string.Format("{0}/login?appId={1}&apiKey={2}&redirectUrl={3}", FileManager.WebsiteBaseUrl, FileManager.AppId, FileManager.ApiKey, redirectUrl));
+                Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
+                string action = showSignup ? "signup" : "login";
+                Uri requestUrl = new Uri(string.Format("{0}/{1}?appId={2}&apiKey={3}&redirectUrl={4}", FileManager.WebsiteBaseUrl, action, FileManager.AppId, FileManager.ApiKey, redirectUrl));
 
-                    var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
-                    if (webAuthenticationResult.ResponseStatus != WebAuthenticationStatus.Success) return false;
+                var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
+                if (webAuthenticationResult.ResponseStatus != WebAuthenticationStatus.Success) return false;
 
-                    // Get the access token from the response string
-                    string accessToken = webAuthenticationResult.ResponseData.Split(new[] { "accessToken=" }, StringSplitOptions.None)[1];
+                // Get the access token from the response string
+                string accessToken = webAuthenticationResult.ResponseData.Split(new[] { "accessToken=" }, StringSplitOptions.None)[1];
 
-                    // Log the user in with the access token
-                    Dav.Login(accessToken);
-                    return true;
-                }
-                catch { }
+                // Log the user in with the access token
+                Dav.Login(accessToken);
+                return true;
             }
+            catch { }
 
             return false;
         }
@@ -134,7 +133,7 @@ namespace UniversalSoundboard.Pages
         
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            await Login();
+            await ShowLoginPage();
             UpdateUserLayout();
         }
 
@@ -156,25 +155,26 @@ namespace UniversalSoundboard.Pages
 
         private async void SignupButton_Click(object sender, RoutedEventArgs e)
         {
-            await Windows.System.Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/signup"));
+            await ShowLoginPage(true);
+            UpdateUserLayout();
         }
 
         private async void PlusCardSelectButton_Click(object sender, RoutedEventArgs e)
         {
-            await Windows.System.Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/login?redirect=user%23plans%0A"));
+            await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/login?redirect=user%23plans%0A"));
         }
 
-        private async void DavLogoImage_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private async void DavLogoImage_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await Windows.System.Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech"));
+            await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech"));
         }
 
-        private void DavLogoImage_PointerEntered(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void DavLogoImage_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Hand, 0);
         }
 
-        private void DavLogoImage_PointerExited(object sender, Windows.UI.Xaml.Input.PointerRoutedEventArgs e)
+        private void DavLogoImage_PointerExited(object sender, PointerRoutedEventArgs e)
         {
             Window.Current.CoreWindow.PointerCursor = new CoreCursor(CoreCursorType.Arrow, 0);
         }
