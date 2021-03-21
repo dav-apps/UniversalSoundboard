@@ -181,13 +181,13 @@ namespace UniversalSoundboard.Pages
         #region ShowCategoriesIcons
         private void SetShowCategoriesIconsToggle()
         {
-            ShowCategoriesIconsToggle.IsOn = FileManager.itemViewHolder.ShowCategoryIcon;
+            ShowCategoriesIconsToggle.IsOn = FileManager.itemViewHolder.ShowCategoriesIcons;
         }
 
         private void ShowCategoriesIconsToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            FileManager.itemViewHolder.ShowCategoryIcon = ShowCategoriesIconsToggle.IsOn;
+            FileManager.itemViewHolder.ShowCategoriesIcons = ShowCategoriesIconsToggle.IsOn;
         }
         #endregion
 

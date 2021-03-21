@@ -883,7 +883,7 @@ namespace UniversalSoundboard.Common
 
         #region ShowCategoriesIcons
         public const string ShowCategoriesIconsKey = "ShowCategoriesIcons";
-        public bool ShowCategoryIcon
+        public bool ShowCategoriesIcons
         {
             get => _showCategoriesIcons;
             set
