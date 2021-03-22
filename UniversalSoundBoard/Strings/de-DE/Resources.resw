@@ -640,4 +640,16 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Account-PlusCard-PriceTextBlock.Text" xml:space="preserve">
     <value>3 € pro Monat</value>
   </data>
+  <data name="AddSoundErrorContentDialog-Content" xml:space="preserve">
+    <value>Der Sound konnte nicht hinzugefügt werden.</value>
+  </data>
+  <data name="AddSoundErrorContentDialog-Title" xml:space="preserve">
+    <value>Fehler beim Hinzufügen des Sounds</value>
+  </data>
+  <data name="AddSoundsErrorContentDialog-Content" xml:space="preserve">
+    <value>Folgende Sounds konnten nicht hinzugefügt werden:{0}</value>
+  </data>
+  <data name="AddSoundsErrorContentDialog-Title" xml:space="preserve">
+    <value>Fehler beim Hinzufügen der Sounds</value>
+  </data>
 </root>

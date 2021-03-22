@@ -121,7 +121,7 @@
     <value>Ajouter une catégorie</value>
   </data>
   <data name="AddButton-Sound.Text" xml:space="preserve">
-    <value>Ajouter un son</value>
+    <value>Ajouter des sons</value>
   </data>
   <data name="AllSounds" xml:space="preserve">
     <value>Tous les sons</value>
@@ -640,5 +640,17 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="Account-PlusCard-PriceTextBlock.Text" xml:space="preserve">
     <value>3 € par mois</value>
+  </data>
+  <data name="AddSoundErrorContentDialog-Content" xml:space="preserve">
+    <value>Le son n'a pas pu être ajouté.</value>
+  </data>
+  <data name="AddSoundErrorContentDialog-Title" xml:space="preserve">
+    <value>Erreur lors de l'ajout du son</value>
+  </data>
+  <data name="AddSoundsErrorContentDialog-Content" xml:space="preserve">
+    <value>Les sons suivants n'ont pas pu être ajoutés :{0}</value>
+  </data>
+  <data name="AddSoundsErrorContentDialog-Title" xml:space="preserve">
+    <value>Erreur lors de l'ajout de sons</value>
   </data>
 </root>

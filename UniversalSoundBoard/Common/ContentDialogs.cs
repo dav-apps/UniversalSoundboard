@@ -51,6 +51,8 @@ namespace UniversalSoundboard.Common
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
+        public static ContentDialog AddSoundErrorContentDialog;
+        public static ContentDialog AddSoundsErrorContentDialog;
         public static ContentDialog RenameSoundContentDialog;
         public static ContentDialog DeleteSoundContentDialog;
         public static ContentDialog DeleteSoundsContentDialog;
@@ -196,6 +198,42 @@ namespace UniversalSoundboard.Common
             };
 
             return DeleteCategoryContentDialog;
+        }
+        #endregion
+
+        #region AddSoundError
+        public static ContentDialog CreateAddSoundErrorContentDialog()
+        {
+            AddSoundErrorContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("AddSoundErrorContentDialog-Title"),
+                Content = loader.GetString("AddSoundErrorContentDialog-Content"),
+                CloseButtonText = loader.GetString("ContentDialog-Close"),
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+
+            return AddSoundErrorContentDialog;
+        }
+        #endregion
+
+        #region AddSoundsError
+        public static ContentDialog CreateAddSoundsErrorContentDialog(List<string> soundsList)
+        {
+            string soundNames = "";
+            foreach(var name in soundsList)
+                soundNames += $"\n- {name}";
+
+            string content = string.Format(loader.GetString("AddSoundsErrorContentDialog-Content"), soundNames);
+
+            AddSoundsErrorContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("AddSoundsErrorContentDialog-Title"),
+                Content = content,
+                CloseButtonText = loader.GetString("ContentDialog-Close"),
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+
+            return AddSoundsErrorContentDialog;
         }
         #endregion
 

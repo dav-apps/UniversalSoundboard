@@ -1740,7 +1740,21 @@ namespace UniversalSoundboard.DataAccess
         public static async Task<Guid> CreateSoundAsync(Guid? uuid, string name, List<Guid> categoryUuids, StorageFile audioFile)
         {
             // Copy the file into the local cache
-            StorageFile newAudioFile = await audioFile.CopyAsync(ApplicationData.Current.LocalCacheFolder, audioFile.Name, NameCollisionOption.ReplaceExisting);
+            StorageFile newAudioFile;
+            try
+            {
+                newAudioFile = await audioFile.CopyAsync(ApplicationData.Current.LocalCacheFolder, audioFile.Name, NameCollisionOption.ReplaceExisting);
+            }
+            catch(Exception e)
+            {
+                var properties = new Dictionary<string, string>
+                {
+                    { "FilePath", audioFile.Path }
+                };
+                Crashes.TrackError(e, properties);
+
+                return Guid.Empty;
+            }
 
             var soundFileTableObject = await DatabaseOperations.CreateSoundFileAsync(Guid.NewGuid(), newAudioFile);
             var soundTableObject = await DatabaseOperations.CreateSoundAsync(uuid ?? Guid.NewGuid(), name, false, soundFileTableObject.Uuid, categoryUuids);
