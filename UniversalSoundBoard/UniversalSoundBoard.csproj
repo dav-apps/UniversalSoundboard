@@ -279,6 +279,8 @@
       <SubType>Designer</SubType>
     </None>
     <None Include="Package.xml" />
+    <Content Include="Assets\Images\usb-logo-white.png" />
+    <Content Include="Assets\Images\usb-logo.png" />
     <Content Include="Properties\Default.rd.xml" />
   </ItemGroup>
   <ItemGroup>
