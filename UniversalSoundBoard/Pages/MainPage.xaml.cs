@@ -978,7 +978,7 @@ namespace UniversalSoundboard.Pages
                 picker.FileTypeFilter.Add(fileType);
 
             var files = await picker.PickMultipleFilesAsync();
-            List<string> notCreatedSounds = new List<string>();
+            List<string> notAddedSounds = new List<string>();
 
             if (files.Any())
             {
@@ -997,7 +997,7 @@ namespace UniversalSoundboard.Pages
                     Guid uuid = await FileManager.CreateSoundAsync(null, soundFile.DisplayName, selectedCategory, soundFile);
 
                     if (uuid.Equals(Guid.Empty))
-                        notCreatedSounds.Add(soundFile.Name);
+                        notAddedSounds.Add(soundFile.Name);
                     else
                         await FileManager.AddSound(uuid);
                 }
@@ -1009,7 +1009,7 @@ namespace UniversalSoundboard.Pages
             if (FileManager.itemViewHolder.AppState == FileManager.AppState.Empty && files.Any())
                 FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
 
-            if (notCreatedSounds.Count > 0)
+            if (notAddedSounds.Count > 0)
             {
                 if (files.Count == 1)
                 {
@@ -1018,7 +1018,7 @@ namespace UniversalSoundboard.Pages
                 }
                 else
                 {
-                    var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notCreatedSounds);
+                    var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notAddedSounds);
                     await addSoundsErrorContentDialog.ShowAsync();
                 }
             }

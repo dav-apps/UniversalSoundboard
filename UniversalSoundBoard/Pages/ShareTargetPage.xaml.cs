@@ -5,6 +5,7 @@ using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
+using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -98,8 +99,9 @@ namespace UniversalSoundboard.Pages
         {
             AddButton.IsEnabled = false;
             LoadingControl.IsLoading = true;
-            LoadingControlMessageTextBlock.Text = new Windows.ApplicationModel.Resources.ResourceLoader().GetString("AddSoundsMessage");
+            LoadingControlMessageTextBlock.Text = new ResourceLoader().GetString("AddSoundsMessage");
 
+            List<string> notAddedSounds = new List<string>();
             List<Guid> categoryUuids = new List<Guid>();
             foreach (CustomTreeViewNode node in CategoriesTreeView.SelectedNodes)
                 categoryUuids.Add((Guid)node.Tag);
@@ -111,11 +113,34 @@ namespace UniversalSoundboard.Pages
                     if (!FileManager.allowedFileTypes.Contains(storagefile.FileType)) continue;
 
                     Guid soundUuid = await FileManager.CreateSoundAsync(null, storagefile.DisplayName, categoryUuids, storagefile);
-                    await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await FileManager.AddSound(soundUuid));
+
+                    if (soundUuid.Equals(Guid.Empty))
+                        notAddedSounds.Add(storagefile.Name);
+                    else
+                        await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () => await FileManager.AddSound(soundUuid));
                 }
             }
 
-            shareOperation.ReportCompleted();
+            AddButton.IsEnabled = true;
+            LoadingControl.IsLoading = false;
+
+            if(notAddedSounds.Count > 0)
+            {
+                if(items.Count == 1)
+                {
+                    var addSoundErrorContentDialog = ContentDialogs.CreateAddSoundErrorContentDialog();
+                    await addSoundErrorContentDialog.ShowAsync();
+                }
+                else
+                {
+                    var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notAddedSounds);
+                    await addSoundsErrorContentDialog.ShowAsync();
+                }
+            }
+            else
+            {
+                shareOperation.ReportCompleted();
+            }
         }
     }
 }

@@ -416,6 +416,7 @@ namespace UniversalSoundboard.DataAccess
                     if (await soundsFolder.TryGetItemAsync(soundData.Uuid + "." + soundData.SoundExt) is StorageFile audioFile)
                     {
                         Guid soundUuid = await CreateSoundAsync(ConvertStringToGuid(soundData.Uuid), WebUtility.HtmlDecode(soundData.Name), ConvertStringToGuid(soundData.CategoryId), audioFile);
+                        if (soundUuid.Equals(Guid.Empty)) continue;
 
                         if (imagesFolder != null)
                         {
@@ -465,6 +466,7 @@ namespace UniversalSoundboard.DataAccess
                     if (audioFile != null)
                     {
                         Guid soundUuid = await CreateSoundAsync(ConvertStringToGuid(sound.uuid), WebUtility.HtmlDecode(sound.name), ConvertStringToGuid(sound.category_id), audioFile);
+                        if (soundUuid.Equals(Guid.Empty)) continue;
 
                         if (imagesFolder != null && !string.IsNullOrEmpty(sound.image_ext))
                         {
@@ -558,6 +560,7 @@ namespace UniversalSoundboard.DataAccess
 
                     // Save the sound
                     soundUuid = await CreateSoundAsync(null, name, category?.Uuid, file);
+                    if (soundUuid.Equals(Guid.Empty)) continue;
 
                     // Get the image file of the sound
                     foreach (StorageFile imageFile in await imagesFolder.GetFilesAsync())
@@ -1741,6 +1744,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Copy the file into the local cache
             StorageFile newAudioFile;
+
             try
             {
                 newAudioFile = await audioFile.CopyAsync(ApplicationData.Current.LocalCacheFolder, audioFile.Name, NameCollisionOption.ReplaceExisting);

@@ -749,23 +749,19 @@ namespace UniversalSoundboard.Pages
             var items = await e.DataView.GetStorageItemsAsync();
             if (!items.Any()) return;
 
-            bool fileTypesSupported = true;
-
             // Check if the file types are supported
             foreach (var storageItem in items)
             {
-                if (!storageItem.IsOfType(StorageItemTypes.File) || !FileManager.allowedFileTypes.Contains((storageItem as StorageFile).FileType))
-                {
-                    fileTypesSupported = false;
-                    break;
-                }
+                if (
+                    !storageItem.IsOfType(StorageItemTypes.File)
+                    || !FileManager.allowedFileTypes.Contains((storageItem as StorageFile).FileType)
+                ) return;
             }
-
-            if (!fileTypesSupported) return;
 
             FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("AddSoundsMessage");
             FileManager.itemViewHolder.LoadingScreenVisible = true;
 
+            List<string> notAddedSounds = new List<string>();
             Guid? selectedCategory = null;
             if (!Equals(FileManager.itemViewHolder.SelectedCategory, Guid.Empty))
                 selectedCategory = FileManager.itemViewHolder.SelectedCategory;
@@ -776,10 +772,29 @@ namespace UniversalSoundboard.Pages
                 if (!FileManager.allowedFileTypes.Contains(soundFile.FileType)) continue;
 
                 // Add the sound to the sound lists
-                await FileManager.AddSound(await FileManager.CreateSoundAsync(null, soundFile.DisplayName, selectedCategory, soundFile));
+                Guid soundUuid = await FileManager.CreateSoundAsync(null, soundFile.DisplayName, selectedCategory, soundFile);
+
+                if (soundUuid.Equals(Guid.Empty))
+                    notAddedSounds.Add(soundFile.Name);
+                else
+                    await FileManager.AddSound(soundUuid);
             }
 
             FileManager.itemViewHolder.LoadingScreenVisible = false;
+
+            if(notAddedSounds.Count > 0)
+            {
+                if(items.Count == 1)
+                {
+                    var addSoundErrorContentDialog = ContentDialogs.CreateAddSoundErrorContentDialog();
+                    await addSoundErrorContentDialog.ShowAsync();
+                }
+                else
+                {
+                    var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notAddedSounds);
+                    await addSoundsErrorContentDialog.ShowAsync();
+                }
+            }
         }
 
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
