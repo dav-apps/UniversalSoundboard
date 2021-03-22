@@ -12,7 +12,7 @@
     Loaded="UserControl_Loaded">
 
     <UserControl.Resources>
-        <converters:CategoryIconsConverter x:Key="CategoryIconsConverter" />
+        <converters:CategoriesIconsConverter x:Key="CategoriesIconsConverter" />
 
         <Storyboard x:Name="ShowNameStoryboard">
             <DoubleAnimation
@@ -74,12 +74,12 @@
             RelativePanel.AlignLeftWithPanel="True" />
 
         <TextBlock
-            Name="CategoryIconsTextBlock"
-            Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}}"
+            Name="CategoriesIconsTextBlock"
+            Text="{x:Bind Sound.Categories, Converter={StaticResource CategoriesIconsConverter}}"
             FontFamily="Segoe MDL2 Assets" 
             FontSize="20"
             Margin="0,6,6,0"
-            Visibility="{Binding ShowCategoryIcon}"
+            Visibility="{Binding ShowCategoriesIcons}"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignRightWithPanel="True" />
 

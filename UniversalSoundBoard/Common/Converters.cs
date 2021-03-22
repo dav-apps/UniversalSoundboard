@@ -107,7 +107,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class CategoryIconsConverter : IValueConverter
+    public class CategoriesIconsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

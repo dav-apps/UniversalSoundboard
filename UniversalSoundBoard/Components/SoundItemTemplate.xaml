@@ -10,7 +10,7 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
-        <converters:CategoryIconsConverter x:Key="CategoryIconsConverter" />
+        <converters:CategoriesIconsConverter x:Key="CategoriesIconsConverter" />
         <converters:CategoriesMarginConverter x:Key="CategoriesMarginConverter" />
     </UserControl.Resources>
 
@@ -33,12 +33,12 @@
                 Text="{x:Bind Sound.Name}"
                 Margin="0,0,10,0"
                 RelativePanel.RightOf="FavouriteSymbol"
-                RelativePanel.LeftOf="CategoryIconsTextBlock"
+                RelativePanel.LeftOf="CategoriesIconsTextBlock"
                 RelativePanel.AlignVerticalCenterWithPanel="True" />
 
             <TextBlock
-                Name="CategoryIconsTextBlock"
-                Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}, ConverterParameter=list}"
+                Name="CategoriesIconsTextBlock"
+                Text="{x:Bind Sound.Categories, Converter={StaticResource CategoriesIconsConverter}, ConverterParameter=list}"
                 FontFamily="Segoe MDL2 Assets"
                 Margin="{x:Bind Sound.Categories, Converter={StaticResource CategoriesMarginConverter}}"
                 RelativePanel.LeftOf="RemoveSoundButton"

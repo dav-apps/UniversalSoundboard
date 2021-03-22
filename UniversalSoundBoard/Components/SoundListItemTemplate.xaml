@@ -11,7 +11,7 @@
 
     <UserControl.Resources>
         <!-- Converters -->
-        <converters:CategoryIconsConverter x:Key="CategoryIconsConverter" />
+        <converters:CategoriesIconsConverter x:Key="CategoriesIconsConverter" />
         <converters:CategoriesMarginConverter x:Key="CategoriesMarginConverter" />
     </UserControl.Resources>
 
@@ -59,16 +59,16 @@
                     FontSize="17"
                     Margin="0,0,10,0"
                     RelativePanel.RightOf="FavouriteSymbol"
-                    RelativePanel.LeftOf="CategoryIconsTextBlock"
+                    RelativePanel.LeftOf="CategoriesIconsTextBlock"
                     RelativePanel.AlignVerticalCenterWithPanel="True" />
 
                 <TextBlock
-                    Name="CategoryIconsTextBlock"
-                    Text="{x:Bind Sound.Categories, Converter={StaticResource CategoryIconsConverter}, ConverterParameter=list}"
+                    Name="CategoriesIconsTextBlock"
+                    Text="{x:Bind Sound.Categories, Converter={StaticResource CategoriesIconsConverter}, ConverterParameter=list}"
                     FontFamily="Segoe MDL2 Assets" 
                     FontSize="20"
                     Margin="{x:Bind Sound.Categories, Converter={StaticResource CategoriesMarginConverter}}"
-                    Visibility="{Binding ShowCategoryIcon}"
+                    Visibility="{Binding ShowCategoriesIcons}"
                     RelativePanel.AlignRightWithPanel="True"
                     RelativePanel.AlignVerticalCenterWithPanel="True" />
             </RelativePanel>
