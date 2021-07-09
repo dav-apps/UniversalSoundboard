@@ -373,13 +373,13 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\source\repos\davClassLibrary\davClassLibrary\davClassLibrary.csproj">
-      <Project>{ce39175d-d394-4bd0-ae01-51b433ac785d}</Project>
-      <Name>davClassLibrary</Name>
-    </ProjectReference>
+    <WCFMetadata Include="Connected Services\" />
   </ItemGroup>
   <ItemGroup>
-    <WCFMetadata Include="Connected Services\" />
+    <ProjectReference Include="..\..\davClassLibrary\davClassLibrary\davClassLibrary.csproj">
+      <Project>{10769b56-07ae-453a-baeb-1c0c7c492838}</Project>
+      <Name>davClassLibrary</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>
