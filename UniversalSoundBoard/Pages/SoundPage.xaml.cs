@@ -871,7 +871,7 @@ namespace UniversalSoundboard.Pages
             double innerWidth = gridView.ActualWidth - 10;  // Left margin = 10, right margin = (innerWidth - (columns * [sound tile margin])) / columns
             int columns = Convert.ToInt32(innerWidth / desiredWidth);
 
-            FileManager.itemViewHolder.SoundTileWidth = (innerWidth - (columns * 9)) / columns;
+            FileManager.itemViewHolder.SoundTileWidth = (innerWidth - (columns * 10)) / columns;
             FileManager.itemViewHolder.TriggerSoundTileSizeChangedEvent(gridView, e);
         }
 

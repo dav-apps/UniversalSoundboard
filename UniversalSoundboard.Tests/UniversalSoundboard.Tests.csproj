@@ -159,16 +159,20 @@
       <Version>6.2.12</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestAdapter">
-      <Version>2.2.1</Version>
+      <Version>2.2.5</Version>
     </PackageReference>
     <PackageReference Include="MSTest.TestFramework">
-      <Version>2.2.1</Version>
+      <Version>2.2.5</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NET.Test.Sdk">
-      <Version>16.9.1</Version>
+      <Version>16.10.0</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\davClassLibrary\davClassLibrary\davClassLibrary.csproj">
+      <Project>{10769b56-07ae-453a-baeb-1c0c7c492838}</Project>
+      <Name>davClassLibrary</Name>
+    </ProjectReference>
     <ProjectReference Include="..\UniversalSoundBoard\UniversalSoundBoard.csproj">
       <Project>{d28c5d63-9e01-456a-b935-63d72f3f4e46}</Project>
       <Name>UniversalSoundBoard</Name>
