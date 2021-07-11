@@ -506,7 +506,15 @@ namespace UniversalSoundboard.Components
 
         private void UpdateSystemMediaTransportControls()
         {
+            if (PlayingSound.Current >= PlayingSound.Sounds.Count)
+            {
+                // Disable the SystemMediaTransportControls
+                systemMediaTransportControls.IsEnabled = false;
+                return;
+            }
+            
             Sound currentSound = PlayingSound.Sounds[PlayingSound.Current];
+            systemMediaTransportControls.IsEnabled = true;
 
             var updater = systemMediaTransportControls.DisplayUpdater;
             updater.ClearAll();
@@ -923,6 +931,9 @@ namespace UniversalSoundboard.Components
                 PlayingSound.MediaPlayer.TimelineController.Pause();
                 PlayingSound.MediaPlayer.TimelineController.Position = TimeSpan.Zero;
             }
+
+            // Remove the sound from the SystemMediaTransportControls
+            systemMediaTransportControls.IsEnabled = false;
 
             // Update the BottomPlayingSoundsBar in SoundPage
             FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));

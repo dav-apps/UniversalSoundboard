@@ -520,7 +520,10 @@ namespace UniversalSoundboard.Components
 
         private void UpdateUI()
         {
-            if (PlayingSound == null) return;
+            if (
+                PlayingSound == null
+                || PlayingSound.Sounds.Count == 0
+            ) return;
 
             // Correct PlayingSound.Current if necessary
             if (PlayingSound.Current < 0)
