@@ -18,6 +18,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundboard.Pages
 {
@@ -91,6 +92,28 @@ namespace UniversalSoundboard.Pages
         {
             maxBottomPlayingSoundsBarHeight = Window.Current.Bounds.Height * 0.6;
             await UpdatePlayingSoundsListAsync();
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            FileManager.itemViewHolder.PropertyChanged -= ItemViewHolder_PropertyChanged;
+            FileManager.itemViewHolder.PlayingSoundsLoaded -= ItemViewHolder_PlayingSoundsLoaded;
+            FileManager.itemViewHolder.SelectAllSounds -= ItemViewHolder_SelectAllSounds;
+            FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationStarted -= ItemViewHolder_PlayingSoundItemShowSoundsListAnimationStarted;
+            FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationEnded -= ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEnded;
+            FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStarted -= ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStarted;
+            FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEnded -= ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEnded;
+            FileManager.itemViewHolder.ShowPlayingSoundItemStarted -= ItemViewHolder_ShowPlayingSoundItemStarted;
+            FileManager.itemViewHolder.ShowPlayingSoundItemEnded -= ItemViewHolder_ShowPlayingSoundItemEnded;
+            FileManager.itemViewHolder.RemovePlayingSoundItemStarted -= ItemViewHolder_RemovePlayingSoundItemStarted;
+            FileManager.itemViewHolder.RemovePlayingSoundItemEnded -= ItemViewHolder_RemovePlayingSoundItemEnded;
+
+            FileManager.itemViewHolder.Sounds.CollectionChanged -= ItemViewHolder_Sounds_CollectionChanged;
+            FileManager.itemViewHolder.FavouriteSounds.CollectionChanged -= ItemViewHolder_FavouriteSounds_CollectionChanged;
+
+            reversedPlayingSounds.VectorChanged -= ReversedPlayingSounds_VectorChanged;
+
+            base.OnNavigatedFrom(e);
         }
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
@@ -394,12 +417,11 @@ namespace UniversalSoundboard.Pages
                     break;
                 case NotifyCollectionChangedAction.Add:
                     Sound addedSound = e.NewItems[0] as Sound;
+                    bool updateOrder = reorderedItem.Equals(addedSound.Uuid);
+                    reorderedItem = Guid.Empty;
 
                     // The user reordered the sounds as the item was first removed and now added again
-                    if (reorderedItem.Equals(addedSound.Uuid))
-                        await UpdateSoundOrder(favourites);
-
-                    reorderedItem = Guid.Empty;
+                    if (updateOrder) await UpdateSoundOrder(favourites);
                     break;
             }
         }

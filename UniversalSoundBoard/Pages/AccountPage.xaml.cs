@@ -13,6 +13,7 @@ using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
+using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundboard.Pages
 {
@@ -35,6 +36,14 @@ namespace UniversalSoundboard.Pages
 
             SharedShadow.Receivers.Add(TopBackgroundGrid);
             SharedShadow.Receivers.Add(BottomBackgroundGrid);
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            FileManager.itemViewHolder.PropertyChanged -= ItemViewHolder_PropertyChanged;
+            FileManager.itemViewHolder.UserSyncFinished -= ItemViewHolder_UserSyncFinished;
+
+            base.OnNavigatedFrom(e);
         }
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)

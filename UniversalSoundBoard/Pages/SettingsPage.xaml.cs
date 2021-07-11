@@ -6,6 +6,7 @@ using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundboard.Pages
 {
@@ -28,6 +29,13 @@ namespace UniversalSoundboard.Pages
             InitSettings();
 
             await FileManager.CalculateSoundboardSizeAsync();
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            FileManager.itemViewHolder.PropertyChanged -= ItemViewHolder_PropertyChanged;
+
+            base.OnNavigatedFrom(e);
         }
 
         #region Functionality
