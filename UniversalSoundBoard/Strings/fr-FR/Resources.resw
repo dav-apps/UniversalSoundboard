@@ -656,4 +656,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="SettingsEntry-UseStandardOutputDeviceToggle.Header" xml:space="preserve">
     <value>Utiliser le périphérique de sortie standard</value>
   </data>
+  <data name="SettingsEntry-OutputDeviceHeaderTextBlock.Text" xml:space="preserve">
+    <value>Choisir votre périphérique de sortie</value>
+  </data>
 </root>

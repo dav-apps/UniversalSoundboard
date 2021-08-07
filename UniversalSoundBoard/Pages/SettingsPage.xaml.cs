@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using Windows.ApplicationModel.Resources;
+using Windows.Devices.Enumeration;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -27,7 +29,7 @@ namespace UniversalSoundboard.Pages
             ContentRoot.DataContext = FileManager.itemViewHolder;
             SetThemeColors();
             InitSettings();
-
+            await LoadOutputDevices();
             await FileManager.CalculateSoundboardSizeAsync();
         }
 
@@ -66,6 +68,28 @@ namespace UniversalSoundboard.Pages
             SetLiveTileToggle();
             SetThemeRadioButton();
             initialized = true;
+        }
+
+        private async Task LoadOutputDevices()
+        {
+            OutputDeviceComboBox.Items.Clear();
+            DeviceInformationCollection devices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
+
+            int i = 0;
+            bool hasSavedOutputDevice = !string.IsNullOrEmpty(FileManager.itemViewHolder.OutputDevice);
+
+            foreach (DeviceInformation deviceInfo in devices)
+            {
+                OutputDeviceComboBox.Items.Add(new ComboBoxItem { Content = deviceInfo.Name, Tag = deviceInfo.Id });
+                
+                // Select the device if it was saved as the output or it is the default output
+                if (
+                    (hasSavedOutputDevice && deviceInfo.Id.Equals(FileManager.itemViewHolder.OutputDevice))
+                    || (!hasSavedOutputDevice && deviceInfo.IsDefault)
+                ) OutputDeviceComboBox.SelectedIndex = i;
+
+                i += 1;
+            }
         }
 
         private void UpdateSoundboardSizeText()
@@ -198,12 +222,26 @@ namespace UniversalSoundboard.Pages
         private void SetUseStandardOutputDeviceToggle()
         {
             UseStandardOutputDeviceToggle.IsOn = FileManager.itemViewHolder.UseStandardOutputDevice;
+            UpdateOutputDeviceVisibility();
         }
 
         private void UseStandardOutputDeviceToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
             FileManager.itemViewHolder.UseStandardOutputDevice = UseStandardOutputDeviceToggle.IsOn;
+
+            if (!UseStandardOutputDeviceToggle.IsOn && OutputDeviceComboBox.Items.Count > 0)
+            {
+                // Save the currently selected output device
+                FileManager.itemViewHolder.OutputDevice = (string)((ComboBoxItem)OutputDeviceComboBox.SelectedItem).Tag;
+            }
+
+            UpdateOutputDeviceVisibility();
+        }
+
+        private void UpdateOutputDeviceVisibility()
+        {
+            OutputDeviceStackPanel.Visibility = FileManager.itemViewHolder.UseStandardOutputDevice ? Visibility.Collapsed : Visibility.Visible;
         }
         #endregion
 

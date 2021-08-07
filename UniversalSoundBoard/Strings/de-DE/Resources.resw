@@ -655,4 +655,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SettingsEntry-UseStandardOutputDeviceToggle.Header" xml:space="preserve">
     <value>Standard-Ausgabegerät verwenden</value>
   </data>
+  <data name="SettingsEntry-OutputDeviceHeaderTextBlock.Text" xml:space="preserve">
+    <value>Ausgabegerät auswählen</value>
+  </data>
 </root>

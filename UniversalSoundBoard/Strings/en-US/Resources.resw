@@ -657,4 +657,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SettingsEntry-UseStandardOutputDeviceToggle.Header" xml:space="preserve">
     <value>Use standard output device</value>
   </data>
+  <data name="SettingsEntry-OutputDeviceHeaderTextBlock.Text" xml:space="preserve">
+    <value>Choose your output device</value>
+  </data>
 </root>

@@ -25,6 +25,7 @@ namespace UniversalSoundboard.Common
         private const string soundOrderKey = "soundOrder";
         private const string soundOrderReversedKey = "soundOrderReversed";
         private const string useStandardOutputDeviceKey = "useStandardOutputDevice";
+        private const string outputDeviceKey = "outputDevice";
         private const string showListViewKey = "showListView";
         private const string showCategoriesIconsKey = "showCategoryIcon";
         private const string showAcrylicBackgroundKey = "showAcrylicBackground";
@@ -44,6 +45,7 @@ namespace UniversalSoundboard.Common
         private const FileManager.SoundOrder soundOrderDefault = FileManager.SoundOrder.Custom;
         private const bool soundOrderReversedDefault = false;
         private const bool useStandardOutputDeviceDefault = true;
+        private const string outputDeviceDefault = "";
         private const bool showListViewDefault = false;
         private const bool showCategoriesIconsDefault = false;
         private const bool showAcrylicBackgroundDefault = true;
@@ -111,6 +113,7 @@ namespace UniversalSoundboard.Common
         private FileManager.SoundOrder _soundOrder;                         // The selected sound order in the settings
         private bool _soundOrderReversed;                                   // If the sound order is descending (false) or ascending (true)
         private bool _useStandardOutputDevice;                              // If true, the standard output device of the OS is used for playback
+        private string _outputDevice;                                       // The id of the selected output device
         private bool _showListView;                                         // If true, shows the sounds on the SoundPage in a ListView
         private bool _showCategoriesIcons;                                  // If true shows the icon of the category on the sound tile
         private bool _showAcrylicBackground;                                // If true the acrylic background is visible
@@ -258,6 +261,13 @@ namespace UniversalSoundboard.Common
                 _useStandardOutputDevice = useStandardOutputDeviceDefault;
             else
                 _useStandardOutputDevice = (bool)localSettings.Values[useStandardOutputDeviceKey];
+            #endregion
+
+            #region outputDevice
+            if (localSettings.Values[outputDeviceKey] == null)
+                _outputDevice = outputDeviceDefault;
+            else
+                _outputDevice = (string)localSettings.Values[outputDeviceKey];
             #endregion
 
             #region showListView
@@ -887,6 +897,21 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[useStandardOutputDeviceKey] = value;
                 _useStandardOutputDevice = value;
                 NotifyPropertyChanged(UseStandardOutputDeviceKey);
+            }
+        }
+        #endregion
+
+        #region OutputDevice
+        public const string OutputDeviceKey = "OutputDevice";
+        public string OutputDevice
+        {
+            get => _outputDevice;
+            set
+            {
+                if (_outputDevice.Equals(value)) return;
+                localSettings.Values[outputDeviceKey] = value;
+                _outputDevice = value;
+                NotifyPropertyChanged(OutputDeviceKey);
             }
         }
         #endregion

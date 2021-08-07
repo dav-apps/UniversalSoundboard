@@ -130,6 +130,21 @@
                         </StackPanel>
 
                         <StackPanel
+                            Name="OutputDeviceStackPanel"
+                            Style="{StaticResource SettingsEntryStyle}">
+
+                            <TextBlock
+                                Name="OutputDeviceHeaderTextBlock"
+                                x:Uid="SettingsEntry-OutputDeviceHeaderTextBlock" />
+
+                            <ComboBox
+                                Name="OutputDeviceComboBox"
+                                Margin="0,10,0,0"
+                                SelectedIndex="0">
+                            </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel
                             Style="{StaticResource SettingsEntryStyle}">
 
                             <HyperlinkButton
