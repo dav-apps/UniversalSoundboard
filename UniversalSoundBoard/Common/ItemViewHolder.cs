@@ -24,6 +24,7 @@ namespace UniversalSoundboard.Common
         private const string showSoundsPivotKey = "showSoundsPivot";
         private const string soundOrderKey = "soundOrder";
         private const string soundOrderReversedKey = "soundOrderReversed";
+        private const string useStandardOutputDeviceKey = "useStandardOutputDevice";
         private const string showListViewKey = "showListView";
         private const string showCategoriesIconsKey = "showCategoryIcon";
         private const string showAcrylicBackgroundKey = "showAcrylicBackground";
@@ -42,6 +43,7 @@ namespace UniversalSoundboard.Common
         private const bool showSoundsPivotDefault = true;
         private const FileManager.SoundOrder soundOrderDefault = FileManager.SoundOrder.Custom;
         private const bool soundOrderReversedDefault = false;
+        private const bool useStandardOutputDeviceDefault = true;
         private const bool showListViewDefault = false;
         private const bool showCategoriesIconsDefault = false;
         private const bool showAcrylicBackgroundDefault = true;
@@ -108,6 +110,7 @@ namespace UniversalSoundboard.Common
         private bool _showSoundsPivot;                                      // If true shows the pivot to select Sounds or Favourite sounds
         private FileManager.SoundOrder _soundOrder;                         // The selected sound order in the settings
         private bool _soundOrderReversed;                                   // If the sound order is descending (false) or ascending (true)
+        private bool _useStandardOutputDevice;                              // If true, the standard output device of the OS is used for playback
         private bool _showListView;                                         // If true, shows the sounds on the SoundPage in a ListView
         private bool _showCategoriesIcons;                                  // If true shows the icon of the category on the sound tile
         private bool _showAcrylicBackground;                                // If true the acrylic background is visible
@@ -248,6 +251,13 @@ namespace UniversalSoundboard.Common
                 _soundOrderReversed = soundOrderReversedDefault;
             else
                 _soundOrderReversed = (bool)localSettings.Values[soundOrderReversedKey];
+            #endregion
+
+            #region useStandardOutputDevice
+            if (localSettings.Values[useStandardOutputDeviceKey] == null)
+                _useStandardOutputDevice = useStandardOutputDeviceDefault;
+            else
+                _useStandardOutputDevice = (bool)localSettings.Values[useStandardOutputDeviceKey];
             #endregion
 
             #region showListView
@@ -862,6 +872,21 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[soundOrderReversedKey] = value;
                 _soundOrderReversed = value;
                 NotifyPropertyChanged(SoundOrderReversedKey);
+            }
+        }
+        #endregion
+
+        #region UseStandardOutputDevice
+        public const string UseStandardOutputDeviceKey = "UseStandardOutputDevice";
+        public bool UseStandardOutputDevice
+        {
+            get => _useStandardOutputDevice;
+            set
+            {
+                if (_useStandardOutputDevice.Equals(value)) return;
+                localSettings.Values[useStandardOutputDeviceKey] = value;
+                _useStandardOutputDevice = value;
+                NotifyPropertyChanged(UseStandardOutputDeviceKey);
             }
         }
         #endregion

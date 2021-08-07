@@ -24,7 +24,7 @@
         </Style>
 
         <Style x:Key="SettingsEntryStyle" TargetType="StackPanel">
-            <Setter Property="Margin" Value="0,5,0,5" />
+            <Setter Property="Margin" Value="0,10,0,5" />
         </Style>
     </Page.Resources>
 
@@ -91,8 +91,7 @@
 
                         <StackPanel
                             Name="SoundOrderStackPanel"
-                            Style="{StaticResource SettingsEntryStyle}"
-                            Margin="0,10,0,5">
+                            Style="{StaticResource SettingsEntryStyle}">
 
                             <TextBlock
                                 Name="SoundOrderHeaderTextBlock"
@@ -118,6 +117,16 @@
                                 <ComboBoxItem x:Uid="SettingsEntry-SoundOrderReversedComboBox-Ascending">Ascending</ComboBoxItem>
                                 <ComboBoxItem x:Uid="SettingsEntry-SoundOrderReversedComboBox-Descending">Descending</ComboBoxItem>
                             </ComboBox>
+                        </StackPanel>
+
+                        <StackPanel
+                            Name="UseStandardOutputDeviceStackPanel"
+                            Style="{StaticResource SettingsEntryStyle}">
+
+                            <ToggleSwitch
+                                Name="UseStandardOutputDeviceToggle"
+                                x:Uid="SettingsEntry-UseStandardOutputDeviceToggle"
+                                Toggled="UseStandardOutputDeviceToggle_Toggled" />
                         </StackPanel>
 
                         <StackPanel

@@ -59,6 +59,7 @@ namespace UniversalSoundboard.Pages
             SetShowSoundsPivotToggle();
             SetSoundOrderComboBox();
             SetSoundOrderReversedComboBox();
+            SetUseStandardOutputDeviceToggle();
             SetShowListViewToggle();
             SetShowCategoriesIconsToggle();
             SetShowAcrylicBackgroundToggle();
@@ -170,6 +171,19 @@ namespace UniversalSoundboard.Pages
             // Disable the combo box if custom sound order is selected
             if (FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom)
                 SoundOrderReversedComboBox.IsEnabled = false;
+        }
+        #endregion
+
+        #region Output device
+        private void SetUseStandardOutputDeviceToggle()
+        {
+            UseStandardOutputDeviceToggle.IsOn = FileManager.itemViewHolder.UseStandardOutputDevice;
+        }
+
+        private void UseStandardOutputDeviceToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!initialized) return;
+            FileManager.itemViewHolder.UseStandardOutputDevice = UseStandardOutputDeviceToggle.IsOn;
         }
         #endregion
 

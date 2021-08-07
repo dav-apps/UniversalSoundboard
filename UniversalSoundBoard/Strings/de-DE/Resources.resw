@@ -652,4 +652,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="AddSoundsErrorContentDialog-Title" xml:space="preserve">
     <value>Fehler beim Hinzufügen der Sounds</value>
   </data>
+  <data name="SettingsEntry-UseStandardOutputDeviceToggle.Header" xml:space="preserve">
+    <value>Standard-Ausgabegerät verwenden</value>
+  </data>
 </root>
