@@ -167,10 +167,30 @@ namespace UniversalSoundboard.Pages
         private void SetSoundOrderReversedComboBox()
         {
             SoundOrderReversedComboBox.SelectedIndex = FileManager.itemViewHolder.SoundOrderReversed ? 1 : 0;
+            UpdateSoundOrderReversedComboBoxVisibility();
+        }
 
-            // Disable the combo box if custom sound order is selected
+        private void SoundOrderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!initialized) return;
+            FileManager.itemViewHolder.SoundOrder = (FileManager.SoundOrder)SoundOrderComboBox.SelectedIndex;
+
             if (FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom)
-                SoundOrderReversedComboBox.IsEnabled = false;
+                FileManager.itemViewHolder.AllSoundsChanged = true;
+
+            UpdateSoundOrderReversedComboBoxVisibility();
+        }
+
+        private void SoundOrderReversedComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!initialized) return;
+            FileManager.itemViewHolder.SoundOrderReversed = SoundOrderReversedComboBox.SelectedIndex != 0;
+        }
+
+        private void UpdateSoundOrderReversedComboBoxVisibility()
+        {
+            // Hide the combo box if custom sound order is selected
+            SoundOrderReversedComboBox.Visibility = FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom ? Visibility.Collapsed : Visibility.Visible;
         }
         #endregion
 
@@ -294,22 +314,6 @@ namespace UniversalSoundboard.Pages
                 SetThemeColors();
             else if (e.PropertyName.Equals(ItemViewHolder.SoundboardSizeKey))
                 UpdateSoundboardSizeText();
-        }
-
-        private void SoundOrderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!initialized) return;
-            FileManager.itemViewHolder.SoundOrder = (FileManager.SoundOrder)SoundOrderComboBox.SelectedIndex;
-
-            SoundOrderReversedComboBox.IsEnabled = FileManager.itemViewHolder.SoundOrder != FileManager.SoundOrder.Custom;
-            if (FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom)
-                FileManager.itemViewHolder.AllSoundsChanged = true;
-        }
-
-        private void SoundOrderReversedComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!initialized) return;
-            FileManager.itemViewHolder.SoundOrderReversed = SoundOrderReversedComboBox.SelectedIndex != 0;
         }
 
         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)
