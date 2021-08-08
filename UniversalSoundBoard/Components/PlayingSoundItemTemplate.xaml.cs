@@ -6,6 +6,7 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.Resources;
+using Windows.Devices.Enumeration;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -358,6 +359,28 @@ namespace UniversalSoundboard.Components
             double diff = e.NewValue - e.OldValue;
             if (diff > 0.6 || diff < -0.6)
                 PlayingSoundItem.SetPosition(Convert.ToInt32(e.NewValue));
+        }
+
+        private async void MenuFlyout_Opening(object sender, object e)
+        {
+            // Update the list of possible output devices
+            DeviceInformationCollection devices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
+            MoreButtonOutputDeviceFlyoutSubItem.Items.Clear();
+
+            MoreButtonOutputDeviceFlyoutSubItem.Items.Add(new ToggleMenuFlyoutItem
+            {
+                Text = loader.GetString("StandardOutputDevice"),
+                IsChecked = true
+            });
+
+            foreach (DeviceInformation deviceInfo in devices)
+            {
+                MoreButtonOutputDeviceFlyoutSubItem.Items.Add(new ToggleMenuFlyoutItem
+                {
+                    Text = deviceInfo.Name,
+                    Tag = deviceInfo.Id
+                });
+            }
         }
 
         private void MenuFlyout_Opened(object sender, object e)

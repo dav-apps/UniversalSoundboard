@@ -659,4 +659,10 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="SettingsEntry-OutputDeviceHeaderTextBlock.Text" xml:space="preserve">
     <value>Choisir votre périphérique de sortie</value>
   </data>
+  <data name="MoreButton-OutputDevice.Text" xml:space="preserve">
+    <value>Périphérique de sortie</value>
+  </data>
+  <data name="StandardOutputDevice" xml:space="preserve">
+    <value>Périphérique de sortie standard</value>
+  </data>
 </root>

@@ -746,13 +746,18 @@
                     Content="&#xE10C;">
 
                     <Button.Flyout>
-                        <MenuFlyout Placement="Top" Opened="MenuFlyout_Opened">
+                        <MenuFlyout Placement="Top" Opening="MenuFlyout_Opening" Opened="MenuFlyout_Opened">
                             <components:VolumeMenuFlyoutItem
                                 x:Name="MoreButtonVolumeFlyoutItem"
                                 VolumeControl_ValueChanged="VolumeControl_ValueChanged"
                                 VolumeControl_IconChanged="VolumeControl_IconChanged"
                                 VolumeControl_LostFocus="VolumeControl_LostFocus"
                                 VolumeControl_MuteChanged="VolumeControl_MuteChanged" />
+                            <MenuFlyoutSubItem Name="MoreButtonOutputDeviceFlyoutSubItem" x:Uid="MoreButton-OutputDevice">
+                                <MenuFlyoutSubItem.Icon>
+                                    <FontIcon FontFamily="Segoe MDL2 Assets" Glyph="&#xE7F5;" />
+                                </MenuFlyoutSubItem.Icon>
+                            </MenuFlyoutSubItem>
                             <MenuFlyoutSubItem Name="MoreButtonRepeatFlyoutSubItem" x:Uid="MoreButton-Repeat" Icon="RepeatAll">
                                 <MenuFlyoutItem Name="MoreButton_Repeat_1x" Text="1x" Click="MoreButton_Repeat_1x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_2x" Text="2x" Click="MoreButton_Repeat_2x_Click" />

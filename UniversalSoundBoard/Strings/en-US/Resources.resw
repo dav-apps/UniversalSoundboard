@@ -660,4 +660,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SettingsEntry-OutputDeviceHeaderTextBlock.Text" xml:space="preserve">
     <value>Choose your output device</value>
   </data>
+  <data name="MoreButton-OutputDevice.Text" xml:space="preserve">
+    <value>Output device</value>
+  </data>
+  <data name="StandardOutputDevice" xml:space="preserve">
+    <value>Standard output device</value>
+  </data>
 </root>
