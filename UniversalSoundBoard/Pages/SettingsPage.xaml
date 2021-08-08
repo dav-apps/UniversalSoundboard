@@ -140,7 +140,8 @@
                             <ComboBox
                                 Name="OutputDeviceComboBox"
                                 Margin="0,10,0,0"
-                                SelectedIndex="0">
+                                SelectedIndex="0"
+                                SelectionChanged="OutputDeviceComboBox_SelectionChanged">
                             </ComboBox>
                         </StackPanel>
 

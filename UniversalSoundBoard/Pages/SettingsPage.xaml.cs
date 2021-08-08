@@ -28,8 +28,8 @@ namespace UniversalSoundboard.Pages
         {
             ContentRoot.DataContext = FileManager.itemViewHolder;
             SetThemeColors();
-            InitSettings();
             await LoadOutputDevices();
+            InitSettings();
             await FileManager.CalculateSoundboardSizeAsync();
         }
 
@@ -237,6 +237,12 @@ namespace UniversalSoundboard.Pages
             }
 
             UpdateOutputDeviceVisibility();
+        }
+
+        private void OutputDeviceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!initialized) return;
+            FileManager.itemViewHolder.OutputDevice = (string)((ComboBoxItem)OutputDeviceComboBox.SelectedItem).Tag;
         }
 
         private void UpdateOutputDeviceVisibility()
