@@ -18,6 +18,7 @@ using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
+using Windows.Devices.Enumeration;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -1708,7 +1709,6 @@ namespace UniversalSoundboard.DataAccess
                     newSounds.Add(sound);
 
             player.CommandManager.IsEnabled = false;
-            player.TimelineController = new MediaTimelineController();
             if(current < newSounds.Count && newSounds[current].AudioFile != null)
                 player.Source = MediaSource.CreateFromStorageFile(newSounds[current].AudioFile);
 
@@ -2912,6 +2912,20 @@ namespace UniversalSoundboard.DataAccess
                 }
             }
             return fileBytes;
+        }
+
+        public static async Task<DeviceInformation> GetDeviceInformationById(string id)
+        {
+            if (string.IsNullOrEmpty(id)) return null;
+
+            try
+            {
+                return await DeviceInformation.CreateFromIdAsync(id);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
         #endregion
 

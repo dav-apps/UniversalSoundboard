@@ -8,6 +8,7 @@ using System.Timers;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
+using Windows.Devices.Enumeration;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -85,7 +86,7 @@ namespace UniversalSoundboard.Components
             this.dispatcher = dispatcher;
         }
 
-        public void Init()
+        public async Task Init()
         {
             if (!initialized)
             {
@@ -108,6 +109,9 @@ namespace UniversalSoundboard.Components
                 // Subscribe to MediaPlayer events
                 PlayingSound.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
                 PlayingSound.MediaPlayer.PlaybackSession.PositionChanged += PlaybackSession_PositionChanged;
+
+                // Set the appropriate output device
+                await UpdateOutputDevice();
 
                 if (PlayingSound.MediaPlayer.Source != null)
                 {
@@ -200,7 +204,7 @@ namespace UniversalSoundboard.Components
         }
 
         #region ItemViewHolder event handlers
-        private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private async void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
 
@@ -208,6 +212,8 @@ namespace UniversalSoundboard.Components
                 PlayingSound.MediaPlayer.Volume = (double)PlayingSound.Volume / 100 * FileManager.itemViewHolder.Volume / 100;
             else if (e.PropertyName == ItemViewHolder.MutedKey)
                 PlayingSound.MediaPlayer.IsMuted = PlayingSound.Muted || FileManager.itemViewHolder.Muted;
+            else if (e.PropertyName == ItemViewHolder.UseStandardOutputDeviceKey || e.PropertyName == ItemViewHolder.OutputDeviceKey)
+                await UpdateOutputDevice();
         }
 
         private void ItemViewHolder_SoundDeleted(object sender, SoundEventArgs e)
@@ -693,6 +699,23 @@ namespace UniversalSoundboard.Components
                 PlayingSound.MediaPlayer.Volume -= fadeOutVolumeDiff;
                 currentFadeOutFrame++;
             }
+        }
+
+        private async Task UpdateOutputDevice()
+        {
+            if (PlayingSound.MediaPlayer == null) return;
+
+            if (!FileManager.itemViewHolder.UseStandardOutputDevice)
+            {
+                DeviceInformation deviceInfo = await FileManager.GetDeviceInformationById(FileManager.itemViewHolder.OutputDevice);
+                if (deviceInfo != null && deviceInfo.IsEnabled)
+                {
+                    PlayingSound.MediaPlayer.AudioDevice = deviceInfo;
+                    return;
+                }
+            }
+
+            PlayingSound.MediaPlayer.AudioDevice = null;
         }
         #endregion
 
