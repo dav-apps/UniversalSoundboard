@@ -200,6 +200,7 @@ namespace UniversalSoundboard.Components
             UpdateFavouriteFlyoutItem();
             UpdateVolumeControl();
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(soundsListVisible));
+            SetPlaybackState(PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing);
             UpdateSystemMediaTransportControls();
         }
 
@@ -936,12 +937,20 @@ namespace UniversalSoundboard.Components
                 DeviceInformation deviceInfo = await FileManager.GetDeviceInformationById(deviceId);
                 if (deviceInfo != null && deviceInfo.IsEnabled)
                 {
-                    PlayingSound.MediaPlayer.AudioDevice = deviceInfo;
+                    try
+                    {
+                        PlayingSound.MediaPlayer.AudioDevice = deviceInfo;
+                    }
+                    catch(Exception) { }
                     return;
                 }
             }
 
-            PlayingSound.MediaPlayer.AudioDevice = null;
+            try
+            {
+                PlayingSound.MediaPlayer.AudioDevice = null;
+            }
+            catch(Exception) { }
         }
 
         public void TriggerRemove()

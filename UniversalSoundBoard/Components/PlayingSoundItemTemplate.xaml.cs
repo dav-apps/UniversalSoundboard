@@ -388,7 +388,7 @@ namespace UniversalSoundboard.Components
             ToggleMenuFlyoutItem standardItem = new ToggleMenuFlyoutItem
             {
                 Text = loader.GetString("StandardOutputDevice"),
-                IsChecked = selectedOutputDevice == null
+                IsChecked = true
             };
             standardItem.Click += MoreButton_OutputDevice_Click;
             outputDeviceFlyoutItem.Items.Add(standardItem);
@@ -403,6 +403,9 @@ namespace UniversalSoundboard.Components
                 };
                 deviceItem.Click += MoreButton_OutputDevice_Click;
                 outputDeviceFlyoutItem.Items.Add(deviceItem);
+
+                if (deviceItem.IsChecked)
+                    standardItem.IsChecked = false;
             }
         }
 
