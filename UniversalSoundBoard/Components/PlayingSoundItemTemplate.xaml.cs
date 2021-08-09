@@ -419,9 +419,12 @@ namespace UniversalSoundboard.Components
         private async void MoreButton_OutputDevice_Click(object sender, RoutedEventArgs e)
         {
             string outputDevice = (string)(sender as ToggleMenuFlyoutItem).Tag;
+            PlayingSoundItem.PlayingSound.OutputDevice = outputDevice;
+
+            // Update the audio device of the PlayingSound
+            await PlayingSoundItem.UpdateOutputDevice();
 
             // Save the selected device
-            PlayingSoundItem.PlayingSound.OutputDevice = outputDevice;
             await FileManager.SetOutputDeviceOfPlayingSoundAsync(PlayingSoundItem.PlayingSound.Uuid, outputDevice == null ? "" : outputDevice);
         }
 

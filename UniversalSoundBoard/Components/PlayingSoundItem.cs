@@ -700,23 +700,6 @@ namespace UniversalSoundboard.Components
                 currentFadeOutFrame++;
             }
         }
-
-        private async Task UpdateOutputDevice()
-        {
-            if (PlayingSound.MediaPlayer == null) return;
-
-            if (!FileManager.itemViewHolder.UseStandardOutputDevice)
-            {
-                DeviceInformation deviceInfo = await FileManager.GetDeviceInformationById(FileManager.itemViewHolder.OutputDevice);
-                if (deviceInfo != null && deviceInfo.IsEnabled)
-                {
-                    PlayingSound.MediaPlayer.AudioDevice = deviceInfo;
-                    return;
-                }
-            }
-
-            PlayingSound.MediaPlayer.AudioDevice = null;
-        }
         #endregion
 
         #region Public methods
@@ -935,6 +918,30 @@ namespace UniversalSoundboard.Components
             await FileManager.ReloadSound(currentSound.Uuid);
 
             FavouriteChanged?.Invoke(this, new FavouriteChangedEventArgs(currentSound.Favourite));
+        }
+
+        public async Task UpdateOutputDevice()
+        {
+            if (PlayingSound.MediaPlayer == null) return;
+            string deviceId = null;
+
+            // Get the output device of the PlayingSound or from the settings
+            if (!string.IsNullOrEmpty(PlayingSound.OutputDevice))
+                deviceId = PlayingSound.OutputDevice;
+            else if (!FileManager.itemViewHolder.UseStandardOutputDevice)
+                deviceId = FileManager.itemViewHolder.OutputDevice;
+
+            if (!string.IsNullOrEmpty(deviceId))
+            {
+                DeviceInformation deviceInfo = await FileManager.GetDeviceInformationById(deviceId);
+                if (deviceInfo != null && deviceInfo.IsEnabled)
+                {
+                    PlayingSound.MediaPlayer.AudioDevice = deviceInfo;
+                    return;
+                }
+            }
+
+            PlayingSound.MediaPlayer.AudioDevice = null;
         }
 
         public void TriggerRemove()
