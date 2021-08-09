@@ -15,6 +15,7 @@ namespace UniversalSoundboard.Models
         public bool Randomly { get; set; }
         public int Volume { get; set; }
         public bool Muted { get; set; }
+        public string OutputDevice { get; set; }
         public bool StartPlaying { get; set; }
 
         public PlayingSound()
@@ -53,7 +54,7 @@ namespace UniversalSoundboard.Models
             StartPlaying = false;
         }
 
-        public PlayingSound(Guid uuid, MediaPlayer player, List<Sound> sounds, int current, int repetitions, bool randomly, int volume, bool muted)
+        public PlayingSound(Guid uuid, MediaPlayer player, List<Sound> sounds, int current, int repetitions, bool randomly, int volume, bool muted, string outputDevice)
         {
             Uuid = uuid;
             MediaPlayer = player;
@@ -63,6 +64,7 @@ namespace UniversalSoundboard.Models
             Randomly = randomly;
             Volume = volume;
             Muted = muted;
+            OutputDevice = outputDevice;
             StartPlaying = false;
         }
     }
