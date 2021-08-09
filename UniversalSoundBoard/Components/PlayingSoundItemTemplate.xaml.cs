@@ -12,6 +12,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Input;
+using Windows.UI.Xaml.Media;
 
 namespace UniversalSoundboard.Components
 {
@@ -38,6 +39,7 @@ namespace UniversalSoundboard.Components
         private bool skipProgressSliderValueChanged = false;
         private bool inBottomPlayingSoundsBar = false;
         private bool playingSoundItemVisible = false;
+        private const string MoreButtonOutputDeviceFlyoutSubItemName = "MoreButtonOutputDeviceFlyoutSubItem";
 
         public PlayingSoundItemTemplate()
         {
@@ -363,23 +365,44 @@ namespace UniversalSoundboard.Components
 
         private async void MenuFlyout_Opening(object sender, object e)
         {
+            int index = MoreButtonMenuFlyout.Items.ToList().FindIndex(item => item.Name == MoreButtonOutputDeviceFlyoutSubItemName);
+            if (index != -1) MoreButtonMenuFlyout.Items.RemoveAt(index);
+
+            MenuFlyoutSubItem outputDeviceFlyoutItem = new MenuFlyoutSubItem
+            {
+                Name = MoreButtonOutputDeviceFlyoutSubItemName,
+                Text = loader.GetString("MoreButton-OutputDevice"),
+                Icon = new FontIcon
+                {
+                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    Glyph = "\uE7F5"
+                }
+            };
+
+            MoreButtonMenuFlyout.Items.Insert(1, outputDeviceFlyoutItem);
+
             // Update the list of possible output devices
             DeviceInformationCollection devices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
-            MoreButtonOutputDeviceFlyoutSubItem.Items.Clear();
+            string selectedOutputDevice = PlayingSoundItem.PlayingSound.OutputDevice;
 
-            MoreButtonOutputDeviceFlyoutSubItem.Items.Add(new ToggleMenuFlyoutItem
+            ToggleMenuFlyoutItem standardItem = new ToggleMenuFlyoutItem
             {
                 Text = loader.GetString("StandardOutputDevice"),
-                IsChecked = true
-            });
+                IsChecked = selectedOutputDevice == null
+            };
+            standardItem.Click += MoreButton_OutputDevice_Click;
+            outputDeviceFlyoutItem.Items.Add(standardItem);
 
             foreach (DeviceInformation deviceInfo in devices)
             {
-                MoreButtonOutputDeviceFlyoutSubItem.Items.Add(new ToggleMenuFlyoutItem
+                ToggleMenuFlyoutItem deviceItem = new ToggleMenuFlyoutItem
                 {
                     Text = deviceInfo.Name,
-                    Tag = deviceInfo.Id
-                });
+                    Tag = deviceInfo.Id,
+                    IsChecked = selectedOutputDevice == deviceInfo.Id
+                };
+                deviceItem.Click += MoreButton_OutputDevice_Click;
+                outputDeviceFlyoutItem.Items.Add(deviceItem);
             }
         }
 
@@ -391,6 +414,15 @@ namespace UniversalSoundboard.Components
                 MoreButtonVolumeFlyoutItem.VolumeControlValue = PlayingSound.Volume;
                 MoreButtonVolumeFlyoutItem.VolumeControlMuted = PlayingSound.Muted;
             }
+        }
+
+        private async void MoreButton_OutputDevice_Click(object sender, RoutedEventArgs e)
+        {
+            string outputDevice = (string)(sender as ToggleMenuFlyoutItem).Tag;
+
+            // Save the selected device
+            PlayingSoundItem.PlayingSound.OutputDevice = outputDevice;
+            await FileManager.SetOutputDeviceOfPlayingSoundAsync(PlayingSoundItem.PlayingSound.Uuid, outputDevice == null ? "" : outputDevice);
         }
 
         private async void MoreButton_Repeat_1x_Click(object sender, RoutedEventArgs e)
