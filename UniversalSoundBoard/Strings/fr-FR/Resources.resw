@@ -665,4 +665,13 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="StandardOutputDevice" xml:space="preserve">
     <value>Périphérique de sortie standard</value>
   </data>
+  <data name="OutputDeviceFlyoutResetButton.Content" xml:space="preserve">
+    <value>Réinitialiser</value>
+  </data>
+  <data name="OutputDeviceButtonToolTip.Text" xml:space="preserve">
+    <value>Ce son est joué sur un autre périphérique.</value>
+  </data>
+  <data name="OutputDeviceFlyoutText.Text" xml:space="preserve">
+    <value>Ce son est joué sur le périphérique suivant :</value>
+  </data>
 </root>

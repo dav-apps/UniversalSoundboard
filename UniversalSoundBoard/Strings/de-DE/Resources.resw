@@ -664,4 +664,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StandardOutputDevice" xml:space="preserve">
     <value>Standard-Ausgabegerät</value>
   </data>
+  <data name="OutputDeviceFlyoutResetButton.Content" xml:space="preserve">
+    <value>Zurücksetzen</value>
+  </data>
+  <data name="OutputDeviceButtonToolTip.Text" xml:space="preserve">
+    <value>Dieser Sound wird auf einem anderen Gerät abgespielt.</value>
+  </data>
+  <data name="OutputDeviceFlyoutText.Text" xml:space="preserve">
+    <value>Dieser Sound wird auf folgendem Gerät abgespielt:</value>
+  </data>
 </root>

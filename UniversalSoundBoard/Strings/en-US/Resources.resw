@@ -666,4 +666,13 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StandardOutputDevice" xml:space="preserve">
     <value>Standard output device</value>
   </data>
+  <data name="OutputDeviceFlyoutResetButton.Content" xml:space="preserve">
+    <value>Reset</value>
+  </data>
+  <data name="OutputDeviceButtonToolTip.Text" xml:space="preserve">
+    <value>This sound is playing on a different device.</value>
+  </data>
+  <data name="OutputDeviceFlyoutText.Text" xml:space="preserve">
+    <value>This sound is playing on the following device:</value>
+  </data>
 </root>

@@ -295,6 +295,17 @@ namespace UniversalSoundboard.Components
             await PlayingSoundItem.MoveToNext();
         }
 
+        private async void OutputDeviceButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (string.IsNullOrEmpty(PlayingSoundItem.PlayingSound.OutputDevice)) return;
+
+            // Get the name of the current output device
+            DeviceInformation deviceInfo = await FileManager.GetDeviceInformationById(PlayingSoundItem.PlayingSound.OutputDevice);
+            if (deviceInfo == null || !deviceInfo.IsEnabled) return;
+
+            OutputDeviceFlyoutDeviceName.Text = deviceInfo.Name;
+        }
+
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
             if (PlayingSoundItem.SoundsListVisible)

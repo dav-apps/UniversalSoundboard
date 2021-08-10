@@ -347,6 +347,14 @@
             <Setter Property="FontSize" Value="15" />
             <Setter Property="Margin" Value="1,0,1,0" />
         </Style>
+
+        <Style x:Key="TopCommandButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
+            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Width" Value="32" />
+            <Setter Property="CornerRadius" Value="18" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
         
         <!-- Storyboards -->
         <Storyboard x:Name="ShowSoundsListViewStoryboard" Completed="ShowSoundsListViewStoryboard_Completed">
@@ -574,6 +582,7 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <TextBlock
@@ -584,15 +593,52 @@
                 TextWrapping="WrapWholeWords" />
 
             <Button
-                Name="ExpandButton"
+                Name="OutputDeviceButton"
                 Grid.Column="1"
-                Style="{StaticResource ButtonRevealStyle}"
-                FontFamily="Segoe MDL2 Assets"
-                FontSize="14"
-                Height="32"
-                Width="32"
-                CornerRadius="18"
-                Background="Transparent"
+                Style="{StaticResource TopCommandButtonStyle}"
+                Margin="0,0,3,0"
+                Padding="-1,0,0,0"
+                FontSize="16"
+                Content="&#xE7F5;"
+                Click="OutputDeviceButton_Click">
+
+                <ToolTipService.ToolTip>
+                    <TextBlock Name="OutputDeviceButtonToolTip" x:Uid="OutputDeviceButtonToolTip" />
+                </ToolTipService.ToolTip>
+
+                <Button.Flyout>
+                    <Flyout>
+                        <RelativePanel MaxWidth="200">
+                            <TextBlock
+                                Name="OutputDeviceFlyoutText"
+                                x:Uid="OutputDeviceFlyoutText"
+                                RelativePanel.AlignTopWithPanel="True"
+                                TextWrapping="WrapWholeWords">
+                            </TextBlock>
+
+                            <TextBlock
+                                Name="OutputDeviceFlyoutDeviceName"
+                                RelativePanel.Below="OutputDeviceFlyoutText"
+                                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                Margin="0,12,0,16"
+                                TextWrapping="WrapWholeWords">
+                            </TextBlock>
+
+                            <Button
+                                Name="OutputDeviceFlyoutResetButton"
+                                x:Uid="OutputDeviceFlyoutResetButton"
+                                RelativePanel.Below="OutputDeviceFlyoutDeviceName"
+                                RelativePanel.AlignHorizontalCenterWithPanel="True">
+                            </Button>
+                        </RelativePanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+
+            <Button
+                Name="ExpandButton"
+                Grid.Column="2"
+                Style="{StaticResource TopCommandButtonStyle}"
                 Content="&#xE099;"
                 Click="ExpandButton_Click">
 
@@ -602,9 +648,7 @@
             </Button>
         </Grid>
 
-        <RelativePanel
-            Grid.Row="1">
-
+        <RelativePanel Grid.Row="1">
             <RelativePanel
                 Name="MediaPlayerElement"
                 RelativePanel.AlignLeftWithPanel="True"
