@@ -49,7 +49,7 @@ namespace UniversalSoundboard.Components
             DataContextChanged += PlayingSoundTemplate_DataContextChanged;
         }
 
-        private async Task Init()
+        private void Init()
         {
             if (_playingSound == null || _playingSound.MediaPlayer == null) return;
 
@@ -74,7 +74,7 @@ namespace UniversalSoundboard.Components
             else
             {
                 PlayingSoundItem = FileManager.itemViewHolder.PlayingSoundItems.ElementAt(i);
-                if(PlayingSoundItem.CurrentSoundIsDownloading)
+                if (PlayingSoundItem.CurrentSoundIsDownloading)
                     ShowIndetermindateProgressBar();
             }
             _playingSound = null;
@@ -109,7 +109,7 @@ namespace UniversalSoundboard.Components
             PlayingSoundItem.RemovePlayingSound += PlayingSoundItem_RemovePlayingSound;
             PlayingSoundItem.DownloadStatusChanged -= PlayingSoundItem_DownloadStatusChanged;
             PlayingSoundItem.DownloadStatusChanged += PlayingSoundItem_DownloadStatusChanged;
-            await PlayingSoundItem.Init();
+            PlayingSoundItem.Init();
 
             SoundsListView.ItemsSource = PlayingSound.Sounds;
             UpdateUI();
@@ -127,12 +127,12 @@ namespace UniversalSoundboard.Components
             UpdateUI();
         }
 
-        private async void PlayingSoundTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
+        private void PlayingSoundTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             if (DataContext == null) return;
 
             _playingSound = DataContext as PlayingSound;
-            await Init();
+            Init();
         }
         #endregion
 

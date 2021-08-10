@@ -87,8 +87,13 @@ namespace UniversalSoundboard.Components
             this.dispatcher = dispatcher;
         }
 
-        public async Task Init()
+        public void Init()
         {
+            bool oldInitialized = initialized;
+
+            // Set the appropriate output device
+            _ = UpdateOutputDevice();
+
             if (!initialized)
             {
                 initialized = true;
@@ -110,9 +115,6 @@ namespace UniversalSoundboard.Components
                 // Subscribe to MediaPlayer events
                 PlayingSound.MediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
                 PlayingSound.MediaPlayer.PlaybackSession.PositionChanged += PlaybackSession_PositionChanged;
-
-                // Set the appropriate output device
-                await UpdateOutputDevice();
 
                 if (PlayingSound.MediaPlayer.Source != null)
                 {
@@ -201,7 +203,7 @@ namespace UniversalSoundboard.Components
             UpdateFavouriteFlyoutItem();
             UpdateVolumeControl();
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(soundsListVisible));
-            SetPlaybackState(PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing);
+            SetPlaybackState(PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing || (PlayingSound.StartPlaying && !oldInitialized));
             UpdateSystemMediaTransportControls();
         }
 
@@ -938,11 +940,14 @@ namespace UniversalSoundboard.Components
                 DeviceInformation deviceInfo = await FileManager.GetDeviceInformationById(deviceId);
                 if (deviceInfo != null && deviceInfo.IsEnabled)
                 {
-                    try
+                    if (PlayingSound.MediaPlayer.AudioDevice == null || PlayingSound.MediaPlayer.AudioDevice.Id != deviceInfo.Id)
                     {
-                        PlayingSound.MediaPlayer.AudioDevice = deviceInfo;
+                        try
+                        {
+                            PlayingSound.MediaPlayer.AudioDevice = deviceInfo;
+                        }
+                        catch (Exception) { }
                     }
-                    catch(Exception) { }
 
                     OutputDeviceButtonVisibilityChanged?.Invoke(
                         this,
@@ -958,7 +963,7 @@ namespace UniversalSoundboard.Components
             {
                 PlayingSound.MediaPlayer.AudioDevice = null;
             }
-            catch(Exception) { }
+            catch (Exception) { }
             OutputDeviceButtonVisibilityChanged?.Invoke(this, new OutputDeviceButtonVisibilityEventArgs(Visibility.Collapsed));
         }
 
