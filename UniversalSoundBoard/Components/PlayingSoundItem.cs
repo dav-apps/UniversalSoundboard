@@ -69,6 +69,7 @@ namespace UniversalSoundboard.Components
         public event EventHandler<DurationChangedEventArgs> DurationChanged;
         public event EventHandler<CurrentSoundChangedEventArgs> CurrentSoundChanged;
         public event EventHandler<ButtonVisibilityChangedEventArgs> ButtonVisibilityChanged;
+        public event EventHandler<OutputDeviceButtonVisibilityEventArgs> OutputDeviceButtonVisibilityChanged;
         public event EventHandler<ExpandButtonContentChangedEventArgs> ExpandButtonContentChanged;
         public event EventHandler<EventArgs> ShowSoundsList;
         public event EventHandler<EventArgs> HideSoundsList;
@@ -942,6 +943,13 @@ namespace UniversalSoundboard.Components
                         PlayingSound.MediaPlayer.AudioDevice = deviceInfo;
                     }
                     catch(Exception) { }
+
+                    OutputDeviceButtonVisibilityChanged?.Invoke(
+                        this,
+                        new OutputDeviceButtonVisibilityEventArgs(
+                            (string.IsNullOrEmpty(PlayingSound.OutputDevice) || PlayingSound.OutputDevice == FileManager.itemViewHolder.OutputDevice) ? Visibility.Collapsed : Visibility.Visible
+                        )
+                    );
                     return;
                 }
             }
@@ -951,6 +959,7 @@ namespace UniversalSoundboard.Components
                 PlayingSound.MediaPlayer.AudioDevice = null;
             }
             catch(Exception) { }
+            OutputDeviceButtonVisibilityChanged?.Invoke(this, new OutputDeviceButtonVisibilityEventArgs(Visibility.Collapsed));
         }
 
         public void TriggerRemove()

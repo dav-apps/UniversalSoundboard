@@ -127,6 +127,16 @@ namespace UniversalSoundboard.Common
         }
     }
 
+    public class OutputDeviceButtonVisibilityEventArgs : EventArgs
+    {
+        public Visibility OutputDeviceButtonVisibility { get; }
+
+        public OutputDeviceButtonVisibilityEventArgs(Visibility outputDeviceButtonVisibility)
+        {
+            OutputDeviceButtonVisibility = outputDeviceButtonVisibility;
+        }
+    }
+
     public class ExpandButtonContentChangedEventArgs : EventArgs
     {
         public bool Expanded { get; }

@@ -600,6 +600,7 @@
                 Padding="-1,0,0,0"
                 FontSize="16"
                 Content="&#xE7F5;"
+                Visibility="Collapsed"
                 Click="OutputDeviceButton_Click">
 
                 <ToolTipService.ToolTip>

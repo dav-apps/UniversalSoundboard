@@ -89,6 +89,8 @@ namespace UniversalSoundboard.Components
             PlayingSoundItem.ButtonVisibilityChanged += PlayingSoundItem_ButtonVisibilityChanged;
             PlayingSoundItem.CurrentSoundChanged -= PlayingSoundItem_CurrentSoundChanged;
             PlayingSoundItem.CurrentSoundChanged += PlayingSoundItem_CurrentSoundChanged;
+            PlayingSoundItem.OutputDeviceButtonVisibilityChanged -= PlayingSoundItem_OutputDeviceButtonVisibilityChanged;
+            PlayingSoundItem.OutputDeviceButtonVisibilityChanged += PlayingSoundItem_OutputDeviceButtonVisibilityChanged;
             PlayingSoundItem.ExpandButtonContentChanged -= PlayingSoundItem_ExpandButtonContentChanged;
             PlayingSoundItem.ExpandButtonContentChanged += PlayingSoundItem_ExpandButtonContentChanged;
             PlayingSoundItem.ShowSoundsList -= PlayingSoundItem_ShowSoundsList;
@@ -169,6 +171,11 @@ namespace UniversalSoundboard.Components
             ExpandButton.Visibility = e.ExpandButtonVisibility;
 
             UpdatePlayPauseButtonMargin();
+        }
+
+        private void PlayingSoundItem_OutputDeviceButtonVisibilityChanged(object sender, OutputDeviceButtonVisibilityEventArgs e)
+        {
+            OutputDeviceButton.Visibility = e.OutputDeviceButtonVisibility;
         }
 
         private void PlayingSoundItem_ExpandButtonContentChanged(object sender, ExpandButtonContentChangedEventArgs e)
