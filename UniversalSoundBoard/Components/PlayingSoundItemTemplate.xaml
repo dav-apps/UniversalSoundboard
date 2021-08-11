@@ -608,7 +608,7 @@
                 </ToolTipService.ToolTip>
 
                 <Button.Flyout>
-                    <Flyout>
+                    <Flyout x:Name="OutputDeviceFlyout">
                         <RelativePanel MaxWidth="200">
                             <TextBlock
                                 Name="OutputDeviceFlyoutText"
@@ -629,7 +629,8 @@
                                 Name="OutputDeviceFlyoutResetButton"
                                 x:Uid="OutputDeviceFlyoutResetButton"
                                 RelativePanel.Below="OutputDeviceFlyoutDeviceName"
-                                RelativePanel.AlignHorizontalCenterWithPanel="True">
+                                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                Click="OutputDeviceFlyoutResetButton_Click">
                             </Button>
                         </RelativePanel>
                     </Flyout>

@@ -313,6 +313,15 @@ namespace UniversalSoundboard.Components
             OutputDeviceFlyoutDeviceName.Text = deviceInfo.Name;
         }
 
+        private async void OutputDeviceFlyoutResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Hide the flyout
+            OutputDeviceFlyout.Hide();
+
+            // Reset the output device
+            await SetOutputDevice(null);
+        }
+
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
             if (PlayingSoundItem.SoundsListVisible)
@@ -439,14 +448,7 @@ namespace UniversalSoundboard.Components
 
         private async void MoreButton_OutputDevice_Click(object sender, RoutedEventArgs e)
         {
-            string outputDevice = (string)(sender as ToggleMenuFlyoutItem).Tag;
-            PlayingSoundItem.PlayingSound.OutputDevice = outputDevice;
-
-            // Update the audio device of the PlayingSound
-            await PlayingSoundItem.UpdateOutputDevice();
-
-            // Save the selected device
-            await FileManager.SetOutputDeviceOfPlayingSoundAsync(PlayingSoundItem.PlayingSound.Uuid, outputDevice == null ? "" : outputDevice);
+            await SetOutputDevice((string)(sender as ToggleMenuFlyoutItem).Tag);
         }
 
         private async void MoreButton_Repeat_1x_Click(object sender, RoutedEventArgs e)
@@ -534,6 +536,17 @@ namespace UniversalSoundboard.Components
 
             // Set the maximum of the slider
             ProgressSlider.Maximum = totalDuration.TotalSeconds;
+        }
+
+        private async Task SetOutputDevice(string outputDevice)
+        {
+            PlayingSoundItem.PlayingSound.OutputDevice = outputDevice;
+
+            // Update the audio device of the PlayingSound
+            await PlayingSoundItem.UpdateOutputDevice();
+
+            // Save the selected device
+            await FileManager.SetOutputDeviceOfPlayingSoundAsync(PlayingSoundItem.PlayingSound.Uuid, outputDevice == null ? "" : outputDevice);
         }
         #endregion
 

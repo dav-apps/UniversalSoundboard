@@ -122,7 +122,7 @@ namespace UniversalSoundboard.Components
                         {
                             duration = mediaSource.Duration.GetValueOrDefault();
                         }
-                        catch(Exception e) { }
+                        catch(Exception) { }
 
                         currentSoundTotalDuration = duration;
                         DurationChanged?.Invoke(this, new DurationChangedEventArgs(duration));
@@ -888,9 +888,7 @@ namespace UniversalSoundboard.Components
 
                     OutputDeviceButtonVisibilityChanged?.Invoke(
                         this,
-                        new OutputDeviceButtonVisibilityEventArgs(
-                            (string.IsNullOrEmpty(PlayingSound.OutputDevice) || PlayingSound.OutputDevice == FileManager.itemViewHolder.OutputDevice) ? Visibility.Collapsed : Visibility.Visible
-                        )
+                        new OutputDeviceButtonVisibilityEventArgs(string.IsNullOrEmpty(PlayingSound.OutputDevice) ? Visibility.Collapsed : Visibility.Visible)
                     );
                     return;
                 }
