@@ -177,6 +177,7 @@ namespace UniversalSoundboard.DataAccess
         private static bool isCalculatingSoundboardSize = false;
         private static bool isShowAllSoundsOrCategoryRunning = false;
         private static Guid nextCategoryToShow = Guid.Empty;
+        private static SystemMediaTransportControls systemMediaTransportControls;
 
         // Save the custom order of the sounds in all categories to load them faster
         private static readonly Dictionary<Guid, List<Guid>> CustomSoundOrder = new Dictionary<Guid, List<Guid>>();
@@ -1729,6 +1730,97 @@ namespace UniversalSoundboard.DataAccess
             }
 
             return (player, newSounds);
+        }
+
+        /**
+         * Update the SMTC to show the appropriate infos and state of the currently active PlayingSound
+         */
+        public static void UpdateSystemMediaTransportControls(bool? playing = null)
+        {
+            if (systemMediaTransportControls == null)
+            {
+                systemMediaTransportControls = SystemMediaTransportControls.GetForCurrentView();
+                systemMediaTransportControls.ButtonPressed += SystemMediaTransportControls_ButtonPressed;
+            }
+
+            if (itemViewHolder.PlayingSounds.Count == 0)
+            {
+                systemMediaTransportControls.IsEnabled = false;
+                return;
+            }
+
+            // Get the last used or currently active PlayingSound
+            PlayingSound lastActivePlayingSound = itemViewHolder.PlayingSounds.ToList().Find(ps => ps.Uuid.Equals(itemViewHolder.ActivePlayingSound));
+
+            if (lastActivePlayingSound == null)
+                lastActivePlayingSound = itemViewHolder.PlayingSounds.Last();
+
+            if (lastActivePlayingSound.Current >= lastActivePlayingSound.Sounds.Count)
+            {
+                systemMediaTransportControls.IsEnabled = false;
+                return;
+            }
+
+            Sound currentSound = lastActivePlayingSound.Sounds[lastActivePlayingSound.Current];
+
+            // Set the infos of the SMTC
+            systemMediaTransportControls.IsEnabled = true;
+            systemMediaTransportControls.IsPlayEnabled = true;
+            systemMediaTransportControls.IsPauseEnabled = true;
+            systemMediaTransportControls.IsPreviousEnabled = lastActivePlayingSound.Current != 0 && lastActivePlayingSound.Sounds.Count > 1;
+            systemMediaTransportControls.IsNextEnabled = lastActivePlayingSound.Current != lastActivePlayingSound.Sounds.Count - 1;
+
+            SystemMediaTransportControlsDisplayUpdater updater = systemMediaTransportControls.DisplayUpdater;
+
+            updater.ClearAll();
+            updater.Type = MediaPlaybackType.Music;
+            updater.MusicProperties.Title = currentSound.Name;
+
+            if (currentSound.Categories.Count > 0)
+                updater.MusicProperties.Artist = currentSound.Categories.First().Name;
+
+            if (currentSound.ImageFileTableObject != null && currentSound.ImageFile != null)
+                updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(currentSound.ImageFile);
+
+            updater.Update();
+
+            if (playing.HasValue)
+                systemMediaTransportControls.PlaybackStatus = playing.Value ? MediaPlaybackStatus.Playing : MediaPlaybackStatus.Paused;
+            else
+                systemMediaTransportControls.PlaybackStatus = lastActivePlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing ? MediaPlaybackStatus.Playing : MediaPlaybackStatus.Paused;
+        }
+
+        private static async void SystemMediaTransportControls_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
+        {
+            if (itemViewHolder.PlayingSounds.Count == 0) return;
+
+            // Get the last used or currently active PlayingSound
+            PlayingSound lastActivePlayingSound = itemViewHolder.PlayingSounds.ToList().Find(ps => ps.Uuid.Equals(itemViewHolder.ActivePlayingSound));
+
+            if (lastActivePlayingSound == null)
+                lastActivePlayingSound = itemViewHolder.PlayingSounds.Last();
+
+            // Get the PlayingSoundItem of the PlayingSound
+            int i = itemViewHolder.PlayingSoundItems.FindIndex(item => item.Uuid.Equals(lastActivePlayingSound.Uuid));
+            if (i == -1) return;
+
+            PlayingSoundItem playingSoundItem = itemViewHolder.PlayingSoundItems.ElementAt(i);
+
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                switch (args.Button)
+                {
+                    case SystemMediaTransportControlsButton.Previous:
+                        await playingSoundItem.MoveToPrevious();
+                        break;
+                    case SystemMediaTransportControlsButton.Next:
+                        await playingSoundItem.MoveToNext();
+                        break;
+                    default:
+                        playingSoundItem.SetPlayPause(args.Button == SystemMediaTransportControlsButton.Play);
+                        break;
+                }
+            });
         }
         #endregion
 

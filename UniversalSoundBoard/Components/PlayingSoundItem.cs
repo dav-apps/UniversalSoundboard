@@ -9,10 +9,8 @@ using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.Devices.Enumeration;
-using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
-using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
@@ -59,8 +57,6 @@ namespace UniversalSoundboard.Components
         private Visibility previousButtonVisibility = Visibility.Visible;
         private Visibility nextButtonVisibility = Visibility.Visible;
         private Visibility expandButtonVisibility = Visibility.Visible;
-
-        private SystemMediaTransportControls systemMediaTransportControls;
         #endregion
         
         #region Events
@@ -103,10 +99,6 @@ namespace UniversalSoundboard.Components
                 else if (PlayingSound.Current < 0)
                     PlayingSound.Current = 0;
 
-                systemMediaTransportControls = SystemMediaTransportControls.GetForCurrentView();
-                systemMediaTransportControls.IsPlayEnabled = true;
-                systemMediaTransportControls.IsPauseEnabled = true;
-
                 // Subscribe to ItemViewHolder events
                 FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
                 FileManager.itemViewHolder.SoundDeleted += ItemViewHolder_SoundDeleted;
@@ -136,8 +128,6 @@ namespace UniversalSoundboard.Components
                         DurationChanged?.Invoke(this, new DurationChangedEventArgs(duration));
                     }
                 }
-
-                systemMediaTransportControls.ButtonPressed += SystemMediaTransportControls_ButtonPressed;
 
                 // Subscribe to other event handlers
                 PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
@@ -181,18 +171,18 @@ namespace UniversalSoundboard.Components
                     if (CheckFileDownload())
                     {
                         PlayingSound.MediaPlayer.Pause();
-                        SetPlaybackState(false);
+                        SetPlayPause(false);
                     }
                     else if (PlayingSound.StartPlaying)
                     {
                         PlayingSound.MediaPlayer.Play();
-                        SetPlaybackState(true);
+                        SetPlayPause(true);
                     }
                 }
                 else if (PlayingSound.StartPlaying)
                 {
                     PlayingSound.MediaPlayer.Play();
-                    SetPlaybackState(true);
+                    SetPlayPause(true);
                 }
             }
 
@@ -202,9 +192,9 @@ namespace UniversalSoundboard.Components
             UpdateButtonVisibility();
             UpdateFavouriteFlyoutItem();
             UpdateVolumeControl();
+            SetPlayPause(PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing || (PlayingSound.StartPlaying && !oldInitialized));
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(soundsListVisible));
-            SetPlaybackState(PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing || (PlayingSound.StartPlaying && !oldInitialized));
-            UpdateSystemMediaTransportControls();
+            PositionChanged?.Invoke(this, new PositionChangedEventArgs(PlayingSound.MediaPlayer.PlaybackSession.Position));
         }
 
         #region ItemViewHolder event handlers
@@ -309,7 +299,7 @@ namespace UniversalSoundboard.Components
                     {
                         PlayingSound.MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
                         PlayingSound.MediaPlayer.Play();
-                        SetPlaybackState(true);
+                        SetPlayPause(true);
                     }
                 }
             });
@@ -331,27 +321,6 @@ namespace UniversalSoundboard.Components
             {
                 currentSoundTotalDuration = sender.Duration.GetValueOrDefault();
                 DurationChanged?.Invoke(this, new DurationChangedEventArgs(sender.Duration.GetValueOrDefault()));
-            });
-        }
-
-        private async void SystemMediaTransportControls_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
-        {
-            if (!PlayingSound.Uuid.Equals(FileManager.itemViewHolder.ActivePlayingSound)) return;
-
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            {
-                switch (args.Button)
-                {
-                    case SystemMediaTransportControlsButton.Previous:
-                        await MoveToPrevious();
-                        break;
-                    case SystemMediaTransportControlsButton.Next:
-                        await MoveToNext();
-                        break;
-                    default:
-                        SetPlayPause(args.Button == SystemMediaTransportControlsButton.Play);
-                        break;
-                }
             });
         }
         #endregion
@@ -424,7 +393,8 @@ namespace UniversalSoundboard.Components
             UpdateFavouriteFlyoutItem();
 
             // Update the SystemMediaTransportControls
-            UpdateSystemMediaTransportControls();
+            FileManager.itemViewHolder.ActivePlayingSound = PlayingSound.Uuid;
+            FileManager.UpdateSystemMediaTransportControls();
 
             if (CheckFileDownload()) return;
 
@@ -446,7 +416,7 @@ namespace UniversalSoundboard.Components
             if (wasPlaying || startPlaying)
             {
                 PlayingSound.MediaPlayer.Play();
-                SetPlaybackState(true);
+                SetPlayPause(true);
             }
 
             // Save the new Current
@@ -465,18 +435,8 @@ namespace UniversalSoundboard.Components
             {
                 if (playingSoundItem.PlayingSound.MediaPlayer == null || playingSoundItem.Uuid.Equals(PlayingSound.Uuid)) continue;
                 playingSoundItem.PlayingSound.MediaPlayer.Pause();
-                playingSoundItem.SetPlaybackState(false);
+                playingSoundItem.SetPlayPause(false, false);
             }
-        }
-
-        private void SetPlaybackState(bool isPlaying)
-        {
-            PlaybackStateChanged?.Invoke(
-                this,
-                new PlaybackStateChangedEventArgs(isPlaying)
-            );
-
-            systemMediaTransportControls.PlaybackStatus = isPlaying ? MediaPlaybackStatus.Playing : MediaPlaybackStatus.Paused;
         }
 
         private void UpdateButtonVisibility()
@@ -520,38 +480,6 @@ namespace UniversalSoundboard.Components
                     expandButtonVisibility
                 )
             );
-        }
-
-        private void UpdateSystemMediaTransportControls()
-        {
-            if (PlayingSound.Current >= PlayingSound.Sounds.Count)
-            {
-                // Disable the SystemMediaTransportControls
-                systemMediaTransportControls.IsEnabled = false;
-                return;
-            }
-            
-            Sound currentSound = PlayingSound.Sounds[PlayingSound.Current];
-            systemMediaTransportControls.IsEnabled = true;
-
-            var updater = systemMediaTransportControls.DisplayUpdater;
-            updater.ClearAll();
-
-            updater.Type = MediaPlaybackType.Music;
-            updater.MusicProperties.Title = currentSound.Name;
-
-            if (currentSound.Categories.Count > 0)
-                updater.MusicProperties.Artist = currentSound.Categories.First().Name;
-
-            if (currentSound.ImageFileTableObject != null && currentSound.ImageFile != null)
-                updater.Thumbnail = RandomAccessStreamReference.CreateFromFile(currentSound.ImageFile);
-
-            updater.Update();
-
-            systemMediaTransportControls.IsPreviousEnabled = PlayingSound.Current != 0 && PlayingSound.Sounds.Count > 1;
-            systemMediaTransportControls.IsNextEnabled = PlayingSound.Current != PlayingSound.Sounds.Count - 1;
-
-            FileManager.itemViewHolder.ActivePlayingSound = PlayingSound.Uuid;
         }
 
         private void AddSoundToDownloadQueue(int i)
@@ -641,7 +569,7 @@ namespace UniversalSoundboard.Components
                         if (PlayingSound.StartPlaying)
                         {
                             PlayingSound.MediaPlayer.Play();
-                            SetPlaybackState(true);
+                            SetPlayPause(true);
                             StopAllOtherPlayingSounds();
                         }
                     }
@@ -782,9 +710,12 @@ namespace UniversalSoundboard.Components
         /**
          * Plays or pauses the MediaPlayer
          */
-        public void SetPlayPause(bool play)
+        public void SetPlayPause(bool play, bool updateSmtc = true)
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+
+            if (updateSmtc)
+                FileManager.itemViewHolder.ActivePlayingSound = PlayingSound.Uuid;
 
             // Check if the file is currently downloading
             if (currentSoundIsDownloading)
@@ -795,22 +726,28 @@ namespace UniversalSoundboard.Components
                     this,
                     new PlaybackStateChangedEventArgs(PlayingSound.StartPlaying)
                 );
+                if (updateSmtc) FileManager.UpdateSystemMediaTransportControls(PlayingSound.StartPlaying);
                 return;
             }
-
-            if (play)
+            else if (play)
             {
                 PlayingSound.MediaPlayer.Play();
-                SetPlaybackState(true);
+                PlaybackStateChanged?.Invoke(
+                    this,
+                    new PlaybackStateChangedEventArgs(true)
+                );
                 StopAllOtherPlayingSounds();
+                if (updateSmtc) FileManager.UpdateSystemMediaTransportControls(true);
             }
             else
             {
                 PlayingSound.MediaPlayer.Pause();
-                SetPlaybackState(false);
+                PlaybackStateChanged?.Invoke(
+                    this,
+                    new PlaybackStateChangedEventArgs(false)
+                );
+                if (updateSmtc) FileManager.UpdateSystemMediaTransportControls(false);
             }
-
-            UpdateSystemMediaTransportControls();
         }
 
         public async Task MoveToPrevious()
@@ -996,8 +933,12 @@ namespace UniversalSoundboard.Components
                 PlayingSound.MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
             }
 
-            // Remove the sound from the SystemMediaTransportControls
-            systemMediaTransportControls.IsEnabled = false;
+            // Remove this PlayingSound from the SMTC, if it was active
+            if (PlayingSound.Uuid.Equals(FileManager.itemViewHolder.ActivePlayingSound))
+            {
+                FileManager.itemViewHolder.ActivePlayingSound = Guid.Empty;
+                FileManager.UpdateSystemMediaTransportControls();
+            }
 
             // Update the BottomPlayingSoundsBar in SoundPage
             FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
