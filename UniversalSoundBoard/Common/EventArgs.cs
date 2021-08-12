@@ -147,6 +147,16 @@ namespace UniversalSoundboard.Common
         }
     }
 
+    public class RepetitionsChangedEventArgs : EventArgs
+    {
+        public int Repetitions { get; }
+
+        public RepetitionsChangedEventArgs(int repetitions)
+        {
+            Repetitions = repetitions;
+        }
+    }
+
     public class FavouriteChangedEventArgs : EventArgs
     {
         public bool Favourite { get; }

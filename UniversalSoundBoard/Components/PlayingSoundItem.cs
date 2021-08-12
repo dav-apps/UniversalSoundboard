@@ -69,6 +69,7 @@ namespace UniversalSoundboard.Components
         public event EventHandler<ExpandButtonContentChangedEventArgs> ExpandButtonContentChanged;
         public event EventHandler<EventArgs> ShowSoundsList;
         public event EventHandler<EventArgs> HideSoundsList;
+        public event EventHandler<RepetitionsChangedEventArgs> RepetitionsChanged;
         public event EventHandler<FavouriteChangedEventArgs> FavouriteChanged;
         public event EventHandler<VolumeChangedEventArgs> VolumeChanged;
         public event EventHandler<MutedChangedEventArgs> MutedChanged;
@@ -190,6 +191,7 @@ namespace UniversalSoundboard.Components
 
             // Set the correct visibilities and icons for the buttons
             UpdateButtonVisibility();
+            RepetitionsChanged?.Invoke(this, new RepetitionsChangedEventArgs(PlayingSound.Repetitions));
             UpdateFavouriteFlyoutItem();
             UpdateVolumeControl();
             SetPlayPause(PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing || (PlayingSound.StartPlaying && !oldInitialized));
@@ -249,14 +251,21 @@ namespace UniversalSoundboard.Components
                 else
                 {
                     // Move to the beginning of the sounds list
-                    PlayingSound.Repetitions--;
+                    if (PlayingSound.Repetitions != int.MaxValue)
+                        PlayingSound.Repetitions--;
 
-                    if (PlayingSound.Repetitions <= 0)
+                    if (PlayingSound.Repetitions < 0)
                     {
                         // Remove the PlayingSound
                         TriggerRemove();
                         return;
                     }
+
+                    // Update the UI
+                    RepetitionsChanged?.Invoke(
+                        this,
+                        new RepetitionsChangedEventArgs(PlayingSound.Repetitions)
+                    );
 
                     // Set the new repetitions
                     await FileManager.SetRepetitionsOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Repetitions);
@@ -846,6 +855,11 @@ namespace UniversalSoundboard.Components
         public async Task SetRepetitions(int repetitions)
         {
             PlayingSound.Repetitions = repetitions;
+
+            // Update the UI
+            RepetitionsChanged?.Invoke(this, new RepetitionsChangedEventArgs(repetitions));
+
+            // Save the new repetitions
             await FileManager.SetRepetitionsOfPlayingSoundAsync(PlayingSound.Uuid, repetitions);
         }
 
@@ -854,11 +868,12 @@ namespace UniversalSoundboard.Components
             Sound currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
             currentSound.Favourite = !currentSound.Favourite;
 
+            // Update the UI
+            FavouriteChanged?.Invoke(this, new FavouriteChangedEventArgs(currentSound.Favourite));
+
             // Save the new favourite and reload the sound
             await FileManager.SetSoundAsFavouriteAsync(currentSound.Uuid, currentSound.Favourite);
             await FileManager.ReloadSound(currentSound.Uuid);
-
-            FavouriteChanged?.Invoke(this, new FavouriteChangedEventArgs(currentSound.Favourite));
         }
 
         public async Task UpdateOutputDevice()

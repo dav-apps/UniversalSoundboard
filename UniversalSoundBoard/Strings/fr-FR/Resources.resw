@@ -213,7 +213,7 @@
   <data name="MoreButton-Cast.Text" xml:space="preserve">
     <value>Diffuser sur un autre appareil</value>
   </data>
-  <data name="MoreButton-Repeat.Text" xml:space="preserve">
+  <data name="MoreButton-Repeat" xml:space="preserve">
     <value>Répéter</value>
   </data>
   <data name="SettingsEntry-ShowPlayingSoundsListToggle.Header" xml:space="preserve">
@@ -673,5 +673,8 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="OutputDeviceFlyoutText.Text" xml:space="preserve">
     <value>Ce son est joué sur le périphérique suivant :</value>
+  </data>
+  <data name="MoreButton-RepeatWithNumber" xml:space="preserve">
+    <value>Répéter ({0})</value>
   </data>
 </root>

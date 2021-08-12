@@ -97,6 +97,8 @@ namespace UniversalSoundboard.Components
             PlayingSoundItem.ShowSoundsList += PlayingSoundItem_ShowSoundsList;
             PlayingSoundItem.HideSoundsList -= PlayingSoundItem_HideSoundsList;
             PlayingSoundItem.HideSoundsList += PlayingSoundItem_HideSoundsList;
+            PlayingSoundItem.RepetitionsChanged -= PlayingSoundItem_RepetitionsChanged;
+            PlayingSoundItem.RepetitionsChanged += PlayingSoundItem_RepetitionsChanged;
             PlayingSoundItem.FavouriteChanged -= PlayingSoundItem_FavouriteChanged;
             PlayingSoundItem.FavouriteChanged += PlayingSoundItem_FavouriteChanged;
             PlayingSoundItem.VolumeChanged -= PlayingSoundItem_VolumeChanged;
@@ -194,6 +196,11 @@ namespace UniversalSoundboard.Components
         {
             // Start the animation
             HideSoundsListViewStoryboard.Begin();
+        }
+
+        private void PlayingSoundItem_RepetitionsChanged(object sender, RepetitionsChangedEventArgs e)
+        {
+            SetRepeatFlyoutItemText(e.Repetitions);
         }
 
         private void PlayingSoundItem_FavouriteChanged(object sender, FavouriteChangedEventArgs e)
@@ -453,22 +460,22 @@ namespace UniversalSoundboard.Components
 
         private async void MoreButton_Repeat_1x_Click(object sender, RoutedEventArgs e)
         {
-            await PlayingSoundItem.SetRepetitions(2);
+            await PlayingSoundItem.SetRepetitions(1);
         }
 
         private async void MoreButton_Repeat_2x_Click(object sender, RoutedEventArgs e)
         {
-            await PlayingSoundItem.SetRepetitions(3);
+            await PlayingSoundItem.SetRepetitions(2);
         }
 
         private async void MoreButton_Repeat_5x_Click(object sender, RoutedEventArgs e)
         {
-            await PlayingSoundItem.SetRepetitions(6);
+            await PlayingSoundItem.SetRepetitions(5);
         }
 
         private async void MoreButton_Repeat_10x_Click(object sender, RoutedEventArgs e)
         {
-            await PlayingSoundItem.SetRepetitions(11);
+            await PlayingSoundItem.SetRepetitions(10);
         }
 
         private async void MoreButton_Repeat_endless_Click(object sender, RoutedEventArgs e)
@@ -623,6 +630,9 @@ namespace UniversalSoundboard.Components
             else if (PlayingSound.Current >= PlayingSound.Sounds.Count)
                 PlayingSound.Current = PlayingSound.Sounds.Count - 1;
 
+            // Set the Repeat flyout item text
+            SetRepeatFlyoutItemText(PlayingSound.Repetitions);
+
             // Set the name of the current sound and set the favourite flyout item
             var currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
             PlayingSoundNameTextBlock.Text = currentSound.Name;
@@ -770,6 +780,19 @@ namespace UniversalSoundboard.Components
                 // Hide the sound list
                 SoundsListViewStackPanel.Height = 0;
             }
+        }
+
+        private void SetRepeatFlyoutItemText(int repetitions)
+        {
+            // Set the text of the repeat flyout item
+            if (repetitions == 0)
+                MoreButtonRepeatFlyoutSubItem.Text = loader.GetString("MoreButton-Repeat");
+            else if (repetitions == int.MaxValue)
+                MoreButtonRepeatFlyoutSubItem.Text = string.Format(loader.GetString("MoreButton-RepeatWithNumber"), "∞");
+            else if (repetitions > 100)
+                MoreButtonRepeatFlyoutSubItem.Text = string.Format(loader.GetString("MoreButton-RepeatWithNumber"), ">100");
+            else
+                MoreButtonRepeatFlyoutSubItem.Text = string.Format(loader.GetString("MoreButton-RepeatWithNumber"), repetitions);
         }
 
         private void SetFavouriteFlyoutItemText(bool fav)

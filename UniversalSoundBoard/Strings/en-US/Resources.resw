@@ -213,7 +213,7 @@
   <data name="MoreButton-Cast.Text" xml:space="preserve">
     <value>Cast to Device</value>
   </data>
-  <data name="MoreButton-Repeat.Text" xml:space="preserve">
+  <data name="MoreButton-Repeat" xml:space="preserve">
     <value>Repeat</value>
   </data>
   <data name="SettingsEntry-ShowPlayingSoundsListToggle.Header" xml:space="preserve">
@@ -674,5 +674,8 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="OutputDeviceFlyoutText.Text" xml:space="preserve">
     <value>This sound is playing on the following device:</value>
+  </data>
+  <data name="MoreButton-RepeatWithNumber" xml:space="preserve">
+    <value>Repeat ({0})</value>
   </data>
 </root>

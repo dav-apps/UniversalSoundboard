@@ -210,7 +210,7 @@
   <data name="MoreButton-Cast.Text" xml:space="preserve">
     <value>Wiedergabe auf Gerät</value>
   </data>
-  <data name="MoreButton-Repeat.Text" xml:space="preserve">
+  <data name="MoreButton-Repeat" xml:space="preserve">
     <value>Wiederholen</value>
   </data>
   <data name="SettingsEntry-ShowPlayingSoundsListToggle.Header" xml:space="preserve">
@@ -672,5 +672,8 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="OutputDeviceFlyoutText.Text" xml:space="preserve">
     <value>Dieser Sound wird auf folgendem Gerät abgespielt:</value>
+  </data>
+  <data name="MoreButton-RepeatWithNumber" xml:space="preserve">
+    <value>Wiederholen ({0})</value>
   </data>
 </root>
