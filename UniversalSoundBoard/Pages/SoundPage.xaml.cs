@@ -440,7 +440,7 @@ namespace UniversalSoundboard.Pages
             FileManager.UpdateCustomSoundOrder(currentCategoryUuid, showFavourites, uuids);
         }
 
-        public static async Task PlaySoundAsync(Sound sound)
+        public static async Task PlaySoundAsync(Sound sound, bool startPlaying = true, int? volume = null, bool? muted = null, TimeSpan? position = null)
         {
             List<Sound> soundList = new List<Sound> { sound };
 
@@ -448,13 +448,21 @@ namespace UniversalSoundboard.Pages
             MediaPlayer player = createMediaPlayerResult.Item1;
             List<Sound> newSounds = createMediaPlayerResult.Item2;
             if (player == null || newSounds == null) return;
+            if (position.HasValue) player.PlaybackSession.Position = position.Value;
+
+            int v = volume.HasValue ? volume.Value : sound.DefaultVolume;
+            bool m = muted.HasValue ? muted.Value : sound.DefaultMuted;
+
+            double appVolume = ((double)FileManager.itemViewHolder.Volume) / 100;
+            player.Volume = appVolume * ((double)v / 100);
+            player.IsMuted = m;
 
             PlayingSound playingSound = new PlayingSound(player, sound)
             {
-                Uuid = await FileManager.CreatePlayingSoundAsync(null, newSounds, 0, 0, false, sound.DefaultVolume, sound.DefaultMuted),
-                Volume = sound.DefaultVolume,
-                Muted = sound.DefaultMuted,
-                StartPlaying = true
+                Uuid = await FileManager.CreatePlayingSoundAsync(null, newSounds, 0, 0, false, v, m),
+                Volume = v,
+                Muted = m,
+                StartPlaying = startPlaying
             };
 
             if (FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSoundItems.Count == 0)

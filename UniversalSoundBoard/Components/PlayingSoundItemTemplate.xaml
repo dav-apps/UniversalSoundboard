@@ -806,7 +806,12 @@
                                 <MenuFlyoutItem Name="MoreButton_Repeat_10x" Text="10x" Click="MoreButton_Repeat_10x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_endless" Text="∞" Click="MoreButton_Repeat_endless_Click" />
                             </MenuFlyoutSubItem>
-                            <MenuFlyoutItem Name="MoreButtonFavouriteFlyoutItem" Text="Add to favourites" Icon="Favorite" Click="MoreButtonFavouriteItem_Click" />
+                            <MenuFlyoutItem Name="MoreButtonOpenSoundSeparatelyFlyoutItem" x:Uid="MoreButton-OpenSoundSeparately" Click="MoreButton_OpenSoundSeparatelyFlyoutItem_Click">
+                                <MenuFlyoutItem.Icon>
+                                    <FontIcon Glyph="&#xE8A7;" />
+                                </MenuFlyoutItem.Icon>
+                            </MenuFlyoutItem>
+                            <MenuFlyoutItem Name="MoreButtonFavouriteFlyoutItem" Text="Add to favourites" Icon="Favorite" Click="MoreButton_FavouriteItem_Click" />
                             <MenuFlyoutItem Name="MoreButtonRemoveFlyoutItem" x:Uid="RemoveButton" Text="Remove" Icon="Clear" Click="RemoveButton_Click" />
                         </MenuFlyout>
                     </Button.Flyout>

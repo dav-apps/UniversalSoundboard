@@ -676,4 +676,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="MoreButton-RepeatWithNumber" xml:space="preserve">
     <value>Wiederholen ({0})</value>
   </data>
+  <data name="MoreButton-OpenSoundSeparately.Text" xml:space="preserve">
+    <value>Diesen Sound separat öffnen</value>
+  </data>
 </root>

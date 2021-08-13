@@ -7,6 +7,7 @@ using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.Resources;
 using Windows.Devices.Enumeration;
+using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -483,7 +484,28 @@ namespace UniversalSoundboard.Components
             await PlayingSoundItem.SetRepetitions(int.MaxValue);
         }
 
-        private async void MoreButtonFavouriteItem_Click(object sender, RoutedEventArgs e)
+        private async void MoreButton_OpenSoundSeparatelyFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+            if (PlayingSound.Current >= PlayingSound.Sounds.Count) return;
+
+            // Get the current sound
+            Sound sound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
+
+            // Open the sound
+            await SoundPage.PlaySoundAsync(
+                sound,
+                PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing,
+                PlayingSound.Volume,
+                PlayingSound.Muted,
+                PlayingSound.MediaPlayer.PlaybackSession.Position
+            );
+
+            // Pause this PlayingSound
+            PlayingSoundItem.SetPlayPause(false);
+        }
+
+        private async void MoreButton_FavouriteItem_Click(object sender, RoutedEventArgs e)
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
             await PlayingSoundItem.ToggleFavourite();
@@ -632,6 +654,9 @@ namespace UniversalSoundboard.Components
 
             // Set the Repeat flyout item text
             SetRepeatFlyoutItemText(PlayingSound.Repetitions);
+
+            // Show or hide the OpenSoundSeparately flyout item
+            MoreButtonOpenSoundSeparatelyFlyoutItem.Visibility = PlayingSound.Sounds.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
 
             // Set the name of the current sound and set the favourite flyout item
             var currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
