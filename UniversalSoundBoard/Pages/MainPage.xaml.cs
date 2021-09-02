@@ -43,6 +43,7 @@ namespace UniversalSoundboard.Pages
         int titleTruncatedChars = 0;                                        // The number of characters the title was truncated
         bool mobileSearchVisible = false;                                   // If true, the app window is small, the search box is visible and the other top buttons are hidden
         bool playingSoundsLoaded = false;
+        public static Style buttonRevealStyle;
 
         public MainPage()
         {
@@ -248,6 +249,9 @@ namespace UniversalSoundboard.Pages
 
         private void InitLayout()
         {
+            // Init the static styles
+            buttonRevealStyle = Resources["ButtonRevealStyle"] as Style;
+
             SideBar.ExpandedModeThresholdWidth = FileManager.sideBarCollapsedMaxWidth;
 
             // Set the background of the sidebar content
@@ -1501,9 +1505,8 @@ namespace UniversalSoundboard.Pages
 
             var template = (DataTemplate)Resources["SoundItemTemplate"];
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
-            var buttonRevealStyle = Resources["ButtonRevealStyle"] as Style;
 
-            var exportSoundsContentDialog = ContentDialogs.CreateExportSoundsContentDialog(sounds, template, listViewItemStyle, buttonRevealStyle);
+            var exportSoundsContentDialog = ContentDialogs.CreateExportSoundsContentDialog(sounds, template, listViewItemStyle);
             exportSoundsContentDialog.PrimaryButtonClick += ExportSoundsContentDialog_PrimaryButtonClick;
             await exportSoundsContentDialog.ShowAsync();
         }

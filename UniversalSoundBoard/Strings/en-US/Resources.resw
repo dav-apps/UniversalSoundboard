@@ -126,7 +126,7 @@
   <data name="AllSounds" xml:space="preserve">
     <value>All Sounds</value>
   </data>
-  <data name="ContentDialog-Cancel" xml:space="preserve">
+  <data name="Actions-Cancel" xml:space="preserve">
     <value>Cancel</value>
   </data>
   <data name="DeleteCategoryContentDialog-Content" xml:space="preserve">
@@ -456,7 +456,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SettingsEntry-ShowAcrylicBackgroundToggle.Header" xml:space="preserve">
     <value>Transparency effects</value>
   </data>
-  <data name="ContentDialog-Save" xml:space="preserve">
+  <data name="Actions-Save" xml:space="preserve">
     <value>Save</value>
   </data>
   <data name="SetCategoryContentDialog-Title" xml:space="preserve">
@@ -594,7 +594,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SoundItemOptionsFlyout-Properties" xml:space="preserve">
     <value>Properties</value>
   </data>
-  <data name="ContentDialog-Close" xml:space="preserve">
+  <data name="Actions-Close" xml:space="preserve">
     <value>Close</value>
   </data>
   <data name="PropertiesContentDialog-FileType" xml:space="preserve">
@@ -680,5 +680,17 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="MoreButton-OpenSoundSeparately.Text" xml:space="preserve">
     <value>Open this sound separately</value>
+  </data>
+  <data name="PropertiesContentDialog-Hotkeys" xml:space="preserve">
+    <value>Hotkeys:</value>
+  </data>
+  <data name="Actions-Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="PropertiesContentDialog-AddHotkeyButtonTooltip" xml:space="preserve">
+    <value>Add hotkey</value>
+  </data>
+  <data name="PropertiesContentDialog-HotkeyFlyoutText" xml:space="preserve">
+    <value>Press a key combination</value>
   </data>
 </root>

@@ -126,7 +126,7 @@
   <data name="AllSounds" xml:space="preserve">
     <value>Tous les sons</value>
   </data>
-  <data name="ContentDialog-Cancel" xml:space="preserve">
+  <data name="Actions-Cancel" xml:space="preserve">
     <value>Annuler</value>
   </data>
   <data name="DeleteCategoryContentDialog-Content" xml:space="preserve">
@@ -455,7 +455,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="SettingsEntry-ShowAcrylicBackgroundToggle.Header" xml:space="preserve">
     <value>Effets de transparence</value>
   </data>
-  <data name="ContentDialog-Save" xml:space="preserve">
+  <data name="Actions-Save" xml:space="preserve">
     <value>Sauvegarder</value>
   </data>
   <data name="SetCategoryContentDialog-Title" xml:space="preserve">
@@ -626,7 +626,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="DownloadFilesContentDialog-Title" xml:space="preserve">
     <value>Télécharger des fichiers...</value>
   </data>
-  <data name="ContentDialog-Close" xml:space="preserve">
+  <data name="Actions-Close" xml:space="preserve">
     <value>Fermer</value>
   </data>
   <data name="Account-Card-SelectButton.Content" xml:space="preserve">
@@ -679,5 +679,17 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="MoreButton-OpenSoundSeparately.Text" xml:space="preserve">
     <value>Ouvrir ce son séparément</value>
+  </data>
+  <data name="PropertiesContentDialog-Hotkeys" xml:space="preserve">
+    <value>Raccourcis clavier :</value>
+  </data>
+  <data name="Actions-Add" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="PropertiesContentDialog-AddHotkeyButtonTooltip" xml:space="preserve">
+    <value>Ajouter un raccourci clavier</value>
+  </data>
+  <data name="PropertiesContentDialog-HotkeyFlyoutText" xml:space="preserve">
+    <value>Appuyez sur une combinaison de touches</value>
   </data>
 </root>

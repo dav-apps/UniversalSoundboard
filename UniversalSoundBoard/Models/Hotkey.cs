@@ -16,6 +16,9 @@ namespace UniversalSoundboard.Models
 
         public bool IsEmpty()
         {
+            // Special cases for invalid key combinations
+            if (Modifiers == Modifiers.Windows) return true;
+
             return Modifiers == Modifiers.None && Key == VirtualKey.None;
         }
 

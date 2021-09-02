@@ -126,7 +126,7 @@
   <data name="AllSounds" xml:space="preserve">
     <value>Alle Sounds</value>
   </data>
-  <data name="ContentDialog-Cancel" xml:space="preserve">
+  <data name="Actions-Cancel" xml:space="preserve">
     <value>Abbrechen</value>
   </data>
   <data name="DeleteCategoryContentDialog-Content" xml:space="preserve">
@@ -454,7 +454,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SettingsEntry-ShowAcrylicBackgroundToggle.Header" xml:space="preserve">
     <value>Transparenz-Effekte</value>
   </data>
-  <data name="ContentDialog-Save" xml:space="preserve">
+  <data name="Actions-Save" xml:space="preserve">
     <value>Speichern</value>
   </data>
   <data name="SetCategoryContentDialog-Title" xml:space="preserve">
@@ -592,7 +592,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SoundItemOptionsFlyout-Properties" xml:space="preserve">
     <value>Eigenschaften</value>
   </data>
-  <data name="ContentDialog-Close" xml:space="preserve">
+  <data name="Actions-Close" xml:space="preserve">
     <value>Schließen</value>
   </data>
   <data name="PropertiesContentDialog-FileType" xml:space="preserve">
@@ -678,5 +678,17 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="MoreButton-OpenSoundSeparately.Text" xml:space="preserve">
     <value>Diesen Sound separat öffnen</value>
+  </data>
+  <data name="PropertiesContentDialog-Hotkeys" xml:space="preserve">
+    <value>Tastenkombinationen:</value>
+  </data>
+  <data name="Actions-Add" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="PropertiesContentDialog-AddHotkeyButtonTooltip" xml:space="preserve">
+    <value>Tastenkombination hinzufügen</value>
+  </data>
+  <data name="PropertiesContentDialog-HotkeyFlyoutText" xml:space="preserve">
+    <value>Drücke eine Tastenkombination</value>
   </data>
 </root>

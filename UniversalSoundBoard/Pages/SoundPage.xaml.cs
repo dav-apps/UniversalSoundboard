@@ -720,8 +720,7 @@ namespace UniversalSoundboard.Pages
 
         private async void StartMessageImportButton_Click(object sender, RoutedEventArgs e)
         {
-            Style buttonRevealStyle = Resources["ButtonRevealStyle"] as Style;
-            var startMessageImportDataContentDialog = ContentDialogs.CreateStartMessageImportDataContentDialog(buttonRevealStyle);
+            var startMessageImportDataContentDialog = ContentDialogs.CreateStartMessageImportDataContentDialog();
             startMessageImportDataContentDialog.PrimaryButtonClick += StartMessageImportDataContentDialog_PrimaryButtonClick;
             await startMessageImportDataContentDialog.ShowAsync();
         }

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
+using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
@@ -86,7 +87,7 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("NewCategoryContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("NewCategoryContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -143,7 +144,7 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("EditCategoryContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("EditCategoryContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
@@ -203,7 +204,7 @@ namespace UniversalSoundboard.Common
                 Title = loader.GetString("DeleteCategoryContentDialog-Title") + currentCategory.Name,
                 Content = loader.GetString("DeleteCategoryContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteCategoryContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
@@ -218,7 +219,7 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("AddSoundErrorContentDialog-Title"),
                 Content = loader.GetString("AddSoundErrorContentDialog-Content"),
-                CloseButtonText = loader.GetString("ContentDialog-Close"),
+                CloseButtonText = loader.GetString("Actions-Close"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
@@ -239,7 +240,7 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("AddSoundsErrorContentDialog-Title"),
                 Content = content,
-                CloseButtonText = loader.GetString("ContentDialog-Close"),
+                CloseButtonText = loader.GetString("Actions-Close"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
@@ -254,7 +255,7 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("RenameSoundContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("RenameSoundContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
@@ -291,7 +292,7 @@ namespace UniversalSoundboard.Common
                 Title = loader.GetString("DeleteSoundContentDialog-Title") + soundName,
                 Content = loader.GetString("DeleteSoundContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteSoundContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
@@ -307,7 +308,7 @@ namespace UniversalSoundboard.Common
                 Title = loader.GetString("DeleteSoundsContentDialog-Title"),
                 Content = loader.GetString("DeleteSoundsContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteSoundsContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
@@ -316,13 +317,13 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region ExportData
-        public static ContentDialog CreateExportDataContentDialog(Style buttonRevealStyle)
+        public static ContentDialog CreateExportDataContentDialog()
         {
             ExportDataContentDialog = new ContentDialog
             {
                 Title = loader.GetString("ExportDataContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("ExportDataContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -352,7 +353,7 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                Style = buttonRevealStyle,
+                Style = MainPage.buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,
@@ -403,13 +404,13 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region ImportData
-        public static ContentDialog CreateImportDataContentDialog(Style buttonRevealStyle)
+        public static ContentDialog CreateImportDataContentDialog()
         {
             ImportDataContentDialog = new ContentDialog
             {
                 Title = loader.GetString("ImportDataContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("ImportDataContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -439,7 +440,7 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                Style = buttonRevealStyle,
+                Style = MainPage.buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,
@@ -467,13 +468,13 @@ namespace UniversalSoundboard.Common
             return ImportDataContentDialog;
         }
 
-        public static ContentDialog CreateStartMessageImportDataContentDialog(Style buttonRevealStyle)
+        public static ContentDialog CreateStartMessageImportDataContentDialog()
         {
             ImportDataContentDialog = new ContentDialog
             {
                 Title = loader.GetString("ImportDataContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("ImportDataContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -503,7 +504,7 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                Style = buttonRevealStyle,
+                Style = MainPage.buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,
@@ -562,7 +563,7 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("PlaySoundsSuccessivelyContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("PlaySoundsSuccessivelyContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 IsPrimaryButtonEnabled = SoundsList.Count > 0,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -713,7 +714,7 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("DownloadFileErrorContentDialog-Title"),
                 Content = loader.GetString("DownloadFileErrorContentDialog-Message"),
-                CloseButtonText = loader.GetString("ContentDialog-Close"),
+                CloseButtonText = loader.GetString("Actions-Close"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
@@ -722,7 +723,7 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region ExportSounds
-        public static ContentDialog CreateExportSoundsContentDialog(List<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle, Style buttonRevealStyle)
+        public static ContentDialog CreateExportSoundsContentDialog(List<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle)
         {
             SoundsList.Clear();
             foreach (var sound in sounds)
@@ -732,7 +733,7 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("ExportSoundsContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("Export"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -770,7 +771,7 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                Style = buttonRevealStyle,
+                Style = MainPage.buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,
@@ -871,8 +872,8 @@ namespace UniversalSoundboard.Common
             {
                 content.Children.Add(CategoriesTreeView);
 
-                SetCategoryContentDialog.PrimaryButtonText = loader.GetString("ContentDialog-Save");
-                SetCategoryContentDialog.SecondaryButtonText = loader.GetString("ContentDialog-Cancel");
+                SetCategoryContentDialog.PrimaryButtonText = loader.GetString("Actions-Save");
+                SetCategoryContentDialog.SecondaryButtonText = loader.GetString("Actions-Cancel");
             }
             else
             {
@@ -882,7 +883,7 @@ namespace UniversalSoundboard.Common
                 };
                 content.Children.Add(noCategoriesTextBlock);
 
-                SetCategoryContentDialog.SecondaryButtonText = loader.GetString("ContentDialog-Close");
+                SetCategoryContentDialog.SecondaryButtonText = loader.GetString("Actions-Close");
             }
 
             SetCategoryContentDialog.Content = content;
@@ -900,7 +901,7 @@ namespace UniversalSoundboard.Common
             PropertiesContentDialog = new ContentDialog
             {
                 Title = loader.GetString("SoundItemOptionsFlyout-Properties"),
-                CloseButtonText = loader.GetString("ContentDialog-Close"),
+                CloseButtonText = loader.GetString("Actions-Close"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
@@ -1087,7 +1088,7 @@ namespace UniversalSoundboard.Common
                 loader.GetString("PropertiesContentDialog-Volume"),
                 fontSize,
                 false,
-                new Thickness(0, 17, 0, 0)
+                new Thickness(0, 16, 0, 0)
             );
 
             StackPanel volumeDataStackPanel = new StackPanel();
@@ -1101,7 +1102,7 @@ namespace UniversalSoundboard.Common
             {
                 Value = sound.DefaultVolume,
                 Muted = sound.DefaultMuted,
-                Margin = new Thickness(0, 10, 0, 0)
+                Margin = new Thickness(8, 10, 0, 0)
             };
             PropertiesVolumeControl.ValueChanged += VolumeControl_ValueChanged;
             PropertiesVolumeControl.MuteChanged += VolumeControl_MuteChanged;
@@ -1121,10 +1122,10 @@ namespace UniversalSoundboard.Common
             StackPanel hotkeysStackPanel = GenerateTableCell(
                 row,
                 0,
-                "Hotkeys:",
+                loader.GetString("PropertiesContentDialog-Hotkeys"),
                 fontSize,
                 false,
-                new Thickness(0, 10, 0, 0)
+                new Thickness(0, 16, 0, 0)
             );
 
             StackPanel hotkeysDataStackPanel = new StackPanel
@@ -1143,7 +1144,7 @@ namespace UniversalSoundboard.Common
             addHotkeyButtonFlyoutContentStackPanel.KeyUp += AddHotkeyButtonFlyoutContentStackPanel_KeyUp;
             PropertiesDialogHotkeyFlyoutTextBlock = new TextBlock
             {
-                Text = "Drücke eine beliebige Tastenkombination"
+                Text = loader.GetString("PropertiesContentDialog-HotkeyFlyoutText")
             };
             StackPanel addHotkeyButtonFlyoutButtonStackPanel = new StackPanel
             {
@@ -1153,13 +1154,13 @@ namespace UniversalSoundboard.Common
 
             PropertiesDialogAddHotkeyFlyoutCancelButton = new Button
             {
-                Content = "Abbrechen",
+                Content = loader.GetString("Actions-Cancel"),
                 Margin = new Thickness(0, 0, 10, 0)
             };
             PropertiesDialogAddHotkeyFlyoutCancelButton.Click += PropertiesDialogAddHotkeyFlyoutCancelButton_Click;
             PropertiesDialogAddHotkeyFlyoutSaveButton = new Button
             {
-                Content = "Speichern",
+                Content = loader.GetString("Actions-Add"),
                 IsEnabled = false
             };
             PropertiesDialogAddHotkeyFlyoutSaveButton.Click += PropertiesDialogAddHotkeyFlyoutSaveButton_Click;
@@ -1177,9 +1178,16 @@ namespace UniversalSoundboard.Common
 
             PropertiesDialogAddHotkeyButton = new Button
             {
-                Content = "Add hotkey",
+                Style = MainPage.buttonRevealStyle,
+                Content = "\uE109",
+                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                Width = 35,
+                Height = 35,
+                Background = new SolidColorBrush(Colors.Transparent),
+                CornerRadius = new CornerRadius(20),
                 Flyout = addHotkeyButtonFlyout
             };
+            ToolTipService.SetToolTip(PropertiesDialogAddHotkeyButton, loader.GetString("PropertiesContentDialog-AddHotkeyButtonTooltip"));
             PropertiesDialogAddHotkeyButton.Click += PropertiesDialogAddHotkeyButton_Click;
 
             PropertiesDialogCurrentlyPressedKeys.Clear();
@@ -1233,8 +1241,13 @@ namespace UniversalSoundboard.Common
 
             // Update the text
             PropertiesDialogPressedHotkey = FileManager.KeyListToHotkey(PropertiesDialogCurrentlyPressedKeys);
-            PropertiesDialogHotkeyFlyoutTextBlock.Text = PropertiesDialogPressedHotkey.ToString();
-            PropertiesDialogAddHotkeyFlyoutSaveButton.IsEnabled = true;
+
+            if (PropertiesDialogPressedHotkey.IsEmpty())
+                PropertiesDialogHotkeyFlyoutTextBlock.Text = loader.GetString("PropertiesContentDialog-HotkeyFlyoutText");
+            else
+                PropertiesDialogHotkeyFlyoutTextBlock.Text = PropertiesDialogPressedHotkey.ToString();
+
+            PropertiesDialogAddHotkeyFlyoutSaveButton.IsEnabled = !PropertiesDialogPressedHotkey.IsEmpty();
         }
 
         private static void AddHotkeyButtonFlyoutContentStackPanel_KeyUp(object sender, KeyRoutedEventArgs e)
