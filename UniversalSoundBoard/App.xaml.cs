@@ -11,8 +11,11 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Pages;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
+using Windows.ApplicationModel.AppService;
+using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
+using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -24,6 +27,9 @@ namespace UniversalSoundboard
     /// </summary>
     sealed partial class App : Application
     {
+        public static BackgroundTaskDeferral AppServiceDeferral = null;
+        public static AppServiceConnection Connection = null;
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
@@ -209,6 +215,39 @@ namespace UniversalSoundboard
             var deferral = e.SuspendingOperation.GetDeferral();
             //TODO: Save application state and stop any background activity
             deferral.Complete();
+        }
+
+        protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
+        {
+            base.OnBackgroundActivated(args);
+
+            if (
+                args.TaskInstance.TriggerDetails is AppServiceTriggerDetails details
+                && details.CallerPackageFamilyName == Package.Current.Id.FamilyName
+            )
+            {
+                // Connection established from the fulltrust process
+                AppServiceDeferral = args.TaskInstance.GetDeferral();
+                Connection = details.AppServiceConnection;
+
+                AppServiceTriggerDetails triggerDetails = (args.TaskInstance.TriggerDetails as AppServiceTriggerDetails);
+                triggerDetails.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
+            }
+        }
+
+        private async void AppServiceConnection_RequestReceived(AppServiceConnection sender, AppServiceRequestReceivedEventArgs args)
+        {
+            AppServiceDeferral messageDeferral = args.GetDeferral();
+
+            int id = (int)args.Request.Message["id"];
+            await FileManager.HandleHotkeyPressed(id);
+
+            await args.Request.SendResponseAsync(new ValueSet());
+            messageDeferral.Complete();
+
+            // Close the connection
+            AppServiceDeferral.Complete();
+            Connection = null;
         }
 
         protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)

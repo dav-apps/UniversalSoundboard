@@ -89,6 +89,7 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.TriggerSoundsLoadedEvent(this);
 
+            await FileManager.StartHotkeyProcess();
             await Dav.SyncData();
         }
 

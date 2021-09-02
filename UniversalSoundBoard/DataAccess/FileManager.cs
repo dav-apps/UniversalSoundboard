@@ -5,6 +5,7 @@ using Microsoft.Toolkit.Uwp.Notifications;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -16,14 +17,17 @@ using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
+using Windows.ApplicationModel;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.Resources;
 using Windows.Devices.Enumeration;
+using Windows.Foundation.Metadata;
 using Windows.Media;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.Streams;
+using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
@@ -96,6 +100,7 @@ namespace UniversalSoundboard.DataAccess
         public const string SoundTableCategoryUuidPropertyName = "category_uuid";
         public const string SoundTableDefaultVolumePropertyName = "default_volume";
         public const string SoundTableDefaultMutedPropertyName = "default_muted";
+        public const string SoundTableHotkeysPropertyName = "hotkeys";
 
         public const string CategoryTableParentPropertyName = "parent";
         public const string CategoryTableNamePropertyName = "name";
@@ -165,6 +170,25 @@ namespace UniversalSoundboard.DataAccess
             InitialSync,
             Empty,
             Normal
+        }
+
+        public enum Modifiers
+        {
+            None = 0,
+            Alt = 1,
+            Control = 2,
+            AltControl = 3,
+            Shift = 4,
+            AltShift = 5,
+            ControlShift = 6,
+            AltControlShift = 7,
+            Windows = 8,
+            AltWindows = 9,
+            ControlWindows = 10,
+            AltControlWindows = 11,
+            ShiftWindows = 12,
+            AltShiftWindows = 13,
+            ControlShiftWindows = 14
         }
         #endregion
 
@@ -429,13 +453,13 @@ namespace UniversalSoundboard.DataAccess
                                 // Set the image of the sound
                                 Guid imageUuid = Guid.NewGuid();
                                 await DatabaseOperations.CreateImageFileAsync(imageUuid, imageFile);
-                                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null);
+                                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null, null);
                                 await imageFile.DeleteAsync();
                             }
                         }
 
                         if (soundData.Favourite)
-                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, soundData.Favourite, null, null, null, null);
+                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, soundData.Favourite, null, null, null, null, null);
 
                         await audioFile.DeleteAsync();
                     }
@@ -479,13 +503,13 @@ namespace UniversalSoundboard.DataAccess
                                 // Add image
                                 Guid imageUuid = Guid.NewGuid();
                                 await DatabaseOperations.CreateImageFileAsync(imageUuid, imageFile);
-                                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null);
+                                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null, null);
                                 await imageFile.DeleteAsync();
                             }
                         }
 
                         if (sound.favourite)
-                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, sound.favourite, null, null, null, null);
+                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, sound.favourite, null, null, null, null, null);
 
                         await audioFile.DeleteAsync();
                     }
@@ -572,7 +596,7 @@ namespace UniversalSoundboard.DataAccess
                         {
                             Guid imageUuid = Guid.NewGuid();
                             await DatabaseOperations.CreateImageFileAsync(imageUuid, imageFile);
-                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null);
+                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null, null);
 
                             // Delete the image
                             await imageFile.DeleteAsync();
@@ -581,7 +605,7 @@ namespace UniversalSoundboard.DataAccess
                     }
 
                     if (favourite)
-                        await DatabaseOperations.UpdateSoundAsync(soundUuid, null, favourite, null, null, null, null);
+                        await DatabaseOperations.UpdateSoundAsync(soundUuid, null, favourite, null, null, null, null, null);
 
                     // Delete the sound and soundDetails file
                     if (soundDetailsFile != null)
@@ -793,6 +817,26 @@ namespace UniversalSoundboard.DataAccess
                 bool.TryParse(defaultMutedString, out defaultMuted);
 
             sound.DefaultMuted = defaultMuted;
+
+            // Hotkeys
+            string hotkeysString = soundTableObject.GetPropertyValue(SoundTableHotkeysPropertyName);
+            if (!string.IsNullOrEmpty(hotkeysString))
+            {
+                foreach(string hotkeyCombinationString in hotkeysString.Split(','))
+                {
+                    Hotkey hotkey = new Hotkey();
+                    string[] hotkeyValues = hotkeyCombinationString.Split(':');
+
+                    if (int.TryParse(hotkeyValues[0], out int modifiers) && modifiers < 15)
+                        hotkey.Modifiers = (Modifiers)modifiers;
+
+                    if (int.TryParse(hotkeyValues[1], out int key))
+                        hotkey.Key = (VirtualKey)key;
+
+                    if (!hotkey.IsEmpty())
+                        sound.Hotkeys.Add(hotkey);
+                }
+            }
 
             return sound;
         }
@@ -1862,22 +1906,27 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task RenameSoundAsync(Guid uuid, string newName)
         {
-            await DatabaseOperations.UpdateSoundAsync(uuid, newName, null, null, null, null, null);
+            await DatabaseOperations.UpdateSoundAsync(uuid, newName, null, null, null, null, null, null);
         }
 
         public static async Task SetCategoriesOfSoundAsync(Guid soundUuid, List<Guid> categoryUuids)
         {
-            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, null, categoryUuids);
+            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, null, categoryUuids, null);
         }
 
         public static async Task SetSoundAsFavouriteAsync(Guid uuid, bool favourite)
         {
-            await DatabaseOperations.UpdateSoundAsync(uuid, null, favourite, null, null, null, null);
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, favourite, null, null, null, null, null);
         }
 
         public static async Task SetDefaultVolumeOfSoundAsync(Guid uuid, int defaultVolume, bool defaultMuted)
         {
-            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, defaultVolume, defaultMuted, null, null);
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, defaultVolume, defaultMuted, null, null, null);
+        }
+
+        public static async Task SetHotkeysOfSoundAsync(Guid uuid, List<Hotkey> hotkeys)
+        {
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, null, null, null, hotkeys);
         }
 
         public static async Task UpdateImageOfSoundAsync(Guid soundUuid, StorageFile file)
@@ -1893,7 +1942,7 @@ namespace UniversalSoundboard.DataAccess
                 // Create new image file
                 Guid imageFileUuid = Guid.NewGuid();
                 await DatabaseOperations.CreateImageFileAsync(imageFileUuid, newImageFile);
-                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageFileUuid, null);
+                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageFileUuid, null, null);
             }
             else
             {
@@ -2902,6 +2951,46 @@ namespace UniversalSoundboard.DataAccess
         {
             return itemViewHolder.CurrentTheme == AppTheme.Dark ? ElementTheme.Dark : ElementTheme.Light;
         }
+
+        public static async Task StartHotkeyProcess()
+        {
+            if (!ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
+                return;
+
+            Process process = Process.GetCurrentProcess();
+            ApplicationData.Current.LocalSettings.Values["ProcessID"] = process.Id;
+
+            // Get all hotkeys and save them in the local settings
+            itemViewHolder.HotkeySoundMapping.Clear();
+            List<string> hotkeyStrings = new List<string>();
+
+            foreach (var sound in itemViewHolder.Sounds)
+            {
+                foreach (var hotkey in sound.Hotkeys)
+                {
+                    if (hotkey.IsEmpty())
+                        continue;
+
+                    hotkeyStrings.Add(hotkey.ToDataString());
+                    itemViewHolder.HotkeySoundMapping.Add(sound.Uuid);
+                }
+            }
+
+            ApplicationData.Current.LocalSettings.Values["Hotkeys"] = string.Join(",", hotkeyStrings);
+
+            await FullTrustProcessLauncher.LaunchFullTrustProcessForCurrentAppAsync();
+        }
+
+        public static async Task HandleHotkeyPressed(int id)
+        {
+            if (id >= itemViewHolder.HotkeySoundMapping.Count)
+                return;
+
+            Sound sound = await GetSoundAsync(itemViewHolder.HotkeySoundMapping.ElementAt(id));
+            if (sound == null) return;
+
+            await SoundPage.PlaySoundAsync(sound);
+        }
         #endregion
 
         #region Helper Methods
@@ -2989,6 +3078,58 @@ namespace UniversalSoundboard.DataAccess
                 "\uE913",
                 "\uE753"
             };
+        }
+
+        public static Modifiers GetKeyAsModifiers(VirtualKey key)
+        {
+            switch (key)
+            {
+                case VirtualKey.Control:
+                case VirtualKey.LeftControl:
+                case VirtualKey.RightControl:
+                    return Modifiers.Control;
+                case VirtualKey.Menu:
+                case VirtualKey.LeftMenu:
+                case VirtualKey.RightMenu:
+                    return Modifiers.Alt;
+                case VirtualKey.Shift:
+                case VirtualKey.LeftShift:
+                case VirtualKey.RightShift:
+                    return Modifiers.Shift;
+                case VirtualKey.LeftWindows:
+                case VirtualKey.RightWindows:
+                    return Modifiers.Windows;
+                default:
+                    return Modifiers.None;
+            }
+        }
+
+        public static Hotkey KeyListToHotkey(List<VirtualKey> keys)
+        {
+            Hotkey hotkey = new Hotkey();
+
+            for (int i = 0; i < keys.Count; i++)
+            {
+                VirtualKey currentKey = keys[i];
+                Modifiers currentKeyModifier = GetKeyAsModifiers(currentKey);
+
+                if (currentKeyModifier == Modifiers.None)
+                {
+                    hotkey.Key = currentKey;
+                    break;
+                }
+
+                if (i == 0)
+                    hotkey.Modifiers += (int)currentKeyModifier;
+                else if (i == 1)
+                    hotkey.Modifiers += (int)currentKeyModifier;
+                else if (i == 2)
+                    hotkey.Modifiers += (int)currentKeyModifier;
+                else if (i > 2)
+                    break;
+            }
+
+            return hotkey;
         }
 
         public static Guid? ConvertStringToGuid(string uuidString)

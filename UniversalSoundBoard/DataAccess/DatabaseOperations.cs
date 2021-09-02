@@ -61,7 +61,7 @@ namespace UniversalSoundboard.DataAccess
             return await Dav.Database.GetAllTableObjectsAsync(FileManager.SoundTableId, false);
         }
 
-        public static async Task UpdateSoundAsync(Guid uuid, string name, bool? favourite, int? defaultVolume, bool? defaultMuted, Guid? imageUuid, List<Guid> categoryUuids)
+        public static async Task UpdateSoundAsync(Guid uuid, string name, bool? favourite, int? defaultVolume, bool? defaultMuted, Guid? imageUuid, List<Guid> categoryUuids, List<Hotkey> hotkeys)
         {
             // Get the sound table object
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
@@ -79,6 +79,20 @@ namespace UniversalSoundboard.DataAccess
                 await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableImageUuidPropertyName, imageUuid.Value.ToString());
             if (categoryUuids != null)
                 await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableCategoryUuidPropertyName, string.Join(",", categoryUuids));
+            if (hotkeys != null)
+            {
+                List<string> hotkeyStrings = new List<string>();
+                
+                foreach (Hotkey hotkey in hotkeys)
+                {
+                    if (hotkey.IsEmpty())
+                        continue;
+
+                    hotkeyStrings.Add(hotkey.ToDataString());
+                }
+
+                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableHotkeysPropertyName, string.Join(",", hotkeyStrings));
+            }
         }
         
         public static async Task DeleteSoundAsync(Guid uuid)
