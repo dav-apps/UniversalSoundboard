@@ -2,12 +2,12 @@
 using davClassLibrary.Models;
 using System;
 using System.Collections.Generic;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using Windows.ApplicationModel.Core;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml.Media.Imaging;
-using static davClassLibrary.Models.TableObject;
 
 namespace UniversalSoundboard.Models
 {
@@ -21,6 +21,7 @@ namespace UniversalSoundboard.Models
         public bool Favourite { get; set; }
         public int DefaultVolume { get; set; }
         public bool DefaultMuted { get; set; }
+        public List<Hotkey> Hotkeys { get; set; }
         public BitmapImage Image { get; set; }
         public TableObject AudioFileTableObject { get; set; }
         public StorageFile AudioFile { get; set; }
@@ -34,11 +35,12 @@ namespace UniversalSoundboard.Models
             Uuid = uuid;
             Name = name;
             Categories = new List<Category>();
+            Hotkeys = new List<Hotkey>();
 
             FileManager.itemViewHolder.TableObjectFileDownloadCompleted += ItemViewHolder_TableObjectFileDownloadCompleted;
         }
 
-        private async void ItemViewHolder_TableObjectFileDownloadCompleted(object sender, UniversalSoundboard.Common.TableObjectFileDownloadCompletedEventArgs e)
+        private async void ItemViewHolder_TableObjectFileDownloadCompleted(object sender, TableObjectFileDownloadCompletedEventArgs e)
         {
             if (e.Uuid.Equals(Guid.Empty) || e.File == null) return;
 
