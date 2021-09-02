@@ -126,6 +126,9 @@
     <Prefer32Bit>true</Prefer32Bit>
     <UseDotNetNativeToolchain>true</UseDotNetNativeToolchain>
   </PropertyGroup>
+  <PropertyGroup>
+    <UseAppLocalCoreFramework>true</UseAppLocalCoreFramework>
+  </PropertyGroup>
   <ItemGroup>
     <!-- A reference to the entire .Net Framework and Windows SDK are automatically included -->
     <Content Include="ApplicationInsights.config">
@@ -152,6 +155,7 @@
     <Compile Include="Components\VolumeMenuFlyoutItem.cs" />
     <Compile Include="DataAccess\DatabaseOperations.cs" />
     <Compile Include="DataAccess\FileManager.cs" />
+    <Compile Include="Models\Hotkey.cs" />
     <Compile Include="Strings\Env.cs" />
     <Compile Include="Models\OldDatabaseModels.cs" />
     <Compile Include="Models\PlayingSound.cs" />
@@ -380,6 +384,11 @@
       <Project>{10769b56-07ae-453a-baeb-1c0c7c492838}</Project>
       <Name>davClassLibrary</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <SDKReference Include="WindowsDesktop, Version=10.0.19041.0">
+      <Name>Windows Desktop Extensions for the UWP %28WindowsDesktop, Version=10.0.19041.0%29</Name>
+    </SDKReference>
   </ItemGroup>
   <PropertyGroup Condition=" '$(VisualStudioVersion)' == '' or '$(VisualStudioVersion)' &lt; '14.0' ">
     <VisualStudioVersion>14.0</VisualStudioVersion>

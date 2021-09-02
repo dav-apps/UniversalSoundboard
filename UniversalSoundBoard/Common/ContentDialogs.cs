@@ -10,8 +10,12 @@ using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
+using Windows.System;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using WinUI = Microsoft.UI.Xaml.Controls;
 
@@ -48,6 +52,12 @@ namespace UniversalSoundboard.Common
         public static StorageFolder ExportSoundsFolder;
         public static ListView CategoriesListView;
         public static WinUI.TreeView CategoriesTreeView;
+        public static Button PropertiesDialogAddHotkeyButton;
+        public static TextBlock PropertiesDialogHotkeyFlyoutTextBlock;
+        public static Button PropertiesDialogAddHotkeyFlyoutCancelButton;
+        public static Button PropertiesDialogAddHotkeyFlyoutSaveButton;
+        public static List<VirtualKey> PropertiesDialogCurrentlyPressedKeys = new List<VirtualKey>();
+        public static Hotkey PropertiesDialogPressedHotkey = new Hotkey();
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -1098,8 +1108,102 @@ namespace UniversalSoundboard.Common
 
             volumeRelativePanel.Children.Add(PropertiesVolumeControl);
 
+            row++;
             contentGrid.Children.Add(volumeHeaderStackPanel);
             contentGrid.Children.Add(volumeDataStackPanel);
+            #endregion
+
+            #region Hotkeys
+            // Add the row
+            var hotkeysRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+            contentGrid.RowDefinitions.Add(hotkeysRow);
+
+            StackPanel hotkeysStackPanel = GenerateTableCell(
+                row,
+                0,
+                "Hotkeys:",
+                fontSize,
+                false,
+                new Thickness(0, 10, 0, 0)
+            );
+
+            StackPanel hotkeysDataStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+            Grid.SetRow(hotkeysDataStackPanel, row);
+            Grid.SetColumn(hotkeysDataStackPanel, 1);
+
+            StackPanel addHotkeyButtonFlyoutContentStackPanel = new StackPanel
+            {
+                MinWidth = 200
+            };
+            addHotkeyButtonFlyoutContentStackPanel.KeyDown += AddHotkeyButtonFlyoutContentStackPanel_KeyDown;
+            addHotkeyButtonFlyoutContentStackPanel.KeyUp += AddHotkeyButtonFlyoutContentStackPanel_KeyUp;
+            PropertiesDialogHotkeyFlyoutTextBlock = new TextBlock
+            {
+                Text = "Drücke eine beliebige Tastenkombination"
+            };
+            StackPanel addHotkeyButtonFlyoutButtonStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 15, 0, 0)
+            };
+
+            PropertiesDialogAddHotkeyFlyoutCancelButton = new Button
+            {
+                Content = "Abbrechen",
+                Margin = new Thickness(0, 0, 10, 0)
+            };
+            PropertiesDialogAddHotkeyFlyoutCancelButton.Click += PropertiesDialogAddHotkeyFlyoutCancelButton_Click;
+            PropertiesDialogAddHotkeyFlyoutSaveButton = new Button
+            {
+                Content = "Speichern",
+                IsEnabled = false
+            };
+            PropertiesDialogAddHotkeyFlyoutSaveButton.Click += PropertiesDialogAddHotkeyFlyoutSaveButton_Click;
+
+            addHotkeyButtonFlyoutButtonStackPanel.Children.Add(PropertiesDialogAddHotkeyFlyoutCancelButton);
+            addHotkeyButtonFlyoutButtonStackPanel.Children.Add(PropertiesDialogAddHotkeyFlyoutSaveButton);
+
+            addHotkeyButtonFlyoutContentStackPanel.Children.Add(PropertiesDialogHotkeyFlyoutTextBlock);
+            addHotkeyButtonFlyoutContentStackPanel.Children.Add(addHotkeyButtonFlyoutButtonStackPanel);
+
+            Flyout addHotkeyButtonFlyout = new Flyout
+            {
+                Content = addHotkeyButtonFlyoutContentStackPanel,
+            };
+
+            PropertiesDialogAddHotkeyButton = new Button
+            {
+                Content = "Add hotkey",
+                Flyout = addHotkeyButtonFlyout
+            };
+            PropertiesDialogAddHotkeyButton.Click += PropertiesDialogAddHotkeyButton_Click;
+
+            PropertiesDialogCurrentlyPressedKeys.Clear();
+            PropertiesDialogPressedHotkey = new Hotkey();
+
+            foreach(Hotkey hotkey in selectedPropertiesSound.Hotkeys)
+            {
+                if (hotkey.IsEmpty())
+                    continue;
+
+                Button hotkeyButton = new Button
+                {
+                    Content = hotkey.ToString(),
+                    Margin = new Thickness(0, 0, 5, 0),
+                    Background = new SolidColorBrush(Colors.Transparent)
+                };
+                hotkeysDataStackPanel.Children.Add(hotkeyButton);
+            }
+
+            hotkeysDataStackPanel.Children.Add(PropertiesDialogAddHotkeyButton);
+
+            row++;
+            contentGrid.Children.Add(hotkeysStackPanel);
+            contentGrid.Children.Add(hotkeysDataStackPanel);
             #endregion
 
             PropertiesContentDialog.Content = contentGrid;
@@ -1107,7 +1211,7 @@ namespace UniversalSoundboard.Common
             return PropertiesContentDialog;
         }
 
-        private static void VolumeControl_ValueChanged(object sender, Windows.UI.Xaml.Controls.Primitives.RangeBaseValueChangedEventArgs e)
+        private static void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             propertiesDefaultVolumeChanged = true;
         }
@@ -1115,6 +1219,47 @@ namespace UniversalSoundboard.Common
         private static void VolumeControl_MuteChanged(object sender, bool e)
         {
             propertiesDefaultMutedChanged = true;
+        }
+
+        private static void PropertiesDialogAddHotkeyButton_Click(object sender, RoutedEventArgs e)
+        {
+            PropertiesDialogAddHotkeyButton.Flyout.ShowAt(PropertiesDialogAddHotkeyButton);
+        }
+
+        private static void AddHotkeyButtonFlyoutContentStackPanel_KeyDown(object sender, KeyRoutedEventArgs e)
+        {
+            if (PropertiesDialogCurrentlyPressedKeys.IndexOf(e.Key) == -1)
+                PropertiesDialogCurrentlyPressedKeys.Add(e.Key);
+
+            // Update the text
+            PropertiesDialogPressedHotkey = FileManager.KeyListToHotkey(PropertiesDialogCurrentlyPressedKeys);
+            PropertiesDialogHotkeyFlyoutTextBlock.Text = PropertiesDialogPressedHotkey.ToString();
+            PropertiesDialogAddHotkeyFlyoutSaveButton.IsEnabled = true;
+        }
+
+        private static void AddHotkeyButtonFlyoutContentStackPanel_KeyUp(object sender, KeyRoutedEventArgs e)
+        {
+            int i = PropertiesDialogCurrentlyPressedKeys.IndexOf(e.Key);
+            if (i != -1)
+                PropertiesDialogCurrentlyPressedKeys.RemoveAt(i);
+        }
+
+        private static void PropertiesDialogAddHotkeyFlyoutCancelButton_Click(object sender, RoutedEventArgs e)
+        {
+            PropertiesDialogAddHotkeyButton.Flyout.Hide();
+        }
+
+        private static async void PropertiesDialogAddHotkeyFlyoutSaveButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Save the selected keys
+            selectedPropertiesSound.Hotkeys.Add(PropertiesDialogPressedHotkey);
+
+            await FileManager.SetHotkeysOfSoundAsync(selectedPropertiesSound.Uuid, selectedPropertiesSound.Hotkeys);
+
+            PropertiesDialogAddHotkeyButton.Flyout.Hide();
+
+            // Update the Hotkey process with the new hotkeys
+            await FileManager.StartHotkeyProcess();
         }
 
         private static async void PropertiesContentDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

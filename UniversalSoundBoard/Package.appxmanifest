@@ -45,6 +45,9 @@
             <uap:DataFormat>StorageItems</uap:DataFormat>
           </uap:ShareTarget>
         </uap:Extension>
+        <uap:Extension Category="windows.appService">
+          <uap:AppService Name="HotkeyConnection"/>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
