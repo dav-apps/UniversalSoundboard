@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -11,12 +12,9 @@ using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
-using Windows.System;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using WinUI = Microsoft.UI.Xaml.Controls;
 
@@ -53,12 +51,7 @@ namespace UniversalSoundboard.Common
         public static StorageFolder ExportSoundsFolder;
         public static ListView CategoriesListView;
         public static WinUI.TreeView CategoriesTreeView;
-        public static Button PropertiesDialogAddHotkeyButton;
-        public static TextBlock PropertiesDialogHotkeyFlyoutTextBlock;
-        public static Button PropertiesDialogAddHotkeyFlyoutCancelButton;
-        public static Button PropertiesDialogAddHotkeyFlyoutSaveButton;
-        public static List<VirtualKey> PropertiesDialogCurrentlyPressedKeys = new List<VirtualKey>();
-        public static Hotkey PropertiesDialogPressedHotkey = new Hotkey();
+        public static ObservableCollection<HotkeyItem> PropertiesDialogHotkeys;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -909,13 +902,14 @@ namespace UniversalSoundboard.Common
 
             int fontSize = 15;
             int row = 0;
-            Grid contentGrid = new Grid
-            {
-                Width = 500
-            };
+            int contentGridWidth = 500;
+            int leftColumnWidth = 160;
+            int rightColumnWidth = contentGridWidth - leftColumnWidth;
+
+            Grid contentGrid = new Grid { Width = contentGridWidth };
 
             // Create the columns
-            var firstColumn = new ColumnDefinition { Width = new GridLength(160, GridUnitType.Pixel) };
+            var firstColumn = new ColumnDefinition { Width = new GridLength(leftColumnWidth, GridUnitType.Pixel) };
             var secondColumn = new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) };
 
             contentGrid.ColumnDefinitions.Add(firstColumn);
@@ -1127,7 +1121,7 @@ namespace UniversalSoundboard.Common
                 false,
                 new Thickness(0, 16, 0, 0)
             );
-
+            
             StackPanel hotkeysDataStackPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
@@ -1136,78 +1130,32 @@ namespace UniversalSoundboard.Common
             Grid.SetRow(hotkeysDataStackPanel, row);
             Grid.SetColumn(hotkeysDataStackPanel, 1);
 
-            StackPanel addHotkeyButtonFlyoutContentStackPanel = new StackPanel
+            // Hotkey button list
+            HotkeyItem addHotkeyItem = new HotkeyItem();
+            addHotkeyItem.HotkeyAdded += AddHotkeyItem_HotkeyAdded;
+
+            PropertiesDialogHotkeys = new ObservableCollection<HotkeyItem> { addHotkeyItem };
+
+            WinUI.ItemsRepeater hotkeyItemsRepeater = new WinUI.ItemsRepeater
             {
-                MinWidth = 200
-            };
-            addHotkeyButtonFlyoutContentStackPanel.KeyDown += AddHotkeyButtonFlyoutContentStackPanel_KeyDown;
-            addHotkeyButtonFlyoutContentStackPanel.KeyUp += AddHotkeyButtonFlyoutContentStackPanel_KeyUp;
-            PropertiesDialogHotkeyFlyoutTextBlock = new TextBlock
-            {
-                Text = loader.GetString("PropertiesContentDialog-HotkeyFlyoutText")
-            };
-            StackPanel addHotkeyButtonFlyoutButtonStackPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 15, 0, 0)
+                ItemTemplate = MainPage.hotkeyButtonTemplate,
+                Layout = new WrapLayout { HorizontalSpacing = 5, VerticalSpacing = 5 },
+                Width = rightColumnWidth,
+                ItemsSource = PropertiesDialogHotkeys
             };
 
-            PropertiesDialogAddHotkeyFlyoutCancelButton = new Button
-            {
-                Content = loader.GetString("Actions-Cancel"),
-                Margin = new Thickness(0, 0, 10, 0)
-            };
-            PropertiesDialogAddHotkeyFlyoutCancelButton.Click += PropertiesDialogAddHotkeyFlyoutCancelButton_Click;
-            PropertiesDialogAddHotkeyFlyoutSaveButton = new Button
-            {
-                Content = loader.GetString("Actions-Add"),
-                IsEnabled = false
-            };
-            PropertiesDialogAddHotkeyFlyoutSaveButton.Click += PropertiesDialogAddHotkeyFlyoutSaveButton_Click;
+            ScrollViewer hotkeyItemsScrollViewer = new ScrollViewer { MaxHeight = 117.5 };
+            hotkeyItemsScrollViewer.Content = hotkeyItemsRepeater;
 
-            addHotkeyButtonFlyoutButtonStackPanel.Children.Add(PropertiesDialogAddHotkeyFlyoutCancelButton);
-            addHotkeyButtonFlyoutButtonStackPanel.Children.Add(PropertiesDialogAddHotkeyFlyoutSaveButton);
-
-            addHotkeyButtonFlyoutContentStackPanel.Children.Add(PropertiesDialogHotkeyFlyoutTextBlock);
-            addHotkeyButtonFlyoutContentStackPanel.Children.Add(addHotkeyButtonFlyoutButtonStackPanel);
-
-            Flyout addHotkeyButtonFlyout = new Flyout
-            {
-                Content = addHotkeyButtonFlyoutContentStackPanel,
-            };
-
-            PropertiesDialogAddHotkeyButton = new Button
-            {
-                Style = MainPage.buttonRevealStyle,
-                Content = "\uE109",
-                FontFamily = new FontFamily("Segoe MDL2 Assets"),
-                Width = 35,
-                Height = 35,
-                Background = new SolidColorBrush(Colors.Transparent),
-                CornerRadius = new CornerRadius(20),
-                Flyout = addHotkeyButtonFlyout
-            };
-            ToolTipService.SetToolTip(PropertiesDialogAddHotkeyButton, loader.GetString("PropertiesContentDialog-AddHotkeyButtonTooltip"));
-            PropertiesDialogAddHotkeyButton.Click += PropertiesDialogAddHotkeyButton_Click;
-
-            PropertiesDialogCurrentlyPressedKeys.Clear();
-            PropertiesDialogPressedHotkey = new Hotkey();
-
-            foreach(Hotkey hotkey in selectedPropertiesSound.Hotkeys)
+            foreach (Hotkey hotkey in selectedPropertiesSound.Hotkeys)
             {
                 if (hotkey.IsEmpty())
                     continue;
 
-                Button hotkeyButton = new Button
-                {
-                    Content = hotkey.ToString(),
-                    Margin = new Thickness(0, 0, 5, 0),
-                    Background = new SolidColorBrush(Colors.Transparent)
-                };
-                hotkeysDataStackPanel.Children.Add(hotkeyButton);
+                PropertiesDialogHotkeys.Add(new HotkeyItem(hotkey.ToString()));
             }
 
-            hotkeysDataStackPanel.Children.Add(PropertiesDialogAddHotkeyButton);
+            hotkeysDataStackPanel.Children.Add(hotkeyItemsScrollViewer);
 
             row++;
             contentGrid.Children.Add(hotkeysStackPanel);
@@ -1229,47 +1177,14 @@ namespace UniversalSoundboard.Common
             propertiesDefaultMutedChanged = true;
         }
 
-        private static void PropertiesDialogAddHotkeyButton_Click(object sender, RoutedEventArgs e)
+        private static async void AddHotkeyItem_HotkeyAdded(object sender, HotkeyEventArgs e)
         {
-            PropertiesDialogAddHotkeyButton.Flyout.ShowAt(PropertiesDialogAddHotkeyButton);
-        }
+            // Add the new hotkey to the sound and list of hotkeys
+            selectedPropertiesSound.Hotkeys.Add(e.Hotkey);
+            PropertiesDialogHotkeys.Add(new HotkeyItem(e.Hotkey.ToString()));
 
-        private static void AddHotkeyButtonFlyoutContentStackPanel_KeyDown(object sender, KeyRoutedEventArgs e)
-        {
-            if (PropertiesDialogCurrentlyPressedKeys.IndexOf(e.Key) == -1)
-                PropertiesDialogCurrentlyPressedKeys.Add(e.Key);
-
-            // Update the text
-            PropertiesDialogPressedHotkey = FileManager.KeyListToHotkey(PropertiesDialogCurrentlyPressedKeys);
-
-            if (PropertiesDialogPressedHotkey.IsEmpty())
-                PropertiesDialogHotkeyFlyoutTextBlock.Text = loader.GetString("PropertiesContentDialog-HotkeyFlyoutText");
-            else
-                PropertiesDialogHotkeyFlyoutTextBlock.Text = PropertiesDialogPressedHotkey.ToString();
-
-            PropertiesDialogAddHotkeyFlyoutSaveButton.IsEnabled = !PropertiesDialogPressedHotkey.IsEmpty();
-        }
-
-        private static void AddHotkeyButtonFlyoutContentStackPanel_KeyUp(object sender, KeyRoutedEventArgs e)
-        {
-            int i = PropertiesDialogCurrentlyPressedKeys.IndexOf(e.Key);
-            if (i != -1)
-                PropertiesDialogCurrentlyPressedKeys.RemoveAt(i);
-        }
-
-        private static void PropertiesDialogAddHotkeyFlyoutCancelButton_Click(object sender, RoutedEventArgs e)
-        {
-            PropertiesDialogAddHotkeyButton.Flyout.Hide();
-        }
-
-        private static async void PropertiesDialogAddHotkeyFlyoutSaveButton_Click(object sender, RoutedEventArgs e)
-        {
-            // Save the selected keys
-            selectedPropertiesSound.Hotkeys.Add(PropertiesDialogPressedHotkey);
-
+            // Save the hotkeys of the sound
             await FileManager.SetHotkeysOfSoundAsync(selectedPropertiesSound.Uuid, selectedPropertiesSound.Hotkeys);
-
-            PropertiesDialogAddHotkeyButton.Flyout.Hide();
 
             // Update the Hotkey process with the new hotkeys
             await FileManager.StartHotkeyProcess();

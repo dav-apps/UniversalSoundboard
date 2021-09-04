@@ -685,10 +685,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Actions-Add" xml:space="preserve">
     <value>Hinzufügen</value>
   </data>
-  <data name="PropertiesContentDialog-AddHotkeyButtonTooltip" xml:space="preserve">
+  <data name="PropertiesContentDialog-AddHotkeyButtonTooltip.Text" xml:space="preserve">
     <value>Tastenkombination hinzufügen</value>
   </data>
   <data name="PropertiesContentDialog-HotkeyFlyoutText" xml:space="preserve">
     <value>Drücke eine Tastenkombination</value>
+  </data>
+  <data name="PropertiesContentDialog-HotkeyFlyoutAddButton.Content" xml:space="preserve">
+    <value>Hinzufügen</value>
   </data>
 </root>

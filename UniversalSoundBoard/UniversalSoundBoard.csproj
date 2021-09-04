@@ -144,6 +144,10 @@
     <Compile Include="Common\Callbacks.cs" />
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
+    <Compile Include="Components\HotkeyItem.cs" />
+    <Compile Include="Components\HotkeyItemTemplate.xaml.cs">
+      <DependentUpon>HotkeyItemTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\PlayingSoundItem.cs" />
     <Compile Include="Components\SoundFileDownloadProgressTemplate.xaml.cs">
       <DependentUpon>SoundFileDownloadProgressTemplate.xaml</DependentUpon>
@@ -292,6 +296,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="Components\HotkeyItemTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\SoundFileDownloadProgressTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

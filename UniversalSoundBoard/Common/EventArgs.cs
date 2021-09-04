@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using UniversalSoundboard.Models;
 using Windows.UI.Xaml;
 
 namespace UniversalSoundboard.Common
@@ -196,6 +197,18 @@ namespace UniversalSoundboard.Common
         {
             IsDownloading = isDownloading;
             DownloadProgress = downloadProgress;
+        }
+    }
+    #endregion
+
+    #region HotkeyItem
+    public class HotkeyEventArgs : EventArgs
+    {
+        public Hotkey Hotkey { get; set; }
+
+        public HotkeyEventArgs(Hotkey hotkey)
+        {
+            Hotkey = hotkey;
         }
     }
     #endregion

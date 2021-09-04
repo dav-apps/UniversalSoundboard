@@ -30,6 +30,10 @@
         <DataTemplate x:Key="SoundFileDownloadProgressTemplate" x:DataType="models:Sound">
             <components:SoundFileDownloadProgressTemplate />
         </DataTemplate>
+        
+        <DataTemplate x:Key="HotkeyButtonTemplate" x:DataType="components:HotkeyItem">
+            <components:HotkeyItemTemplate />
+        </DataTemplate>
 
         <!-- Styles -->
         <Style TargetType="ListViewItem" x:Key="ListViewItemStyle">

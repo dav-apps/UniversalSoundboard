@@ -686,10 +686,13 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="Actions-Add" xml:space="preserve">
     <value>Ajouter</value>
   </data>
-  <data name="PropertiesContentDialog-AddHotkeyButtonTooltip" xml:space="preserve">
+  <data name="PropertiesContentDialog-AddHotkeyButtonTooltip.Text" xml:space="preserve">
     <value>Ajouter un raccourci clavier</value>
   </data>
   <data name="PropertiesContentDialog-HotkeyFlyoutText" xml:space="preserve">
     <value>Appuyez sur une combinaison de touches</value>
+  </data>
+  <data name="PropertiesContentDialog-HotkeyFlyoutAddButton.Content" xml:space="preserve">
+    <value>Ajouter</value>
   </data>
 </root>

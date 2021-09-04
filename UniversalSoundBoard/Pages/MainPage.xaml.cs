@@ -44,6 +44,7 @@ namespace UniversalSoundboard.Pages
         bool mobileSearchVisible = false;                                   // If true, the app window is small, the search box is visible and the other top buttons are hidden
         bool playingSoundsLoaded = false;
         public static Style buttonRevealStyle;
+        public static DataTemplate hotkeyButtonTemplate;
 
         public MainPage()
         {
@@ -251,6 +252,7 @@ namespace UniversalSoundboard.Pages
         {
             // Init the static styles
             buttonRevealStyle = Resources["ButtonRevealStyle"] as Style;
+            hotkeyButtonTemplate = Resources["HotkeyButtonTemplate"] as DataTemplate;
 
             SideBar.ExpandedModeThresholdWidth = FileManager.sideBarCollapsedMaxWidth;
 
