@@ -55,7 +55,7 @@
 
         <Style x:Name="SoundGridViewStyle" TargetType="GridView">
             <!-- Custom Setters -->
-            <Setter Property="animations:ReorderGridAnimation.Duration" Value="150" />
+            <Setter Property="animations:ItemsReorderAnimation.Duration" Value="0:0:0.15" />
             <Setter Property="IsItemClickEnabled" Value="True" />
             <Setter Property="AllowDrop" Value="True" />
             <Setter Property="ItemTemplate" Value="{StaticResource SoundGridViewItemTemplate}" />

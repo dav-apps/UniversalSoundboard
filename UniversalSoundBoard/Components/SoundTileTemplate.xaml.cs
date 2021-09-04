@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Common;
+using System.Numerics;
 
 namespace UniversalSoundboard.Components
 {
@@ -124,22 +125,44 @@ namespace UniversalSoundboard.Components
             soundItem.ShowFlyout(sender, e.GetPosition(sender as UIElement));
         }
 
-        private void ContentRoot_PointerEntered(object sender, PointerRoutedEventArgs e)
+        private async void ContentRoot_PointerEntered(object sender, PointerRoutedEventArgs e)
         {
-            // Scale the image
-            SoundTileImage.Scale(1.1f, 1.1f, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 400, 0, EasingType.Quintic).Start();
-
             // Show the animation of the name
             ShowNameStoryboard.Begin();
+
+            // Scale the image
+            await AnimationBuilder.Create()
+                .Scale(
+                    to: new Vector2(1.15f),
+                    duration: TimeSpan.FromMilliseconds(200),
+                    easingType: EasingType.Quartic
+                )
+                .Translation(
+                    to: new Vector2(Convert.ToInt32(SoundTileImage.ActualWidth * -0.075), Convert.ToInt32(SoundTileImage.ActualHeight * -0.075)),
+                    duration: TimeSpan.FromMilliseconds(200),
+                    easingType: EasingType.Quartic
+                )
+                .StartAsync(SoundTileImage);
         }
 
-        private void ContentRoot_PointerExited(object sender, PointerRoutedEventArgs e)
+        private async void ContentRoot_PointerExited(object sender, PointerRoutedEventArgs e)
         {
-            // Scale the image
-            SoundTileImage.Scale(1, 1, Convert.ToInt32(SoundTileImage.ActualWidth / 2), Convert.ToInt32(SoundTileImage.ActualHeight / 2), 400, 0, EasingType.Quintic).Start();
-
             // Show the animation of the name
             HideNameStoryboard.Begin();
+
+            // Scale the image
+            await AnimationBuilder.Create()
+                .Scale(
+                    to: new Vector2(1),
+                    duration: TimeSpan.FromMilliseconds(200),
+                    easingType: EasingType.Quartic
+                )
+                .Translation(
+                    to: new Vector2(0, 0),
+                    duration: TimeSpan.FromMilliseconds(200),
+                    easingType: EasingType.Quartic
+                )
+                .StartAsync(SoundTileImage);
         }
     }
 }
