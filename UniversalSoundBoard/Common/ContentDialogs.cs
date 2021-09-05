@@ -9,6 +9,7 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.Resources;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
@@ -1157,60 +1158,63 @@ namespace UniversalSoundboard.Common
             #endregion
 
             #region Hotkeys
-            // Add the row
-            var hotkeysRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
-            contentGrid.RowDefinitions.Add(hotkeysRow);
-
-            StackPanel hotkeysStackPanel = GenerateTableCell(
-                row,
-                0,
-                loader.GetString("PropertiesContentDialog-Hotkeys"),
-                fontSize,
-                false,
-                new Thickness(0, 16, 0, 0)
-            );
-            
-            StackPanel hotkeysDataStackPanel = new StackPanel
+            if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
             {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 10, 0, 0)
-            };
-            Grid.SetRow(hotkeysDataStackPanel, row);
-            Grid.SetColumn(hotkeysDataStackPanel, 1);
+                // Add the row
+                var hotkeysRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+                contentGrid.RowDefinitions.Add(hotkeysRow);
 
-            // Hotkey button list
-            HotkeyItem addHotkeyItem = new HotkeyItem();
-            addHotkeyItem.HotkeyAdded += AddHotkeyItem_HotkeyAdded;
+                StackPanel hotkeysStackPanel = GenerateTableCell(
+                    row,
+                    0,
+                    loader.GetString("PropertiesContentDialog-Hotkeys"),
+                    fontSize,
+                    false,
+                    new Thickness(0, 16, 0, 0)
+                );
 
-            PropertiesDialogHotkeys.Clear();
-            PropertiesDialogHotkeys.Add(addHotkeyItem);
+                StackPanel hotkeysDataStackPanel = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    Margin = new Thickness(0, 10, 0, 0)
+                };
+                Grid.SetRow(hotkeysDataStackPanel, row);
+                Grid.SetColumn(hotkeysDataStackPanel, 1);
 
-            WinUI.ItemsRepeater hotkeyItemsRepeater = new WinUI.ItemsRepeater
-            {
-                ItemTemplate = MainPage.hotkeyButtonTemplate,
-                ItemsSource = PropertiesDialogHotkeys,
-                Layout = new WrapLayout { HorizontalSpacing = 5, VerticalSpacing = 5 },
-                Width = rightColumnWidth
-            };
+                // Hotkey button list
+                HotkeyItem addHotkeyItem = new HotkeyItem();
+                addHotkeyItem.HotkeyAdded += AddHotkeyItem_HotkeyAdded;
 
-            ScrollViewer hotkeyItemsScrollViewer = new ScrollViewer { MaxHeight = 117.5 };
-            hotkeyItemsScrollViewer.Content = hotkeyItemsRepeater;
+                PropertiesDialogHotkeys.Clear();
+                PropertiesDialogHotkeys.Add(addHotkeyItem);
 
-            foreach (Hotkey hotkey in selectedPropertiesSound.Hotkeys)
-            {
-                if (hotkey.IsEmpty())
-                    continue;
+                WinUI.ItemsRepeater hotkeyItemsRepeater = new WinUI.ItemsRepeater
+                {
+                    ItemTemplate = MainPage.hotkeyButtonTemplate,
+                    ItemsSource = PropertiesDialogHotkeys,
+                    Layout = new WrapLayout { HorizontalSpacing = 5, VerticalSpacing = 5 },
+                    Width = rightColumnWidth
+                };
 
-                HotkeyItem hotkeyItem = new HotkeyItem(hotkey);
-                hotkeyItem.RemoveHotkey += HotkeyItem_RemoveHotkey;
-                PropertiesDialogHotkeys.Add(hotkeyItem);
+                ScrollViewer hotkeyItemsScrollViewer = new ScrollViewer { MaxHeight = 117.5 };
+                hotkeyItemsScrollViewer.Content = hotkeyItemsRepeater;
+
+                foreach (Hotkey hotkey in selectedPropertiesSound.Hotkeys)
+                {
+                    if (hotkey.IsEmpty())
+                        continue;
+
+                    HotkeyItem hotkeyItem = new HotkeyItem(hotkey);
+                    hotkeyItem.RemoveHotkey += HotkeyItem_RemoveHotkey;
+                    PropertiesDialogHotkeys.Add(hotkeyItem);
+                }
+
+                hotkeysDataStackPanel.Children.Add(hotkeyItemsScrollViewer);
+
+                row++;
+                contentGrid.Children.Add(hotkeysStackPanel);
+                contentGrid.Children.Add(hotkeysDataStackPanel);
             }
-
-            hotkeysDataStackPanel.Children.Add(hotkeyItemsScrollViewer);
-
-            row++;
-            contentGrid.Children.Add(hotkeysStackPanel);
-            contentGrid.Children.Add(hotkeysDataStackPanel);
             #endregion
 
             PropertiesContentDialog.Content = contentGrid;
