@@ -525,7 +525,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Ajoutez votre premier son</value>
   </data>
   <data name="StartMessageExistingSoundboardTitleTextBlock.Text" xml:space="preserve">
-    <value>Vous avez déjà un Soundboard?</value>
+    <value>Vous avez déjà un Soundboard ?</value>
   </data>
   <data name="StartMessageImportExistingSoundboardButton.Text" xml:space="preserve">
     <value>Importer votre Soundboard</value>
@@ -534,7 +534,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Se connecter</value>
   </data>
   <data name="StartMessageTitleTextBlock.Text" xml:space="preserve">
-    <value>Bienvenue à UniversalSoundboard!</value>
+    <value>Bienvenue à UniversalSoundboard !</value>
   </data>
   <data name="StartMessageImportDataContentDialog-Text2" xml:space="preserve">
     <value>L'import peut prendre un certain temps, en fonction de la dimension de votre Soundboard.</value>
@@ -694,5 +694,11 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="PropertiesContentDialog-HotkeyFlyoutAddButton.Content" xml:space="preserve">
     <value>Ajouter</value>
+  </data>
+  <data name="PropertiesContentDialog-HotkeyButtonFlyoutText.Text" xml:space="preserve">
+    <value>Voulez-vous supprimer cette raccourci clavier ?</value>
+  </data>
+  <data name="PropertiesContentDialog-HotkeyFlyoutRemoveButton.Content" xml:space="preserve">
+    <value>Supprimer</value>
   </data>
 </root>

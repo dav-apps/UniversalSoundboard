@@ -66,6 +66,23 @@
             Content="{x:Bind HotkeyItem.Text}"
             Height="35"
             Background="Transparent"
-            Visibility="{x:Bind HotkeyItem.AddItem, Converter={StaticResource BooleanToInvertedVisibilityConverter}}" />
+            Visibility="{x:Bind HotkeyItem.AddItem, Converter={StaticResource BooleanToInvertedVisibilityConverter}}">
+
+            <Button.Flyout>
+                <Flyout>
+                    <StackPanel Orientation="Vertical" MaxWidth="200">
+                        <TextBlock
+                            x:Uid="PropertiesContentDialog-HotkeyButtonFlyoutText"
+                            TextWrapping="WrapWholeWords" />
+
+                        <Button
+                            Name="RemoveButton"
+                            x:Uid="PropertiesContentDialog-HotkeyFlyoutRemoveButton"
+                            Margin="0,15,0,0"
+                            Click="RemoveButton_Click" />
+                    </StackPanel>
+                </Flyout>
+            </Button.Flyout>
+        </Button>
     </StackPanel>
 </UserControl>

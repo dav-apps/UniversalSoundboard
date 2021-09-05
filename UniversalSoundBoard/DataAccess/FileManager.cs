@@ -2983,6 +2983,10 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task HandleHotkeyPressed(int id)
         {
+            // Don't handle hotkeys if a ContentDialog is open
+            if (ContentDialogs.ContentDialogOpen)
+                return;
+
             if (id >= itemViewHolder.HotkeySoundMapping.Count)
                 return;
 

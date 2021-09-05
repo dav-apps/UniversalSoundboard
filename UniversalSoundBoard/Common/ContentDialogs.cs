@@ -30,6 +30,7 @@ namespace UniversalSoundboard.Common
         private static bool propertiesDefaultVolumeChanged = false;
         private static bool propertiesDefaultMutedChanged = false;
 
+        public static bool ContentDialogOpen = false;
         public static TextBox NewCategoryTextBox;
         public static Guid NewCategoryParentUuid;
         public static TextBox EditCategoryTextBox;
@@ -51,7 +52,7 @@ namespace UniversalSoundboard.Common
         public static StorageFolder ExportSoundsFolder;
         public static ListView CategoriesListView;
         public static WinUI.TreeView CategoriesTreeView;
-        public static ObservableCollection<HotkeyItem> PropertiesDialogHotkeys;
+        public static ObservableCollection<HotkeyItem> PropertiesDialogHotkeys = new ObservableCollection<HotkeyItem>();
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -73,6 +74,18 @@ namespace UniversalSoundboard.Common
         public static ContentDialog PropertiesContentDialog;
         #endregion
 
+        #region General methods
+        private static void ContentDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            ContentDialogOpen = true;
+        }
+
+        private static void ContentDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
+        {
+            ContentDialogOpen = false;
+        }
+        #endregion
+
         #region NewCategory
         public static ContentDialog CreateNewCategoryContentDialog(Guid parentUuid)
         {
@@ -84,6 +97,8 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            NewCategoryContentDialog.Opened += ContentDialog_Opened;
+            NewCategoryContentDialog.Closed += ContentDialog_Closed;
 
             NewCategoryParentUuid = parentUuid;
             if (!Equals(parentUuid, Guid.Empty))
@@ -140,6 +155,8 @@ namespace UniversalSoundboard.Common
                 SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            EditCategoryContentDialog.Opened += ContentDialog_Opened;
+            EditCategoryContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel stackPanel = new StackPanel
             {
@@ -200,6 +217,8 @@ namespace UniversalSoundboard.Common
                 SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            DeleteCategoryContentDialog.Opened += ContentDialog_Opened;
+            DeleteCategoryContentDialog.Closed += ContentDialog_Closed;
 
             return DeleteCategoryContentDialog;
         }
@@ -215,6 +234,8 @@ namespace UniversalSoundboard.Common
                 CloseButtonText = loader.GetString("Actions-Close"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            AddSoundErrorContentDialog.Opened += ContentDialog_Opened;
+            AddSoundErrorContentDialog.Closed += ContentDialog_Closed;
 
             return AddSoundErrorContentDialog;
         }
@@ -236,6 +257,8 @@ namespace UniversalSoundboard.Common
                 CloseButtonText = loader.GetString("Actions-Close"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            AddSoundsErrorContentDialog.Opened += ContentDialog_Opened;
+            AddSoundsErrorContentDialog.Closed += ContentDialog_Closed;
 
             return AddSoundsErrorContentDialog;
         }
@@ -251,6 +274,8 @@ namespace UniversalSoundboard.Common
                 SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            RenameSoundContentDialog.Opened += ContentDialog_Opened;
+            RenameSoundContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel stackPanel = new StackPanel
             {
@@ -288,6 +313,8 @@ namespace UniversalSoundboard.Common
                 SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            DeleteSoundContentDialog.Opened += ContentDialog_Opened;
+            DeleteSoundContentDialog.Closed += ContentDialog_Closed;
 
             return DeleteSoundContentDialog;
         }
@@ -304,6 +331,8 @@ namespace UniversalSoundboard.Common
                 SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            DeleteSoundsContentDialog.Opened += ContentDialog_Opened;
+            DeleteSoundsContentDialog.Closed += ContentDialog_Closed;
 
             return DeleteSoundsContentDialog;
         }
@@ -320,6 +349,8 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            ExportDataContentDialog.Opened += ContentDialog_Opened;
+            ExportDataContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel content = new StackPanel
             {
@@ -407,6 +438,8 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            ImportDataContentDialog.Opened += ContentDialog_Opened;
+            ImportDataContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel content = new StackPanel
             {
@@ -560,6 +593,8 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = SoundsList.Count > 0,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            PlaySoundsSuccessivelyContentDialog.Opened += ContentDialog_Opened;
+            PlaySoundsSuccessivelyContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel content = new StackPanel
             {
@@ -639,6 +674,8 @@ namespace UniversalSoundboard.Common
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            LogoutContentDialog.Opened += ContentDialog_Opened;
+            LogoutContentDialog.Closed += ContentDialog_Closed;
 
             return LogoutContentDialog;
         }
@@ -653,6 +690,8 @@ namespace UniversalSoundboard.Common
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            DownloadFileContentDialog.Opened += ContentDialog_Opened;
+            DownloadFileContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel content = new StackPanel
             {
@@ -679,6 +718,8 @@ namespace UniversalSoundboard.Common
                 SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            DownloadFilesContentDialog.Opened += ContentDialog_Opened;
+            DownloadFilesContentDialog.Closed += ContentDialog_Closed;
 
             ListView progressListView = new ListView
             {
@@ -710,6 +751,8 @@ namespace UniversalSoundboard.Common
                 CloseButtonText = loader.GetString("Actions-Close"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            DownloadFileErrorContentDialog.Opened += ContentDialog_Opened;
+            DownloadFileErrorContentDialog.Closed += ContentDialog_Closed;
 
             return DownloadFileErrorContentDialog;
         }
@@ -730,6 +773,8 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            ExportSoundsContentDialog.Opened += ContentDialog_Opened;
+            ExportSoundsContentDialog.Closed += ContentDialog_Closed;
 
             if (SoundsList.Count == 0)
                 ExportSoundsContentDialog.IsPrimaryButtonEnabled = false;
@@ -826,6 +871,8 @@ namespace UniversalSoundboard.Common
                 Title = title,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
+            SetCategoryContentDialog.Opened += ContentDialog_Opened;
+            SetCategoryContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel content = new StackPanel
             {
@@ -897,7 +944,8 @@ namespace UniversalSoundboard.Common
                 CloseButtonText = loader.GetString("Actions-Close"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-
+            PropertiesContentDialog.Opened += ContentDialog_Opened;
+            PropertiesContentDialog.Closed += ContentDialog_Closed;
             PropertiesContentDialog.CloseButtonClick += PropertiesContentDialog_CloseButtonClick;
 
             int fontSize = 15;
@@ -1134,14 +1182,15 @@ namespace UniversalSoundboard.Common
             HotkeyItem addHotkeyItem = new HotkeyItem();
             addHotkeyItem.HotkeyAdded += AddHotkeyItem_HotkeyAdded;
 
-            PropertiesDialogHotkeys = new ObservableCollection<HotkeyItem> { addHotkeyItem };
+            PropertiesDialogHotkeys.Clear();
+            PropertiesDialogHotkeys.Add(addHotkeyItem);
 
             WinUI.ItemsRepeater hotkeyItemsRepeater = new WinUI.ItemsRepeater
             {
                 ItemTemplate = MainPage.hotkeyButtonTemplate,
+                ItemsSource = PropertiesDialogHotkeys,
                 Layout = new WrapLayout { HorizontalSpacing = 5, VerticalSpacing = 5 },
-                Width = rightColumnWidth,
-                ItemsSource = PropertiesDialogHotkeys
+                Width = rightColumnWidth
             };
 
             ScrollViewer hotkeyItemsScrollViewer = new ScrollViewer { MaxHeight = 117.5 };
@@ -1152,7 +1201,9 @@ namespace UniversalSoundboard.Common
                 if (hotkey.IsEmpty())
                     continue;
 
-                PropertiesDialogHotkeys.Add(new HotkeyItem(hotkey.ToString()));
+                HotkeyItem hotkeyItem = new HotkeyItem(hotkey);
+                hotkeyItem.RemoveHotkey += HotkeyItem_RemoveHotkey;
+                PropertiesDialogHotkeys.Add(hotkeyItem);
             }
 
             hotkeysDataStackPanel.Children.Add(hotkeyItemsScrollViewer);
@@ -1181,7 +1232,22 @@ namespace UniversalSoundboard.Common
         {
             // Add the new hotkey to the sound and list of hotkeys
             selectedPropertiesSound.Hotkeys.Add(e.Hotkey);
-            PropertiesDialogHotkeys.Add(new HotkeyItem(e.Hotkey.ToString()));
+            PropertiesDialogHotkeys.Add(new HotkeyItem(e.Hotkey));
+
+            // Save the hotkeys of the sound
+            await FileManager.SetHotkeysOfSoundAsync(selectedPropertiesSound.Uuid, selectedPropertiesSound.Hotkeys);
+
+            // Update the Hotkey process with the new hotkeys
+            await FileManager.StartHotkeyProcess();
+        }
+
+        private static async void HotkeyItem_RemoveHotkey(object sender, HotkeyEventArgs e)
+        {
+            // Remove the hotkey from the list of hotkeys
+            int index = selectedPropertiesSound.Hotkeys.FindIndex(h => h.Modifiers == e.Hotkey.Modifiers && h.Key == e.Hotkey.Key);
+            if (index != -1) selectedPropertiesSound.Hotkeys.RemoveAt(index);
+
+            PropertiesDialogHotkeys.Remove((HotkeyItem)sender);
 
             // Save the hotkeys of the sound
             await FileManager.SetHotkeysOfSoundAsync(selectedPropertiesSound.Uuid, selectedPropertiesSound.Hotkeys);

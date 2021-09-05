@@ -74,5 +74,11 @@ namespace UniversalSoundboard.Components
             AddHotkeyButtonFlyoutText.Text = loader.GetString("PropertiesContentDialog-HotkeyFlyoutText");
             AddButton.IsEnabled = false;
         }
+
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            HotkeyButton.Flyout.Hide();
+            HotkeyItem.Remove();
+        }
     }
 }

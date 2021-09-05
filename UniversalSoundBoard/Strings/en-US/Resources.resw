@@ -696,4 +696,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PropertiesContentDialog-HotkeyFlyoutAddButton.Content" xml:space="preserve">
     <value>Add</value>
   </data>
+  <data name="PropertiesContentDialog-HotkeyButtonFlyoutText.Text" xml:space="preserve">
+    <value>Do you want to remove this hotkey?</value>
+  </data>
+  <data name="PropertiesContentDialog-HotkeyFlyoutRemoveButton.Content" xml:space="preserve">
+    <value>Remove</value>
+  </data>
 </root>

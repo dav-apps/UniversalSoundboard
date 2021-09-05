@@ -6,24 +6,33 @@ namespace UniversalSoundboard.Components
 {
     public class HotkeyItem
     {
-        public bool AddItem { get; set; }
-        public string Text { get; set; }
+        public bool AddItem { get; }
+        public Hotkey Hotkey { get; }
+        public string Text { get; }
         public event EventHandler<HotkeyEventArgs> HotkeyAdded;
+        public event EventHandler<HotkeyEventArgs> RemoveHotkey;
 
         public HotkeyItem()
         {
             AddItem = true;
+            Hotkey = new Hotkey();
         }
 
-        public HotkeyItem(string text)
+        public HotkeyItem(Hotkey hotkey)
         {
             AddItem = false;
-            Text = text;
+            Hotkey = hotkey;
+            Text = hotkey.ToString();
         }
 
         public void TriggerHotkeyAddedEvent(object sender, Hotkey hotkey)
         {
             HotkeyAdded?.Invoke(sender, new HotkeyEventArgs(hotkey));
+        }
+
+        public void Remove()
+        {
+            RemoveHotkey?.Invoke(this, new HotkeyEventArgs(Hotkey));
         }
     }
 }

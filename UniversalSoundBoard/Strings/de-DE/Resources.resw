@@ -694,4 +694,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PropertiesContentDialog-HotkeyFlyoutAddButton.Content" xml:space="preserve">
     <value>Hinzufügen</value>
   </data>
+  <data name="PropertiesContentDialog-HotkeyButtonFlyoutText.Text" xml:space="preserve">
+    <value>Willst du diese Tastenkombination entfernen?</value>
+  </data>
+  <data name="PropertiesContentDialog-HotkeyFlyoutRemoveButton.Content" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
 </root>
