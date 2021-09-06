@@ -28,56 +28,55 @@ namespace UniversalSoundboard.Models
                 return "";
 
             if (Modifiers == Modifiers.None)
-                return Key.ToString();
+                return VirtualKeyToString(Key);
 
             string text = "";
 
-            // TODO: Add translations
             switch (Modifiers)
             {
                 case Modifiers.Alt:
-                    text = VirtualKeyModifiers.Menu.ToString();
+                    text = VirtualKeyModifiersToString(VirtualKeyModifiers.Menu);
                     break;
                 case Modifiers.Control:
-                    text = VirtualKeyModifiers.Control.ToString();
+                    text = VirtualKeyModifiersToString(VirtualKeyModifiers.Control);
                     break;
                 case Modifiers.AltControl:
-                    text = $"{VirtualKeyModifiers.Control} + {VirtualKeyModifiers.Menu}";
+                    text = $"{VirtualKeyModifiersToString(VirtualKeyModifiers.Control)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Menu)}";
                     break;
                 case Modifiers.Shift:
-                    text = VirtualKeyModifiers.Shift.ToString();
+                    text = VirtualKeyModifiersToString(VirtualKeyModifiers.Shift);
                     break;
                 case Modifiers.AltShift:
-                    text = $"{VirtualKeyModifiers.Menu} + {VirtualKeyModifiers.Shift}";
+                    text = $"{VirtualKeyModifiersToString(VirtualKeyModifiers.Menu)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Shift)}";
                     break;
                 case Modifiers.ControlShift:
-                    text = $"{VirtualKeyModifiers.Control} + {VirtualKeyModifiers.Shift}";
+                    text = $"{VirtualKeyModifiersToString(VirtualKeyModifiers.Control)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Shift)}";
                     break;
                 case Modifiers.AltControlShift:
-                    text = $"{VirtualKeyModifiers.Control} + {VirtualKeyModifiers.Menu} + {VirtualKeyModifiers.Shift}";
+                    text = $"{VirtualKeyModifiersToString(VirtualKeyModifiers.Control)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Menu)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Shift)}";
                     break;
                 case Modifiers.AltWindows:
-                    text = $"{VirtualKeyModifiers.Menu} + {VirtualKeyModifiers.Windows}";
+                    text = $"{VirtualKeyModifiersToString(VirtualKeyModifiers.Menu)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Windows)}";
                     break;
                 case Modifiers.ControlWindows:
-                    text = $"{VirtualKeyModifiers.Control} + {VirtualKeyModifiers.Windows}";
+                    text = $"{VirtualKeyModifiersToString(VirtualKeyModifiers.Control)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Windows)}";
                     break;
                 case Modifiers.AltControlWindows:
-                    text = $"{VirtualKeyModifiers.Control} + {VirtualKeyModifiers.Menu} + {VirtualKeyModifiers.Windows}";
+                    text = $"{VirtualKeyModifiersToString(VirtualKeyModifiers.Control)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Menu)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Windows)}";
                     break;
                 case Modifiers.ShiftWindows:
-                    text = $"{VirtualKeyModifiers.Shift} + {VirtualKeyModifiers.Windows}";
+                    text = $"{VirtualKeyModifiersToString(VirtualKeyModifiers.Shift)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Windows)}";
                     break;
                 case Modifiers.AltShiftWindows:
-                    text = $"{VirtualKeyModifiers.Menu} + {VirtualKeyModifiers.Shift} + {VirtualKeyModifiers.Windows}";
+                    text = $"{VirtualKeyModifiersToString(VirtualKeyModifiers.Menu)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Shift)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Windows)}";
                     break;
                 case Modifiers.ControlShiftWindows:
-                    text = $"{VirtualKeyModifiers.Control} + {VirtualKeyModifiers.Shift} + {VirtualKeyModifiers.Windows}";
+                    text = $"{VirtualKeyModifiersToString(VirtualKeyModifiers.Control)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Shift)} + {VirtualKeyModifiersToString(VirtualKeyModifiers.Windows)}";
                     break;
             }
 
             if (Key != VirtualKey.None)
-                text += $" + {Key}";
+                text += $" + {VirtualKeyToString(Key)}";
 
             return text;
         }

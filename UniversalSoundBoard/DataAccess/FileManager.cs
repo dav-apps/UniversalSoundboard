@@ -3136,6 +3136,80 @@ namespace UniversalSoundboard.DataAccess
             return hotkey;
         }
 
+        public static string VirtualKeyModifiersToString(VirtualKeyModifiers modifiers)
+        {
+            switch (modifiers)
+            {
+                case VirtualKeyModifiers.Control:
+                    return loader.GetString("Keys-Control");
+                case VirtualKeyModifiers.Menu:
+                    return "Alt";
+                case VirtualKeyModifiers.Shift:
+                    return "Shift";
+                case VirtualKeyModifiers.Windows:
+                    return "Windows";
+                default:
+                    return "";
+            }
+        }
+
+        public static string VirtualKeyToString(VirtualKey key)
+        {
+            switch (key)
+            {
+                case VirtualKey.Number0:
+                    return "0";
+                case VirtualKey.Number1:
+                    return "1";
+                case VirtualKey.Number2:
+                    return "2";
+                case VirtualKey.Number3:
+                    return "3";
+                case VirtualKey.Number4:
+                    return "4";
+                case VirtualKey.Number5:
+                    return "5";
+                case VirtualKey.Number6:
+                    return "6";
+                case VirtualKey.Number7:
+                    return "7";
+                case VirtualKey.Number8:
+                    return "8";
+                case VirtualKey.Number9:
+                    return "9";
+                case VirtualKey.Divide:
+                    return loader.GetString("Keys-Divide");
+                case VirtualKey.Multiply:
+                    return loader.GetString("Keys-Multiply");
+                case VirtualKey.Add:
+                    return loader.GetString("Keys-Add");
+                case VirtualKey.Subtract:
+                    return loader.GetString("Keys-Subtract");
+                case VirtualKey.Delete:
+                    return loader.GetString("Keys-Delete");
+                case VirtualKey.Insert:
+                    return loader.GetString("Keys-Insert");
+                case VirtualKey.End:
+                    return loader.GetString("Keys-End");
+                case VirtualKey.Home:
+                    return loader.GetString("Keys-Home");
+                case VirtualKey.PageUp:
+                    return loader.GetString("Keys-PageUp");
+                case VirtualKey.PageDown:
+                    return loader.GetString("Keys-PageDown");
+                case VirtualKey.Left:
+                    return loader.GetString("Keys-Left");
+                case VirtualKey.Right:
+                    return loader.GetString("Keys-Right");
+                case VirtualKey.Up:
+                    return loader.GetString("Keys-Up");
+                case VirtualKey.Down:
+                    return loader.GetString("Keys-Down");
+                default:
+                    return key.ToString();
+            }
+        }
+
         public static Guid? ConvertStringToGuid(string uuidString)
         {
             if (!Guid.TryParse(uuidString, out Guid uuid)) return null;

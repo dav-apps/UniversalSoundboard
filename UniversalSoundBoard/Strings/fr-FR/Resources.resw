@@ -701,4 +701,49 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="PropertiesContentDialog-HotkeyFlyoutRemoveButton.Content" xml:space="preserve">
     <value>Supprimer</value>
   </data>
+  <data name="Keys-Control" xml:space="preserve">
+    <value>Ctrl</value>
+  </data>
+  <data name="Keys-Add" xml:space="preserve">
+    <value>Additionner</value>
+  </data>
+  <data name="Keys-Delete" xml:space="preserve">
+    <value>Suppr</value>
+  </data>
+  <data name="Keys-Divide" xml:space="preserve">
+    <value>Divider</value>
+  </data>
+  <data name="Keys-Down" xml:space="preserve">
+    <value>Bas</value>
+  </data>
+  <data name="Keys-End" xml:space="preserve">
+    <value>Fin</value>
+  </data>
+  <data name="Keys-Home" xml:space="preserve">
+    <value>Début</value>
+  </data>
+  <data name="Keys-Insert" xml:space="preserve">
+    <value>Inser</value>
+  </data>
+  <data name="Keys-Left" xml:space="preserve">
+    <value>Gauche</value>
+  </data>
+  <data name="Keys-Multiply" xml:space="preserve">
+    <value>Multiplier</value>
+  </data>
+  <data name="Keys-PageDown" xml:space="preserve">
+    <value>Page bas</value>
+  </data>
+  <data name="Keys-PageUp" xml:space="preserve">
+    <value>Page haut</value>
+  </data>
+  <data name="Keys-Right" xml:space="preserve">
+    <value>Droite</value>
+  </data>
+  <data name="Keys-Subtract" xml:space="preserve">
+    <value>Soustraire</value>
+  </data>
+  <data name="Keys-Up" xml:space="preserve">
+    <value>Haut</value>
+  </data>
 </root>

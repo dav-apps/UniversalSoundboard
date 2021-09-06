@@ -700,4 +700,49 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PropertiesContentDialog-HotkeyFlyoutRemoveButton.Content" xml:space="preserve">
     <value>Entfernen</value>
   </data>
+  <data name="Keys-Control" xml:space="preserve">
+    <value>Strg</value>
+  </data>
+  <data name="Keys-Add" xml:space="preserve">
+    <value>Addieren</value>
+  </data>
+  <data name="Keys-Delete" xml:space="preserve">
+    <value>Entf</value>
+  </data>
+  <data name="Keys-Divide" xml:space="preserve">
+    <value>Division</value>
+  </data>
+  <data name="Keys-Down" xml:space="preserve">
+    <value>Runter</value>
+  </data>
+  <data name="Keys-End" xml:space="preserve">
+    <value>Ende</value>
+  </data>
+  <data name="Keys-Home" xml:space="preserve">
+    <value>Pos1</value>
+  </data>
+  <data name="Keys-Insert" xml:space="preserve">
+    <value>Einfg</value>
+  </data>
+  <data name="Keys-Left" xml:space="preserve">
+    <value>Links</value>
+  </data>
+  <data name="Keys-Multiply" xml:space="preserve">
+    <value>Multiplizieren</value>
+  </data>
+  <data name="Keys-PageDown" xml:space="preserve">
+    <value>Bild runter</value>
+  </data>
+  <data name="Keys-PageUp" xml:space="preserve">
+    <value>Bild hoch</value>
+  </data>
+  <data name="Keys-Right" xml:space="preserve">
+    <value>Rechts</value>
+  </data>
+  <data name="Keys-Subtract" xml:space="preserve">
+    <value>Subtrahieren</value>
+  </data>
+  <data name="Keys-Up" xml:space="preserve">
+    <value>Hoch</value>
+  </data>
 </root>
