@@ -53,7 +53,7 @@ namespace UniversalSoundboard.Common
         public static StorageFolder ExportSoundsFolder;
         public static ListView CategoriesListView;
         public static WinUI.TreeView CategoriesTreeView;
-        public static ObservableCollection<HotkeyItem> PropertiesDialogHotkeys = new ObservableCollection<HotkeyItem>();
+        public static List<ObservableCollection<HotkeyItem>> PropertiesDialogHotkeys = new List<ObservableCollection<HotkeyItem>>();
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -1185,13 +1185,13 @@ namespace UniversalSoundboard.Common
                 HotkeyItem addHotkeyItem = new HotkeyItem();
                 addHotkeyItem.HotkeyAdded += AddHotkeyItem_HotkeyAdded;
 
-                PropertiesDialogHotkeys.Clear();
-                PropertiesDialogHotkeys.Add(addHotkeyItem);
+                PropertiesDialogHotkeys.Add(new ObservableCollection<HotkeyItem>());
+                PropertiesDialogHotkeys.Last().Add(addHotkeyItem);
 
                 WinUI.ItemsRepeater hotkeyItemsRepeater = new WinUI.ItemsRepeater
                 {
                     ItemTemplate = MainPage.hotkeyButtonTemplate,
-                    ItemsSource = PropertiesDialogHotkeys,
+                    ItemsSource = PropertiesDialogHotkeys.Last(),
                     Layout = new WrapLayout { HorizontalSpacing = 5, VerticalSpacing = 5 },
                     Width = rightColumnWidth
                 };
@@ -1206,7 +1206,7 @@ namespace UniversalSoundboard.Common
 
                     HotkeyItem hotkeyItem = new HotkeyItem(hotkey);
                     hotkeyItem.RemoveHotkey += HotkeyItem_RemoveHotkey;
-                    PropertiesDialogHotkeys.Add(hotkeyItem);
+                    PropertiesDialogHotkeys.Last().Add(hotkeyItem);
                 }
 
                 hotkeysDataStackPanel.Children.Add(hotkeyItemsScrollViewer);
@@ -1236,7 +1236,7 @@ namespace UniversalSoundboard.Common
         {
             // Add the new hotkey to the sound and list of hotkeys
             selectedPropertiesSound.Hotkeys.Add(e.Hotkey);
-            PropertiesDialogHotkeys.Add(new HotkeyItem(e.Hotkey));
+            PropertiesDialogHotkeys.Last().Add(new HotkeyItem(e.Hotkey));
 
             // Save the hotkeys of the sound
             await FileManager.SetHotkeysOfSoundAsync(selectedPropertiesSound.Uuid, selectedPropertiesSound.Hotkeys);
@@ -1251,7 +1251,7 @@ namespace UniversalSoundboard.Common
             int index = selectedPropertiesSound.Hotkeys.FindIndex(h => h.Modifiers == e.Hotkey.Modifiers && h.Key == e.Hotkey.Key);
             if (index != -1) selectedPropertiesSound.Hotkeys.RemoveAt(index);
 
-            PropertiesDialogHotkeys.Remove((HotkeyItem)sender);
+            PropertiesDialogHotkeys.Last().Remove((HotkeyItem)sender);
 
             // Save the hotkeys of the sound
             await FileManager.SetHotkeysOfSoundAsync(selectedPropertiesSound.Uuid, selectedPropertiesSound.Hotkeys);
