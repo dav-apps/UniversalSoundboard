@@ -35,6 +35,13 @@ namespace UniversalSoundboard.Components
             HotkeyItem = DataContext as HotkeyItem;
         }
 
+        private void AddHotkeyButtonFlyout_Closed(object sender, object e)
+        {
+            // Clear the selected hotkey
+            PropertiesDialogCurrentlyPressedKeys.Clear();
+            AddHotkeyButtonFlyoutText.Text = loader.GetString("PropertiesContentDialog-HotkeyFlyoutText");
+        }
+
         private void AddHotkeyButtonFlyoutStackPanel_KeyDown(object sender, KeyRoutedEventArgs e)
         {
             if (PropertiesDialogCurrentlyPressedKeys.IndexOf(e.Key) == -1)

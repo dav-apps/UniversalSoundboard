@@ -29,7 +29,7 @@
             Visibility="{x:Bind HotkeyItem.AddItem, Converter={StaticResource BooleanToVisibilityConverter}}">
 
             <Button.Flyout>
-                <Flyout x:Name="AddHotkeyButtonFlyout">
+                <Flyout x:Name="AddHotkeyButtonFlyout" Closed="AddHotkeyButtonFlyout_Closed">
                     <StackPanel
                         Name="AddHotkeyButtonFlyoutStackPanel"
                         MinWidth="200"
