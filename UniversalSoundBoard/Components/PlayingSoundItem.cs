@@ -137,6 +137,9 @@ namespace UniversalSoundboard.Components
                 if(PlayingSound.StartPlaying)
                     StopAllOtherPlayingSounds();
 
+                // Set the initial playback speed
+                PlayingSound.MediaPlayer.PlaybackSession.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
+
                 if (Dav.IsLoggedIn)
                 {
                     // Add each sound file that is not downloaded to the download queue
@@ -307,6 +310,7 @@ namespace UniversalSoundboard.Components
                     else
                     {
                         PlayingSound.MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
+                        PlayingSound.MediaPlayer.PlaybackSession.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
                         PlayingSound.MediaPlayer.Play();
                         SetPlayPause(true);
                     }
@@ -422,6 +426,8 @@ namespace UniversalSoundboard.Components
             bool wasPlaying = PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing;
             PlayingSound.MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
             PlayingSound.MediaPlayer.Source = newSource;
+            PlayingSound.MediaPlayer.PlaybackSession.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
+
             if (wasPlaying || startPlaying)
             {
                 PlayingSound.MediaPlayer.Play();
@@ -861,6 +867,17 @@ namespace UniversalSoundboard.Components
 
             // Save the new repetitions
             await FileManager.SetRepetitionsOfPlayingSoundAsync(PlayingSound.Uuid, repetitions);
+        }
+
+        public async void SetPlaybackSpeed(int playbackSpeed)
+        {
+            if (playbackSpeed < 50 || playbackSpeed > 200) return;
+
+            PlayingSound.PlaybackSpeed = playbackSpeed;
+            PlayingSound.MediaPlayer.PlaybackSession.PlaybackRate = (double)playbackSpeed / 100;
+
+            // Save the new playback speed
+            await FileManager.SetPlaybackSpeedOfPlayingSoundAsync(PlayingSound.Uuid, playbackSpeed);
         }
 
         public async Task ToggleFavourite()
