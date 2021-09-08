@@ -114,6 +114,7 @@ namespace UniversalSoundboard.DataAccess
         public const string PlayingSoundTableVolume2PropertyName = "volume2";
         public const string PlayingSoundTableMutedPropertyName = "muted";
         public const string PlayingSoundTableOutputDevicePropertyName = "output_device";
+        public const string PlayingSoundTablePlaybackSpeedPropertyName = "playback_speed";
 
         public const string OrderTableTypePropertyName = "type";
         public const string OrderTableCategoryPropertyName = "category";
@@ -2115,12 +2116,12 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task SetCurrentOfPlayingSoundAsync(Guid uuid, int current)
         {
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, current, null, null, null, null, null);
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, current, null, null, null, null, null, null);
         }
 
         public static async Task SetRepetitionsOfPlayingSoundAsync(Guid uuid, int repetitions)
         {
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, repetitions, null, null, null, null);
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, repetitions, null, null, null, null, null);
         }
 
         public static async Task SetSoundsListOfPlayingSoundAsync(Guid uuid, List<Sound> sounds)
@@ -2129,27 +2130,37 @@ namespace UniversalSoundboard.DataAccess
             foreach (Sound sound in sounds)
                 soundUuids.Add(sound.Uuid);
 
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, soundUuids, null, null, null, null, null, null);
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, soundUuids, null, null, null, null, null, null, null);
         }
 
         public static async Task SetVolumeOfPlayingSoundAsync(Guid uuid, int volume)
         {
-            if (volume >= 100)
+            if (volume > 100)
                 volume = 100;
-            else if (volume <= 0)
+            else if (volume < 0)
                 volume = 0;
 
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, volume, null, null);
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, volume, null, null, null);
         }
 
         public static async Task SetMutedOfPlayingSoundAsync(Guid uuid, bool muted)
         {
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, null, muted, null);
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, null, muted, null, null);
         }
 
         public static async Task SetOutputDeviceOfPlayingSoundAsync(Guid uuid, string outputDevice)
         {
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, null, null, outputDevice);
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, null, null, outputDevice, null);
+        }
+
+        public static async Task SetPlaybackSpeedOfPlayingSoundAsync(Guid uuid, int playbackSpeed)
+        {
+            if (playbackSpeed >= 200)
+                playbackSpeed = 200;
+            else if (playbackSpeed < 50)
+                playbackSpeed = 50;
+
+            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, null, null, null, playbackSpeed);
         }
 
         public static async Task DeletePlayingSoundAsync(Guid uuid)
@@ -2195,17 +2206,17 @@ namespace UniversalSoundboard.DataAccess
             // Get the properties of the table object
             int current = 0;
             string currentString = tableObject.GetPropertyValue(PlayingSoundTableCurrentPropertyName);
-            if(!string.IsNullOrEmpty(currentString))
+            if (!string.IsNullOrEmpty(currentString))
                 int.TryParse(currentString, out current);
 
             int repetitions = 1;
             string repetitionsString = tableObject.GetPropertyValue(PlayingSoundTableRepetitionsPropertyName);
-            if(!string.IsNullOrEmpty(repetitionsString))
+            if (!string.IsNullOrEmpty(repetitionsString))
                 int.TryParse(repetitionsString, out repetitions);
 
             bool randomly = false;
             string randomlyString = tableObject.GetPropertyValue(PlayingSoundTableRandomlyPropertyName);
-            if(!string.IsNullOrEmpty(randomlyString))
+            if (!string.IsNullOrEmpty(randomlyString))
                 bool.TryParse(randomlyString, out randomly);
 
             // Backwards compatibility for volume saved as double
@@ -2215,11 +2226,11 @@ namespace UniversalSoundboard.DataAccess
             double volume = 100;
 
             // Use volume2 if it exists, otherwise use volume
-            if(!string.IsNullOrEmpty(volume2String))
+            if (!string.IsNullOrEmpty(volume2String))
             {
                 double.TryParse(volume2String, out volume);
             }
-            else if(!string.IsNullOrEmpty(volumeString))
+            else if (!string.IsNullOrEmpty(volumeString))
             {
                 double.TryParse(volumeString, out volume);
                 volume *= 100;
@@ -2227,10 +2238,15 @@ namespace UniversalSoundboard.DataAccess
 
             bool muted = false;
             string mutedString = tableObject.GetPropertyValue(PlayingSoundTableMutedPropertyName);
-            if(!string.IsNullOrEmpty(mutedString))
+            if (!string.IsNullOrEmpty(mutedString))
                 bool.TryParse(mutedString, out muted);
 
             string outputDevice = tableObject.GetPropertyValue(PlayingSoundTableOutputDevicePropertyName);
+
+            int playbackSpeed = 100;
+            string playbackSpeedString = tableObject.GetPropertyValue(PlayingSoundTablePlaybackSpeedPropertyName);
+            if (!string.IsNullOrEmpty(playbackSpeedString))
+                int.TryParse(playbackSpeedString, out playbackSpeed);
 
             // Create the media player
             var createMediaPlayerResult = CreateMediaPlayer(sounds, current);
@@ -2242,7 +2258,7 @@ namespace UniversalSoundboard.DataAccess
                 player.Volume = (double)itemViewHolder.Volume / 100 * (volume / 100);
                 player.IsMuted = itemViewHolder.Muted || muted;
 
-                return new PlayingSound(tableObject.Uuid, player, newSounds, current, repetitions, randomly, Convert.ToInt32(volume), muted, outputDevice);
+                return new PlayingSound(tableObject.Uuid, player, newSounds, current, repetitions, randomly, Convert.ToInt32(volume), muted, outputDevice, playbackSpeed);
             }
             else
             {

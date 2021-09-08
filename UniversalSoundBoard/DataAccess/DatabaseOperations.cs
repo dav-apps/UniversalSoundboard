@@ -215,7 +215,7 @@ namespace UniversalSoundboard.DataAccess
             return tableObject;
         }
 
-        public static async Task UpdatePlayingSoundAsync(Guid uuid, List<Guid> soundUuids, int? current, int? repetitions, bool? randomly, int? volume, bool? muted, string outputDevice)
+        public static async Task UpdatePlayingSoundAsync(Guid uuid, List<Guid> soundUuids, int? current, int? repetitions, bool? randomly, int? volume, bool? muted, string outputDevice, int? playbackSpeed)
         {
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (playingSoundTableObject == null || playingSoundTableObject.TableId != FileManager.PlayingSoundTableId) return;
@@ -234,6 +234,8 @@ namespace UniversalSoundboard.DataAccess
                 await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableMutedPropertyName, muted.Value.ToString());
             if (outputDevice != null)
                 await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableOutputDevicePropertyName, outputDevice);
+            if (playbackSpeed.HasValue)
+                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTablePlaybackSpeedPropertyName, playbackSpeed.Value.ToString());
         }
         #endregion
 
