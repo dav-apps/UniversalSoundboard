@@ -747,4 +747,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Keys-Up" xml:space="preserve">
     <value>Up</value>
   </data>
+  <data name="PlaybackSpeed" xml:space="preserve">
+    <value>Playback speed</value>
+  </data>
 </root>

@@ -40,7 +40,9 @@ namespace UniversalSoundboard.Components
         private bool skipProgressSliderValueChanged = false;
         private bool inBottomPlayingSoundsBar = false;
         private bool playingSoundItemVisible = false;
+
         private const string MoreButtonOutputDeviceFlyoutSubItemName = "MoreButtonOutputDeviceFlyoutSubItem";
+        private const string MoreButtonPlaybackSpeedFlyoutSubItemName = "MoreButtonPlaybackSpeedFlyoutSubItemName";
 
         public PlayingSoundItemTemplate()
         {
@@ -400,6 +402,7 @@ namespace UniversalSoundboard.Components
 
         private async void MenuFlyout_Opening(object sender, object e)
         {
+            // First insert the items
             int index = MoreButtonMenuFlyout.Items.ToList().FindIndex(item => item.Name == MoreButtonOutputDeviceFlyoutSubItemName);
             if (index != -1) MoreButtonMenuFlyout.Items.RemoveAt(index);
 
@@ -416,6 +419,23 @@ namespace UniversalSoundboard.Components
 
             MoreButtonMenuFlyout.Items.Insert(1, outputDeviceFlyoutItem);
 
+            index = MoreButtonMenuFlyout.Items.ToList().FindIndex(item => item.Name == MoreButtonPlaybackSpeedFlyoutSubItemName);
+            if (index != -1) MoreButtonMenuFlyout.Items.RemoveAt(index);
+
+            MenuFlyoutSubItem playbackSpeedFlyoutItem = new MenuFlyoutSubItem
+            {
+                Name = MoreButtonPlaybackSpeedFlyoutSubItemName,
+                Text = loader.GetString("PlaybackSpeed"),
+                Icon = new FontIcon
+                {
+                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    Glyph = "\uEC58"
+                }
+            };
+
+            MoreButtonMenuFlyout.Items.Insert(3, playbackSpeedFlyoutItem);
+
+            #region OutputDevice
             // Update the list of possible output devices
             DeviceInformationCollection devices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
             string selectedOutputDevice = PlayingSoundItem.PlayingSound.OutputDevice;
@@ -442,6 +462,39 @@ namespace UniversalSoundboard.Components
                 if (deviceItem.IsChecked)
                     standardItem.IsChecked = false;
             }
+            #endregion
+
+            #region Playback speed
+            double playbackSpeed = 1;
+
+            ToggleMenuFlyoutItem playbackSpeedItem_0_5 = new ToggleMenuFlyoutItem { Text = "0.5x", IsChecked = playbackSpeed == 0.5 };
+            playbackSpeedItem_0_5.Click += MoreButton_PlaybackSpeed_0_5x_Click;
+            playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_0_5);
+
+            ToggleMenuFlyoutItem playbackSpeedItem_0_75 = new ToggleMenuFlyoutItem { Text = "0.75x", IsChecked = playbackSpeed == 0.75 };
+            playbackSpeedItem_0_75.Click += MoreButton_PlaybackSpeed_0_75x_Click;
+            playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_0_75);
+
+            ToggleMenuFlyoutItem playbackSpeedItem_1_0 = new ToggleMenuFlyoutItem { Text = "1.0x", IsChecked = playbackSpeed == 1 };
+            playbackSpeedItem_1_0.Click += MoreButton_PlaybackSpeed_1_0x_Click;
+            playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_1_0);
+
+            ToggleMenuFlyoutItem playbackSpeedItem_1_25 = new ToggleMenuFlyoutItem { Text = "1.25x", IsChecked = playbackSpeed == 1.25 };
+            playbackSpeedItem_1_25.Click += MoreButton_PlaybackSpeed_1_25x_Click;
+            playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_1_25);
+            
+            ToggleMenuFlyoutItem playbackSpeedItem_1_5 = new ToggleMenuFlyoutItem { Text = "1.5x", IsChecked = playbackSpeed == 1.5 };
+            playbackSpeedItem_1_5.Click += MoreButton_PlaybackSpeed_1_5x_Click;
+            playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_1_5);
+
+            ToggleMenuFlyoutItem playbackSpeedItem_1_75 = new ToggleMenuFlyoutItem { Text = "1.75x", IsChecked = playbackSpeed == 1.75 };
+            playbackSpeedItem_1_75.Click += MoreButton_PlaybackSpeed_1_75x_Click;
+            playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_1_75);
+
+            ToggleMenuFlyoutItem playbackSpeedItem_2_0 = new ToggleMenuFlyoutItem { Text = "2.0x", IsChecked = playbackSpeed == 2 };
+            playbackSpeedItem_2_0.Click += MoreButton_PlaybackSpeed_2_0x_Click;
+            playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_2_0);
+            #endregion
         }
 
         private void MenuFlyout_Opened(object sender, object e)
@@ -482,6 +535,41 @@ namespace UniversalSoundboard.Components
         private async void MoreButton_Repeat_endless_Click(object sender, RoutedEventArgs e)
         {
             await PlayingSoundItem.SetRepetitions(int.MaxValue);
+        }
+
+        private void MoreButton_PlaybackSpeed_0_5x_Click(object sender, RoutedEventArgs e)
+        {
+            PlayingSoundItem.SetPlaybackSpeed(0.5);
+        }
+
+        private void MoreButton_PlaybackSpeed_0_75x_Click(object sender, RoutedEventArgs e)
+        {
+            PlayingSoundItem.SetPlaybackSpeed(0.75);
+        }
+
+        private void MoreButton_PlaybackSpeed_1_0x_Click(object sender, RoutedEventArgs e)
+        {
+            PlayingSoundItem.SetPlaybackSpeed(1);
+        }
+
+        private void MoreButton_PlaybackSpeed_1_25x_Click(object sender, RoutedEventArgs e)
+        {
+            PlayingSoundItem.SetPlaybackSpeed(1.25);
+        }
+
+        private void MoreButton_PlaybackSpeed_1_5x_Click(object sender, RoutedEventArgs e)
+        {
+            PlayingSoundItem.SetPlaybackSpeed(1.5);
+        }
+
+        private void MoreButton_PlaybackSpeed_1_75x_Click(object sender, RoutedEventArgs e)
+        {
+            PlayingSoundItem.SetPlaybackSpeed(1.75);
+        }
+
+        private void MoreButton_PlaybackSpeed_2_0x_Click(object sender, RoutedEventArgs e)
+        {
+            PlayingSoundItem.SetPlaybackSpeed(2.0);
         }
 
         private async void MoreButton_OpenSoundSeparatelyFlyoutItem_Click(object sender, RoutedEventArgs e)

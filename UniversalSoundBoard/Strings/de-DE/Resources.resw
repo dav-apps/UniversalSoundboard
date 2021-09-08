@@ -745,4 +745,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Keys-Up" xml:space="preserve">
     <value>Hoch</value>
   </data>
+  <data name="PlaybackSpeed" xml:space="preserve">
+    <value>Wiedergabegeschwindigkeit</value>
+  </data>
 </root>

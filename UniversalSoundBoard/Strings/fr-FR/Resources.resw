@@ -746,4 +746,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="Keys-Up" xml:space="preserve">
     <value>Haut</value>
   </data>
+  <data name="PlaybackSpeed" xml:space="preserve">
+    <value>Vitesse de lecture</value>
+  </data>
 </root>
