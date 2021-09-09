@@ -742,7 +742,7 @@ namespace UniversalSoundboard.Components
             SetRepeatFlyoutItemText(PlayingSound.Repetitions);
 
             // Show or hide the OpenSoundSeparately flyout item
-            MoreButtonOpenSoundSeparatelyFlyoutItem.Visibility = PlayingSound.Sounds.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
+            MoreButtonOpenSoundSeparatelyFlyoutItem.Visibility = (FileManager.itemViewHolder.OpenMultipleSounds && PlayingSound.Sounds.Count > 1) ? Visibility.Visible : Visibility.Collapsed;
 
             // Set the name of the current sound and set the favourite flyout item
             var currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
