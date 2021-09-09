@@ -346,10 +346,7 @@ namespace UniversalSoundboard.Pages
                 // Set the max width of the sounds list and playing sounds list columns
                 PlayingSoundsBarColDef.MaxWidth = ContentRoot.ActualWidth / 2;
                 
-                if (
-                    (FileManager.itemViewHolder.PlayingSoundsListVisible && !FileManager.itemViewHolder.OpenMultipleSounds)
-                    || Window.Current.Bounds.Width < FileManager.mobileMaxWidth
-                )
+                if (!FileManager.itemViewHolder.OpenMultipleSounds || Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
                 {
                     // Hide the PlayingSoundsBar and the GridSplitter
                     PlayingSoundsBarColDef.Width = new GridLength(0);
@@ -357,12 +354,12 @@ namespace UniversalSoundboard.Pages
                     GridSplitterColDef.Width = new GridLength(0);
 
                     // Update the visibility of the BottomPlayingSoundsBar
-                    if(reversedPlayingSounds.Count == 0)
+                    if (reversedPlayingSounds.Count == 0)
                     {
                         BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                         GridSplitterGrid.Visibility = Visibility.Collapsed;
                     }
-                    else if(reversedPlayingSounds.Count == 1)
+                    else if (reversedPlayingSounds.Count == 1)
                     {
                         BottomPlayingSoundsBar.Visibility = Visibility.Visible;
                         GridSplitterGrid.Visibility = Visibility.Visible;
@@ -661,9 +658,9 @@ namespace UniversalSoundboard.Pages
         {
             ListViewItem item = BottomPlayingSoundsBarListView.ContainerFromIndex(index) as ListViewItem;
 
-            if(item == null)
+            if(item == null || !item.IsLoaded || item.ActualHeight == 0)
             {
-                if(getContainerHeightCount > 15)
+                if (getContainerHeightCount > 20)
                 {
                     getContainerHeightCount = 0;
 
@@ -675,11 +672,12 @@ namespace UniversalSoundboard.Pages
                     getContainerHeightCount++;
 
                     // Call this methods again after some time
-                    await Task.Delay(15);
+                    await Task.Delay(20);
                     return await GetPlayingSoundItemContainerHeight(index);
                 }
             }
 
+            getContainerHeightCount = 0;
             return item.ActualHeight;
         }
 
