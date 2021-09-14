@@ -437,7 +437,7 @@ namespace UniversalSoundboard.Pages
             FileManager.UpdateCustomSoundOrder(currentCategoryUuid, showFavourites, uuids);
         }
 
-        public static async Task PlaySoundAsync(Sound sound, bool startPlaying = true, int? volume = null, bool? muted = null, TimeSpan? position = null)
+        public static async Task PlaySoundAsync(Sound sound, bool startPlaying = true, int? volume = null, bool? muted = null, int? playbackSpeed = null, TimeSpan? position = null)
         {
             List<Sound> soundList = new List<Sound> { sound };
 
@@ -449,16 +449,19 @@ namespace UniversalSoundboard.Pages
 
             int v = volume.HasValue ? volume.Value : sound.DefaultVolume;
             bool m = muted.HasValue ? muted.Value : sound.DefaultMuted;
+            int ps = playbackSpeed.HasValue ? playbackSpeed.Value : 100;
 
             double appVolume = ((double)FileManager.itemViewHolder.Volume) / 100;
             player.Volume = appVolume * ((double)v / 100);
             player.IsMuted = m;
+            player.PlaybackSession.PlaybackRate = (double)ps / 100;
 
             PlayingSound playingSound = new PlayingSound(player, sound)
             {
                 Uuid = await FileManager.CreatePlayingSoundAsync(null, newSounds, 0, 0, false, v, m),
                 Volume = v,
                 Muted = m,
+                PlaybackSpeed = ps,
                 StartPlaying = startPlaying
             };
 
