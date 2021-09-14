@@ -197,9 +197,17 @@ namespace UniversalSoundboard.Components
             RepetitionsChanged?.Invoke(this, new RepetitionsChangedEventArgs(PlayingSound.Repetitions));
             UpdateFavouriteFlyoutItem();
             UpdateVolumeControl();
-            SetPlayPause(PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing || (PlayingSound.StartPlaying && !oldInitialized));
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(soundsListVisible));
             PositionChanged?.Invoke(this, new PositionChangedEventArgs(PlayingSound.MediaPlayer.PlaybackSession.Position));
+
+            if (!oldInitialized)
+                SetPlayPause(PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing || PlayingSound.StartPlaying);
+
+            // Update the Play/Pause UI, without setting the PlaybackState of the MediaPlayer
+            PlaybackStateChanged?.Invoke(
+                this,
+                new PlaybackStateChangedEventArgs(PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing || PlayingSound.StartPlaying)
+            );
         }
 
         #region ItemViewHolder event handlers
