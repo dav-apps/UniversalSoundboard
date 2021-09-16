@@ -752,4 +752,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="PlaybackSpeedButtonToolTip" xml:space="preserve">
     <value>Ce son est joué à {0} fois la vitesse normale.</value>
   </data>
+  <data name="PropertiesContentDialog-PlaybackSpeed" xml:space="preserve">
+    <value>Vitesse de lecture par défaut :</value>
+  </data>
 </root>

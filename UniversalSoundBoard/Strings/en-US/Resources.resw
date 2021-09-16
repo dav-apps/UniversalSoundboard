@@ -753,4 +753,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PlaybackSpeedButtonToolTip" xml:space="preserve">
     <value>This sound is played at {0} times the normal speed.</value>
   </data>
+  <data name="PropertiesContentDialog-PlaybackSpeed" xml:space="preserve">
+    <value>Default playback speed:</value>
+  </data>
 </root>

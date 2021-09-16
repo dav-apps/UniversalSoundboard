@@ -952,7 +952,7 @@ namespace UniversalSoundboard.Common
             int fontSize = 15;
             int row = 0;
             int contentGridWidth = 500;
-            int leftColumnWidth = 160;
+            int leftColumnWidth = 210;
             int rightColumnWidth = contentGridWidth - leftColumnWidth;
 
             Grid contentGrid = new Grid { Width = contentGridWidth };
@@ -1155,6 +1155,43 @@ namespace UniversalSoundboard.Common
             row++;
             contentGrid.Children.Add(volumeHeaderStackPanel);
             contentGrid.Children.Add(volumeDataStackPanel);
+            #endregion
+
+            #region Playback speed
+            // Add the row
+            var playbackSpeedRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+            contentGrid.RowDefinitions.Add(playbackSpeedRow);
+
+            StackPanel playbackSpeedHeaderStackPanel = GenerateTableCell(
+                row,
+                0,
+                loader.GetString("PropertiesContentDialog-PlaybackSpeed"),
+                fontSize,
+                false,
+                new Thickness(0, 16, 0, 0)
+            );
+
+            RelativePanel playbackSpeedDataRelativePanel = new RelativePanel { Margin = new Thickness(0, 10, 0, 0) };
+            Grid.SetRow(playbackSpeedDataRelativePanel, row);
+            Grid.SetColumn(playbackSpeedDataRelativePanel, 1);
+
+            ComboBox playbackSpeedComboBox = new ComboBox();
+            playbackSpeedComboBox.Items.Add("0.25x");
+            playbackSpeedComboBox.Items.Add("0.5x");
+            playbackSpeedComboBox.Items.Add("0.75x");
+            playbackSpeedComboBox.Items.Add("1.0x");
+            playbackSpeedComboBox.Items.Add("1.25x");
+            playbackSpeedComboBox.Items.Add("1.5x");
+            playbackSpeedComboBox.Items.Add("1.75x");
+            playbackSpeedComboBox.Items.Add("2.0x");
+            playbackSpeedComboBox.SelectedIndex = 3;
+
+            RelativePanel.SetAlignVerticalCenterWithPanel(playbackSpeedComboBox, true);
+            playbackSpeedDataRelativePanel.Children.Add(playbackSpeedComboBox);
+
+            row++;
+            contentGrid.Children.Add(playbackSpeedHeaderStackPanel);
+            contentGrid.Children.Add(playbackSpeedDataRelativePanel);
             #endregion
 
             #region Hotkeys

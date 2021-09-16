@@ -751,4 +751,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PlaybackSpeedButtonToolTip" xml:space="preserve">
     <value>Dieser Sound wird mit {0}-facher Geschwindigkeit abgespielt.</value>
   </data>
+  <data name="PropertiesContentDialog-PlaybackSpeed" xml:space="preserve">
+    <value>Standard-Wiedergabegeschwindigkeit:</value>
+  </data>
 </root>
