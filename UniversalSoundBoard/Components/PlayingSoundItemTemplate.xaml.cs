@@ -585,7 +585,7 @@ namespace UniversalSoundboard.Components
                 PlayingSound.Volume,
                 PlayingSound.Muted,
                 PlayingSound.PlaybackSpeed,
-                PlayingSound.MediaPlayer.PlaybackSession.Position
+                PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing ? PlayingSound.MediaPlayer.PlaybackSession.Position : TimeSpan.Zero
             );
 
             // Pause this PlayingSound

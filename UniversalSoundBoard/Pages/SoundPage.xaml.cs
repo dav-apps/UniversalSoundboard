@@ -462,7 +462,8 @@ namespace UniversalSoundboard.Pages
                 Volume = v,
                 Muted = m,
                 PlaybackSpeed = ps,
-                StartPlaying = startPlaying
+                StartPlaying = startPlaying,
+                StartPosition = position
             };
 
             if (FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSoundItems.Count == 0)

@@ -18,6 +18,7 @@ namespace UniversalSoundboard.Models
         public string OutputDevice { get; set; }
         public int PlaybackSpeed { get; set; }
         public bool StartPlaying { get; set; }
+        public TimeSpan? StartPosition { get; set; }
 
         public PlayingSound()
         {

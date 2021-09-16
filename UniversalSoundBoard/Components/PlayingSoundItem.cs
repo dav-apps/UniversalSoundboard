@@ -116,6 +116,16 @@ namespace UniversalSoundboard.Components
 
                     if (mediaSource.IsOpen)
                     {
+                        if (PlayingSound.StartPosition.HasValue)
+                        {
+                            PlayingSound.MediaPlayer.PlaybackSession.Position = PlayingSound.StartPosition.Value;
+                            PlayingSound.StartPosition = null;
+                        }
+                        else
+                        {
+                            PlayingSound.MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
+                        }
+
                         // Set the total duration and call the DurationChanged event
                         TimeSpan duration = TimeSpan.FromMinutes(1);
 
@@ -336,7 +346,15 @@ namespace UniversalSoundboard.Components
 
         private async void PlayingSoundItem_OpenOperationCompleted(MediaSource sender, MediaSourceOpenOperationCompletedEventArgs args)
         {
-            PlayingSound.MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
+            if (PlayingSound.StartPosition.HasValue)
+            {
+                PlayingSound.MediaPlayer.PlaybackSession.Position = PlayingSound.StartPosition.Value;
+                PlayingSound.StartPosition = null;
+            }
+            else
+            {
+                PlayingSound.MediaPlayer.PlaybackSession.Position = TimeSpan.Zero;
+            }
 
             await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
@@ -836,7 +854,7 @@ namespace UniversalSoundboard.Components
         public void SetPosition(int position)
         {
             if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
-            if (position > currentSoundTotalDuration.TotalSeconds - 1) return;
+            if (position >= currentSoundTotalDuration.TotalSeconds) return;
 
             PlayingSound.MediaPlayer.PlaybackSession.Position = new TimeSpan(0, 0, position);
         }
