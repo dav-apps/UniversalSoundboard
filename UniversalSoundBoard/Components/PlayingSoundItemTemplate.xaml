@@ -583,6 +583,7 @@
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
             <TextBlock
@@ -593,8 +594,44 @@
                 TextWrapping="WrapWholeWords" />
 
             <Button
-                Name="OutputDeviceButton"
+                Name="PlaybackSpeedButton"
                 Grid.Column="1"
+                Style="{StaticResource TopCommandButtonStyle}"
+                Margin="0,0,3,0"
+                Padding="-1,0,0,0"
+                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                FontSize="12"
+                Visibility="Collapsed">
+
+                <ToolTipService.ToolTip>
+                    <TextBlock Name="PlaybackSpeedButtonToolTip" TextWrapping="WrapWholeWords" />
+                </ToolTipService.ToolTip>
+
+                <Button.Flyout>
+                    <Flyout x:Name="PlaybackSpeedFlyout">
+                        <RelativePanel MaxWidth="200">
+                            <TextBlock
+                                Name="PlaybackSpeedFlyoutText"
+                                RelativePanel.AlignTopWithPanel="True"
+                                Margin="0,0,0,16"
+                                TextWrapping="WrapWholeWords">
+                            </TextBlock>
+
+                            <Button
+                                Name="PlaybackSpeedFlyoutResetButton"
+                                x:Uid="ResetButton"
+                                RelativePanel.Below="PlaybackSpeedFlyoutText"
+                                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                Click="PlaybackSpeedFlyoutResetButton_Click">
+                            </Button>
+                        </RelativePanel>
+                    </Flyout>
+                </Button.Flyout>
+            </Button>
+
+            <Button
+                Name="OutputDeviceButton"
+                Grid.Column="2"
                 Style="{StaticResource TopCommandButtonStyle}"
                 Margin="0,0,3,0"
                 Padding="-1,0,0,0"
@@ -627,7 +664,7 @@
 
                             <Button
                                 Name="OutputDeviceFlyoutResetButton"
-                                x:Uid="OutputDeviceFlyoutResetButton"
+                                x:Uid="ResetButton"
                                 RelativePanel.Below="OutputDeviceFlyoutDeviceName"
                                 RelativePanel.AlignHorizontalCenterWithPanel="True"
                                 Click="OutputDeviceFlyoutResetButton_Click">
@@ -639,7 +676,7 @@
 
             <Button
                 Name="ExpandButton"
-                Grid.Column="2"
+                Grid.Column="3"
                 Style="{StaticResource TopCommandButtonStyle}"
                 Content="&#xE099;"
                 Click="ExpandButton_Click">

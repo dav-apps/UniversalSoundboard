@@ -664,7 +664,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StandardOutputDevice" xml:space="preserve">
     <value>Standard-Ausgabegerät</value>
   </data>
-  <data name="OutputDeviceFlyoutResetButton.Content" xml:space="preserve">
+  <data name="ResetButton.Content" xml:space="preserve">
     <value>Zurücksetzen</value>
   </data>
   <data name="OutputDeviceButtonToolTip.Text" xml:space="preserve">
@@ -747,5 +747,8 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="PlaybackSpeed" xml:space="preserve">
     <value>Wiedergabegeschwindigkeit</value>
+  </data>
+  <data name="PlaybackSpeedButtonToolTip" xml:space="preserve">
+    <value>Dieser Sound wird mit {0}-facher Geschwindigkeit abgespielt.</value>
   </data>
 </root>

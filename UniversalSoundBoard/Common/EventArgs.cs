@@ -188,6 +188,16 @@ namespace UniversalSoundboard.Common
         }
     }
 
+    public class PlaybackSpeedChangedEventArgs : EventArgs
+    {
+        public int PlaybackSpeed { get; }
+
+        public PlaybackSpeedChangedEventArgs(int playbackSpeed)
+        {
+            PlaybackSpeed = playbackSpeed;
+        }
+    }
+
     public class DownloadStatusChangedEventArgs : EventArgs
     {
         public bool IsDownloading { get; set; }

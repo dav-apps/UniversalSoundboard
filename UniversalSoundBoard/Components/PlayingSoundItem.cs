@@ -73,6 +73,7 @@ namespace UniversalSoundboard.Components
         public event EventHandler<FavouriteChangedEventArgs> FavouriteChanged;
         public event EventHandler<VolumeChangedEventArgs> VolumeChanged;
         public event EventHandler<MutedChangedEventArgs> MutedChanged;
+        public event EventHandler<PlaybackSpeedChangedEventArgs> PlaybackSpeedChanged;
         public event EventHandler<EventArgs> ShowPlayingSound;
         public event EventHandler<EventArgs> RemovePlayingSound;
         public event EventHandler<DownloadStatusChangedEventArgs> DownloadStatusChanged;
@@ -209,6 +210,7 @@ namespace UniversalSoundboard.Components
             UpdateVolumeControl();
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(soundsListVisible));
             PositionChanged?.Invoke(this, new PositionChangedEventArgs(PlayingSound.MediaPlayer.PlaybackSession.Position));
+            PlaybackSpeedChanged?.Invoke(this, new PlaybackSpeedChangedEventArgs(PlayingSound.PlaybackSpeed));
 
             if (!oldInitialized)
                 SetPlayPause(PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing || PlayingSound.StartPlaying);
@@ -901,6 +903,9 @@ namespace UniversalSoundboard.Components
 
             PlayingSound.PlaybackSpeed = playbackSpeed;
             PlayingSound.MediaPlayer.PlaybackSession.PlaybackRate = (double)playbackSpeed / 100;
+
+            // Show or hide the playback speed button
+            PlaybackSpeedChanged?.Invoke(this, new PlaybackSpeedChangedEventArgs(playbackSpeed));
 
             // Save the new playback speed
             await FileManager.SetPlaybackSpeedOfPlayingSoundAsync(PlayingSound.Uuid, playbackSpeed);

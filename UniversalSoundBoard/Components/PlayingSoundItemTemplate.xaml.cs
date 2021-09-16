@@ -108,6 +108,8 @@ namespace UniversalSoundboard.Components
             PlayingSoundItem.VolumeChanged += PlayingSoundItem_VolumeChanged;
             PlayingSoundItem.MutedChanged -= PlayingSoundItem_MutedChanged;
             PlayingSoundItem.MutedChanged += PlayingSoundItem_MutedChanged;
+            PlayingSoundItem.PlaybackSpeedChanged -= PlayingSoundItem_PlaybackSpeedChanged;
+            PlayingSoundItem.PlaybackSpeedChanged += PlayingSoundItem_PlaybackSpeedChanged;
             PlayingSoundItem.ShowPlayingSound -= PlayingSoundItem_ShowPlayingSound;
             PlayingSoundItem.ShowPlayingSound += PlayingSoundItem_ShowPlayingSound;
             PlayingSoundItem.RemovePlayingSound -= PlayingSoundItem_RemovePlayingSound;
@@ -221,6 +223,45 @@ namespace UniversalSoundboard.Components
             VolumeControl2.Muted = e.Muted;
         }
 
+        private void PlayingSoundItem_PlaybackSpeedChanged(object sender, PlaybackSpeedChangedEventArgs e)
+        {
+            switch (e.PlaybackSpeed)
+            {
+                case 50:
+                    PlaybackSpeedButton.Content = "0.5x";
+                    PlaybackSpeedButton.FontSize = 12;
+                    break;
+                case 75:
+                    PlaybackSpeedButton.Content = "0.75x";
+                    PlaybackSpeedButton.FontSize = 11;
+                    break;
+                case 125:
+                    PlaybackSpeedButton.Content = "1.25x";
+                    PlaybackSpeedButton.FontSize = 11;
+                    break;
+                case 150:
+                    PlaybackSpeedButton.Content = "1.5x";
+                    PlaybackSpeedButton.FontSize = 12;
+                    break;
+                case 175:
+                    PlaybackSpeedButton.Content = "1.75x";
+                    PlaybackSpeedButton.FontSize = 11;
+                    break;
+                case 200:
+                    PlaybackSpeedButton.Content = "2x";
+                    PlaybackSpeedButton.FontSize = 12;
+                    break;
+                default:
+                    PlaybackSpeedButton.Visibility = Visibility.Collapsed;
+                    return;
+            }
+
+            string playbackSpeedText = loader.GetString("PlaybackSpeedButtonToolTip").Replace("{0}", ((double)e.PlaybackSpeed / 100).ToString());
+            PlaybackSpeedButtonToolTip.Text = playbackSpeedText;
+            PlaybackSpeedFlyoutText.Text = playbackSpeedText;
+            PlaybackSpeedButton.Visibility = Visibility.Visible;
+        }
+
         private async void PlayingSoundItem_ShowPlayingSound(object sender, EventArgs e)
         {
             if (playingSoundItemVisible) return;
@@ -310,6 +351,12 @@ namespace UniversalSoundboard.Components
         private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
             await PlayingSoundItem.MoveToNext();
+        }
+
+        private void PlaybackSpeedFlyoutResetButton_Click(object sender, RoutedEventArgs e)
+        {
+            PlayingSoundItem.SetPlaybackSpeed(100);
+            PlaybackSpeedFlyout.Hide();
         }
 
         private async void OutputDeviceButton_Click(object sender, RoutedEventArgs e)

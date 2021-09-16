@@ -665,7 +665,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="StandardOutputDevice" xml:space="preserve">
     <value>Périphérique de sortie standard</value>
   </data>
-  <data name="OutputDeviceFlyoutResetButton.Content" xml:space="preserve">
+  <data name="ResetButton.Content" xml:space="preserve">
     <value>Réinitialiser</value>
   </data>
   <data name="OutputDeviceButtonToolTip.Text" xml:space="preserve">
@@ -748,5 +748,8 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="PlaybackSpeed" xml:space="preserve">
     <value>Vitesse de lecture</value>
+  </data>
+  <data name="PlaybackSpeedButtonToolTip" xml:space="preserve">
+    <value>Ce son est joué à {0} fois la vitesse normale.</value>
   </data>
 </root>
