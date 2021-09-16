@@ -899,7 +899,7 @@ namespace UniversalSoundboard.Components
 
         public async void SetPlaybackSpeed(int playbackSpeed)
         {
-            if (playbackSpeed < 50 || playbackSpeed > 200) return;
+            if (playbackSpeed < 25 || playbackSpeed > 200) return;
 
             PlayingSound.PlaybackSpeed = playbackSpeed;
             PlayingSound.MediaPlayer.PlaybackSession.PlaybackRate = (double)playbackSpeed / 100;

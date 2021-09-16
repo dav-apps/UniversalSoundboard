@@ -227,6 +227,10 @@ namespace UniversalSoundboard.Components
         {
             switch (e.PlaybackSpeed)
             {
+                case 25:
+                    PlaybackSpeedButton.Content = "0.25x";
+                    PlaybackSpeedButton.FontSize = 11;
+                    break;
                 case 50:
                     PlaybackSpeedButton.Content = "0.5x";
                     PlaybackSpeedButton.FontSize = 12;
@@ -512,6 +516,10 @@ namespace UniversalSoundboard.Components
             #endregion
 
             #region Playback speed
+            ToggleMenuFlyoutItem playbackSpeedItem_0_25 = new ToggleMenuFlyoutItem { Text = "0.25x", IsChecked = PlayingSound.PlaybackSpeed == 25 };
+            playbackSpeedItem_0_25.Click += MoreButton_PlaybackSpeed_0_25_Click;
+            playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_0_25);
+
             ToggleMenuFlyoutItem playbackSpeedItem_0_5 = new ToggleMenuFlyoutItem { Text = "0.5x", IsChecked = PlayingSound.PlaybackSpeed == 50 };
             playbackSpeedItem_0_5.Click += MoreButton_PlaybackSpeed_0_5x_Click;
             playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_0_5);
@@ -580,6 +588,11 @@ namespace UniversalSoundboard.Components
         private async void MoreButton_Repeat_endless_Click(object sender, RoutedEventArgs e)
         {
             await PlayingSoundItem.SetRepetitions(int.MaxValue);
+        }
+
+        private void MoreButton_PlaybackSpeed_0_25_Click(object sender, RoutedEventArgs e)
+        {
+            PlayingSoundItem.SetPlaybackSpeed(25);
         }
 
         private void MoreButton_PlaybackSpeed_0_5x_Click(object sender, RoutedEventArgs e)

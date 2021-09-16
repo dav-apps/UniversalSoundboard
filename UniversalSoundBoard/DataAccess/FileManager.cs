@@ -2155,10 +2155,10 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task SetPlaybackSpeedOfPlayingSoundAsync(Guid uuid, int playbackSpeed)
         {
-            if (playbackSpeed >= 200)
+            if (playbackSpeed > 200)
                 playbackSpeed = 200;
-            else if (playbackSpeed < 50)
-                playbackSpeed = 50;
+            else if (playbackSpeed < 25)
+                playbackSpeed = 25;
 
             await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, null, null, null, playbackSpeed);
         }
