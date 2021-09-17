@@ -339,7 +339,7 @@ namespace UniversalSoundboard.Tests.DataAccess
             List<Guid> updatedCategoryUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
 
             // Act (2)
-            await DatabaseOperations.UpdateSoundAsync(uuid, updatedName, updatedFavourite, defaultVolume, defaultMuted, imageUuid, updatedCategoryUuids);
+            await DatabaseOperations.UpdateSoundAsync(uuid, updatedName, updatedFavourite, defaultVolume, defaultMuted, imageUuid, updatedCategoryUuids, null, null);
 
             // Assert (2)
             soundFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
@@ -417,7 +417,7 @@ namespace UniversalSoundboard.Tests.DataAccess
 
             // Create the sound
             await DatabaseOperations.CreateSoundAsync(uuid, name, false, soundFileUuid, null);
-            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, null, imageFileUuid, null);
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, null, imageFileUuid, null, null, null);
 
             // Create the sound file table object
             await TableObject.CreateAsync(soundFileUuid, FileManager.SoundFileTableId);
@@ -781,6 +781,8 @@ namespace UniversalSoundboard.Tests.DataAccess
             bool randomly = true;
             int volume = 80;
             bool muted = false;
+            int playbackSpeed = 125;
+            string outputDevice = "test";
 
             // Act (1)
             await DatabaseOperations.CreatePlayingSoundAsync(
@@ -822,7 +824,9 @@ namespace UniversalSoundboard.Tests.DataAccess
                 updatedRepetitions,
                 updatedRandomly,
                 updatedVolume,
-                updatedMuted
+                updatedMuted,
+                outputDevice,
+                playbackSpeed
             );
 
             // Assert (2)
@@ -834,6 +838,8 @@ namespace UniversalSoundboard.Tests.DataAccess
             Assert.AreEqual(updatedRandomly, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
             Assert.AreEqual(updatedVolume, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
             Assert.AreEqual(updatedMuted, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
+            Assert.AreEqual(playbackSpeed, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTablePlaybackSpeedPropertyName)));
+            Assert.AreEqual(outputDevice, playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableOutputDevicePropertyName));
         }
         #endregion
         #endregion
