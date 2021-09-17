@@ -484,7 +484,7 @@ namespace UniversalSoundboard.Components
                 }
             };
 
-            MoreButtonMenuFlyout.Items.Insert(3, playbackSpeedFlyoutItem);
+            MoreButtonMenuFlyout.Items.Insert(2, playbackSpeedFlyoutItem);
 
             #region OutputDevice
             // Update the list of possible output devices
