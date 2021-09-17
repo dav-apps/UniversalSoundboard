@@ -449,7 +449,7 @@ namespace UniversalSoundboard.Pages
 
             int v = volume.HasValue ? volume.Value : sound.DefaultVolume;
             bool m = muted.HasValue ? muted.Value : sound.DefaultMuted;
-            int ps = playbackSpeed.HasValue ? playbackSpeed.Value : 100;
+            int ps = playbackSpeed.HasValue ? playbackSpeed.Value : sound.DefaultPlaybackSpeed;
 
             double appVolume = ((double)FileManager.itemViewHolder.Volume) / 100;
             player.Volume = appVolume * ((double)v / 100);

@@ -21,6 +21,7 @@ namespace UniversalSoundboard.Models
         public bool Favourite { get; set; }
         public int DefaultVolume { get; set; }
         public bool DefaultMuted { get; set; }
+        public int DefaultPlaybackSpeed { get; set; }
         public List<Hotkey> Hotkeys { get; set; }
         public BitmapImage Image { get; set; }
         public TableObject AudioFileTableObject { get; set; }
@@ -35,6 +36,9 @@ namespace UniversalSoundboard.Models
             Uuid = uuid;
             Name = name;
             Categories = new List<Category>();
+            DefaultVolume = 100;
+            DefaultMuted = false;
+            DefaultPlaybackSpeed = 100;
             Hotkeys = new List<Hotkey>();
 
             FileManager.itemViewHolder.TableObjectFileDownloadCompleted += ItemViewHolder_TableObjectFileDownloadCompleted;

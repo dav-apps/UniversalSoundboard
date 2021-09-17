@@ -100,6 +100,7 @@ namespace UniversalSoundboard.DataAccess
         public const string SoundTableCategoryUuidPropertyName = "category_uuid";
         public const string SoundTableDefaultVolumePropertyName = "default_volume";
         public const string SoundTableDefaultMutedPropertyName = "default_muted";
+        public const string SoundTableDefaultPlaybackSpeedPropertyName = "default_playback_speed";
         public const string SoundTableHotkeysPropertyName = "hotkeys";
 
         public const string CategoryTableParentPropertyName = "parent";
@@ -454,13 +455,13 @@ namespace UniversalSoundboard.DataAccess
                                 // Set the image of the sound
                                 Guid imageUuid = Guid.NewGuid();
                                 await DatabaseOperations.CreateImageFileAsync(imageUuid, imageFile);
-                                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null, null);
+                                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null, null, null);
                                 await imageFile.DeleteAsync();
                             }
                         }
 
                         if (soundData.Favourite)
-                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, soundData.Favourite, null, null, null, null, null);
+                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, soundData.Favourite, null, null, null, null, null, null);
 
                         await audioFile.DeleteAsync();
                     }
@@ -504,13 +505,13 @@ namespace UniversalSoundboard.DataAccess
                                 // Add image
                                 Guid imageUuid = Guid.NewGuid();
                                 await DatabaseOperations.CreateImageFileAsync(imageUuid, imageFile);
-                                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null, null);
+                                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null, null, null);
                                 await imageFile.DeleteAsync();
                             }
                         }
 
                         if (sound.favourite)
-                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, sound.favourite, null, null, null, null, null);
+                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, sound.favourite, null, null, null, null, null, null);
 
                         await audioFile.DeleteAsync();
                     }
@@ -597,7 +598,7 @@ namespace UniversalSoundboard.DataAccess
                         {
                             Guid imageUuid = Guid.NewGuid();
                             await DatabaseOperations.CreateImageFileAsync(imageUuid, imageFile);
-                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null, null);
+                            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageUuid, null, null, null);
 
                             // Delete the image
                             await imageFile.DeleteAsync();
@@ -606,7 +607,7 @@ namespace UniversalSoundboard.DataAccess
                     }
 
                     if (favourite)
-                        await DatabaseOperations.UpdateSoundAsync(soundUuid, null, favourite, null, null, null, null, null);
+                        await DatabaseOperations.UpdateSoundAsync(soundUuid, null, favourite, null, null, null, null, null, null);
 
                     // Delete the sound and soundDetails file
                     if (soundDetailsFile != null)
@@ -818,6 +819,14 @@ namespace UniversalSoundboard.DataAccess
                 bool.TryParse(defaultMutedString, out defaultMuted);
 
             sound.DefaultMuted = defaultMuted;
+
+            // DefaultPlaybackSpeed
+            int defaultPlaybackSpeed = 100;
+            string defaultPlaybackSpeedString = soundTableObject.GetPropertyValue(SoundTableDefaultPlaybackSpeedPropertyName);
+            if (!string.IsNullOrEmpty(defaultPlaybackSpeedString))
+                int.TryParse(defaultPlaybackSpeedString, out defaultPlaybackSpeed);
+
+            sound.DefaultPlaybackSpeed = defaultPlaybackSpeed;
 
             // Hotkeys
             string hotkeysString = soundTableObject.GetPropertyValue(SoundTableHotkeysPropertyName);
@@ -1907,27 +1916,32 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task RenameSoundAsync(Guid uuid, string newName)
         {
-            await DatabaseOperations.UpdateSoundAsync(uuid, newName, null, null, null, null, null, null);
+            await DatabaseOperations.UpdateSoundAsync(uuid, newName, null, null, null, null, null, null, null);
         }
 
         public static async Task SetCategoriesOfSoundAsync(Guid soundUuid, List<Guid> categoryUuids)
         {
-            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, null, categoryUuids, null);
+            await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, null, categoryUuids, null, null);
         }
 
         public static async Task SetSoundAsFavouriteAsync(Guid uuid, bool favourite)
         {
-            await DatabaseOperations.UpdateSoundAsync(uuid, null, favourite, null, null, null, null, null);
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, favourite, null, null, null, null, null, null);
         }
 
         public static async Task SetDefaultVolumeOfSoundAsync(Guid uuid, int defaultVolume, bool defaultMuted)
         {
-            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, defaultVolume, defaultMuted, null, null, null);
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, defaultVolume, defaultMuted, null, null, null, null);
+        }
+
+        public static async Task SetDefaultPlaybackSpeedOfSoundAsync(Guid uuid, int defaultPlaybackSpeed)
+        {
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, null, null, null, null, defaultPlaybackSpeed);
         }
 
         public static async Task SetHotkeysOfSoundAsync(Guid uuid, List<Hotkey> hotkeys)
         {
-            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, null, null, null, hotkeys);
+            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, null, null, null, hotkeys, null);
         }
 
         public static async Task UpdateImageOfSoundAsync(Guid soundUuid, StorageFile file)
@@ -1943,7 +1957,7 @@ namespace UniversalSoundboard.DataAccess
                 // Create new image file
                 Guid imageFileUuid = Guid.NewGuid();
                 await DatabaseOperations.CreateImageFileAsync(imageFileUuid, newImageFile);
-                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageFileUuid, null, null);
+                await DatabaseOperations.UpdateSoundAsync(soundUuid, null, null, null, null, imageFileUuid, null, null, null);
             }
             else
             {

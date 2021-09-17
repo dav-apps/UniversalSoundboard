@@ -53,6 +53,7 @@ namespace UniversalSoundboard.Common
         public static StorageFolder ExportSoundsFolder;
         public static ListView CategoriesListView;
         public static WinUI.TreeView CategoriesTreeView;
+        public static ComboBox PlaybackSpeedComboBox;
         public static List<ObservableCollection<HotkeyItem>> PropertiesDialogHotkeys = new List<ObservableCollection<HotkeyItem>>();
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
@@ -1175,19 +1176,49 @@ namespace UniversalSoundboard.Common
             Grid.SetRow(playbackSpeedDataRelativePanel, row);
             Grid.SetColumn(playbackSpeedDataRelativePanel, 1);
 
-            ComboBox playbackSpeedComboBox = new ComboBox();
-            playbackSpeedComboBox.Items.Add("0.25x");
-            playbackSpeedComboBox.Items.Add("0.5x");
-            playbackSpeedComboBox.Items.Add("0.75x");
-            playbackSpeedComboBox.Items.Add("1.0x");
-            playbackSpeedComboBox.Items.Add("1.25x");
-            playbackSpeedComboBox.Items.Add("1.5x");
-            playbackSpeedComboBox.Items.Add("1.75x");
-            playbackSpeedComboBox.Items.Add("2.0x");
-            playbackSpeedComboBox.SelectedIndex = 3;
+            // Create the ComboBox with the playback speed items
+            PlaybackSpeedComboBox = new ComboBox();
+            PlaybackSpeedComboBox.Items.Add("0.25x");
+            PlaybackSpeedComboBox.Items.Add("0.5x");
+            PlaybackSpeedComboBox.Items.Add("0.75x");
+            PlaybackSpeedComboBox.Items.Add("1.0x");
+            PlaybackSpeedComboBox.Items.Add("1.25x");
+            PlaybackSpeedComboBox.Items.Add("1.5x");
+            PlaybackSpeedComboBox.Items.Add("1.75x");
+            PlaybackSpeedComboBox.Items.Add("2.0x");
+            PlaybackSpeedComboBox.SelectionChanged += PlaybackSpeedComboBox_SelectionChanged;
 
-            RelativePanel.SetAlignVerticalCenterWithPanel(playbackSpeedComboBox, true);
-            playbackSpeedDataRelativePanel.Children.Add(playbackSpeedComboBox);
+            // Select the correct item
+            switch (selectedPropertiesSound.DefaultPlaybackSpeed)
+            {
+                case 25:
+                    PlaybackSpeedComboBox.SelectedIndex = 0;
+                    break;
+                case 50:
+                    PlaybackSpeedComboBox.SelectedIndex = 1;
+                    break;
+                case 75:
+                    PlaybackSpeedComboBox.SelectedIndex = 2;
+                    break;
+                case 125:
+                    PlaybackSpeedComboBox.SelectedIndex = 4;
+                    break;
+                case 150:
+                    PlaybackSpeedComboBox.SelectedIndex = 5;
+                    break;
+                case 175:
+                    PlaybackSpeedComboBox.SelectedIndex = 6;
+                    break;
+                case 200:
+                    PlaybackSpeedComboBox.SelectedIndex = 7;
+                    break;
+                default:
+                    PlaybackSpeedComboBox.SelectedIndex = 3;
+                    break;
+            }
+
+            RelativePanel.SetAlignVerticalCenterWithPanel(PlaybackSpeedComboBox, true);
+            playbackSpeedDataRelativePanel.Children.Add(PlaybackSpeedComboBox);
 
             row++;
             contentGrid.Children.Add(playbackSpeedHeaderStackPanel);
@@ -1267,6 +1298,43 @@ namespace UniversalSoundboard.Common
         private static void VolumeControl_MuteChanged(object sender, bool e)
         {
             propertiesDefaultMutedChanged = true;
+        }
+
+        private static async void PlaybackSpeedComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            int selectedPlaybackSpeed = 100;
+
+            switch (PlaybackSpeedComboBox.SelectedIndex)
+            {
+                case 0:
+                    selectedPlaybackSpeed = 25;
+                    break;
+                case 1:
+                    selectedPlaybackSpeed = 50;
+                    break;
+                case 2:
+                    selectedPlaybackSpeed = 75;
+                    break;
+                case 3:
+                    selectedPlaybackSpeed = 100;
+                    break;
+                case 4:
+                    selectedPlaybackSpeed = 125;
+                    break;
+                case 5:
+                    selectedPlaybackSpeed = 150;
+                    break;
+                case 6:
+                    selectedPlaybackSpeed = 175;
+                    break;
+                case 7:
+                    selectedPlaybackSpeed = 200;
+                    break;
+            }
+
+            selectedPropertiesSound.DefaultPlaybackSpeed = selectedPlaybackSpeed;
+
+            await FileManager.SetDefaultPlaybackSpeedOfSoundAsync(selectedPropertiesSound.Uuid, selectedPlaybackSpeed);
         }
 
         private static async void AddHotkeyItem_HotkeyAdded(object sender, HotkeyEventArgs e)
