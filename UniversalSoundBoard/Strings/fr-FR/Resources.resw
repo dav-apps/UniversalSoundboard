@@ -632,11 +632,11 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="Account-Card-SelectButton.Content" xml:space="preserve">
     <value>Choisir</value>
   </data>
-  <data name="Account-PlusCard-Feature1TextBlock.Text" xml:space="preserve">
+  <data name="Account-PlusCardFeature-StorageTextBlock.Text" xml:space="preserve">
     <value>15 Go espace de stockage en ligne</value>
   </data>
-  <data name="Account-PlusCard-Feature2TextBlock.Text" xml:space="preserve">
-    <value>Soutenir le développement de nouvelles fonctionnalités</value>
+  <data name="Account-PlusCardFeature-SupportTextBlock.Text" xml:space="preserve">
+    <value>Soutenir le développement de l'application</value>
   </data>
   <data name="Account-PlusCard-PriceTextBlock.Text" xml:space="preserve">
     <value>3 € par mois</value>
@@ -754,5 +754,20 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   </data>
   <data name="PropertiesContentDialog-PlaybackSpeed" xml:space="preserve">
     <value>Vitesse de lecture par défaut :</value>
+  </data>
+  <data name="Account-PlusCardFeature-HotkeysFlyoutTextBlock.Text" xml:space="preserve">
+    <value>Ajoutez des raccourcis à vos sons. Ainsi, vous pouvez jouer des sons spécifiques à tout moment sans avoir à les rechercher dans l'application.</value>
+  </data>
+  <data name="Account-PlusCardFeature-HotkeysTextBlock.Text" xml:space="preserve">
+    <value>Attribuer des raccourcis clavier aux sons</value>
+  </data>
+  <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock1.Text" xml:space="preserve">
+    <value>Cette fonction vous permet de définir le périphérique de sortie séparément pour chaque son ouvert.</value>
+  </data>
+  <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock2.Text" xml:space="preserve">
+    <value>Cela permet aussi de jouer différents sons sur différents appareils en même temps.</value>
+  </data>
+  <data name="Account-PlusCardFeature-OutputDeviceTextBlock.Text" xml:space="preserve">
+    <value>Réglez le périphérique de sortie pour chaque son individuellement</value>
   </data>
 </root>

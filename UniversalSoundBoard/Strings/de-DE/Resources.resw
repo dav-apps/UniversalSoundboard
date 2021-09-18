@@ -631,11 +631,11 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Account-Card-SelectButton.Content" xml:space="preserve">
     <value>Auswählen</value>
   </data>
-  <data name="Account-PlusCard-Feature1TextBlock.Text" xml:space="preserve">
+  <data name="Account-PlusCardFeature-StorageTextBlock.Text" xml:space="preserve">
     <value>15 GB Online-Speicher</value>
   </data>
-  <data name="Account-PlusCard-Feature2TextBlock.Text" xml:space="preserve">
-    <value>Unterstütze die Entwicklung von neuen Funktionen</value>
+  <data name="Account-PlusCardFeature-SupportTextBlock.Text" xml:space="preserve">
+    <value>Unterstütze die Weiterentwicklung der App</value>
   </data>
   <data name="Account-PlusCard-PriceTextBlock.Text" xml:space="preserve">
     <value>3 € pro Monat</value>
@@ -753,5 +753,20 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="PropertiesContentDialog-PlaybackSpeed" xml:space="preserve">
     <value>Standard-Wiedergabegeschwindigkeit:</value>
+  </data>
+  <data name="Account-PlusCardFeature-HotkeysFlyoutTextBlock.Text" xml:space="preserve">
+    <value>Füge Tastenkombinationen zu deinen Sounds hinzu. So kannst du jederzeit bestimmte Sounds abspielen, ohne sie zuerst in der App zu suchen.</value>
+  </data>
+  <data name="Account-PlusCardFeature-HotkeysTextBlock.Text" xml:space="preserve">
+    <value>Ordne Tastenkombinationen zu Sounds zu</value>
+  </data>
+  <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock1.Text" xml:space="preserve">
+    <value>Mit dieser Funktion kannst du das Ausgabegerät für jeden geöffneten Sound separat einstellen.</value>
+  </data>
+  <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock2.Text" xml:space="preserve">
+    <value>Damit ist es auch möglich, unterschiedliche Sounds auf unterschiedlichen Geräten gleichzeitig abzuspielen.</value>
+  </data>
+  <data name="Account-PlusCardFeature-OutputDeviceTextBlock.Text" xml:space="preserve">
+    <value>Lege das Ausgabegerät für jeden Sound individuell fest</value>
   </data>
 </root>

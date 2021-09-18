@@ -633,11 +633,11 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Account-Card-SelectButton.Content" xml:space="preserve">
     <value>Select</value>
   </data>
-  <data name="Account-PlusCard-Feature1TextBlock.Text" xml:space="preserve">
+  <data name="Account-PlusCardFeature-StorageTextBlock.Text" xml:space="preserve">
     <value>15 GB of online storage</value>
   </data>
-  <data name="Account-PlusCard-Feature2TextBlock.Text" xml:space="preserve">
-    <value>Support the development of new features</value>
+  <data name="Account-PlusCardFeature-SupportTextBlock.Text" xml:space="preserve">
+    <value>Support the further development of the app</value>
   </data>
   <data name="Account-PlusCard-PriceTextBlock.Text" xml:space="preserve">
     <value>3 € per month</value>
@@ -755,5 +755,20 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="PropertiesContentDialog-PlaybackSpeed" xml:space="preserve">
     <value>Default playback speed:</value>
+  </data>
+  <data name="Account-PlusCardFeature-HotkeysFlyoutTextBlock.Text" xml:space="preserve">
+    <value>Add keyboard shortcuts to your sounds. This allows you to play specific sounds at any time without having to search for them in the app first.</value>
+  </data>
+  <data name="Account-PlusCardFeature-HotkeysTextBlock.Text" xml:space="preserve">
+    <value>Assign hotkeys to sounds</value>
+  </data>
+  <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock1.Text" xml:space="preserve">
+    <value>With this feature you can set the output device for each opened sound separately.</value>
+  </data>
+  <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock2.Text" xml:space="preserve">
+    <value>This also makes it possible to play different sounds on different devices at the same time.</value>
+  </data>
+  <data name="Account-PlusCardFeature-OutputDeviceTextBlock.Text" xml:space="preserve">
+    <value>Set the output device for each playing sound individually</value>
   </data>
 </root>
