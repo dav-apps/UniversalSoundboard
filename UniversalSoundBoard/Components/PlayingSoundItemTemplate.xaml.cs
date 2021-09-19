@@ -1,4 +1,5 @@
-﻿using System;
+﻿using davClassLibrary;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
@@ -562,7 +563,23 @@ namespace UniversalSoundboard.Components
 
         private async void MoreButton_OutputDevice_Click(object sender, RoutedEventArgs e)
         {
-            await SetOutputDevice((string)(sender as ToggleMenuFlyoutItem).Tag);
+            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
+            {
+                await SetOutputDevice((string)(sender as ToggleMenuFlyoutItem).Tag);
+            }
+            else
+            {
+                // Show dialog which explains that this feature is only for Plus users
+                ContentDialog davPlusOutputDeviceContentDialog = ContentDialogs.CreateDavPlusOutputDeviceContentDialog();
+                davPlusOutputDeviceContentDialog.PrimaryButtonClick += DavPlusOutputDeviceContentDialog_PrimaryButtonClick;
+                await davPlusOutputDeviceContentDialog.ShowAsync();
+            }
+        }
+
+        private void DavPlusOutputDeviceContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Navigate to the Account page
+            FileManager.NavigateToAccountPage();
         }
 
         private async void MoreButton_Repeat_1x_Click(object sender, RoutedEventArgs e)

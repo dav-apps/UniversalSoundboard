@@ -3030,7 +3030,7 @@ namespace UniversalSoundboard.DataAccess
             }
             else
             {
-                // Show dialog which shows this feature is only for Plus users
+                // Show dialog which explains that this feature is only for Plus users
                 ContentDialog davPlusHotkeysContentDialog = ContentDialogs.CreateDavPlusHotkeysContentDialog();
                 davPlusHotkeysContentDialog.PrimaryButtonClick += DavPlusHotkeysContentDialog_PrimaryButtonClick;
                 await davPlusHotkeysContentDialog.ShowAsync();

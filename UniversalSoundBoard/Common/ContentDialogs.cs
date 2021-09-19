@@ -75,6 +75,7 @@ namespace UniversalSoundboard.Common
         public static ContentDialog CategoryOrderContentDialog;
         public static ContentDialog PropertiesContentDialog;
         public static ContentDialog DavPlusHotkeysContentDialog;
+        public static ContentDialog DavPlusOutputDeviceContentDialog;
         #endregion
 
         #region General methods
@@ -1399,12 +1400,12 @@ namespace UniversalSoundboard.Common
         }
         #endregion
 
-        #region DavPlusHotkeysDialog
+        #region DavPlusHotkeys
         public static ContentDialog CreateDavPlusHotkeysContentDialog()
         {
             DavPlusHotkeysContentDialog = new ContentDialog
             {
-                Title = loader.GetString("DavPlusHotkeysContentDialog-Title"),
+                Title = loader.GetString("DavPlusContentDialog-Title"),
                 Content = loader.GetString("DavPlusHotkeysContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("Actions-LearnMore"),
                 CloseButtonText = loader.GetString("Actions-Close"),
@@ -1414,6 +1415,24 @@ namespace UniversalSoundboard.Common
             DavPlusHotkeysContentDialog.Closed += ContentDialog_Closed;
 
             return DavPlusHotkeysContentDialog;
+        }
+        #endregion
+
+        #region DavPlusOutputDevice
+        public static ContentDialog CreateDavPlusOutputDeviceContentDialog()
+        {
+            DavPlusOutputDeviceContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("DavPlusContentDialog-Title"),
+                Content = loader.GetString("DavPlusOutputDeviceContentDialog-Content"),
+                PrimaryButtonText = loader.GetString("Actions-LearnMore"),
+                CloseButtonText = loader.GetString("Actions-Close"),
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+            DavPlusOutputDeviceContentDialog.Opened += ContentDialog_Opened;
+            DavPlusOutputDeviceContentDialog.Closed += ContentDialog_Closed;
+
+            return DavPlusOutputDeviceContentDialog;
         }
         #endregion
     }
