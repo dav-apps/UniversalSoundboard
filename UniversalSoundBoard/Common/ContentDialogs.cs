@@ -74,6 +74,7 @@ namespace UniversalSoundboard.Common
         public static ContentDialog SetCategoryContentDialog;
         public static ContentDialog CategoryOrderContentDialog;
         public static ContentDialog PropertiesContentDialog;
+        public static ContentDialog DavPlusHotkeysContentDialog;
         #endregion
 
         #region General methods
@@ -1395,6 +1396,24 @@ namespace UniversalSoundboard.Common
 
             contentStackPanel.Children.Add(contentTextBlock);
             return contentStackPanel;
+        }
+        #endregion
+
+        #region DavPlusHotkeysDialog
+        public static ContentDialog CreateDavPlusHotkeysContentDialog()
+        {
+            DavPlusHotkeysContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("DavPlusHotkeysContentDialog-Title"),
+                Content = loader.GetString("DavPlusHotkeysContentDialog-Content"),
+                PrimaryButtonText = loader.GetString("Actions-LearnMore"),
+                CloseButtonText = loader.GetString("Actions-Close"),
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+            DavPlusHotkeysContentDialog.Opened += ContentDialog_Opened;
+            DavPlusHotkeysContentDialog.Closed += ContentDialog_Closed;
+
+            return DavPlusHotkeysContentDialog;
         }
         #endregion
     }

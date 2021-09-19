@@ -771,4 +771,13 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Account-PlusCardFeature-OutputDeviceTextBlock.Text" xml:space="preserve">
     <value>Set the output device for each playing sound individually</value>
   </data>
+  <data name="Actions-LearnMore" xml:space="preserve">
+    <value>Learn more</value>
+  </data>
+  <data name="DavPlusHotkeysContentDialog-Content" xml:space="preserve">
+    <value>Hotkeys are only available for dav Plus users. Log in and change your plan to use this feature.</value>
+  </data>
+  <data name="DavPlusHotkeysContentDialog-Title" xml:space="preserve">
+    <value>dav Plus required</value>
+  </data>
 </root>

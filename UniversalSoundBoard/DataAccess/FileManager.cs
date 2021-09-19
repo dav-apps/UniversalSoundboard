@@ -32,6 +32,7 @@ using Windows.UI;
 using Windows.UI.Core;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -3023,7 +3024,23 @@ namespace UniversalSoundboard.DataAccess
             Sound sound = await GetSoundAsync(itemViewHolder.HotkeySoundMapping.ElementAt(id));
             if (sound == null) return;
 
-            await SoundPage.PlaySoundAsync(sound);
+            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
+            {
+                await SoundPage.PlaySoundAsync(sound);
+            }
+            else
+            {
+                // Show dialog which shows this feature is only for Plus users
+                ContentDialog davPlusHotkeysContentDialog = ContentDialogs.CreateDavPlusHotkeysContentDialog();
+                davPlusHotkeysContentDialog.PrimaryButtonClick += DavPlusHotkeysContentDialog_PrimaryButtonClick;
+                await davPlusHotkeysContentDialog.ShowAsync();
+            }
+        }
+
+        private static void DavPlusHotkeysContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Navigate to the Account page
+            NavigateToAccountPage();
         }
         #endregion
 

@@ -769,4 +769,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Account-PlusCardFeature-OutputDeviceTextBlock.Text" xml:space="preserve">
     <value>Lege das Ausgabegerät für jeden Sound individuell fest</value>
   </data>
+  <data name="Actions-LearnMore" xml:space="preserve">
+    <value>Mehr erfahren</value>
+  </data>
+  <data name="DavPlusHotkeysContentDialog-Content" xml:space="preserve">
+    <value>Tastenkombinationen sind nur für Nutzer von dav Plus verfügbar. Melde dich an und ändere deinen Plan, um diese Funktion zu nutzen.</value>
+  </data>
+  <data name="DavPlusHotkeysContentDialog-Title" xml:space="preserve">
+    <value>dav Plus benötigt</value>
+  </data>
 </root>

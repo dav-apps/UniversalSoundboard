@@ -770,4 +770,13 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="Account-PlusCardFeature-OutputDeviceTextBlock.Text" xml:space="preserve">
     <value>Réglez le périphérique de sortie pour chaque son individuellement</value>
   </data>
+  <data name="Actions-LearnMore" xml:space="preserve">
+    <value>Plus d'informations</value>
+  </data>
+  <data name="DavPlusHotkeysContentDialog-Content" xml:space="preserve">
+    <value>Les raccourcis ne sont disponibles que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre plan pour utiliser cette fonctionnalité.</value>
+  </data>
+  <data name="DavPlusHotkeysContentDialog-Title" xml:space="preserve">
+    <value>dav Plus requis</value>
+  </data>
 </root>
