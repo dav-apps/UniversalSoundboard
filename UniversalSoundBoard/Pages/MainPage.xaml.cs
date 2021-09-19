@@ -30,6 +30,7 @@ namespace UniversalSoundboard.Pages
         readonly ResourceLoader loader = new ResourceLoader();
         public static CoreDispatcher dispatcher;                            // Dispatcher for ShareTargetPage
         bool initizalized = false;
+        string appTitle = "UniversalSoundboard";                               // The app name displayed in the title bar
         private Guid initialCategory = Guid.Empty;                          // The category that was selected before the sounds started loading
         private Guid selectedCategory = Guid.Empty;                         // The category that was right clicked for the flyout
         private List<string> Suggestions = new List<string>();              // The suggestions for the SearchAutoSuggestBox
@@ -287,6 +288,13 @@ namespace UniversalSoundboard.Pages
             {
                 TitleBar.Width = Window.Current.Bounds.Width - 40;
                 WindowTitleTextBlock.Margin = new Thickness(57, 12, 0, 0);
+            }
+
+            // Update the app title if the user is on dav Plus
+            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
+            {
+                appTitle = "UniversalSoundboard Plus";
+                Bindings.Update();
             }
         }
 

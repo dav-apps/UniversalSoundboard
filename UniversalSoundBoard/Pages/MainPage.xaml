@@ -454,10 +454,10 @@
         </muxc:NavigationView>
 
         <TextBlock
-            Name="WindowTitleTextBlock" 
+            Name="WindowTitleTextBlock"
             Style="{StaticResource CaptionTextBlockStyle}"
-            Text="UniversalSoundboard" 
-            VerticalAlignment="Top" 
+            Text="{x:Bind appTitle}"
+            VerticalAlignment="Top"
             HorizontalAlignment="Left" />
         
         <Grid
