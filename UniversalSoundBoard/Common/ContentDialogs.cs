@@ -1,4 +1,5 @@
-﻿using Microsoft.Toolkit.Uwp.UI.Controls;
+﻿using davClassLibrary;
+using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -13,6 +14,7 @@ using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -55,6 +57,7 @@ namespace UniversalSoundboard.Common
         public static WinUI.TreeView CategoriesTreeView;
         public static ComboBox PlaybackSpeedComboBox;
         public static List<ObservableCollection<HotkeyItem>> PropertiesDialogHotkeys = new List<ObservableCollection<HotkeyItem>>();
+        public static StackPanel davPlusHotkeyInfoStackPanel;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -1245,7 +1248,7 @@ namespace UniversalSoundboard.Common
 
                 StackPanel hotkeysDataStackPanel = new StackPanel
                 {
-                    Orientation = Orientation.Horizontal,
+                    Orientation = Orientation.Vertical,
                     Margin = new Thickness(0, 10, 0, 0)
                 };
                 Grid.SetRow(hotkeysDataStackPanel, row);
@@ -1279,7 +1282,53 @@ namespace UniversalSoundboard.Common
                     PropertiesDialogHotkeys.Last().Add(hotkeyItem);
                 }
 
+                davPlusHotkeyInfoStackPanel = new StackPanel
+                {
+                    Orientation = Orientation.Horizontal,
+                    MaxWidth = rightColumnWidth,
+                    Margin = new Thickness(0, 6, 0, 0),
+                    Visibility = PropertiesDialogHotkeys.Last().Count > 1 ? Visibility.Visible : Visibility.Collapsed
+                };
+
+                TextBlock davPlusHotkeyInfoTextBlock = new TextBlock
+                {
+                    Text = loader.GetString("PropertiesContentDialog-HotkeysRestricted"),
+                    FontSize = 13,
+                    Foreground = new SolidColorBrush(Colors.Red),
+                    VerticalAlignment = VerticalAlignment.Center,
+                    TextWrapping = TextWrapping.WrapWholeWords,
+                    MaxWidth = rightColumnWidth - 40
+                };
+
+                Button infoButton = new Button
+                {
+                    Style = MainPage.buttonRevealStyle,
+                    Content = "\uE946",
+                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    FontSize = 14,
+                    Width = 32,
+                    Height = 32,
+                    CornerRadius = new CornerRadius(18),
+                    Padding = new Thickness(1, 0, 0, 0),
+                    Background = new SolidColorBrush(Colors.Transparent),
+                    Margin = new Thickness(10, 0, 0, 0)
+                };
+
+                TextBlock infoButtonTextBlock = new TextBlock
+                {
+                    Text = loader.GetString("DavPlusHotkeysContentDialog-Content"),
+                    TextWrapping = TextWrapping.WrapWholeWords,
+                    MaxWidth = 300
+                };
+
+                Flyout infoButtonFlyout = new Flyout { Content = infoButtonTextBlock };
+                infoButton.Flyout = infoButtonFlyout;
+
+                davPlusHotkeyInfoStackPanel.Children.Add(davPlusHotkeyInfoTextBlock);
+                davPlusHotkeyInfoStackPanel.Children.Add(infoButton);
+
                 hotkeysDataStackPanel.Children.Add(hotkeyItemsScrollViewer);
+                hotkeysDataStackPanel.Children.Add(davPlusHotkeyInfoStackPanel);
 
                 row++;
                 contentGrid.Children.Add(hotkeysStackPanel);
@@ -1339,11 +1388,24 @@ namespace UniversalSoundboard.Common
             await FileManager.SetDefaultPlaybackSpeedOfSoundAsync(selectedPropertiesSound.Uuid, selectedPlaybackSpeed);
         }
 
+        private static void UpdateDavPlusHotkeyInfoStackPanelVisibility()
+        {
+            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
+                davPlusHotkeyInfoStackPanel.Visibility = Visibility.Collapsed;
+            else
+                davPlusHotkeyInfoStackPanel.Visibility = PropertiesDialogHotkeys.Last().Count > 1 ? Visibility.Visible : Visibility.Collapsed;
+        }
+
         private static async void AddHotkeyItem_HotkeyAdded(object sender, HotkeyEventArgs e)
         {
             // Add the new hotkey to the sound and list of hotkeys
             selectedPropertiesSound.Hotkeys.Add(e.Hotkey);
-            PropertiesDialogHotkeys.Last().Add(new HotkeyItem(e.Hotkey));
+            HotkeyItem newHotkeyItem = new HotkeyItem(e.Hotkey);
+            newHotkeyItem.RemoveHotkey += HotkeyItem_RemoveHotkey;
+            PropertiesDialogHotkeys.Last().Add(newHotkeyItem);
+
+            // Update the visibility of the dav Plus info text
+            UpdateDavPlusHotkeyInfoStackPanelVisibility();
 
             // Save the hotkeys of the sound
             await FileManager.SetHotkeysOfSoundAsync(selectedPropertiesSound.Uuid, selectedPropertiesSound.Hotkeys);
@@ -1359,6 +1421,9 @@ namespace UniversalSoundboard.Common
             if (index != -1) selectedPropertiesSound.Hotkeys.RemoveAt(index);
 
             PropertiesDialogHotkeys.Last().Remove((HotkeyItem)sender);
+
+            // Update the visibility of the dav Plus info text
+            UpdateDavPlusHotkeyInfoStackPanelVisibility();
 
             // Save the hotkeys of the sound
             await FileManager.SetHotkeysOfSoundAsync(selectedPropertiesSound.Uuid, selectedPropertiesSound.Hotkeys);

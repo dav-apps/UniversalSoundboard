@@ -783,4 +783,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="DavPlusOutputDeviceContentDialog-Content" xml:space="preserve">
     <value>Changing the output device for particular opened sounds is only available for dav Plus users. Log in and upgrade your plan to use this feature.</value>
   </data>
+  <data name="PropertiesContentDialog-HotkeysRestricted" xml:space="preserve">
+    <value>The function of hotkeys is restricted.</value>
+  </data>
 </root>

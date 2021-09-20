@@ -781,4 +781,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="DavPlusOutputDeviceContentDialog-Content" xml:space="preserve">
     <value>Das Ändern des Ausgabegeräts für bestimmte geöffnete Sounds ist nur für Nutzer von dav Plus verfügbar. Melde dich an und ändere deinen Plan, um diese Funktion zu nutzen.</value>
   </data>
+  <data name="PropertiesContentDialog-HotkeysRestricted" xml:space="preserve">
+    <value>Die Funktion von Tastenkombinationen ist eingeschränkt.</value>
+  </data>
 </root>
