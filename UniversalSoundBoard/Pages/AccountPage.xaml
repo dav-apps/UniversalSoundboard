@@ -207,10 +207,16 @@
                                     </Button.Flyout>
                                 </Button>
                             </Grid>
-                            
-                            <StackPanel Name="PlusCardBorder2" BorderThickness="0.5" />
 
-                            <Grid Padding="20,12">
+                            <StackPanel
+                                Name="PlusCardBorder2"
+                                BorderThickness="0.5"
+                                Visibility="{x:Bind davPlusHotkeyFeatureVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                            <Grid
+                                Padding="20,12"
+                                Visibility="{x:Bind davPlusHotkeyFeatureVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+                                
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />

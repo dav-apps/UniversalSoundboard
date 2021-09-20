@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using Windows.ApplicationModel.Resources;
+using Windows.Foundation.Metadata;
 using Windows.Security.Authentication.Web;
 using Windows.System;
 using Windows.UI;
@@ -20,6 +21,7 @@ namespace UniversalSoundboard.Pages
     public sealed partial class AccountPage : Page
     {
         ResourceLoader loader = new ResourceLoader();
+        bool davPlusHotkeyFeatureVisible = false;
 
         public AccountPage()
         {
@@ -104,6 +106,9 @@ namespace UniversalSoundboard.Pages
             // Set the visibilities for the content elements
             LoggedInContent.Visibility = Dav.IsLoggedIn ? Visibility.Visible : Visibility.Collapsed;
             LoggedOutContent.Visibility = Dav.IsLoggedIn ? Visibility.Collapsed : Visibility.Visible;
+
+            davPlusHotkeyFeatureVisible = ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0);
+            Bindings.Update();
         }
 
         public static async Task<bool> ShowLoginPage(bool showSignup = false)
