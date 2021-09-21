@@ -345,7 +345,7 @@
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
             <Setter Property="FontSize" Value="15" />
-            <Setter Property="Margin" Value="1,0,1,0" />
+            <Setter Property="Margin" Value="1,0" />
         </Style>
 
         <Style x:Key="TopCommandButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
@@ -436,15 +436,18 @@
                         <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.Above)" Value="MediaPlayerElement" />
                         <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True" />
                         <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignVerticalCenterWith)" Value="RightMediaControlStackPanel" />
-                        <Setter Target="MiddleMediaControlStackPanel.Width" Value="154" />
+                        <Setter Target="MiddleMediaControlStackPanel.Width" Value="146" />
 
                         <Setter Target="PreviousButton.CornerRadius" Value="20" />
                         <Setter Target="PlayPauseButton.CornerRadius" Value="30" />
                         <Setter Target="NextButton.CornerRadius" Value="20" />
 
+                        <Setter Target="PreviousButtonStackPanel.Width" Value="42" />
+
                         <Setter Target="PlayPauseButton.Height" Value="50" />
                         <Setter Target="PlayPauseButton.Width" Value="50" />
                         <Setter Target="PlayPauseButton.FontSize" Value="20" />
+                        <Setter Target="PlayPauseButton.Margin" Value="6,0" />
 
                         <!-- RightMediaControlStackPanel -->
                         <Setter Target="RightMediaControlStackPanel.(RelativePanel.Above)" Value="MediaPlayerElement" />
@@ -473,15 +476,18 @@
                         <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.Above)" Value="MediaPlayerElement" />
                         <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True" />
                         <Setter Target="MiddleMediaControlStackPanel.(RelativePanel.AlignVerticalCenterWith)" Value="RightMediaControlStackPanel" />
-                        <Setter Target="MiddleMediaControlStackPanel.Width" Value="154" />
+                        <Setter Target="MiddleMediaControlStackPanel.Width" Value="146" />
 
                         <Setter Target="PreviousButton.CornerRadius" Value="20" />
                         <Setter Target="PlayPauseButton.CornerRadius" Value="30" />
                         <Setter Target="NextButton.CornerRadius" Value="20" />
 
+                        <Setter Target="PreviousButtonStackPanel.Width" Value="42" />
+
                         <Setter Target="PlayPauseButton.Height" Value="50" />
                         <Setter Target="PlayPauseButton.Width" Value="50" />
                         <Setter Target="PlayPauseButton.FontSize" Value="20" />
+                        <Setter Target="PlayPauseButton.Margin" Value="6,0" />
 
                         <!-- RightMediaControlStackPanel -->
                         <Setter Target="RightMediaControlStackPanel.(RelativePanel.Above)" Value="MediaPlayerElement" />
@@ -759,21 +765,27 @@
                 Orientation="Horizontal"
                 HorizontalAlignment="Center">
 
-                <Button
-                    Name="PreviousButton"
-                    Style="{StaticResource MediaControlButtonStyle}"
-                    Content="&#xE100;"
-                    Click="PreviousButton_Click">
+                <StackPanel
+                    Name="PreviousButtonStackPanel"
+                    VerticalAlignment="Center">
 
-                    <ToolTipService.ToolTip>
-                        <TextBlock Name="PreviousButtonToolTip" x:Uid="PreviousButton" Text="Previous" />
-                    </ToolTipService.ToolTip>
-                </Button>
+                    <Button
+                        Name="PreviousButton"
+                        Style="{StaticResource MediaControlButtonStyle}"
+                        Content="&#xE100;"
+                        Click="PreviousButton_Click">
+
+                        <ToolTipService.ToolTip>
+                            <TextBlock Name="PreviousButtonToolTip" x:Uid="PreviousButton" Text="Previous" />
+                        </ToolTipService.ToolTip>
+                    </Button>
+                </StackPanel>
 
                 <Button
                     Name="PlayPauseButton"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Content="&#xE102;"
+                    HorizontalAlignment="Center"
                     Click="PlayPauseButton_Click">
 
                     <ToolTipService.ToolTip>
