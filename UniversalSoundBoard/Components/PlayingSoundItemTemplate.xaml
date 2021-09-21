@@ -456,9 +456,8 @@
                         <Setter Target="MoreButtonVolumeFlyoutItem.Visibility" Value="Collapsed" />
 
                         <!-- PlayingSoundNameTextBlock -->
-                        <Setter Target="PlayingSoundNameTextBlock.HorizontalAlignment" Value="Center" />
+                        <Setter Target="PlayingSoundNameTextBlock.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True" />
                         <Setter Target="PlayingSoundNameTextBlock.TextAlignment" Value="Center" />
-                        <Setter Target="PlayingSoundNameTextBlock.Margin" Value="8,0" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="LayoutSizeSingleSoundSmall">
@@ -491,9 +490,8 @@
                         <Setter Target="RemoveButton.Visibility" Value="Collapsed" />
 
                         <!-- PlayingSoundNameTextBlock -->
-                        <Setter Target="PlayingSoundNameTextBlock.HorizontalAlignment" Value="Center" />
+                        <Setter Target="PlayingSoundNameTextBlock.(RelativePanel.AlignHorizontalCenterWithPanel)" Value="True" />
                         <Setter Target="PlayingSoundNameTextBlock.TextAlignment" Value="Center" />
-                        <Setter Target="PlayingSoundNameTextBlock.Margin" Value="8,0" />
                     </VisualState.Setters>
                 </VisualState>
                 <VisualState x:Name="LayoutSizeCompact">
@@ -578,114 +576,117 @@
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
-        <Grid Grid.Row="0" Margin="0,0,0,4">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="*" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
-
+        <RelativePanel
+            Grid.Row="0"
+            Margin="0,0,0,4"
+            MinHeight="32">
+            
             <TextBlock
                 Name="PlayingSoundNameTextBlock"
-                Grid.Column="0"
-                VerticalAlignment="Center"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
                 FontSize="15"
-                TextWrapping="WrapWholeWords" />
+                TextWrapping="WrapWholeWords"
+                Margin="{x:Bind singlePlayingSoundTitleMargin}" />
 
-            <Button
-                Name="PlaybackSpeedButton"
-                Grid.Column="1"
-                Style="{StaticResource TopCommandButtonStyle}"
-                Margin="0,0,3,0"
-                Padding="-1,0,0,0"
-                FontFamily="{ThemeResource ContentControlThemeFontFamily}"
-                FontSize="12"
-                Visibility="Collapsed">
+            <StackPanel
+                Name="TopButtonsStackPanel"
+                RelativePanel.LeftOf="PlayingSoundNameTextBlock"
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                Orientation="Horizontal"
+                SizeChanged="TopButtonsStackPanel_SizeChanged">
 
-                <ToolTipService.ToolTip>
-                    <TextBlock Name="PlaybackSpeedButtonToolTip" TextWrapping="WrapWholeWords" />
-                </ToolTipService.ToolTip>
+                <Button
+                    Name="PlaybackSpeedButton"
+                    Style="{StaticResource TopCommandButtonStyle}"
+                    Margin="0,0,3,0"
+                    Padding="-1,0,0,0"
+                    FontFamily="{ThemeResource ContentControlThemeFontFamily}"
+                    FontSize="12"
+                    Visibility="Collapsed">
 
-                <Button.Flyout>
-                    <Flyout x:Name="PlaybackSpeedFlyout">
-                        <RelativePanel MaxWidth="200">
-                            <TextBlock
-                                Name="PlaybackSpeedFlyoutText"
-                                RelativePanel.AlignTopWithPanel="True"
-                                Margin="0,0,0,16"
-                                TextWrapping="WrapWholeWords">
-                            </TextBlock>
+                    <ToolTipService.ToolTip>
+                        <TextBlock Name="PlaybackSpeedButtonToolTip" TextWrapping="WrapWholeWords" />
+                    </ToolTipService.ToolTip>
 
-                            <Button
-                                Name="PlaybackSpeedFlyoutResetButton"
-                                x:Uid="ResetButton"
-                                RelativePanel.Below="PlaybackSpeedFlyoutText"
-                                RelativePanel.AlignHorizontalCenterWithPanel="True"
-                                Click="PlaybackSpeedFlyoutResetButton_Click">
-                            </Button>
-                        </RelativePanel>
-                    </Flyout>
-                </Button.Flyout>
-            </Button>
+                    <Button.Flyout>
+                        <Flyout x:Name="PlaybackSpeedFlyout">
+                            <RelativePanel MaxWidth="200">
+                                <TextBlock
+                                    Name="PlaybackSpeedFlyoutText"
+                                    RelativePanel.AlignTopWithPanel="True"
+                                    Margin="0,0,0,16"
+                                    TextWrapping="WrapWholeWords">
+                                </TextBlock>
 
-            <Button
-                Name="OutputDeviceButton"
-                Grid.Column="2"
-                Style="{StaticResource TopCommandButtonStyle}"
-                Margin="0,0,3,0"
-                Padding="-1,0,0,0"
-                FontSize="16"
-                Content="&#xE7F5;"
-                Visibility="Collapsed"
-                Click="OutputDeviceButton_Click">
+                                <Button
+                                    Name="PlaybackSpeedFlyoutResetButton"
+                                    x:Uid="ResetButton"
+                                    RelativePanel.Below="PlaybackSpeedFlyoutText"
+                                    RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                    Click="PlaybackSpeedFlyoutResetButton_Click">
+                                </Button>
+                            </RelativePanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
 
-                <ToolTipService.ToolTip>
-                    <TextBlock Name="OutputDeviceButtonToolTip" x:Uid="OutputDeviceButtonToolTip" />
-                </ToolTipService.ToolTip>
+                <Button
+                    Name="OutputDeviceButton"
+                    Style="{StaticResource TopCommandButtonStyle}"
+                    Margin="0,0,3,0"
+                    Padding="-1,0,0,0"
+                    FontSize="16"
+                    Content="&#xE7F5;"
+                    Visibility="Collapsed"
+                    Click="OutputDeviceButton_Click">
 
-                <Button.Flyout>
-                    <Flyout x:Name="OutputDeviceFlyout">
-                        <RelativePanel MaxWidth="200">
-                            <TextBlock
-                                Name="OutputDeviceFlyoutText"
-                                x:Uid="OutputDeviceFlyoutText"
-                                RelativePanel.AlignTopWithPanel="True"
-                                TextWrapping="WrapWholeWords">
-                            </TextBlock>
+                    <ToolTipService.ToolTip>
+                        <TextBlock Name="OutputDeviceButtonToolTip" x:Uid="OutputDeviceButtonToolTip" />
+                    </ToolTipService.ToolTip>
 
-                            <TextBlock
-                                Name="OutputDeviceFlyoutDeviceName"
-                                RelativePanel.Below="OutputDeviceFlyoutText"
-                                RelativePanel.AlignHorizontalCenterWithPanel="True"
-                                Margin="0,12,0,16"
-                                TextWrapping="WrapWholeWords">
-                            </TextBlock>
+                    <Button.Flyout>
+                        <Flyout x:Name="OutputDeviceFlyout">
+                            <RelativePanel MaxWidth="200">
+                                <TextBlock
+                                    Name="OutputDeviceFlyoutText"
+                                    x:Uid="OutputDeviceFlyoutText"
+                                    RelativePanel.AlignTopWithPanel="True"
+                                    TextWrapping="WrapWholeWords">
+                                </TextBlock>
 
-                            <Button
-                                Name="OutputDeviceFlyoutResetButton"
-                                x:Uid="ResetButton"
-                                RelativePanel.Below="OutputDeviceFlyoutDeviceName"
-                                RelativePanel.AlignHorizontalCenterWithPanel="True"
-                                Click="OutputDeviceFlyoutResetButton_Click">
-                            </Button>
-                        </RelativePanel>
-                    </Flyout>
-                </Button.Flyout>
-            </Button>
+                                <TextBlock
+                                    Name="OutputDeviceFlyoutDeviceName"
+                                    RelativePanel.Below="OutputDeviceFlyoutText"
+                                    RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                    Margin="0,12,0,16"
+                                    TextWrapping="WrapWholeWords">
+                                </TextBlock>
 
-            <Button
-                Name="ExpandButton"
-                Grid.Column="3"
-                Style="{StaticResource TopCommandButtonStyle}"
-                Content="&#xE099;"
-                Click="ExpandButton_Click">
+                                <Button
+                                    Name="OutputDeviceFlyoutResetButton"
+                                    x:Uid="ResetButton"
+                                    RelativePanel.Below="OutputDeviceFlyoutDeviceName"
+                                    RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                    Click="OutputDeviceFlyoutResetButton_Click">
+                                </Button>
+                            </RelativePanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
 
-                <ToolTipService.ToolTip>
-                    <TextBlock Name="ExpandButtonToolTip" Text="Expand" />
-                </ToolTipService.ToolTip>
-            </Button>
-        </Grid>
+                <Button
+                    Name="ExpandButton"
+                    Style="{StaticResource TopCommandButtonStyle}"
+                    Content="&#xE099;"
+                    Click="ExpandButton_Click">
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock Name="ExpandButtonToolTip" Text="Expand" />
+                    </ToolTipService.ToolTip>
+                </Button>
+            </StackPanel>
+        </RelativePanel>
 
         <RelativePanel Grid.Row="1">
             <RelativePanel

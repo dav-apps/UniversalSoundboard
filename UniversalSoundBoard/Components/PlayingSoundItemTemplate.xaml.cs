@@ -37,6 +37,7 @@ namespace UniversalSoundboard.Components
         private readonly ResourceLoader loader = new ResourceLoader();
         PlayingSoundItemLayoutType layoutType = PlayingSoundItemLayoutType.Small;
         Guid selectedSoundUuid;
+        Thickness singlePlayingSoundTitleMargin = new Thickness(0);
         private bool skipSoundsListViewSelectionChanged;
         private bool skipProgressSliderValueChanged = false;
         private bool inBottomPlayingSoundsBar = false;
@@ -356,6 +357,25 @@ namespace UniversalSoundboard.Components
         private async void NextButton_Click(object sender, RoutedEventArgs e)
         {
             await PlayingSoundItem.MoveToNext();
+        }
+
+        private void TopButtonsStackPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (
+                layoutType == PlayingSoundItemLayoutType.SingleSoundSmall
+                || layoutType == PlayingSoundItemLayoutType.SingleSoundLarge
+            )
+            {
+                singlePlayingSoundTitleMargin.Left = TopButtonsStackPanel.ActualWidth + 8;
+                singlePlayingSoundTitleMargin.Right = TopButtonsStackPanel.ActualWidth + 8;
+            }
+            else
+            {
+                singlePlayingSoundTitleMargin.Left = 0;
+                singlePlayingSoundTitleMargin.Right = TopButtonsStackPanel.ActualWidth + 8;
+            }
+
+            Bindings.Update();
         }
 
         private void PlaybackSpeedFlyoutResetButton_Click(object sender, RoutedEventArgs e)
