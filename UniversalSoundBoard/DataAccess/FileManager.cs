@@ -1680,7 +1680,10 @@ namespace UniversalSoundboard.DataAccess
                         int index = itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
 
                         // Update the current playing sound if it is currently not playing
-                        if (currentPlayingSound.MediaPlayer.TimelineController.State != MediaTimelineControllerState.Running)
+                        if (
+                            currentPlayingSound.MediaPlayer.TimelineController != null
+                            && currentPlayingSound.MediaPlayer.TimelineController.State != MediaTimelineControllerState.Running
+                        )
                         {
                             // Check if the playing sound changed
                             bool soundWasUpdated = (
@@ -3348,6 +3351,6 @@ namespace UniversalSoundboard.DataAccess
             var ms = new MemoryStream(Encoding.UTF8.GetBytes(data));
             return (List<TableObjectData>)serializer.ReadObject(ms);
         }
+        #endregion
     }
-    #endregion
 }
