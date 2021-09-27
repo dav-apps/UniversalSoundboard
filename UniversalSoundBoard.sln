@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31424.327
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31717.71
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalSoundBoard", "UniversalSoundBoard\UniversalSoundBoard.csproj", "{D28C5D63-9E01-456A-B935-63D72F3F4E46}"
 EndProject
@@ -94,9 +94,9 @@ Global
 		{10769B56-07AE-453A-BAEB-1C0C7C492838}.Release|x64.Build.0 = Release|Any CPU
 		{10769B56-07AE-453A-BAEB-1C0C7C492838}.Release|x86.ActiveCfg = Release|Any CPU
 		{10769B56-07AE-453A-BAEB-1C0C7C492838}.Release|x86.Build.0 = Release|Any CPU
-		{C86F0684-38BF-4D79-9711-515EBDE3BAF1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C86F0684-38BF-4D79-9711-515EBDE3BAF1}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C86F0684-38BF-4D79-9711-515EBDE3BAF1}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{C86F0684-38BF-4D79-9711-515EBDE3BAF1}.Debug|Any CPU.ActiveCfg = Debug|ARM64
+		{C86F0684-38BF-4D79-9711-515EBDE3BAF1}.Debug|Any CPU.Build.0 = Debug|ARM64
+		{C86F0684-38BF-4D79-9711-515EBDE3BAF1}.Debug|Any CPU.Deploy.0 = Debug|ARM64
 		{C86F0684-38BF-4D79-9711-515EBDE3BAF1}.Debug|ARM.ActiveCfg = Debug|ARM
 		{C86F0684-38BF-4D79-9711-515EBDE3BAF1}.Debug|ARM.Build.0 = Debug|ARM
 		{C86F0684-38BF-4D79-9711-515EBDE3BAF1}.Debug|ARM.Deploy.0 = Debug|ARM
