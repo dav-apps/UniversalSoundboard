@@ -240,7 +240,11 @@ namespace UniversalSoundboard
             AppServiceDeferral messageDeferral = args.GetDeferral();
 
             int id = (int)args.Request.Message["id"];
-            await FileManager.HandleHotkeyPressed(id);
+
+            await MainPage.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, async () =>
+            {
+                await FileManager.HandleHotkeyPressed(id);
+            });
 
             await args.Request.SendResponseAsync(new ValueSet());
             messageDeferral.Complete();
