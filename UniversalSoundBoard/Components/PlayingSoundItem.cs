@@ -920,7 +920,7 @@ namespace UniversalSoundboard.Components
             FavouriteChanged?.Invoke(this, new FavouriteChangedEventArgs(currentSound.Favourite));
 
             // Save the new favourite and reload the sound
-            await FileManager.SetSoundAsFavouriteAsync(currentSound.Uuid, currentSound.Favourite);
+            await FileManager.SetFavouriteOfSoundAsync(currentSound.Uuid, currentSound.Favourite);
             await FileManager.ReloadSound(currentSound.Uuid);
         }
 

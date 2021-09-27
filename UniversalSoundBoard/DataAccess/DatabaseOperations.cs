@@ -60,42 +60,6 @@ namespace UniversalSoundboard.DataAccess
         {
             return await Dav.Database.GetAllTableObjectsAsync(FileManager.SoundTableId, false);
         }
-
-        public static async Task UpdateSoundAsync(Guid uuid, string name, bool? favourite, int? defaultVolume, bool? defaultMuted, Guid? imageUuid, List<Guid> categoryUuids, List<Hotkey> hotkeys, int? defaultPlaybackSpeed)
-        {
-            // Get the sound table object
-            var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != FileManager.SoundTableId) return;
-
-            if (!string.IsNullOrEmpty(name))
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableNamePropertyName, name);
-            if (favourite.HasValue)
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableFavouritePropertyName, favourite.Value.ToString());
-            if (defaultVolume.HasValue)
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableDefaultVolumePropertyName, defaultVolume.Value.ToString());
-            if (defaultMuted.HasValue)
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableDefaultMutedPropertyName, defaultMuted.Value.ToString());
-            if (imageUuid.HasValue)
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableImageUuidPropertyName, imageUuid.Value.ToString());
-            if (categoryUuids != null)
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableCategoryUuidPropertyName, string.Join(",", categoryUuids));
-            if (hotkeys != null)
-            {
-                List<string> hotkeyStrings = new List<string>();
-                
-                foreach (Hotkey hotkey in hotkeys)
-                {
-                    if (hotkey.IsEmpty())
-                        continue;
-
-                    hotkeyStrings.Add(hotkey.ToDataString());
-                }
-
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableHotkeysPropertyName, string.Join(",", hotkeyStrings));
-            }
-            if (defaultPlaybackSpeed.HasValue)
-                await soundTableObject.SetPropertyValueAsync(FileManager.SoundTableDefaultPlaybackSpeedPropertyName, defaultPlaybackSpeed.Value.ToString());
-        }
         
         public static async Task DeleteSoundAsync(Guid uuid)
         {

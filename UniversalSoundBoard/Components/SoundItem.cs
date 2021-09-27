@@ -87,7 +87,7 @@ namespace UniversalSoundboard.Components
         {
             bool newFav = !sound.Favourite;
 
-            await FileManager.SetSoundAsFavouriteAsync(sound.Uuid, newFav);
+            await FileManager.SetFavouriteOfSoundAsync(sound.Uuid, newFav);
             await FileManager.ReloadSound(sound.Uuid);
         }
         #endregion

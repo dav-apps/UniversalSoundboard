@@ -303,61 +303,6 @@ namespace UniversalSoundboard.Tests.DataAccess
         }
         #endregion
 
-        #region UpdateSoundAsync
-        [TestMethod]
-        public async Task UpdateSoundAsyncShouldUpdateAllValuesOfTheSound()
-        {
-            // Arrange (1)
-            Guid uuid = Guid.NewGuid();
-            string name = "Test-Sound";
-            bool favourite = false;
-            Guid fileUuid = Guid.NewGuid();
-            List<Guid> categoryUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid() };
-
-            // Act (1)
-            await DatabaseOperations.CreateSoundAsync(uuid, name, favourite, fileUuid, categoryUuids);
-
-            // Assert (1)
-            TableObject soundFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
-            Assert.IsNotNull(soundFromDatabase);
-            Assert.AreEqual(uuid, soundFromDatabase.Uuid);
-            Assert.AreEqual(name, soundFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
-            Assert.AreEqual(favourite, bool.Parse(soundFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
-            Assert.AreEqual(fileUuid.ToString(), soundFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
-
-            string[] soundTableObjectCategories = soundFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(',');
-            Assert.AreEqual(categoryUuids.Count, soundTableObjectCategories.Length);
-            for (int i = 0; i < categoryUuids.Count; i++)
-                Assert.AreEqual(categoryUuids[i].ToString(), soundTableObjectCategories[i]);
-
-            // Arrange (2)
-            string updatedName = "Updated Test-Sound name";
-            bool updatedFavourite = true;
-            int defaultVolume = 80;
-            bool defaultMuted = true;
-            Guid imageUuid = Guid.NewGuid();
-            List<Guid> updatedCategoryUuids = new List<Guid> { Guid.NewGuid(), Guid.NewGuid(), Guid.NewGuid() };
-
-            // Act (2)
-            await DatabaseOperations.UpdateSoundAsync(uuid, updatedName, updatedFavourite, defaultVolume, defaultMuted, imageUuid, updatedCategoryUuids, null, null);
-
-            // Assert (2)
-            soundFromDatabase = await DatabaseOperations.GetTableObjectAsync(uuid);
-            Assert.IsNotNull(soundFromDatabase);
-            Assert.AreEqual(updatedName, soundFromDatabase.GetPropertyValue(FileManager.SoundTableNamePropertyName));
-            Assert.AreEqual(updatedFavourite, bool.Parse(soundFromDatabase.GetPropertyValue(FileManager.SoundTableFavouritePropertyName)));
-            Assert.AreEqual(fileUuid.ToString(), soundFromDatabase.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
-            Assert.AreEqual(defaultVolume, int.Parse(soundFromDatabase.GetPropertyValue(FileManager.SoundTableDefaultVolumePropertyName)));
-            Assert.AreEqual(defaultMuted, bool.Parse(soundFromDatabase.GetPropertyValue(FileManager.SoundTableDefaultMutedPropertyName)));
-            Assert.AreEqual(imageUuid.ToString(), soundFromDatabase.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
-
-            soundTableObjectCategories = soundFromDatabase.GetPropertyValue(FileManager.SoundTableCategoryUuidPropertyName).Split(',');
-            Assert.AreEqual(updatedCategoryUuids.Count, soundTableObjectCategories.Length);
-            for (int i = 0; i < updatedCategoryUuids.Count; i++)
-                Assert.AreEqual(updatedCategoryUuids[i].ToString(), soundTableObjectCategories[i]);
-        }
-        #endregion
-
         #region DeleteSoundAsync
         [TestMethod]
         public async Task DeleteSoundAsyncShouldDeleteTheSound()
@@ -417,7 +362,7 @@ namespace UniversalSoundboard.Tests.DataAccess
 
             // Create the sound
             await DatabaseOperations.CreateSoundAsync(uuid, name, false, soundFileUuid, null);
-            await DatabaseOperations.UpdateSoundAsync(uuid, null, null, null, null, imageFileUuid, null, null, null);
+            await FileManager.SetImageUuidOfSoundAsync(uuid, imageFileUuid);
 
             // Create the sound file table object
             await TableObject.CreateAsync(soundFileUuid, FileManager.SoundFileTableId);
