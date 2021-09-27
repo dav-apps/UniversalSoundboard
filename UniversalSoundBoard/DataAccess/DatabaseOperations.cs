@@ -180,29 +180,6 @@ namespace UniversalSoundboard.DataAccess
 
             return tableObject;
         }
-
-        public static async Task UpdatePlayingSoundAsync(Guid uuid, List<Guid> soundUuids, int? current, int? repetitions, bool? randomly, int? volume, bool? muted, string outputDevice, int? playbackSpeed)
-        {
-            var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (playingSoundTableObject == null || playingSoundTableObject.TableId != FileManager.PlayingSoundTableId) return;
-
-            if (soundUuids != null)
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableSoundIdsPropertyName, string.Join(",", soundUuids));
-            if (current.HasValue)
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableCurrentPropertyName, current.Value.ToString());
-            if (repetitions.HasValue)
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableRepetitionsPropertyName, repetitions.Value.ToString());
-            if (randomly.HasValue)
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableRandomlyPropertyName, randomly.Value.ToString());
-            if (volume.HasValue)
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableVolume2PropertyName, volume.Value.ToString());
-            if (muted.HasValue)
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableMutedPropertyName, muted.Value.ToString());
-            if (outputDevice != null)
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTableOutputDevicePropertyName, outputDevice);
-            if (playbackSpeed.HasValue)
-                await playingSoundTableObject.SetPropertyValueAsync(FileManager.PlayingSoundTablePlaybackSpeedPropertyName, playbackSpeed.Value.ToString());
-        }
         #endregion
 
         #region Order

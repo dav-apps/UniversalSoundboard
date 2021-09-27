@@ -2178,51 +2178,79 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task SetCurrentOfPlayingSoundAsync(Guid uuid, int current)
         {
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, current, null, null, null, null, null, null);
+            // Get the playing sound table object
+            var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+
+            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableCurrentPropertyName, current.ToString());
         }
 
         public static async Task SetRepetitionsOfPlayingSoundAsync(Guid uuid, int repetitions)
         {
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, repetitions, null, null, null, null, null);
+            // Get the playing sound table object
+            var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+
+            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableRepetitionsPropertyName, repetitions.ToString());
         }
 
         public static async Task SetSoundsListOfPlayingSoundAsync(Guid uuid, List<Sound> sounds)
         {
+            // Get the playing sound table object
+            var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+
             List<Guid> soundUuids = new List<Guid>();
             foreach (Sound sound in sounds)
                 soundUuids.Add(sound.Uuid);
 
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, soundUuids, null, null, null, null, null, null, null);
+            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableSoundIdsPropertyName, string.Join(",", soundUuids));
         }
 
         public static async Task SetVolumeOfPlayingSoundAsync(Guid uuid, int volume)
         {
+            // Get the playing sound table object
+            var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+
             if (volume > 100)
                 volume = 100;
             else if (volume < 0)
                 volume = 0;
 
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, volume, null, null, null);
+            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableVolume2PropertyName, volume.ToString());
         }
 
         public static async Task SetMutedOfPlayingSoundAsync(Guid uuid, bool muted)
         {
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, null, muted, null, null);
+            // Get the playing sound table object
+            var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+
+            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableMutedPropertyName, muted.ToString());
         }
 
         public static async Task SetOutputDeviceOfPlayingSoundAsync(Guid uuid, string outputDevice)
         {
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, null, null, outputDevice, null);
+            // Get the playing sound table object
+            var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+
+            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableOutputDevicePropertyName, outputDevice);
         }
 
         public static async Task SetPlaybackSpeedOfPlayingSoundAsync(Guid uuid, int playbackSpeed)
         {
+            // Get the playing sound table object
+            var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+
             if (playbackSpeed > 200)
                 playbackSpeed = 200;
             else if (playbackSpeed < 25)
                 playbackSpeed = 25;
 
-            await DatabaseOperations.UpdatePlayingSoundAsync(uuid, null, null, null, null, null, null, null, playbackSpeed);
+            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTablePlaybackSpeedPropertyName, playbackSpeed.ToString());
         }
 
         public static async Task DeletePlayingSoundAsync(Guid uuid)
