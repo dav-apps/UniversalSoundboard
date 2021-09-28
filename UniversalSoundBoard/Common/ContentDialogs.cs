@@ -1286,9 +1286,11 @@ namespace UniversalSoundboard.Common
                 {
                     Orientation = Orientation.Horizontal,
                     MaxWidth = rightColumnWidth,
-                    Margin = new Thickness(0, 6, 0, 0),
-                    Visibility = PropertiesDialogHotkeys.Last().Count > 1 ? Visibility.Visible : Visibility.Collapsed
+                    Margin = new Thickness(0, 6, 0, 0)
                 };
+
+                // Set the correct visibility for the dav Plus message
+                UpdateDavPlusHotkeyInfoStackPanelVisibility();
 
                 TextBlock davPlusHotkeyInfoTextBlock = new TextBlock
                 {
