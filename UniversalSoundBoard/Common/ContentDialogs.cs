@@ -678,7 +678,7 @@ namespace UniversalSoundboard.Common
                 Title = loader.GetString("Logout"),
                 Content = loader.GetString("Account-LogoutMessage"),
                 PrimaryButtonText = loader.GetString("Logout"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             LogoutContentDialog.Opened += ContentDialog_Opened;
