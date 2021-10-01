@@ -17,6 +17,7 @@
 
     <Grid
         Name="ContentRoot"
+        Background="Transparent"
         RightTapped="ContentRoot_RightTapped"
         Holding="ContentRoot_Holding">
         
