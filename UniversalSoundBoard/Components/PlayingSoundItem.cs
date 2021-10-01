@@ -957,6 +957,8 @@ namespace UniversalSoundboard.Components
                 }
             }
 
+            if (PlayingSound.MediaPlayer.AudioDevice == null) return;
+
             try
             {
                 PlayingSound.MediaPlayer.AudioDevice = null;
