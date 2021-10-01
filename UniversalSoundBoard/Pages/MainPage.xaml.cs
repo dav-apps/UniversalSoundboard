@@ -934,7 +934,8 @@ namespace UniversalSoundboard.Pages
             int rounds = int.MaxValue;
 
             if (ContentDialogs.RepeatsComboBox.SelectedItem != ContentDialogs.RepeatsComboBox.Items.Last())
-                int.TryParse(ContentDialogs.RepeatsComboBox.SelectedValue.ToString(), out rounds);
+                if (int.TryParse(ContentDialogs.RepeatsComboBox.SelectedValue.ToString(), out rounds))
+                    rounds--;
 
             await SoundPage.PlaySoundsAsync(ContentDialogs.SoundsList.ToList(), rounds, randomly);
 
