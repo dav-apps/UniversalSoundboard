@@ -9,7 +9,7 @@ Create your own soundboard by adding your sound and music files. Sort your sound
 
 You can find UniversalSoundboard in the Microsoft Store:
 
-<a href='//www.microsoft.com/store/apps/9nblggh51005?cid=storebadge&ocid=badge'><img src='https://dav-apps.tech/assets/images/MicrosoftStoreBadge.png' alt='Microsoft Store badge' height="48" /></a>
+<a href='//www.microsoft.com/store/apps/9nblggh51005?cid=storebadge&ocid=badge'><img src='https://dav-apps.tech/assets/images/MicrosoftStoreBadge.jpg' alt='Microsoft Store badge' height="48" /></a>
 
 You can also download the project from here and open the solution in Visual Studio.
 
