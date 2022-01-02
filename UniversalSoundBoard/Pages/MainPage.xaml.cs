@@ -22,6 +22,8 @@ using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using davClassLibrary;
+using DotNetTools.SharpGrabber;
+using DotNetTools.SharpGrabber.Grabbed;
 
 namespace UniversalSoundboard.Pages
 {
@@ -1038,6 +1040,147 @@ namespace UniversalSoundboard.Pages
                     await addSoundsErrorContentDialog.ShowAsync();
                 }
             }
+        }
+        #endregion
+
+        #region New Sound from URL
+        private async void NewSoundFromUrlFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var newSoundFromUrlContentDialog = ContentDialogs.CreateNewSoundFromUrlContentDialog();
+            newSoundFromUrlContentDialog.PrimaryButtonClick += NewSoundFromUrlContentDialog_PrimaryButtonClick;
+            await newSoundFromUrlContentDialog.ShowAsync();
+        }
+
+        private async void NewSoundFromUrlContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Get the url in the text box
+            var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
+            var grabResult = await grabber.GrabAsync(new Uri(ContentDialogs.NewSoundUrlTextBox.Text));
+            var mediaResources = grabResult.Resources<GrabbedMedia>();
+            var imageResources = grabResult.Resources<GrabbedImage>();
+
+            // Find the audio track with the highest sample rate
+            GrabbedMedia bestAudio = null;
+
+            foreach (var media in mediaResources)
+            {
+                if (media.Format.Extension != "m4a") continue;
+
+                int? bitrate = media.GetBitRate();
+                if (!bitrate.HasValue) continue;
+
+                if (bestAudio == null || bestAudio.GetBitRate().Value < bitrate.Value)
+                    bestAudio = media;
+            }
+
+            if (bestAudio == null)
+            {
+                await ShowDownloadErrorDialog();
+                return;
+            }
+
+            // Find the thumbnail image with the highest resolution
+            List<GrabbedImage> images = new List<GrabbedImage>();
+            GrabbedImage maxresDefaultImage = null;
+            GrabbedImage mqDefaultImage = null;
+            GrabbedImage sdDefaultImage = null;
+            GrabbedImage hqDefaultImage = null;
+            GrabbedImage defaultImage = null;
+
+            foreach (var media in imageResources)
+            {
+                string mediaFileName = media.ResourceUri.ToString().Split('/').Last();
+
+                switch (mediaFileName)
+                {
+                    case "maxresdefault.jpg":
+                        maxresDefaultImage = media;
+                        break;
+                    case "mqdefault.jpg":
+                        mqDefaultImage = media;
+                        break;
+                    case "sddefault.jpg":
+                        sdDefaultImage = media;
+                        break;
+                    case "hqdefault.jpg":
+                        hqDefaultImage = media;
+                        break;
+                    case "default.jpg":
+                        defaultImage = media;
+                        break;
+                }
+            }
+
+            if (maxresDefaultImage != null)
+                images.Add(maxresDefaultImage);
+            if (mqDefaultImage != null)
+                images.Add(mqDefaultImage);
+            if (sdDefaultImage != null)
+                images.Add(sdDefaultImage);
+            if (hqDefaultImage != null)
+                images.Add(hqDefaultImage);
+            if (defaultImage != null)
+                images.Add(defaultImage);
+
+            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
+
+            // Download the thumbnail image
+            StorageFile imageFile = await cacheFolder.CreateFileAsync("download.jpg", CreationCollisionOption.GenerateUniqueName);
+            GrabbedImage currentImage;
+            bool imageDownloaded = false;
+
+            while (images.Count() > 0)
+            {
+                currentImage = images[0];
+                images.RemoveAt(0);
+
+                var imageFileDownloadResult = await FileManager.DownloadGrabbedMedia(currentImage.ResourceUri, grabResult, imageFile);
+
+                if (!imageFileDownloadResult.Key)
+                {
+                    if (imageFileDownloadResult.Value == 404)
+                    {
+                        // Try to download the next image in the list
+                        continue;
+                    }
+                    else
+                    {
+                        await ShowDownloadErrorDialog();
+                        return;
+                    }
+                }
+                else
+                {
+                    imageDownloaded = true;
+                    break;
+                }
+            }
+
+            if (!imageDownloaded)
+            {
+                await ShowDownloadErrorDialog();
+                return;
+            }
+
+            // Download the audio track
+            StorageFile audioFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
+            var audioFileDownloadResult = await FileManager.DownloadGrabbedMedia(bestAudio.ResourceUri, grabResult, audioFile);
+
+            if (!audioFileDownloadResult.Key)
+            {
+                await ShowDownloadErrorDialog();
+                return;
+            }
+
+            // Add the files as a new sound
+            Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, null, audioFile, imageFile);
+            await FileManager.AddSound(uuid);
+        }
+
+        public async Task ShowDownloadErrorDialog()
+        {
+            ContentDialog downloadFileErrorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
+            await downloadFileErrorContentDialog.ShowAsync();
         }
         #endregion
 

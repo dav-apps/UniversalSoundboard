@@ -1,5 +1,6 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Models;
+using DotNetTools.SharpGrabber;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
@@ -10,6 +11,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
@@ -141,7 +143,8 @@ namespace UniversalSoundboard.DataAccess
             ".wav",
             ".ogg",
             ".wma",
-            ".flac"
+            ".flac",
+            ".m4a"
         };
         #endregion
 
@@ -198,6 +201,8 @@ namespace UniversalSoundboard.DataAccess
         #region Local variables
         public static ItemViewHolder itemViewHolder;
         public static davClassLibrary.Environment Environment = davClassLibrary.Environment.Production;
+
+        public static HttpClient httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(60) };
 
         private static readonly ResourceLoader loader = new ResourceLoader();
         internal static bool syncFinished = false;
@@ -1891,14 +1896,21 @@ namespace UniversalSoundboard.DataAccess
             return await CreateSoundAsync(uuid, name, categoryUuidList, audioFile);
         }
 
-        public static async Task<Guid> CreateSoundAsync(Guid? uuid, string name, List<Guid> categoryUuids, StorageFile audioFile)
+        public static async Task<Guid> CreateSoundAsync(Guid? uuid, string name, List<Guid> categoryUuids, StorageFile audioFile, StorageFile imageFile = null)
         {
-            // Copy the file into the local cache
-            StorageFile newAudioFile;
+            // Copy the audio and image files into the local cache
+            StorageFile newAudioFile = audioFile;
+            StorageFile newImageFile = imageFile;
+            StorageFolder audioFileParent = await audioFile.GetParentAsync();
+            StorageFolder imageFileParent = imageFile == null ? null : await imageFile.GetParentAsync();
 
             try
             {
-                newAudioFile = await audioFile.CopyAsync(ApplicationData.Current.LocalCacheFolder, audioFile.Name, NameCollisionOption.ReplaceExisting);
+                if (audioFileParent == null || audioFileParent.Path != ApplicationData.Current.LocalCacheFolder.Path)
+                    newAudioFile = await audioFile.CopyAsync(ApplicationData.Current.LocalCacheFolder, audioFile.Name, NameCollisionOption.ReplaceExisting);
+
+                if (imageFile != null && (imageFileParent == null || imageFileParent.Path != ApplicationData.Current.LocalCacheFolder.Path))
+                    await imageFile.CopyAsync(ApplicationData.Current.LocalCacheFolder, imageFile.Name, NameCollisionOption.ReplaceExisting);
             }
             catch(Exception e)
             {
@@ -1913,8 +1925,16 @@ namespace UniversalSoundboard.DataAccess
 
             var soundFileTableObject = await DatabaseOperations.CreateSoundFileAsync(Guid.NewGuid(), newAudioFile);
             var soundTableObject = await DatabaseOperations.CreateSoundAsync(uuid ?? Guid.NewGuid(), name, false, soundFileTableObject.Uuid, categoryUuids);
-
             await newAudioFile.DeleteAsync();
+
+            if (newImageFile != null)
+            {
+                Guid imageUuid = Guid.NewGuid();
+                await DatabaseOperations.CreateImageFileAsync(imageUuid, newImageFile);
+                await SetImageUuidOfSoundAsync(soundTableObject.Uuid, imageUuid);
+                await newImageFile.DeleteAsync();
+            }
+
             return soundTableObject.Uuid;
         }
 
@@ -3366,6 +3386,29 @@ namespace UniversalSoundboard.DataAccess
             catch (Exception)
             {
                 return null;
+            }
+        }
+
+        public static async Task<KeyValuePair<bool, int>> DownloadGrabbedMedia(Uri uri, IGrabResult grabResult, StorageFile targetFile)
+        {
+            try
+            {
+                var response = await httpClient.GetAsync(uri);
+                if (!response.IsSuccessStatusCode) return new KeyValuePair<bool, int>(false, ((int)response.StatusCode));
+
+                var downloadStream = await response.Content.ReadAsStreamAsync();
+                var resourceStream = await grabResult.WrapStreamAsync(downloadStream);
+                Stream fileStream = await targetFile.OpenStreamForWriteAsync();
+
+                await resourceStream.CopyToAsync(fileStream);
+                await fileStream.FlushAsync();
+                fileStream.Dispose();
+
+                return new KeyValuePair<bool, int>(true, -1);
+            }
+            catch (Exception)
+            {
+                return new KeyValuePair<bool, int>(false, -1);
             }
         }
         #endregion

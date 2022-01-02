@@ -236,6 +236,10 @@
                                                     x:Uid="AddButton-Sound"
                                                     Click="NewSoundFlyoutItem_Click" />
                                                 <MenuFlyoutItem
+                                                    Name="NewSoundFromUrlFlyoutItem"
+                                                    Text="Sound von URL hinzufügen"
+                                                    Click="NewSoundFromUrlFlyoutItem_Click" />
+                                                <MenuFlyoutItem
                                                     Name="NewCategoryFlyoutItem" 
                                                     x:Uid="AddButton-Category"
                                                     Click="NewCategoryFlyoutItem_Click" />

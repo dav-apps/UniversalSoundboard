@@ -34,6 +34,7 @@ namespace UniversalSoundboard.Common
         private static bool propertiesDefaultMutedChanged = false;
 
         public static bool ContentDialogOpen = false;
+        public static TextBox NewSoundUrlTextBox;
         public static TextBox NewCategoryTextBox;
         public static Guid NewCategoryParentUuid;
         public static TextBox EditCategoryTextBox;
@@ -58,6 +59,7 @@ namespace UniversalSoundboard.Common
         public static ComboBox PlaybackSpeedComboBox;
         public static List<ObservableCollection<HotkeyItem>> PropertiesDialogHotkeys = new List<ObservableCollection<HotkeyItem>>();
         public static StackPanel davPlusHotkeyInfoStackPanel;
+        public static ContentDialog NewSoundFromUrlContentDialog;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -90,6 +92,39 @@ namespace UniversalSoundboard.Common
         private static void ContentDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
             ContentDialogOpen = false;
+        }
+        #endregion
+
+        #region NewSoundFromUrl
+        public static ContentDialog CreateNewSoundFromUrlContentDialog()
+        {
+            NewSoundFromUrlContentDialog = new ContentDialog
+            {
+                Title = "Neuer Sound von URL",
+                PrimaryButtonText = "Hinzufügen",
+                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                IsPrimaryButtonEnabled = false,
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+            NewSoundFromUrlContentDialog.Opened += ContentDialog_Opened;
+            NewSoundFromUrlContentDialog.Closed += ContentDialog_Closed;
+
+            StackPanel containerStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
+            NewSoundUrlTextBox = new TextBox();
+            NewSoundUrlTextBox.TextChanged += NewSoundUrlTextBox_TextChanged;
+            containerStackPanel.Children.Add(NewSoundUrlTextBox);
+
+            NewSoundFromUrlContentDialog.Content = containerStackPanel;
+            return NewSoundFromUrlContentDialog;
+        }
+
+        private static void NewSoundUrlTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            NewSoundFromUrlContentDialog.IsPrimaryButtonEnabled = NewSoundUrlTextBox.Text.Length > 2;
         }
         #endregion
 
