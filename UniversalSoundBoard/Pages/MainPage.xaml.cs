@@ -24,6 +24,7 @@ using UniversalSoundboard.Models;
 using davClassLibrary;
 using DotNetTools.SharpGrabber;
 using DotNetTools.SharpGrabber.Grabbed;
+using System.Collections.ObjectModel;
 
 namespace UniversalSoundboard.Pages
 {
@@ -33,6 +34,7 @@ namespace UniversalSoundboard.Pages
         public static CoreDispatcher dispatcher;                            // Dispatcher for ShareTargetPage
         bool initizalized = false;
         string appTitle = "UniversalSoundboard";                               // The app name displayed in the title bar
+        private readonly ObservableCollection<object> menuItems = new ObservableCollection<object>();
         private Guid initialCategory = Guid.Empty;                          // The category that was selected before the sounds started loading
         private Guid selectedCategory = Guid.Empty;                         // The category that was right clicked for the flyout
         private List<string> Suggestions = new List<string>();              // The suggestions for the SearchAutoSuggestBox
@@ -75,9 +77,8 @@ namespace UniversalSoundboard.Pages
             AdjustLayout();
             initizalized = true;
 
-            // Load the Categories and the menu items
+            // Load the Categories
             await FileManager.LoadCategoriesAsync();
-            LoadMenuItems();
 
             // Select the first menu item
             await Task.Delay(2);
@@ -169,13 +170,13 @@ namespace UniversalSoundboard.Pages
         private async void ItemViewHolder_CategoryUpdated(object sender, CategoryEventArgs args)
         {
             // Update the text and icon of the menu item of the category
-            UpdateCategoryMenuItem(SideBar.MenuItems, await FileManager.GetCategoryAsync(args.Uuid));
+            UpdateCategoryMenuItem(menuItems, await FileManager.GetCategoryAsync(args.Uuid));
         }
 
         private void ItemViewHolder_CategoryDeleted(object sender, CategoryEventArgs args)
         {
             // Remove the category from the SideBar
-            RemoveCategoryMenuItem(SideBar.MenuItems, args.Uuid);
+            RemoveCategoryMenuItem(menuItems, args.Uuid);
         }
 
         private async void ItemViewHolder_TableObjectFileDownloadProgressChanged(object sender, TableObjectFileDownloadProgressChangedEventArgs e)
@@ -381,7 +382,7 @@ namespace UniversalSoundboard.Pages
 
         private void SelectCategory(Guid categoryUuid)
         {
-            foreach (WinUI.NavigationViewItem item in SideBar.MenuItems)
+            foreach (WinUI.NavigationViewItem item in menuItems)
                 SelectSubCategory(item, categoryUuid);
         }
 
@@ -410,10 +411,8 @@ namespace UniversalSoundboard.Pages
         #region MenuItem methods
         private void LoadMenuItems()
         {
-            SideBar.MenuItems.Clear();
-
             foreach (var menuItem in CreateMenuItemsforCategories(FileManager.itemViewHolder.Categories.ToList()))
-                SideBar.MenuItems.Add(menuItem);
+                menuItems.Add(menuItem);
         }
 
         private List<WinUI.NavigationViewItem> CreateMenuItemsforCategories(List<Category> categories)
@@ -548,7 +547,7 @@ namespace UniversalSoundboard.Pages
             List<WinUI.NavigationViewItem> parentItems = new List<WinUI.NavigationViewItem>();
             int i = 0;
 
-            foreach(var menuItem in SideBar.MenuItems)
+            foreach(var menuItem in menuItems)
             {
                 WinUI.NavigationViewItem item = (WinUI.NavigationViewItem)menuItem;
                 Guid uuid = (Guid)item.Tag;
@@ -612,8 +611,8 @@ namespace UniversalSoundboard.Pages
             List<WinUI.NavigationViewItem> currentItemList = new List<WinUI.NavigationViewItem>();
             
             // Copy the SideBar menu items into the current items list
-            for(int i = 1; i < SideBar.MenuItems.Count; i++)
-                currentItemList.Add((WinUI.NavigationViewItem)SideBar.MenuItems[i]);
+            for(int i = 1; i < menuItems.Count; i++)
+                currentItemList.Add((WinUI.NavigationViewItem)menuItems[i]);
 
             foreach (var position in positionPath)
             {
@@ -1205,7 +1204,7 @@ namespace UniversalSoundboard.Pages
             FileManager.AddCategory(newCategory, Guid.Empty);
 
             // Add the category to the SideBar
-            AddCategoryMenuItem(SideBar.MenuItems, newCategory, Guid.Empty);
+            AddCategoryMenuItem(menuItems, newCategory, Guid.Empty);
 
             // Navigate to the new category
             await FileManager.ShowCategoryAsync(categoryUuid);
@@ -1580,7 +1579,7 @@ namespace UniversalSoundboard.Pages
             FileManager.AddCategory(newCategory, selectedCategory);
 
             // Add the category to the MenuItems of the SideBar
-            AddCategoryMenuItem(SideBar.MenuItems, newCategory, selectedCategory);
+            AddCategoryMenuItem(menuItems, newCategory, selectedCategory);
 
             // Navigate to the new category
             await FileManager.ShowCategoryAsync(selectedCategory);
@@ -1594,21 +1593,21 @@ namespace UniversalSoundboard.Pages
         #region Position
         private async void MoveUpFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            MoveCategoryMenuItem(SideBar.MenuItems, selectedCategory, true);
+            MoveCategoryMenuItem(menuItems, selectedCategory, true);
             await FileManager.MoveCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, Guid.Empty, true);
             await SelectCurrentCategory();
         }
 
         private async void MoveDownFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            MoveCategoryMenuItem(SideBar.MenuItems, selectedCategory, false);
+            MoveCategoryMenuItem(menuItems, selectedCategory, false);
             await FileManager.MoveCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, Guid.Empty, false);
             await SelectCurrentCategory();
         }
 
         private async void MoveToCategoryAboveItem_Click(object sender, RoutedEventArgs e)
         {
-            MoveCategoryMenuItemToMenuItem(SideBar.MenuItems, selectedCategory, true);
+            MoveCategoryMenuItemToMenuItem(menuItems, selectedCategory, true);
             await FileManager.MoveCategoryToCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, true);
             await SelectCurrentCategory();
 
@@ -1618,7 +1617,7 @@ namespace UniversalSoundboard.Pages
 
         private async void MoveToCategoryBelowItem_Click(object sender, RoutedEventArgs e)
         {
-            MoveCategoryMenuItemToMenuItem(SideBar.MenuItems, selectedCategory, false);
+            MoveCategoryMenuItemToMenuItem(menuItems, selectedCategory, false);
             await FileManager.MoveCategoryToCategoryAndSaveOrderAsync(FileManager.itemViewHolder.Categories, selectedCategory, false);
             await SelectCurrentCategory();
 
@@ -1628,7 +1627,7 @@ namespace UniversalSoundboard.Pages
 
         private async void MoveToParentCategoryAboveItem_Click(object sender, RoutedEventArgs e)
         {
-            MoveCategoryMenuItemToParent(SideBar.MenuItems, selectedCategory, true);
+            MoveCategoryMenuItemToParent(menuItems, selectedCategory, true);
             await FileManager.MoveCategoryToParentAndSaveOrderAsync(FileManager.itemViewHolder.Categories, Guid.Empty, selectedCategory, true);
             await SelectCurrentCategory();
 
@@ -1638,7 +1637,7 @@ namespace UniversalSoundboard.Pages
 
         private async void MoveToParentCategoryBelowItem_Click(object sender, RoutedEventArgs e)
         {
-            MoveCategoryMenuItemToParent(SideBar.MenuItems, selectedCategory, false);
+            MoveCategoryMenuItemToParent(menuItems, selectedCategory, false);
             await FileManager.MoveCategoryToParentAndSaveOrderAsync(FileManager.itemViewHolder.Categories, Guid.Empty, selectedCategory, false);
             await SelectCurrentCategory();
 

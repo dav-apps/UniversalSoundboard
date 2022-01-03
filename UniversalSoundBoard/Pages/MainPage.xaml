@@ -83,7 +83,8 @@
             IsBackEnabled="{Binding BackButtonEnabled}"
             ItemInvoked="SideBar_ItemInvoked"
             BackRequested="SideBar_BackRequested"
-            DisplayModeChanged="SideBar_DisplayModeChanged">
+            DisplayModeChanged="SideBar_DisplayModeChanged"
+            MenuItemsSource="{x:Bind menuItems}">
 
             <muxc:NavigationView.PaneFooter>
                 <StackPanel>
