@@ -84,37 +84,37 @@
             ItemInvoked="SideBar_ItemInvoked"
             BackRequested="SideBar_BackRequested"
             DisplayModeChanged="SideBar_DisplayModeChanged"
+            PaneOpening="SideBar_PaneOpening"
+            PaneClosing="SideBar_PaneClosing"
             MenuItemsSource="{x:Bind menuItems}">
 
-            <muxc:NavigationView.PaneFooter>
-                <StackPanel>
-                    <muxc:NavigationViewItem
-                        x:Name="LoginMenuItem"
-                        x:Uid="LoginButton"
-                        Icon="Contact"
-                        Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
-                        Tapped="LogInMenuItem_Tapped" />
+            <muxc:NavigationView.FooterMenuItems>
+                <muxc:NavigationViewItem
+                    x:Name="LoginMenuItem"
+                    x:Uid="LoginButton"
+                    Icon="Contact"
+                    Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToInvertedVisibilityConverter}}" />
 
-                    <muxc:NavigationViewItem
-                        x:Name="AccountMenuItem"
-                        Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Tapped="LogInMenuItem_Tapped">
+                <muxc:NavigationViewItem
+                    x:Name="AccountMenuItem"
+                    Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
+                    <muxc:NavigationViewItem.Content>
                         <StackPanel Orientation="Horizontal">
                             <PersonPicture
                                 ProfilePicture="{x:Bind davClassLibrary:Dav.User.ProfileImage, Converter={StaticResource FileToBitmapImageConverter}}" 
-                                Height="23"
-                                Width="23" 
-                                Margin="-7,0,0,0" />
+                                Height="20"
+                                Width="20"
+                                Margin="0,1,0,0" />
 
                             <TextBlock
-                                Text="{x:Bind davClassLibrary:Dav.User.FirstName}" 
-                                Margin="8,0,0,0" 
+                                Text="{x:Bind davClassLibrary:Dav.User.FirstName}"
+                                Margin="13,0,0,0"
                                 VerticalAlignment="Center" />
                         </StackPanel>
-                    </muxc:NavigationViewItem>
-                </StackPanel>
-            </muxc:NavigationView.PaneFooter>
+                    </muxc:NavigationViewItem.Content>
+                </muxc:NavigationViewItem>
+            </muxc:NavigationView.FooterMenuItems>
 
             <muxc:NavigationView.Content>
                 <Grid Name="ContentRoot">

@@ -284,19 +284,29 @@ namespace UniversalSoundboard.Pages
             // Set the width of the title bar and the position of the title, depending on whether the Hamburger button of the NavigationView is visible
             if (SideBar.DisplayMode == WinUI.NavigationViewDisplayMode.Minimal)
             {
-                TitleBar.Width = Window.Current.Bounds.Width - 80;
-                WindowTitleTextBlock.Margin = new Thickness(97, 12, 0, 0);
+                TitleBar.Width = Window.Current.Bounds.Width - 96;
+                WindowTitleTextBlock.Margin = new Thickness(97, 15, 0, 0);
             }
             else
             {
-                TitleBar.Width = Window.Current.Bounds.Width - 40;
-                WindowTitleTextBlock.Margin = new Thickness(57, 12, 0, 0);
+                TitleBar.Width = Window.Current.Bounds.Width - 48;
+                WindowTitleTextBlock.Margin = new Thickness(65, 15, 0, 0);
             }
 
-            // Update the app title if the user is on dav Plus
-            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
+            // Update the margin of the profile image in the Sidebar
+            if (SideBar.IsPaneOpen)
+                AccountMenuItem.Margin = new Thickness(-2, 1, 0, 0);
+            else
+                AccountMenuItem.Margin = new Thickness(2, 1, 0, 0);
+
+            // Update the app title if the user is on dav Plus or Pro
+            if (Dav.IsLoggedIn)
             {
-                appTitle = "UniversalSoundboard Plus";
+                if (((int)Dav.User.Plan) == 1)
+                    appTitle = "UniversalSoundboard Plus";
+                else if (((int)Dav.User.Plan) == 2)
+                    appTitle = "UniversalSoundboard Pro";
+
                 Bindings.Update();
             }
         }
@@ -757,6 +767,20 @@ namespace UniversalSoundboard.Pages
                 // Show the Settings page
                 FileManager.NavigateToSettingsPage();
             }
+            else if (
+                args.InvokedItemContainer == LoginMenuItem
+                || args.InvokedItemContainer == AccountMenuItem
+            )
+            {
+                // Show the Account page
+                FileManager.NavigateToAccountPage();
+
+                // Close the SideBar if it was open on mobile
+                if (
+                    SideBar.DisplayMode == WinUI.NavigationViewDisplayMode.Compact
+                    || SideBar.DisplayMode == WinUI.NavigationViewDisplayMode.Minimal
+                ) SideBar.IsPaneOpen = false;
+            }
             else
             {
                 // Show the selected category
@@ -784,18 +808,14 @@ namespace UniversalSoundboard.Pages
             AdjustLayout();
         }
 
-        private void LogInMenuItem_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
+        private void SideBar_PaneOpening(WinUI.NavigationView sender, object args)
         {
-            SideBar.SelectedItem = null;
+            AccountMenuItem.Margin = new Thickness(-2, 1, 0, 0);
+        }
 
-            // Show the Account page
-            FileManager.NavigateToAccountPage();
-
-            // Close the SideBar if it was open on mobile
-            if (
-                SideBar.DisplayMode == WinUI.NavigationViewDisplayMode.Compact
-                || SideBar.DisplayMode == WinUI.NavigationViewDisplayMode.Minimal
-            ) SideBar.IsPaneOpen = false;
+        private void SideBar_PaneClosing(WinUI.NavigationView sender, WinUI.NavigationViewPaneClosingEventArgs args)
+        {
+            AccountMenuItem.Margin = new Thickness(2, 1, 0, 0);
         }
 
         private void NavigationViewMenuItem_RightTapped(object sender, Windows.UI.Xaml.Input.RightTappedRoutedEventArgs e)
