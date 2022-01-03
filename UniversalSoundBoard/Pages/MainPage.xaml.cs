@@ -1404,7 +1404,7 @@ namespace UniversalSoundboard.Pages
                 var itemStyle = Resources["ListViewItemStyle"] as Style;
 
                 var downloadFilesContentDialog = ContentDialogs.CreateDownloadFilesContentDialog(selectedSounds.ToList(), itemTemplate, itemStyle);
-                downloadFilesContentDialog.SecondaryButtonClick += DownloadFilesContentDialog_SecondaryButtonClick;
+                downloadFilesContentDialog.CloseButtonClick += DownloadFilesContentDialog_CloseButtonClick;
 
                 downloadFilesDialogIsVisible = true;
                 await downloadFilesContentDialog.ShowAsync();
@@ -1430,7 +1430,7 @@ namespace UniversalSoundboard.Pages
             return true;
         }
 
-        private void DownloadFilesContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void DownloadFilesContentDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             downloadFilesCanceled = true;
         }

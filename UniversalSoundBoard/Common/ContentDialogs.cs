@@ -102,7 +102,8 @@ namespace UniversalSoundboard.Common
             {
                 Title = "Neuer Sound von URL",
                 PrimaryButtonText = "Hinzufügen",
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -135,7 +136,8 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("NewCategoryContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("NewCategoryContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -194,7 +196,8 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("EditCategoryContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("EditCategoryContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             EditCategoryContentDialog.Opened += ContentDialog_Opened;
@@ -256,7 +259,8 @@ namespace UniversalSoundboard.Common
                 Title = loader.GetString("DeleteCategoryContentDialog-Title") + currentCategory.Name,
                 Content = loader.GetString("DeleteCategoryContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteCategoryContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             DeleteCategoryContentDialog.Opened += ContentDialog_Opened;
@@ -274,6 +278,7 @@ namespace UniversalSoundboard.Common
                 Title = loader.GetString("AddSoundErrorContentDialog-Title"),
                 Content = loader.GetString("AddSoundErrorContentDialog-Content"),
                 CloseButtonText = loader.GetString("Actions-Close"),
+                DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             AddSoundErrorContentDialog.Opened += ContentDialog_Opened;
@@ -297,6 +302,7 @@ namespace UniversalSoundboard.Common
                 Title = loader.GetString("AddSoundsErrorContentDialog-Title"),
                 Content = content,
                 CloseButtonText = loader.GetString("Actions-Close"),
+                DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             AddSoundsErrorContentDialog.Opened += ContentDialog_Opened;
@@ -313,7 +319,8 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("RenameSoundContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("RenameSoundContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             RenameSoundContentDialog.Opened += ContentDialog_Opened;
@@ -352,7 +359,8 @@ namespace UniversalSoundboard.Common
                 Title = loader.GetString("DeleteSoundContentDialog-Title") + soundName,
                 Content = loader.GetString("DeleteSoundContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteSoundContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             DeleteSoundContentDialog.Opened += ContentDialog_Opened;
@@ -370,7 +378,8 @@ namespace UniversalSoundboard.Common
                 Title = loader.GetString("DeleteSoundsContentDialog-Title"),
                 Content = loader.GetString("DeleteSoundsContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("DeleteSoundsContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             DeleteSoundsContentDialog.Opened += ContentDialog_Opened;
@@ -387,7 +396,8 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("ExportDataContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("ExportDataContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -476,7 +486,8 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("ImportDataContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("ImportDataContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -542,7 +553,8 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("ImportDataContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("ImportDataContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -631,7 +643,8 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("PlaySoundsSuccessivelyContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("PlaySoundsSuccessivelyContentDialog-PrimaryButton"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
                 IsPrimaryButtonEnabled = SoundsList.Count > 0,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -713,7 +726,8 @@ namespace UniversalSoundboard.Common
                 Title = loader.GetString("Logout"),
                 Content = loader.GetString("Account-LogoutMessage"),
                 PrimaryButtonText = loader.GetString("Logout"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             LogoutContentDialog.Opened += ContentDialog_Opened;
@@ -729,7 +743,8 @@ namespace UniversalSoundboard.Common
             DownloadFileContentDialog = new ContentDialog
             {
                 Title = string.Format(loader.GetString("DownloadFileContentDialog-Title"), filename),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                CloseButtonText = loader.GetString("ContentDialog-Cancel"),
+                DefaultButton = ContentDialogButton.None,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             DownloadFileContentDialog.Opened += ContentDialog_Opened;
@@ -757,7 +772,8 @@ namespace UniversalSoundboard.Common
             DownloadFilesContentDialog = new ContentDialog
             {
                 Title = loader.GetString("DownloadFilesContentDialog-Title"),
-                SecondaryButtonText = loader.GetString("ContentDialog-Cancel"),
+                CloseButtonText = loader.GetString("ContentDialog-Cancel"),
+                DefaultButton = ContentDialogButton.None,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             DownloadFilesContentDialog.Opened += ContentDialog_Opened;
@@ -791,6 +807,7 @@ namespace UniversalSoundboard.Common
                 Title = loader.GetString("DownloadFileErrorContentDialog-Title"),
                 Content = loader.GetString("DownloadFileErrorContentDialog-Message"),
                 CloseButtonText = loader.GetString("Actions-Close"),
+                DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             DownloadFileErrorContentDialog.Opened += ContentDialog_Opened;
@@ -811,7 +828,8 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("ExportSoundsContentDialog-Title"),
                 PrimaryButtonText = loader.GetString("Export"),
-                SecondaryButtonText = loader.GetString("Actions-Cancel"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
@@ -911,6 +929,7 @@ namespace UniversalSoundboard.Common
             SetCategoryContentDialog = new ContentDialog
             {
                 Title = title,
+                DefaultButton = ContentDialogButton.Primary,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             SetCategoryContentDialog.Opened += ContentDialog_Opened;
@@ -955,7 +974,7 @@ namespace UniversalSoundboard.Common
                 content.Children.Add(CategoriesTreeView);
 
                 SetCategoryContentDialog.PrimaryButtonText = loader.GetString("Actions-Save");
-                SetCategoryContentDialog.SecondaryButtonText = loader.GetString("Actions-Cancel");
+                SetCategoryContentDialog.CloseButtonText = loader.GetString("Actions-Cancel");
             }
             else
             {
@@ -965,7 +984,7 @@ namespace UniversalSoundboard.Common
                 };
                 content.Children.Add(noCategoriesTextBlock);
 
-                SetCategoryContentDialog.SecondaryButtonText = loader.GetString("Actions-Close");
+                SetCategoryContentDialog.CloseButtonText = loader.GetString("Actions-Close");
             }
 
             SetCategoryContentDialog.Content = content;
@@ -984,6 +1003,7 @@ namespace UniversalSoundboard.Common
             {
                 Title = loader.GetString("SoundItemOptionsFlyout-Properties"),
                 CloseButtonText = loader.GetString("Actions-Close"),
+                DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             PropertiesContentDialog.Opened += ContentDialog_Opened;
@@ -1511,6 +1531,7 @@ namespace UniversalSoundboard.Common
                 Content = loader.GetString("DavPlusHotkeysContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("Actions-LearnMore"),
                 CloseButtonText = loader.GetString("Actions-Close"),
+                DefaultButton = ContentDialogButton.Primary,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             DavPlusHotkeysContentDialog.Opened += ContentDialog_Opened;
@@ -1529,6 +1550,7 @@ namespace UniversalSoundboard.Common
                 Content = loader.GetString("DavPlusOutputDeviceContentDialog-Content"),
                 PrimaryButtonText = loader.GetString("Actions-LearnMore"),
                 CloseButtonText = loader.GetString("Actions-Close"),
+                DefaultButton = ContentDialogButton.Primary,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             DavPlusOutputDeviceContentDialog.Opened += ContentDialog_Opened;

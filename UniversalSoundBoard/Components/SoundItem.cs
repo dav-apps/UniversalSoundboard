@@ -310,7 +310,7 @@ namespace UniversalSoundboard.Components
 
                 ContentDialogs.CreateDownloadFileContentDialog($"{sound.Name}.{sound.GetAudioFileExtension()}");
                 ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
-                ContentDialogs.DownloadFileContentDialog.SecondaryButtonClick += DownloadFileContentDialog_SecondaryButtonClick;
+                ContentDialogs.DownloadFileContentDialog.CloseButtonClick += DownloadFileContentDialog_CloseButtonClick;
                 await ContentDialogs.DownloadFileContentDialog.ShowAsync();
             }
 
@@ -356,7 +356,7 @@ namespace UniversalSoundboard.Components
             }
         }
 
-        private void DownloadFileContentDialog_SecondaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void DownloadFileContentDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             downloadFileWasCanceled = true;
             downloadFileIsExecuting = false;
