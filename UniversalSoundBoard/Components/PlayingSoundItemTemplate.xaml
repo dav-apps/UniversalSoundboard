@@ -685,6 +685,7 @@
                     Name="ExpandButton"
                     Style="{StaticResource TopCommandButtonStyle}"
                     Content="&#xE099;"
+                    Padding="0"
                     Click="ExpandButton_Click">
 
                     <ToolTipService.ToolTip>

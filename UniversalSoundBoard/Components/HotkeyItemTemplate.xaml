@@ -24,6 +24,7 @@
             FontFamily="Segoe MDL2 Assets"
             Width="35"
             Height="35"
+            Padding="0"
             Background="Transparent"
             CornerRadius="20"
             Visibility="{x:Bind HotkeyItem.AddItem, Converter={StaticResource BooleanToVisibilityConverter}}">

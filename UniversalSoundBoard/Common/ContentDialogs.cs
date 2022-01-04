@@ -434,7 +434,8 @@ namespace UniversalSoundboard.Common
                 Content = "\uE838",
                 FontSize = 18,
                 Width = 35,
-                Height = 35
+                Height = 35,
+                Padding = new Thickness(0)
             };
             folderButton.Tapped += ExportFolderButton_Tapped;
 
@@ -524,7 +525,8 @@ namespace UniversalSoundboard.Common
                 Content = "\uE838",
                 FontSize = 18,
                 Width = 35,
-                Height = 35
+                Height = 35,
+                Padding = new Thickness(0)
             };
             folderButton.Tapped += ImportFolderButton_Tapped;
 
@@ -589,7 +591,8 @@ namespace UniversalSoundboard.Common
                 Content = "\uE838",
                 FontSize = 18,
                 Width = 35,
-                Height = 35
+                Height = 35,
+                Padding = new Thickness(0)
             };
             folderButton.Tapped += ImportFolderButton_Tapped;
 

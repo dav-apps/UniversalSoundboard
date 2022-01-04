@@ -21,6 +21,8 @@
         <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
         <converters:OptionsOnSoundPageVisibleConverter x:Name="OptionsOnSoundPageVisibleConverter" />
+        <converters:TopButtonWidthConverter x:Name="TopButtonWidthConverter" />
+        <converters:TopButtonPaddingConverter x:Name="TopButtonPaddingConverter" />
 
         <!-- Item Templates -->
         <DataTemplate x:Key="SoundItemTemplate" x:DataType="models:Sound">
@@ -47,6 +49,7 @@
             <Setter Property="Width" Value="36" />
             <Setter Property="CornerRadius" Value="18" />
             <Setter Property="Margin" Value="5,0,0,0" />
+            <Setter Property="Padding" Value="0" />
             <Setter Property="Background" Value="Transparent" />
         </Style>
 
@@ -218,6 +221,8 @@
                                         Name="AddButton"
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
+                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonWidthConverter}}"
+                                        Padding="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonPaddingConverter}}"
                                         Visibility="{x:Bind mobileSearchVisible, Converter={StaticResource BooleanToInvertedVisibilityConverter}}">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
@@ -256,6 +261,8 @@
                                         Name="VolumeButton"
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
+                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonWidthConverter}}"
+                                        Padding="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonPaddingConverter}}"
                                         Visibility="{x:Bind mobileSearchVisible, Converter={StaticResource BooleanToInvertedVisibilityConverter}}">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
@@ -288,6 +295,8 @@
                                         Name="SelectButton" 
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
+                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonWidthConverter}}"
+                                        Padding="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonPaddingConverter}}"
                                         Visibility="{x:Bind mobileSearchVisible, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
                                         Click="SelectButton_Click">
 
@@ -324,6 +333,7 @@
                                         Content="&#xE094;" 
                                         Style="{StaticResource TopButtonStyle}"
                                         Width="40"
+                                        Padding="0"
                                         VerticalAlignment="Center"
                                         Visibility="{Binding SearchButtonVisible}"
                                         Click="SearchButton_Click">
@@ -344,6 +354,8 @@
                                         Name="PlaySoundsButton" 
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
+                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonWidthConverter}}"
+                                        Padding="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonPaddingConverter}}"
                                         IsEnabled="{x:Bind selectionButtonsEnabled}"
                                         Click="PlaySoundsButton_Click">
 
@@ -366,6 +378,8 @@
                                         Name="DeleteSoundsButton"
                                         Style="{StaticResource TopButtonStyle}"
                                         VerticalAlignment="Center"
+                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonWidthConverter}}"
+                                        Padding="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonPaddingConverter}}"
                                         IsEnabled="{x:Bind selectionButtonsEnabled}"
                                         Click="DeleteSoundsButton_Click">
 

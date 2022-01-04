@@ -158,6 +158,32 @@ namespace UniversalSoundboard.Converters
         }
     }
 
+    public class TopButtonWidthConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return (bool)value ? 40 : DependencyProperty.UnsetValue;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return null;
+        }
+    }
+
+    public class TopButtonPaddingConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            return (bool)value ? new Thickness(0) : new Thickness(10, 0, 10, 0);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return null;
+        }
+    }
+
     public class GridViewReorderItemsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
