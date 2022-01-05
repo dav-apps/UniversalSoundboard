@@ -774,13 +774,13 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Plus d'informations</value>
   </data>
   <data name="DavPlusHotkeysContentDialog-Content" xml:space="preserve">
-    <value>Les raccourcis ne sont disponibles que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre plan pour utiliser cette fonctionnalité.</value>
+    <value>Les raccourcis ne sont disponibles que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
   </data>
   <data name="DavPlusContentDialog-Title" xml:space="preserve">
     <value>dav Plus requis</value>
   </data>
   <data name="DavPlusOutputDeviceContentDialog-Content" xml:space="preserve">
-    <value>La modification du périphérique de sortie pour certains sons ouverts n'est disponible que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre plan pour utiliser cette fonctionnalité.</value>
+    <value>La modification du périphérique de sortie pour certains sons ouverts n'est disponible que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
   </data>
   <data name="PropertiesContentDialog-HotkeysRestricted" xml:space="preserve">
     <value>La fonction des raccourcis clavier est limitée.</value>

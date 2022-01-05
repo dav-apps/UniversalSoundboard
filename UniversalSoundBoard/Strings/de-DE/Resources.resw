@@ -773,13 +773,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>Mehr erfahren</value>
   </data>
   <data name="DavPlusHotkeysContentDialog-Content" xml:space="preserve">
-    <value>Tastenkombinationen sind nur für Nutzer von dav Plus verfügbar. Melde dich an und ändere deinen Plan, um diese Funktion zu nutzen.</value>
+    <value>Tastenkombinationen sind nur für Nutzer von dav Plus verfügbar. Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   </data>
   <data name="DavPlusContentDialog-Title" xml:space="preserve">
     <value>dav Plus benötigt</value>
   </data>
   <data name="DavPlusOutputDeviceContentDialog-Content" xml:space="preserve">
-    <value>Das Ändern des Ausgabegeräts für bestimmte geöffnete Sounds ist nur für Nutzer von dav Plus verfügbar. Melde dich an und ändere deinen Plan, um diese Funktion zu nutzen.</value>
+    <value>Das Ändern des Ausgabegeräts für bestimmte geöffnete Sounds ist nur für Nutzer von dav Plus verfügbar. Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   </data>
   <data name="PropertiesContentDialog-HotkeysRestricted" xml:space="preserve">
     <value>Die Funktion von Tastenkombinationen ist eingeschränkt.</value>
