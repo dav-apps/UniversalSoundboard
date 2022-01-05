@@ -851,6 +851,7 @@
                                 VolumeControl_LostFocus="VolumeControl_LostFocus"
                                 VolumeControl_MuteChanged="VolumeControl_MuteChanged" />
                             <MenuFlyoutSubItem Name="MoreButtonRepeatFlyoutSubItem" Text="Repeat" Icon="RepeatAll">
+                                <MenuFlyoutItem Name="MoreButton_Repeat_0x" Text="0x" Click="MoreButton_Repeat_0x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_1x" Text="1x" Click="MoreButton_Repeat_1x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_2x" Text="2x" Click="MoreButton_Repeat_2x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_5x" Text="5x" Click="MoreButton_Repeat_5x_Click" />

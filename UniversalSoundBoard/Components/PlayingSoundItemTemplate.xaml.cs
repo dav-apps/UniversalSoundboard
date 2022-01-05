@@ -600,6 +600,11 @@ namespace UniversalSoundboard.Components
             FileManager.NavigateToAccountPage();
         }
 
+        private async void MoreButton_Repeat_0x_Click(object sender, RoutedEventArgs e)
+        {
+            await PlayingSoundItem.SetRepetitions(0);
+        }
+
         private async void MoreButton_Repeat_1x_Click(object sender, RoutedEventArgs e)
         {
             await PlayingSoundItem.SetRepetitions(1);
