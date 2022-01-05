@@ -786,4 +786,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PropertiesContentDialog-HotkeysRestricted" xml:space="preserve">
     <value>The function of hotkeys is restricted.</value>
   </data>
+  <data name="Export-Image" xml:space="preserve">
+    <value>Export image</value>
+  </data>
+  <data name="Export-Sound" xml:space="preserve">
+    <value>Export sound</value>
+  </data>
 </root>

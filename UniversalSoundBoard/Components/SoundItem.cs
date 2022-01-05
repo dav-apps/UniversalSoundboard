@@ -14,7 +14,6 @@ using Windows.UI.Notifications;
 using Windows.UI.StartScreen;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using static davClassLibrary.Models.TableObject;
 
 namespace UniversalSoundboard.Components
 {
@@ -46,12 +45,13 @@ namespace UniversalSoundboard.Components
         public void ShowFlyout(object sender, Point position)
         {
             if (sound == null) return;
-            var flyout = new SoundItemOptionsFlyout(sound.Uuid, sound.Favourite);
+            var flyout = new SoundItemOptionsFlyout(sound.Uuid, sound.Favourite, sound.ImageFile != null && sound.ImageFileTableObject != null);
 
             flyout.SetCategoriesFlyoutItemClick += OptionsFlyout_SetCategoriesFlyoutItemClick;
             flyout.SetFavouriteFlyoutItemClick += OptionsFlyout_SetFavouriteFlyoutItemClick;
             flyout.ShareFlyoutItemClick += OptionsFlyout_ShareFlyoutItemClick;
-            flyout.ExportFlyoutItemClick += OptionsFlyout_ExportFlyoutItemClick;
+            flyout.ExportSoundFlyoutItemClick += OptionsFlyout_ExportSoundFlyoutItemClick;
+            flyout.ExportImageFlyoutItemClick += OptionsFlyout_ExportImageFlyoutItemClick;
             flyout.PinFlyoutItemClick += OptionsFlyout_PinFlyoutItemClick;
             flyout.SetImageFlyoutItemClick += OptionsFlyout_SetImageFlyoutItemClick;
             flyout.RenameFlyoutItemClick += OptionsFlyout_RenameFlyoutItemClick;
@@ -126,8 +126,8 @@ namespace UniversalSoundboard.Components
         }
         #endregion
 
-        #region Export
-        private async void OptionsFlyout_ExportFlyoutItemClick(object sender, RoutedEventArgs e)
+        #region Export sound
+        private async void OptionsFlyout_ExportSoundFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             if (!await DownloadFile()) return;
 
@@ -142,9 +142,7 @@ namespace UniversalSoundboard.Components
             if (string.IsNullOrEmpty(ext))
                 ext = "mp3";
 
-            // Dropdown of file types the user can save the file as
             savePicker.FileTypeChoices.Add("Audio", new List<string>() { "." + ext });
-            // Default file name if the user does not type one in or select a file to replace
             savePicker.SuggestedFileName = sound.Name;
 
             StorageFile file = await savePicker.PickSaveFileAsync();
@@ -154,6 +152,35 @@ namespace UniversalSoundboard.Components
                 CachedFileManager.DeferUpdates(file);
                 var audioFile = sound.AudioFile;
                 await FileIO.WriteBytesAsync(file, await FileManager.GetBytesAsync(audioFile));
+                await CachedFileManager.CompleteUpdatesAsync(file);
+            }
+        }
+        #endregion
+
+        #region Export image
+        private async void OptionsFlyout_ExportImageFlyoutItemClick(object sender, RoutedEventArgs e)
+        {
+            // Open a folder picker and save the file there
+            var savePicker = new Windows.Storage.Pickers.FileSavePicker
+            {
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.PicturesLibrary
+            };
+
+            string ext = sound.GetImageFileExtension();
+
+            if (string.IsNullOrEmpty(ext))
+                ext = "jpg";
+
+            savePicker.FileTypeChoices.Add("Image", new List<string> { "." + ext });
+            savePicker.SuggestedFileName = sound.Name;
+
+            StorageFile file = await savePicker.PickSaveFileAsync();
+
+            if (file != null)
+            {
+                CachedFileManager.DeferUpdates(file);
+                var imageFile = sound.ImageFile;
+                await FileIO.WriteBytesAsync(file, await FileManager.GetBytesAsync(imageFile));
                 await CachedFileManager.CompleteUpdatesAsync(file);
             }
         }
@@ -376,14 +403,15 @@ namespace UniversalSoundboard.Components
         public event RoutedEventHandler SetCategoriesFlyoutItemClick;
         public event RoutedEventHandler SetFavouriteFlyoutItemClick;
         public event RoutedEventHandler ShareFlyoutItemClick;
-        public event RoutedEventHandler ExportFlyoutItemClick;
+        public event RoutedEventHandler ExportSoundFlyoutItemClick;
+        public event RoutedEventHandler ExportImageFlyoutItemClick;
         public event RoutedEventHandler PinFlyoutItemClick;
         public event RoutedEventHandler SetImageFlyoutItemClick;
         public event RoutedEventHandler RenameFlyoutItemClick;
         public event RoutedEventHandler DeleteFlyoutItemClick;
         public event RoutedEventHandler PropertiesFlyoutItemClick;
 
-        public SoundItemOptionsFlyout(Guid soundUuid, bool favourite) {
+        public SoundItemOptionsFlyout(Guid soundUuid, bool favourite, bool hasImage) {
             loader = new ResourceLoader();
 
             // Create the flyout
@@ -415,12 +443,41 @@ namespace UniversalSoundboard.Components
             optionsFlyout.Items.Add(shareFlyoutItem);
 
             // Export
-            MenuFlyoutItem exportFlyoutItem = new MenuFlyoutItem {
-                Text = loader.GetString("Export"),
-                Icon = new FontIcon { Glyph = "\uEDE1" }
-            };
-            exportFlyoutItem.Click += (object sender, RoutedEventArgs e) => ExportFlyoutItemClick?.Invoke(sender, e);
-            optionsFlyout.Items.Add(exportFlyoutItem);
+            if (hasImage)
+            {
+                MenuFlyoutSubItem exportFlyoutItem = new MenuFlyoutSubItem
+                {
+                    Text = loader.GetString("Export"),
+                    Icon = new FontIcon { Glyph = "\uEDE1" }
+                };
+
+                MenuFlyoutItem exportSoundFileFlyoutItem = new MenuFlyoutItem
+                {
+                    Text = loader.GetString("Export-Sound")
+                };
+                exportSoundFileFlyoutItem.Click += (object sender, RoutedEventArgs e) => ExportSoundFlyoutItemClick?.Invoke(sender, e);
+
+                MenuFlyoutItem exportImageFileFlyoutItem = new MenuFlyoutItem
+                {
+                    Text = loader.GetString("Export-Image")
+                };
+                exportImageFileFlyoutItem.Click += (object sender, RoutedEventArgs e) => ExportImageFlyoutItemClick?.Invoke(sender, e);
+
+                exportFlyoutItem.Items.Add(exportSoundFileFlyoutItem);
+                exportFlyoutItem.Items.Add(exportImageFileFlyoutItem);
+
+                optionsFlyout.Items.Add(exportFlyoutItem);
+            }
+            else
+            {
+                MenuFlyoutItem exportFlyoutItem = new MenuFlyoutItem
+                {
+                    Text = loader.GetString("Export"),
+                    Icon = new FontIcon { Glyph = "\uEDE1" }
+                };
+                exportFlyoutItem.Click += (object sender, RoutedEventArgs e) => ExportSoundFlyoutItemClick?.Invoke(sender, e);
+                optionsFlyout.Items.Add(exportFlyoutItem);
+            }
 
             // Pin
             bool pinned = SecondaryTile.Exists(soundUuid.ToString());

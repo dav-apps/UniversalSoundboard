@@ -785,4 +785,10 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="PropertiesContentDialog-HotkeysRestricted" xml:space="preserve">
     <value>La fonction des raccourcis clavier est limitée.</value>
   </data>
+  <data name="Export-Image" xml:space="preserve">
+    <value>Exporter l'image</value>
+  </data>
+  <data name="Export-Sound" xml:space="preserve">
+    <value>Exporter le son</value>
+  </data>
 </root>

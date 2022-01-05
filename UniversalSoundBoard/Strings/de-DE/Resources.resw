@@ -784,4 +784,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PropertiesContentDialog-HotkeysRestricted" xml:space="preserve">
     <value>Die Funktion von Tastenkombinationen ist eingeschränkt.</value>
   </data>
+  <data name="Export-Image" xml:space="preserve">
+    <value>Bild exportieren</value>
+  </data>
+  <data name="Export-Sound" xml:space="preserve">
+    <value>Sound exportieren</value>
+  </data>
 </root>
