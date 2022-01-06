@@ -791,4 +791,13 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="Export-Sound" xml:space="preserve">
     <value>Exporter le son</value>
   </data>
+  <data name="Actions-OpenFolder" xml:space="preserve">
+    <value>Ouvrir le dossier</value>
+  </data>
+  <data name="InAppNotification-ImageExportSuccessful" xml:space="preserve">
+    <value>L'image a été exportée avec succès</value>
+  </data>
+  <data name="InAppNotification-SoundExportSuccessful" xml:space="preserve">
+    <value>Le son a été exporté avec succès</value>
+  </data>
 </root>

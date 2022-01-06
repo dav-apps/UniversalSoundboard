@@ -792,4 +792,13 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Export-Sound" xml:space="preserve">
     <value>Export sound</value>
   </data>
+  <data name="Actions-OpenFolder" xml:space="preserve">
+    <value>Open folder</value>
+  </data>
+  <data name="InAppNotification-ImageExportSuccessful" xml:space="preserve">
+    <value>Image was exported successfully</value>
+  </data>
+  <data name="InAppNotification-SoundExportSuccessful" xml:space="preserve">
+    <value>Sound was exported successfully</value>
+  </data>
 </root>

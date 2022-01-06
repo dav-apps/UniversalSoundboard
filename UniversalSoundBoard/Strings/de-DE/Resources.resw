@@ -790,4 +790,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Export-Sound" xml:space="preserve">
     <value>Sound exportieren</value>
   </data>
+  <data name="Actions-OpenFolder" xml:space="preserve">
+    <value>Ordner öffnen</value>
+  </data>
+  <data name="InAppNotification-ImageExportSuccessful" xml:space="preserve">
+    <value>Bild wurde erfolgreich exportiert</value>
+  </data>
+  <data name="InAppNotification-SoundExportSuccessful" xml:space="preserve">
+    <value>Sound wurde erfolgreich exportiert</value>
+  </data>
 </root>

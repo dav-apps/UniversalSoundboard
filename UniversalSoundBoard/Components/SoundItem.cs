@@ -1,6 +1,7 @@
 ﻿using davClassLibrary;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
@@ -10,6 +11,7 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Notifications;
 using Windows.UI.StartScreen;
 using Windows.UI.Xaml;
@@ -28,6 +30,7 @@ namespace UniversalSoundboard.Components
         private bool downloadFileThrewError = false;
         private bool downloadFileIsExecuting = false;
         private List<StorageFile> soundFiles = new List<StorageFile>();
+        private string exportedFilePath = "";
 
         public SoundItem(Sound sound)
         {
@@ -153,7 +156,33 @@ namespace UniversalSoundboard.Components
                 var audioFile = sound.AudioFile;
                 await FileIO.WriteBytesAsync(file, await FileManager.GetBytesAsync(audioFile));
                 await CachedFileManager.CompleteUpdatesAsync(file);
+                exportedFilePath = file.Path;
+
+                // Show InAppNotification
+                ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
+                    loader.GetString("InAppNotification-SoundExportSuccessful"),
+                    5000,
+                    false,
+                    loader.GetString("Actions-OpenFolder")
+                );
+
+                args.PrimaryButtonClick += Export_InAppNotification_PrimaryButtonClick;
+
+                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                    this,
+                    args
+                );
             }
+        }
+
+        private async void Export_InAppNotification_PrimaryButtonClick(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                DirectoryInfo dir = Directory.GetParent(exportedFilePath);
+                await Launcher.LaunchFolderPathAsync(dir.FullName);
+            }
+            catch(Exception) { }
         }
         #endregion
 
@@ -182,6 +211,22 @@ namespace UniversalSoundboard.Components
                 var imageFile = sound.ImageFile;
                 await FileIO.WriteBytesAsync(file, await FileManager.GetBytesAsync(imageFile));
                 await CachedFileManager.CompleteUpdatesAsync(file);
+                exportedFilePath = file.Path;
+
+                // Show InAppNotification
+                ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
+                    loader.GetString("InAppNotification-ImageExportSuccessful"),
+                    5000,
+                    false,
+                    loader.GetString("Actions-OpenFolder")
+                );
+
+                args.PrimaryButtonClick += Export_InAppNotification_PrimaryButtonClick;
+
+                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                    this,
+                    args
+                );
             }
         }
         #endregion
@@ -453,13 +498,15 @@ namespace UniversalSoundboard.Components
 
                 MenuFlyoutItem exportSoundFileFlyoutItem = new MenuFlyoutItem
                 {
-                    Text = loader.GetString("Export-Sound")
+                    Text = loader.GetString("Export-Sound"),
+                    Icon = new FontIcon { Glyph = "\uE189" }
                 };
                 exportSoundFileFlyoutItem.Click += (object sender, RoutedEventArgs e) => ExportSoundFlyoutItemClick?.Invoke(sender, e);
 
                 MenuFlyoutItem exportImageFileFlyoutItem = new MenuFlyoutItem
                 {
-                    Text = loader.GetString("Export-Image")
+                    Text = loader.GetString("Export-Image"),
+                    Icon = new FontIcon { Glyph = "\uEB9F" }
                 };
                 exportImageFileFlyoutItem.Click += (object sender, RoutedEventArgs e) => ExportImageFlyoutItemClick?.Invoke(sender, e);
 
