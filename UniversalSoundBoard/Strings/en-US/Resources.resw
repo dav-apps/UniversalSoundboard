@@ -801,4 +801,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="InAppNotification-SoundExportSuccessful" xml:space="preserve">
     <value>Sound was exported successfully</value>
   </data>
+  <data name="InAppNotification-SoundsExportSuccessful" xml:space="preserve">
+    <value>Sounds were exported successfully</value>
+  </data>
 </root>

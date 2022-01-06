@@ -877,7 +877,8 @@ namespace UniversalSoundboard.Common
                 Content = "\uE838",
                 FontSize = 18,
                 Width = 35,
-                Height = 35
+                Height = 35,
+                Padding = new Thickness(0)
             };
             folderButton.Tapped += ExportSoundsFolderButton_Tapped;
 

@@ -210,6 +210,7 @@ namespace UniversalSoundboard.DataAccess
         private static bool isShowAllSoundsOrCategoryRunning = false;
         private static Guid nextCategoryToShow = Guid.Empty;
         private static SystemMediaTransportControls systemMediaTransportControls;
+        private static StorageFolder exportDestinationFolder;
 
         // Save the custom order of the sounds in all categories to load them faster
         private static readonly Dictionary<Guid, List<Guid>> CustomSoundOrder = new Dictionary<Guid, List<Guid>>();
@@ -639,9 +640,15 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task ExportSoundsAsync(List<Sound> sounds, bool saveAsZip, StorageFolder destinationFolder)
         {
-            // Show the loading screen
-            itemViewHolder.LoadingScreenMessage = loader.GetString("ExportSoundsMessage");
-            itemViewHolder.LoadingScreenVisible = true;
+            // Show InAppNotification
+            itemViewHolder.TriggerShowInAppNotificationEvent(
+                null,
+                new ShowInAppNotificationEventArgs(
+                    loader.GetString("ExportSoundsMessage"),
+                    0,
+                    true
+                )
+            );
 
             if (saveAsZip)
             {
@@ -672,7 +679,22 @@ namespace UniversalSoundboard.DataAccess
                     await CopySoundFileIntoFolderAsync(sound, destinationFolder);
             }
 
-            itemViewHolder.LoadingScreenVisible = false;
+            exportDestinationFolder = destinationFolder;
+
+            ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
+                loader.GetString("InAppNotification-SoundsExportSuccessful"),
+                5000,
+                false,
+                loader.GetString("Actions-OpenFolder")
+            );
+            args.PrimaryButtonClick += ExportSounds_InAppNotification_PrimaryButtonClick;
+
+            itemViewHolder.TriggerShowInAppNotificationEvent(null, args);
+        }
+
+        private static async void ExportSounds_InAppNotification_PrimaryButtonClick(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchFolderAsync(exportDestinationFolder);
         }
 
         private static async Task CopySoundFileIntoFolderAsync(Sound sound, StorageFolder destinationFolder)
@@ -682,7 +704,8 @@ namespace UniversalSoundboard.DataAccess
             if (string.IsNullOrEmpty(ext))
                 ext = "mp3";
 
-            StorageFile soundFile = await destinationFolder.CreateFileAsync(string.Format("{0}.{1}", sound.Name, ext), CreationCollisionOption.GenerateUniqueName);
+            string fileName = string.Format("{0}.{1}", RemoveSpecialCharsFromString(sound.Name), ext);
+            StorageFile soundFile = await destinationFolder.CreateFileAsync(fileName, CreationCollisionOption.GenerateUniqueName);
             await FileIO.WriteBytesAsync(soundFile, await GetBytesAsync(sound.AudioFile));
         }
         #endregion
@@ -3410,6 +3433,34 @@ namespace UniversalSoundboard.DataAccess
             {
                 return new KeyValuePair<bool, int>(false, -1);
             }
+        }
+
+        public static string RemoveSpecialCharsFromString(string input)
+        {
+            return new string(input.Where(c => 
+                char.IsLetterOrDigit(c)
+                || c == '.'
+                || c == ','
+                || c == ';'
+                || c == '_'
+                || c == '-'
+                || c == '+'
+                || c == ' '
+                || c == '%'
+                || c == '('
+                || c == ')'
+                || c == '{'
+                || c == '}'
+                || c == '['
+                || c == ']'
+                || c == '#'
+                || c == '\''
+                || c == '~'
+                || c == '&'
+                || c == '$'
+                || c == '§'
+                || c == '!'
+            ).ToArray());
         }
         #endregion
 
