@@ -578,6 +578,11 @@
                 </Grid>
             </Grid>
 
+            <controls:InAppNotification
+                x:Name="InAppNotification"
+                ShowDismissButton="False">
+            </controls:InAppNotification>
+
             <controls:GridSplitter
                 x:Name="PlayingSoundsBarGridSplitter"
                 Grid.Column="1"

@@ -147,6 +147,7 @@ namespace UniversalSoundboard.Common
         public event EventHandler<PlayingSoundItemEventArgs> RemovePlayingSoundItemEnded;                       // Is triggered after a PlayingSound was removed
         public event EventHandler<TableObjectFileDownloadProgressChangedEventArgs> TableObjectFileDownloadProgressChanged;  // Is triggered when the file of a TableObject is being downloaded and the progress changed
         public event EventHandler<TableObjectFileDownloadCompletedEventArgs> TableObjectFileDownloadCompleted;  // Is triggered from TriggerAction when the file of a TableObject was finished
+        public event EventHandler<ShowInAppNotificationEventArgs> ShowInAppNotification;                        // Trigger this event to show the InAppNotification on the SoundPage
         #endregion
 
         #region Local variables
@@ -1154,6 +1155,11 @@ namespace UniversalSoundboard.Common
         public void TriggerTableObjectFileDownloadCompletedEvent(object sender, TableObjectFileDownloadCompletedEventArgs args)
         {
             TableObjectFileDownloadCompleted?.Invoke(sender, args);
+        }
+
+        public void TriggerShowInAppNotificationEvent(object sender, ShowInAppNotificationEventArgs args)
+        {
+            ShowInAppNotification?.Invoke(sender, args);
         }
         #endregion
 

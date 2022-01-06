@@ -67,6 +67,41 @@ namespace UniversalSoundboard.Common
             File = file;
         }
     }
+
+    public class ShowInAppNotificationEventArgs : EventArgs
+    {
+        public string Message { get; set; }
+        public int Duration { get; set; }
+        public bool ShowProgressRing { get; set; }
+        public string PrimaryButtonText { get; set; }
+        public string SecondaryButtonText { get; set; }
+        public event EventHandler<RoutedEventArgs> PrimaryButtonClick;
+        public event EventHandler<RoutedEventArgs> SecondaryButtonClick;
+
+        public ShowInAppNotificationEventArgs(
+            string message,
+            int duration = 0,
+            bool showProgressRing = false,
+            string primaryButtonText = null,
+            string secondaryButtonText = null
+        ) {
+            Message = message;
+            Duration = duration;
+            ShowProgressRing = showProgressRing;
+            PrimaryButtonText = primaryButtonText;
+            SecondaryButtonText = secondaryButtonText;
+        }
+
+        public void TriggerPrimaryButtonClickEvent(object sender, RoutedEventArgs args)
+        {
+            PrimaryButtonClick?.Invoke(sender, args);
+        }
+
+        public void TriggerSecondaryButtonClickEvent(object sender, RoutedEventArgs args)
+        {
+            SecondaryButtonClick?.Invoke(sender, args);
+        }
+    }
     #endregion
 
     #region PlayingSoundItem
