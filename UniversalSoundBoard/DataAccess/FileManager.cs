@@ -387,6 +387,18 @@ namespace UniversalSoundboard.DataAccess
 
             if (startMessage)
                 itemViewHolder.LoadingScreenVisible = true;
+            else
+            {
+                // Show InAppNotification
+                itemViewHolder.TriggerShowInAppNotificationEvent(
+                    null,
+                    new ShowInAppNotificationEventArgs(
+                        loader.GetString("InAppNotification-SoundboardImport"),
+                        0,
+                        true
+                    )
+                );
+            }
 
             await ClearImportCacheAsync();
 
@@ -435,6 +447,16 @@ namespace UniversalSoundboard.DataAccess
 
             if (startMessage)
                 itemViewHolder.LoadingScreenVisible = false;
+            else
+            {
+                ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
+                    loader.GetString("InAppNotification-SoundboardImportSuccessful"),
+                    5000,
+                    false
+                );
+
+                itemViewHolder.TriggerShowInAppNotificationEvent(null, args);
+            }
 
             await LoadCategoriesAsync();
             await LoadAllSoundsAsync();

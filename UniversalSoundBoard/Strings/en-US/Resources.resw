@@ -810,4 +810,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="InAppNotification-SoundboardExportSuccessful" xml:space="preserve">
     <value>Your soundboard was exported successfully</value>
   </data>
+  <data name="InAppNotification-SoundboardImport" xml:space="preserve">
+    <value>Your soundboard is being imported...</value>
+  </data>
+  <data name="InAppNotification-SoundboardImportSuccessful" xml:space="preserve">
+    <value>Your soundboard was imported successfully</value>
+  </data>
 </root>

@@ -79,6 +79,11 @@ namespace UniversalSoundboard.Pages
             // Check if there is a InAppNotification to display
             var lastArgs = FileManager.GetLastInAppNotificationEventArgs();
             if (lastArgs != null) ShowInAppNotification(lastArgs);
+
+            // Enable or disable StartMessage buttons
+            StartMessageAddFirstSoundButton.IsEnabled = !FileManager.itemViewHolder.Importing;
+            StartMessageLoginButton.IsEnabled = !FileManager.itemViewHolder.Importing;
+            StartMessageImportButton.IsEnabled = !FileManager.itemViewHolder.Importing;
         }
 
         #region Page event handlers

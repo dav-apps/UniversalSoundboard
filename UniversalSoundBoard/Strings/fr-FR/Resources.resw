@@ -809,4 +809,10 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="InAppNotification-SoundboardExportSuccessful" xml:space="preserve">
     <value>Votre Soundboard a été exporté avec succès</value>
   </data>
+  <data name="InAppNotification-SoundboardImport" xml:space="preserve">
+    <value>Votre Soundboard est importé...</value>
+  </data>
+  <data name="InAppNotification-SoundboardImportSuccessful" xml:space="preserve">
+    <value>Votre Soundboard a été importé avec succès</value>
+  </data>
 </root>
