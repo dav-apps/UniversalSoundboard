@@ -33,7 +33,12 @@
                 Height="35"
                 Width="35"
                 Margin="10,0,0,0"
-                Click="RemoveButton_Click" />
+                Click="RemoveButton_Click">
+
+                <ToolTipService.ToolTip>
+                    <TextBlock x:Uid="RemoveButton" />
+                </ToolTipService.ToolTip>
+            </Button>
         </RelativePanel>
     </Grid>
 </UserControl>

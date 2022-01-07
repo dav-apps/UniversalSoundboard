@@ -53,7 +53,12 @@
                 Height="35"
                 Width="35"
                 RelativePanel.AlignRightWithPanel="True"
-                Click="RemoveSoundButton_Click" />
+                Click="RemoveSoundButton_Click">
+
+                <ToolTipService.ToolTip>
+                    <TextBlock x:Uid="RemoveButton" />
+                </ToolTipService.ToolTip>
+            </Button>
         </RelativePanel>
     </Grid>
 </UserControl>
