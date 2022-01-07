@@ -75,6 +75,10 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
 
             reversedPlayingSounds.VectorChanged += ReversedPlayingSounds_VectorChanged;
+
+            // Check if there is a InAppNotification to display
+            var lastArgs = FileManager.GetLastInAppNotificationEventArgs();
+            if (lastArgs != null) ShowInAppNotification(lastArgs);
         }
 
         #region Page event handlers
@@ -288,64 +292,7 @@ namespace UniversalSoundboard.Pages
 
         private void ItemViewHolder_ShowInAppNotification(object sender, ShowInAppNotificationEventArgs args)
         {
-            Grid rootGrid = new Grid();
-            rootGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            rootGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            rootGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            rootGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-            WinUI.ProgressRing progressRing = new WinUI.ProgressRing
-            {
-                Width = 20,
-                Height = 20,
-                Margin = new Thickness(0, 0, 10, 0),
-                IsActive = true
-            };
-
-            TextBlock textBlock = new TextBlock
-            {
-                Text = args.Message,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            Grid.SetColumn(textBlock, 1);
-
-            StackPanel buttonStackPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            Grid.SetColumn(buttonStackPanel, 2);
-
-            if (args.PrimaryButtonText != null)
-            {
-                Button primaryButton = new Button
-                {
-                    Content = args.PrimaryButtonText,
-                    Height = 32
-                };
-                primaryButton.Click += (object s, RoutedEventArgs e) => args.TriggerPrimaryButtonClickEvent(s, e);
-
-                buttonStackPanel.Children.Add(primaryButton);
-            }
-
-            if (args.SecondaryButtonText != null)
-            {
-                Button secondaryButton = new Button
-                {
-                    Content = args.SecondaryButtonText,
-                    Height = 32,
-                    Margin = new Thickness(10, 0, 0, 0)
-                };
-                secondaryButton.Click += (object s, RoutedEventArgs e) => args.TriggerSecondaryButtonClickEvent(s, e);
-
-                buttonStackPanel.Children.Add(secondaryButton);
-            }
-
-            if (args.ShowProgressRing) rootGrid.Children.Add(progressRing);
-            rootGrid.Children.Add(textBlock);
-            rootGrid.Children.Add(buttonStackPanel);
-
-            InAppNotification.Show(rootGrid, args.Duration);
+            ShowInAppNotification(args);
         }
 
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -591,6 +538,68 @@ namespace UniversalSoundboard.Pages
                 foreach (PlayingSoundItem playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
                     playingSoundItem.TriggerRemove();
             }
+        }
+
+        private void ShowInAppNotification(ShowInAppNotificationEventArgs args)
+        {
+            Grid rootGrid = new Grid();
+            rootGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
+            rootGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+            rootGrid.ColumnDefinitions.Add(new ColumnDefinition());
+            rootGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
+
+            WinUI.ProgressRing progressRing = new WinUI.ProgressRing
+            {
+                Width = 20,
+                Height = 20,
+                Margin = new Thickness(0, 0, 10, 0),
+                IsActive = true
+            };
+
+            TextBlock textBlock = new TextBlock
+            {
+                Text = args.Message,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetColumn(textBlock, 1);
+
+            StackPanel buttonStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetColumn(buttonStackPanel, 2);
+
+            if (args.PrimaryButtonText != null)
+            {
+                Button primaryButton = new Button
+                {
+                    Content = args.PrimaryButtonText,
+                    Height = 32
+                };
+                primaryButton.Click += (object s, RoutedEventArgs e) => args.TriggerPrimaryButtonClickEvent(s, e);
+
+                buttonStackPanel.Children.Add(primaryButton);
+            }
+
+            if (args.SecondaryButtonText != null)
+            {
+                Button secondaryButton = new Button
+                {
+                    Content = args.SecondaryButtonText,
+                    Height = 32,
+                    Margin = new Thickness(10, 0, 0, 0)
+                };
+                secondaryButton.Click += (object s, RoutedEventArgs e) => args.TriggerSecondaryButtonClickEvent(s, e);
+
+                buttonStackPanel.Children.Add(secondaryButton);
+            }
+
+            if (args.ShowProgressRing) rootGrid.Children.Add(progressRing);
+            rootGrid.Children.Add(textBlock);
+            rootGrid.Children.Add(buttonStackPanel);
+
+            InAppNotification.Show(rootGrid, args.Duration);
         }
         #endregion
 

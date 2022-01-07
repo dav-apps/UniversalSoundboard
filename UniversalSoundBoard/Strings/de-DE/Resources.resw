@@ -802,4 +802,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="InAppNotification-SoundsExportSuccessful" xml:space="preserve">
     <value>Sounds wurden erfolgreich exportiert</value>
   </data>
+  <data name="InAppNotification-SoundboardExport" xml:space="preserve">
+    <value>Dein Soundboard wird exportiert...</value>
+  </data>
+  <data name="InAppNotification-SoundboardExportSuccessful" xml:space="preserve">
+    <value>Dein Soundboard wurde erfolgreich exportiert</value>
+  </data>
 </root>

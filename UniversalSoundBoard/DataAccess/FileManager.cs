@@ -211,6 +211,7 @@ namespace UniversalSoundboard.DataAccess
         private static Guid nextCategoryToShow = Guid.Empty;
         private static SystemMediaTransportControls systemMediaTransportControls;
         private static StorageFolder exportDestinationFolder;
+        private static ShowInAppNotificationEventArgs lastInAppNotificationEventArgs = null;
 
         // Save the custom order of the sounds in all categories to load them faster
         private static readonly Dictionary<Guid, List<Guid>> CustomSoundOrder = new Dictionary<Guid, List<Guid>>();
@@ -320,6 +321,16 @@ namespace UniversalSoundboard.DataAccess
         #region Export / Import
         public static async Task ExportDataAsync(StorageFolder destinationFolder)
         {
+            // Show InAppNotification
+            itemViewHolder.TriggerShowInAppNotificationEvent(
+                null,
+                new ShowInAppNotificationEventArgs(
+                    loader.GetString("InAppNotification-SoundboardExport"),
+                    0,
+                    true
+                )
+            );
+
             await ClearExportCacheAsync();
 
             itemViewHolder.Exported = false;
@@ -356,6 +367,18 @@ namespace UniversalSoundboard.DataAccess
             itemViewHolder.ExportMessage = "";
             itemViewHolder.Exported = true;
             itemViewHolder.ExportAndImportButtonsEnabled = true;
+
+            exportDestinationFolder = destinationFolder;
+
+            ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
+                loader.GetString("InAppNotification-SoundboardExportSuccessful"),
+                5000,
+                false,
+                loader.GetString("Actions-OpenFolder")
+            );
+            args.PrimaryButtonClick += ExportSounds_InAppNotification_PrimaryButtonClick;
+
+            itemViewHolder.TriggerShowInAppNotificationEvent(null, args);
         }
 
         public static async Task ImportDataAsync(StorageFile zipFile, bool startMessage)
@@ -3159,6 +3182,21 @@ namespace UniversalSoundboard.DataAccess
         {
             // Navigate to the Account page
             NavigateToAccountPage();
+        }
+
+        public static void SetLastInAppNotificationEventArgs(ShowInAppNotificationEventArgs args)
+        {
+            lastInAppNotificationEventArgs = args;
+        }
+
+        public static ShowInAppNotificationEventArgs GetLastInAppNotificationEventArgs()
+        {
+            if (
+                lastInAppNotificationEventArgs == null
+                || lastInAppNotificationEventArgs.Duration != 0
+            ) return null;
+
+            return lastInAppNotificationEventArgs;
         }
         #endregion
 

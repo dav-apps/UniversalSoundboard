@@ -1159,6 +1159,7 @@ namespace UniversalSoundboard.Common
 
         public void TriggerShowInAppNotificationEvent(object sender, ShowInAppNotificationEventArgs args)
         {
+            FileManager.SetLastInAppNotificationEventArgs(args);
             ShowInAppNotification?.Invoke(sender, args);
         }
         #endregion
