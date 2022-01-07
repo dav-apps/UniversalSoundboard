@@ -5,7 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
-    xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:davClassLibrary="using:davClassLibrary"
     xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
@@ -80,7 +80,7 @@
     </Page.Resources>
 
     <Grid Name="RootGrid">
-        <muxc:NavigationView
+        <winui:NavigationView
             x:Name="SideBar"
             IsTitleBarAutoPaddingEnabled="False"
             IsBackEnabled="{Binding BackButtonEnabled}"
@@ -91,18 +91,18 @@
             PaneClosing="SideBar_PaneClosing"
             MenuItemsSource="{x:Bind menuItems}">
 
-            <muxc:NavigationView.FooterMenuItems>
-                <muxc:NavigationViewItem
+            <winui:NavigationView.FooterMenuItems>
+                <winui:NavigationViewItem
                     x:Name="LoginMenuItem"
                     x:Uid="LoginButton"
                     Icon="Contact"
                     Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToInvertedVisibilityConverter}}" />
 
-                <muxc:NavigationViewItem
+                <winui:NavigationViewItem
                     x:Name="AccountMenuItem"
                     Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}">
 
-                    <muxc:NavigationViewItem.Content>
+                    <winui:NavigationViewItem.Content>
                         <StackPanel Orientation="Horizontal">
                             <PersonPicture
                                 ProfilePicture="{x:Bind davClassLibrary:Dav.User.ProfileImage, Converter={StaticResource FileToBitmapImageConverter}}" 
@@ -115,11 +115,11 @@
                                 Margin="13,0,0,0"
                                 VerticalAlignment="Center" />
                         </StackPanel>
-                    </muxc:NavigationViewItem.Content>
-                </muxc:NavigationViewItem>
-            </muxc:NavigationView.FooterMenuItems>
+                    </winui:NavigationViewItem.Content>
+                </winui:NavigationViewItem>
+            </winui:NavigationView.FooterMenuItems>
 
-            <muxc:NavigationView.Content>
+            <winui:NavigationView.Content>
                 <Grid Name="ContentRoot">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="85" />
@@ -469,8 +469,8 @@
                         Grid.Row="0"
                         Grid.RowSpan="2" />
                 </Grid>
-            </muxc:NavigationView.Content>
-        </muxc:NavigationView>
+            </winui:NavigationView.Content>
+        </winui:NavigationView>
 
         <TextBlock
             Name="WindowTitleTextBlock"

@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
     xmlns:davClassLibrary="using:davClassLibrary"
@@ -273,7 +274,7 @@
                 Grid.Column="0"
                 Visibility="{Binding AppState, Converter={StaticResource AppStateLoadingOrInitialSyncConverter}}">
 
-                <ProgressRing
+                <winui:ProgressRing
                     RelativePanel.AlignHorizontalCenterWithPanel="True"
                     RelativePanel.AlignVerticalCenterWithPanel="True"
                     Height="40"
