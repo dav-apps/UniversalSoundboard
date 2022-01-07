@@ -100,7 +100,7 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region AddSounds
-        public static ContentDialog CreateAddSoundsContentDialog(DataTemplate itemTemplate)
+        public static ContentDialog CreateAddSoundsContentDialog(DataTemplate itemTemplate, List<StorageFile> selectedFiles)
         {
             AddSoundsContentDialog = new ContentDialog
             {
@@ -108,7 +108,7 @@ namespace UniversalSoundboard.Common
                 PrimaryButtonText = loader.GetString("AddSoundsContentDialog-PrimaryButton"),
                 CloseButtonText = loader.GetString("Actions-Cancel"),
                 DefaultButton = ContentDialogButton.Primary,
-                IsPrimaryButtonEnabled = false,
+                IsPrimaryButtonEnabled = selectedFiles.Count > 0,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
             AddSoundsContentDialog.Opened += ContentDialog_Opened;
@@ -130,10 +130,18 @@ namespace UniversalSoundboard.Common
             {
                 Text = loader.GetString("AddSoundsContentDialog-NoFilesSelected"),
                 Margin = new Thickness(0, 25, 0, 0),
-                HorizontalAlignment = HorizontalAlignment.Center
+                HorizontalAlignment = HorizontalAlignment.Center,
+                Visibility = selectedFiles.Count > 0 ? Visibility.Collapsed : Visibility.Visible
             };
 
             AddSoundsSelectedFiles = new ObservableCollection<SoundFileItem>();
+
+            foreach (StorageFile file in selectedFiles)
+            {
+                SoundFileItem item = new SoundFileItem(file);
+                item.Removed += SoundFileItem_Removed;
+                AddSoundsSelectedFiles.Add(item);
+            }
 
             AddSoundsListView = new ListView
             {
@@ -141,7 +149,8 @@ namespace UniversalSoundboard.Common
                 ItemsSource = AddSoundsSelectedFiles,
                 SelectionMode = ListViewSelectionMode.None,
                 Height = 250,
-                CanReorderItems = true
+                CanReorderItems = true,
+                AllowDrop = true
             };
 
             containerStackPanel.Children.Add(selectFilesButton);

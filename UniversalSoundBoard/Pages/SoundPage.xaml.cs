@@ -790,9 +790,14 @@ namespace UniversalSoundboard.Pages
         #region Start message event handlers
         private async void StartMessageAddFirstSoundButton_Click(object sender, RoutedEventArgs e)
         {
+            // Show file picker for new sounds
+            var files = await MainPage.PickFilesForAddSoundsContentDialog();
+            if (files.Count == 0) return;
+
+            // Show the dialog for adding the sounds
             var template = (DataTemplate)Resources["SoundFileItemTemplate"];
 
-            ContentDialog addSoundsContentDialog = ContentDialogs.CreateAddSoundsContentDialog(template);
+            ContentDialog addSoundsContentDialog = ContentDialogs.CreateAddSoundsContentDialog(template, files);
             addSoundsContentDialog.PrimaryButtonClick += AddSoundsContentDialog_PrimaryButtonClick;
             await addSoundsContentDialog.ShowAsync();
         }

@@ -997,9 +997,14 @@ namespace UniversalSoundboard.Pages
         #region New Sounds
         private async void NewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            // Show file picker for new sounds
+            var files = await PickFilesForAddSoundsContentDialog();
+            if (files.Count == 0) return;
+
+            // Show the dialog for adding the sounds
             var template = (DataTemplate)Resources["SoundFileItemTemplate"];
 
-            ContentDialog addSoundsContentDialog = ContentDialogs.CreateAddSoundsContentDialog(template);
+            ContentDialog addSoundsContentDialog = ContentDialogs.CreateAddSoundsContentDialog(template, files);
             addSoundsContentDialog.PrimaryButtonClick += AddSoundsContentDialog_PrimaryButtonClick;
             await addSoundsContentDialog.ShowAsync();
         }
@@ -1007,6 +1012,22 @@ namespace UniversalSoundboard.Pages
         private async void AddSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await AddSelectedSoundFiles();
+        }
+
+        public static async Task<List<StorageFile>> PickFilesForAddSoundsContentDialog()
+        {
+            // Open file picker
+            var picker = new Windows.Storage.Pickers.FileOpenPicker
+            {
+                ViewMode = Windows.Storage.Pickers.PickerViewMode.List,
+                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary
+            };
+
+            foreach (var fileType in FileManager.allowedFileTypes)
+                picker.FileTypeFilter.Add(fileType);
+
+            var files = await picker.PickMultipleFilesAsync();
+            return files.ToList();
         }
 
         public static async Task AddSelectedSoundFiles()
