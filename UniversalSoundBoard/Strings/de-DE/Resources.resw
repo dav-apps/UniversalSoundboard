@@ -814,4 +814,16 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="InAppNotification-SoundboardImportSuccessful" xml:space="preserve">
     <value>Dein Soundboard wurde erfolgreich importiert</value>
   </data>
+  <data name="AddSoundsContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="AddSoundsContentDialog-SelectFiles" xml:space="preserve">
+    <value>Dateien auswählen</value>
+  </data>
+  <data name="AddSoundsContentDialog-Title" xml:space="preserve">
+    <value>Sounds hinzufügen</value>
+  </data>
+  <data name="AddSoundsContentDialog-NoFilesSelected" xml:space="preserve">
+    <value>Keine Dateien ausgewählt</value>
+  </data>
 </root>

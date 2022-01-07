@@ -25,6 +25,10 @@
         <converters:TopButtonPaddingConverter x:Name="TopButtonPaddingConverter" />
 
         <!-- Item Templates -->
+        <DataTemplate x:Key="SoundFileItemTemplate" x:DataType="components:SoundFileItem">
+            <components:SoundFileItemTemplate />
+        </DataTemplate>
+        
         <DataTemplate x:Key="SoundItemTemplate" x:DataType="models:Sound">
             <components:SoundItemTemplate />
         </DataTemplate>
@@ -497,7 +501,7 @@
                 Orientation="Horizontal" 
                 Padding="12">
                 
-                <ProgressRing
+                <winui:ProgressRing
                     IsActive="True" 
                     Margin="0,0,28,0" 
                     Height="30" 

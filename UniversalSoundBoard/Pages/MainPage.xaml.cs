@@ -33,7 +33,7 @@ namespace UniversalSoundboard.Pages
         readonly ResourceLoader loader = new ResourceLoader();
         public static CoreDispatcher dispatcher;                            // Dispatcher for ShareTargetPage
         bool initizalized = false;
-        string appTitle = "UniversalSoundboard";                               // The app name displayed in the title bar
+        string appTitle = "UniversalSoundboard";                            // The app name displayed in the title bar
         private readonly ObservableCollection<object> menuItems = new ObservableCollection<object>();
         private Guid initialCategory = Guid.Empty;                          // The category that was selected before the sounds started loading
         private Guid selectedCategory = Guid.Empty;                         // The category that was right clicked for the flyout
@@ -997,58 +997,52 @@ namespace UniversalSoundboard.Pages
         #region New Sounds
         private async void NewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            await PickSounds();
+            var template = (DataTemplate)Resources["SoundFileItemTemplate"];
+
+            ContentDialog addSoundsContentDialog = ContentDialogs.CreateAddSoundsContentDialog(template);
+            addSoundsContentDialog.PrimaryButtonClick += AddSoundsContentDialog_PrimaryButtonClick;
+            await addSoundsContentDialog.ShowAsync();
         }
 
-        public static async Task PickSounds()
+        private async void AddSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            await AddSelectedSoundFiles();
+        }
+
+        public static async Task AddSelectedSoundFiles()
+        {
+            if (ContentDialogs.AddSoundsSelectedFiles.Count == 0) return;
             var loader = new ResourceLoader();
 
-            // Open file explorer
-            var picker = new Windows.Storage.Pickers.FileOpenPicker
-            {
-                ViewMode = Windows.Storage.Pickers.PickerViewMode.List,
-                SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary
-            };
-
-            foreach (var fileType in FileManager.allowedFileTypes)
-                picker.FileTypeFilter.Add(fileType);
-
-            var files = await picker.PickMultipleFilesAsync();
+            FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("AddSoundsMessage");
+            FileManager.itemViewHolder.LoadingScreenVisible = true;
             List<string> notAddedSounds = new List<string>();
 
-            if (files.Any())
+            // Get the category
+            Guid? selectedCategory = null;
+            if (!Equals(FileManager.itemViewHolder.SelectedCategory, Guid.Empty))
+                selectedCategory = FileManager.itemViewHolder.SelectedCategory;
+
+            foreach (var soundFileItem in ContentDialogs.AddSoundsSelectedFiles)
             {
-                FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("AddSoundsMessage");
-                FileManager.itemViewHolder.LoadingScreenVisible = true;
+                // Create the sound and add it to the sound lists
+                Guid uuid = await FileManager.CreateSoundAsync(null, soundFileItem.File.DisplayName, selectedCategory, soundFileItem.File);
 
-                // Get the category
-                Guid? selectedCategory = null;
-                if (!Equals(FileManager.itemViewHolder.SelectedCategory, Guid.Empty))
-                    selectedCategory = FileManager.itemViewHolder.SelectedCategory;
-
-                // Add all selected files
-                foreach (StorageFile soundFile in files)
-                {
-                    // Create the sound and add it to the sound lists
-                    Guid uuid = await FileManager.CreateSoundAsync(null, soundFile.DisplayName, selectedCategory, soundFile);
-
-                    if (uuid.Equals(Guid.Empty))
-                        notAddedSounds.Add(soundFile.Name);
-                    else
-                        await FileManager.AddSound(uuid);
-                }
+                if (uuid.Equals(Guid.Empty))
+                    notAddedSounds.Add(soundFileItem.File.Name);
+                else
+                    await FileManager.AddSound(uuid);
             }
 
             FileManager.itemViewHolder.LoadingScreenVisible = false;
             FileManager.UpdatePlayAllButtonVisibility();
 
-            if (FileManager.itemViewHolder.AppState == FileManager.AppState.Empty && files.Any())
+            if (FileManager.itemViewHolder.AppState == FileManager.AppState.Empty)
                 FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
 
             if (notAddedSounds.Count > 0)
             {
-                if (files.Count == 1)
+                if (ContentDialogs.AddSoundsSelectedFiles.Count == 1)
                 {
                     var addSoundErrorContentDialog = ContentDialogs.CreateAddSoundErrorContentDialog();
                     await addSoundErrorContentDialog.ShowAsync();

@@ -149,6 +149,10 @@
     <Compile Include="Components\SoundFileDownloadProgressTemplate.xaml.cs">
       <DependentUpon>SoundFileDownloadProgressTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\SoundFileItem.cs" />
+    <Compile Include="Components\SoundFileItemTemplate.xaml.cs">
+      <DependentUpon>SoundFileItemTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\SoundItem.cs" />
     <Compile Include="Components\SoundListItemTemplate.xaml.cs">
       <DependentUpon>SoundListItemTemplate.xaml</DependentUpon>
@@ -298,6 +302,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\SoundFileDownloadProgressTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\SoundFileItemTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -34,6 +34,9 @@ namespace UniversalSoundboard.Common
         private static bool propertiesDefaultMutedChanged = false;
 
         public static bool ContentDialogOpen = false;
+        public static ListView AddSoundsListView;
+        public static ObservableCollection<SoundFileItem> AddSoundsSelectedFiles;
+        public static TextBlock NoFilesSelectedTextBlock;
         public static TextBox NewSoundUrlTextBox;
         public static TextBox NewCategoryTextBox;
         public static Guid NewCategoryParentUuid;
@@ -59,6 +62,7 @@ namespace UniversalSoundboard.Common
         public static ComboBox PlaybackSpeedComboBox;
         public static List<ObservableCollection<HotkeyItem>> PropertiesDialogHotkeys = new List<ObservableCollection<HotkeyItem>>();
         public static StackPanel davPlusHotkeyInfoStackPanel;
+        public static ContentDialog AddSoundsContentDialog;
         public static ContentDialog NewSoundFromUrlContentDialog;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
@@ -92,6 +96,93 @@ namespace UniversalSoundboard.Common
         private static void ContentDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
             ContentDialogOpen = false;
+        }
+        #endregion
+
+        #region AddSounds
+        public static ContentDialog CreateAddSoundsContentDialog(DataTemplate itemTemplate)
+        {
+            AddSoundsContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("AddSoundsContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("AddSoundsContentDialog-PrimaryButton"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
+                IsPrimaryButtonEnabled = false,
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+            AddSoundsContentDialog.Opened += ContentDialog_Opened;
+            AddSoundsContentDialog.Closed += ContentDialog_Closed;
+
+            StackPanel containerStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
+            Button selectFilesButton = new Button
+            {
+                Content = loader.GetString("AddSoundsContentDialog-SelectFiles"),
+                Margin = new Thickness(0, 10, 0, 10),
+            };
+            selectFilesButton.Click += SelectFilesButton_Click;
+
+            NoFilesSelectedTextBlock = new TextBlock
+            {
+                Text = loader.GetString("AddSoundsContentDialog-NoFilesSelected"),
+                Margin = new Thickness(0, 25, 0, 0),
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+
+            AddSoundsSelectedFiles = new ObservableCollection<SoundFileItem>();
+
+            AddSoundsListView = new ListView
+            {
+                ItemTemplate = itemTemplate,
+                ItemsSource = AddSoundsSelectedFiles,
+                SelectionMode = ListViewSelectionMode.None,
+                Height = 250,
+                CanReorderItems = true
+            };
+
+            containerStackPanel.Children.Add(selectFilesButton);
+            containerStackPanel.Children.Add(NoFilesSelectedTextBlock);
+            containerStackPanel.Children.Add(AddSoundsListView);
+
+            AddSoundsContentDialog.Content = containerStackPanel;
+
+            return AddSoundsContentDialog;
+        }
+
+        private static async void SelectFilesButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Open file explorer
+            var picker = new FileOpenPicker
+            {
+                ViewMode = PickerViewMode.List,
+                SuggestedStartLocation = PickerLocationId.MusicLibrary
+            };
+
+            foreach (var fileType in FileManager.allowedFileTypes)
+                picker.FileTypeFilter.Add(fileType);
+
+            var files = await picker.PickMultipleFilesAsync();
+            
+            foreach (var file in files)
+            {
+                SoundFileItem item = new SoundFileItem(file);
+                item.Removed += SoundFileItem_Removed;
+                AddSoundsSelectedFiles.Add(item);
+            }
+
+            AddSoundsContentDialog.IsPrimaryButtonEnabled = AddSoundsSelectedFiles.Count > 0;
+            NoFilesSelectedTextBlock.Visibility = AddSoundsSelectedFiles.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
+        }
+
+        private static void SoundFileItem_Removed(object sender, EventArgs e)
+        {
+            AddSoundsSelectedFiles.Remove((SoundFileItem)sender);
+            AddSoundsContentDialog.IsPrimaryButtonEnabled = AddSoundsSelectedFiles.Count > 0;
+            NoFilesSelectedTextBlock.Visibility = AddSoundsSelectedFiles.Count > 0 ? Visibility.Collapsed : Visibility.Visible;
         }
         #endregion
 

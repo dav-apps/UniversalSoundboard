@@ -815,4 +815,16 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="InAppNotification-SoundboardImportSuccessful" xml:space="preserve">
     <value>Votre Soundboard a été importé avec succès</value>
   </data>
+  <data name="AddSoundsContentDialog-PrimaryButton" xml:space="preserve">
+    <value>Ajouter</value>
+  </data>
+  <data name="AddSoundsContentDialog-SelectFiles" xml:space="preserve">
+    <value>Sélectionner des fichiers</value>
+  </data>
+  <data name="AddSoundsContentDialog-Title" xml:space="preserve">
+    <value>Ajouter des sons</value>
+  </data>
+  <data name="AddSoundsContentDialog-NoFilesSelected" xml:space="preserve">
+    <value>Aucun fichier sélectionné</value>
+  </data>
 </root>
