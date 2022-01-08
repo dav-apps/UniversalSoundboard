@@ -1035,9 +1035,18 @@ namespace UniversalSoundboard.Pages
             if (ContentDialogs.AddSoundsSelectedFiles.Count == 0) return;
             var loader = new ResourceLoader();
 
-            FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("AddSoundsMessage");
-            FileManager.itemViewHolder.LoadingScreenVisible = true;
+            // Show InAppNotification
+            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                null,
+                new ShowInAppNotificationEventArgs(
+                    string.Format(loader.GetString("InAppNotification-AddSounds"), 0, ContentDialogs.AddSoundsSelectedFiles.Count),
+                    0,
+                    true
+                )
+            );
+
             List<string> notAddedSounds = new List<string>();
+            int i = 0;
 
             // Get the category
             Guid? selectedCategory = null;
@@ -1052,10 +1061,20 @@ namespace UniversalSoundboard.Pages
                 if (uuid.Equals(Guid.Empty))
                     notAddedSounds.Add(soundFileItem.File.Name);
                 else
+                {
                     await FileManager.AddSound(uuid);
+
+                    FileManager.itemViewHolder.TriggerSetInAppNotificationMessageEvent(
+                        null,
+                        new SetInAppNotificationMessageEventArgs(
+                            string.Format(loader.GetString("InAppNotification-AddSounds"), i + 1, ContentDialogs.AddSoundsSelectedFiles.Count)
+                        )
+                    );
+
+                    i++;
+                }
             }
 
-            FileManager.itemViewHolder.LoadingScreenVisible = false;
             FileManager.UpdatePlayAllButtonVisibility();
 
             if (FileManager.itemViewHolder.AppState == FileManager.AppState.Empty)
@@ -1063,16 +1082,37 @@ namespace UniversalSoundboard.Pages
 
             if (notAddedSounds.Count > 0)
             {
-                if (ContentDialogs.AddSoundsSelectedFiles.Count == 1)
+                string message = notAddedSounds.Count == 1 ?
+                    loader.GetString("InAppNotification-AddSoundsErrorOneSound")
+                    : string.Format(loader.GetString("InAppNotification-AddSoundsErrorMultipleSounds"), notAddedSounds.Count);
+
+                var inAppNotificationArgs = new ShowInAppNotificationEventArgs(
+                    message,
+                    0,
+                    false,
+                    true,
+                    loader.GetString("Actions-ShowDetails")
+                );
+
+                inAppNotificationArgs.PrimaryButtonClick += async (sender, args) =>
                 {
-                    var addSoundErrorContentDialog = ContentDialogs.CreateAddSoundErrorContentDialog();
-                    await addSoundErrorContentDialog.ShowAsync();
-                }
-                else
-                {
+                    FileManager.itemViewHolder.TriggerDismissInAppNotificationEvent(null, new EventArgs());
+
                     var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notAddedSounds);
                     await addSoundsErrorContentDialog.ShowAsync();
-                }
+                };
+
+                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(null, inAppNotificationArgs);
+            }
+            else
+            {
+                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                    null,
+                    new ShowInAppNotificationEventArgs(
+                        string.Format(loader.GetString("InAppNotification-AddSoundsSuccessful"), ContentDialogs.AddSoundsSelectedFiles.Count),
+                        8000
+                    )
+                );
             }
         }
         #endregion

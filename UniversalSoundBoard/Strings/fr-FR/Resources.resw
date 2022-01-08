@@ -827,4 +827,19 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="AddSoundsContentDialog-NoFilesSelected" xml:space="preserve">
     <value>Aucun fichier sélectionné</value>
   </data>
+  <data name="InAppNotification-AddSounds" xml:space="preserve">
+    <value>Ajouté {0} sur {1} sons</value>
+  </data>
+  <data name="InAppNotification-AddSoundsSuccessful" xml:space="preserve">
+    <value>{0} sons ont été ajoutés avec succès</value>
+  </data>
+  <data name="Actions-ShowDetails" xml:space="preserve">
+    <value>Afficher les détails</value>
+  </data>
+  <data name="InAppNotification-AddSoundsErrorMultipleSounds" xml:space="preserve">
+    <value>{0} sons n'ont pas pu être ajoutés</value>
+  </data>
+  <data name="InAppNotification-AddSoundsErrorOneSound" xml:space="preserve">
+    <value>Un son n'a pas pu être ajouté</value>
+  </data>
 </root>

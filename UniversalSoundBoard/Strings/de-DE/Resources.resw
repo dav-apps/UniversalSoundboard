@@ -826,4 +826,19 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="AddSoundsContentDialog-NoFilesSelected" xml:space="preserve">
     <value>Keine Dateien ausgewählt</value>
   </data>
+  <data name="InAppNotification-AddSounds" xml:space="preserve">
+    <value>{0} von {1} Sounds wurden hinzugefügt</value>
+  </data>
+  <data name="InAppNotification-AddSoundsSuccessful" xml:space="preserve">
+    <value>{0} Sounds wurden erfolgreich hinzugefügt</value>
+  </data>
+  <data name="Actions-ShowDetails" xml:space="preserve">
+    <value>Details anzeigen</value>
+  </data>
+  <data name="InAppNotification-AddSoundsErrorMultipleSounds" xml:space="preserve">
+    <value>{0} Sounds konnten nicht hinzugefügt werden</value>
+  </data>
+  <data name="InAppNotification-AddSoundsErrorOneSound" xml:space="preserve">
+    <value>Ein Sound konnte nicht hinzugefügt werden</value>
+  </data>
 </root>

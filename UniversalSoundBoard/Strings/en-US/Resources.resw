@@ -828,4 +828,19 @@ This may take some time, depending on how large the import file is.</value>
   <data name="AddSoundsContentDialog-NoFilesSelected" xml:space="preserve">
     <value>No files selected</value>
   </data>
+  <data name="InAppNotification-AddSounds" xml:space="preserve">
+    <value>{0} of {1} sounds were added</value>
+  </data>
+  <data name="InAppNotification-AddSoundsSuccessful" xml:space="preserve">
+    <value>{0} sounds were added successfully</value>
+  </data>
+  <data name="Actions-ShowDetails" xml:space="preserve">
+    <value>Show details</value>
+  </data>
+  <data name="InAppNotification-AddSoundsErrorMultipleSounds" xml:space="preserve">
+    <value>{0} sounds could not be added</value>
+  </data>
+  <data name="InAppNotification-AddSoundsErrorOneSound" xml:space="preserve">
+    <value>One sound could not be added</value>
+  </data>
 </root>
