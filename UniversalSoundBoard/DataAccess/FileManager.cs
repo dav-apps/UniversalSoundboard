@@ -374,6 +374,7 @@ namespace UniversalSoundboard.DataAccess
                 loader.GetString("InAppNotification-SoundboardExportSuccessful"),
                 5000,
                 false,
+                false,
                 loader.GetString("Actions-OpenFolder")
             );
             args.PrimaryButtonClick += ExportSounds_InAppNotification_PrimaryButtonClick;
@@ -729,6 +730,7 @@ namespace UniversalSoundboard.DataAccess
             ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
                 loader.GetString("InAppNotification-SoundsExportSuccessful"),
                 5000,
+                false,
                 false,
                 loader.GetString("Actions-OpenFolder")
             );

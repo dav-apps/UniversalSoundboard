@@ -73,6 +73,7 @@ namespace UniversalSoundboard.Common
         public string Message { get; set; }
         public int Duration { get; set; }
         public bool ShowProgressRing { get; set; }
+        public bool Dismissable { get; set; }
         public string PrimaryButtonText { get; set; }
         public string SecondaryButtonText { get; set; }
         public event EventHandler<RoutedEventArgs> PrimaryButtonClick;
@@ -82,12 +83,14 @@ namespace UniversalSoundboard.Common
             string message,
             int duration = 0,
             bool showProgressRing = false,
+            bool dismissable = false,
             string primaryButtonText = null,
             string secondaryButtonText = null
         ) {
             Message = message;
             Duration = duration;
             ShowProgressRing = showProgressRing;
+            Dismissable = dismissable;
             PrimaryButtonText = primaryButtonText;
             SecondaryButtonText = secondaryButtonText;
         }
@@ -100,6 +103,16 @@ namespace UniversalSoundboard.Common
         public void TriggerSecondaryButtonClickEvent(object sender, RoutedEventArgs args)
         {
             SecondaryButtonClick?.Invoke(sender, args);
+        }
+    }
+
+    public class SetInAppNotificationMessageEventArgs : EventArgs
+    {
+        public string Message { get; set; }
+
+        public SetInAppNotificationMessageEventArgs(string message)
+        {
+            Message = message;
         }
     }
     #endregion

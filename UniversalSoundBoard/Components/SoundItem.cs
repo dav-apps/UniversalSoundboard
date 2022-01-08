@@ -163,6 +163,7 @@ namespace UniversalSoundboard.Components
                     loader.GetString("InAppNotification-SoundExportSuccessful"),
                     5000,
                     false,
+                    false,
                     loader.GetString("Actions-OpenFolder")
                 );
 
@@ -217,6 +218,7 @@ namespace UniversalSoundboard.Components
                 ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
                     loader.GetString("InAppNotification-ImageExportSuccessful"),
                     5000,
+                    false,
                     false,
                     loader.GetString("Actions-OpenFolder")
                 );

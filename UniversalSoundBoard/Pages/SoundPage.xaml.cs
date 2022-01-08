@@ -40,6 +40,7 @@ namespace UniversalSoundboard.Pages
         AdvancedCollectionView reversedPlayingSounds;
         Visibility startMessageVisibility = Visibility.Collapsed;
         Visibility emptyCategoryMessageVisibility = Visibility.Collapsed;
+        TextBlock inAppNotificationMessageTextBlock = new TextBlock();
         
         public SoundPage()
         {
@@ -70,6 +71,8 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.RemovePlayingSoundItemStarted += ItemViewHolder_RemovePlayingSoundItemStarted;
             FileManager.itemViewHolder.RemovePlayingSoundItemEnded += ItemViewHolder_RemovePlayingSoundItemEnded;
             FileManager.itemViewHolder.ShowInAppNotification += ItemViewHolder_ShowInAppNotification;
+            FileManager.itemViewHolder.SetInAppNotificationMessage += ItemViewHolder_SetInAppNotificationMessage;
+            FileManager.itemViewHolder.DismissInAppNotification += ItemViewHolder_DismissInAppNotification;
 
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
@@ -85,7 +88,7 @@ namespace UniversalSoundboard.Pages
             StartMessageLoginButton.IsEnabled = !FileManager.itemViewHolder.Importing;
             StartMessageImportButton.IsEnabled = !FileManager.itemViewHolder.Importing;
         }
-
+        
         #region Page event handlers
         async void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
@@ -119,6 +122,8 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.RemovePlayingSoundItemStarted -= ItemViewHolder_RemovePlayingSoundItemStarted;
             FileManager.itemViewHolder.RemovePlayingSoundItemEnded -= ItemViewHolder_RemovePlayingSoundItemEnded;
             FileManager.itemViewHolder.ShowInAppNotification -= ItemViewHolder_ShowInAppNotification;
+            FileManager.itemViewHolder.SetInAppNotificationMessage -= ItemViewHolder_SetInAppNotificationMessage;
+            FileManager.itemViewHolder.DismissInAppNotification -= ItemViewHolder_DismissInAppNotification;
 
             FileManager.itemViewHolder.Sounds.CollectionChanged -= ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged -= ItemViewHolder_FavouriteSounds_CollectionChanged;
@@ -298,6 +303,16 @@ namespace UniversalSoundboard.Pages
         private void ItemViewHolder_ShowInAppNotification(object sender, ShowInAppNotificationEventArgs args)
         {
             ShowInAppNotification(args);
+        }
+
+        private void ItemViewHolder_SetInAppNotificationMessage(object sender, SetInAppNotificationMessageEventArgs e)
+        {
+            inAppNotificationMessageTextBlock.Text = e.Message;
+        }
+
+        private void ItemViewHolder_DismissInAppNotification(object sender, EventArgs e)
+        {
+            InAppNotification.Dismiss();
         }
 
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -547,6 +562,8 @@ namespace UniversalSoundboard.Pages
 
         private void ShowInAppNotification(ShowInAppNotificationEventArgs args)
         {
+            InAppNotification.ShowDismissButton = args.Dismissable;
+
             Grid rootGrid = new Grid();
             rootGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
             rootGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
@@ -561,12 +578,13 @@ namespace UniversalSoundboard.Pages
                 IsActive = true
             };
 
-            TextBlock textBlock = new TextBlock
+            inAppNotificationMessageTextBlock = new TextBlock
             {
                 Text = args.Message,
-                VerticalAlignment = VerticalAlignment.Center
+                VerticalAlignment = VerticalAlignment.Center,
+                TextWrapping = TextWrapping.WrapWholeWords
             };
-            Grid.SetColumn(textBlock, 1);
+            Grid.SetColumn(inAppNotificationMessageTextBlock, 1);
 
             StackPanel buttonStackPanel = new StackPanel
             {
@@ -601,7 +619,7 @@ namespace UniversalSoundboard.Pages
             }
 
             if (args.ShowProgressRing) rootGrid.Children.Add(progressRing);
-            rootGrid.Children.Add(textBlock);
+            rootGrid.Children.Add(inAppNotificationMessageTextBlock);
             rootGrid.Children.Add(buttonStackPanel);
 
             InAppNotification.Show(rootGrid, args.Duration);
