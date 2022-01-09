@@ -843,4 +843,30 @@ This may take some time, depending on how large the import file is.</value>
   <data name="InAppNotification-AddSoundsErrorOneSound" xml:space="preserve">
     <value>One sound could not be added</value>
   </data>
+  <data name="AddButton-Download.Text" xml:space="preserve">
+    <value>Download sounds</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-Title" xml:space="preserve">
+    <value>Download sounds</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-Description" xml:space="preserve">
+    <value>You can download sounds directly from the Internet. Just enter the link below.
+
+Supported are links to audio files and YouTube videos.</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-RetrievingInfo" xml:space="preserve">
+    <value>Retrieving information...</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-UrlTextBoxPlaceholder" xml:space="preserve">
+    <value>Link to audio or video</value>
+  </data>
+  <data name="InAppNotification-DownloadSound" xml:space="preserve">
+    <value>Sound is being downloaded...</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundSuccessful" xml:space="preserve">
+    <value>Sound was downloaded successfully</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundError" xml:space="preserve">
+    <value>Sound could not be downloaded</value>
+  </data>
 </root>

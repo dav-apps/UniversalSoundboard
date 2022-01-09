@@ -841,4 +841,30 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="InAppNotification-AddSoundsErrorOneSound" xml:space="preserve">
     <value>Ein Sound konnte nicht hinzugefügt werden</value>
   </data>
+  <data name="AddButton-Download.Text" xml:space="preserve">
+    <value>Sounds herunterladen</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-Title" xml:space="preserve">
+    <value>Sounds herunterladen</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-Description" xml:space="preserve">
+    <value>Du kannst Sounds direkt aus dem Internet herunterladen. Gebe einfach den Link unten ein.
+
+Unterstützt werden Links zu Audiodateien und YouTube-Videos.</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-RetrievingInfo" xml:space="preserve">
+    <value>Informationen werden abgerufen...</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-UrlTextBoxPlaceholder" xml:space="preserve">
+    <value>Link zu Audio oder Video</value>
+  </data>
+  <data name="InAppNotification-DownloadSound" xml:space="preserve">
+    <value>Sound wird heruntergeladen...</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundSuccessful" xml:space="preserve">
+    <value>Sound wurde erfolgreich heruntergeladen</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundError" xml:space="preserve">
+    <value>Sound konnte nicht heruntergeladen werden</value>
+  </data>
 </root>

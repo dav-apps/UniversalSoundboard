@@ -842,4 +842,30 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="InAppNotification-AddSoundsErrorOneSound" xml:space="preserve">
     <value>Un son n'a pas pu être ajouté</value>
   </data>
+  <data name="AddButton-Download.Text" xml:space="preserve">
+    <value>Télécharger des sons</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-Title" xml:space="preserve">
+    <value>Télécharger des sons</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-Description" xml:space="preserve">
+    <value>Vous pouvez télécharger des sons directement depuis Internet. Saisissez le lien ci-dessous.
+
+Les liens vers des fichiers audio et des vidéos YouTube sont acceptés.</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-RetrievingInfo" xml:space="preserve">
+    <value>Obtenir des informations...</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-UrlTextBoxPlaceholder" xml:space="preserve">
+    <value>Lien vers un fichier audio ou vidéo</value>
+  </data>
+  <data name="InAppNotification-DownloadSound" xml:space="preserve">
+    <value>Le son est téléchargé...</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundSuccessful" xml:space="preserve">
+    <value>Le son a été téléchargé avec succès</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundError" xml:space="preserve">
+    <value>Le son n'a pas pu être téléchargé</value>
+  </data>
 </root>

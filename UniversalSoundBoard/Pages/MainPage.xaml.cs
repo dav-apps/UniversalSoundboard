@@ -994,7 +994,7 @@ namespace UniversalSoundboard.Pages
         }
         #endregion
 
-        #region New Sounds
+        #region AddSounds
         private async void NewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             // Show file picker for new sounds
@@ -1117,19 +1117,33 @@ namespace UniversalSoundboard.Pages
         }
         #endregion
 
-        #region New Sound from URL
-        private async void NewSoundFromUrlFlyoutItem_Click(object sender, RoutedEventArgs e)
+        #region DownloadSounds
+        private async void DownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            var newSoundFromUrlContentDialog = ContentDialogs.CreateNewSoundFromUrlContentDialog();
-            newSoundFromUrlContentDialog.PrimaryButtonClick += NewSoundFromUrlContentDialog_PrimaryButtonClick;
-            await newSoundFromUrlContentDialog.ShowAsync();
+            var downloadSoundsContentDialog = ContentDialogs.CreateDownloadSoundsContentDialog();
+            downloadSoundsContentDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
+            await downloadSoundsContentDialog.ShowAsync();
         }
 
-        private async void NewSoundFromUrlContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void DownloadSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get the url in the text box
-            var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
-            var grabResult = await grabber.GrabAsync(new Uri(ContentDialogs.NewSoundUrlTextBox.Text));
+            var grabResult = ContentDialogs.DownloadSoundsGrabResult;
+            if (grabResult == null) return;
+
+            // Show InAppNotification
+            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                this,
+                new ShowInAppNotificationEventArgs(
+                    loader.GetString("InAppNotification-DownloadSound"),
+                    0,
+                    true
+                )
+            );
+
+            // Disable the ability to download sounds
+            DownloadSoundsFlyoutItem.IsEnabled = false;
+
             var mediaResources = grabResult.Resources<GrabbedMedia>();
             var imageResources = grabResult.Resources<GrabbedImage>();
 
@@ -1149,7 +1163,7 @@ namespace UniversalSoundboard.Pages
 
             if (bestAudio == null)
             {
-                await ShowDownloadErrorDialog();
+                ShowDownloadSoundErrorInAppNotification();
                 return;
             }
 
@@ -1219,7 +1233,7 @@ namespace UniversalSoundboard.Pages
                     }
                     else
                     {
-                        await ShowDownloadErrorDialog();
+                        ShowDownloadSoundErrorInAppNotification();
                         return;
                     }
                 }
@@ -1232,7 +1246,7 @@ namespace UniversalSoundboard.Pages
 
             if (!imageDownloaded)
             {
-                await ShowDownloadErrorDialog();
+                ShowDownloadSoundErrorInAppNotification();
                 return;
             }
 
@@ -1242,13 +1256,41 @@ namespace UniversalSoundboard.Pages
 
             if (!audioFileDownloadResult.Key)
             {
-                await ShowDownloadErrorDialog();
+                ShowDownloadSoundErrorInAppNotification();
                 return;
             }
 
             // Add the files as a new sound
             Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, null, audioFile, imageFile);
             await FileManager.AddSound(uuid);
+
+            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                this,
+                new ShowInAppNotificationEventArgs(
+                    loader.GetString("InAppNotification-DownloadSoundSuccessful"),
+                    8000,
+                    false,
+                    true
+                )
+            );
+
+            DownloadSoundsFlyoutItem.IsEnabled = true;
+        }
+
+        public void ShowDownloadSoundErrorInAppNotification()
+        {
+            DownloadSoundsFlyoutItem.IsEnabled = true;
+
+            var inAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
+                loader.GetString("InAppNotification-DownloadSoundError"),
+                0,
+                false,
+                true,
+                loader.GetString("Actions-ShowDetails")
+            );
+            inAppNotificationEventArgs.PrimaryButtonClick += async (sender, args) => await ShowDownloadErrorDialog();
+
+            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(this, inAppNotificationEventArgs);
         }
 
         public async Task ShowDownloadErrorDialog()

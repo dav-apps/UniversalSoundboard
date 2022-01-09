@@ -1,9 +1,12 @@
 ﻿using davClassLibrary;
+using DotNetTools.SharpGrabber;
+using DotNetTools.SharpGrabber.Grabbed;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
@@ -19,6 +22,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using WinUI = Microsoft.UI.Xaml.Controls;
 
 namespace UniversalSoundboard.Common
@@ -37,7 +41,12 @@ namespace UniversalSoundboard.Common
         public static ListView AddSoundsListView;
         public static ObservableCollection<SoundFileItem> AddSoundsSelectedFiles;
         public static TextBlock NoFilesSelectedTextBlock;
-        public static TextBox NewSoundUrlTextBox;
+        public static TextBox DownloadSoundsUrlTextBox;
+        public static StackPanel DownloadSoundsLoadingMessageStackPanel;
+        public static Grid DownloadSoundsYoutubeInfoGrid;
+        public static Image DownloadSoundsYoutubeInfoImage;
+        public static TextBlock DownloadSoundsYoutubeInfoTextBlock;
+        public static GrabResult DownloadSoundsGrabResult;
         public static TextBox NewCategoryTextBox;
         public static Guid NewCategoryParentUuid;
         public static TextBox EditCategoryTextBox;
@@ -63,7 +72,7 @@ namespace UniversalSoundboard.Common
         public static List<ObservableCollection<HotkeyItem>> PropertiesDialogHotkeys = new List<ObservableCollection<HotkeyItem>>();
         public static StackPanel davPlusHotkeyInfoStackPanel;
         public static ContentDialog AddSoundsContentDialog;
-        public static ContentDialog NewSoundFromUrlContentDialog;
+        public static ContentDialog DownloadSoundsContentDialog;
         public static ContentDialog NewCategoryContentDialog;
         public static ContentDialog EditCategoryContentDialog;
         public static ContentDialog DeleteCategoryContentDialog;
@@ -195,37 +204,150 @@ namespace UniversalSoundboard.Common
         }
         #endregion
 
-        #region NewSoundFromUrl
-        public static ContentDialog CreateNewSoundFromUrlContentDialog()
+        #region DownloadSounds
+        public static ContentDialog CreateDownloadSoundsContentDialog()
         {
-            NewSoundFromUrlContentDialog = new ContentDialog
+            DownloadSoundsContentDialog = new ContentDialog
             {
-                Title = "Neuer Sound von URL",
-                PrimaryButtonText = "Hinzufügen",
+                Title = loader.GetString("DownloadSoundsContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("Actions-Add"),
                 CloseButtonText = loader.GetString("Actions-Cancel"),
                 DefaultButton = ContentDialogButton.Primary,
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            NewSoundFromUrlContentDialog.Opened += ContentDialog_Opened;
-            NewSoundFromUrlContentDialog.Closed += ContentDialog_Closed;
+            DownloadSoundsContentDialog.Opened += ContentDialog_Opened;
+            DownloadSoundsContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel containerStackPanel = new StackPanel
             {
-                Orientation = Orientation.Vertical
+                Orientation = Orientation.Vertical,
+                Width = 400
             };
 
-            NewSoundUrlTextBox = new TextBox();
-            NewSoundUrlTextBox.TextChanged += NewSoundUrlTextBox_TextChanged;
-            containerStackPanel.Children.Add(NewSoundUrlTextBox);
+            TextBlock descriptionTextBlock = new TextBlock
+            {
+                Text = loader.GetString("DownloadSoundsContentDialog-Description"),
+                TextWrapping = TextWrapping.WrapWholeWords
+            };
 
-            NewSoundFromUrlContentDialog.Content = containerStackPanel;
-            return NewSoundFromUrlContentDialog;
+            DownloadSoundsUrlTextBox = new TextBox
+            {
+                Margin = new Thickness(0, 20, 0, 0),
+                PlaceholderText = loader.GetString("DownloadSoundsContentDialog-UrlTextBoxPlaceholder")
+            };
+            DownloadSoundsUrlTextBox.TextChanged += DownloadSoundsUrlTextBox_TextChanged;
+
+            DownloadSoundsLoadingMessageStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 10, 0, 0),
+                Visibility = Visibility.Collapsed
+            };
+
+            WinUI.ProgressRing progressRing = new WinUI.ProgressRing
+            {
+                IsActive = true,
+                Width = 20,
+                Height = 20
+            };
+
+            TextBlock loadingMessage = new TextBlock
+            {
+                Text = loader.GetString("DownloadSoundsContentDialog-RetrievingInfo"),
+                FontSize = 14,
+                Margin = new Thickness(10, 0, 0, 0)
+            };
+
+            DownloadSoundsLoadingMessageStackPanel.Children.Add(progressRing);
+            DownloadSoundsLoadingMessageStackPanel.Children.Add(loadingMessage);
+
+            DownloadSoundsYoutubeInfoGrid = new Grid
+            {
+                Margin = new Thickness(0, 10, 0, 0),
+                Visibility = Visibility.Collapsed
+            };
+
+            DownloadSoundsYoutubeInfoGrid.RowDefinitions.Add(new RowDefinition());
+
+            DownloadSoundsYoutubeInfoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
+            DownloadSoundsYoutubeInfoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
+
+            DownloadSoundsYoutubeInfoImage = new Image
+            {
+                Height = 60
+            };
+            Grid.SetColumn(DownloadSoundsYoutubeInfoImage, 0);
+
+            DownloadSoundsYoutubeInfoTextBlock = new TextBlock
+            {
+                TextWrapping = TextWrapping.WrapWholeWords,
+                Margin = new Thickness(20, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            Grid.SetColumn(DownloadSoundsYoutubeInfoTextBlock, 1);
+
+            DownloadSoundsYoutubeInfoGrid.Children.Add(DownloadSoundsYoutubeInfoImage);
+            DownloadSoundsYoutubeInfoGrid.Children.Add(DownloadSoundsYoutubeInfoTextBlock);
+
+            containerStackPanel.Children.Add(descriptionTextBlock);
+            containerStackPanel.Children.Add(DownloadSoundsUrlTextBox);
+            containerStackPanel.Children.Add(DownloadSoundsLoadingMessageStackPanel);
+            containerStackPanel.Children.Add(DownloadSoundsYoutubeInfoGrid);
+
+            DownloadSoundsContentDialog.Content = containerStackPanel;
+            return DownloadSoundsContentDialog;
         }
 
-        private static void NewSoundUrlTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private static async void DownloadSoundsUrlTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
-            NewSoundFromUrlContentDialog.IsPrimaryButtonEnabled = NewSoundUrlTextBox.Text.Length > 2;
+            DownloadSoundsContentDialog.IsPrimaryButtonEnabled = false;
+
+            // Check if the input is a valid link
+            string input = DownloadSoundsUrlTextBox.Text;
+
+            Regex urlRegex = new Regex("^(https?:\\/\\/)?[\\w.-]+(\\.[\\w.-]+)+[\\w\\-._~/?#@&\\+,;=]+$");
+            Regex youtubeUrlRegex = new Regex("^(https?:\\/\\/)?(www.)?youtube.com\\/");
+
+            bool isUrl = urlRegex.IsMatch(input);
+            bool isYoutubeUrl = youtubeUrlRegex.IsMatch(input);
+
+            if (!isUrl)
+            {
+                DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+                return;
+            }
+
+            DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Visible;
+
+            if (isYoutubeUrl)
+            {
+                var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
+                DownloadSoundsGrabResult = await grabber.GrabAsync(new Uri(input));
+                if (DownloadSoundsGrabResult == null) return;
+
+                DownloadSoundsYoutubeInfoTextBlock.Text = DownloadSoundsGrabResult.Title;
+
+                var imageResources = DownloadSoundsGrabResult.Resources<GrabbedImage>();
+                GrabbedImage smallThumbnail = imageResources.ToList().Find(image => image.ResourceUri.ToString().Split('/').Last() == "default.jpg");
+
+                if (smallThumbnail != null)
+                {
+                    DownloadSoundsYoutubeInfoImage.Source = new BitmapImage(smallThumbnail.ResourceUri);
+                    DownloadSoundsYoutubeInfoGrid.Visibility = Visibility.Visible;
+                }
+
+                DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+                DownloadSoundsContentDialog.IsPrimaryButtonEnabled = true;
+                return;
+            }
+            else
+            {
+                // Make a GET request to see if this is an audio file
+                // TODO
+            }
+
+            DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Collapsed;
         }
         #endregion
 
