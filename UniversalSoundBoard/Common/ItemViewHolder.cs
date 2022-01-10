@@ -148,7 +148,8 @@ namespace UniversalSoundboard.Common
         public event EventHandler<TableObjectFileDownloadProgressChangedEventArgs> TableObjectFileDownloadProgressChanged;  // Is triggered when the file of a TableObject is being downloaded and the progress changed
         public event EventHandler<TableObjectFileDownloadCompletedEventArgs> TableObjectFileDownloadCompleted;  // Is triggered from TriggerAction when the file of a TableObject was finished
         public event EventHandler<ShowInAppNotificationEventArgs> ShowInAppNotification;                        // Trigger this event to show the InAppNotification on the SoundPage
-        public event EventHandler<SetInAppNotificationMessageEventArgs> SetInAppNotificationMessage;            // Trigger this event to set the message of a currently visible InAppNotification
+        public event EventHandler<SetInAppNotificationMessageEventArgs> SetInAppNotificationMessage;            // Trigger this event to set the message of the currently visible InAppNotification
+        public event EventHandler<SetInAppNotificationProgressEventArgs> SetInAppNotificationProgress;          // Trigger this event to set the progress of the progress ring of the currently visible InAppNotification
         public event EventHandler<EventArgs> DismissInAppNotification;                                          // Trigger this event to dismiss the InAppNotification if it is currently visible
         #endregion
 
@@ -1168,6 +1169,11 @@ namespace UniversalSoundboard.Common
         public void TriggerSetInAppNotificationMessageEvent(object sender, SetInAppNotificationMessageEventArgs args)
         {
             SetInAppNotificationMessage?.Invoke(sender, args);
+        }
+
+        public void TriggerSetInAppNotificationProgressEvent(object sender, SetInAppNotificationProgressEventArgs args)
+        {
+            SetInAppNotificationProgress?.Invoke(sender, args);
         }
 
         public void TriggerDismissInAppNotificationEvent(object sender, EventArgs args)

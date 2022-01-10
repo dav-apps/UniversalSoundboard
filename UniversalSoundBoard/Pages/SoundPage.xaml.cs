@@ -40,6 +40,7 @@ namespace UniversalSoundboard.Pages
         AdvancedCollectionView reversedPlayingSounds;
         Visibility startMessageVisibility = Visibility.Collapsed;
         Visibility emptyCategoryMessageVisibility = Visibility.Collapsed;
+        WinUI.ProgressRing inAppNotificationProgressRing = new WinUI.ProgressRing();
         TextBlock inAppNotificationMessageTextBlock = new TextBlock();
         
         public SoundPage()
@@ -72,6 +73,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.RemovePlayingSoundItemEnded += ItemViewHolder_RemovePlayingSoundItemEnded;
             FileManager.itemViewHolder.ShowInAppNotification += ItemViewHolder_ShowInAppNotification;
             FileManager.itemViewHolder.SetInAppNotificationMessage += ItemViewHolder_SetInAppNotificationMessage;
+            FileManager.itemViewHolder.SetInAppNotificationProgress += ItemViewHolder_SetInAppNotificationProgress;
             FileManager.itemViewHolder.DismissInAppNotification += ItemViewHolder_DismissInAppNotification;
 
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
@@ -88,7 +90,7 @@ namespace UniversalSoundboard.Pages
             StartMessageLoginButton.IsEnabled = !FileManager.itemViewHolder.Importing;
             StartMessageImportButton.IsEnabled = !FileManager.itemViewHolder.Importing;
         }
-        
+
         #region Page event handlers
         async void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
@@ -123,6 +125,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.RemovePlayingSoundItemEnded -= ItemViewHolder_RemovePlayingSoundItemEnded;
             FileManager.itemViewHolder.ShowInAppNotification -= ItemViewHolder_ShowInAppNotification;
             FileManager.itemViewHolder.SetInAppNotificationMessage -= ItemViewHolder_SetInAppNotificationMessage;
+            FileManager.itemViewHolder.SetInAppNotificationProgress -= ItemViewHolder_SetInAppNotificationProgress;
             FileManager.itemViewHolder.DismissInAppNotification -= ItemViewHolder_DismissInAppNotification;
 
             FileManager.itemViewHolder.Sounds.CollectionChanged -= ItemViewHolder_Sounds_CollectionChanged;
@@ -308,6 +311,22 @@ namespace UniversalSoundboard.Pages
         private void ItemViewHolder_SetInAppNotificationMessage(object sender, SetInAppNotificationMessageEventArgs e)
         {
             inAppNotificationMessageTextBlock.Text = e.Message;
+        }
+
+        private void ItemViewHolder_SetInAppNotificationProgress(object sender, SetInAppNotificationProgressEventArgs e)
+        {
+            if (e.IsIndeterminate)
+                inAppNotificationProgressRing.IsIndeterminate = true;
+            else
+            {
+                inAppNotificationProgressRing.IsIndeterminate = false;
+
+                int progress = e.Progress;
+                if (progress > 100) progress = 100;
+                else if (progress < 0) progress = 0;
+
+                inAppNotificationProgressRing.Value = progress;
+            }
         }
 
         private void ItemViewHolder_DismissInAppNotification(object sender, EventArgs e)
@@ -570,7 +589,7 @@ namespace UniversalSoundboard.Pages
             rootGrid.ColumnDefinitions.Add(new ColumnDefinition());
             rootGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
 
-            WinUI.ProgressRing progressRing = new WinUI.ProgressRing
+            inAppNotificationProgressRing = new WinUI.ProgressRing
             {
                 Width = 20,
                 Height = 20,
@@ -618,7 +637,7 @@ namespace UniversalSoundboard.Pages
                 buttonStackPanel.Children.Add(secondaryButton);
             }
 
-            if (args.ShowProgressRing) rootGrid.Children.Add(progressRing);
+            if (args.ShowProgressRing) rootGrid.Children.Add(inAppNotificationProgressRing);
             rootGrid.Children.Add(inAppNotificationMessageTextBlock);
             rootGrid.Children.Add(buttonStackPanel);
 

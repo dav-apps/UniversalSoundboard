@@ -115,6 +115,18 @@ namespace UniversalSoundboard.Common
             Message = message;
         }
     }
+
+    public class SetInAppNotificationProgressEventArgs : EventArgs
+    {
+        public bool IsIndeterminate { get; set; }
+        public int Progress { get; set; }
+
+        public SetInAppNotificationProgressEventArgs(bool isIndeterminate = true, int progress = 0)
+        {
+            IsIndeterminate = isIndeterminate;
+            Progress = progress;
+        }
+    }
     #endregion
 
     #region PlayingSoundItem

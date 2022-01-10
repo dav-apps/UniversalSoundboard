@@ -1312,7 +1312,7 @@ namespace UniversalSoundboard.Pages
 
             string soundUrl = ContentDialogs.DownloadSoundsUrlTextBox.Text;
             bool result = false;
-            var progress = new Progress<int>((int value) => Debug.WriteLine(value));
+            var progress = new Progress<int>((int value) => FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(false, value)));
 
             await Task.Run(async () =>
             {
@@ -1324,6 +1324,8 @@ namespace UniversalSoundboard.Pages
                 ShowDownloadSoundErrorInAppNotification();
                 return;
             }
+
+            FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs());
 
             Guid uuid = await FileManager.CreateSoundAsync(null, ContentDialogs.DownloadSoundsAudioFileName, null, audioFile);
 
