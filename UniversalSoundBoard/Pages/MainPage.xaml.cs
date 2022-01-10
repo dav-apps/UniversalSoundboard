@@ -1261,9 +1261,15 @@ namespace UniversalSoundboard.Pages
 
             // Download the audio track
             StorageFile audioFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
-            var audioFileDownloadResult = await FileManager.DownloadGrabbedMedia(bestAudio.ResourceUri, grabResult, audioFile);
+            var progress = new Progress<int>((int value) => FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(false, value)));
+            bool audioFileDownloadResult = false;
 
-            if (!audioFileDownloadResult.Key)
+            await Task.Run(async () =>
+            {
+                audioFileDownloadResult = await FileManager.DownloadBinaryDataToFile(audioFile, bestAudio.ResourceUri, progress);
+            });
+
+            if (!audioFileDownloadResult)
             {
                 ShowDownloadSoundErrorInAppNotification();
                 return;
