@@ -355,11 +355,16 @@ namespace UniversalSoundboard.DataAccess
 
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
             StorageFolder exportFolder = await GetExportFolderAsync();
-            var progress = new Progress<int>((int value) => itemViewHolder.ExportMessage = value + " %");
+            var progress = new Progress<int>((int value) =>
+            {
+                itemViewHolder.ExportMessage = value + " %";
+                itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(false, value));
+            });
 
             await DatabaseOperations.ExportDataAsync(exportFolder, progress);
 
             itemViewHolder.ExportMessage = loader.GetString("ExportMessage-3");
+            itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs());
 
             // Create the zip file
             StorageFile zipFile = await Task.Run(async () =>
@@ -387,9 +392,9 @@ namespace UniversalSoundboard.DataAccess
 
             ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
                 loader.GetString("InAppNotification-SoundboardExportSuccessful"),
-                5000,
+                8000,
                 false,
-                false,
+                true,
                 loader.GetString("Actions-OpenFolder")
             );
             args.PrimaryButtonClick += ExportSounds_InAppNotification_PrimaryButtonClick;
@@ -436,7 +441,11 @@ namespace UniversalSoundboard.DataAccess
             });
 
             DataModel dataModel = await GetDataModelAsync(importFolder);
-            Progress<int> progress = new Progress<int>((int value) => SetImportMessage(string.Format("{0} %", value), startMessage));
+            Progress<int> progress = new Progress<int>((int value) =>
+            {
+                SetImportMessage(string.Format("{0} %", value), startMessage);
+                itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(false, value));
+            });
 
             switch (dataModel)
             {
@@ -452,6 +461,7 @@ namespace UniversalSoundboard.DataAccess
             }
 
             SetImportMessage(loader.GetString("ExportImportMessage-TidyUp"), startMessage);     // TidyUp
+            itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs());
             itemViewHolder.Importing = false;
 
             await ClearImportCacheAsync();
@@ -467,8 +477,9 @@ namespace UniversalSoundboard.DataAccess
             {
                 ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
                     loader.GetString("InAppNotification-SoundboardImportSuccessful"),
-                    5000,
-                    false
+                    8000,
+                    false,
+                    true
                 );
 
                 itemViewHolder.TriggerShowInAppNotificationEvent(null, args);
@@ -744,9 +755,9 @@ namespace UniversalSoundboard.DataAccess
 
             ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
                 loader.GetString("InAppNotification-SoundsExportSuccessful"),
-                5000,
+                8000,
                 false,
-                false,
+                true,
                 loader.GetString("Actions-OpenFolder")
             );
             args.PrimaryButtonClick += ExportSounds_InAppNotification_PrimaryButtonClick;
