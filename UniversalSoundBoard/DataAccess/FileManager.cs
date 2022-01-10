@@ -3489,10 +3489,11 @@ namespace UniversalSoundboard.DataAccess
             }
         }
 
-        public static async Task<bool> DownloadBinaryDataToFile(StorageFile targetFile, Uri uri)
+        public static async Task<bool> DownloadBinaryDataToFile(StorageFile targetFile, Uri uri, IProgress<int> progress)
         {
             var req = WebRequest.Create(uri);
             var res = await req.GetResponseAsync();
+            long contentLength = res.ContentLength;
 
             try
             {
@@ -3506,10 +3507,11 @@ namespace UniversalSoundboard.DataAccess
                     do
                     {
                         read = await responseStream.ReadAsync(buffer, 0, buffer.Length);
-                        await fileStream.WriteAsync(buffer, 0, buffer.Length);
+                        await fileStream.WriteAsync(buffer, 0, read);
                         offset += read;
 
-                        // TODO: Progress
+                        if (offset != 0 && read != 0 && contentLength != 0)
+                            progress.Report((int)Math.Floor((double)offset / contentLength * 100));
                     } while (read != 0);
 
                     await fileStream.FlushAsync();

@@ -25,6 +25,7 @@ using davClassLibrary;
 using DotNetTools.SharpGrabber;
 using DotNetTools.SharpGrabber.Grabbed;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 
 namespace UniversalSoundboard.Pages
 {
@@ -1270,7 +1271,13 @@ namespace UniversalSoundboard.Pages
 
             // Add the files as a new sound
             Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, null, audioFile, imageFile);
-            // TODO: Check if uuid == null
+
+            if (uuid.Equals(Guid.Empty))
+            {
+                ShowDownloadSoundErrorInAppNotification();
+                return;
+            }
+
             await FileManager.AddSound(uuid);
 
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
@@ -1290,20 +1297,53 @@ namespace UniversalSoundboard.Pages
         {
             DownloadSoundsFlyoutItem.IsEnabled = false;
 
+            // Show InAppNotification
+            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                this,
+                new ShowInAppNotificationEventArgs(
+                    loader.GetString("InAppNotification-DownloadSound"),
+                    0,
+                    true
+                )
+            );
+
             StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
             StorageFile audioFile = await cacheFolder.CreateFileAsync(string.Format("download.{0}", ContentDialogs.DownloadSoundsAudioFileType), CreationCollisionOption.GenerateUniqueName);
 
-            bool result = await FileManager.DownloadBinaryDataToFile(audioFile, new Uri(ContentDialogs.DownloadSoundsUrlTextBox.Text));
+            string soundUrl = ContentDialogs.DownloadSoundsUrlTextBox.Text;
+            bool result = false;
+            var progress = new Progress<int>((int value) => Debug.WriteLine(value));
+
+            await Task.Run(async () =>
+            {
+                result = await FileManager.DownloadBinaryDataToFile(audioFile, new Uri(soundUrl), progress);
+            });
 
             if (!result)
             {
-                // TODO: Fehler anzeigen
+                ShowDownloadSoundErrorInAppNotification();
                 return;
             }
 
             Guid uuid = await FileManager.CreateSoundAsync(null, ContentDialogs.DownloadSoundsAudioFileName, null, audioFile);
-            // TODO: Check if uuid == null
+
+            if (uuid.Equals(Guid.Empty))
+            {
+                ShowDownloadSoundErrorInAppNotification();
+                return;
+            }
+
             await FileManager.AddSound(uuid);
+
+            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                this,
+                new ShowInAppNotificationEventArgs(
+                    loader.GetString("InAppNotification-DownloadSoundSuccessful"),
+                    8000,
+                    false,
+                    true
+                )
+            );
 
             DownloadSoundsFlyoutItem.IsEnabled = true;
         }
