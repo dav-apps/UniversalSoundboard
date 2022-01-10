@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UniversalSoundboard.Components;
@@ -46,7 +47,11 @@ namespace UniversalSoundboard.Common
         public static Grid DownloadSoundsYoutubeInfoGrid;
         public static Image DownloadSoundsYoutubeInfoImage;
         public static TextBlock DownloadSoundsYoutubeInfoTextBlock;
+        public static TextBlock DownloadSoundsAudioFileInfoTextBlock;
         public static GrabResult DownloadSoundsGrabResult;
+        public static FileManager.DownloadSoundsResultType DownloadSoundsResult = FileManager.DownloadSoundsResultType.None;
+        public static string DownloadSoundsAudioFileName = "";
+        public static string DownloadSoundsAudioFileType = "";
         public static TextBox NewCategoryTextBox;
         public static Guid NewCategoryParentUuid;
         public static TextBox EditCategoryTextBox;
@@ -290,10 +295,17 @@ namespace UniversalSoundboard.Common
             DownloadSoundsYoutubeInfoGrid.Children.Add(DownloadSoundsYoutubeInfoImage);
             DownloadSoundsYoutubeInfoGrid.Children.Add(DownloadSoundsYoutubeInfoTextBlock);
 
+            DownloadSoundsAudioFileInfoTextBlock = new TextBlock
+            {
+                Margin = new Thickness(6, 10, 0, 0),
+                Visibility = Visibility.Collapsed
+            };
+
             containerStackPanel.Children.Add(descriptionTextBlock);
             containerStackPanel.Children.Add(DownloadSoundsUrlTextBox);
             containerStackPanel.Children.Add(DownloadSoundsLoadingMessageStackPanel);
             containerStackPanel.Children.Add(DownloadSoundsYoutubeInfoGrid);
+            containerStackPanel.Children.Add(DownloadSoundsAudioFileInfoTextBlock);
 
             DownloadSoundsContentDialog.Content = containerStackPanel;
             return DownloadSoundsContentDialog;
@@ -302,11 +314,13 @@ namespace UniversalSoundboard.Common
         private static async void DownloadSoundsUrlTextBox_TextChanged(object sender, TextChangedEventArgs e)
         {
             DownloadSoundsContentDialog.IsPrimaryButtonEnabled = false;
+            DownloadSoundsResult = FileManager.DownloadSoundsResultType.None;
+            HideAllMessageElementsInDownloadSoundsContentDialog();
 
             // Check if the input is a valid link
             string input = DownloadSoundsUrlTextBox.Text;
 
-            Regex urlRegex = new Regex("^(https?:\\/\\/)?[\\w.-]+(\\.[\\w.-]+)+[\\w\\-._~/?#@&\\+,;=]+$");
+            Regex urlRegex = new Regex("^(https?:\\/\\/)?[\\w.-]+(\\.[\\w.-]+)+[\\w\\-._~/?#@&%\\+,;=]+");
             Regex youtubeUrlRegex = new Regex("^(https?:\\/\\/)?(www.)?youtube.com\\/");
 
             bool isUrl = urlRegex.IsMatch(input);
@@ -314,7 +328,7 @@ namespace UniversalSoundboard.Common
 
             if (!isUrl)
             {
-                DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+                HideAllMessageElementsInDownloadSoundsContentDialog();
                 return;
             }
 
@@ -338,16 +352,69 @@ namespace UniversalSoundboard.Common
                 }
 
                 DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+                DownloadSoundsResult = FileManager.DownloadSoundsResultType.Youtube;
                 DownloadSoundsContentDialog.IsPrimaryButtonEnabled = true;
                 return;
             }
             else
             {
                 // Make a GET request to see if this is an audio file
-                // TODO
-            }
+                WebResponse response;
 
+                try
+                {
+                    var req = WebRequest.Create(input);
+                    response = await req.GetResponseAsync();
+
+                    // Check if the content type is a supported audio format
+                    if (!FileManager.allowedAudioMimeTypes.Contains(response.ContentType))
+                    {
+                        HideAllMessageElementsInDownloadSoundsContentDialog();
+                        return;
+                    }
+                }
+                catch(Exception)
+                {
+                    HideAllMessageElementsInDownloadSoundsContentDialog();
+                    return;
+                }
+
+                // Get file type and file size
+                DownloadSoundsAudioFileType = FileManager.fileTypeToExt(response.ContentType);
+                long fileSize = response.ContentLength;
+
+                // Try to get the file name
+                Regex fileNameRegex = new Regex("^[\\w\\.\\+\\-_ ]+\\.\\w{3}$");
+                DownloadSoundsAudioFileName = loader.GetString("DownloadSoundsContentDialog-DefaultSoundName");
+                bool defaultFileName = true;
+
+                string lastPart = input.Split('/').Last();
+                
+                if (fileNameRegex.IsMatch(lastPart))
+                {
+                    var parts = lastPart.Split('.');
+                    DownloadSoundsAudioFileName = string.Join(".", parts.Take(parts.Count() - 1));
+                    defaultFileName = false;
+                }
+
+                DownloadSoundsAudioFileInfoTextBlock.Text = "";
+                if (!defaultFileName) DownloadSoundsAudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", loader.GetString("FileName"), DownloadSoundsAudioFileName);
+                DownloadSoundsAudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", loader.GetString("FileType"), DownloadSoundsAudioFileType);
+                if (fileSize > 0) DownloadSoundsAudioFileInfoTextBlock.Text += string.Format("{0}: {1}", loader.GetString("FileSize"), FileManager.GetFormattedSize((ulong)fileSize));
+                DownloadSoundsAudioFileInfoTextBlock.Visibility = Visibility.Visible;
+
+                DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+                DownloadSoundsYoutubeInfoGrid.Visibility = Visibility.Collapsed;
+                DownloadSoundsResult = FileManager.DownloadSoundsResultType.AudioFile;
+                DownloadSoundsContentDialog.IsPrimaryButtonEnabled = true;
+            }
+        }
+
+        private static void HideAllMessageElementsInDownloadSoundsContentDialog()
+        {
             DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+            DownloadSoundsYoutubeInfoGrid.Visibility = Visibility.Collapsed;
+            DownloadSoundsAudioFileInfoTextBlock.Visibility = Visibility.Collapsed;
         }
         #endregion
 

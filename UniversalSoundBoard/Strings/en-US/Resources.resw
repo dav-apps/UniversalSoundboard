@@ -869,4 +869,16 @@ Supported are links to audio files and YouTube videos.</value>
   <data name="InAppNotification-DownloadSoundError" xml:space="preserve">
     <value>Sound could not be downloaded</value>
   </data>
+  <data name="DownloadSoundsContentDialog-DefaultSoundName" xml:space="preserve">
+    <value>Downloaded sound</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>File name</value>
+  </data>
+  <data name="FileSize" xml:space="preserve">
+    <value>File size</value>
+  </data>
+  <data name="FileType" xml:space="preserve">
+    <value>File type</value>
+  </data>
 </root>

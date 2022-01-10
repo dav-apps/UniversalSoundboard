@@ -1127,6 +1127,14 @@ namespace UniversalSoundboard.Pages
 
         private async void DownloadSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            if (ContentDialogs.DownloadSoundsResult == FileManager.DownloadSoundsResultType.Youtube)
+                await DownloadSoundsContentDialog_YoutubeDownload();
+            else if (ContentDialogs.DownloadSoundsResult == FileManager.DownloadSoundsResultType.AudioFile)
+                await DownloadSoundsContentDialog_AudioFileDownload();
+        }
+
+        public async Task DownloadSoundsContentDialog_YoutubeDownload()
+        {
             // Get the url in the text box
             var grabResult = ContentDialogs.DownloadSoundsGrabResult;
             if (grabResult == null) return;
@@ -1262,6 +1270,7 @@ namespace UniversalSoundboard.Pages
 
             // Add the files as a new sound
             Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, null, audioFile, imageFile);
+            // TODO: Check if uuid == null
             await FileManager.AddSound(uuid);
 
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
@@ -1273,6 +1282,28 @@ namespace UniversalSoundboard.Pages
                     true
                 )
             );
+
+            DownloadSoundsFlyoutItem.IsEnabled = true;
+        }
+
+        public async Task DownloadSoundsContentDialog_AudioFileDownload()
+        {
+            DownloadSoundsFlyoutItem.IsEnabled = false;
+
+            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
+            StorageFile audioFile = await cacheFolder.CreateFileAsync(string.Format("download.{0}", ContentDialogs.DownloadSoundsAudioFileType), CreationCollisionOption.GenerateUniqueName);
+
+            bool result = await FileManager.DownloadBinaryDataToFile(audioFile, new Uri(ContentDialogs.DownloadSoundsUrlTextBox.Text));
+
+            if (!result)
+            {
+                // TODO: Fehler anzeigen
+                return;
+            }
+
+            Guid uuid = await FileManager.CreateSoundAsync(null, ContentDialogs.DownloadSoundsAudioFileName, null, audioFile);
+            // TODO: Check if uuid == null
+            await FileManager.AddSound(uuid);
 
             DownloadSoundsFlyoutItem.IsEnabled = true;
         }

@@ -867,4 +867,16 @@ Unterstützt werden Links zu Audiodateien und YouTube-Videos.</value>
   <data name="InAppNotification-DownloadSoundError" xml:space="preserve">
     <value>Sound konnte nicht heruntergeladen werden</value>
   </data>
+  <data name="DownloadSoundsContentDialog-DefaultSoundName" xml:space="preserve">
+    <value>Heruntergeladener Sound</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>Dateiname</value>
+  </data>
+  <data name="FileSize" xml:space="preserve">
+    <value>Dateigröße</value>
+  </data>
+  <data name="FileType" xml:space="preserve">
+    <value>Dateityp</value>
+  </data>
 </root>

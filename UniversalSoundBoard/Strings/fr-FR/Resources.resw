@@ -868,4 +868,16 @@ Les liens vers des fichiers audio et des vidéos YouTube sont acceptés.</value>
   <data name="InAppNotification-DownloadSoundError" xml:space="preserve">
     <value>Le son n'a pas pu être téléchargé</value>
   </data>
+  <data name="DownloadSoundsContentDialog-DefaultSoundName" xml:space="preserve">
+    <value>Son téléchargé</value>
+  </data>
+  <data name="FileName" xml:space="preserve">
+    <value>Nom du fichier</value>
+  </data>
+  <data name="FileSize" xml:space="preserve">
+    <value>Taille du fichier</value>
+  </data>
+  <data name="FileType" xml:space="preserve">
+    <value>Type de fichier</value>
+  </data>
 </root>

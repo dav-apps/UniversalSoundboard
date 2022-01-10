@@ -140,11 +140,19 @@ namespace UniversalSoundboard.DataAccess
         public static List<string> allowedFileTypes = new List<string>
         {
             ".mp3",
+            ".m4a",
             ".wav",
             ".ogg",
             ".wma",
-            ".flac",
-            ".m4a"
+            ".flac"
+        };
+
+        public static List<string> allowedAudioMimeTypes = new List<string>
+        {
+            "audio/mpeg",   // .mp3
+            "audio/mp4",    // .m4a
+            "audio/wav",    // .wav
+            "audio/ogg"     // .ogg
         };
         #endregion
 
@@ -195,6 +203,13 @@ namespace UniversalSoundboard.DataAccess
             ShiftWindows = 12,
             AltShiftWindows = 13,
             ControlShiftWindows = 14
+        }
+
+        public enum DownloadSoundsResultType
+        {
+            None,
+            Youtube,
+            AudioFile
         }
         #endregion
 
@@ -3112,32 +3127,6 @@ namespace UniversalSoundboard.DataAccess
             isCalculatingSoundboardSize = false;
         }
 
-        public static string GetFormattedSize(ulong size, bool rounded = false) 
-        {
-            ulong gbMin = 1000000000;
-            ulong mbMin = 1000000;
-            ulong kbMin = 1000;
-
-            if (size >= gbMin)
-            {
-                // GB
-                double gb = size / (double)gbMin;
-                return string.Format("{0} {1}", gb.ToString(rounded ? "N0" : "N2"), loader.GetString("Sizes-GB"));
-            }
-            else if (size >= mbMin)
-            {
-                // MB
-                double mb = size / (double)mbMin;
-                return string.Format("{0} {1}", mb.ToString(rounded ? "N0" : "N1"), loader.GetString("Sizes-MB"));
-            }
-            else
-            {
-                // KB
-                double kb = size / (double)kbMin;
-                return string.Format("{0} {1}", kb.ToString("N0"), loader.GetString("Sizes-KB"));
-            }
-        }
-
         public static Color GetApplicationThemeColor()
         {
             return itemViewHolder.CurrentTheme == AppTheme.Dark ? ((Color)Application.Current.Resources["DarkThemeBackgroundColor"]) : ((Color)Application.Current.Resources["LightThemeBackgroundColor"]);
@@ -3228,6 +3217,32 @@ namespace UniversalSoundboard.DataAccess
         public static async Task<ulong> GetFileSizeAsync(StorageFile file)
         {
             return (await file.GetBasicPropertiesAsync()).Size;
+        }
+
+        public static string GetFormattedSize(ulong size, bool rounded = false)
+        {
+            ulong gbMin = 1000000000;
+            ulong mbMin = 1000000;
+            ulong kbMin = 1000;
+
+            if (size >= gbMin)
+            {
+                // GB
+                double gb = size / (double)gbMin;
+                return string.Format("{0} {1}", gb.ToString(rounded ? "N0" : "N2"), loader.GetString("Sizes-GB"));
+            }
+            else if (size >= mbMin)
+            {
+                // MB
+                double mb = size / (double)mbMin;
+                return string.Format("{0} {1}", mb.ToString(rounded ? "N0" : "N1"), loader.GetString("Sizes-MB"));
+            }
+            else
+            {
+                // KB
+                double kb = size / (double)kbMin;
+                return string.Format("{0} {1}", kb.ToString("N0"), loader.GetString("Sizes-KB"));
+            }
         }
 
         public static List<string> GetIconsList()
@@ -3474,6 +3489,41 @@ namespace UniversalSoundboard.DataAccess
             }
         }
 
+        public static async Task<bool> DownloadBinaryDataToFile(StorageFile targetFile, Uri uri)
+        {
+            var req = WebRequest.Create(uri);
+            var res = await req.GetResponseAsync();
+
+            try
+            {
+                using (var responseStream = res.GetResponseStream())
+                {
+                    var fileStream = await targetFile.OpenStreamForWriteAsync();
+                    var buffer = new byte[8192];
+                    int read;
+                    long offset = 0;
+
+                    do
+                    {
+                        read = await responseStream.ReadAsync(buffer, 0, buffer.Length);
+                        await fileStream.WriteAsync(buffer, 0, buffer.Length);
+                        offset += read;
+
+                        // TODO: Progress
+                    } while (read != 0);
+
+                    await fileStream.FlushAsync();
+                    fileStream.Dispose();
+                }
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
         public static async Task<KeyValuePair<bool, int>> DownloadGrabbedMedia(Uri uri, IGrabResult grabResult, StorageFile targetFile)
         {
             try
@@ -3523,6 +3573,21 @@ namespace UniversalSoundboard.DataAccess
                 || c == '§'
                 || c == '!'
             ).ToArray());
+        }
+
+        public static string fileTypeToExt(string fileType)
+        {
+            switch(fileType)
+            {
+                case "audio/mp4":
+                    return "mp4";
+                case "audio/wav":
+                    return "wav";
+                case "audio/ogg":
+                    return "ogg";
+                default:
+                    return "mp3";
+            }
         }
         #endregion
 
