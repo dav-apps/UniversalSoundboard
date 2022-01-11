@@ -55,6 +55,7 @@ namespace UniversalSoundboard.Common
         public static CheckBox DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox;
         public static TextBlock DownloadSoundsAudioFileInfoTextBlock;
         public static GrabResult DownloadSoundsGrabResult;
+        public static PlaylistItemListResponse DownloadSoundsPlaylistItemListResponse;
         public static FileManager.DownloadSoundsResultType DownloadSoundsResult = FileManager.DownloadSoundsResultType.None;
         public static string DownloadSoundsAudioFileName = "";
         public static string DownloadSoundsAudioFileType = "";
@@ -422,11 +423,10 @@ namespace UniversalSoundboard.Common
                     var listOperation = youtubeService.PlaylistItems.List(new List<string> { "contentDetails" });
                     listOperation.PlaylistId = listParam;
                     listOperation.MaxResults = 5000;
-                    PlaylistItemListResponse playlistResponse;
 
                     try
                     {
-                        playlistResponse = await listOperation.ExecuteAsync();
+                        DownloadSoundsPlaylistItemListResponse = await listOperation.ExecuteAsync();
                     }
                     catch (Exception)
                     {

@@ -1,6 +1,5 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Models;
-using DotNetTools.SharpGrabber;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
@@ -3500,15 +3499,15 @@ namespace UniversalSoundboard.DataAccess
             }
         }
 
-        public static async Task<bool> DownloadBinaryDataToFile(StorageFile targetFile, Uri uri, IProgress<int> progress)
+        public static async Task<KeyValuePair<bool, int>> DownloadBinaryDataToFile(StorageFile targetFile, Uri uri, IProgress<int> progress)
         {
-            var req = WebRequest.Create(uri);
-            var res = await req.GetResponseAsync();
-            long contentLength = res.ContentLength;
-
             try
             {
-                using (var responseStream = res.GetResponseStream())
+                var response = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
+                if (!response.IsSuccessStatusCode) return new KeyValuePair<bool, int>(false, (int)response.StatusCode);
+                long contentLength = response.Content.Headers.ContentLength.GetValueOrDefault();
+
+                using (var responseStream = await response.Content.ReadAsStreamAsync())
                 {
                     var fileStream = await targetFile.OpenStreamForWriteAsync();
                     var buffer = new byte[8192];
@@ -3521,36 +3520,13 @@ namespace UniversalSoundboard.DataAccess
                         await fileStream.WriteAsync(buffer, 0, read);
                         offset += read;
 
-                        if (offset != 0 && read != 0 && contentLength != 0)
+                        if (progress != null && offset != 0 && read != 0 && contentLength != 0)
                             progress.Report((int)Math.Floor((double)offset / contentLength * 100));
                     } while (read != 0);
 
                     await fileStream.FlushAsync();
                     fileStream.Dispose();
                 }
-
-                return true;
-            }
-            catch (Exception)
-            {
-                return false;
-            }
-        }
-
-        public static async Task<KeyValuePair<bool, int>> DownloadGrabbedMedia(Uri uri, IGrabResult grabResult, StorageFile targetFile)
-        {
-            try
-            {
-                var response = await httpClient.GetAsync(uri);
-                if (!response.IsSuccessStatusCode) return new KeyValuePair<bool, int>(false, ((int)response.StatusCode));
-
-                var downloadStream = await response.Content.ReadAsStreamAsync();
-                var resourceStream = await grabResult.WrapStreamAsync(downloadStream);
-                Stream fileStream = await targetFile.OpenStreamForWriteAsync();
-
-                await resourceStream.CopyToAsync(fileStream);
-                await fileStream.FlushAsync();
-                fileStream.Dispose();
 
                 return new KeyValuePair<bool, int>(true, -1);
             }

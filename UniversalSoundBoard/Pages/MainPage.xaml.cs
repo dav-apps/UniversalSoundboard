@@ -25,7 +25,6 @@ using davClassLibrary;
 using DotNetTools.SharpGrabber;
 using DotNetTools.SharpGrabber.Grabbed;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 
 namespace UniversalSoundboard.Pages
 {
@@ -1121,7 +1120,8 @@ namespace UniversalSoundboard.Pages
         #region DownloadSounds
         private async void DownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            var downloadSoundsContentDialog = ContentDialogs.CreateDownloadSoundsContentDialog();
+            var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
+            var downloadSoundsContentDialog = ContentDialogs.CreateDownloadSoundsContentDialog(infoButtonStyle);
             downloadSoundsContentDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
             await downloadSoundsContentDialog.ShowAsync();
         }
@@ -1129,12 +1129,17 @@ namespace UniversalSoundboard.Pages
         private async void DownloadSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (ContentDialogs.DownloadSoundsResult == FileManager.DownloadSoundsResultType.Youtube)
-                await DownloadSoundsContentDialog_YoutubeDownload();
+            {
+                if (ContentDialogs.DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox.IsChecked == true)
+                    await DownloadSoundsContentDialog_YoutubePlaylistDownload();
+                else
+                    await DownloadSoundsContentDialog_YoutubeVideoDownload();
+            }
             else if (ContentDialogs.DownloadSoundsResult == FileManager.DownloadSoundsResultType.AudioFile)
                 await DownloadSoundsContentDialog_AudioFileDownload();
         }
 
-        public async Task DownloadSoundsContentDialog_YoutubeDownload()
+        public async Task DownloadSoundsContentDialog_YoutubeVideoDownload()
         {
             // Get the url in the text box
             var grabResult = ContentDialogs.DownloadSoundsGrabResult;
@@ -1157,6 +1162,134 @@ namespace UniversalSoundboard.Pages
             var imageResources = grabResult.Resources<GrabbedImage>();
 
             // Find the audio track with the highest sample rate
+            GrabbedMedia bestAudio = FindBestAudioOfYoutubeVideo(mediaResources);
+
+            if (bestAudio == null)
+            {
+                ShowDownloadSoundErrorInAppNotification();
+                return;
+            }
+
+            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
+            StorageFile imageFile = await cacheFolder.CreateFileAsync("download.jpg", CreationCollisionOption.GenerateUniqueName);
+            bool imageDownloaded = await DownloadBestImageOfYoutubeVideo(imageFile, imageResources);
+
+            if (!imageDownloaded)
+            {
+                ShowDownloadSoundErrorInAppNotification();
+                return;
+            }
+
+            // Download the audio track
+            StorageFile audioFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
+            var progress = new Progress<int>((int value) => FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(false, value)));
+            bool audioFileDownloadResult = false;
+
+            await Task.Run(async () =>
+            {
+                audioFileDownloadResult = (await FileManager.DownloadBinaryDataToFile(audioFile, bestAudio.ResourceUri, progress)).Key;
+            });
+
+            if (!audioFileDownloadResult)
+            {
+                ShowDownloadSoundErrorInAppNotification();
+                return;
+            }
+
+            // Add the files as a new sound
+            Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, null, audioFile, imageFile);
+
+            if (uuid.Equals(Guid.Empty))
+            {
+                ShowDownloadSoundErrorInAppNotification();
+                return;
+            }
+
+            await FileManager.AddSound(uuid);
+
+            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                this,
+                new ShowInAppNotificationEventArgs(
+                    loader.GetString("InAppNotification-DownloadSoundSuccessful"),
+                    8000,
+                    false,
+                    true
+                )
+            );
+
+            DownloadSoundsFlyoutItem.IsEnabled = true;
+        }
+
+        public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload()
+        {
+            var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
+
+            // Disable the ability to download sounds
+            DownloadSoundsFlyoutItem.IsEnabled = false;
+
+            // Go through each video of the playlist
+            foreach (var item in ContentDialogs.DownloadSoundsPlaylistItemListResponse.Items)
+            {
+                string videoLink = string.Format("https://youtube.com/watch?v={0}", item.ContentDetails.VideoId);
+
+                GrabResult grabResult = await grabber.GrabAsync(new Uri(videoLink));
+                if (grabResult == null) continue;   // TODO: Error
+
+                var mediaResources = grabResult.Resources<GrabbedMedia>();
+                var imageResources = grabResult.Resources<GrabbedImage>();
+
+                // Find the audio track with the highest sample rate
+                GrabbedMedia bestAudio = FindBestAudioOfYoutubeVideo(mediaResources);
+
+                if (bestAudio == null)
+                {
+                    // TODO: Error
+                    continue;
+                }
+
+                StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
+                StorageFile imageFile = await cacheFolder.CreateFileAsync("download.jpg", CreationCollisionOption.GenerateUniqueName);
+                bool imageDownloaded = await DownloadBestImageOfYoutubeVideo(imageFile, imageResources);
+
+                if (!imageDownloaded)
+                {
+                    // TODO: Error
+                    continue;
+                }
+
+                // Download the audio track
+                StorageFile audioFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
+                var progress = new Progress<int>((int value) => FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(false, value)));
+                bool audioFileDownloadResult = false;
+
+                await Task.Run(async () =>
+                {
+                    audioFileDownloadResult = (await FileManager.DownloadBinaryDataToFile(audioFile, bestAudio.ResourceUri, progress)).Key;
+                });
+
+                if (!audioFileDownloadResult)
+                {
+                    // TODO: Error
+                    continue;
+                }
+
+                // Add the files as a new sound
+                Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, null, audioFile, imageFile);
+
+                if (uuid.Equals(Guid.Empty))
+                {
+                    // TODO: Error
+                    continue;
+                }
+
+                await FileManager.AddSound(uuid);
+
+                DownloadSoundsFlyoutItem.IsEnabled = true;
+            }
+        }
+
+        private GrabbedMedia FindBestAudioOfYoutubeVideo(IEnumerable<GrabbedMedia> mediaResources)
+        {
             GrabbedMedia bestAudio = null;
 
             foreach (var media in mediaResources)
@@ -1170,12 +1303,11 @@ namespace UniversalSoundboard.Pages
                     bestAudio = media;
             }
 
-            if (bestAudio == null)
-            {
-                ShowDownloadSoundErrorInAppNotification();
-                return;
-            }
+            return bestAudio;
+        }
 
+        private async Task<bool> DownloadBestImageOfYoutubeVideo(StorageFile targetFile, IEnumerable<GrabbedImage> imageResources)
+        {
             // Find the thumbnail image with the highest resolution
             List<GrabbedImage> images = new List<GrabbedImage>();
             GrabbedImage maxresDefaultImage = null;
@@ -1219,19 +1351,15 @@ namespace UniversalSoundboard.Pages
             if (defaultImage != null)
                 images.Add(defaultImage);
 
-            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-
             // Download the thumbnail image
-            StorageFile imageFile = await cacheFolder.CreateFileAsync("download.jpg", CreationCollisionOption.GenerateUniqueName);
             GrabbedImage currentImage;
-            bool imageDownloaded = false;
 
             while (images.Count() > 0)
             {
                 currentImage = images[0];
                 images.RemoveAt(0);
 
-                var imageFileDownloadResult = await FileManager.DownloadGrabbedMedia(currentImage.ResourceUri, grabResult, imageFile);
+                var imageFileDownloadResult = await FileManager.DownloadBinaryDataToFile(targetFile, currentImage.ResourceUri, null);
 
                 if (!imageFileDownloadResult.Key)
                 {
@@ -1242,61 +1370,16 @@ namespace UniversalSoundboard.Pages
                     }
                     else
                     {
-                        ShowDownloadSoundErrorInAppNotification();
-                        return;
+                        return false;
                     }
                 }
                 else
                 {
-                    imageDownloaded = true;
-                    break;
+                    return true;
                 }
             }
 
-            if (!imageDownloaded)
-            {
-                ShowDownloadSoundErrorInAppNotification();
-                return;
-            }
-
-            // Download the audio track
-            StorageFile audioFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
-            var progress = new Progress<int>((int value) => FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(false, value)));
-            bool audioFileDownloadResult = false;
-
-            await Task.Run(async () =>
-            {
-                audioFileDownloadResult = await FileManager.DownloadBinaryDataToFile(audioFile, bestAudio.ResourceUri, progress);
-            });
-
-            if (!audioFileDownloadResult)
-            {
-                ShowDownloadSoundErrorInAppNotification();
-                return;
-            }
-
-            // Add the files as a new sound
-            Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, null, audioFile, imageFile);
-
-            if (uuid.Equals(Guid.Empty))
-            {
-                ShowDownloadSoundErrorInAppNotification();
-                return;
-            }
-
-            await FileManager.AddSound(uuid);
-
-            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
-                this,
-                new ShowInAppNotificationEventArgs(
-                    loader.GetString("InAppNotification-DownloadSoundSuccessful"),
-                    8000,
-                    false,
-                    true
-                )
-            );
-
-            DownloadSoundsFlyoutItem.IsEnabled = true;
+            return false;
         }
 
         public async Task DownloadSoundsContentDialog_AudioFileDownload()
@@ -1322,7 +1405,7 @@ namespace UniversalSoundboard.Pages
 
             await Task.Run(async () =>
             {
-                result = await FileManager.DownloadBinaryDataToFile(audioFile, new Uri(soundUrl), progress);
+                result = (await FileManager.DownloadBinaryDataToFile(audioFile, new Uri(soundUrl), progress)).Key;
             });
 
             if (!result)
