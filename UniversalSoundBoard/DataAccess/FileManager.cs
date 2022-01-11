@@ -3212,6 +3212,12 @@ namespace UniversalSoundboard.DataAccess
             lastInAppNotificationEventArgs = args;
         }
 
+        public static void SetMessageOfLastInAppNotificationEventArgs(string message)
+        {
+            if (lastInAppNotificationEventArgs == null) return;
+            lastInAppNotificationEventArgs.Message = message;
+        }
+
         public static ShowInAppNotificationEventArgs GetLastInAppNotificationEventArgs()
         {
             if (

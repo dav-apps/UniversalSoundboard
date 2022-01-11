@@ -1168,6 +1168,7 @@ namespace UniversalSoundboard.Common
 
         public void TriggerSetInAppNotificationMessageEvent(object sender, SetInAppNotificationMessageEventArgs args)
         {
+            FileManager.SetMessageOfLastInAppNotificationEventArgs(args.Message);
             SetInAppNotificationMessage?.Invoke(sender, args);
         }
 
