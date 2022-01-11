@@ -880,4 +880,12 @@ Les liens vers des fichiers audio et des vidéos YouTube sont acceptés.</value>
   <data name="FileType" xml:space="preserve">
     <value>Type de fichier</value>
   </data>
+  <data name="DownloadSoundsContentDialog-DownloadPlaylist" xml:space="preserve">
+    <value>Télécharger la playlist complète</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-DavPlusPlaylistDownload" xml:space="preserve">
+    <value>Le téléchargement de tous les sons d'une playlist YouTube n'est disponible que pour les utilisateurs de dav Plus.
+
+Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
+  </data>
 </root>

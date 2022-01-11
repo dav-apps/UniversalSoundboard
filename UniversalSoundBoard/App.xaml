@@ -47,6 +47,19 @@
                 </Grid>
             </ControlTemplate>
 
+            <Style x:Key="InfoButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
+                <Setter Property="Grid.Column" Value="1" />
+                <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+                <Setter Property="FontSize" Value="14" />
+                <Setter Property="Width" Value="32" />
+                <Setter Property="Height" Value="32" />
+                <Setter Property="CornerRadius" Value="18" />
+                <Setter Property="Margin" Value="6,0,0,0" />
+                <Setter Property="Padding" Value="1,0,0,0" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="Content" Value="&#xE946;" />
+            </Style>
+
             <Style x:Key="CustomPivotStyle" TargetType="Pivot">
                 <Setter Property="Margin" Value="0"/>
                 <Setter Property="Padding" Value="0"/>

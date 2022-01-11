@@ -879,4 +879,12 @@ Unterstützt werden Links zu Audiodateien und YouTube-Videos.</value>
   <data name="FileType" xml:space="preserve">
     <value>Dateityp</value>
   </data>
+  <data name="DownloadSoundsContentDialog-DownloadPlaylist" xml:space="preserve">
+    <value>Gesamte Playlist herunterladen</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-DavPlusPlaylistDownload" xml:space="preserve">
+    <value>Das Herunterladen aller Sounds einer YouTube-Playlist ist nur für Nutzer von dav Plus verfügbar.
+
+Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
+  </data>
 </root>

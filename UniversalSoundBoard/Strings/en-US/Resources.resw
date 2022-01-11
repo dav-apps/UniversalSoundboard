@@ -881,4 +881,12 @@ Supported are links to audio files and YouTube videos.</value>
   <data name="FileType" xml:space="preserve">
     <value>File type</value>
   </data>
+  <data name="DownloadSoundsContentDialog-DownloadPlaylist" xml:space="preserve">
+    <value>Download entire playlist</value>
+  </data>
+  <data name="DownloadSoundsContentDialog-DavPlusPlaylistDownload" xml:space="preserve">
+    <value>Downloading all sounds from a YouTube playlist is only available for dav Plus users.
+
+Log in and upgrade your plan to use this feature.</value>
+  </data>
 </root>

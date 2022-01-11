@@ -1,6 +1,9 @@
 ﻿using davClassLibrary;
 using DotNetTools.SharpGrabber;
 using DotNetTools.SharpGrabber.Grabbed;
+using Google.Apis.Services;
+using Google.Apis.YouTube.v3;
+using Google.Apis.YouTube.v3.Data;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
@@ -9,6 +12,7 @@ using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
@@ -47,6 +51,8 @@ namespace UniversalSoundboard.Common
         public static Grid DownloadSoundsYoutubeInfoGrid;
         public static Image DownloadSoundsYoutubeInfoImage;
         public static TextBlock DownloadSoundsYoutubeInfoTextBlock;
+        public static StackPanel DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel;
+        public static CheckBox DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox;
         public static TextBlock DownloadSoundsAudioFileInfoTextBlock;
         public static GrabResult DownloadSoundsGrabResult;
         public static FileManager.DownloadSoundsResultType DownloadSoundsResult = FileManager.DownloadSoundsResultType.None;
@@ -210,7 +216,7 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region DownloadSounds
-        public static ContentDialog CreateDownloadSoundsContentDialog()
+        public static ContentDialog CreateDownloadSoundsContentDialog(Style infoButtonStyle)
         {
             DownloadSoundsContentDialog = new ContentDialog
             {
@@ -274,6 +280,7 @@ namespace UniversalSoundboard.Common
             };
 
             DownloadSoundsYoutubeInfoGrid.RowDefinitions.Add(new RowDefinition());
+            DownloadSoundsYoutubeInfoGrid.RowDefinitions.Add(new RowDefinition());
 
             DownloadSoundsYoutubeInfoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
             DownloadSoundsYoutubeInfoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -292,8 +299,54 @@ namespace UniversalSoundboard.Common
             };
             Grid.SetColumn(DownloadSoundsYoutubeInfoTextBlock, 1);
 
+            DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(5, 10, 0, 0),
+                Visibility = Visibility.Collapsed
+            };
+            Grid.SetRow(DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel, 1);
+            Grid.SetColumnSpan(DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel, 2);
+
+            DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox = new CheckBox
+            {
+                Content = loader.GetString("DownloadSoundsContentDialog-DownloadPlaylist"),
+                IsEnabled = Dav.IsLoggedIn && Dav.User.Plan > 0
+            };
+
+            DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel.Children.Add(DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox);
+
+            if (!Dav.IsLoggedIn || Dav.User.Plan == 0)
+            {
+                var flyout = new Flyout();
+
+                var flyoutStackPanel = new StackPanel
+                {
+                    MaxWidth = 300
+                };
+
+                var flyoutText = new TextBlock
+                {
+                    Text = loader.GetString("DownloadSoundsContentDialog-DavPlusPlaylistDownload"),
+                    TextWrapping = TextWrapping.WrapWholeWords
+                };
+
+                flyoutStackPanel.Children.Add(flyoutText);
+                flyout.Content = flyoutStackPanel;
+
+                var downloadPlaylistInfoButton = new Button
+                {
+                    Style = infoButtonStyle,
+                    Margin = new Thickness(10, 0, 0, 0),
+                    Flyout = flyout
+                };
+
+                DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel.Children.Add(downloadPlaylistInfoButton);
+            }
+
             DownloadSoundsYoutubeInfoGrid.Children.Add(DownloadSoundsYoutubeInfoImage);
             DownloadSoundsYoutubeInfoGrid.Children.Add(DownloadSoundsYoutubeInfoTextBlock);
+            DownloadSoundsYoutubeInfoGrid.Children.Add(DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel);
 
             DownloadSoundsAudioFileInfoTextBlock = new TextBlock
             {
@@ -340,6 +393,12 @@ namespace UniversalSoundboard.Common
                 DownloadSoundsGrabResult = await grabber.GrabAsync(new Uri(input));
                 if (DownloadSoundsGrabResult == null) return;
 
+                // Check if the video is part of a playlist
+                Uri uri = new Uri(input);
+                string queryString = uri.Query;
+                var queryDictionary = HttpUtility.ParseQueryString(queryString);
+                string listParam = queryDictionary.Get("list");
+
                 DownloadSoundsYoutubeInfoTextBlock.Text = DownloadSoundsGrabResult.Title;
 
                 var imageResources = DownloadSoundsGrabResult.Resources<GrabbedImage>();
@@ -354,6 +413,30 @@ namespace UniversalSoundboard.Common
                 DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Collapsed;
                 DownloadSoundsResult = FileManager.DownloadSoundsResultType.Youtube;
                 DownloadSoundsContentDialog.IsPrimaryButtonEnabled = true;
+
+                if (listParam != null)
+                {
+                    // Get the playlist
+                    var youtubeService = new YouTubeService(new BaseClientService.Initializer { ApiKey = Env.YoutubeApiKey });
+
+                    var listOperation = youtubeService.PlaylistItems.List(new List<string> { "contentDetails" });
+                    listOperation.PlaylistId = listParam;
+                    listOperation.MaxResults = 5000;
+                    PlaylistItemListResponse playlistResponse;
+
+                    try
+                    {
+                        playlistResponse = await listOperation.ExecuteAsync();
+                    }
+                    catch (Exception)
+                    {
+                        return;
+                    }
+
+                    // Show the option to download the playlist
+                    DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel.Visibility = Visibility.Visible;
+                }
+
                 return;
             }
             else
@@ -414,6 +497,7 @@ namespace UniversalSoundboard.Common
         {
             DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Collapsed;
             DownloadSoundsYoutubeInfoGrid.Visibility = Visibility.Collapsed;
+            DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel.Visibility = Visibility.Collapsed;
             DownloadSoundsAudioFileInfoTextBlock.Visibility = Visibility.Collapsed;
         }
         #endregion

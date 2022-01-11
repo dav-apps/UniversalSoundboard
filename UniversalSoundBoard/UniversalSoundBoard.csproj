@@ -355,6 +355,9 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="Google.Apis.YouTube.v3">
+      <Version>1.55.0.2449</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
       <Version>4.4.0</Version>
     </PackageReference>
