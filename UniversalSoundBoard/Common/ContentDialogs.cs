@@ -90,6 +90,7 @@ namespace UniversalSoundboard.Common
         public static ContentDialog DeleteCategoryContentDialog;
         public static ContentDialog AddSoundErrorContentDialog;
         public static ContentDialog AddSoundsErrorContentDialog;
+        public static ContentDialog DownloadSoundsErrorContentDialog;
         public static ContentDialog RenameSoundContentDialog;
         public static ContentDialog DeleteSoundContentDialog;
         public static ContentDialog DeleteSoundsContentDialog;
@@ -433,8 +434,11 @@ namespace UniversalSoundboard.Common
                         return;
                     }
 
-                    // Show the option to download the playlist
-                    DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel.Visibility = Visibility.Visible;
+                    if (DownloadSoundsPlaylistItemListResponse.Items.Count > 1)
+                    {
+                        // Show the option to download the playlist
+                        DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel.Visibility = Visibility.Visible;
+                    }
                 }
 
                 return;
@@ -682,6 +686,48 @@ namespace UniversalSoundboard.Common
             AddSoundsErrorContentDialog.Closed += ContentDialog_Closed;
 
             return AddSoundsErrorContentDialog;
+        }
+        #endregion
+
+        #region DownloadSoundsError
+        public static ContentDialog CreateDownloadSoundsErrorContentDialog(List<KeyValuePair<string, string>> soundsList)
+        {
+            DownloadSoundsErrorContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("DownloadSoundsErrorContentDialog-Title"),
+                CloseButtonText = loader.GetString("Actions-Close"),
+                DefaultButton = ContentDialogButton.Close,
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+            DownloadSoundsErrorContentDialog.Opened += ContentDialog_Opened;
+            DownloadSoundsErrorContentDialog.Closed += ContentDialog_Closed;
+
+            StackPanel containerStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
+            TextBlock descriptionTextBlock = new TextBlock
+            {
+                Text = loader.GetString("DownloadSoundsErrorContentDialog-Description"),
+                Margin = new Thickness(0, 0, 0, 8)
+            };
+
+            containerStackPanel.Children.Add(descriptionTextBlock);
+
+            foreach (var soundItem in soundsList)
+            {
+                containerStackPanel.Children.Add(
+                    new HyperlinkButton
+                    {
+                        Content = soundItem.Key != null ? soundItem.Key : soundItem.Value,
+                        NavigateUri = new Uri(soundItem.Value)
+                    }
+                );
+            }
+
+            DownloadSoundsErrorContentDialog.Content = containerStackPanel;
+            return DownloadSoundsErrorContentDialog;
         }
         #endregion
 

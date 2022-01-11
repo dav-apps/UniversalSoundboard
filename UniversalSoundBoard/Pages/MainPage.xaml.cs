@@ -1223,17 +1223,40 @@ namespace UniversalSoundboard.Pages
         public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload()
         {
             var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
+            var playlistItems = ContentDialogs.DownloadSoundsPlaylistItemListResponse.Items;
+            List<KeyValuePair<string, string>> notDownloadedSounds = new List<KeyValuePair<string, string>>();
+
+            // Show InAppNotification
+            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                this,
+                new ShowInAppNotificationEventArgs(
+                    string.Format(loader.GetString("InAppNotification-DownloadSounds"), 1, playlistItems.Count),
+                    0,
+                    true
+                )
+            );
 
             // Disable the ability to download sounds
             DownloadSoundsFlyoutItem.IsEnabled = false;
 
             // Go through each video of the playlist
-            foreach (var item in ContentDialogs.DownloadSoundsPlaylistItemListResponse.Items)
+            for (int i = 0; i < playlistItems.Count; i++)
             {
-                string videoLink = string.Format("https://youtube.com/watch?v={0}", item.ContentDetails.VideoId);
+                FileManager.itemViewHolder.TriggerSetInAppNotificationMessageEvent(
+                    this,
+                    new SetInAppNotificationMessageEventArgs(
+                        string.Format(loader.GetString("InAppNotification-DownloadSounds"), i + 1, playlistItems.Count)
+                    )
+                );
+                
+                string videoLink = string.Format("https://youtube.com/watch?v={0}", playlistItems[i].ContentDetails.VideoId);
 
                 GrabResult grabResult = await grabber.GrabAsync(new Uri(videoLink));
-                if (grabResult == null) continue;   // TODO: Error
+                if (grabResult == null)
+                {
+                    notDownloadedSounds.Add(new KeyValuePair<string, string>(null, videoLink));
+                    continue;
+                }
 
                 var mediaResources = grabResult.Resources<GrabbedMedia>();
                 var imageResources = grabResult.Resources<GrabbedImage>();
@@ -1243,7 +1266,7 @@ namespace UniversalSoundboard.Pages
 
                 if (bestAudio == null)
                 {
-                    // TODO: Error
+                    notDownloadedSounds.Add(new KeyValuePair<string, string>(grabResult.Title, videoLink));
                     continue;
                 }
 
@@ -1253,7 +1276,7 @@ namespace UniversalSoundboard.Pages
 
                 if (!imageDownloaded)
                 {
-                    // TODO: Error
+                    notDownloadedSounds.Add(new KeyValuePair<string, string>(grabResult.Title, videoLink));
                     continue;
                 }
 
@@ -1269,23 +1292,62 @@ namespace UniversalSoundboard.Pages
 
                 if (!audioFileDownloadResult)
                 {
-                    // TODO: Error
+                    notDownloadedSounds.Add(new KeyValuePair<string, string>(grabResult.Title, videoLink));
                     continue;
                 }
+
+                FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs());
 
                 // Add the files as a new sound
                 Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, null, audioFile, imageFile);
 
                 if (uuid.Equals(Guid.Empty))
                 {
-                    // TODO: Error
+                    notDownloadedSounds.Add(new KeyValuePair<string, string>(grabResult.Title, videoLink));
                     continue;
                 }
 
                 await FileManager.AddSound(uuid);
-
-                DownloadSoundsFlyoutItem.IsEnabled = true;
             }
+
+            if (notDownloadedSounds.Count > 0)
+            {
+                string message = notDownloadedSounds.Count == 1 ?
+                    loader.GetString("InAppNotification-DownloadSoundsErrorOneSound")
+                    : string.Format(loader.GetString("InAppNotification-DownloadSoundsErrorMultipleSounds"), notDownloadedSounds.Count);
+
+                var inAppNotificationArgs = new ShowInAppNotificationEventArgs(
+                    message,
+                    0,
+                    false,
+                    true,
+                    loader.GetString("Actions-ShowDetails")
+                );
+
+                inAppNotificationArgs.PrimaryButtonClick += async (sender, args) =>
+                {
+                    FileManager.itemViewHolder.TriggerDismissInAppNotificationEvent(null, new EventArgs());
+
+                    var downloadSoundsErrorContentDialog = ContentDialogs.CreateDownloadSoundsErrorContentDialog(notDownloadedSounds);
+                    await downloadSoundsErrorContentDialog.ShowAsync();
+                };
+
+                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(this, inAppNotificationArgs);
+            }
+            else
+            {
+                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                    this,
+                    new ShowInAppNotificationEventArgs(
+                        string.Format(loader.GetString("InAppNotification-DownloadSoundsSuccessful"), playlistItems.Count),
+                        8000,
+                        false,
+                        true
+                    )
+                );
+            }
+
+            DownloadSoundsFlyoutItem.IsEnabled = true;
         }
 
         private GrabbedMedia FindBestAudioOfYoutubeVideo(IEnumerable<GrabbedMedia> mediaResources)

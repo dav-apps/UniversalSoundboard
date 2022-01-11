@@ -888,4 +888,22 @@ Les liens vers des fichiers audio et des vidéos YouTube sont acceptés.</value>
 
 Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
   </data>
+  <data name="InAppNotification-DownloadSounds" xml:space="preserve">
+    <value>Son {0} sur {1} en cours de téléchargement...</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundsSuccessful" xml:space="preserve">
+    <value>{0} sons ont été téléchargés avec succès</value>
+  </data>
+  <data name="DownloadSoundsErrorContentDialog-Description" xml:space="preserve">
+    <value>Les sons suivants n'ont pas pu être téléchargés :</value>
+  </data>
+  <data name="DownloadSoundsErrorContentDialog-Title" xml:space="preserve">
+    <value>Erreur lors du téléchargement des sons</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundsErrorMultipleSounds" xml:space="preserve">
+    <value>{0} sons n'ont pas pu être téléchargés</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundsErrorOneSound" xml:space="preserve">
+    <value>Un son n'a pas pu être téléchargé</value>
+  </data>
 </root>

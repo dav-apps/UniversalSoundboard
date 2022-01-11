@@ -887,4 +887,22 @@ Unterstützt werden Links zu Audiodateien und YouTube-Videos.</value>
 
 Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   </data>
+  <data name="InAppNotification-DownloadSounds" xml:space="preserve">
+    <value>Sound {0} von {1} wird heruntergeladen...</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundsSuccessful" xml:space="preserve">
+    <value>{0} Sounds wurden erfolgreich heruntergeladen</value>
+  </data>
+  <data name="DownloadSoundsErrorContentDialog-Description" xml:space="preserve">
+    <value>Folgende Sounds konnten nicht heruntergeladen werden:</value>
+  </data>
+  <data name="DownloadSoundsErrorContentDialog-Title" xml:space="preserve">
+    <value>Fehler beim Herunterladen der Sounds</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundsErrorMultipleSounds" xml:space="preserve">
+    <value>{0} Sounds konnten nicht heruntergeladen werden</value>
+  </data>
+  <data name="InAppNotification-DownloadSoundsErrorOneSound" xml:space="preserve">
+    <value>Ein Sound konnte nicht heruntergeladen werden</value>
+  </data>
 </root>
