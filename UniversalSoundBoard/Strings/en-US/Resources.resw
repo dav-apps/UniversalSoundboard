@@ -913,4 +913,13 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="DownloadSoundsContentDialog-CreateCategoryForPlaylist" xml:space="preserve">
     <value>Create new category for playlist</value>
   </data>
+  <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock1.Text" xml:space="preserve">
+    <value>This feature allows you to download all the sounds in a playlist and save them directly to a new category.</value>
+  </data>
+  <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock2.Text" xml:space="preserve">
+    <value>You will see this option when you try to download a YouTube video in a playlist.</value>
+  </data>
+  <data name="Account-PlusCardFeature-PlaylistDownloadTextBlock.Text" xml:space="preserve">
+    <value>Download entire YouTube playlists</value>
+  </data>
 </root>

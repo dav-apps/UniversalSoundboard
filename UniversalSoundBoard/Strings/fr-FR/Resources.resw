@@ -912,4 +912,13 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="DownloadSoundsContentDialog-CreateCategoryForPlaylist" xml:space="preserve">
     <value>Créer une nouvelle catégorie pour la playlist</value>
   </data>
+  <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock1.Text" xml:space="preserve">
+    <value>Cette fonction vous permet de télécharger tous les sons d'une playlist et de les enregistrer directement dans une nouvelle catégorie.</value>
+  </data>
+  <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock2.Text" xml:space="preserve">
+    <value>Cette option est présentée lorsque vous essayez de télécharger une vidéo YouTube dans une playlist.</value>
+  </data>
+  <data name="Account-PlusCardFeature-PlaylistDownloadTextBlock.Text" xml:space="preserve">
+    <value>Téléchargez des playlists YouTube complètes</value>
+  </data>
 </root>

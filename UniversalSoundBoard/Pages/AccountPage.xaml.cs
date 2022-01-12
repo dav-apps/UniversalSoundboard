@@ -83,6 +83,7 @@ namespace UniversalSoundboard.Pages
                 PlusCardBorder3.BorderBrush = borderBrush;
                 PlusCardBorder4.BorderBrush = borderBrush;
                 PlusCardBorder5.BorderBrush = borderBrush;
+                PlusCardBorder6.BorderBrush = borderBrush;
             }
             else
             {
@@ -95,6 +96,7 @@ namespace UniversalSoundboard.Pages
                 PlusCardBorder3.BorderBrush = borderBrush;
                 PlusCardBorder4.BorderBrush = borderBrush;
                 PlusCardBorder5.BorderBrush = borderBrush;
+                PlusCardBorder6.BorderBrush = borderBrush;
             }
         }
 

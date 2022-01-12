@@ -1,8 +1,6 @@
 ﻿using davClassLibrary;
 using DotNetTools.SharpGrabber;
 using DotNetTools.SharpGrabber.Grabbed;
-using Google.Apis.Services;
-using Google.Apis.YouTube.v3;
 using Google.Apis.YouTube.v3.Data;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;

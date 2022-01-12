@@ -167,6 +167,14 @@
 
                             <StackPanel Name="PlusCardBorder1" BorderThickness="0.5" />
 
+                            <StackPanel Padding="20,12">
+                                <TextBlock
+                                    x:Uid="Account-PlusCardFeature-StorageTextBlock"
+                                    Style="{StaticResource PlusCardFeatureTextStyle}" />
+                            </StackPanel>
+
+                            <StackPanel Name="PlusCardBorder2" BorderThickness="0.5" />
+
                             <Grid Padding="20,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -196,7 +204,7 @@
                             </Grid>
 
                             <StackPanel
-                                Name="PlusCardBorder2"
+                                Name="PlusCardBorder3"
                                 BorderThickness="0.5"
                                 Visibility="{x:Bind davPlusHotkeyFeatureVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
@@ -226,15 +234,37 @@
                                 </Button>
                             </Grid>
 
-                            <StackPanel Name="PlusCardBorder3" BorderThickness="0.5" />
-
-                            <StackPanel Padding="20,12">
-                                <TextBlock
-                                    x:Uid="Account-PlusCardFeature-StorageTextBlock"
-                                    Style="{StaticResource PlusCardFeatureTextStyle}" />
-                            </StackPanel>
-
                             <StackPanel Name="PlusCardBorder4" BorderThickness="0.5" />
+
+                            <Grid Padding="20,12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    Style="{StaticResource PlusCardFeatureTextStyle}"
+                                    x:Uid="Account-PlusCardFeature-PlaylistDownloadTextBlock" />
+
+                                <Button Style="{StaticResource InfoButtonStyle}">
+                                    <Button.Flyout>
+                                        <Flyout>
+                                            <StackPanel MaxWidth="300">
+                                                <TextBlock
+                                                    x:Uid="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock1"
+                                                    TextWrapping="WrapWholeWords" />
+
+                                                <TextBlock
+                                                    x:Uid="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock2"
+                                                    TextWrapping="WrapWholeWords"
+                                                    Margin="0,10,0,0" />
+                                            </StackPanel>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </Grid>
+
+                            <StackPanel Name="PlusCardBorder5" BorderThickness="0.5" />
 
                             <StackPanel Padding="20,12">
                                 <TextBlock
@@ -242,7 +272,7 @@
                                     Style="{StaticResource PlusCardFeatureTextStyle}" />
                             </StackPanel>
 
-                            <StackPanel Name="PlusCardBorder5" BorderThickness="0.5" />
+                            <StackPanel Name="PlusCardBorder6" BorderThickness="0.5" />
 
                             <StackPanel Padding="20,12">
                                 <Button
