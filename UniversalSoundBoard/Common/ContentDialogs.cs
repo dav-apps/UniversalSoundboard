@@ -53,10 +53,12 @@ namespace UniversalSoundboard.Common
         public static TextBlock DownloadSoundsYoutubeInfoTextBlock;
         public static StackPanel DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel;
         public static CheckBox DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox;
+        public static CheckBox DownloadSoundsYoutubeInfoCreateCategoryForPlaylistCheckbox;
         public static TextBlock DownloadSoundsAudioFileInfoTextBlock;
         public static GrabResult DownloadSoundsGrabResult;
         public static PlaylistItemListResponse DownloadSoundsPlaylistItemListResponse;
         public static string DownloadSoundsPlaylistId = "";
+        public static string DownloadSoundsPlaylistTitle = "";
         public static FileManager.DownloadSoundsResultType DownloadSoundsResult = FileManager.DownloadSoundsResultType.None;
         public static string DownloadSoundsAudioFileName = "";
         public static string DownloadSoundsAudioFileType = "";
@@ -284,6 +286,7 @@ namespace UniversalSoundboard.Common
 
             DownloadSoundsYoutubeInfoGrid.RowDefinitions.Add(new RowDefinition());
             DownloadSoundsYoutubeInfoGrid.RowDefinitions.Add(new RowDefinition());
+            DownloadSoundsYoutubeInfoGrid.RowDefinitions.Add(new RowDefinition());
 
             DownloadSoundsYoutubeInfoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
             DownloadSoundsYoutubeInfoGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -316,6 +319,8 @@ namespace UniversalSoundboard.Common
                 Content = loader.GetString("DownloadSoundsContentDialog-DownloadPlaylist"),
                 IsEnabled = Dav.IsLoggedIn && Dav.User.Plan > 0
             };
+            DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox.Checked += DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox_Checked;
+            DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox.Unchecked += DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox_Unchecked;
 
             DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel.Children.Add(DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox);
 
@@ -347,9 +352,19 @@ namespace UniversalSoundboard.Common
                 DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel.Children.Add(downloadPlaylistInfoButton);
             }
 
+            DownloadSoundsYoutubeInfoCreateCategoryForPlaylistCheckbox = new CheckBox
+            {
+                Content = loader.GetString("DownloadSoundsContentDialog-CreateCategoryForPlaylist"),
+                Margin = new Thickness(5, 5, 0, 0),
+                Visibility = Visibility.Collapsed
+            };
+            Grid.SetRow(DownloadSoundsYoutubeInfoCreateCategoryForPlaylistCheckbox, 2);
+            Grid.SetColumnSpan(DownloadSoundsYoutubeInfoCreateCategoryForPlaylistCheckbox, 2);
+
             DownloadSoundsYoutubeInfoGrid.Children.Add(DownloadSoundsYoutubeInfoImage);
             DownloadSoundsYoutubeInfoGrid.Children.Add(DownloadSoundsYoutubeInfoTextBlock);
             DownloadSoundsYoutubeInfoGrid.Children.Add(DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel);
+            DownloadSoundsYoutubeInfoGrid.Children.Add(DownloadSoundsYoutubeInfoCreateCategoryForPlaylistCheckbox);
 
             DownloadSoundsAudioFileInfoTextBlock = new TextBlock
             {
@@ -435,6 +450,20 @@ namespace UniversalSoundboard.Common
 
                     if (DownloadSoundsPlaylistItemListResponse.Items.Count > 1)
                     {
+                        // Get the name of the playlist
+                        DownloadSoundsPlaylistTitle = "";
+                        var playlistListOperation = FileManager.youtubeService.Playlists.List("snippet");
+                        playlistListOperation.Id = DownloadSoundsPlaylistId;
+
+                        try
+                        {
+                            var result = await playlistListOperation.ExecuteAsync();
+
+                            if (result.Items.Count > 0)
+                                DownloadSoundsPlaylistTitle = result.Items[0].Snippet.Title;
+                        }
+                        catch (Exception) { }
+
                         // Show the option to download the playlist
                         DownloadSoundsYoutubeInfoDownloadPlaylistStackPanel.Visibility = Visibility.Visible;
                     }
@@ -494,6 +523,17 @@ namespace UniversalSoundboard.Common
                 DownloadSoundsResult = FileManager.DownloadSoundsResultType.AudioFile;
                 DownloadSoundsContentDialog.IsPrimaryButtonEnabled = true;
             }
+        }
+
+        private static void DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (DownloadSoundsPlaylistTitle.Length > 0)
+                DownloadSoundsYoutubeInfoCreateCategoryForPlaylistCheckbox.Visibility = Visibility.Visible;
+        }
+
+        private static void DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            DownloadSoundsYoutubeInfoCreateCategoryForPlaylistCheckbox.Visibility = Visibility.Collapsed;
         }
 
         private static void HideAllMessageElementsInDownloadSoundsContentDialog()

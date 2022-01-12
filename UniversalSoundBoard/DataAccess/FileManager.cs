@@ -1986,12 +1986,12 @@ namespace UniversalSoundboard.DataAccess
         #endregion
 
         #region Sound CRUD methods
-        public static async Task<Guid> CreateSoundAsync(Guid? uuid, string name, Guid? categoryUuid, StorageFile audioFile)
+        public static async Task<Guid> CreateSoundAsync(Guid? uuid, string name, Guid? categoryUuid, StorageFile audioFile, StorageFile imageFile = null)
         {
             List<Guid> categoryUuidList = new List<Guid>();
             if (categoryUuid.HasValue) categoryUuidList.Add(categoryUuid.Value);
 
-            return await CreateSoundAsync(uuid, name, categoryUuidList, audioFile);
+            return await CreateSoundAsync(uuid, name, categoryUuidList, audioFile, imageFile);
         }
 
         public static async Task<Guid> CreateSoundAsync(Guid? uuid, string name, List<Guid> categoryUuids, StorageFile audioFile, StorageFile imageFile = null)

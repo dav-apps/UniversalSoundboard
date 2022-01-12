@@ -909,4 +909,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="InAppNotification-DownloadSoundsPlaylistError" xml:space="preserve">
     <value>Erreur lors du chargement de la playlist. Veuillez vérifier votre connexion Internet.</value>
   </data>
+  <data name="DownloadSoundsContentDialog-CreateCategoryForPlaylist" xml:space="preserve">
+    <value>Créer une nouvelle catégorie pour la playlist</value>
+  </data>
 </root>

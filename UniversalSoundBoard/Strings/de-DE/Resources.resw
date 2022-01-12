@@ -908,4 +908,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="InAppNotification-DownloadSoundsPlaylistError" xml:space="preserve">
     <value>Fehler beim Laden der Playlist. Bitte überprüfe deine Internetverbindung.</value>
   </data>
+  <data name="DownloadSoundsContentDialog-CreateCategoryForPlaylist" xml:space="preserve">
+    <value>Neue Kategorie für Playlist erstellen</value>
+  </data>
 </root>

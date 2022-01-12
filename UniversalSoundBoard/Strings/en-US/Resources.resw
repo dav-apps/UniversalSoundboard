@@ -910,4 +910,7 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="InAppNotification-DownloadSoundsPlaylistError" xml:space="preserve">
     <value>Error in loading the playlist. Please check your internet connection.</value>
   </data>
+  <data name="DownloadSoundsContentDialog-CreateCategoryForPlaylist" xml:space="preserve">
+    <value>Create new category for playlist</value>
+  </data>
 </root>

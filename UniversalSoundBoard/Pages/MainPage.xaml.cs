@@ -1199,7 +1199,7 @@ namespace UniversalSoundboard.Pages
             }
 
             // Add the files as a new sound
-            Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, null, audioFile, imageFile);
+            Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, new List<Guid>(), audioFile, imageFile);
 
             if (uuid.Equals(Guid.Empty))
             {
@@ -1225,6 +1225,10 @@ namespace UniversalSoundboard.Pages
 
         public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload()
         {
+            // Disable the ability to add or download sounds
+            NewSoundFlyoutItem.IsEnabled = false;
+            DownloadSoundsFlyoutItem.IsEnabled = false;
+
             var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
             List<KeyValuePair<string, string>> notDownloadedSounds = new List<KeyValuePair<string, string>>();
             var playlistItemResponse = ContentDialogs.DownloadSoundsPlaylistItemListResponse;
@@ -1242,7 +1246,7 @@ namespace UniversalSoundboard.Pages
             // Load all items from all pages of the playlist
             List<PlaylistItem> playlistItems = new List<PlaylistItem>();
             
-            foreach(var item in playlistItemResponse.Items)
+            foreach (var item in playlistItemResponse.Items)
                 playlistItems.Add(item);
 
             while (playlistItemResponse.NextPageToken != null)
@@ -1276,9 +1280,24 @@ namespace UniversalSoundboard.Pages
                     playlistItems.Add(item);
             }
 
-            // Disable the ability to add or download sounds
-            NewSoundFlyoutItem.IsEnabled = false;
-            DownloadSoundsFlyoutItem.IsEnabled = false;
+            // Create category for playlist, if the option is checked
+            Category newCategory = null;
+
+            if (ContentDialogs.DownloadSoundsYoutubeInfoCreateCategoryForPlaylistCheckbox.IsChecked.GetValueOrDefault())
+            {
+                // Create category
+                List<string> iconsList = FileManager.GetIconsList();
+                int randomNumber = new Random().Next(iconsList.Count);
+
+                Guid categoryUuid = await FileManager.CreateCategoryAsync(null, null, ContentDialogs.DownloadSoundsPlaylistTitle, iconsList[randomNumber]);
+                newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
+
+                // Add the category to the Categories list
+                FileManager.AddCategory(newCategory, Guid.Empty);
+
+                // Add the category to the SideBar
+                AddCategoryMenuItem(menuItems, newCategory, Guid.Empty);
+            }
 
             // Go through each video of the playlist
             for (int i = 0; i < playlistItems.Count; i++)
@@ -1340,7 +1359,7 @@ namespace UniversalSoundboard.Pages
                 FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs());
 
                 // Add the files as a new sound
-                Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, null, audioFile, imageFile);
+                Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, newCategory?.Uuid, audioFile, imageFile);
 
                 if (uuid.Equals(Guid.Empty))
                 {
@@ -1521,7 +1540,7 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs());
 
-            Guid uuid = await FileManager.CreateSoundAsync(null, ContentDialogs.DownloadSoundsAudioFileName, null, audioFile);
+            Guid uuid = await FileManager.CreateSoundAsync(null, ContentDialogs.DownloadSoundsAudioFileName, new List<Guid>(), audioFile);
 
             if (uuid.Equals(Guid.Empty))
             {
