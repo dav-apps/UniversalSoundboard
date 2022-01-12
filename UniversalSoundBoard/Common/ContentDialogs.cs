@@ -56,6 +56,7 @@ namespace UniversalSoundboard.Common
         public static TextBlock DownloadSoundsAudioFileInfoTextBlock;
         public static GrabResult DownloadSoundsGrabResult;
         public static PlaylistItemListResponse DownloadSoundsPlaylistItemListResponse;
+        public static string DownloadSoundsPlaylistId = "";
         public static FileManager.DownloadSoundsResultType DownloadSoundsResult = FileManager.DownloadSoundsResultType.None;
         public static string DownloadSoundsAudioFileName = "";
         public static string DownloadSoundsAudioFileType = "";
@@ -399,7 +400,7 @@ namespace UniversalSoundboard.Common
                 Uri uri = new Uri(input);
                 string queryString = uri.Query;
                 var queryDictionary = HttpUtility.ParseQueryString(queryString);
-                string listParam = queryDictionary.Get("list");
+                DownloadSoundsPlaylistId = queryDictionary.Get("list");
 
                 DownloadSoundsYoutubeInfoTextBlock.Text = DownloadSoundsGrabResult.Title;
 
@@ -416,14 +417,12 @@ namespace UniversalSoundboard.Common
                 DownloadSoundsResult = FileManager.DownloadSoundsResultType.Youtube;
                 DownloadSoundsContentDialog.IsPrimaryButtonEnabled = true;
 
-                if (listParam != null)
+                if (DownloadSoundsPlaylistId != null)
                 {
                     // Get the playlist
-                    var youtubeService = new YouTubeService(new BaseClientService.Initializer { ApiKey = Env.YoutubeApiKey });
-
-                    var listOperation = youtubeService.PlaylistItems.List(new List<string> { "contentDetails" });
-                    listOperation.PlaylistId = listParam;
-                    listOperation.MaxResults = 5000;
+                    var listOperation = FileManager.youtubeService.PlaylistItems.List("contentDetails");
+                    listOperation.PlaylistId = DownloadSoundsPlaylistId;
+                    listOperation.MaxResults = 50;
 
                     try
                     {

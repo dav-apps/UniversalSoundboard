@@ -25,6 +25,7 @@ using davClassLibrary;
 using DotNetTools.SharpGrabber;
 using DotNetTools.SharpGrabber.Grabbed;
 using System.Collections.ObjectModel;
+using Google.Apis.YouTube.v3.Data;
 
 namespace UniversalSoundboard.Pages
 {
@@ -1155,7 +1156,8 @@ namespace UniversalSoundboard.Pages
                 )
             );
 
-            // Disable the ability to download sounds
+            // Disable the ability to add or download sounds
+            NewSoundFlyoutItem.IsEnabled = false;
             DownloadSoundsFlyoutItem.IsEnabled = false;
 
             var mediaResources = grabResult.Resources<GrabbedMedia>();
@@ -1217,26 +1219,65 @@ namespace UniversalSoundboard.Pages
                 )
             );
 
+            NewSoundFlyoutItem.IsEnabled = true;
             DownloadSoundsFlyoutItem.IsEnabled = true;
         }
 
         public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload()
         {
             var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
-            var playlistItems = ContentDialogs.DownloadSoundsPlaylistItemListResponse.Items;
             List<KeyValuePair<string, string>> notDownloadedSounds = new List<KeyValuePair<string, string>>();
+            var playlistItemResponse = ContentDialogs.DownloadSoundsPlaylistItemListResponse;
 
             // Show InAppNotification
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
                 new ShowInAppNotificationEventArgs(
-                    string.Format(loader.GetString("InAppNotification-DownloadSounds"), 1, playlistItems.Count),
+                    string.Format(loader.GetString("InAppNotification-DownloadSounds"), 1, playlistItemResponse.PageInfo.TotalResults.GetValueOrDefault()),
                     0,
                     true
                 )
             );
 
-            // Disable the ability to download sounds
+            // Load all items from all pages of the playlist
+            List<PlaylistItem> playlistItems = new List<PlaylistItem>();
+            
+            foreach(var item in playlistItemResponse.Items)
+                playlistItems.Add(item);
+
+            while (playlistItemResponse.NextPageToken != null)
+            {
+                // Get the next page of the playlist
+                var listOperation = FileManager.youtubeService.PlaylistItems.List("contentDetails");
+                listOperation.PlaylistId = ContentDialogs.DownloadSoundsPlaylistId;
+                listOperation.MaxResults = 50;
+                listOperation.PageToken = playlistItemResponse.NextPageToken;
+
+                try
+                {
+                    playlistItemResponse = await listOperation.ExecuteAsync();
+                }
+                catch (Exception)
+                {
+                    // Show InAppNotification for error
+                    FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                        this,
+                        new ShowInAppNotificationEventArgs(
+                            loader.GetString("InAppNotification-DownloadSoundsPlaylistError"),
+                            0,
+                            false,
+                            true
+                        )
+                    );
+                    return;
+                }
+
+                foreach (var item in playlistItemResponse.Items)
+                    playlistItems.Add(item);
+            }
+
+            // Disable the ability to add or download sounds
+            NewSoundFlyoutItem.IsEnabled = false;
             DownloadSoundsFlyoutItem.IsEnabled = false;
 
             // Go through each video of the playlist
@@ -1248,7 +1289,7 @@ namespace UniversalSoundboard.Pages
                         string.Format(loader.GetString("InAppNotification-DownloadSounds"), i + 1, playlistItems.Count)
                     )
                 );
-                
+
                 string videoLink = string.Format("https://youtube.com/watch?v={0}", playlistItems[i].ContentDetails.VideoId);
 
                 GrabResult grabResult = await grabber.GrabAsync(new Uri(videoLink));
@@ -1347,6 +1388,7 @@ namespace UniversalSoundboard.Pages
                 );
             }
 
+            NewSoundFlyoutItem.IsEnabled = true;
             DownloadSoundsFlyoutItem.IsEnabled = true;
         }
 
@@ -1446,6 +1488,7 @@ namespace UniversalSoundboard.Pages
 
         public async Task DownloadSoundsContentDialog_AudioFileDownload()
         {
+            NewSoundFlyoutItem.IsEnabled = false;
             DownloadSoundsFlyoutItem.IsEnabled = false;
 
             // Show InAppNotification
@@ -1498,11 +1541,13 @@ namespace UniversalSoundboard.Pages
                 )
             );
 
+            NewSoundFlyoutItem.IsEnabled = true;
             DownloadSoundsFlyoutItem.IsEnabled = true;
         }
 
         public void ShowDownloadSoundErrorInAppNotification()
         {
+            NewSoundFlyoutItem.IsEnabled = true;
             DownloadSoundsFlyoutItem.IsEnabled = true;
 
             var inAppNotificationEventArgs = new ShowInAppNotificationEventArgs(

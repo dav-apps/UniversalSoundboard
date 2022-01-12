@@ -906,4 +906,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="InAppNotification-DownloadSoundsErrorOneSound" xml:space="preserve">
     <value>Un son n'a pas pu être téléchargé</value>
   </data>
+  <data name="InAppNotification-DownloadSoundsPlaylistError" xml:space="preserve">
+    <value>Erreur lors du chargement de la playlist. Veuillez vérifier votre connexion Internet.</value>
+  </data>
 </root>

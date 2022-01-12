@@ -1,5 +1,7 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Models;
+using Google.Apis.Services;
+using Google.Apis.YouTube.v3;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Toolkit.Uwp.Notifications;
 using System;
@@ -217,6 +219,7 @@ namespace UniversalSoundboard.DataAccess
         public static davClassLibrary.Environment Environment = davClassLibrary.Environment.Production;
 
         public static HttpClient httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(60) };
+        public static YouTubeService youtubeService = new YouTubeService(new BaseClientService.Initializer { ApiKey = Env.YoutubeApiKey });
 
         private static readonly ResourceLoader loader = new ResourceLoader();
         internal static bool syncFinished = false;

@@ -905,4 +905,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="InAppNotification-DownloadSoundsErrorOneSound" xml:space="preserve">
     <value>Ein Sound konnte nicht heruntergeladen werden</value>
   </data>
+  <data name="InAppNotification-DownloadSoundsPlaylistError" xml:space="preserve">
+    <value>Fehler beim Laden der Playlist. Bitte überprüfe deine Internetverbindung.</value>
+  </data>
 </root>
