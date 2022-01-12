@@ -495,7 +495,7 @@ namespace UniversalSoundboard.Common
                 }
 
                 // Get file type and file size
-                DownloadSoundsAudioFileType = FileManager.fileTypeToExt(response.ContentType);
+                DownloadSoundsAudioFileType = FileManager.FileTypeToExt(response.ContentType);
                 long fileSize = response.ContentLength;
 
                 // Try to get the file name

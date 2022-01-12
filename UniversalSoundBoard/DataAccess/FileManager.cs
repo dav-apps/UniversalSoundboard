@@ -3510,6 +3510,8 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task<KeyValuePair<bool, int>> DownloadBinaryDataToFile(StorageFile targetFile, Uri uri, IProgress<int> progress)
         {
+            Stream fileStream = null;
+
             try
             {
                 var response = await httpClient.GetAsync(uri, HttpCompletionOption.ResponseHeadersRead);
@@ -3518,7 +3520,7 @@ namespace UniversalSoundboard.DataAccess
 
                 using (var responseStream = await response.Content.ReadAsStreamAsync())
                 {
-                    var fileStream = await targetFile.OpenStreamForWriteAsync();
+                    fileStream = await targetFile.OpenStreamForWriteAsync();
                     var buffer = new byte[8192];
                     int read;
                     long offset = 0;
@@ -3534,13 +3536,14 @@ namespace UniversalSoundboard.DataAccess
                     } while (read != 0);
 
                     await fileStream.FlushAsync();
-                    fileStream.Dispose();
+                    fileStream.Close();
                 }
 
                 return new KeyValuePair<bool, int>(true, -1);
             }
             catch (Exception)
             {
+                if (fileStream != null) fileStream.Close();
                 return new KeyValuePair<bool, int>(false, -1);
             }
         }
@@ -3573,7 +3576,7 @@ namespace UniversalSoundboard.DataAccess
             ).ToArray());
         }
 
-        public static string fileTypeToExt(string fileType)
+        public static string FileTypeToExt(string fileType)
         {
             switch(fileType)
             {

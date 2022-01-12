@@ -1194,8 +1194,19 @@ namespace UniversalSoundboard.Pages
 
             if (!audioFileDownloadResult)
             {
-                ShowDownloadSoundErrorInAppNotification();
-                return;
+                // Wait a few seconds and try it again
+                await Task.Delay(10000);
+
+                await Task.Run(async () =>
+                {
+                    audioFileDownloadResult = (await FileManager.DownloadBinaryDataToFile(audioFile, bestAudio.ResourceUri, progress)).Key;
+                });
+
+                if (!audioFileDownloadResult)
+                {
+                    ShowDownloadSoundErrorInAppNotification();
+                    return;
+                }
             }
 
             // Add the files as a new sound
@@ -1352,8 +1363,19 @@ namespace UniversalSoundboard.Pages
 
                 if (!audioFileDownloadResult)
                 {
-                    notDownloadedSounds.Add(new KeyValuePair<string, string>(grabResult.Title, videoLink));
-                    continue;
+                    // Wait a few seconds and try it again
+                    await Task.Delay(10000);
+
+                    await Task.Run(async () =>
+                    {
+                        audioFileDownloadResult = (await FileManager.DownloadBinaryDataToFile(audioFile, bestAudio.ResourceUri, progress)).Key;
+                    });
+
+                    if (!audioFileDownloadResult)
+                    {
+                        notDownloadedSounds.Add(new KeyValuePair<string, string>(grabResult.Title, videoLink));
+                        continue;
+                    }
                 }
 
                 FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs());
