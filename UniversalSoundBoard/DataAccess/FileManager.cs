@@ -1893,6 +1893,19 @@ namespace UniversalSoundboard.DataAccess
             return (player, newSounds);
         }
 
+        public static MediaPlayer CreateMediaPlayerForLocalSound(Sound sound)
+        {
+            if (sound == null) return null;
+
+            MediaPlayer player = new MediaPlayer();
+            player.CommandManager.IsEnabled = false;
+            player.Source = MediaSource.CreateFromStorageFile(sound.AudioFile);
+            player.Volume = ((double)itemViewHolder.Volume) / 100;
+            player.IsMuted = itemViewHolder.Muted;
+
+            return player;
+        }
+
         /**
          * Update the SMTC to show the appropriate infos and state of the currently active PlayingSound
          */

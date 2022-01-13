@@ -530,18 +530,6 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        public static async Task PlaySoundAfterPlayingSoundsLoadedAsync(Sound sound)
-        {
-            if (!playingSoundsLoaded)
-            {
-                await Task.Delay(10);
-                await PlaySoundAfterPlayingSoundsLoadedAsync(sound);
-                return;
-            }
-
-            await PlaySoundAsync(sound);
-        }
-
         public static async Task PlaySoundsAsync(List<Sound> sounds, int repetitions, bool randomly)
         {
             // If randomly is true, shuffle sounds
@@ -577,6 +565,57 @@ namespace UniversalSoundboard.Pages
                 foreach (PlayingSoundItem playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
                     playingSoundItem.TriggerRemove();
             }
+        }
+
+        public static void PlayLocalSound(StorageFile file)
+        {
+            Sound sound = new Sound(Guid.NewGuid(), file.DisplayName)
+            {
+                AudioFile = file
+            };
+
+            MediaPlayer player = FileManager.CreateMediaPlayerForLocalSound(sound);
+            if (player == null) return;
+
+            PlayingSound playingSound = new PlayingSound(Guid.NewGuid(), player, new List<Sound> { sound }, 0, 0, false);
+            playingSound.LocalFile = true;
+            playingSound.StartPlaying = true;
+
+            if (FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSoundItems.Count == 0)
+            {
+                FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
+            }
+            else
+            {
+                nextSinglePlayingSoundToOpen = playingSound;
+
+                foreach (PlayingSoundItem playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
+                    playingSoundItem.TriggerRemove();
+            }
+        }
+
+        public static async Task PlaySoundAfterPlayingSoundsLoadedAsync(Sound sound)
+        {
+            if (!playingSoundsLoaded)
+            {
+                await Task.Delay(10);
+                await PlaySoundAfterPlayingSoundsLoadedAsync(sound);
+                return;
+            }
+
+            await PlaySoundAsync(sound);
+        }
+
+        public static async Task PlayLocalSoundAfterPlayingSoundsLoadedAsync(StorageFile file)
+        {
+            if (!playingSoundsLoaded)
+            {
+                await Task.Delay(10);
+                await PlayLocalSoundAfterPlayingSoundsLoadedAsync(file);
+                return;
+            }
+
+            PlayLocalSound(file);
         }
 
         private void ShowInAppNotification(ShowInAppNotificationEventArgs args)

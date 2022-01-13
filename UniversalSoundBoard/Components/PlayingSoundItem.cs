@@ -151,7 +151,7 @@ namespace UniversalSoundboard.Components
                 // Set the initial playback speed
                 PlayingSound.MediaPlayer.PlaybackSession.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
 
-                if (Dav.IsLoggedIn)
+                if (Dav.IsLoggedIn && !PlayingSound.LocalFile)
                 {
                     // Add each sound file that is not downloaded to the download queue
                     List<int> fileDownloads = new List<int>();

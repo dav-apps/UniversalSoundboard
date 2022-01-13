@@ -16,6 +16,7 @@ using Windows.ApplicationModel.Background;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.Foundation.Collections;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
@@ -153,6 +154,31 @@ namespace UniversalSoundboard
             }
 
             Window.Current.Activate();
+        }
+
+        protected override async void OnFileActivated(FileActivatedEventArgs args)
+        {
+            if (args.Files.Count == 0) return;
+
+            // Handle file activation
+            Frame rootFrame = Window.Current.Content as Frame;
+            
+            // Create the root frame if the app is not already running
+            if (rootFrame == null)
+            {
+                rootFrame = new Frame();
+                rootFrame.NavigationFailed += OnNavigationFailed;
+                rootFrame.ActualThemeChanged += RootFrame_ActualThemeChanged;
+
+                rootFrame.Navigate(typeof(MainPage));
+
+                Window.Current.Content = rootFrame;
+            }
+
+            Window.Current.Activate();
+
+            var item = (StorageFile)args.Files[0];
+            await SoundPage.PlayLocalSoundAfterPlayingSoundsLoadedAsync(item);
         }
 
         private void RootFrame_ActualThemeChanged(FrameworkElement sender, object args)

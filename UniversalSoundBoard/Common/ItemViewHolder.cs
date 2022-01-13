@@ -82,7 +82,7 @@ namespace UniversalSoundboard.Common
         public ObservableCollection<Sound> SelectedSounds { get; }          // A list of the sounds which are selected
         public ObservableCollection<PlayingSound> PlayingSounds { get; }    // A list of the Playing Sounds which are displayed in the right menu
         public List<PlayingSoundItem> PlayingSoundItems { get; }            // A list of all PlayingSoundItems
-        public List<Guid> HotkeySoundMapping { get; }                      // A list of the sounds which are mapped to a specific hotkey, with the position in the list as id
+        public List<Guid> HotkeySoundMapping { get; }                       // A list of the sounds which are mapped to a specific hotkey, with the position in the list as id
         #endregion
 
         #region Layout & Design

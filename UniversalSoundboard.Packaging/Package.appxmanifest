@@ -73,6 +73,19 @@
         <uap:Extension Category="windows.appService">
           <uap:AppService Name="HotkeyConnection"/>
         </uap:Extension>
+        <uap:Extension Category="windows.fileTypeAssociation">
+          <uap:FileTypeAssociation Name="universalsoundboard">
+            <uap:SupportedFileTypes>
+              <uap:FileType ContentType="audio/mpeg">.mp3</uap:FileType>
+              <uap:FileType ContentType="audio/mp4">.m4a</uap:FileType>
+              <uap:FileType ContentType="audio/wav">.wav</uap:FileType>
+              <uap:FileType ContentType="audio/ogg">.ogg</uap:FileType>
+              <uap:FileType>.wma</uap:FileType>
+              <uap:FileType>.flac</uap:FileType>
+            </uap:SupportedFileTypes>
+            <uap:DisplayName>UniversalSoundboard</uap:DisplayName>
+          </uap:FileTypeAssociation>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>
