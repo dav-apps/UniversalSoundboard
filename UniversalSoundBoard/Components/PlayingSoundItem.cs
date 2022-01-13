@@ -817,6 +817,39 @@ namespace UniversalSoundboard.Components
             await MoveToSound(PlayingSound.Current + 1);
         }
 
+        public async Task AddSoundToSoundboard()
+        {
+            if (
+                !PlayingSound.LocalFile
+                || PlayingSound.Sounds.Count == 0
+            ) return;
+
+            // Update the UI
+            LocalFileButtonVisibilityChanged?.Invoke(this, new LocalFileButtonVisibilityEventArgs(Visibility.Collapsed));
+
+            // Create the sound
+            var sound = PlayingSound.Sounds[0];
+            await FileManager.CreateSoundAsync(sound.Uuid, sound.AudioFile.DisplayName, new List<Guid>(), sound.AudioFile, null);
+
+            // Replace the sound in the PlayingSound
+            var newSound = await FileManager.GetSoundAsync(sound.Uuid);
+            PlayingSound.Sounds[0] = newSound;
+
+            FileManager.AddSound(newSound);
+
+            // Create the PlayingSound
+            PlayingSound.LocalFile = false;
+            await FileManager.CreatePlayingSoundAsync(
+                PlayingSound.Uuid,
+                PlayingSound.Sounds.ToList(),
+                0,
+                PlayingSound.Repetitions,
+                PlayingSound.Randomly,
+                PlayingSound.Volume,
+                PlayingSound.Muted
+            );
+        }
+
         public void ExpandSoundsList(double heightDifference)
         {
             if (soundsListVisible) return;

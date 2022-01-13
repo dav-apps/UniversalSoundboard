@@ -185,6 +185,7 @@ namespace UniversalSoundboard.Components
         private void PlayingSoundItem_LocalFileButtonVisibilityChanged(object sender, LocalFileButtonVisibilityEventArgs e)
         {
             LocalFileButton.Visibility = e.LocalFileButtonVisibility;
+            MoreButtonFavouriteFlyoutItem.Visibility = e.LocalFileButtonVisibility == Visibility.Visible ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void PlayingSoundItem_OutputDeviceButtonVisibilityChanged(object sender, OutputDeviceButtonVisibilityEventArgs e)
@@ -383,12 +384,12 @@ namespace UniversalSoundboard.Components
             Bindings.Update();
         }
 
-        private void LocalFileFlyoutAddButton_Click(object sender, RoutedEventArgs e)
+        private async void LocalFileFlyoutAddButton_Click(object sender, RoutedEventArgs e)
         {
-            // Add the sound to the soundboard
-            // TODO
-
             LocalFileFlyout.Hide();
+
+            // Add the sound to the soundboard
+            await PlayingSoundItem.AddSoundToSoundboard();
         }
 
         private void PlaybackSpeedFlyoutResetButton_Click(object sender, RoutedEventArgs e)
