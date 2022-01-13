@@ -90,10 +90,12 @@ namespace UniversalSoundboard.Components
             PlayingSoundItem.PositionChanged += PlayingSoundItem_PositionChanged;
             PlayingSoundItem.DurationChanged -= PlayingSoundItem_DurationChanged;
             PlayingSoundItem.DurationChanged += PlayingSoundItem_DurationChanged;
-            PlayingSoundItem.ButtonVisibilityChanged -= PlayingSoundItem_ButtonVisibilityChanged;
-            PlayingSoundItem.ButtonVisibilityChanged += PlayingSoundItem_ButtonVisibilityChanged;
             PlayingSoundItem.CurrentSoundChanged -= PlayingSoundItem_CurrentSoundChanged;
             PlayingSoundItem.CurrentSoundChanged += PlayingSoundItem_CurrentSoundChanged;
+            PlayingSoundItem.ButtonVisibilityChanged -= PlayingSoundItem_ButtonVisibilityChanged;
+            PlayingSoundItem.ButtonVisibilityChanged += PlayingSoundItem_ButtonVisibilityChanged;
+            PlayingSoundItem.LocalFileButtonVisibilityChanged -= PlayingSoundItem_LocalFileButtonVisibilityChanged;
+            PlayingSoundItem.LocalFileButtonVisibilityChanged += PlayingSoundItem_LocalFileButtonVisibilityChanged;
             PlayingSoundItem.OutputDeviceButtonVisibilityChanged -= PlayingSoundItem_OutputDeviceButtonVisibilityChanged;
             PlayingSoundItem.OutputDeviceButtonVisibilityChanged += PlayingSoundItem_OutputDeviceButtonVisibilityChanged;
             PlayingSoundItem.ExpandButtonContentChanged -= PlayingSoundItem_ExpandButtonContentChanged;
@@ -178,6 +180,11 @@ namespace UniversalSoundboard.Components
             PreviousButton.Visibility = e.PreviousButtonVisibility;
             NextButton.Visibility = e.NextButtonVisibility;
             ExpandButton.Visibility = e.ExpandButtonVisibility;
+        }
+
+        private void PlayingSoundItem_LocalFileButtonVisibilityChanged(object sender, LocalFileButtonVisibilityEventArgs e)
+        {
+            LocalFileButton.Visibility = e.LocalFileButtonVisibility;
         }
 
         private void PlayingSoundItem_OutputDeviceButtonVisibilityChanged(object sender, OutputDeviceButtonVisibilityEventArgs e)
@@ -374,6 +381,14 @@ namespace UniversalSoundboard.Components
             }
 
             Bindings.Update();
+        }
+
+        private void LocalFileFlyoutAddButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Add the sound to the soundboard
+            // TODO
+
+            LocalFileFlyout.Hide();
         }
 
         private void PlaybackSpeedFlyoutResetButton_Click(object sender, RoutedEventArgs e)
@@ -998,6 +1013,7 @@ namespace UniversalSoundboard.Components
         {
             MoreButtonFavouriteFlyoutItem.Text = loader.GetString(fav ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite");
             MoreButtonFavouriteFlyoutItem.Icon = new FontIcon { Glyph = fav ? "\uE195" : "\uE113" };
+            MoreButtonFavouriteFlyoutItem.Visibility = PlayingSound.LocalFile ? Visibility.Collapsed : Visibility.Visible;
         }
 
         private void ShowIndetermindateProgressBar()

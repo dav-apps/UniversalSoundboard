@@ -188,6 +188,16 @@ namespace UniversalSoundboard.Common
         }
     }
 
+    public class LocalFileButtonVisibilityEventArgs : EventArgs
+    {
+        public Visibility LocalFileButtonVisibility { get; set; }
+
+        public LocalFileButtonVisibilityEventArgs(Visibility localFileButtonVisibility)
+        {
+            LocalFileButtonVisibility = localFileButtonVisibility;
+        }
+    }
+
     public class OutputDeviceButtonVisibilityEventArgs : EventArgs
     {
         public Visibility OutputDeviceButtonVisibility { get; }

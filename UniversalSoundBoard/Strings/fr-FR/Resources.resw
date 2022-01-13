@@ -921,4 +921,13 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="Account-PlusCardFeature-PlaylistDownloadTextBlock.Text" xml:space="preserve">
     <value>Téléchargez des playlists YouTube complètes</value>
   </data>
+  <data name="LocalFileButtonToolTip.Text" xml:space="preserve">
+    <value>Ce son est un fichier local</value>
+  </data>
+  <data name="LocalFileFlyoutAddButton.Content" xml:space="preserve">
+    <value>Ajouter au Soundboard</value>
+  </data>
+  <data name="LocalFileFlyoutText.Text" xml:space="preserve">
+    <value>Ce son est un fichier local qui n'appartient pas à votre Soundboard.</value>
+  </data>
 </root>

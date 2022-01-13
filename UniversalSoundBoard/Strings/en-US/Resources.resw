@@ -922,4 +922,13 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="Account-PlusCardFeature-PlaylistDownloadTextBlock.Text" xml:space="preserve">
     <value>Download entire YouTube playlists</value>
   </data>
+  <data name="LocalFileButtonToolTip.Text" xml:space="preserve">
+    <value>This sound is a local file</value>
+  </data>
+  <data name="LocalFileFlyoutAddButton.Content" xml:space="preserve">
+    <value>Add to soundboard</value>
+  </data>
+  <data name="LocalFileFlyoutText.Text" xml:space="preserve">
+    <value>This sound is a local file that does not belong to your soundboard.</value>
+  </data>
 </root>

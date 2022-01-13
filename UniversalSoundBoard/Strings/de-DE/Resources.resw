@@ -920,4 +920,13 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="Account-PlusCardFeature-PlaylistDownloadTextBlock.Text" xml:space="preserve">
     <value>Lade komplette YouTube-Playlisten herunter</value>
   </data>
+  <data name="LocalFileButtonToolTip.Text" xml:space="preserve">
+    <value>Dieser Sound ist eine lokale Datei.</value>
+  </data>
+  <data name="LocalFileFlyoutAddButton.Content" xml:space="preserve">
+    <value>Zum Soundboard hinzufügen</value>
+  </data>
+  <data name="LocalFileFlyoutText.Text" xml:space="preserve">
+    <value>Dieser Sound ist eine lokale Datei, die nicht zu deinem Soundboard gehört.</value>
+  </data>
 </root>

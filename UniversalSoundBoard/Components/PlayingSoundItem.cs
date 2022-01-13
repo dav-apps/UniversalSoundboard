@@ -65,6 +65,7 @@ namespace UniversalSoundboard.Components
         public event EventHandler<DurationChangedEventArgs> DurationChanged;
         public event EventHandler<CurrentSoundChangedEventArgs> CurrentSoundChanged;
         public event EventHandler<ButtonVisibilityChangedEventArgs> ButtonVisibilityChanged;
+        public event EventHandler<LocalFileButtonVisibilityEventArgs> LocalFileButtonVisibilityChanged;
         public event EventHandler<OutputDeviceButtonVisibilityEventArgs> OutputDeviceButtonVisibilityChanged;
         public event EventHandler<ExpandButtonContentChangedEventArgs> ExpandButtonContentChanged;
         public event EventHandler<EventArgs> ShowSoundsList;
@@ -208,6 +209,7 @@ namespace UniversalSoundboard.Components
             RepetitionsChanged?.Invoke(this, new RepetitionsChangedEventArgs(PlayingSound.Repetitions));
             UpdateFavouriteFlyoutItem();
             UpdateVolumeControl();
+            LocalFileButtonVisibilityChanged?.Invoke(this, new LocalFileButtonVisibilityEventArgs(PlayingSound.LocalFile ? Visibility.Visible : Visibility.Collapsed));
             ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(soundsListVisible));
             PositionChanged?.Invoke(this, new PositionChangedEventArgs(PlayingSound.MediaPlayer.PlaybackSession.Position));
             PlaybackSpeedChanged?.Invoke(this, new PlaybackSpeedChangedEventArgs(PlayingSound.PlaybackSpeed));

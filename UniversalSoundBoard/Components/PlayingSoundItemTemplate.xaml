@@ -603,6 +603,45 @@
                 SizeChanged="TopButtonsStackPanel_SizeChanged">
 
                 <Button
+                    Name="LocalFileButton"
+                    Style="{StaticResource TopCommandButtonStyle}"
+                    Margin="0,0,3,0"
+                    Padding="0"
+                    FontSize="15"
+                    Content="&#xE160;"
+                    Visibility="Collapsed">
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock
+                            Name="LocalFileButtonToolTip"
+                            x:Uid="LocalFileButtonToolTip"
+                            TextWrapping="WrapWholeWords" />
+                    </ToolTipService.ToolTip>
+
+                    <Button.Flyout>
+                        <Flyout x:Name="LocalFileFlyout">
+                            <RelativePanel MaxWidth="220">
+                                <TextBlock
+                                    Name="LocalFileFlyoutText"
+                                    x:Uid="LocalFileFlyoutText"
+                                    RelativePanel.AlignTopWithPanel="True"
+                                    Margin="0,0,0,16"
+                                    TextWrapping="WrapWholeWords">
+                                </TextBlock>
+
+                                <Button
+                                    Name="LocalFileFlyoutAddButton"
+                                    x:Uid="LocalFileFlyoutAddButton"
+                                    RelativePanel.Below="LocalFileFlyoutText"
+                                    RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                    Click="LocalFileFlyoutAddButton_Click">
+                                </Button>
+                            </RelativePanel>
+                        </Flyout>
+                    </Button.Flyout>
+                </Button>
+
+                <Button
                     Name="PlaybackSpeedButton"
                     Style="{StaticResource TopCommandButtonStyle}"
                     Margin="0,0,3,0"
@@ -612,7 +651,9 @@
                     Visibility="Collapsed">
 
                     <ToolTipService.ToolTip>
-                        <TextBlock Name="PlaybackSpeedButtonToolTip" TextWrapping="WrapWholeWords" />
+                        <TextBlock
+                            Name="PlaybackSpeedButtonToolTip"
+                            TextWrapping="WrapWholeWords" />
                     </ToolTipService.ToolTip>
 
                     <Button.Flyout>
@@ -648,7 +689,9 @@
                     Click="OutputDeviceButton_Click">
 
                     <ToolTipService.ToolTip>
-                        <TextBlock Name="OutputDeviceButtonToolTip" x:Uid="OutputDeviceButtonToolTip" />
+                        <TextBlock
+                            Name="OutputDeviceButtonToolTip"
+                            x:Uid="OutputDeviceButtonToolTip" />
                     </ToolTipService.ToolTip>
 
                     <Button.Flyout>
@@ -689,7 +732,9 @@
                     Click="ExpandButton_Click">
 
                     <ToolTipService.ToolTip>
-                        <TextBlock Name="ExpandButtonToolTip" Text="Expand" />
+                        <TextBlock
+                            Name="ExpandButtonToolTip"
+                            Text="Expand" />
                     </ToolTipService.ToolTip>
                 </Button>
             </StackPanel>
