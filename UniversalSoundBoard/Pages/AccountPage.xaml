@@ -123,7 +123,6 @@
                                 <Button
                                     Name="LogoutButton"
                                     x:Uid="LogoutButton"
-                                    Style="{StaticResource ButtonRevealStyle}"
                                     FontSize="14"
                                     Margin="0,8,0,0"
                                     Click="LogoutButton_Click" />
@@ -278,7 +277,6 @@
                                 <Button
                                     Name="PlusCardSelectButton"
                                     x:Uid="Account-Card-SelectButton"
-                                    Style="{StaticResource ButtonRevealStyle}"
                                     HorizontalAlignment="Center"
                                     FontSize="16"
                                     Click="PlusCardSelectButton_Click" />
@@ -354,7 +352,6 @@
                                 <Button
                                     Name="LoginButton"
                                     x:Uid="LoginButton"
-                                    Style="{StaticResource ButtonRevealStyle}"
                                     Content="Log in"
                                     Margin="0,20,10,0"
                                     Click="LoginButton_Click" />
@@ -362,7 +359,6 @@
                                 <Button
                                     Name="SignupButton"
                                     x:Uid="SignupButton"
-                                    Style="{StaticResource ButtonRevealStyle}"
                                     Content="Sign up"
                                     Margin="10,20,0,0"
                                     Click="SignupButton_Click" />

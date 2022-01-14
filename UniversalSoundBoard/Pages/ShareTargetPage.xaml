@@ -31,7 +31,6 @@
 
                     <Button
                         Name="AddButton" 
-                        Style="{StaticResource ButtonRevealStyle}"
                         x:Uid="ShareTarget-AddButton" 
                         Grid.Row="2"
                         Click="AddButton_Click"/>

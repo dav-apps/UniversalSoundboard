@@ -885,7 +885,6 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                Style = MainPage.buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,
@@ -976,7 +975,6 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                Style = MainPage.buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,
@@ -1042,7 +1040,6 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                Style = MainPage.buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,
@@ -1328,7 +1325,6 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                Style = MainPage.buttonRevealStyle,
                 FontFamily = new FontFamily("Segoe MDL2 Assets"),
                 Content = "\uE838",
                 FontSize = 18,
