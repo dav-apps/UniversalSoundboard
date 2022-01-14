@@ -931,6 +931,21 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="LocalFileFlyoutText.Text" xml:space="preserve">
     <value>This sound is a local file that does not belong to your soundboard.</value>
   </data>
+  <data name="SettingsEntry-CreateIssueButton.Content" xml:space="preserve">
+    <value>Create an issue on GitHub</value>
+  </data>
+  <data name="SettingsEntry-FeedbackHeader.Text" xml:space="preserve">
+    <value>Found a bug or have a feature request?</value>
+  </data>
+  <data name="SettingsEntry-ReviewButton.Content" xml:space="preserve">
+    <value>Leave a review</value>
+  </data>
+  <data name="SettingsEntry-ReviewHeader.Text" xml:space="preserve">
+    <value>Do you like UniversalSoundboard?</value>
+  </data>
+  <data name="SettingsEntry-SendFeedbackButton.Content" xml:space="preserve">
+    <value>Send feedback</value>
+  </data>
   <data name="SettingsPivot-About.Header" xml:space="preserve">
     <value>About</value>
   </data>

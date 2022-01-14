@@ -930,6 +930,21 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="LocalFileFlyoutText.Text" xml:space="preserve">
     <value>Ce son est un fichier local qui n'appartient pas à votre Soundboard.</value>
   </data>
+  <data name="SettingsEntry-CreateIssueButton.Content" xml:space="preserve">
+    <value>Créer un issue sur GitHub</value>
+  </data>
+  <data name="SettingsEntry-FeedbackHeader.Text" xml:space="preserve">
+    <value>Vous avez trouvé un bogue ou une demande de fonctionnalité ?</value>
+  </data>
+  <data name="SettingsEntry-ReviewButton.Content" xml:space="preserve">
+    <value>Écrire une évaluation</value>
+  </data>
+  <data name="SettingsEntry-ReviewHeader.Text" xml:space="preserve">
+    <value>Vous aimez UniversalSoundboard ?</value>
+  </data>
+  <data name="SettingsEntry-SendFeedbackButton.Content" xml:space="preserve">
+    <value>Envoyer des commentaires</value>
+  </data>
   <data name="SettingsPivot-About.Header" xml:space="preserve">
     <value>À Propos</value>
   </data>

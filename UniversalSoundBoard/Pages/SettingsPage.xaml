@@ -288,7 +288,38 @@
             <PivotItem x:Uid="SettingsPivot-About">
                 <ScrollViewer Style="{StaticResource SettingsPageScrollViewerStyle}">
                     <StackPanel Name="SettingsAboutStackPanel" Style="{StaticResource SettingsContentStyle}">
-                        <StackPanel Margin="0,5,0,0">
+                        <StackPanel Margin="0,5,0,5">
+                            <TextBlock
+                                x:Uid="SettingsEntry-ReviewHeader"
+                                FontSize="16" />
+
+                            <Button
+                                Name="ReviewButton"
+                                x:Uid="SettingsEntry-ReviewButton"
+                                Margin="0,10,0,0"
+                                Click="ReviewButton_Click" />
+                        </StackPanel>
+
+                        <StackPanel Margin="0,15,0,5">
+                            <TextBlock
+                                x:Uid="SettingsEntry-FeedbackHeader"
+                                FontSize="16" />
+
+                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                <Button
+                                    Name="SendFeedbackButton"
+                                    x:Uid="SettingsEntry-SendFeedbackButton"
+                                    Click="SendFeedbackButton_Click"/>
+
+                                <Button
+                                    Name="CreateIssueButton"
+                                    x:Uid="SettingsEntry-CreateIssueButton"
+                                    Margin="10,0,0,0"
+                                    Click="CreateIssueButton_Click" />
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Margin="0,15,0,5">
                             <HyperlinkButton
                                 x:Uid="Blog-Link"
                                 NavigateUri="https://blog.dav-apps.tech/tag/universalsoundboard" />

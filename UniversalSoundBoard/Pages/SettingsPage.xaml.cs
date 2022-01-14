@@ -4,6 +4,7 @@ using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using Windows.ApplicationModel.Resources;
 using Windows.Devices.Enumeration;
+using Windows.System;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -383,6 +384,21 @@ namespace UniversalSoundboard.Pages
         private async void ImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.ImportDataAsync(ContentDialogs.ImportFile, false);
+        }
+
+        private async void ReviewButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NBLGGH51005"));
+        }
+
+        private async void SendFeedbackButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://forms.gle/Y2fJnwDTyWMwBRbk7"));
+        }
+
+        private async void CreateIssueButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://github.com/dav-apps/UniversalSoundboard/issues"));
         }
         #endregion
     }
