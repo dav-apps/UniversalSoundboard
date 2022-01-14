@@ -65,9 +65,7 @@ namespace UniversalSoundboard.Common
         private bool _allSoundsChanged;                                     // If there was made change to one or multiple sounds so that a reload of the sounds is required
         private Guid _selectedCategory;                                     // The index of the currently selected category in the category list
         private bool _exporting;                                            // If true the soundboard is currently being exported
-        private bool _exported;                                             // If true the soundboard was exported in the app session
         private bool _importing;                                            // If true a soundboard is currently being imported
-        private bool _imported;                                             // If true a soundboard was import in the app session
         private string _exportMessage;                                      // The text describing the status of the export
         private string _importMessage;                                      // The text describing the status of the import
         private ulong _soundboardSize;                                      // The size of the entire soundboard in byte
@@ -169,9 +167,7 @@ namespace UniversalSoundboard.Common
             _allSoundsChanged = true;
             _selectedCategory = Guid.Empty;
             _exporting = false;
-            _exported = false;
             _importing = false;
-            _imported = false;
             _exportMessage = "";
             _importMessage = "";
             _soundboardSize = 0;
@@ -460,20 +456,6 @@ namespace UniversalSoundboard.Common
         }
         #endregion
 
-        #region Exported
-        public const string ExportedKey = "Exported";
-        public bool Exported
-        {
-            get => _exported;
-            set
-            {
-                if (_exported.Equals(value)) return;
-                _exported = value;
-                NotifyPropertyChanged(ExportedKey);
-            }
-        }
-        #endregion
-
         #region Importing
         public const string ImportingKey = "Importing";
         public bool Importing
@@ -484,20 +466,6 @@ namespace UniversalSoundboard.Common
                 if (_importing.Equals(value)) return;
                 _importing = value;
                 NotifyPropertyChanged(ImportingKey);
-            }
-        }
-        #endregion
-
-        #region Imported
-        public const string ImportedKey = "Imported";
-        public bool Imported
-        {
-            get => _imported;
-            set
-            {
-                if (_imported.Equals(value)) return;
-                _imported = value;
-                NotifyPropertyChanged(ImportedKey);
             }
         }
         #endregion

@@ -948,4 +948,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="SettingsPivot-About.Header" xml:space="preserve">
     <value>À Propos</value>
   </data>
+  <data name="SettingsEntry-ImportExportDescription.Text" xml:space="preserve">
+    <value>Tu peux sauvegarder ton Soundboard en dehors de l'application et l'utiliser sur différents appareils.</value>
+  </data>
 </root>

@@ -949,4 +949,7 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="SettingsPivot-About.Header" xml:space="preserve">
     <value>About</value>
   </data>
+  <data name="SettingsEntry-ImportExportDescription.Text" xml:space="preserve">
+    <value>You can save your soundboard outside the app and use it on different devices.</value>
+  </data>
 </root>

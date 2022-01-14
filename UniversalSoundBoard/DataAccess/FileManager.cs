@@ -350,8 +350,6 @@ namespace UniversalSoundboard.DataAccess
 
             await ClearExportCacheAsync();
 
-            itemViewHolder.Exported = false;
-            itemViewHolder.Imported = false;
             itemViewHolder.Exporting = true;
             itemViewHolder.ExportAndImportButtonsEnabled = false;
 
@@ -387,7 +385,6 @@ namespace UniversalSoundboard.DataAccess
             await ClearExportCacheAsync();
 
             itemViewHolder.ExportMessage = "";
-            itemViewHolder.Exported = true;
             itemViewHolder.ExportAndImportButtonsEnabled = true;
 
             exportDestinationFolder = destinationFolder;
@@ -427,8 +424,6 @@ namespace UniversalSoundboard.DataAccess
 
             // Extract the file into the local cache folder
             itemViewHolder.Importing = true;
-            itemViewHolder.Exported = false;
-            itemViewHolder.Imported = false;
             itemViewHolder.ExportAndImportButtonsEnabled = false;
 
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
@@ -469,7 +464,6 @@ namespace UniversalSoundboard.DataAccess
             await ClearImportCacheAsync();
 
             SetImportMessage("", startMessage);
-            itemViewHolder.Imported = true;
             itemViewHolder.AllSoundsChanged = true;
             itemViewHolder.ExportAndImportButtonsEnabled = true;
 

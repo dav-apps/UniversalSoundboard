@@ -18,6 +18,7 @@ namespace UniversalSoundboard.Pages
         readonly ResourceLoader loader = new ResourceLoader();
         bool initialized = false;
         string soundboardSize = "";
+        Visibility soundboardSizeVisibility = Visibility.Collapsed;
 
         public SettingsPage()
         {
@@ -97,9 +98,15 @@ namespace UniversalSoundboard.Pages
         private void UpdateSoundboardSizeText()
         {
             if (FileManager.itemViewHolder.SoundboardSize == 0)
+            {
                 soundboardSize = "";
+                soundboardSizeVisibility = Visibility.Collapsed;
+            }
             else
+            {
                 soundboardSize = string.Format(loader.GetString("SettingsSoundBoardSize"), FileManager.GetFormattedSize(FileManager.itemViewHolder.SoundboardSize));
+                soundboardSizeVisibility = Visibility.Visible;
+            }
 
             Bindings.Update();
         }
