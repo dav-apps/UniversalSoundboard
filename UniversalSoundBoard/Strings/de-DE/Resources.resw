@@ -929,4 +929,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="LocalFileFlyoutText.Text" xml:space="preserve">
     <value>Dieser Sound ist eine lokale Datei, die nicht zu deinem Soundboard gehört.</value>
   </data>
+  <data name="SettingsPivot-About.Header" xml:space="preserve">
+    <value>Info</value>
+  </data>
 </root>

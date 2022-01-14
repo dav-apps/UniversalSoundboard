@@ -208,7 +208,7 @@
     <value>Rename</value>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>2.1.2</value>
+    <value>2.2</value>
   </data>
   <data name="MoreButton-Cast.Text" xml:space="preserve">
     <value>Cast to Device</value>
@@ -930,5 +930,8 @@ Log in and upgrade your plan to use this feature.</value>
   </data>
   <data name="LocalFileFlyoutText.Text" xml:space="preserve">
     <value>This sound is a local file that does not belong to your soundboard.</value>
+  </data>
+  <data name="SettingsPivot-About.Header" xml:space="preserve">
+    <value>About</value>
   </data>
 </root>

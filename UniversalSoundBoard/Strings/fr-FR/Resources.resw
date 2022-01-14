@@ -930,4 +930,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="LocalFileFlyoutText.Text" xml:space="preserve">
     <value>Ce son est un fichier local qui n'appartient pas à votre Soundboard.</value>
   </data>
+  <data name="SettingsPivot-About.Header" xml:space="preserve">
+    <value>À Propos</value>
+  </data>
 </root>

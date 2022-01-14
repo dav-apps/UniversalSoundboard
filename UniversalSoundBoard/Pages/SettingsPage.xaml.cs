@@ -49,6 +49,7 @@ namespace UniversalSoundboard.Pages
             SettingsGeneralStackPanel.Background = appThemeColorBrush;
             SettingsDesignStackPanel.Background = appThemeColorBrush;
             SettingsDataStackPanel.Background = appThemeColorBrush;
+            SettingsAboutStackPanel.Background = appThemeColorBrush;
         }
 
         private void InitSettings()

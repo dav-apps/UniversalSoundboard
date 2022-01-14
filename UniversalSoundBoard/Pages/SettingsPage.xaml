@@ -145,40 +145,6 @@
                                 SelectionChanged="OutputDeviceComboBox_SelectionChanged">
                             </ComboBox>
                         </StackPanel>
-
-                        <StackPanel
-                            Style="{StaticResource SettingsEntryStyle}">
-
-                            <HyperlinkButton
-                                x:Uid="Blog-Link"
-                                NavigateUri="https://blog.dav-apps.tech/tag/universalsoundboard" />
-
-                            <HyperlinkButton
-                                x:Uid="Github-Link"
-                                NavigateUri="https://github.com/dav-apps/UniversalSoundboard"
-                                Margin="0,-8,0,0" />
-
-                            <HyperlinkButton
-                                x:Uid="PrivacyPolicy-Link"
-                                NavigateUri="https://dav-apps.tech/privacy"
-                                Margin="0,-8,0,0" />
-
-                            <StackPanel
-                                Orientation="Horizontal"
-                                Margin="0,7,0,0">
-
-                                <TextBlock
-                                    Text="Version"
-                                    IsTextSelectionEnabled="True"
-                                    Margin="0,0,4,0" />
-
-                                <TextBlock
-                                    x:Uid="Version"
-                                    IsTextSelectionEnabled="True" />
-                            </StackPanel>
-
-                            <TextBlock Text="Copyright © 2021 by dav" />
-                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
@@ -273,7 +239,7 @@
                                     Visibility="{Binding Importing}" />
                             </StackPanel>
                         </StackPanel>
-                        
+
                         <StackPanel Margin="0,5,0,5">
                             <StackPanel Orientation="Horizontal">
                                 <Button
@@ -314,6 +280,44 @@
                                 Name="SoundBoardSizeTextBlock" 
                                 Text="{x:Bind soundboardSize}"
                                 IsTextSelectionEnabled="True" />
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </PivotItem>
+
+            <PivotItem x:Uid="SettingsPivot-About">
+                <ScrollViewer Style="{StaticResource SettingsPageScrollViewerStyle}">
+                    <StackPanel Name="SettingsAboutStackPanel" Style="{StaticResource SettingsContentStyle}">
+                        <StackPanel Margin="0,5,0,0">
+                            <HyperlinkButton
+                                x:Uid="Blog-Link"
+                                NavigateUri="https://blog.dav-apps.tech/tag/universalsoundboard" />
+
+                            <HyperlinkButton
+                                x:Uid="Github-Link"
+                                NavigateUri="https://github.com/dav-apps/UniversalSoundboard"
+                                Margin="0,-8,0,0" />
+
+                            <HyperlinkButton
+                                x:Uid="PrivacyPolicy-Link"
+                                NavigateUri="https://dav-apps.tech/privacy"
+                                Margin="0,-8,0,0" />
+
+                            <StackPanel
+                                Orientation="Horizontal"
+                                Margin="0,7,0,0">
+
+                                <TextBlock
+                                    Text="Version"
+                                    IsTextSelectionEnabled="True"
+                                    Margin="0,0,4,0" />
+
+                                <TextBlock
+                                    x:Uid="Version"
+                                    IsTextSelectionEnabled="True" />
+                            </StackPanel>
+
+                            <TextBlock Text="Copyright © 2022 by dav" />
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
