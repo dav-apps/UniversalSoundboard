@@ -850,7 +850,9 @@ namespace UniversalSoundboard.Pages
                     && FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty)
                 ) ? Visibility.Visible : Visibility.Collapsed;
 
-            if(FileManager.itemViewHolder.AllSounds.Count > 0)
+            startMessageButtonsEnabled = FileManager.itemViewHolder.AppState != FileManager.AppState.InitialSync;
+
+            if (FileManager.itemViewHolder.AllSounds.Count > 0)
                 EmptyCategoryMessageRelativePanel.Margin = new Thickness(0, 220, 0, 25);
             else
                 EmptyCategoryMessageRelativePanel.Margin = new Thickness(0, 110, 0, 25);

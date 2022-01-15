@@ -1147,6 +1147,7 @@ namespace UniversalSoundboard.Common
 
         public void TriggerDismissInAppNotificationEvent(object sender, EventArgs args)
         {
+            FileManager.SetLastInAppNotificationEventArgs(null);
             DismissInAppNotification?.Invoke(sender, args);
         }
         #endregion
