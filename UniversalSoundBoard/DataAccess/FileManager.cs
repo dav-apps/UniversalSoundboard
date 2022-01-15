@@ -2523,10 +2523,23 @@ namespace UniversalSoundboard.DataAccess
                 foreach (var category in categories)
                     newCategories.Add(category);
 
+                List<Property> sortedOrderProperties = new List<Property>();
+
                 foreach (var property in lastOrderTableObject.Properties)
                 {
                     if (!int.TryParse(property.Name, out int index)) continue;
+                    sortedOrderProperties.Add(property);
+                }
 
+                sortedOrderProperties.Sort((a, b) =>
+                {
+                    int.TryParse(a.Name, out int aName);
+                    int.TryParse(b.Name, out int bName);
+                    return aName.CompareTo(bName);
+                });
+
+                foreach (var property in sortedOrderProperties)
+                {
                     Guid? categoryUuid = ConvertStringToGuid(property.Value);
                     if (!categoryUuid.HasValue) continue;
 
@@ -2814,10 +2827,23 @@ namespace UniversalSoundboard.DataAccess
                 foreach (var sound in sounds)
                     newSounds.Add(sound);
 
+                List<Property> sortedOrderProperties = new List<Property>();
+
                 foreach (var property in lastOrderTableObject.Properties)
                 {
                     if (!int.TryParse(property.Name, out int index)) continue;
+                    sortedOrderProperties.Add(property);
+                }
 
+                sortedOrderProperties.Sort((a, b) =>
+                {
+                    int.TryParse(a.Name, out int aName);
+                    int.TryParse(b.Name, out int bName);
+                    return aName.CompareTo(bName);
+                });
+
+                foreach (var property in sortedOrderProperties)
+                {
                     Guid? soundUuid = ConvertStringToGuid(property.Value);
                     if (!soundUuid.HasValue) continue;
 
