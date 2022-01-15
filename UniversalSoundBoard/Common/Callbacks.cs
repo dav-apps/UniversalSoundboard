@@ -27,7 +27,11 @@ namespace UniversalSoundboard.Common
             CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
             if (tableObject.TableId == FileManager.SoundTableId)
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadSound(tableObject.Uuid));
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+                {
+                    bool result = await FileManager.ReloadSound(tableObject.Uuid);
+                    if (!result) await FileManager.AddSound(tableObject.Uuid);
+                });
             else if(tableObject.TableId == FileManager.CategoryTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadCategory(tableObject.Uuid));
             else if(tableObject.TableId == FileManager.PlayingSoundTableId)
@@ -86,7 +90,10 @@ namespace UniversalSoundboard.Common
             FileManager.syncFinished = true;
 
             if (FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync)
+            {
                 FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
+                FileManager.itemViewHolder.TriggerDismissInAppNotificationEvent(this, new EventArgs());
+            }
         }
     }
 }

@@ -1171,20 +1171,21 @@ namespace UniversalSoundboard.DataAccess
             if (soundBelongsToSelectedCategory && !itemViewHolder.Sounds.ToList().Exists(s => s.Uuid == sound.Uuid))
                 itemViewHolder.Sounds.Add(sound);
 
-            if (itemViewHolder.AllSounds.Count > 0 && itemViewHolder.AppState == AppState.Empty)
+            if (itemViewHolder.AllSounds.Count > 0 && (itemViewHolder.AppState == AppState.Empty || itemViewHolder.AppState == AppState.InitialSync))
                 itemViewHolder.AppState = AppState.Normal;
         }
 
         /**
          * Replaces the sound in all sound lists
          */
-        public static async Task ReloadSound(Guid uuid)
+        public static async Task<bool> ReloadSound(Guid uuid)
         {
             var sound = await GetSoundAsync(uuid);
-            if(sound != null) await ReloadSound(sound);
+            if (sound != null) return await ReloadSound(sound);
+            else return false;
         }
 
-        public static async Task ReloadSound(Sound updatedSound)
+        public static async Task<bool> ReloadSound(Sound updatedSound)
         {
             bool soundBelongsToSelectedCategory = true;
 
@@ -1204,8 +1205,8 @@ namespace UniversalSoundboard.DataAccess
 
             // Replace in AllSounds
             int i = itemViewHolder.AllSounds.ToList().FindIndex(s => s.Uuid == updatedSound.Uuid);
-            if (i != -1)
-                itemViewHolder.AllSounds[i] = updatedSound;
+            if (i == -1) return false;
+            else itemViewHolder.AllSounds[i] = updatedSound;
 
             // Replace in Sounds
             i = itemViewHolder.Sounds.ToList().FindIndex(s => s.Uuid == updatedSound.Uuid);
@@ -1236,6 +1237,8 @@ namespace UniversalSoundboard.DataAccess
                 if (i != -1)
                     playingSound.Sounds[i] = updatedSound;
             }
+
+            return true;
         }
 
         /**

@@ -958,4 +958,7 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="RenameSoundContentDialog-RenameSoundTextBoxPlaceholder" xml:space="preserve">
     <value>Name of the sound</value>
   </data>
+  <data name="InAppNotification-Sync" xml:space="preserve">
+    <value>Your data is being downloaded. This may take some time...</value>
+  </data>
 </root>

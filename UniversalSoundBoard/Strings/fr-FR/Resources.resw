@@ -957,4 +957,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="RenameSoundContentDialog-RenameSoundTextBoxPlaceholder" xml:space="preserve">
     <value>Nom du son</value>
   </data>
+  <data name="InAppNotification-Sync" xml:space="preserve">
+    <value>Tes données sont en train d'être téléchargées. Cela peut prendre un certain temps...</value>
+  </data>
 </root>

@@ -956,4 +956,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="RenameSoundContentDialog-RenameSoundTextBoxPlaceholder" xml:space="preserve">
     <value>Name des Sounds</value>
   </data>
+  <data name="InAppNotification-Sync" xml:space="preserve">
+    <value>Deine Daten werden heruntergeladen. Dies kann einige Zeit dauern...</value>
+  </data>
 </root>

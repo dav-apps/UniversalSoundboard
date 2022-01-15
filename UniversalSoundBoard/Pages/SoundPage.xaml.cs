@@ -38,6 +38,7 @@ namespace UniversalSoundboard.Pages
         private static PlayingSound nextSinglePlayingSoundToOpen;
         private int getContainerHeightCount = 0;
         AdvancedCollectionView reversedPlayingSounds;
+        bool startMessageButtonsEnabled = true;
         Visibility startMessageVisibility = Visibility.Collapsed;
         Visibility emptyCategoryMessageVisibility = Visibility.Collapsed;
         WinUI.ProgressRing inAppNotificationProgressRing = new WinUI.ProgressRing();
@@ -86,9 +87,8 @@ namespace UniversalSoundboard.Pages
             if (lastArgs != null) ShowInAppNotification(lastArgs);
 
             // Enable or disable StartMessage buttons
-            StartMessageAddFirstSoundButton.IsEnabled = !FileManager.itemViewHolder.Importing;
-            StartMessageLoginButton.IsEnabled = !FileManager.itemViewHolder.Importing;
-            StartMessageImportButton.IsEnabled = !FileManager.itemViewHolder.Importing;
+            startMessageButtonsEnabled = !FileManager.itemViewHolder.Importing && FileManager.itemViewHolder.AppState != FileManager.AppState.InitialSync;
+            Bindings.Update();
         }
 
         #region Page event handlers
@@ -843,7 +843,10 @@ namespace UniversalSoundboard.Pages
         private void UpdateMessagesVisibilities()
         {
             startMessageVisibility = (
-                    FileManager.itemViewHolder.AppState == FileManager.AppState.Empty
+                    (
+                        FileManager.itemViewHolder.AppState == FileManager.AppState.Empty
+                        || FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync
+                    )
                     && FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty)
                 ) ? Visibility.Visible : Visibility.Collapsed;
 
@@ -885,8 +888,23 @@ namespace UniversalSoundboard.Pages
 
         private async void StartMessageLoginButton_Click(object sender, RoutedEventArgs e)
         {
-            if (await AccountPage.ShowLoginPage() && FileManager.itemViewHolder.AppState == FileManager.AppState.Empty)
-                FileManager.itemViewHolder.AppState = FileManager.AppState.InitialSync;
+            bool loginResult = await AccountPage.ShowLoginPage();
+            if (!loginResult) return;
+
+            // Disable the start message buttons
+            FileManager.itemViewHolder.AppState = FileManager.AppState.InitialSync;
+            startMessageButtonsEnabled = false;
+            Bindings.Update();
+
+            // Show InAppNotification for sync
+            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                this,
+                new ShowInAppNotificationEventArgs(
+                    loader.GetString("InAppNotification-Sync"),
+                    0,
+                    true
+                )
+            );
         }
 
         private async void StartMessageImportButton_Click(object sender, RoutedEventArgs e)

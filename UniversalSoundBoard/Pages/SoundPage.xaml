@@ -22,7 +22,7 @@
         <converters:BooleanToSelectionMode x:Name="BooleanToSelectionMode" />
         <converters:GridViewReorderItemsConverter x:Name="GridViewReorderItemsConverter" />
         <converters:LogoImageSourceConverter x:Name="LogoImageSourceConverter" />
-        <converters:AppStateLoadingOrInitialSyncConverter x:Name="AppStateLoadingOrInitialSyncConverter" />
+        <converters:AppStateLoadingConverter x:Name="AppStateLoadingConverter" />
         <converters:AppStateNormalConverter x:Name="AppStateNormalConverter" />
 
         <!-- DataTemplates -->
@@ -276,7 +276,7 @@
             <RelativePanel
                 Grid.Row="0"
                 Grid.Column="0"
-                Visibility="{Binding AppState, Converter={StaticResource AppStateLoadingOrInitialSyncConverter}}">
+                Visibility="{Binding AppState, Converter={StaticResource AppStateLoadingConverter}}">
 
                 <winui:ProgressRing
                     RelativePanel.AlignHorizontalCenterWithPanel="True"
@@ -317,6 +317,7 @@
                         RelativePanel.Below="StartMessageTitleTextBlock"
                         RelativePanel.AlignHorizontalCenterWithPanel="True"
                         Margin="0,25,0,0"
+                        IsEnabled="{x:Bind startMessageButtonsEnabled}"
                         Click="StartMessageAddFirstSoundButton_Click">
 
                         <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
@@ -352,6 +353,7 @@
                             Style="{StaticResource StartMessageButtonStyle}"
                             Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
                             Margin="0,0,8,0"
+                            IsEnabled="{x:Bind startMessageButtonsEnabled}"
                             Click="StartMessageLoginButton_Click">
 
                             <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
@@ -372,6 +374,7 @@
                             Name="StartMessageImportButton"
                             Style="{StaticResource StartMessageButtonStyle}"
                             Margin="8,0,0,0"
+                            IsEnabled="{x:Bind startMessageButtonsEnabled}"
                             Click="StartMessageImportButton_Click">
 
                             <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
