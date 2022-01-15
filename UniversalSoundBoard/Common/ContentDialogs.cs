@@ -569,7 +569,11 @@ namespace UniversalSoundboard.Common
 
             List<string> IconsList = FileManager.GetIconsList();
 
-            NewCategoryTextBox = new TextBox { Width = 300 };
+            NewCategoryTextBox = new TextBox
+            {
+                Width = 300,
+                PlaceholderText = loader.GetString("NewCategoryContentDialog-NewCategoryTextBoxPlaceholder")
+            };
 
             IconSelectionComboBox = new ComboBox
             {
@@ -625,6 +629,7 @@ namespace UniversalSoundboard.Common
             EditCategoryTextBox = new TextBox
             {
                 Text = currentCategory.Name,
+                PlaceholderText = loader.GetString("NewCategoryContentDialog-NewCategoryTextBoxPlaceholder"),
                 Width = 300
             };
 
@@ -790,6 +795,7 @@ namespace UniversalSoundboard.Common
             RenameSoundTextBox = new TextBox
             {
                 Text = sound.Name,
+                PlaceholderText = loader.GetString("RenameSoundContentDialog-RenameSoundTextBoxPlaceholder"),
                 Width = 300
             };
 

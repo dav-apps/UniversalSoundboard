@@ -952,4 +952,10 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="SettingsEntry-ImportExportDescription.Text" xml:space="preserve">
     <value>You can save your soundboard outside the app and use it on different devices.</value>
   </data>
+  <data name="NewCategoryContentDialog-NewCategoryTextBoxPlaceholder" xml:space="preserve">
+    <value>Category name</value>
+  </data>
+  <data name="RenameSoundContentDialog-RenameSoundTextBoxPlaceholder" xml:space="preserve">
+    <value>Name of the sound</value>
+  </data>
 </root>

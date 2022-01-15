@@ -950,4 +950,10 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="SettingsEntry-ImportExportDescription.Text" xml:space="preserve">
     <value>Du kannst dein Soundboard außerhalb der App sichern und auf unterschiedlichen Geräten benutzen.</value>
   </data>
+  <data name="NewCategoryContentDialog-NewCategoryTextBoxPlaceholder" xml:space="preserve">
+    <value>Name der Kategorie</value>
+  </data>
+  <data name="RenameSoundContentDialog-RenameSoundTextBoxPlaceholder" xml:space="preserve">
+    <value>Name des Sounds</value>
+  </data>
 </root>
