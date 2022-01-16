@@ -258,6 +258,7 @@
         Name="ContentRoot">
 
         <Grid
+            Name="ContentGrid"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
@@ -585,11 +586,6 @@
                     </ListView>
                 </Grid>
             </Grid>
-
-            <controls:InAppNotification
-                x:Name="InAppNotification"
-                ShowDismissButton="False">
-            </controls:InAppNotification>
 
             <controls:GridSplitter
                 x:Name="PlayingSoundsBarGridSplitter"

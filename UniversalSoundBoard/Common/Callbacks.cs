@@ -92,7 +92,7 @@ namespace UniversalSoundboard.Common
             if (FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync)
             {
                 FileManager.itemViewHolder.AppState = FileManager.itemViewHolder.AllSounds.Count > 0 ? FileManager.AppState.Normal : FileManager.AppState.Empty;
-                FileManager.itemViewHolder.TriggerDismissInAppNotificationEvent(this, new EventArgs());
+                FileManager.itemViewHolder.TriggerDismissInAppNotificationEvent(this, new DismissInAppNotificationEventArgs(FileManager.InAppNotificationType.Sync));
             }
         }
     }

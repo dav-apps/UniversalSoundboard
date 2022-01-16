@@ -423,7 +423,25 @@ namespace UniversalSoundboard.Pages
         private void LoadMenuItems()
         {
             foreach (var menuItem in CreateMenuItemsforCategories(FileManager.itemViewHolder.Categories.ToList()))
-                menuItems.Add(menuItem);
+            {
+                // Check if the menu items list already contains the item
+                var itemUuid = (Guid)menuItem.Tag;
+                bool containsItem = false;
+
+                foreach(var mi in menuItems)
+                {
+                    Guid uuid = (Guid)((WinUI.NavigationViewItem)mi).Tag;
+
+                    if (itemUuid.Equals(uuid))
+                    {
+                        containsItem = true;
+                        break;
+                    }
+                }
+
+                if (!containsItem)
+                    menuItems.Add(menuItem);
+            }
         }
 
         private List<WinUI.NavigationViewItem> CreateMenuItemsforCategories(List<Category> categories)
@@ -1040,6 +1058,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 null,
                 new ShowInAppNotificationEventArgs(
+                    FileManager.InAppNotificationType.AddSounds,
                     string.Format(loader.GetString("InAppNotification-AddSounds"), 0, ContentDialogs.AddSoundsSelectedFiles.Count),
                     0,
                     true
@@ -1068,6 +1087,7 @@ namespace UniversalSoundboard.Pages
                     FileManager.itemViewHolder.TriggerSetInAppNotificationMessageEvent(
                         null,
                         new SetInAppNotificationMessageEventArgs(
+                            FileManager.InAppNotificationType.AddSounds,
                             string.Format(loader.GetString("InAppNotification-AddSounds"), i + 1, ContentDialogs.AddSoundsSelectedFiles.Count)
                         )
                     );
@@ -1088,6 +1108,7 @@ namespace UniversalSoundboard.Pages
                     : string.Format(loader.GetString("InAppNotification-AddSoundsErrorMultipleSounds"), notAddedSounds.Count);
 
                 var inAppNotificationArgs = new ShowInAppNotificationEventArgs(
+                    FileManager.InAppNotificationType.AddSounds,
                     message,
                     0,
                     false,
@@ -1097,7 +1118,7 @@ namespace UniversalSoundboard.Pages
 
                 inAppNotificationArgs.PrimaryButtonClick += async (sender, args) =>
                 {
-                    FileManager.itemViewHolder.TriggerDismissInAppNotificationEvent(null, new EventArgs());
+                    FileManager.itemViewHolder.TriggerDismissInAppNotificationEvent(null, new DismissInAppNotificationEventArgs(FileManager.InAppNotificationType.AddSounds));
 
                     var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notAddedSounds);
                     await addSoundsErrorContentDialog.ShowAsync();
@@ -1110,8 +1131,11 @@ namespace UniversalSoundboard.Pages
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                     null,
                     new ShowInAppNotificationEventArgs(
+                        FileManager.InAppNotificationType.AddSounds,
                         string.Format(loader.GetString("InAppNotification-AddSoundsSuccessful"), ContentDialogs.AddSoundsSelectedFiles.Count),
-                        8000
+                        8000,
+                        false,
+                        true
                     )
                 );
             }
@@ -1150,6 +1174,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
                 new ShowInAppNotificationEventArgs(
+                    FileManager.InAppNotificationType.DownloadSound,
                     loader.GetString("InAppNotification-DownloadSound"),
                     0,
                     true
@@ -1184,7 +1209,10 @@ namespace UniversalSoundboard.Pages
 
             // Download the audio track
             StorageFile audioFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
-            var progress = new Progress<int>((int value) => FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(false, value)));
+            var progress = new Progress<int>((int value) =>
+            {
+                FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(FileManager.InAppNotificationType.DownloadSound, false, value));
+            });
             bool audioFileDownloadResult = false;
 
             await Task.Run(async () =>
@@ -1223,6 +1251,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
                 new ShowInAppNotificationEventArgs(
+                    FileManager.InAppNotificationType.DownloadSound,
                     loader.GetString("InAppNotification-DownloadSoundSuccessful"),
                     8000,
                     false,
@@ -1248,6 +1277,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
                 new ShowInAppNotificationEventArgs(
+                    FileManager.InAppNotificationType.DownloadSounds,
                     string.Format(loader.GetString("InAppNotification-DownloadSounds"), 1, playlistItemResponse.PageInfo.TotalResults.GetValueOrDefault()),
                     0,
                     true
@@ -1278,6 +1308,7 @@ namespace UniversalSoundboard.Pages
                     FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                         this,
                         new ShowInAppNotificationEventArgs(
+                            FileManager.InAppNotificationType.DownloadSounds,
                             loader.GetString("InAppNotification-DownloadSoundsPlaylistError"),
                             0,
                             false,
@@ -1316,6 +1347,7 @@ namespace UniversalSoundboard.Pages
                 FileManager.itemViewHolder.TriggerSetInAppNotificationMessageEvent(
                     this,
                     new SetInAppNotificationMessageEventArgs(
+                        FileManager.InAppNotificationType.DownloadSounds,
                         string.Format(loader.GetString("InAppNotification-DownloadSounds"), i + 1, playlistItems.Count)
                     )
                 );
@@ -1353,7 +1385,10 @@ namespace UniversalSoundboard.Pages
 
                 // Download the audio track
                 StorageFile audioFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
-                var progress = new Progress<int>((int value) => FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(false, value)));
+                var progress = new Progress<int>((int value) =>
+                {
+                    FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(FileManager.InAppNotificationType.DownloadSounds, false, value));
+                });
                 bool audioFileDownloadResult = false;
 
                 await Task.Run(async () =>
@@ -1378,7 +1413,7 @@ namespace UniversalSoundboard.Pages
                     }
                 }
 
-                FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs());
+                FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(FileManager.InAppNotificationType.DownloadSounds));
 
                 // Add the files as a new sound
                 Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, newCategory?.Uuid, audioFile, imageFile);
@@ -1399,6 +1434,7 @@ namespace UniversalSoundboard.Pages
                     : string.Format(loader.GetString("InAppNotification-DownloadSoundsErrorMultipleSounds"), notDownloadedSounds.Count);
 
                 var inAppNotificationArgs = new ShowInAppNotificationEventArgs(
+                    FileManager.InAppNotificationType.DownloadSounds,
                     message,
                     0,
                     false,
@@ -1408,7 +1444,7 @@ namespace UniversalSoundboard.Pages
 
                 inAppNotificationArgs.PrimaryButtonClick += async (sender, args) =>
                 {
-                    FileManager.itemViewHolder.TriggerDismissInAppNotificationEvent(null, new EventArgs());
+                    FileManager.itemViewHolder.TriggerDismissInAppNotificationEvent(null, new DismissInAppNotificationEventArgs(FileManager.InAppNotificationType.DownloadSounds));
 
                     var downloadSoundsErrorContentDialog = ContentDialogs.CreateDownloadSoundsErrorContentDialog(notDownloadedSounds);
                     await downloadSoundsErrorContentDialog.ShowAsync();
@@ -1421,6 +1457,7 @@ namespace UniversalSoundboard.Pages
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                     this,
                     new ShowInAppNotificationEventArgs(
+                        FileManager.InAppNotificationType.DownloadSounds,
                         string.Format(loader.GetString("InAppNotification-DownloadSoundsSuccessful"), playlistItems.Count),
                         8000,
                         false,
@@ -1536,6 +1573,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
                 new ShowInAppNotificationEventArgs(
+                    FileManager.InAppNotificationType.DownloadSound,
                     loader.GetString("InAppNotification-DownloadSound"),
                     0,
                     true
@@ -1547,7 +1585,10 @@ namespace UniversalSoundboard.Pages
 
             string soundUrl = ContentDialogs.DownloadSoundsUrlTextBox.Text;
             bool result = false;
-            var progress = new Progress<int>((int value) => FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(false, value)));
+            var progress = new Progress<int>((int value) =>
+            {
+                FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(FileManager.InAppNotificationType.DownloadSound, false, value));
+            });
 
             await Task.Run(async () =>
             {
@@ -1560,7 +1601,7 @@ namespace UniversalSoundboard.Pages
                 return;
             }
 
-            FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs());
+            FileManager.itemViewHolder.TriggerSetInAppNotificationProgressEvent(this, new SetInAppNotificationProgressEventArgs(FileManager.InAppNotificationType.DownloadSound));
 
             Guid uuid = await FileManager.CreateSoundAsync(null, ContentDialogs.DownloadSoundsAudioFileName, new List<Guid>(), audioFile);
 
@@ -1575,6 +1616,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
                 new ShowInAppNotificationEventArgs(
+                    FileManager.InAppNotificationType.DownloadSound,
                     loader.GetString("InAppNotification-DownloadSoundSuccessful"),
                     8000,
                     false,
@@ -1592,6 +1634,7 @@ namespace UniversalSoundboard.Pages
             DownloadSoundsFlyoutItem.IsEnabled = true;
 
             var inAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
+                FileManager.InAppNotificationType.DownloadSound,
                 loader.GetString("InAppNotification-DownloadSoundError"),
                 0,
                 false,

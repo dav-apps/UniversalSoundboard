@@ -212,6 +212,19 @@ namespace UniversalSoundboard.DataAccess
             Youtube,
             AudioFile
         }
+
+        public enum InAppNotificationType
+        {
+            AddSounds,
+            DownloadSound,
+            DownloadSounds,
+            Export,
+            Import,
+            ImageExport,
+            SoundExport,
+            SoundsExport,
+            Sync
+        }
         #endregion
 
         #region Local variables
@@ -228,12 +241,13 @@ namespace UniversalSoundboard.DataAccess
         private static Guid nextCategoryToShow = Guid.Empty;
         private static SystemMediaTransportControls systemMediaTransportControls;
         private static StorageFolder exportDestinationFolder;
-        private static ShowInAppNotificationEventArgs lastInAppNotificationEventArgs = null;
 
         // Save the custom order of the sounds in all categories to load them faster
         private static readonly Dictionary<Guid, List<Guid>> CustomSoundOrder = new Dictionary<Guid, List<Guid>>();
         private static readonly Dictionary<Guid, List<Guid>> CustomFavouriteSoundOrder = new Dictionary<Guid, List<Guid>>();
         private static readonly List<Guid> LoadedSoundOrders = new List<Guid>();
+
+        public static List<InAppNotificationItem> InAppNotificationItems = new List<InAppNotificationItem>();
         #endregion
         #endregion
 
@@ -342,6 +356,7 @@ namespace UniversalSoundboard.DataAccess
             itemViewHolder.TriggerShowInAppNotificationEvent(
                 null,
                 new ShowInAppNotificationEventArgs(
+                    InAppNotificationType.Export,
                     loader.GetString("InAppNotification-SoundboardExport"),
                     0,
                     true
@@ -358,13 +373,13 @@ namespace UniversalSoundboard.DataAccess
             var progress = new Progress<int>((int value) =>
             {
                 itemViewHolder.ExportMessage = value + " %";
-                itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(false, value));
+                itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(InAppNotificationType.Export, false, value));
             });
 
             await DatabaseOperations.ExportDataAsync(exportFolder, progress);
 
             itemViewHolder.ExportMessage = loader.GetString("ExportMessage-3");
-            itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs());
+            itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(InAppNotificationType.Export));
 
             // Create the zip file
             StorageFile zipFile = await Task.Run(async () =>
@@ -390,6 +405,7 @@ namespace UniversalSoundboard.DataAccess
             exportDestinationFolder = destinationFolder;
 
             ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
+                InAppNotificationType.Export,
                 loader.GetString("InAppNotification-SoundboardExportSuccessful"),
                 8000,
                 false,
@@ -413,6 +429,7 @@ namespace UniversalSoundboard.DataAccess
                 itemViewHolder.TriggerShowInAppNotificationEvent(
                     null,
                     new ShowInAppNotificationEventArgs(
+                        InAppNotificationType.Import,
                         loader.GetString("InAppNotification-SoundboardImport"),
                         0,
                         true
@@ -441,7 +458,7 @@ namespace UniversalSoundboard.DataAccess
             Progress<int> progress = new Progress<int>((int value) =>
             {
                 SetImportMessage(string.Format("{0} %", value), startMessage);
-                itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(false, value));
+                itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(InAppNotificationType.Import, false, value));
             });
 
             switch (dataModel)
@@ -458,7 +475,7 @@ namespace UniversalSoundboard.DataAccess
             }
 
             SetImportMessage(loader.GetString("ExportImportMessage-TidyUp"), startMessage);     // TidyUp
-            itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs());
+            itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(InAppNotificationType.Import));
             itemViewHolder.Importing = false;
 
             await ClearImportCacheAsync();
@@ -472,6 +489,7 @@ namespace UniversalSoundboard.DataAccess
             else
             {
                 ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
+                    InAppNotificationType.Import,
                     loader.GetString("InAppNotification-SoundboardImportSuccessful"),
                     8000,
                     false,
@@ -712,6 +730,7 @@ namespace UniversalSoundboard.DataAccess
             itemViewHolder.TriggerShowInAppNotificationEvent(
                 null,
                 new ShowInAppNotificationEventArgs(
+                    InAppNotificationType.SoundsExport,
                     loader.GetString("ExportSoundsMessage"),
                     0,
                     true
@@ -750,6 +769,7 @@ namespace UniversalSoundboard.DataAccess
             exportDestinationFolder = destinationFolder;
 
             ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
+                InAppNotificationType.SoundsExport,
                 loader.GetString("InAppNotification-SoundsExportSuccessful"),
                 8000,
                 false,
@@ -3244,27 +3264,6 @@ namespace UniversalSoundboard.DataAccess
         {
             // Navigate to the Account page
             NavigateToAccountPage();
-        }
-
-        public static void SetLastInAppNotificationEventArgs(ShowInAppNotificationEventArgs args)
-        {
-            lastInAppNotificationEventArgs = args;
-        }
-
-        public static void SetMessageOfLastInAppNotificationEventArgs(string message)
-        {
-            if (lastInAppNotificationEventArgs == null) return;
-            lastInAppNotificationEventArgs.Message = message;
-        }
-
-        public static ShowInAppNotificationEventArgs GetLastInAppNotificationEventArgs()
-        {
-            if (
-                lastInAppNotificationEventArgs == null
-                || lastInAppNotificationEventArgs.Duration != 0
-            ) return null;
-
-            return lastInAppNotificationEventArgs;
         }
         #endregion
 

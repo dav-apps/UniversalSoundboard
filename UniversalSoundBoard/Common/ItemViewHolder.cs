@@ -148,7 +148,7 @@ namespace UniversalSoundboard.Common
         public event EventHandler<ShowInAppNotificationEventArgs> ShowInAppNotification;                        // Trigger this event to show the InAppNotification on the SoundPage
         public event EventHandler<SetInAppNotificationMessageEventArgs> SetInAppNotificationMessage;            // Trigger this event to set the message of the currently visible InAppNotification
         public event EventHandler<SetInAppNotificationProgressEventArgs> SetInAppNotificationProgress;          // Trigger this event to set the progress of the progress ring of the currently visible InAppNotification
-        public event EventHandler<EventArgs> DismissInAppNotification;                                          // Trigger this event to dismiss the InAppNotification if it is currently visible
+        public event EventHandler<DismissInAppNotificationEventArgs> DismissInAppNotification;                  // Trigger this event to dismiss the InAppNotification if it is currently visible
         #endregion
 
         #region Local variables
@@ -1130,25 +1130,52 @@ namespace UniversalSoundboard.Common
 
         public void TriggerShowInAppNotificationEvent(object sender, ShowInAppNotificationEventArgs args)
         {
-            FileManager.SetLastInAppNotificationEventArgs(args);
+            var ianItem = FileManager.InAppNotificationItems.Find(item => item.InAppNotificationType == args.Type);
+            var newIanItem = SoundPage.CreateInAppNotificationItem(args);
+
+            if (ianItem != null)
+            {
+                ianItem.InAppNotification.Dismiss();
+                FileManager.InAppNotificationItems.Remove(ianItem);
+            }
+
+            FileManager.InAppNotificationItems.Add(newIanItem);
             ShowInAppNotification?.Invoke(sender, args);
         }
 
         public void TriggerSetInAppNotificationMessageEvent(object sender, SetInAppNotificationMessageEventArgs args)
         {
-            FileManager.SetMessageOfLastInAppNotificationEventArgs(args.Message);
-            SetInAppNotificationMessage?.Invoke(sender, args);
+            var ianItem = FileManager.InAppNotificationItems.Find(item => item.InAppNotificationType == args.Type);
+            if (ianItem == null) return;
+
+            ianItem.MessageTextBlock.Text = args.Message;
         }
 
         public void TriggerSetInAppNotificationProgressEvent(object sender, SetInAppNotificationProgressEventArgs args)
         {
-            SetInAppNotificationProgress?.Invoke(sender, args);
+            var ianItem = FileManager.InAppNotificationItems.Find(item => item.InAppNotificationType == args.Type);
+            if (ianItem == null) return;
+
+            if (args.IsIndeterminate)
+                ianItem.ProgressRing.IsIndeterminate = true;
+            else
+            {
+                ianItem.ProgressRing.IsIndeterminate = false;
+
+                int progress = args.Progress;
+                if (progress > 100) progress = 100;
+                else if (progress < 0) progress = 0;
+
+                ianItem.ProgressRing.Value = progress;
+            }
         }
 
-        public void TriggerDismissInAppNotificationEvent(object sender, EventArgs args)
+        public void TriggerDismissInAppNotificationEvent(object sender, DismissInAppNotificationEventArgs args)
         {
-            FileManager.SetLastInAppNotificationEventArgs(null);
-            DismissInAppNotification?.Invoke(sender, args);
+            var ianItem = FileManager.InAppNotificationItems.Find(item => item.InAppNotificationType == args.Type);
+            if (ianItem == null) return;
+
+            ianItem.InAppNotification.Dismiss();
         }
         #endregion
 
