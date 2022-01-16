@@ -72,9 +72,6 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.RemovePlayingSoundItemStarted += ItemViewHolder_RemovePlayingSoundItemStarted;
             FileManager.itemViewHolder.RemovePlayingSoundItemEnded += ItemViewHolder_RemovePlayingSoundItemEnded;
             FileManager.itemViewHolder.ShowInAppNotification += ItemViewHolder_ShowInAppNotification;
-            FileManager.itemViewHolder.SetInAppNotificationMessage += ItemViewHolder_SetInAppNotificationMessage;
-            FileManager.itemViewHolder.SetInAppNotificationProgress += ItemViewHolder_SetInAppNotificationProgress;
-            FileManager.itemViewHolder.DismissInAppNotification += ItemViewHolder_DismissInAppNotification;
 
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
@@ -82,34 +79,7 @@ namespace UniversalSoundboard.Pages
             reversedPlayingSounds.VectorChanged += ReversedPlayingSounds_VectorChanged;
 
             // Show all currently active InAppNotifications
-            double marginBottom = 10;
-
-            foreach (var item in FileManager.InAppNotificationItems)
-            {
-                item.InAppNotification.Margin = new Thickness(20, 0, 20, marginBottom);
-
-                var progressRing = new WinUI.ProgressRing
-                {
-                    Width = 20,
-                    Height = 20,
-                    Margin = new Thickness(0, 0, 10, 0),
-                    IsIndeterminate = item.ProgressRing.IsIndeterminate,
-                    Value = item.ProgressRing.Value,
-                    Visibility = item.ProgressRing.Visibility
-                };
-
-                (item.InAppNotification.Content as Grid).Children.Remove(item.ProgressRing);
-                (item.InAppNotification.Content as Grid).Children.Add(progressRing);
-                item.ProgressRing = progressRing;
-
-                ContentGrid.Children.Add(item.InAppNotification);
-
-                item.InAppNotification.Show(item.Duration);
-                item.Sent = true;
-
-                // Calculate the bottom margin
-                marginBottom = marginBottom + 10 + item.MessageTextBlock.ActualHeight;
-            }
+            ShowAllInAppNotifications();
 
             // Enable or disable StartMessage buttons
             startMessageButtonsEnabled = !FileManager.itemViewHolder.Importing && FileManager.itemViewHolder.AppState != FileManager.AppState.InitialSync;
@@ -149,9 +119,6 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.RemovePlayingSoundItemStarted -= ItemViewHolder_RemovePlayingSoundItemStarted;
             FileManager.itemViewHolder.RemovePlayingSoundItemEnded -= ItemViewHolder_RemovePlayingSoundItemEnded;
             FileManager.itemViewHolder.ShowInAppNotification -= ItemViewHolder_ShowInAppNotification;
-            FileManager.itemViewHolder.SetInAppNotificationMessage -= ItemViewHolder_SetInAppNotificationMessage;
-            FileManager.itemViewHolder.SetInAppNotificationProgress -= ItemViewHolder_SetInAppNotificationProgress;
-            FileManager.itemViewHolder.DismissInAppNotification -= ItemViewHolder_DismissInAppNotification;
 
             FileManager.itemViewHolder.Sounds.CollectionChanged -= ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged -= ItemViewHolder_FavouriteSounds_CollectionChanged;
@@ -355,21 +322,6 @@ namespace UniversalSoundboard.Pages
                 ianItem.InAppNotification.Show(ianItem.Duration);
                 ianItem.Sent = true;
             }
-        }
-
-        private void ItemViewHolder_SetInAppNotificationMessage(object sender, SetInAppNotificationMessageEventArgs e)
-        {
-            
-        }
-
-        private void ItemViewHolder_SetInAppNotificationProgress(object sender, SetInAppNotificationProgressEventArgs e)
-        {
-            
-        }
-
-        private void ItemViewHolder_DismissInAppNotification(object sender, DismissInAppNotificationEventArgs e)
-        {
-            
         }
 
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -737,6 +689,38 @@ namespace UniversalSoundboard.Pages
             };
 
             return inAppNotificationItem;
+        }
+
+        public void ShowAllInAppNotifications()
+        {
+            double marginBottom = 10;
+
+            foreach (var item in FileManager.InAppNotificationItems)
+            {
+                item.InAppNotification.Margin = new Thickness(20, 0, 20, marginBottom);
+
+                var progressRing = new WinUI.ProgressRing
+                {
+                    Width = 20,
+                    Height = 20,
+                    Margin = new Thickness(0, 0, 10, 0),
+                    IsIndeterminate = item.ProgressRing.IsIndeterminate,
+                    Value = item.ProgressRing.Value,
+                    Visibility = item.ProgressRing.Visibility
+                };
+
+                (item.InAppNotification.Content as Grid).Children.Remove(item.ProgressRing);
+                (item.InAppNotification.Content as Grid).Children.Add(progressRing);
+                item.ProgressRing = progressRing;
+
+                ContentGrid.Children.Add(item.InAppNotification);
+
+                item.InAppNotification.Show(item.Duration);
+                item.Sent = true;
+
+                // Calculate the bottom margin
+                marginBottom = marginBottom + 10 + item.MessageTextBlock.ActualHeight;
+            }
         }
         #endregion
 

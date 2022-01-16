@@ -109,42 +109,6 @@ namespace UniversalSoundboard.Common
             SecondaryButtonClick?.Invoke(sender, args);
         }
     }
-
-    public class SetInAppNotificationMessageEventArgs : EventArgs
-    {
-        public FileManager.InAppNotificationType Type { get; set; }
-        public string Message { get; set; }
-
-        public SetInAppNotificationMessageEventArgs(FileManager.InAppNotificationType type, string message)
-        {
-            Type = type;
-            Message = message;
-        }
-    }
-
-    public class SetInAppNotificationProgressEventArgs : EventArgs
-    {
-        public FileManager.InAppNotificationType Type { get; set; }
-        public bool IsIndeterminate { get; set; }
-        public int Progress { get; set; }
-
-        public SetInAppNotificationProgressEventArgs(FileManager.InAppNotificationType type, bool isIndeterminate = true, int progress = 0)
-        {
-            Type = type;
-            IsIndeterminate = isIndeterminate;
-            Progress = progress;
-        }
-    }
-
-    public class DismissInAppNotificationEventArgs : EventArgs
-    {
-        public FileManager.InAppNotificationType Type { get; set; }
-
-        public DismissInAppNotificationEventArgs(FileManager.InAppNotificationType type)
-        {
-            Type = type;
-        }
-    }
     #endregion
 
     #region PlayingSoundItem

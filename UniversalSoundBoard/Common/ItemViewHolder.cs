@@ -146,9 +146,6 @@ namespace UniversalSoundboard.Common
         public event EventHandler<TableObjectFileDownloadProgressChangedEventArgs> TableObjectFileDownloadProgressChanged;  // Is triggered when the file of a TableObject is being downloaded and the progress changed
         public event EventHandler<TableObjectFileDownloadCompletedEventArgs> TableObjectFileDownloadCompleted;  // Is triggered from TriggerAction when the file of a TableObject was finished
         public event EventHandler<ShowInAppNotificationEventArgs> ShowInAppNotification;                        // Trigger this event to show the InAppNotification on the SoundPage
-        public event EventHandler<SetInAppNotificationMessageEventArgs> SetInAppNotificationMessage;            // Trigger this event to set the message of the currently visible InAppNotification
-        public event EventHandler<SetInAppNotificationProgressEventArgs> SetInAppNotificationProgress;          // Trigger this event to set the progress of the progress ring of the currently visible InAppNotification
-        public event EventHandler<DismissInAppNotificationEventArgs> DismissInAppNotification;                  // Trigger this event to dismiss the InAppNotification if it is currently visible
         #endregion
 
         #region Local variables
@@ -1141,41 +1138,6 @@ namespace UniversalSoundboard.Common
 
             FileManager.InAppNotificationItems.Add(newIanItem);
             ShowInAppNotification?.Invoke(sender, args);
-        }
-
-        public void TriggerSetInAppNotificationMessageEvent(object sender, SetInAppNotificationMessageEventArgs args)
-        {
-            var ianItem = FileManager.InAppNotificationItems.Find(item => item.InAppNotificationType == args.Type);
-            if (ianItem == null) return;
-
-            ianItem.MessageTextBlock.Text = args.Message;
-        }
-
-        public void TriggerSetInAppNotificationProgressEvent(object sender, SetInAppNotificationProgressEventArgs args)
-        {
-            var ianItem = FileManager.InAppNotificationItems.Find(item => item.InAppNotificationType == args.Type);
-            if (ianItem == null) return;
-
-            if (args.IsIndeterminate)
-                ianItem.ProgressRing.IsIndeterminate = true;
-            else
-            {
-                ianItem.ProgressRing.IsIndeterminate = false;
-
-                int progress = args.Progress;
-                if (progress > 100) progress = 100;
-                else if (progress < 0) progress = 0;
-
-                ianItem.ProgressRing.Value = progress;
-            }
-        }
-
-        public void TriggerDismissInAppNotificationEvent(object sender, DismissInAppNotificationEventArgs args)
-        {
-            var ianItem = FileManager.InAppNotificationItems.Find(item => item.InAppNotificationType == args.Type);
-            if (ianItem == null) return;
-
-            ianItem.InAppNotification.Dismiss();
         }
         #endregion
 

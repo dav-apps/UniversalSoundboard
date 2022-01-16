@@ -373,13 +373,13 @@ namespace UniversalSoundboard.DataAccess
             var progress = new Progress<int>((int value) =>
             {
                 itemViewHolder.ExportMessage = value + " %";
-                itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(InAppNotificationType.Export, false, value));
+                SetInAppNotificationProgress(InAppNotificationType.Export, false, value);
             });
 
             await DatabaseOperations.ExportDataAsync(exportFolder, progress);
 
             itemViewHolder.ExportMessage = loader.GetString("ExportMessage-3");
-            itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(InAppNotificationType.Export));
+            SetInAppNotificationProgress(InAppNotificationType.Export);
 
             // Create the zip file
             StorageFile zipFile = await Task.Run(async () =>
@@ -458,7 +458,7 @@ namespace UniversalSoundboard.DataAccess
             Progress<int> progress = new Progress<int>((int value) =>
             {
                 SetImportMessage(string.Format("{0} %", value), startMessage);
-                itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(InAppNotificationType.Import, false, value));
+                SetInAppNotificationProgress(InAppNotificationType.Import, false, value);
             });
 
             switch (dataModel)
@@ -475,7 +475,7 @@ namespace UniversalSoundboard.DataAccess
             }
 
             SetImportMessage(loader.GetString("ExportImportMessage-TidyUp"), startMessage);     // TidyUp
-            itemViewHolder.TriggerSetInAppNotificationProgressEvent(null, new SetInAppNotificationProgressEventArgs(InAppNotificationType.Import));
+            SetInAppNotificationProgress(InAppNotificationType.Import);
             itemViewHolder.Importing = false;
 
             await ClearImportCacheAsync();
@@ -2977,6 +2977,42 @@ namespace UniversalSoundboard.DataAccess
 
                 CustomSoundOrder[categoryUuid] = uuids;
             }
+        }
+        #endregion
+
+        #region InAppNotification methods
+        public static void SetInAppNotificationMessage(InAppNotificationType type, string message)
+        {
+            var ianItem = InAppNotificationItems.Find(item => item.InAppNotificationType == type);
+            if (ianItem == null) return;
+
+            ianItem.MessageTextBlock.Text = message;
+        }
+
+        public static void SetInAppNotificationProgress(InAppNotificationType type, bool isIndeterminate = true, int progress = 0)
+        {
+            var ianItem = InAppNotificationItems.Find(item => item.InAppNotificationType == type);
+            if (ianItem == null) return;
+
+            if (isIndeterminate)
+                ianItem.ProgressRing.IsIndeterminate = true;
+            else
+            {
+                ianItem.ProgressRing.IsIndeterminate = false;
+
+                if (progress > 100) progress = 100;
+                else if (progress < 0) progress = 0;
+
+                ianItem.ProgressRing.Value = progress;
+            }
+        }
+
+        public static void DismissInAppNotification(InAppNotificationType type)
+        {
+            var ianItem = InAppNotificationItems.Find(item => item.InAppNotificationType == type);
+            if (ianItem == null) return;
+
+            ianItem.InAppNotification.Dismiss();
         }
         #endregion
 
