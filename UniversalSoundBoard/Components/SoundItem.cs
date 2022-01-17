@@ -160,7 +160,7 @@ namespace UniversalSoundboard.Components
 
                 // Show InAppNotification
                 ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
-                    FileManager.InAppNotificationType.Export,
+                    FileManager.InAppNotificationType.SoundExport,
                     loader.GetString("InAppNotification-SoundExportSuccessful"),
                     8000,
                     false,

@@ -301,12 +301,16 @@ namespace UniversalSoundboard.Pages
 
         private void ItemViewHolder_ShowInAppNotification(object sender, ShowInAppNotificationEventArgs args)
         {
+            bool isSmallWindow = Window.Current.Bounds.Width < FileManager.mobileMaxWidth;
+
             foreach(var ianItem in FileManager.InAppNotificationItems)
             {
                 if (ianItem.Sent) continue;
 
                 // Calculate the bottom margin
                 double marginBottom = 10;
+                if (!FileManager.itemViewHolder.OpenMultipleSounds && FileManager.itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 70;
+                else if (isSmallWindow && FileManager.itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 57;
 
                 foreach (var item in FileManager.InAppNotificationItems)
                 {
@@ -315,7 +319,7 @@ namespace UniversalSoundboard.Pages
                 }
 
                 ianItem.InAppNotification.Margin = new Thickness(20, 0, 20, marginBottom);
-
+                
                 ContentGrid.Children.Add(ianItem.InAppNotification);
 
                 ianItem.InAppNotification.Show(ianItem.Duration);
@@ -610,6 +614,8 @@ namespace UniversalSoundboard.Pages
         public void ShowAllInAppNotifications()
         {
             double marginBottom = 10;
+            if (!FileManager.itemViewHolder.OpenMultipleSounds && FileManager.itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 70;
+            else if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth && FileManager.itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 57;
 
             foreach (var item in FileManager.InAppNotificationItems)
             {

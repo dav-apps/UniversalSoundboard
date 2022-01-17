@@ -49,6 +49,7 @@ namespace UniversalSoundboard.Pages
         int titleTruncatedChars = 0;                                        // The number of characters the title was truncated
         bool mobileSearchVisible = false;                                   // If true, the app window is small, the search box is visible and the other top buttons are hidden
         bool playingSoundsLoaded = false;
+        public static double windowWidth = 500;
         public static Style buttonRevealStyle;
         public static DataTemplate hotkeyButtonTemplate;
 
@@ -62,6 +63,7 @@ namespace UniversalSoundboard.Pages
 
             SystemNavigationManager.GetForCurrentView().BackRequested += MainPage_BackRequested;
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
+            FileManager.itemViewHolder.PlayingSounds.CollectionChanged += PlayingSounds_CollectionChanged;
             FileManager.itemViewHolder.PlayingSoundsLoaded += ItemViewHolder_PlayingSoundsLoaded;
             FileManager.itemViewHolder.CategoriesLoaded += ItemViewHolder_CategoriesLoaded;
             FileManager.itemViewHolder.UserSyncFinished += ItemViewHolder_UserSyncFinished;
@@ -108,7 +110,10 @@ namespace UniversalSoundboard.Pages
 
         private async void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            windowWidth = Window.Current.Bounds.Width;
+
             AdjustLayout();
+            FileManager.UpdateInAppNotificationPositions();
 
             if(initizalized)
                 await TruncateTitleAsync();
@@ -151,6 +156,11 @@ namespace UniversalSoundboard.Pages
                     UpdateTopButtonVisibilityForMobileSearch();
                     break;
             }
+        }
+
+        private void PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            FileManager.UpdateInAppNotificationPositions();
         }
 
         private void ItemViewHolder_PlayingSoundsLoaded(object sender, EventArgs e)

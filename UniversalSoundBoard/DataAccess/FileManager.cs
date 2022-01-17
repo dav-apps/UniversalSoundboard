@@ -3053,17 +3053,24 @@ namespace UniversalSoundboard.DataAccess
                 if (e.DismissKind != InAppNotificationDismissKind.Programmatic)
                     InAppNotificationItems.Remove(inAppNotificationItem);
 
-                // Update the position of each InAppNotifications
-                double marginBottom = 10;
-
-                foreach (var ianItem in InAppNotificationItems)
-                {
-                    ianItem.InAppNotification.Margin = new Thickness(20, 0, 20, marginBottom);
-                    marginBottom = marginBottom + 10 + ianItem.MessageTextBlock.ActualHeight;
-                }
+                // Update the position of each InAppNotification
+                UpdateInAppNotificationPositions();
             };
 
             return inAppNotificationItem;
+        }
+
+        public static void UpdateInAppNotificationPositions()
+        {
+            double marginBottom = 10;
+            if (!itemViewHolder.OpenMultipleSounds && itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 70;
+            else if (MainPage.windowWidth < mobileMaxWidth && itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 57;
+
+            foreach (var ianItem in InAppNotificationItems)
+            {
+                ianItem.InAppNotification.Margin = new Thickness(20, 0, 20, marginBottom);
+                marginBottom = marginBottom + 10 + ianItem.MessageTextBlock.ActualHeight;
+            }
         }
 
         public static void SetInAppNotificationMessage(InAppNotificationType type, string message)
