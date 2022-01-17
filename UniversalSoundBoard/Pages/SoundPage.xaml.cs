@@ -1,5 +1,4 @@
 ﻿using Microsoft.Toolkit.Uwp.UI;
-using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -606,89 +605,6 @@ namespace UniversalSoundboard.Pages
             }
 
             PlayLocalSound(file);
-        }
-
-        public static InAppNotificationItem CreateInAppNotificationItem(ShowInAppNotificationEventArgs args)
-        {
-            InAppNotification inAppNotification = new InAppNotification
-            {
-                ShowDismissButton = args.Dismissable
-            };
-
-            Grid rootGrid = new Grid();
-            rootGrid.RowDefinitions.Add(new RowDefinition { Height = GridLength.Auto });
-            rootGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-            rootGrid.ColumnDefinitions.Add(new ColumnDefinition());
-            rootGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = GridLength.Auto });
-
-            WinUI.ProgressRing progressRing = new WinUI.ProgressRing
-            {
-                Width = 20,
-                Height = 20,
-                Margin = new Thickness(0, 0, 10, 0),
-                Visibility = args.ShowProgressRing ? Visibility.Visible : Visibility.Collapsed
-            };
-
-            TextBlock messageTextBlock = new TextBlock
-            {
-                Text = args.Message,
-                VerticalAlignment = VerticalAlignment.Center,
-                TextWrapping = TextWrapping.WrapWholeWords
-            };
-            Grid.SetColumn(messageTextBlock, 1);
-
-            StackPanel buttonStackPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                VerticalAlignment = VerticalAlignment.Center
-            };
-            Grid.SetColumn(buttonStackPanel, 2);
-
-            Button primaryButton = new Button
-            {
-                Content = args.PrimaryButtonText ?? "",
-                Height = 32,
-                Visibility = args.PrimaryButtonText != null ? Visibility.Visible : Visibility.Collapsed
-            };
-
-            Button secondaryButton = new Button
-            {
-                Content = args.SecondaryButtonText ?? "",
-                Height = 32,
-                Margin = new Thickness(10, 0, 0, 0),
-                Visibility = args.SecondaryButtonText != null ? Visibility.Visible : Visibility.Collapsed
-            };
-
-            primaryButton.Click += (object s, RoutedEventArgs e) => args.TriggerPrimaryButtonClickEvent(s, e);
-            secondaryButton.Click += (object s, RoutedEventArgs e) => args.TriggerSecondaryButtonClickEvent(s, e);
-
-            buttonStackPanel.Children.Add(primaryButton);
-            buttonStackPanel.Children.Add(secondaryButton);
-
-            rootGrid.Children.Add(progressRing);
-            rootGrid.Children.Add(messageTextBlock);
-            rootGrid.Children.Add(buttonStackPanel);
-
-            inAppNotification.Content = rootGrid;
-
-            var inAppNotificationItem = new InAppNotificationItem(inAppNotification, args.Type, args.Duration, progressRing, messageTextBlock, primaryButton, secondaryButton);
-
-            inAppNotification.Closed += (object sender, InAppNotificationClosedEventArgs e) =>
-            {
-                if (e.DismissKind != InAppNotificationDismissKind.Programmatic)
-                    FileManager.InAppNotificationItems.Remove(inAppNotificationItem);
-
-                // Update the position of each InAppNotifications
-                double marginBottom = 10;
-
-                foreach (var ianItem in FileManager.InAppNotificationItems)
-                {
-                    ianItem.InAppNotification.Margin = new Thickness(20, 0, 20, marginBottom);
-                    marginBottom = marginBottom + 10 + ianItem.MessageTextBlock.ActualHeight;
-                }
-            };
-
-            return inAppNotificationItem;
         }
 
         public void ShowAllInAppNotifications()

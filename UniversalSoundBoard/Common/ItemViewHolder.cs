@@ -1128,7 +1128,7 @@ namespace UniversalSoundboard.Common
         public void TriggerShowInAppNotificationEvent(object sender, ShowInAppNotificationEventArgs args)
         {
             var ianItem = FileManager.InAppNotificationItems.Find(item => item.InAppNotificationType == args.Type);
-            var newIanItem = SoundPage.CreateInAppNotificationItem(args);
+            var newIanItem = FileManager.CreateInAppNotificationItem(args);
 
             if (ianItem != null)
             {
