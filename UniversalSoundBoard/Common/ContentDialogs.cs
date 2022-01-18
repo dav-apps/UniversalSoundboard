@@ -757,9 +757,19 @@ namespace UniversalSoundboard.Common
 
             containerStackPanel.Children.Add(descriptionTextBlock);
 
+            ScrollViewer scrollViewer = new ScrollViewer
+            {
+                MaxHeight = 300
+            };
+
+            StackPanel scrollViewerContainerStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
             foreach (var soundItem in soundsList)
             {
-                containerStackPanel.Children.Add(
+                scrollViewerContainerStackPanel.Children.Add(
                     new HyperlinkButton
                     {
                         Content = soundItem.Key != null ? soundItem.Key : soundItem.Value,
@@ -767,6 +777,9 @@ namespace UniversalSoundboard.Common
                     }
                 );
             }
+
+            scrollViewer.Content = scrollViewerContainerStackPanel;
+            containerStackPanel.Children.Add(scrollViewer);
 
             DownloadSoundsErrorContentDialog.Content = containerStackPanel;
             return DownloadSoundsErrorContentDialog;

@@ -1227,7 +1227,7 @@ namespace UniversalSoundboard.Pages
             if (!audioFileDownloadResult)
             {
                 // Wait a few seconds and try it again
-                await Task.Delay(10000);
+                await Task.Delay(15000);
 
                 await Task.Run(async () =>
                 {
@@ -1397,7 +1397,7 @@ namespace UniversalSoundboard.Pages
                 if (!audioFileDownloadResult)
                 {
                     // Wait a few seconds and try it again
-                    await Task.Delay(10000);
+                    await Task.Delay(15000);
 
                     await Task.Run(async () =>
                     {
