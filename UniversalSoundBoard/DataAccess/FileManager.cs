@@ -254,75 +254,11 @@ namespace UniversalSoundboard.DataAccess
         #endregion
 
         #region Filesystem methods
-        private async static Task<StorageFolder> GetImportFolderAsync()
-        {
-            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-
-            if (await cacheFolder.TryGetItemAsync(ImportFolderName) == null)
-                return await cacheFolder.CreateFolderAsync(ImportFolderName);
-            else
-                return await cacheFolder.GetFolderAsync(ImportFolderName);
-        }
-
-        private static async Task<StorageFolder> GetExportFolderAsync()
-        {
-            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-
-            if (await cacheFolder.TryGetItemAsync(ExportFolderName) == null)
-                return await cacheFolder.CreateFolderAsync(ExportFolderName);
-            else
-                return await cacheFolder.GetFolderAsync(ExportFolderName);
-        }
-
-        private static async Task<StorageFolder> GetTileFolderAsync()
-        {
-            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-
-            if (await cacheFolder.TryGetItemAsync(TileFolderName) == null)
-                return await cacheFolder.CreateFolderAsync(TileFolderName);
-            else
-                return await cacheFolder.GetFolderAsync(TileFolderName);
-        }
-
         public static string GetDavDataPath()
         {
             string path = Path.Combine(ApplicationData.Current.LocalFolder.Path, "dav");
             Directory.CreateDirectory(path);
             return path;
-        }
-
-        private static async Task ClearImportCacheAsync()
-        {
-            if (itemViewHolder.Importing) return;
-
-            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-
-            // Delete the import folder
-            var importFolder = await cacheFolder.TryGetItemAsync(ImportFolderName);
-            if (importFolder != null)
-                await importFolder.DeleteAsync();
-
-            // Delete the import zip file
-            var importZipFile = await cacheFolder.TryGetItemAsync(ImportZipFileName);
-            if (importZipFile != null)
-                await importZipFile.DeleteAsync();
-        }
-
-        private static async Task ClearExportCacheAsync()
-        {
-            if (itemViewHolder.Exporting) return;
-
-            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-
-            // Delete the export folder
-            var exportFolder = await cacheFolder.TryGetItemAsync(ExportFolderName);
-            if (exportFolder != null)
-                await exportFolder.DeleteAsync();
-
-            // Delete the export zip file
-            var exportZipFile = await cacheFolder.TryGetItemAsync(ExportZipFileName);
-            if (exportZipFile != null)
-                await exportZipFile.DeleteAsync();
         }
 
         private static async Task<DataModel> GetDataModelAsync(StorageFolder root)
@@ -365,13 +301,12 @@ namespace UniversalSoundboard.DataAccess
                 )
             );
 
-            await ClearExportCacheAsync();
-
             itemViewHolder.Exporting = true;
             itemViewHolder.ExportAndImportButtonsEnabled = false;
 
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
-            StorageFolder exportFolder = await GetExportFolderAsync();
+            StorageFolder exportFolder = await localCacheFolder.CreateFolderAsync(ExportFolderName, CreationCollisionOption.GenerateUniqueName);
+
             var progress = new Progress<int>((int value) =>
             {
                 itemViewHolder.ExportMessage = value + " %";
@@ -386,9 +321,10 @@ namespace UniversalSoundboard.DataAccess
             // Create the zip file
             StorageFile zipFile = await Task.Run(async () =>
             {
-                string exportFilePath = Path.Combine(localCacheFolder.Path, "export.zip");
-                ZipFile.CreateFromDirectory(exportFolder.Path, exportFilePath);
-                return await StorageFile.GetFileFromPathAsync(exportFilePath);
+                StorageFile file = await localCacheFolder.CreateFileAsync(ExportZipFileName, CreationCollisionOption.GenerateUniqueName);
+                await file.DeleteAsync();
+                ZipFile.CreateFromDirectory(exportFolder.Path, file.Path);
+                return file;
             });
 
             itemViewHolder.ExportMessage = loader.GetString("ExportMessage-4");
@@ -399,7 +335,8 @@ namespace UniversalSoundboard.DataAccess
             itemViewHolder.ExportMessage = loader.GetString("ExportImportMessage-TidyUp");
             itemViewHolder.Exporting = false;
 
-            await ClearExportCacheAsync();
+            // Delete the files in the cache
+            await exportFolder.DeleteAsync();
 
             itemViewHolder.ExportMessage = "";
             itemViewHolder.ExportAndImportButtonsEnabled = true;
@@ -439,19 +376,16 @@ namespace UniversalSoundboard.DataAccess
                 );
             }
 
-            await ClearImportCacheAsync();
-
             // Extract the file into the local cache folder
             itemViewHolder.Importing = true;
             itemViewHolder.ExportAndImportButtonsEnabled = false;
 
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
-            StorageFolder importFolder = await GetImportFolderAsync();
+            StorageFolder importFolder = await localCacheFolder.CreateFolderAsync(ImportFolderName, CreationCollisionOption.GenerateUniqueName);
+            StorageFile newZipFile = await zipFile.CopyAsync(localCacheFolder, ImportZipFileName, NameCollisionOption.ReplaceExisting);
 
-            await Task.Run(async () =>
+            await Task.Run(() =>
             {
-                StorageFile newZipFile = await zipFile.CopyAsync(localCacheFolder, ImportZipFileName, NameCollisionOption.ReplaceExisting);
-
                 // Extract the zip file
                 ZipFile.ExtractToDirectory(newZipFile.Path, importFolder.Path);
             });
@@ -480,7 +414,9 @@ namespace UniversalSoundboard.DataAccess
             SetInAppNotificationProgress(InAppNotificationType.Import);
             itemViewHolder.Importing = false;
 
-            await ClearImportCacheAsync();
+            // Delete the files in the cache
+            await newZipFile.DeleteAsync();
+            await importFolder.DeleteAsync();
 
             SetImportMessage("", startMessage);
             itemViewHolder.AllSoundsChanged = true;
@@ -741,9 +677,8 @@ namespace UniversalSoundboard.DataAccess
 
             if (saveAsZip)
             {
-                await ClearExportCacheAsync();
                 StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
-                StorageFolder exportFolder = await GetExportFolderAsync();
+                StorageFolder exportFolder = await localCacheFolder.CreateFolderAsync(ExportFolderName, CreationCollisionOption.GenerateUniqueName);
 
                 // Copy the selected files into the export folder
                 foreach (var sound in sounds)
@@ -752,14 +687,17 @@ namespace UniversalSoundboard.DataAccess
                 // Create the zip file from the export folder
                 StorageFile zipFile = await Task.Run(async () =>
                 {
-                    string exportFilePath = Path.Combine(localCacheFolder.Path, ExportZipFileName);
-                    ZipFile.CreateFromDirectory(exportFolder.Path, exportFilePath);
-                    return await StorageFile.GetFileFromPathAsync(exportFilePath);
+                    StorageFile file = await localCacheFolder.CreateFileAsync(ExportZipFileName, CreationCollisionOption.GenerateUniqueName);
+                    await file.DeleteAsync();
+                    ZipFile.CreateFromDirectory(exportFolder.Path, file.Path);
+                    return file;
                 });
 
                 // Move the zip file into the destination folder
                 await zipFile.MoveAsync(destinationFolder, string.Format("UniversalSoundboard {0}.zip", DateTime.Today.ToString("dd.MM.yyyy")), NameCollisionOption.GenerateUniqueName);
-                await ClearExportCacheAsync();
+
+                // Delete the files in the cache
+                await exportFolder.DeleteAsync();
             }
             else
             {
