@@ -930,13 +930,13 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
     <value>Dieser Sound ist eine lokale Datei, die nicht zu deinem Soundboard gehört.</value>
   </data>
   <data name="SettingsEntry-CreateIssueButton.Content" xml:space="preserve">
-    <value>Erstelle ein Issue auf GitHub</value>
+    <value>Ein Issue auf GitHub erstellen</value>
   </data>
   <data name="SettingsEntry-FeedbackHeader.Text" xml:space="preserve">
     <value>Du hast einen Fehler gefunden oder Ideen für neue Funktionen?</value>
   </data>
   <data name="SettingsEntry-ReviewButton.Content" xml:space="preserve">
-    <value>Schreibe eine Bewertung</value>
+    <value>Bewertung schreiben</value>
   </data>
   <data name="SettingsEntry-ReviewHeader.Text" xml:space="preserve">
     <value>Dir gefällt UniversalSoundboard?</value>

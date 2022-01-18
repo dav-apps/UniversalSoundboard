@@ -938,7 +938,7 @@ Log in and upgrade your plan to use this feature.</value>
     <value>Found a bug or have a feature request?</value>
   </data>
   <data name="SettingsEntry-ReviewButton.Content" xml:space="preserve">
-    <value>Leave a review</value>
+    <value>Write a review</value>
   </data>
   <data name="SettingsEntry-ReviewHeader.Text" xml:space="preserve">
     <value>Do you like UniversalSoundboard?</value>
