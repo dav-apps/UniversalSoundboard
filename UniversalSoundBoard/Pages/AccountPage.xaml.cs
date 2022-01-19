@@ -129,6 +129,21 @@ namespace UniversalSoundboard.Pages
 
                 // Log the user in with the access token
                 Dav.Login(accessToken);
+
+                // Show InAppNotification for sync
+                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                    null,
+                    new ShowInAppNotificationEventArgs(
+                        FileManager.InAppNotificationType.Sync,
+                        new ResourceLoader().GetString("InAppNotification-Sync"),
+                        0,
+                        true
+                    )
+                );
+
+                if (FileManager.itemViewHolder.AllSounds.Count == 0)
+                    FileManager.itemViewHolder.AppState = FileManager.AppState.InitialSync;
+
                 return true;
             }
             catch { }

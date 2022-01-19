@@ -854,22 +854,6 @@ namespace UniversalSoundboard.Pages
         {
             bool loginResult = await AccountPage.ShowLoginPage();
             if (!loginResult) return;
-
-            // Disable the start message buttons
-            FileManager.itemViewHolder.AppState = FileManager.AppState.InitialSync;
-            startMessageButtonsEnabled = false;
-            Bindings.Update();
-
-            // Show InAppNotification for sync
-            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
-                this,
-                new ShowInAppNotificationEventArgs(
-                    FileManager.InAppNotificationType.Sync,
-                    loader.GetString("InAppNotification-Sync"),
-                    0,
-                    true
-                )
-            );
         }
 
         private async void StartMessageImportButton_Click(object sender, RoutedEventArgs e)

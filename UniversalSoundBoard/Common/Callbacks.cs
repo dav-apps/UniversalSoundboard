@@ -2,6 +2,7 @@
 using davClassLibrary.Models;
 using System;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.Core;
 using Windows.UI.Core;
 
@@ -9,16 +10,30 @@ namespace UniversalSoundboard.Common
 {
     public class Callbacks : ICallbacks
     {
-        public async void UpdateAllOfTable(int tableId, bool changed)
+        public async void UpdateAllOfTable(int tableId, bool changed, bool complete)
         {
             if (!changed) return;
             CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
             if (tableId == FileManager.SoundTableId)
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.AddAllSounds());
-            else if (tableId == FileManager.CategoryTableId)
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
+                {
+                    if (FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync)
+                        FileManager.itemViewHolder.AppState = FileManager.AppState.Loading;
+
+                    FileManager.itemViewHolder.AllSoundsChanged = true;
+
+                    if (FileManager.itemViewHolder.Page == typeof(SoundPage))
+                    {
+                        if (FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty))
+                            await FileManager.ShowAllSoundsAsync();
+                        else
+                            await FileManager.ShowCategoryAsync(FileManager.itemViewHolder.SelectedCategory);
+                    }
+                });
+            else if (tableId == FileManager.CategoryTableId && complete)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.LoadCategoriesAsync());
-            else if (tableId == FileManager.PlayingSoundTableId)
+            else if (tableId == FileManager.PlayingSoundTableId && complete)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.LoadPlayingSoundsAsync());
         }
 
@@ -27,16 +42,12 @@ namespace UniversalSoundboard.Common
             CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
             if (tableObject.TableId == FileManager.SoundTableId)
-                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
-                {
-                    bool result = await FileManager.ReloadSound(tableObject.Uuid);
-                    if (!result) await FileManager.AddSound(tableObject.Uuid);
-                });
-            else if(tableObject.TableId == FileManager.CategoryTableId)
+                await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadSound(tableObject.Uuid));
+            else if (tableObject.TableId == FileManager.CategoryTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadCategory(tableObject.Uuid));
-            else if(tableObject.TableId == FileManager.PlayingSoundTableId)
+            else if (tableObject.TableId == FileManager.PlayingSoundTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadPlayingSoundAsync(tableObject.Uuid));
-            else if(
+            else if (
                 fileDownloaded
                 && (
                     tableObject.TableId == FileManager.SoundFileTableId
@@ -88,12 +99,10 @@ namespace UniversalSoundboard.Common
         public void SyncFinished()
         {
             FileManager.syncFinished = true;
+            FileManager.DismissInAppNotification(FileManager.InAppNotificationType.Sync);
 
             if (FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync)
-            {
                 FileManager.itemViewHolder.AppState = FileManager.itemViewHolder.AllSounds.Count > 0 ? FileManager.AppState.Normal : FileManager.AppState.Empty;
-                FileManager.DismissInAppNotification(FileManager.InAppNotificationType.Sync);
-            }
         }
     }
 }

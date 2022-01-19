@@ -1078,13 +1078,6 @@ namespace UniversalSoundboard.DataAccess
             }
         }
 
-        public static async Task AddAllSounds()
-        {
-            var allSoundTableObjects = await DatabaseOperations.GetAllSoundsAsync();
-            foreach(var soundTableObject in allSoundTableObjects)
-                AddSound(await GetSoundAsync(soundTableObject));
-        }
-
         /**
          * Adds the sound to all appropriate sound lists
          */
@@ -3042,6 +3035,7 @@ namespace UniversalSoundboard.DataAccess
             var ianItem = InAppNotificationItems.Find(item => item.InAppNotificationType == type);
             if (ianItem == null) return;
 
+            InAppNotificationItems.Remove(ianItem);
             ianItem.InAppNotification.Dismiss();
         }
         #endregion
