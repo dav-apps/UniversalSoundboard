@@ -58,18 +58,19 @@ namespace UniversalSoundboard.Common
 
         #region Variables
         #region State
-        private FileManager.AppState _appState;                             // The current state of the app
-        private string _title;                                              // The title text
-        private Type _page;                                                 // The current page
-        private string _searchQuery;                                        // The string entered into the search box
-        private bool _allSoundsChanged;                                     // If there was made change to one or multiple sounds so that a reload of the sounds is required
-        private Guid _selectedCategory;                                     // The index of the currently selected category in the category list
-        private bool _exporting;                                            // If true the soundboard is currently being exported
-        private bool _importing;                                            // If true a soundboard is currently being imported
-        private string _exportMessage;                                      // The text describing the status of the export
-        private string _importMessage;                                      // The text describing the status of the import
-        private ulong _soundboardSize;                                      // The size of the entire soundboard in byte
-        private Guid _activePlayingSound;                                   // The PlayingSound that was last activated and is currently visible in SystemMediaTransportControls
+        private FileManager.AppState _appState;     // The current state of the app
+        private string _title;                      // The title text
+        private Type _page;                         // The current page
+        private string _searchQuery;                // The string entered into the search box
+        private bool _allSoundsChanged;             // If there was made change to one or multiple sounds so that a reload of the sounds is required
+        private Guid _selectedCategory;             // The index of the currently selected category in the category list
+        private bool _exporting;                    // If true the soundboard is currently being exported
+        private bool _importing;                    // If true a soundboard is currently being imported
+        private string _exportMessage;              // The text describing the status of the export
+        private string _importMessage;              // The text describing the status of the import
+        private ulong _soundboardSize;              // The size of the entire soundboard in byte
+        private Guid _activePlayingSound;           // The PlayingSound that was last activated and is currently visible in SystemMediaTransportControls
+        private bool _addSoundsDisabled;            // If true, all buttons for adding or downloading sounds are disabled
         #endregion
 
         #region Lists
@@ -172,6 +173,7 @@ namespace UniversalSoundboard.Common
             _importMessage = "";
             _soundboardSize = 0;
             _activePlayingSound = Guid.Empty;
+            _addSoundsDisabled = false;
             #endregion
 
             #region Lists
@@ -522,6 +524,20 @@ namespace UniversalSoundboard.Common
                 if (_activePlayingSound.Equals(value)) return;
                 _activePlayingSound = value;
                 NotifyPropertyChanged(ActivePlayingSoundKey);
+            }
+        }
+        #endregion
+
+        #region AddSoundsDisabled
+        public const string AddSoundsDisabledKey = "AddSoundsDisabled";
+        public bool AddSoundsDisabled
+        {
+            get => _addSoundsDisabled;
+            set
+            {
+                if (_addSoundsDisabled.Equals(value)) return;
+                _addSoundsDisabled = value;
+                NotifyPropertyChanged(AddSoundsDisabledKey);
             }
         }
         #endregion

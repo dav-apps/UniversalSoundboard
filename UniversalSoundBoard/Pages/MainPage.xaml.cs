@@ -1209,8 +1209,7 @@ namespace UniversalSoundboard.Pages
             );
 
             // Disable the ability to add or download sounds
-            NewSoundFlyoutItem.IsEnabled = false;
-            DownloadSoundsFlyoutItem.IsEnabled = false;
+            FileManager.itemViewHolder.AddSoundsDisabled = true;
 
             var mediaResources = grabResult.Resources<GrabbedMedia>();
             var imageResources = grabResult.Resources<GrabbedImage>();
@@ -1283,8 +1282,7 @@ namespace UniversalSoundboard.Pages
                 )
             );
 
-            NewSoundFlyoutItem.IsEnabled = true;
-            DownloadSoundsFlyoutItem.IsEnabled = true;
+            FileManager.itemViewHolder.AddSoundsDisabled = false;
         }
 
         public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload()
@@ -1292,8 +1290,7 @@ namespace UniversalSoundboard.Pages
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
 
             // Disable the ability to add or download sounds
-            NewSoundFlyoutItem.IsEnabled = false;
-            DownloadSoundsFlyoutItem.IsEnabled = false;
+            FileManager.itemViewHolder.AddSoundsDisabled = true;
 
             var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
             List<KeyValuePair<string, string>> notDownloadedSounds = new List<KeyValuePair<string, string>>();
@@ -1492,8 +1489,7 @@ namespace UniversalSoundboard.Pages
                 );
             }
 
-            NewSoundFlyoutItem.IsEnabled = true;
-            DownloadSoundsFlyoutItem.IsEnabled = true;
+            FileManager.itemViewHolder.AddSoundsDisabled = false;
         }
 
         private GrabbedMedia FindBestAudioOfYoutubeVideo(IEnumerable<GrabbedMedia> mediaResources)
@@ -1593,8 +1589,7 @@ namespace UniversalSoundboard.Pages
         public async Task DownloadSoundsContentDialog_AudioFileDownload()
         {
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
-            NewSoundFlyoutItem.IsEnabled = false;
-            DownloadSoundsFlyoutItem.IsEnabled = false;
+            FileManager.itemViewHolder.AddSoundsDisabled = true;
 
             // Show InAppNotification
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
@@ -1653,14 +1648,12 @@ namespace UniversalSoundboard.Pages
                 )
             );
 
-            NewSoundFlyoutItem.IsEnabled = true;
-            DownloadSoundsFlyoutItem.IsEnabled = true;
+            FileManager.itemViewHolder.AddSoundsDisabled = false;
         }
 
         public void ShowDownloadSoundErrorInAppNotification()
         {
-            NewSoundFlyoutItem.IsEnabled = true;
-            DownloadSoundsFlyoutItem.IsEnabled = true;
+            FileManager.itemViewHolder.AddSoundsDisabled = false;
 
             var inAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
                 FileManager.InAppNotificationType.DownloadSound,

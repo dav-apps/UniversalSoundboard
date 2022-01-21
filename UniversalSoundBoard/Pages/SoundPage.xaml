@@ -437,7 +437,8 @@
                         Style="{StaticResource StartMessageButtonStyle}"
                         RelativePanel.Below="EmptyCategoryMessageTitleTextBlock"
                         RelativePanel.AlignHorizontalCenterWithPanel="True"
-                        Margin="0,25,0,0">
+                        Margin="0,25,0,0"
+                        IsEnabled="{Binding AddSoundsDisabled, Converter={StaticResource InvertBooleanConverter}}">
 
                         <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
                             <TextBlock

@@ -242,15 +242,17 @@
                                         <Button.Flyout>
                                             <MenuFlyout Placement="Bottom">
                                                 <MenuFlyoutItem
-                                                    Name="NewSoundFlyoutItem" 
+                                                    Name="NewSoundFlyoutItem"
                                                     x:Uid="AddButton-Sound"
+                                                    IsEnabled="{Binding AddSoundsDisabled, Converter={StaticResource InvertBooleanConverter}}"
                                                     Click="NewSoundFlyoutItem_Click" />
                                                 <MenuFlyoutItem
                                                     Name="DownloadSoundsFlyoutItem"
                                                     x:Uid="AddButton-Download"
+                                                    IsEnabled="{Binding AddSoundsDisabled, Converter={StaticResource InvertBooleanConverter}}"
                                                     Click="DownloadSoundsFlyoutItem_Click" />
                                                 <MenuFlyoutItem
-                                                    Name="NewCategoryFlyoutItem" 
+                                                    Name="NewCategoryFlyoutItem"
                                                     x:Uid="AddButton-Category"
                                                     Click="NewCategoryFlyoutItem_Click" />
                                             </MenuFlyout>
