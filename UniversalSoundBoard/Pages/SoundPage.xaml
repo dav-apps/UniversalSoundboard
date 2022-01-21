@@ -295,10 +295,8 @@
                 AllowDrop="True"
                 DragOver="SoundContentGrid_DragOver"
                 Drop="SoundContentGrid_Drop">
-            
-                <RelativePanel
-                    Margin="0,110,0,25">
 
+                <RelativePanel Margin="0,110,0,25">
                     <Image
                         Name="LogoImage"
                         RelativePanel.AlignHorizontalCenterWithPanel="True"
@@ -318,8 +316,7 @@
                         RelativePanel.Below="StartMessageTitleTextBlock"
                         RelativePanel.AlignHorizontalCenterWithPanel="True"
                         Margin="0,25,0,0"
-                        IsEnabled="{x:Bind startMessageButtonsEnabled}"
-                        Click="StartMessageAddFirstSoundButton_Click">
+                        IsEnabled="{x:Bind startMessageButtonsEnabled}">
 
                         <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
                             <TextBlock
@@ -333,6 +330,19 @@
                                 FontSize="18"
                                 Margin="15,-3,0,0"/>
                         </StackPanel>
+
+                        <Button.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem
+                                    Name="StartMessageNewSoundFlyoutItem"
+                                    x:Uid="AddButton-Sound"
+                                    Click="StartMessageNewSoundFlyoutItem_Click" />
+                                <MenuFlyoutItem
+                                    Name="StartMessageDownloadSoundsFlyoutItem"
+                                    x:Uid="AddButton-Download"
+                                    Click="StartMessageDownloadSoundsFlyoutItem_Click" />
+                            </MenuFlyout>
+                        </Button.Flyout>
                     </Button>
 
                     <TextBlock
@@ -427,8 +437,7 @@
                         Style="{StaticResource StartMessageButtonStyle}"
                         RelativePanel.Below="EmptyCategoryMessageTitleTextBlock"
                         RelativePanel.AlignHorizontalCenterWithPanel="True"
-                        Margin="0,25,0,0"
-                        Click="StartMessageAddFirstSoundButton_Click">
+                        Margin="0,25,0,0">
 
                         <StackPanel Orientation="Horizontal" Margin="4,2,4,0">
                             <TextBlock
@@ -442,6 +451,19 @@
                                 FontSize="18"
                                 Margin="15,-3,0,0"/>
                         </StackPanel>
+
+                        <Button.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem
+                                    Name="EmptyCategoryMessageNewSoundFlyoutItem"
+                                    x:Uid="AddButton-Sound"
+                                    Click="StartMessageNewSoundFlyoutItem_Click" />
+                                <MenuFlyoutItem
+                                    Name="EmptyCategoryMessageDownloadSoundsFlyoutItem"
+                                    x:Uid="AddButton-Download"
+                                    Click="StartMessageDownloadSoundsFlyoutItem_Click" />
+                            </MenuFlyout>
+                        </Button.Flyout>
                     </Button>
                 </RelativePanel>
             </ScrollViewer>

@@ -72,6 +72,9 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TableObjectFileDownloadProgressChanged += ItemViewHolder_TableObjectFileDownloadProgressChanged;
             FileManager.itemViewHolder.TableObjectFileDownloadCompleted += ItemViewHolder_TableObjectFileDownloadCompleted;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
+            FileManager.itemViewHolder.DownloadYoutubeVideo += ItemViewHolder_DownloadYoutubeVideo;
+            FileManager.itemViewHolder.DownloadYoutubePlaylist += ItemViewHolder_DownloadYoutubePlaylist;
+            FileManager.itemViewHolder.DownloadAudioFile += ItemViewHolder_DownloadAudioFile;
         }
 
         #region Page event handlers
@@ -246,6 +249,21 @@ namespace UniversalSoundboard.Pages
         {
             selectionButtonsEnabled = FileManager.itemViewHolder.SelectedSounds.Count > 0;
             Bindings.Update();
+        }
+
+        private async void ItemViewHolder_DownloadYoutubeVideo(object sender, EventArgs e)
+        {
+            await DownloadSoundsContentDialog_YoutubeVideoDownload();
+        }
+
+        private async void ItemViewHolder_DownloadYoutubePlaylist(object sender, EventArgs e)
+        {
+            await DownloadSoundsContentDialog_YoutubePlaylistDownload();
+        }
+
+        private async void ItemViewHolder_DownloadAudioFile(object sender, EventArgs e)
+        {
+            await DownloadSoundsContentDialog_AudioFileDownload();
         }
         #endregion
 

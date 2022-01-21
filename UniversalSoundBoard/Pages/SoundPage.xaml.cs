@@ -831,7 +831,7 @@ namespace UniversalSoundboard.Pages
 
         #region Event handlers
         #region Start message event handlers
-        private async void StartMessageAddFirstSoundButton_Click(object sender, RoutedEventArgs e)
+        private async void StartMessageNewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             // Show file picker for new sounds
             var files = await MainPage.PickFilesForAddSoundsContentDialog();
@@ -848,6 +848,27 @@ namespace UniversalSoundboard.Pages
         private async void AddSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await MainPage.AddSelectedSoundFiles();
+        }
+
+        private async void StartMessageDownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
+            var downloadSoundsContentDialog = ContentDialogs.CreateDownloadSoundsContentDialog(infoButtonStyle);
+            downloadSoundsContentDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
+            await downloadSoundsContentDialog.ShowAsync();
+        }
+
+        private void DownloadSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            if (ContentDialogs.DownloadSoundsResult == FileManager.DownloadSoundsResultType.Youtube)
+            {
+                if (ContentDialogs.DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox.IsChecked == true)
+                    FileManager.itemViewHolder.TriggerDownloadYoutubePlaylistEvent(this, new EventArgs());
+                else
+                    FileManager.itemViewHolder.TriggerDownloadYoutubeVideoEvent(this, new EventArgs());
+            }
+            else if (ContentDialogs.DownloadSoundsResult == FileManager.DownloadSoundsResultType.AudioFile)
+                FileManager.itemViewHolder.TriggerDownloadAudioFileEvent(this, new EventArgs());
         }
 
         private async void StartMessageLoginButton_Click(object sender, RoutedEventArgs e)

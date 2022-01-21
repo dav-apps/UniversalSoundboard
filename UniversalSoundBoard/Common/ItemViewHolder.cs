@@ -146,6 +146,9 @@ namespace UniversalSoundboard.Common
         public event EventHandler<TableObjectFileDownloadProgressChangedEventArgs> TableObjectFileDownloadProgressChanged;  // Is triggered when the file of a TableObject is being downloaded and the progress changed
         public event EventHandler<TableObjectFileDownloadCompletedEventArgs> TableObjectFileDownloadCompleted;  // Is triggered from TriggerAction when the file of a TableObject was finished
         public event EventHandler<ShowInAppNotificationEventArgs> ShowInAppNotification;                        // Trigger this event to show the InAppNotification on the SoundPage
+        public event EventHandler<EventArgs> DownloadYoutubeVideo;
+        public event EventHandler<EventArgs> DownloadYoutubePlaylist;
+        public event EventHandler<EventArgs> DownloadAudioFile;
         #endregion
 
         #region Local variables
@@ -1138,6 +1141,21 @@ namespace UniversalSoundboard.Common
 
             FileManager.InAppNotificationItems.Add(newIanItem);
             ShowInAppNotification?.Invoke(sender, args);
+        }
+
+        public void TriggerDownloadYoutubeVideoEvent(object sender, EventArgs args)
+        {
+            DownloadYoutubeVideo?.Invoke(sender, args);
+        }
+
+        public void TriggerDownloadYoutubePlaylistEvent(object sender, EventArgs args)
+        {
+            DownloadYoutubePlaylist?.Invoke(sender, args);
+        }
+
+        public void TriggerDownloadAudioFileEvent(object sender, EventArgs args)
+        {
+            DownloadAudioFile?.Invoke(sender, args);
         }
         #endregion
 
