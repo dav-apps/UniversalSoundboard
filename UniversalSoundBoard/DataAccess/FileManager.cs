@@ -1989,7 +1989,13 @@ namespace UniversalSoundboard.DataAccess
             }
 
             var soundFileTableObject = await DatabaseOperations.CreateSoundFileAsync(Guid.NewGuid(), newAudioFile);
-            var soundTableObject = await DatabaseOperations.CreateSoundAsync(uuid ?? Guid.NewGuid(), name, false, soundFileTableObject.Uuid, categoryUuids);
+            var soundTableObject = await DatabaseOperations.CreateSoundAsync(
+                uuid ?? Guid.NewGuid(),
+                name,
+                false,
+                soundFileTableObject.Uuid,
+                categoryUuids.Where(categoryUuid => categoryUuid != null && !categoryUuid.Equals(Guid.Empty)).ToList()
+            );
             await newAudioFile.DeleteAsync();
 
             if (newImageFile != null)

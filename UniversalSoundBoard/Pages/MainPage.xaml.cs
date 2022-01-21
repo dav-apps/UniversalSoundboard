@@ -1191,6 +1191,8 @@ namespace UniversalSoundboard.Pages
 
         public async Task DownloadSoundsContentDialog_YoutubeVideoDownload()
         {
+            Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
+
             // Get the url in the text box
             var grabResult = ContentDialogs.DownloadSoundsGrabResult;
             if (grabResult == null) return;
@@ -1260,7 +1262,7 @@ namespace UniversalSoundboard.Pages
             }
 
             // Add the files as a new sound
-            Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, new List<Guid>(), audioFile, imageFile);
+            Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, new List<Guid> { currentCategoryUuid }, audioFile, imageFile);
 
             if (uuid.Equals(Guid.Empty))
             {
@@ -1287,6 +1289,8 @@ namespace UniversalSoundboard.Pages
 
         public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload()
         {
+            Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
+
             // Disable the ability to add or download sounds
             NewSoundFlyoutItem.IsEnabled = false;
             DownloadSoundsFlyoutItem.IsEnabled = false;
@@ -1432,7 +1436,13 @@ namespace UniversalSoundboard.Pages
                 FileManager.SetInAppNotificationProgress(FileManager.InAppNotificationType.DownloadSounds);
 
                 // Add the files as a new sound
-                Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, newCategory?.Uuid, audioFile, imageFile);
+                Guid uuid = await FileManager.CreateSoundAsync(
+                    null,
+                    grabResult.Title,
+                    newCategory != null ? newCategory.Uuid : currentCategoryUuid,
+                    audioFile,
+                    imageFile
+                );
 
                 if (uuid.Equals(Guid.Empty))
                 {
@@ -1582,6 +1592,7 @@ namespace UniversalSoundboard.Pages
 
         public async Task DownloadSoundsContentDialog_AudioFileDownload()
         {
+            Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
             NewSoundFlyoutItem.IsEnabled = false;
             DownloadSoundsFlyoutItem.IsEnabled = false;
 
@@ -1616,7 +1627,12 @@ namespace UniversalSoundboard.Pages
 
             FileManager.SetInAppNotificationProgress(FileManager.InAppNotificationType.DownloadSound);
 
-            Guid uuid = await FileManager.CreateSoundAsync(null, ContentDialogs.DownloadSoundsAudioFileName, new List<Guid>(), audioFile);
+            Guid uuid = await FileManager.CreateSoundAsync(
+                null,
+                ContentDialogs.DownloadSoundsAudioFileName,
+                new List<Guid> { currentCategoryUuid },
+                audioFile
+            );
 
             if (uuid.Equals(Guid.Empty))
             {
