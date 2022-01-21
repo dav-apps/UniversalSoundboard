@@ -1799,7 +1799,11 @@ namespace UniversalSoundboard.DataAccess
             if (playingSound == null) return;
 
             // Check if the PlayingSound is currently playing
-            if (playingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running) return;
+            if (
+                playingSound.MediaPlayer != null
+                && playingSound.MediaPlayer.TimelineController != null
+                && playingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running
+            ) return;
 
             // Remove the playing sound
             itemViewHolder.PlayingSounds.Remove(playingSound);
