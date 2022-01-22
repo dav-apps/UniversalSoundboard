@@ -1124,7 +1124,31 @@ namespace UniversalSoundboard.DataAccess
 
             // Add to the current sounds
             if (soundBelongsToSelectedCategory && !itemViewHolder.Sounds.ToList().Exists(s => s.Uuid == sound.Uuid))
-                itemViewHolder.Sounds.Add(sound);
+            {
+                // Add the sound at the correct position
+                switch (itemViewHolder.SoundOrder)
+                {
+                    case SoundOrder.Name:
+                        var soundsList = itemViewHolder.Sounds.ToList();
+                        soundsList.Add(sound);
+                        soundsList.Sort((x, y) => string.Compare(x.Name, y.Name));
+
+                        if (itemViewHolder.SoundOrderReversed)
+                            soundsList.Reverse();
+
+                        itemViewHolder.Sounds.Insert(soundsList.IndexOf(sound), sound);
+                        break;
+                    case SoundOrder.CreationDate:
+                        if (itemViewHolder.SoundOrderReversed)
+                            itemViewHolder.Sounds.Insert(0, sound);
+                        else
+                            itemViewHolder.Sounds.Add(sound);
+                        break;
+                    default:
+                        itemViewHolder.Sounds.Add(sound);
+                        break;
+                }
+            }
 
             if (itemViewHolder.AllSounds.Count > 0 && (itemViewHolder.AppState == AppState.Empty || itemViewHolder.AppState == AppState.InitialSync))
                 itemViewHolder.AppState = AppState.Normal;
