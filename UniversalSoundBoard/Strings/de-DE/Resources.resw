@@ -968,4 +968,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="InAppNotification-AddSoundSuccessful" xml:space="preserve">
     <value>Sound wurde erfolgreich hinzugefügt</value>
   </data>
+  <data name="Drop-AlreadyAddingSounds" xml:space="preserve">
+    <value>Es werden bereits Sounds hinzugefügt</value>
+  </data>
 </root>

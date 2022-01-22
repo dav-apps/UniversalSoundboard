@@ -951,7 +951,9 @@ namespace UniversalSoundboard.Pages
                 }
             }
 
-            if (fileTypesSupported)
+            if (FileManager.itemViewHolder.AddSoundsDisabled)
+                e.DragUIOverride.Caption = loader.GetString("Drop-AlreadyAddingSounds");
+            else if (fileTypesSupported)
                 e.DragUIOverride.Caption = loader.GetString("Drop");
             else
                 e.DragUIOverride.Caption = loader.GetString("Drop-FileTypeNotSupported");
@@ -961,7 +963,10 @@ namespace UniversalSoundboard.Pages
 
         private async void SoundContentGrid_Drop(object sender, DragEventArgs e)
         {
-            if (!e.DataView.Contains(StandardDataFormats.StorageItems)) return;
+            if (
+                !e.DataView.Contains(StandardDataFormats.StorageItems)
+                || FileManager.itemViewHolder.AddSoundsDisabled
+            ) return;
 
             var items = await e.DataView.GetStorageItemsAsync();
             if (!items.Any()) return;

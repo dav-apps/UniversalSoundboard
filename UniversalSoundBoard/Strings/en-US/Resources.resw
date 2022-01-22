@@ -970,4 +970,7 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="InAppNotification-AddSoundSuccessful" xml:space="preserve">
     <value>Sound was added successfully</value>
   </data>
+  <data name="Drop-AlreadyAddingSounds" xml:space="preserve">
+    <value>Sounds are already being added</value>
+  </data>
 </root>

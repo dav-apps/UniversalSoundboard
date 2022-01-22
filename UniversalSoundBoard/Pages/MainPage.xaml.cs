@@ -1125,6 +1125,7 @@ namespace UniversalSoundboard.Pages
         {
             if (ContentDialogs.AddSoundsSelectedFiles.Count == 0) return;
             var loader = new ResourceLoader();
+            FileManager.itemViewHolder.AddSoundsDisabled = true;
 
             // Show InAppNotification
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
@@ -1212,6 +1213,8 @@ namespace UniversalSoundboard.Pages
                     )
                 );
             }
+
+            FileManager.itemViewHolder.AddSoundsDisabled = false;
 
             Analytics.TrackEvent("AddSounds", new Dictionary<string, string>
             {

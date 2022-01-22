@@ -969,4 +969,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="InAppNotification-AddSoundSuccessful" xml:space="preserve">
     <value>Son ajouté avec succès</value>
   </data>
+  <data name="Drop-AlreadyAddingSounds" xml:space="preserve">
+    <value>Des sons sont déjà ajoutés</value>
+  </data>
 </root>
