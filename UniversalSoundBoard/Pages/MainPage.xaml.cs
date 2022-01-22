@@ -1197,11 +1197,15 @@ namespace UniversalSoundboard.Pages
             }
             else
             {
+                string message = ContentDialogs.AddSoundsSelectedFiles.Count == 1 ?
+                    loader.GetString("InAppNotification-AddSoundSuccessful")
+                    : string.Format(loader.GetString("InAppNotification-AddSoundsSuccessful"), ContentDialogs.AddSoundsSelectedFiles.Count);
+
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                     null,
                     new ShowInAppNotificationEventArgs(
                         FileManager.InAppNotificationType.AddSounds,
-                        string.Format(loader.GetString("InAppNotification-AddSoundsSuccessful"), ContentDialogs.AddSoundsSelectedFiles.Count),
+                        message,
                         8000,
                         false,
                         true

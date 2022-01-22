@@ -966,4 +966,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="InAppNotification-WriteReview" xml:space="preserve">
     <value>Vous aimez UniversalSoundboard ?</value>
   </data>
+  <data name="InAppNotification-AddSoundSuccessful" xml:space="preserve">
+    <value>Son ajouté avec succès</value>
+  </data>
 </root>

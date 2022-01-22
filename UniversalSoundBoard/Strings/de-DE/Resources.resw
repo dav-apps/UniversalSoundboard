@@ -965,4 +965,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="InAppNotification-WriteReview" xml:space="preserve">
     <value>Gefällt dir UniversalSoundboard?</value>
   </data>
+  <data name="InAppNotification-AddSoundSuccessful" xml:space="preserve">
+    <value>Sound wurde erfolgreich hinzugefügt</value>
+  </data>
 </root>
