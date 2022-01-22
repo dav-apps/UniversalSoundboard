@@ -1206,7 +1206,7 @@ namespace UniversalSoundboard.DataAccess
                 else
                     itemViewHolder.FavouriteSounds.RemoveAt(i);
             }
-            else if (updatedSound.Favourite)
+            else if (updatedSound.Favourite && soundBelongsToSelectedCategory)
                 itemViewHolder.FavouriteSounds.Add(updatedSound);
 
             // Replace in PlayingSounds
