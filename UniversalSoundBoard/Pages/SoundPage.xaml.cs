@@ -1,4 +1,5 @@
-﻿using Microsoft.Toolkit.Uwp.UI;
+﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.Toolkit.Uwp.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -873,8 +874,13 @@ namespace UniversalSoundboard.Pages
 
         private async void StartMessageLoginButton_Click(object sender, RoutedEventArgs e)
         {
-            bool loginResult = await AccountPage.ShowLoginPage();
-            if (!loginResult) return;
+            bool result = await AccountPage.ShowLoginPage();
+
+            Analytics.TrackEvent("LoginButtonClick", new Dictionary<string, string>
+            {
+                { "Context", "StartMessage" },
+                { "Result", result.ToString() }
+            });
         }
 
         private async void StartMessageImportButton_Click(object sender, RoutedEventArgs e)
@@ -889,6 +895,11 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
             await FileManager.ImportDataAsync(ContentDialogs.ImportFile, true);
             FileManager.UpdatePlayAllButtonVisibility();
+
+            Analytics.TrackEvent("ImportData", new Dictionary<string, string>
+            {
+                { "Context", "StartMessage" }
+            });
         }
         #endregion
 
@@ -896,6 +907,8 @@ namespace UniversalSoundboard.Pages
         {
             if (FileManager.itemViewHolder.MultiSelectionEnabled) return;
             await PlaySoundAsync((Sound)e.ClickedItem);
+
+            Analytics.TrackEvent("PlaySound");
         }
 
         private async void SoundContentGrid_DragOver(object sender, DragEventArgs e)

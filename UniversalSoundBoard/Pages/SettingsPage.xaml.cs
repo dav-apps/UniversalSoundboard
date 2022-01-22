@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Analytics;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
@@ -379,6 +381,7 @@ namespace UniversalSoundboard.Pages
         private async void ExportDataContentDialog_PrimaryButtonClickAsync(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.ExportDataAsync(ContentDialogs.ExportFolder);
+            Analytics.TrackEvent("ExportData");
         }
 
         private async void ImportDataButton_Click(object sender, RoutedEventArgs e)
@@ -391,21 +394,28 @@ namespace UniversalSoundboard.Pages
         private async void ImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.ImportDataAsync(ContentDialogs.ImportFile, false);
+            Analytics.TrackEvent("ImportData", new Dictionary<string, string>
+            {
+                { "Context", "Settings" }
+            });
         }
 
         private async void ReviewButton_Click(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NBLGGH51005"));
+            Analytics.TrackEvent("SettingsPage-ReviewButtonClick");
         }
 
         private async void SendFeedbackButton_Click(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("https://forms.gle/Y2fJnwDTyWMwBRbk7"));
+            Analytics.TrackEvent("SettingsPage-SendFeedbackButtonClick");
         }
 
         private async void CreateIssueButton_Click(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("https://github.com/dav-apps/UniversalSoundboard/issues"));
+            Analytics.TrackEvent("SettingsPage-CreateIssueButtonClick");
         }
         #endregion
     }

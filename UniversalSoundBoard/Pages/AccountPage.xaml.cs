@@ -1,5 +1,7 @@
 ﻿using davClassLibrary;
+using Microsoft.AppCenter.Analytics;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
@@ -168,8 +170,14 @@ namespace UniversalSoundboard.Pages
         
         private async void LoginButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowLoginPage();
+            bool result = await ShowLoginPage();
             UpdateUserLayout();
+
+            Analytics.TrackEvent("LoginButtonClick", new Dictionary<string, string>
+            {
+                { "Context", "AccountPage" },
+                { "Result", result.ToString() }
+            });
         }
 
         private async void LogoutButton_Click(object sender, RoutedEventArgs e)
@@ -186,12 +194,19 @@ namespace UniversalSoundboard.Pages
 
             // Remove the sounds that are not saved locally
             await FileManager.RemoveNotLocallySavedSoundsAsync();
+
+            Analytics.TrackEvent("AccountPage-Logout");
         }
 
         private async void SignupButton_Click(object sender, RoutedEventArgs e)
         {
-            await ShowLoginPage(true);
+            bool result = await ShowLoginPage(true);
             UpdateUserLayout();
+
+            Analytics.TrackEvent("AccountPage-SignupButtonClick", new Dictionary<string, string>
+            {
+                { "Result", result.ToString() }
+            });
         }
 
         private async void DavLogoImage_Tapped(object sender, TappedRoutedEventArgs e)
@@ -207,6 +222,7 @@ namespace UniversalSoundboard.Pages
         private async void PlusCardSelectButton_Click(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/login?redirect=user%23plans%0A"));
+            Analytics.TrackEvent("AccountPage-PlusCardSelectButtonClick");
         }
 
         private void Image_PointerEntered(object sender, PointerRoutedEventArgs e)

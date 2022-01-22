@@ -1,4 +1,5 @@
 ﻿using davClassLibrary;
+using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -174,6 +175,8 @@ namespace UniversalSoundboard.Components
                     this,
                     args
                 );
+
+                Analytics.TrackEvent("SoundItem-ExportSound");
             }
         }
 
@@ -231,6 +234,8 @@ namespace UniversalSoundboard.Components
                     this,
                     args
                 );
+
+                Analytics.TrackEvent("SoundItem-ExportImage");
             }
         }
         #endregion

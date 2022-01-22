@@ -26,6 +26,7 @@ using DotNetTools.SharpGrabber;
 using DotNetTools.SharpGrabber.Grabbed;
 using System.Collections.ObjectModel;
 using Google.Apis.YouTube.v3.Data;
+using Microsoft.AppCenter.Analytics;
 
 namespace UniversalSoundboard.Pages
 {
@@ -1164,6 +1165,12 @@ namespace UniversalSoundboard.Pages
                     )
                 );
             }
+
+            Analytics.TrackEvent("AddSounds", new Dictionary<string, string>
+            {
+                { "AddedSounds", i.ToString() },
+                { "NotAddedSounds", notAddedSounds.Count.ToString() }
+            });
         }
         #endregion
 
@@ -1283,6 +1290,8 @@ namespace UniversalSoundboard.Pages
             );
 
             FileManager.itemViewHolder.AddSoundsDisabled = false;
+
+            Analytics.TrackEvent("YoutubeVideoDownload");
         }
 
         public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload()
@@ -1490,6 +1499,8 @@ namespace UniversalSoundboard.Pages
             }
 
             FileManager.itemViewHolder.AddSoundsDisabled = false;
+
+            Analytics.TrackEvent("YoutubePlaylistDownload");
         }
 
         private GrabbedMedia FindBestAudioOfYoutubeVideo(IEnumerable<GrabbedMedia> mediaResources)
@@ -1649,6 +1660,8 @@ namespace UniversalSoundboard.Pages
             );
 
             FileManager.itemViewHolder.AddSoundsDisabled = false;
+
+            Analytics.TrackEvent("AudioFileDownload");
         }
 
         public void ShowDownloadSoundErrorInAppNotification()
