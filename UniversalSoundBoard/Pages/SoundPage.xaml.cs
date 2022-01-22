@@ -939,14 +939,14 @@ namespace UniversalSoundboard.Pages
             e.DragUIOverride.IsGlyphVisible = true;
 
             // If the file types of all items are not supported, update the Caption
-            bool fileTypesSupported = true;
-
+            bool fileTypesSupported = false;
             var storageItems = await e.DataView.GetStorageItemsAsync();
+
             foreach (var item in storageItems)
             {
-                if (!item.IsOfType(StorageItemTypes.File) || !FileManager.allowedFileTypes.Contains((item as StorageFile).FileType))
+                if (item.IsOfType(StorageItemTypes.File) && FileManager.allowedFileTypes.Contains((item as StorageFile).FileType))
                 {
-                    fileTypesSupported = false;
+                    fileTypesSupported = true;
                     break;
                 }
             }
@@ -971,52 +971,25 @@ namespace UniversalSoundboard.Pages
             var items = await e.DataView.GetStorageItemsAsync();
             if (!items.Any()) return;
 
-            // Check if the file types are supported
+            // Get all files with supported file type
+            List<StorageFile> files = new List<StorageFile>();
+
             foreach (var storageItem in items)
             {
                 if (
-                    !storageItem.IsOfType(StorageItemTypes.File)
-                    || !FileManager.allowedFileTypes.Contains((storageItem as StorageFile).FileType)
-                ) return;
+                    storageItem.IsOfType(StorageItemTypes.File)
+                    && FileManager.allowedFileTypes.Contains((storageItem as StorageFile).FileType)
+                ) files.Add((StorageFile)storageItem);
             }
 
-            FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("AddSoundsMessage");
-            FileManager.itemViewHolder.LoadingScreenVisible = true;
+            if (files.Count == 0) return;
 
-            List<string> notAddedSounds = new List<string>();
-            Guid? selectedCategory = null;
-            if (!Equals(FileManager.itemViewHolder.SelectedCategory, Guid.Empty))
-                selectedCategory = FileManager.itemViewHolder.SelectedCategory;
+            // Show the dialog for adding the sounds
+            var template = (DataTemplate)Resources["SoundFileItemTemplate"];
 
-            // Add all files
-            foreach (StorageFile soundFile in items)
-            {
-                if (!FileManager.allowedFileTypes.Contains(soundFile.FileType)) continue;
-
-                // Add the sound to the sound lists
-                Guid soundUuid = await FileManager.CreateSoundAsync(null, soundFile.DisplayName, selectedCategory, soundFile);
-
-                if (soundUuid.Equals(Guid.Empty))
-                    notAddedSounds.Add(soundFile.Name);
-                else
-                    await FileManager.AddSound(soundUuid);
-            }
-
-            FileManager.itemViewHolder.LoadingScreenVisible = false;
-
-            if(notAddedSounds.Count > 0)
-            {
-                if(items.Count == 1)
-                {
-                    var addSoundErrorContentDialog = ContentDialogs.CreateAddSoundErrorContentDialog();
-                    await addSoundErrorContentDialog.ShowAsync();
-                }
-                else
-                {
-                    var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notAddedSounds);
-                    await addSoundsErrorContentDialog.ShowAsync();
-                }
-            }
+            ContentDialog addSoundsContentDialog = ContentDialogs.CreateAddSoundsContentDialog(template, files);
+            addSoundsContentDialog.PrimaryButtonClick += AddSoundsContentDialog_PrimaryButtonClick;
+            await addSoundsContentDialog.ShowAsync();
         }
 
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
