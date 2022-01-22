@@ -1,4 +1,5 @@
 ﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -21,11 +22,16 @@ namespace UniversalSoundboard.Pages
         bool initialized = false;
         string soundboardSize = "";
         Visibility soundboardSizeVisibility = Visibility.Collapsed;
+        Visibility liveTileSettingVisibility = Visibility.Visible;
 
         public SettingsPage()
         {
             InitializeComponent();
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
+
+            // Hide the setting for Live Tiles on Windows 11+
+            if (SystemInformation.Instance.OperatingSystemVersion.Build >= 22000)
+                liveTileSettingVisibility = Visibility.Collapsed;
         }
 
         private async void SettingsPage_Loaded(object sender, RoutedEventArgs e)

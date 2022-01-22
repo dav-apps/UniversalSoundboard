@@ -177,7 +177,10 @@
                                 Toggled="ShowAcrylicBackgroundToggle_Toggled" />
                         </StackPanel>
 
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                        <StackPanel
+                            Style="{StaticResource SettingsEntryStyle}"
+                            Visibility="{x:Bind liveTileSettingVisibility}">
+                            
                             <ToggleSwitch
                                 Name="LiveTileToggle"
                                 x:Uid="SettingsEntry-LiveTileToggle"
