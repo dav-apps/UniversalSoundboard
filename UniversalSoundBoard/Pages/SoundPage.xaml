@@ -20,7 +20,6 @@
         <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
         <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
         <converters:BooleanToSelectionMode x:Name="BooleanToSelectionMode" />
-        <converters:GridViewReorderItemsConverter x:Name="GridViewReorderItemsConverter" />
         <converters:LogoImageSourceConverter x:Name="LogoImageSourceConverter" />
         <converters:AppStateLoadingConverter x:Name="AppStateLoadingConverter" />
         <converters:AppStateNormalConverter x:Name="AppStateNormalConverter" />
@@ -254,9 +253,7 @@
         </Storyboard>
     </Page.Resources>
 
-    <RelativePanel
-        Name="ContentRoot">
-
+    <RelativePanel Name="ContentRoot">
         <Grid
             Name="ContentGrid"
             RelativePanel.AlignTopWithPanel="True"
@@ -478,9 +475,7 @@
                 DragOver="SoundContentGrid_DragOver"
                 Drop="SoundContentGrid_Drop">
 
-                <Grid
-                    Visibility="{Binding ShowSoundsPivot}">
-
+                <Grid Visibility="{Binding ShowSoundsPivot}">
                     <Pivot
                         Name="SoundGridViewPivot"
                         Style="{StaticResource CustomPivotStyle}"
@@ -498,7 +493,7 @@
                                 ItemsSource="{Binding Sounds}"
                                 SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
                                 IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                                CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                                CanReorderItems="{x:Bind canReorderItems}"
                                 ItemClick="SoundGridView_ItemClick"
                                 SelectionChanged="SoundGridView_SelectionChanged"
                                 SizeChanged="SoundGridView_SizeChanged">
@@ -513,7 +508,7 @@
                                 ItemsSource="{Binding FavouriteSounds}"
                                 SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
                                 IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                                CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                                CanReorderItems="{x:Bind canReorderItems}"
                                 ItemClick="SoundGridView_ItemClick"
                                 SelectionChanged="SoundGridView_SelectionChanged"
                                 SizeChanged="SoundGridView_SizeChanged">
@@ -539,7 +534,7 @@
                                 ItemsSource="{Binding Sounds}"
                                 SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
                                 IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                                CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                                CanReorderItems="{x:Bind canReorderItems}"
                                 ItemClick="SoundGridView_ItemClick"
                                 SelectionChanged="SoundGridView_SelectionChanged">
                             </ListView>
@@ -554,7 +549,7 @@
                                 ItemsSource="{Binding FavouriteSounds}"
                                 SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
                                 IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                                CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                                CanReorderItems="{x:Bind canReorderItems}"
                                 ItemClick="SoundGridView_ItemClick"
                                 SelectionChanged="SoundGridView_SelectionChanged">
                             </ListView>
@@ -586,7 +581,7 @@
                         ItemsSource="{Binding Sounds}"
                         SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
                         IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                        CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                        CanReorderItems="{x:Bind canReorderItems}"
                         ItemClick="SoundGridView_ItemClick"
                         SelectionChanged="SoundGridView_SelectionChanged"
                         SizeChanged="SoundGridView_SizeChanged">
@@ -603,7 +598,7 @@
                         ItemsSource="{Binding Sounds}"
                         SelectionMode="{Binding MultiSelectionEnabled, Converter={StaticResource BooleanToSelectionMode}}"
                         IsEnabled="{Binding ProgressRingIsActive, Converter={StaticResource InvertBooleanConverter}}"
-                        CanReorderItems="{Binding SoundOrder, Converter={StaticResource GridViewReorderItemsConverter}}"
+                        CanReorderItems="{x:Bind canReorderItems}"
                         ItemClick="SoundGridView_ItemClick"
                         SelectionChanged="SoundGridView_SelectionChanged">
                     </ListView>

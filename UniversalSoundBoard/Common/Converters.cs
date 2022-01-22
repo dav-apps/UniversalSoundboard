@@ -184,19 +184,6 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class GridViewReorderItemsConverter : IValueConverter
-    {
-        public object Convert(object value, Type targetType, object parameter, string language)
-        {
-            return FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom;
-        }
-
-        public object ConvertBack(object value, Type targetType, object parameter, string language)
-        {
-            return null;
-        }
-    }
-
     public class TopOfThicknessToGridLengthConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

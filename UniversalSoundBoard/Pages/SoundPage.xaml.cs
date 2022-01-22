@@ -40,6 +40,7 @@ namespace UniversalSoundboard.Pages
         private int getContainerHeightCount = 0;
         AdvancedCollectionView reversedPlayingSounds;
         bool startMessageButtonsEnabled = true;
+        bool canReorderItems = false;
         Visibility startMessageVisibility = Visibility.Collapsed;
         Visibility emptyCategoryMessageVisibility = Visibility.Collapsed;
         
@@ -97,6 +98,7 @@ namespace UniversalSoundboard.Pages
 
             await UpdatePlayingSoundsListAsync();
             await UpdateGridSplitterRange();
+            UpdateCanReorderItems();
         }
 
         private async void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -135,10 +137,12 @@ namespace UniversalSoundboard.Pages
 
         private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
+            if (e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 RequestedTheme = FileManager.GetRequestedTheme();
             else if (e.PropertyName.Equals(ItemViewHolder.AppStateKey) || e.PropertyName.Equals(ItemViewHolder.SelectedCategoryKey))
                 UpdateMessagesVisibilities();
+            else if (e.PropertyName.Equals(ItemViewHolder.SoundOrderKey) || e.PropertyName.Equals(ItemViewHolder.MultiSelectionEnabledKey))
+                UpdateCanReorderItems();
         }
 
         private async void ItemViewHolder_PlayingSoundsLoaded(object sender, EventArgs e)
@@ -644,6 +648,18 @@ namespace UniversalSoundboard.Pages
                 // Calculate the bottom margin
                 marginBottom = marginBottom + 10 + item.MessageTextBlock.ActualHeight;
             }
+        }
+
+        private void UpdateCanReorderItems()
+        {
+            if (FileManager.itemViewHolder.MultiSelectionEnabled)
+                canReorderItems = false;
+            else if (FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom)
+                canReorderItems = true;
+            else
+                canReorderItems = false;
+
+            Bindings.Update();
         }
         #endregion
 
