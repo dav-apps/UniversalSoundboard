@@ -403,6 +403,7 @@ namespace UniversalSoundboard.Pages
         private async void ReviewButton_Click(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NBLGGH51005"));
+            FileManager.itemViewHolder.AppReviewed = true;
             Analytics.TrackEvent("SettingsPage-ReviewButtonClick");
         }
 

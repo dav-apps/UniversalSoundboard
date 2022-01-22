@@ -34,6 +34,8 @@ namespace UniversalSoundboard.Common
         private const string playingSoundsBarWidthKey = "playingSoundsBarWidth";
         private const string mutedKey = "muted";
         private const string volumeKey = "volume";
+        private const string appStartCounterKey = "appStartCounter";
+        private const string appReviewedKey = "appReviewed";
         #endregion
 
         #region Constants for localSettings defaults
@@ -54,6 +56,8 @@ namespace UniversalSoundboard.Common
         private const double playingSoundsBarWidthDefault = 0.35;
         private const bool mutedDefault = false;
         private const int volumeDefault = 100;
+        private const int appStartCounterDefault = 0;
+        private const bool appReviewedDefault = false;
         #endregion
 
         #region Variables
@@ -105,23 +109,25 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Settings
-        private bool _playingSoundsListVisible;                             // If true shows the Playing Sounds list at the right
-        private bool _savePlayingSounds;                                    // If true saves the PlayingSounds and loads them when starting the app
-        private bool _openMultipleSounds;                                   // If false, removes all PlayingSounds whenever the user opens a new one; if true, adds new opened sounds to existing PlayingSounds
-        private bool _multiSoundPlayback;                                   // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
-        private bool _showSoundsPivot;                                      // If true shows the pivot to select Sounds or Favourite sounds
-        private FileManager.SoundOrder _soundOrder;                         // The selected sound order in the settings
-        private bool _soundOrderReversed;                                   // If the sound order is descending (false) or ascending (true)
-        private bool _useStandardOutputDevice;                              // If true, the standard output device of the OS is used for playback
-        private string _outputDevice;                                       // The id of the selected output device
-        private bool _showListView;                                         // If true, shows the sounds on the SoundPage in a ListView
-        private bool _showCategoriesIcons;                                  // If true shows the icon of the category on the sound tile
-        private bool _showAcrylicBackground;                                // If true the acrylic background is visible
-        private bool _liveTile;                                             // If true, shows the live tile
-        private FileManager.AppTheme _theme;                                // The design theme of the app
-        private double _playingSoundsBarWidth;                              // The relative width of the PlayingSoundsBar in percent
-        private bool _muted;                                                // If true, the volume is muted
-        private int _volume;                                                // The volume of the entire app, between 0 and 100
+        private bool _playingSoundsListVisible;         // If true shows the Playing Sounds list at the right
+        private bool _savePlayingSounds;                // If true saves the PlayingSounds and loads them when starting the app
+        private bool _openMultipleSounds;               // If false, removes all PlayingSounds whenever the user opens a new one; if true, adds new opened sounds to existing PlayingSounds
+        private bool _multiSoundPlayback;               // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
+        private bool _showSoundsPivot;                  // If true shows the pivot to select Sounds or Favourite sounds
+        private FileManager.SoundOrder _soundOrder;     // The selected sound order in the settings
+        private bool _soundOrderReversed;               // If the sound order is descending (false) or ascending (true)
+        private bool _useStandardOutputDevice;          // If true, the standard output device of the OS is used for playback
+        private string _outputDevice;                   // The id of the selected output device
+        private bool _showListView;                     // If true, shows the sounds on the SoundPage in a ListView
+        private bool _showCategoriesIcons;              // If true shows the icon of the category on the sound tile
+        private bool _showAcrylicBackground;            // If true the acrylic background is visible
+        private bool _liveTile;                         // If true, shows the live tile
+        private FileManager.AppTheme _theme;            // The design theme of the app
+        private double _playingSoundsBarWidth;          // The relative width of the PlayingSoundsBar in percent
+        private bool _muted;                            // If true, the volume is muted
+        private int _volume;                            // The volume of the entire app, between 0 and 100
+        private int _appStartCounter;                   // Counts the number of app starts
+        private bool _appReviewed;                      // If true, the user has followed the link to the MS Store to write a review
         #endregion
 
         #region Events
@@ -354,6 +360,20 @@ namespace UniversalSoundboard.Common
                     _volume = volumeDefault;
                 }
             }
+            #endregion
+
+            #region appStartCounter
+            if (localSettings.Values[appStartCounterKey] == null)
+                _appStartCounter = appStartCounterDefault;
+            else
+                _appStartCounter = (int)localSettings.Values[appStartCounterKey];
+            #endregion
+
+            #region appReviewed
+            if (localSettings.Values[appReviewedKey] == null)
+                _appReviewed = appReviewedDefault;
+            else
+                _appReviewed = (bool)localSettings.Values[appReviewedKey];
             #endregion
             #endregion
         }
@@ -1033,6 +1053,36 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[volumeKey] = value;
                 _volume = value;
                 NotifyPropertyChanged(VolumeKey);
+            }
+        }
+        #endregion
+
+        #region AppStartCounter
+        public const string AppStartCounterKey = "AppStartCounter";
+        public int AppStartCounter
+        {
+            get => _appStartCounter;
+            set
+            {
+                if (_appStartCounter.Equals(value)) return;
+                localSettings.Values[appStartCounterKey] = value;
+                _appStartCounter = value;
+                NotifyPropertyChanged(AppStartCounterKey);
+            }
+        }
+        #endregion
+
+        #region AppReviewed
+        public const string AppReviewedKey = "AppReviewed";
+        public bool AppReviewed
+        {
+            get => _appReviewed;
+            set
+            {
+                if (_appReviewed.Equals(value)) return;
+                localSettings.Values[appReviewedKey] = value;
+                _appReviewed = value;
+                NotifyPropertyChanged(AppReviewedKey);
             }
         }
         #endregion
