@@ -960,4 +960,10 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="InAppNotification-Sync" xml:space="preserve">
     <value>Tes données sont en train d'être téléchargées. Cela peut prendre un certain temps...</value>
   </data>
+  <data name="Actions-WriteReview" xml:space="preserve">
+    <value>Écrire une évaluation</value>
+  </data>
+  <data name="InAppNotification-WriteReview" xml:space="preserve">
+    <value>Vous aimez UniversalSoundboard ?</value>
+  </data>
 </root>

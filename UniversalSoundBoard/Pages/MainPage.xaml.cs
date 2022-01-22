@@ -27,6 +27,7 @@ using DotNetTools.SharpGrabber.Grabbed;
 using System.Collections.ObjectModel;
 using Google.Apis.YouTube.v3.Data;
 using Microsoft.AppCenter.Analytics;
+using Windows.System;
 
 namespace UniversalSoundboard.Pages
 {
@@ -102,6 +103,7 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.TriggerSoundsLoadedEvent(this);
 
+            IncreaseAppStartCounter();
             await FileManager.StartHotkeyProcess();
             await Dav.SyncData();
         }
@@ -445,6 +447,47 @@ namespace UniversalSoundboard.Pages
         {
             await Task.Delay(2);
             SelectCategory(FileManager.itemViewHolder.SelectedCategory);
+        }
+
+        private void IncreaseAppStartCounter()
+        {
+            FileManager.itemViewHolder.AppStartCounter++;
+            int count = FileManager.itemViewHolder.AppStartCounter;
+
+            if (count % 20 == 0)
+            {
+                Analytics.TrackEvent("AppStarts", new Dictionary<string, string>
+                {
+                    { "Count", count.ToString() }
+                });
+            }
+
+            if (!FileManager.itemViewHolder.AppReviewed && count % 100 == 0)
+            {
+                // Show InAppNotification for writing a review
+                var args = new ShowInAppNotificationEventArgs(
+                    FileManager.InAppNotificationType.WriteReview,
+                    loader.GetString("InAppNotification-WriteReview"),
+                    0,
+                    false,
+                    true,
+                    loader.GetString("Actions-WriteReview")
+                );
+                args.PrimaryButtonClick += WriteReviewInAppNotificationEventArgs_PrimaryButtonClick;
+
+                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(this, args);
+            }
+        }
+
+        private async void WriteReviewInAppNotificationEventArgs_PrimaryButtonClick(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NBLGGH51005"));
+            FileManager.DismissInAppNotification(FileManager.InAppNotificationType.WriteReview);
+
+            Analytics.TrackEvent("InAppNotification-WriteReview-PrimaryButtonClick", new Dictionary<string, string>
+            {
+                { "AppStarts", FileManager.itemViewHolder.AppStartCounter.ToString() }
+            });
         }
         #endregion
 

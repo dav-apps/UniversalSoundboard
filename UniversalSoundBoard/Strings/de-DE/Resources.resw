@@ -959,4 +959,10 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="InAppNotification-Sync" xml:space="preserve">
     <value>Deine Daten werden heruntergeladen. Dies kann einige Zeit dauern...</value>
   </data>
+  <data name="Actions-WriteReview" xml:space="preserve">
+    <value>Schreibe eine Bewertung</value>
+  </data>
+  <data name="InAppNotification-WriteReview" xml:space="preserve">
+    <value>Gefällt dir UniversalSoundboard?</value>
+  </data>
 </root>

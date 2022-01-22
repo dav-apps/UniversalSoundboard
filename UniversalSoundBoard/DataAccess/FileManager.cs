@@ -225,7 +225,8 @@ namespace UniversalSoundboard.DataAccess
             ImageExport,
             SoundExport,
             SoundsExport,
-            Sync
+            Sync,
+            WriteReview
         }
         #endregion
 
