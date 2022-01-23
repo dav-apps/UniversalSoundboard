@@ -35,7 +35,6 @@ namespace UniversalSoundboard.Pages
     {
         readonly ResourceLoader loader = new ResourceLoader();
         public static CoreDispatcher dispatcher;                            // Dispatcher for ShareTargetPage
-        bool initizalized = false;
         string appTitle = "UniversalSoundboard";                            // The app name displayed in the title bar
         private readonly ObservableCollection<object> menuItems = new ObservableCollection<object>();
         private Guid initialCategory = Guid.Empty;                          // The category that was selected before the sounds started loading
@@ -46,9 +45,6 @@ namespace UniversalSoundboard.Pages
         bool downloadFilesDialogIsVisible = false;
         bool downloadFilesCanceled = false;
         bool downloadFilesFailed = false;
-        string title = FileManager.itemViewHolder.Title;                    // The visible title, possibly truncated
-        bool isTruncatingTitle = false;                                     // If true, TruncateTitleAsync is currently running
-        int titleTruncatedChars = 0;                                        // The number of characters the title was truncated
         bool mobileSearchVisible = false;                                   // If true, the app window is small, the search box is visible and the other top buttons are hidden
         bool playingSoundsLoaded = false;
         public static double windowWidth = 500;
@@ -83,7 +79,6 @@ namespace UniversalSoundboard.Pages
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             AdjustLayout();
-            initizalized = true;
 
             // Load the Categories
             await FileManager.LoadCategoriesAsync();
@@ -114,18 +109,25 @@ namespace UniversalSoundboard.Pages
             e.Handled = true;
         }
 
-        private async void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void MainPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             windowWidth = Window.Current.Bounds.Width;
 
             AdjustLayout();
             FileManager.UpdateInAppNotificationPositions();
-
-            if(initizalized)
-                await TruncateTitleAsync();
         }
 
-        private async void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        private void TitleRelativePanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateTitleWidth();
+        }
+
+        private void TitleButtonStackPanel_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            UpdateTitleWidth();
+        }
+
+        private void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
             {
@@ -149,14 +151,7 @@ namespace UniversalSoundboard.Pages
                     SetThemeColors();
                     break;
                 case ItemViewHolder.TitleKey:
-                    title = FileManager.itemViewHolder.Title;
-                    Bindings.Update();
-
-                    // Wait for the layout to update
-                    await Task.Delay(8);
-
-                    titleTruncatedChars = 0;
-                    await TruncateTitleAsync();
+                    UpdateTitleWidth();
                     break;
                 case ItemViewHolder.SearchAutoSuggestBoxVisibleKey:
                     UpdateTopButtonVisibilityForMobileSearch();
@@ -343,57 +338,9 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        private async Task TruncateTitleAsync()
+        private void UpdateTitleWidth()
         {
-            if (isTruncatingTitle) return;
-
-            if(TitleTextBlock.ActualWidth == 0)
-            {
-                title = FileManager.itemViewHolder.Title;
-                titleTruncatedChars = 0;
-                return;
-            }
-
-            isTruncatingTitle = true;
-
-            double titleWidth = TitleStackPanel.Margin.Left + TitleTextBlock.ActualWidth + TitleButtonStackPanel.ActualWidth;
-            double optionsWidth = OptionsRelativePanel.Margin.Right + OptionsRelativePanel.ActualWidth;
-
-            while (titleWidth > NavigationViewHeader.ActualWidth - optionsWidth - 20 && title.Length > 6)
-            {
-                // Remove the last 4 characters and append ...
-                title = title.Substring(0, title.Length - 4) + "...";
-                Bindings.Update();
-
-                // Wait for the layout to update
-                await Task.Delay(1);
-
-                // Update titleWidth
-                titleWidth = TitleStackPanel.Margin.Left + TitleTextBlock.ActualWidth + TitleButtonStackPanel.ActualWidth;
-                titleTruncatedChars++;
-            }
-
-            while(titleWidth < NavigationViewHeader.ActualWidth - optionsWidth - 60 && titleTruncatedChars > 0)
-            {
-                titleTruncatedChars--;
-
-                // Remove the ... from the end of the title and add the next 1 or 4 chars of the title
-                title = title.Substring(0, title.Length - 3);
-                title += FileManager.itemViewHolder.Title.Substring(title.Length, titleTruncatedChars == 0 ? 4 : 1);
-
-                if (titleTruncatedChars > 0)
-                    title += "...";
-
-                Bindings.Update();
-
-                // Wait for the layout to update
-                await Task.Delay(1);
-
-                // Update titleWidth
-                titleWidth = TitleStackPanel.Margin.Left + TitleTextBlock.ActualWidth + TitleButtonStackPanel.ActualWidth;
-            }
-
-            isTruncatingTitle = false;
+            TitleTextBlock.MaxWidth = TitleRelativePanel.ActualWidth - TitleButtonStackPanel.ActualWidth - 10;
         }
 
         private void SetThemeColors()

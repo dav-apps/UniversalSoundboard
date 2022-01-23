@@ -145,17 +145,19 @@
                             RelativePanel.AlignRightWithPanel="True">
 
                             <RelativePanel
-                                Name="TitleStackPanel" 
+                                Name="TitleRelativePanel" 
                                 Margin="17,0,0,0"
                                 RelativePanel.AlignLeftWithPanel="True"
-                                RelativePanel.AlignRightWith="OptionsRelativePanel"
-                                RelativePanel.AlignVerticalCenterWithPanel="True">
+                                RelativePanel.LeftOf="OptionsRelativePanel"
+                                RelativePanel.AlignVerticalCenterWithPanel="True"
+                                SizeChanged="TitleRelativePanel_SizeChanged">
 
                                 <TextBlock
-                                    Name="TitleTextBlock" 
+                                    Name="TitleTextBlock"
                                     Style="{StaticResource TitleTextBlockStyle}"
                                     RelativePanel.AlignVerticalCenterWithPanel="True"
-                                    Text="{x:Bind title}"
+                                    RelativePanel.AlignLeftWithPanel="True"
+                                    Text="{Binding Title}"
                                     Margin="0,0,10,0">
                                     
                                     <ToolTipService.ToolTip>
@@ -166,8 +168,9 @@
                                 <StackPanel
                                     Name="TitleButtonStackPanel"
                                     Orientation="Horizontal"
+                                    RelativePanel.AlignVerticalCenterWithPanel="True"
                                     RelativePanel.RightOf="TitleTextBlock"
-                                    RelativePanel.AlignVerticalCenterWithPanel="True">
+                                    SizeChanged="TitleButtonStackPanel_SizeChanged">
 
                                     <Button
                                         Name="CategoryEditButton"
