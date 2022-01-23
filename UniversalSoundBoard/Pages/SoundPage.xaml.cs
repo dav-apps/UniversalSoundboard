@@ -951,7 +951,7 @@ namespace UniversalSoundboard.Pages
                 }
             }
 
-            if (FileManager.itemViewHolder.AddSoundsDisabled)
+            if (FileManager.itemViewHolder.AddingSounds)
                 e.DragUIOverride.Caption = loader.GetString("Drop-AlreadyAddingSounds");
             else if (fileTypesSupported)
                 e.DragUIOverride.Caption = loader.GetString("Drop");
@@ -965,7 +965,7 @@ namespace UniversalSoundboard.Pages
         {
             if (
                 !e.DataView.Contains(StandardDataFormats.StorageItems)
-                || FileManager.itemViewHolder.AddSoundsDisabled
+                || FileManager.itemViewHolder.AddingSounds
             ) return;
 
             var items = await e.DataView.GetStorageItemsAsync();

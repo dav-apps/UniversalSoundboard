@@ -186,6 +186,7 @@
                                         Style="{StaticResource SmallTopButtonStyle}"
                                         Content="&#xE107;"
                                         Visibility="{Binding EditButtonVisible}"
+                                        IsEnabled="{Binding AddingSounds, Converter={StaticResource InvertBooleanConverter}}"
                                         Click="CategoryDeleteButton_Click">
 
                                         <ToolTipService.ToolTip>
@@ -244,12 +245,12 @@
                                                 <MenuFlyoutItem
                                                     Name="NewSoundFlyoutItem"
                                                     x:Uid="AddButton-Sound"
-                                                    IsEnabled="{Binding AddSoundsDisabled, Converter={StaticResource InvertBooleanConverter}}"
+                                                    IsEnabled="{Binding AddingSounds, Converter={StaticResource InvertBooleanConverter}}"
                                                     Click="NewSoundFlyoutItem_Click" />
                                                 <MenuFlyoutItem
                                                     Name="DownloadSoundsFlyoutItem"
                                                     x:Uid="AddButton-Download"
-                                                    IsEnabled="{Binding AddSoundsDisabled, Converter={StaticResource InvertBooleanConverter}}"
+                                                    IsEnabled="{Binding AddingSounds, Converter={StaticResource InvertBooleanConverter}}"
                                                     Click="DownloadSoundsFlyoutItem_Click" />
                                                 <MenuFlyoutItem
                                                     Name="NewCategoryFlyoutItem"

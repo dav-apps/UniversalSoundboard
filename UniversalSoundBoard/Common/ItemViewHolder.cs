@@ -74,7 +74,7 @@ namespace UniversalSoundboard.Common
         private string _importMessage;              // The text describing the status of the import
         private ulong _soundboardSize;              // The size of the entire soundboard in byte
         private Guid _activePlayingSound;           // The PlayingSound that was last activated and is currently visible in SystemMediaTransportControls
-        private bool _addSoundsDisabled;            // If true, all buttons for adding or downloading sounds are disabled
+        private bool _addingSounds;                 // If true, sounds are currently being added and all buttons for adding or downloading sounds are disabled
         #endregion
 
         #region Lists
@@ -179,7 +179,7 @@ namespace UniversalSoundboard.Common
             _importMessage = "";
             _soundboardSize = 0;
             _activePlayingSound = Guid.Empty;
-            _addSoundsDisabled = false;
+            _addingSounds = false;
             #endregion
 
             #region Lists
@@ -548,16 +548,16 @@ namespace UniversalSoundboard.Common
         }
         #endregion
 
-        #region AddSoundsDisabled
-        public const string AddSoundsDisabledKey = "AddSoundsDisabled";
-        public bool AddSoundsDisabled
+        #region AddingSounds
+        public const string AddingSoundsKey = "AddingSounds";
+        public bool AddingSounds
         {
-            get => _addSoundsDisabled;
+            get => _addingSounds;
             set
             {
-                if (_addSoundsDisabled.Equals(value)) return;
-                _addSoundsDisabled = value;
-                NotifyPropertyChanged(AddSoundsDisabledKey);
+                if (_addingSounds.Equals(value)) return;
+                _addingSounds = value;
+                NotifyPropertyChanged(AddingSoundsKey);
             }
         }
         #endregion

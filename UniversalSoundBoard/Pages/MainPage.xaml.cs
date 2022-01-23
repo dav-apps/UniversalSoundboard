@@ -1125,7 +1125,7 @@ namespace UniversalSoundboard.Pages
         {
             if (ContentDialogs.AddSoundsSelectedFiles.Count == 0) return;
             var loader = new ResourceLoader();
-            FileManager.itemViewHolder.AddSoundsDisabled = true;
+            FileManager.itemViewHolder.AddingSounds = true;
 
             // Show InAppNotification
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
@@ -1214,7 +1214,7 @@ namespace UniversalSoundboard.Pages
                 );
             }
 
-            FileManager.itemViewHolder.AddSoundsDisabled = false;
+            FileManager.itemViewHolder.AddingSounds = false;
 
             Analytics.TrackEvent("AddSounds", new Dictionary<string, string>
             {
@@ -1266,7 +1266,7 @@ namespace UniversalSoundboard.Pages
             );
 
             // Disable the ability to add or download sounds
-            FileManager.itemViewHolder.AddSoundsDisabled = true;
+            FileManager.itemViewHolder.AddingSounds = true;
 
             var mediaResources = grabResult.Resources<GrabbedMedia>();
             var imageResources = grabResult.Resources<GrabbedImage>();
@@ -1339,7 +1339,7 @@ namespace UniversalSoundboard.Pages
                 )
             );
 
-            FileManager.itemViewHolder.AddSoundsDisabled = false;
+            FileManager.itemViewHolder.AddingSounds = false;
 
             Analytics.TrackEvent("YoutubeVideoDownload");
         }
@@ -1349,7 +1349,7 @@ namespace UniversalSoundboard.Pages
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
 
             // Disable the ability to add or download sounds
-            FileManager.itemViewHolder.AddSoundsDisabled = true;
+            FileManager.itemViewHolder.AddingSounds = true;
 
             var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
             List<KeyValuePair<string, string>> notDownloadedSounds = new List<KeyValuePair<string, string>>();
@@ -1548,7 +1548,7 @@ namespace UniversalSoundboard.Pages
                 );
             }
 
-            FileManager.itemViewHolder.AddSoundsDisabled = false;
+            FileManager.itemViewHolder.AddingSounds = false;
 
             Analytics.TrackEvent("YoutubePlaylistDownload");
         }
@@ -1650,7 +1650,7 @@ namespace UniversalSoundboard.Pages
         public async Task DownloadSoundsContentDialog_AudioFileDownload()
         {
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
-            FileManager.itemViewHolder.AddSoundsDisabled = true;
+            FileManager.itemViewHolder.AddingSounds = true;
 
             // Show InAppNotification
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
@@ -1709,14 +1709,14 @@ namespace UniversalSoundboard.Pages
                 )
             );
 
-            FileManager.itemViewHolder.AddSoundsDisabled = false;
+            FileManager.itemViewHolder.AddingSounds = false;
 
             Analytics.TrackEvent("AudioFileDownload");
         }
 
         public void ShowDownloadSoundErrorInAppNotification()
         {
-            FileManager.itemViewHolder.AddSoundsDisabled = false;
+            FileManager.itemViewHolder.AddingSounds = false;
 
             var inAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
                 FileManager.InAppNotificationType.DownloadSound,
