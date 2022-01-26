@@ -41,6 +41,11 @@
             <Setter Property="TextAlignment" Value="Center" />
             <Setter Property="HorizontalAlignment" Value="Center" />
         </Style>
+
+        <Style TargetType="StackPanel" x:Key="PlusCardBorder">
+            <Setter Property="BorderThickness" Value="0.5" />
+            <Setter Property="Margin" Value="50,0" />
+        </Style>
     </Page.Resources>
 
     <Grid
@@ -164,7 +169,7 @@
                                     Margin="0,2,0,0" />
                             </StackPanel>
 
-                            <StackPanel Name="PlusCardBorder1" BorderThickness="0.5" />
+                            <StackPanel Name="PlusCardBorder1" Style="{StaticResource PlusCardBorder}" />
 
                             <StackPanel Padding="20,12">
                                 <TextBlock
@@ -172,7 +177,7 @@
                                     Style="{StaticResource PlusCardFeatureTextStyle}" />
                             </StackPanel>
 
-                            <StackPanel Name="PlusCardBorder2" BorderThickness="0.5" />
+                            <StackPanel Name="PlusCardBorder2" Style="{StaticResource PlusCardBorder}" />
 
                             <Grid Padding="20,12">
                                 <Grid.ColumnDefinitions>
@@ -204,7 +209,7 @@
 
                             <StackPanel
                                 Name="PlusCardBorder3"
-                                BorderThickness="0.5"
+                                Style="{StaticResource PlusCardBorder}"
                                 Visibility="{x:Bind davPlusHotkeyFeatureVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                             <Grid
@@ -233,7 +238,7 @@
                                 </Button>
                             </Grid>
 
-                            <StackPanel Name="PlusCardBorder4" BorderThickness="0.5" />
+                            <StackPanel Name="PlusCardBorder4" Style="{StaticResource PlusCardBorder}" />
 
                             <Grid Padding="20,12">
                                 <Grid.ColumnDefinitions>
@@ -263,7 +268,7 @@
                                 </Button>
                             </Grid>
 
-                            <StackPanel Name="PlusCardBorder5" BorderThickness="0.5" />
+                            <StackPanel Name="PlusCardBorder5" Style="{StaticResource PlusCardBorder}" />
 
                             <StackPanel Padding="20,12">
                                 <TextBlock
@@ -271,7 +276,7 @@
                                     Style="{StaticResource PlusCardFeatureTextStyle}" />
                             </StackPanel>
 
-                            <StackPanel Name="PlusCardBorder6" BorderThickness="0.5" />
+                            <StackPanel Name="PlusCardBorder6" Style="{StaticResource PlusCardBorder}" />
 
                             <StackPanel Padding="20,12">
                                 <Button
