@@ -783,16 +783,18 @@ namespace UniversalSoundboard.DataAccess
 
             // Get the audio file
             Guid? audioFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName));
-            if(audioFileUuid.HasValue && !audioFileUuid.Equals(Guid.Empty))
+
+            if (audioFileUuid.HasValue && !audioFileUuid.Equals(Guid.Empty))
             {
                 var audioFileTableObject = await DatabaseOperations.GetTableObjectAsync(audioFileUuid.Value);
-                if(audioFileTableObject != null)
+
+                if (audioFileTableObject != null)
                 {
                     sound.AudioFileTableObject = audioFileTableObject;
 
                     if (!audioFileTableObject.IsFile) return null;
 
-                    if(audioFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.Downloaded)
+                    if (audioFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.Downloaded)
                     {
                         try
                         {
@@ -801,11 +803,19 @@ namespace UniversalSoundboard.DataAccess
                                 sound.AudioFile = audioFile;
                         }
                         catch { }
-                    }else if(audioFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.NoFileOrNotLoggedIn)
+                    } else if (audioFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.NoFileOrNotLoggedIn)
                         return null;
                 }
                 else
+                {
+                    if (!Dav.IsLoggedIn)
+                    {
+                        // Delete the sound table object
+                        await soundTableObject.DeleteAsync();
+                    }
+
                     return null;
+                }
             }
 
             // Get favourite

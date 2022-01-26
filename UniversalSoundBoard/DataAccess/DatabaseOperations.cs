@@ -510,8 +510,6 @@ namespace UniversalSoundboard.DataAccess
 
                         if (!await Dav.Database.TableObjectExistsAsync(tableObject.Uuid))
                         {
-                            await Dav.Database.CreateTableObjectWithPropertiesAsync(tableObject);
-
                             if (tableObject.IsFile)
                             {
                                 // Get the file from the appropriate folder
@@ -521,7 +519,12 @@ namespace UniversalSoundboard.DataAccess
                                 StorageFile tableObjectFile = (StorageFile)await tableFolder.TryGetItemAsync(tableObject.Uuid.ToString());
                                 if (tableObjectFile == null) continue;
 
+                                await Dav.Database.CreateTableObjectWithPropertiesAsync(tableObject);
                                 await tableObject.SetFileAsync(new FileInfo(tableObjectFile.Path));
+                            }
+                            else
+                            {
+                                await Dav.Database.CreateTableObjectWithPropertiesAsync(tableObject);
                             }
                         }
                     }
