@@ -1,4 +1,5 @@
 ﻿using davClassLibrary;
+using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -337,6 +338,13 @@ namespace UniversalSoundboard.Components
                         SetPlayPause(true);
                     }
                 }
+            });
+
+            Analytics.TrackEvent("PlayingSoundItem-MediaEnded", new Dictionary<string, string>
+            {
+                { "Multiple sounds", (PlayingSound.Sounds.Count > 1).ToString() },
+                { "Number of sounds", PlayingSound.Sounds.Count.ToString() },
+                { "Local file", PlayingSound.LocalFile.ToString() }
             });
         }
 

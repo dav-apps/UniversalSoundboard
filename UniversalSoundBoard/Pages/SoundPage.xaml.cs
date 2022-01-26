@@ -923,8 +923,6 @@ namespace UniversalSoundboard.Pages
         {
             if (FileManager.itemViewHolder.MultiSelectionEnabled) return;
             await PlaySoundAsync((Sound)e.ClickedItem);
-
-            Analytics.TrackEvent("PlaySound");
         }
 
         private async void SoundContentGrid_DragOver(object sender, DragEventArgs e)
