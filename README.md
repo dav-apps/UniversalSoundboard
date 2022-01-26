@@ -1,9 +1,9 @@
 # UniversalSoundboard
 
-UniversalSoundboard is a customizable soundboard and music player app for Windows 10.
+UniversalSoundboard is a customizable soundboard and music player app for Windows.
 Create your own soundboard by adding your sound and music files. Sort your sounds in categories and add images to them. There are many different settings and modes to adapt your soundboard to your liking.
 
-![](https://am3pap001files.storage.live.com/y4mQdMQL0OarwR-F_XKep45Y7iVqW_PuqcsJyPkOSf9y6HSMiZ-xF4vgBItz_qro-YXRYowKhI06wrThf1TQcyqoB2JdwzRtcpHhcZkuONS02ULHLYsnRs5kRbeiIvJ2_iN9RfCJlc1eUoFQaHBAgxbKOgGP6Mduzw573vbLJ3U1szv6HcRVFoRrIvXpjUvqpUk?width=1920&height=1080&cropmode=none)
+![](https://am3pap001files.storage.live.com/y4mizEmMZ72SzaNkDGC9H5HZR5hgJXKDcygwGIC2WWEn1nV2XdNLZCl-IqGoJTtilYwiuDiTZgz0LAVIk9McTvP8wy_kSdfRg2Kf8DVnQGeJ9pucE_hyIwlX3MfJ8JWeKp4HS9mSovGQSUO2GDaYtvMyzYs7H5hjS9CnpGOtR9wvyFIUjRf8RVQfU3LAqjkiNIT?width=1920&height=1080&cropmode=none)
 
 ## Getting started
 
