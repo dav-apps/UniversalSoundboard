@@ -340,7 +340,10 @@ namespace UniversalSoundboard.Pages
 
         private void UpdateTitleWidth()
         {
-            TitleTextBlock.MaxWidth = TitleRelativePanel.ActualWidth - TitleButtonStackPanel.ActualWidth - 10;
+            double newTitleWidth = TitleRelativePanel.ActualWidth - TitleButtonStackPanel.ActualWidth - 10;
+            if (newTitleWidth <= 0) return;
+
+            TitleTextBlock.MaxWidth = newTitleWidth;
         }
 
         private void SetThemeColors()

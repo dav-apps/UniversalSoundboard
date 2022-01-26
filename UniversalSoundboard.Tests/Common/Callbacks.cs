@@ -8,7 +8,7 @@ namespace UniversalSoundboard.Tests.Common
     {
         public void DeleteTableObject(Guid uuid, int tableId) { }
 
-        public void UpdateAllOfTable(int tableId, bool changed) { }
+        public void UpdateAllOfTable(int tableId, bool changed, bool complete) { }
 
         public void UpdateTableObject(TableObject tableObject, bool fileDownloaded) { }
 
