@@ -2,6 +2,8 @@
 using DotNetTools.SharpGrabber;
 using DotNetTools.SharpGrabber.Grabbed;
 using Google.Apis.YouTube.v3.Data;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
 using System.Collections.Generic;
@@ -380,7 +382,7 @@ namespace UniversalSoundboard.Common
             return DownloadSoundsContentDialog;
         }
 
-        private static async void DownloadSoundsUrlTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        private static async void DownloadSoundsUrlTextBox_TextChanged(object sender, TextChangedEventArgs args)
         {
             DownloadSoundsContentDialog.IsPrimaryButtonEnabled = false;
             DownloadSoundsResult = FileManager.DownloadSoundsResultType.None;
@@ -405,14 +407,37 @@ namespace UniversalSoundboard.Common
 
             if (isYoutubeUrl)
             {
-                var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
-                DownloadSoundsGrabResult = await grabber.GrabAsync(new Uri(input));
-                if (DownloadSoundsGrabResult == null) return;
-
-                // Check if the video is part of a playlist
                 Uri uri = new Uri(input);
                 string queryString = uri.Query;
                 var queryDictionary = HttpUtility.ParseQueryString(queryString);
+
+                // Get the video id and build the url
+                string videoId = queryDictionary.Get("v");
+                string youtubeLink = string.Format("https://youtube.com/watch?v={0}", videoId);
+
+                try
+                {
+                    var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
+                    DownloadSoundsGrabResult = await grabber.GrabAsync(new Uri(youtubeLink));
+
+                    if (DownloadSoundsGrabResult == null)
+                    {
+                        HideAllMessageElementsInDownloadSoundsContentDialog();
+                        return;
+                    }
+                }
+                catch(Exception e)
+                {
+                    HideAllMessageElementsInDownloadSoundsContentDialog();
+
+                    Crashes.TrackError(e, new Dictionary<string, string>
+                    {
+                        { "YoutubeLink", input }
+                    });
+                    return;
+                }
+
+                // Check if the video is part of a playlist
                 DownloadSoundsPlaylistId = queryDictionary.Get("list");
 
                 DownloadSoundsYoutubeInfoTextBlock.Text = DownloadSoundsGrabResult.Title;
@@ -483,12 +508,22 @@ namespace UniversalSoundboard.Common
                     if (!FileManager.allowedAudioMimeTypes.Contains(response.ContentType))
                     {
                         HideAllMessageElementsInDownloadSoundsContentDialog();
+
+                        Analytics.TrackEvent("AudioFileDownload-NotSupportedFormat", new Dictionary<string, string>
+                        {
+                            { "Link", input }
+                        });
                         return;
                     }
                 }
-                catch(Exception)
+                catch(Exception e)
                 {
                     HideAllMessageElementsInDownloadSoundsContentDialog();
+
+                    Crashes.TrackError(e, new Dictionary<string, string>
+                    {
+                        { "Link", input }
+                    });
                     return;
                 }
 

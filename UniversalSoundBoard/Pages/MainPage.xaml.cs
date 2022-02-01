@@ -1661,7 +1661,10 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.AddingSounds = false;
 
-            Analytics.TrackEvent("AudioFileDownload");
+            Analytics.TrackEvent("AudioFileDownload", new Dictionary<string, string>
+            {
+                { "File extension", ContentDialogs.DownloadSoundsAudioFileType }
+            });
         }
 
         public void ShowDownloadSoundErrorInAppNotification()
