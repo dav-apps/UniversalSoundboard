@@ -10,7 +10,7 @@
   <Identity
     Name="49427davSoftwareDevelopme.UniversalSoundBoard"
     Publisher="CN=34761CCA-A79E-46B8-A1BC-D17F44039844"
-    Version="2.2.1.0" />
+    Version="2.2.2.0" />
 
   <Properties>
     <DisplayName>UniversalSoundboard</DisplayName>
