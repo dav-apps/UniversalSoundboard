@@ -5,6 +5,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:davClassLibrary="using:davClassLibrary"
     xmlns:converters="using:UniversalSoundboard.Converters"
     mc:Ignorable="d"
@@ -278,13 +279,24 @@
 
                             <StackPanel Name="PlusCardBorder6" Style="{StaticResource PlusCardBorder}" />
 
-                            <StackPanel Padding="20,12">
+                            <StackPanel
+                                Padding="20,12"
+                                Orientation="Horizontal"
+                                HorizontalAlignment="Center">
+                                
                                 <Button
                                     Name="PlusCardSelectButton"
                                     x:Uid="Account-Card-SelectButton"
                                     HorizontalAlignment="Center"
                                     FontSize="16"
                                     Click="PlusCardSelectButton_Click" />
+
+                                <winui:ProgressRing
+                                    Name="PlusCardSelectButtonProgressRing"
+                                    Margin="14,0,0,0"
+                                    Height="18"
+                                    Width="18"
+                                    Visibility="Collapsed" />
                             </StackPanel>
                         </StackPanel>
                     </RelativePanel>

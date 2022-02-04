@@ -229,6 +229,10 @@ namespace UniversalSoundboard.Pages
 
         private async void PlusCardSelectButton_Click(object sender, RoutedEventArgs e)
         {
+            PlusCardSelectButton.IsEnabled = false;
+            PlusCardSelectButton.Margin = new Thickness(32, 0, 0, 0);
+            PlusCardSelectButtonProgressRing.Visibility = Visibility.Visible;
+
             Analytics.TrackEvent("AccountPage-PlusCardSelectButtonClick");
 
             var createCheckoutSessionResponse = await CheckoutSessionsController.CreateCheckoutSession(
@@ -245,6 +249,10 @@ namespace UniversalSoundboard.Pages
             {
                 // TODO: Error handling
             }
+
+            PlusCardSelectButton.IsEnabled = true;
+            PlusCardSelectButton.Margin = new Thickness(0, 0, 0, 0);
+            PlusCardSelectButtonProgressRing.Visibility = Visibility.Collapsed;
         }
 
         private void Image_PointerEntered(object sender, PointerRoutedEventArgs e)
