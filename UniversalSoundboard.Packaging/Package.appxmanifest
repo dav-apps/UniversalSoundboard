@@ -86,6 +86,12 @@
             <uap:DisplayName>UniversalSoundboard</uap:DisplayName>
           </uap:FileTypeAssociation>
         </uap:Extension>
+        <uap:Extension Category="windows.protocol">
+          <uap:Protocol Name="universalsoundboard">
+            <uap:Logo>Assets/Square44x44Logo.png</uap:Logo>
+            <uap:DisplayName>UniversalSoundboard</uap:DisplayName>
+          </uap:Protocol>
+        </uap:Extension>
       </Extensions>
     </Application>
   </Applications>

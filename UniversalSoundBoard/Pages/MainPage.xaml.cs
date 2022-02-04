@@ -65,6 +65,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.PlayingSoundsLoaded += ItemViewHolder_PlayingSoundsLoaded;
             FileManager.itemViewHolder.CategoriesLoaded += ItemViewHolder_CategoriesLoaded;
             FileManager.itemViewHolder.UserSyncFinished += ItemViewHolder_UserSyncFinished;
+            FileManager.itemViewHolder.UserPlanChanged += ItemViewHolder_UserPlanChanged;
             FileManager.itemViewHolder.CategoryUpdated += ItemViewHolder_CategoryUpdated;
             FileManager.itemViewHolder.CategoryDeleted += ItemViewHolder_CategoryDeleted;
             FileManager.itemViewHolder.TableObjectFileDownloadProgressChanged += ItemViewHolder_TableObjectFileDownloadProgressChanged;
@@ -177,6 +178,11 @@ namespace UniversalSoundboard.Pages
         private void ItemViewHolder_UserSyncFinished(object sender, EventArgs e)
         {
             Bindings.Update();
+        }
+
+        private void ItemViewHolder_UserPlanChanged(object sender, EventArgs e)
+        {
+            AdjustLayout();
         }
 
         private async void ItemViewHolder_CategoryUpdated(object sender, CategoryEventArgs args)

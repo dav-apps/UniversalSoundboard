@@ -6,6 +6,7 @@ using Microsoft.AppCenter.Crashes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Web;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Pages;
@@ -154,6 +155,48 @@ namespace UniversalSoundboard
             }
 
             Window.Current.Activate();
+        }
+
+        protected override void OnActivated(IActivatedEventArgs args)
+        {
+            if (args.Kind == ActivationKind.Protocol)
+            {
+                Frame rootFrame = Window.Current.Content as Frame;
+                ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
+
+                // Create the root frame if the app is not already running
+                if (rootFrame == null)
+                {
+                    rootFrame = new Frame();
+                    rootFrame.NavigationFailed += OnNavigationFailed;
+                    rootFrame.ActualThemeChanged += RootFrame_ActualThemeChanged;
+
+                    rootFrame.Navigate(typeof(MainPage));
+
+                    Window.Current.Content = rootFrame;
+                }
+
+                Window.Current.Activate();
+                
+                if (eventArgs.Uri.AbsoluteUri.StartsWith("universalsoundboard://upgrade"))
+                {
+                    FileManager.NavigateToAccountPage();
+
+                    var queryDictionary = HttpUtility.ParseQueryString(eventArgs.Uri.Query);
+
+                    if (queryDictionary.Get("success") == "true")
+                    {
+                        // Upgrade the plan
+                        if (queryDictionary.Get("plan") == "1")
+                            Dav.User.Plan = Plan.Plus;
+                        else if (queryDictionary.Get("plan") == "2")
+                            Dav.User.Plan = Plan.Pro;
+
+                        FileManager.itemViewHolder.TriggerUserPlanChangedEvent(this, new EventArgs());
+                        Analytics.TrackEvent("UpgradeSuccessful");
+                    }
+                }
+            }
         }
 
         protected override async void OnFileActivated(FileActivatedEventArgs args)

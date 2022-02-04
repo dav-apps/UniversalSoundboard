@@ -1,4 +1,5 @@
 ﻿using davClassLibrary;
+using davClassLibrary.Controllers;
 using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
@@ -30,6 +31,7 @@ namespace UniversalSoundboard.Pages
             InitializeComponent();
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.UserSyncFinished += ItemViewHolder_UserSyncFinished;
+            FileManager.itemViewHolder.UserPlanChanged += ItemViewHolder_UserPlanChanged;
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -46,6 +48,7 @@ namespace UniversalSoundboard.Pages
         {
             FileManager.itemViewHolder.PropertyChanged -= ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.UserSyncFinished -= ItemViewHolder_UserSyncFinished;
+            FileManager.itemViewHolder.UserPlanChanged -= ItemViewHolder_UserPlanChanged;
 
             base.OnNavigatedFrom(e);
         }
@@ -59,6 +62,11 @@ namespace UniversalSoundboard.Pages
         private void ItemViewHolder_UserSyncFinished(object sender, EventArgs e)
         {
             Bindings.Update();
+            UpdateUserLayout();
+        }
+
+        private void ItemViewHolder_UserPlanChanged(object sender, EventArgs e)
+        {
             UpdateUserLayout();
         }
 
@@ -221,8 +229,22 @@ namespace UniversalSoundboard.Pages
 
         private async void PlusCardSelectButton_Click(object sender, RoutedEventArgs e)
         {
-            await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/login?redirect=user%23plans%0A"));
             Analytics.TrackEvent("AccountPage-PlusCardSelectButtonClick");
+
+            var createCheckoutSessionResponse = await CheckoutSessionsController.CreateCheckoutSession(
+                1,
+                "https://universalsoundboard.dav-apps.tech/upgrade?success=true&plan=1",
+                "https://universalsoundboard.dav-apps.tech/upgrade?success=false"
+            );
+
+            if (createCheckoutSessionResponse.Success)
+            {
+                await Launcher.LaunchUriAsync(new Uri(createCheckoutSessionResponse.Data.SessionUrl));
+            }
+            else
+            {
+                // TODO: Error handling
+            }
         }
 
         private void Image_PointerEntered(object sender, PointerRoutedEventArgs e)

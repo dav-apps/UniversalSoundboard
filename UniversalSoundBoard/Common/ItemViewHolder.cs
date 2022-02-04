@@ -135,6 +135,7 @@ namespace UniversalSoundboard.Common
         public event EventHandler<EventArgs> PlayingSoundsLoaded;                                               // Is triggered when the playing sounds at startup were loaded
         public event EventHandler<EventArgs> CategoriesLoaded;                                                  // Is triggered when all categories were loaded into the Categories List
         public event EventHandler<EventArgs> UserSyncFinished;                                                  // Is triggered when the user infos and the profile image were downloaded from the server
+        public event EventHandler<EventArgs> UserPlanChanged;                                                   // Is triggered when the plan of the user was changed from within the app
         public event EventHandler<CategoryEventArgs> CategoryAdded;                                             // Is triggered when a category was added
         public event EventHandler<CategoryEventArgs> CategoryUpdated;                                           // Is triggered when a category was updated
         public event EventHandler<CategoryEventArgs> CategoryDeleted;                                           // Is triggered when a category was deleted
@@ -1104,9 +1105,14 @@ namespace UniversalSoundboard.Common
             CategoriesLoaded?.Invoke(sender, new EventArgs());
         }
 
-        public void TriggerUserSyncFinished(object sender, EventArgs args)
+        public void TriggerUserSyncFinishedEvent(object sender, EventArgs args)
         {
             UserSyncFinished?.Invoke(sender, args);
+        }
+
+        public void TriggerUserPlanChangedEvent(object sender, EventArgs args)
+        {
+            UserPlanChanged?.Invoke(sender, args);
         }
 
         public void TriggerCategoryAddedEvent(object sender, CategoryEventArgs args)
