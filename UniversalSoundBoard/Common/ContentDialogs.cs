@@ -110,6 +110,7 @@ namespace UniversalSoundboard.Common
         public static ContentDialog PropertiesContentDialog;
         public static ContentDialog DavPlusHotkeysContentDialog;
         public static ContentDialog DavPlusOutputDeviceContentDialog;
+        public static ContentDialog UpgradeErrorContentDialog;
         #endregion
 
         #region General methods
@@ -2067,6 +2068,24 @@ namespace UniversalSoundboard.Common
             DavPlusOutputDeviceContentDialog.Closed += ContentDialog_Closed;
 
             return DavPlusOutputDeviceContentDialog;
+        }
+        #endregion
+
+        #region UpgradeError
+        public static ContentDialog CreateUpgradeErrorContentDialog()
+        {
+            UpgradeErrorContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("UpgradeErrorContentDialog-Title"),
+                Content = loader.GetString("UpgradeErrorContentDialog-Message"),
+                CloseButtonText = loader.GetString("Actions-Close"),
+                DefaultButton = ContentDialogButton.Close,
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+            UpgradeErrorContentDialog.Opened += ContentDialog_Opened;
+            UpgradeErrorContentDialog.Closed += ContentDialog_Closed;
+
+            return UpgradeErrorContentDialog;
         }
         #endregion
     }

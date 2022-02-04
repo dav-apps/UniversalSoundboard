@@ -241,18 +241,20 @@ namespace UniversalSoundboard.Pages
                 "https://universalsoundboard.dav-apps.tech/upgrade?success=false"
             );
 
+            PlusCardSelectButton.IsEnabled = true;
+            PlusCardSelectButton.Margin = new Thickness(0, 0, 0, 0);
+            PlusCardSelectButtonProgressRing.Visibility = Visibility.Collapsed;
+
             if (createCheckoutSessionResponse.Success)
             {
                 await Launcher.LaunchUriAsync(new Uri(createCheckoutSessionResponse.Data.SessionUrl));
             }
             else
             {
-                // TODO: Error handling
+                // Show dialog for error
+                var errorDialog = ContentDialogs.CreateUpgradeErrorContentDialog();
+                await errorDialog.ShowAsync();
             }
-
-            PlusCardSelectButton.IsEnabled = true;
-            PlusCardSelectButton.Margin = new Thickness(0, 0, 0, 0);
-            PlusCardSelectButtonProgressRing.Visibility = Visibility.Collapsed;
         }
 
         private void Image_PointerEntered(object sender, PointerRoutedEventArgs e)

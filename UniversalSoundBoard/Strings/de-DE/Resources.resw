@@ -971,4 +971,10 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="Drop-AlreadyAddingSounds" xml:space="preserve">
     <value>Es werden bereits Sounds hinzugefügt</value>
   </data>
+  <data name="UpgradeErrorContentDialog-Message" xml:space="preserve">
+    <value>Bitte überprüfe deine Internetverbindung und versuche es erneut.</value>
+  </data>
+  <data name="UpgradeErrorContentDialog-Title" xml:space="preserve">
+    <value>Ein Fehler ist aufgetreten</value>
+  </data>
 </root>
