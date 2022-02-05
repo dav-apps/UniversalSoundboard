@@ -180,16 +180,15 @@ namespace UniversalSoundboard
                 
                 if (eventArgs.Uri.AbsoluteUri.StartsWith("universalsoundboard://upgrade"))
                 {
-                    FileManager.NavigateToAccountPage();
-
                     var queryDictionary = HttpUtility.ParseQueryString(eventArgs.Uri.Query);
+                    string planParam = queryDictionary.Get("plan");
 
-                    if (queryDictionary.Get("success") == "true")
+                    if (planParam == "1" || planParam == "2")
                     {
                         // Upgrade the plan
-                        if (queryDictionary.Get("plan") == "1")
+                        if (planParam == "1")
                             Dav.User.Plan = Plan.Plus;
-                        else if (queryDictionary.Get("plan") == "2")
+                        else if (planParam == "2")
                             Dav.User.Plan = Plan.Pro;
 
                         FileManager.itemViewHolder.TriggerUserPlanChangedEvent(this, new EventArgs());
