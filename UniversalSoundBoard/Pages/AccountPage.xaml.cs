@@ -118,6 +118,7 @@ namespace UniversalSoundboard.Pages
             // Set the visibilities for the content elements
             LoggedInContent.Visibility = Dav.IsLoggedIn ? Visibility.Visible : Visibility.Collapsed;
             LoggedOutContent.Visibility = Dav.IsLoggedIn ? Visibility.Collapsed : Visibility.Visible;
+            ManageSubscriptionButton.Visibility = Dav.IsLoggedIn && Dav.User.Plan > 0 ? Visibility.Visible : Visibility.Collapsed;
 
             davPlusHotkeyFeatureVisible = ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0);
             Bindings.Update();
@@ -217,14 +218,19 @@ namespace UniversalSoundboard.Pages
             });
         }
 
+        private async void ManageSubscriptionButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/user#plans"));
+        }
+
         private async void DavLogoImage_Tapped(object sender, TappedRoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech"));
         }
 
-        private async void DropShadowPanel_Tapped(object sender, TappedRoutedEventArgs e)
+        private async void UsernameTextBlock_Tapped(object sender, TappedRoutedEventArgs e)
         {
-            await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/login?redirect=user"));
+            await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/user"));
         }
 
         private async void PlusCardSelectButton_Click(object sender, RoutedEventArgs e)

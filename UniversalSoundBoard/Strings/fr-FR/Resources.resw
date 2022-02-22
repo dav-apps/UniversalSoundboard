@@ -978,4 +978,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="UpgradeErrorContentDialog-Title" xml:space="preserve">
     <value>Une erreur est survenue</value>
   </data>
+  <data name="Account-ManageSubscriptionButton.Content" xml:space="preserve">
+    <value>Gérer votre abonnement</value>
+  </data>
 </root>

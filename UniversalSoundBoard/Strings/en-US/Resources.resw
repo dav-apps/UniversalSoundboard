@@ -979,4 +979,7 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="UpgradeErrorContentDialog-Title" xml:space="preserve">
     <value>An error occured</value>
   </data>
+  <data name="Account-ManageSubscriptionButton.Content" xml:space="preserve">
+    <value>Manage subscription</value>
+  </data>
 </root>

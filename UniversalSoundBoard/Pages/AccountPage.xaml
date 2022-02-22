@@ -84,10 +84,7 @@
                                 OffsetX="0"
                                 OffsetY="2"
                                 BlurRadius="16"
-                                ShadowOpacity="0.8"
-                                PointerEntered="Image_PointerEntered"
-                                PointerExited="Image_PointerExited"
-                                Tapped="DropShadowPanel_Tapped">
+                                ShadowOpacity="0.8">
                                 
                                 <Ellipse Name="Avatar" Height="150" Width="150">
                                     <Ellipse.Fill>
@@ -99,13 +96,15 @@
                             <StackPanel
                                 Name="UserInfoStackPanel"
                                 Orientation="Vertical"
-                                Width="250"
                                 Margin="40,0,0,0">
 
                                 <TextBlock
                                     Name="UsernameTextBlock"
                                     Text="{x:Bind davClassLibrary:Dav.User.FirstName}"
-                                    FontSize="24" />
+                                    FontSize="24"
+                                    PointerEntered="Image_PointerEntered"
+                                    PointerExited="Image_PointerExited"
+                                    Tapped="UsernameTextBlock_Tapped" />
 
                                 <TextBlock
                                     Name="PlanTextBlock"
@@ -126,12 +125,22 @@
                                     TextWrapping="WrapWholeWords"
                                     Margin="0,8,0,2" />
 
-                                <Button
-                                    Name="LogoutButton"
-                                    x:Uid="LogoutButton"
-                                    FontSize="14"
-                                    Margin="0,8,0,0"
-                                    Click="LogoutButton_Click" />
+                                <StackPanel Orientation="Horizontal">
+                                    <Button
+                                        Name="ManageSubscriptionButton"
+                                        x:Uid="Account-ManageSubscriptionButton"
+                                        FontSize="14"
+                                        Margin="0,8,8,0"
+                                        Visibility="Collapsed"
+                                        Click="ManageSubscriptionButton_Click" />
+
+                                    <Button
+                                        Name="LogoutButton"
+                                        x:Uid="LogoutButton"
+                                        FontSize="14"
+                                        Margin="0,8,0,0"
+                                        Click="LogoutButton_Click" />
+                                </StackPanel>
                             </StackPanel>
                         </StackPanel>
                     </RelativePanel>
