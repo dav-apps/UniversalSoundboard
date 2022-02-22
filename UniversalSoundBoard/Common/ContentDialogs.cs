@@ -393,9 +393,11 @@ namespace UniversalSoundboard.Common
             string input = DownloadSoundsUrlTextBox.Text;
 
             Regex urlRegex = new Regex("^(https?:\\/\\/)?[\\w.-]+(\\.[\\w.-]+)+[\\w\\-._~/?#@&%\\+,;=]+");
+            Regex shortYoutubeUrlRegex = new Regex("^(https?:\\/\\/)?youtu.be\\/");
             Regex youtubeUrlRegex = new Regex("^(https?:\\/\\/)?(www.)?youtube.com\\/");
 
             bool isUrl = urlRegex.IsMatch(input);
+            bool isShortYoutubeUrl = shortYoutubeUrlRegex.IsMatch(input);
             bool isYoutubeUrl = youtubeUrlRegex.IsMatch(input);
 
             if (!isUrl)
@@ -406,14 +408,25 @@ namespace UniversalSoundboard.Common
 
             DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Visible;
 
-            if (isYoutubeUrl)
+            if (isShortYoutubeUrl || isYoutubeUrl)
             {
-                Uri uri = new Uri(input);
-                string queryString = uri.Query;
-                var queryDictionary = HttpUtility.ParseQueryString(queryString);
+                string videoId = null;
+                DownloadSoundsPlaylistId = null;
 
-                // Get the video id and build the url
-                string videoId = queryDictionary.Get("v");
+                if (isShortYoutubeUrl)
+                {
+                    videoId = input.Split('/').Last();
+                }
+                else
+                {
+                    // Get the video id from the url params
+                    var queryDictionary = HttpUtility.ParseQueryString(input.Split('?').Last());
+
+                    videoId = queryDictionary.Get("v");
+                    DownloadSoundsPlaylistId = queryDictionary.Get("list");
+                }
+
+                // Build the url
                 string youtubeLink = string.Format("https://youtube.com/watch?v={0}", videoId);
 
                 try
@@ -437,9 +450,6 @@ namespace UniversalSoundboard.Common
                     });
                     return;
                 }
-
-                // Check if the video is part of a playlist
-                DownloadSoundsPlaylistId = queryDictionary.Get("list");
 
                 DownloadSoundsYoutubeInfoTextBlock.Text = DownloadSoundsGrabResult.Title;
 
