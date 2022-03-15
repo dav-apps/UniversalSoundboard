@@ -394,7 +394,7 @@ namespace UniversalSoundboard.Common
 
             Regex urlRegex = new Regex("^(https?:\\/\\/)?[\\w.-]+(\\.[\\w.-]+)+[\\w\\-._~/?#@&%\\+,;=]+");
             Regex shortYoutubeUrlRegex = new Regex("^(https?:\\/\\/)?youtu.be\\/");
-            Regex youtubeUrlRegex = new Regex("^(https?:\\/\\/)?(www.)?youtube.com\\/");
+            Regex youtubeUrlRegex = new Regex("^(https?:\\/\\/)?((www|music).)?youtube.com\\/");
 
             bool isUrl = urlRegex.IsMatch(input);
             bool isShortYoutubeUrl = shortYoutubeUrlRegex.IsMatch(input);
