@@ -257,6 +257,14 @@ namespace UniversalSoundboard.Pages
             }
             else
             {
+                if (createCheckoutSessionResponse.Errors.Length > 0)
+                {
+                    Analytics.TrackEvent("AccountPage-PlusCardSelectButtonClick-Error", new Dictionary<string, string>
+                    {
+                        { "ErrorCode", createCheckoutSessionResponse.Errors[0].Code.ToString() }
+                    });
+                }
+
                 // Show dialog for error
                 var errorDialog = ContentDialogs.CreateUpgradeErrorContentDialog();
                 await errorDialog.ShowAsync();
