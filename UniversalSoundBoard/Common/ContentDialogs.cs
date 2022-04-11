@@ -41,8 +41,14 @@ namespace UniversalSoundboard.Common
         private static VolumeControl PropertiesVolumeControl;
         private static bool propertiesDefaultVolumeChanged = false;
         private static bool propertiesDefaultMutedChanged = false;
+        private static List<ContentDialog> contentDialogQueue = new List<ContentDialog>();
 
-        public static bool ContentDialogOpen = false;
+        private static bool _contentDialogVisible = false;
+        public static bool ContentDialogVisible
+        {
+            get { return _contentDialogVisible; }
+        }
+
         public static ListView AddSoundsListView;
         public static ObservableCollection<SoundFileItem> AddSoundsSelectedFiles;
         public static TextBlock NoFilesSelectedTextBlock;
@@ -114,14 +120,31 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region General methods
-        private static void ContentDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        public static async Task ShowContentDialogAsync(ContentDialog contentDialog)
         {
-            ContentDialogOpen = true;
-        }
+            contentDialog.Closed += async (e, s) =>
+            {
+                contentDialogQueue.Remove(contentDialog);
 
-        private static void ContentDialog_Closed(ContentDialog sender, ContentDialogClosedEventArgs args)
-        {
-            ContentDialogOpen = false;
+                if (contentDialogQueue.Count > 0)
+                {
+                    // Show the next content dialog
+                    _contentDialogVisible = true;
+                    await contentDialogQueue[0].ShowAsync();
+                }
+                else
+                {
+                    _contentDialogVisible = false;
+                }
+            };
+
+            contentDialogQueue.Add(contentDialog);
+
+            if (!_contentDialogVisible)
+            {
+                _contentDialogVisible = true;
+                await contentDialog.ShowAsync();
+            }
         }
         #endregion
 
@@ -137,8 +160,6 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = selectedFiles.Count > 0,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            AddSoundsContentDialog.Opened += ContentDialog_Opened;
-            AddSoundsContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel containerStackPanel = new StackPanel
             {
@@ -233,8 +254,6 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            DownloadSoundsContentDialog.Opened += ContentDialog_Opened;
-            DownloadSoundsContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel containerStackPanel = new StackPanel
             {
@@ -601,8 +620,6 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            NewCategoryContentDialog.Opened += ContentDialog_Opened;
-            NewCategoryContentDialog.Closed += ContentDialog_Closed;
 
             NewCategoryParentUuid = parentUuid;
             if (!Equals(parentUuid, Guid.Empty))
@@ -664,8 +681,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Primary,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            EditCategoryContentDialog.Opened += ContentDialog_Opened;
-            EditCategoryContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel stackPanel = new StackPanel
             {
@@ -728,8 +743,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            DeleteCategoryContentDialog.Opened += ContentDialog_Opened;
-            DeleteCategoryContentDialog.Closed += ContentDialog_Closed;
 
             return DeleteCategoryContentDialog;
         }
@@ -746,8 +759,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            AddSoundErrorContentDialog.Opened += ContentDialog_Opened;
-            AddSoundErrorContentDialog.Closed += ContentDialog_Closed;
 
             return AddSoundErrorContentDialog;
         }
@@ -770,8 +781,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            AddSoundsErrorContentDialog.Opened += ContentDialog_Opened;
-            AddSoundsErrorContentDialog.Closed += ContentDialog_Closed;
 
             return AddSoundsErrorContentDialog;
         }
@@ -787,8 +796,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            DownloadSoundsErrorContentDialog.Opened += ContentDialog_Opened;
-            DownloadSoundsErrorContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel containerStackPanel = new StackPanel
             {
@@ -843,8 +850,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Primary,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            RenameSoundContentDialog.Opened += ContentDialog_Opened;
-            RenameSoundContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel stackPanel = new StackPanel
             {
@@ -884,8 +889,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            DeleteSoundContentDialog.Opened += ContentDialog_Opened;
-            DeleteSoundContentDialog.Closed += ContentDialog_Closed;
 
             return DeleteSoundContentDialog;
         }
@@ -903,8 +906,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            DeleteSoundsContentDialog.Opened += ContentDialog_Opened;
-            DeleteSoundsContentDialog.Closed += ContentDialog_Closed;
 
             return DeleteSoundsContentDialog;
         }
@@ -922,8 +923,6 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            ExportDataContentDialog.Opened += ContentDialog_Opened;
-            ExportDataContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel content = new StackPanel
             {
@@ -1012,8 +1011,6 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            ImportDataContentDialog.Opened += ContentDialog_Opened;
-            ImportDataContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel content = new StackPanel
             {
@@ -1169,8 +1166,6 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = SoundsList.Count > 0,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            PlaySoundsSuccessivelyContentDialog.Opened += ContentDialog_Opened;
-            PlaySoundsSuccessivelyContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel content = new StackPanel
             {
@@ -1251,8 +1246,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            LogoutContentDialog.Opened += ContentDialog_Opened;
-            LogoutContentDialog.Closed += ContentDialog_Closed;
 
             return LogoutContentDialog;
         }
@@ -1268,8 +1261,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.None,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            DownloadFileContentDialog.Opened += ContentDialog_Opened;
-            DownloadFileContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel content = new StackPanel
             {
@@ -1297,8 +1288,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.None,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            DownloadFilesContentDialog.Opened += ContentDialog_Opened;
-            DownloadFilesContentDialog.Closed += ContentDialog_Closed;
 
             ListView progressListView = new ListView
             {
@@ -1331,8 +1320,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            DownloadFileErrorContentDialog.Opened += ContentDialog_Opened;
-            DownloadFileErrorContentDialog.Closed += ContentDialog_Closed;
 
             return DownloadFileErrorContentDialog;
         }
@@ -1354,8 +1341,6 @@ namespace UniversalSoundboard.Common
                 IsPrimaryButtonEnabled = false,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            ExportSoundsContentDialog.Opened += ContentDialog_Opened;
-            ExportSoundsContentDialog.Closed += ContentDialog_Closed;
 
             if (SoundsList.Count == 0)
                 ExportSoundsContentDialog.IsPrimaryButtonEnabled = false;
@@ -1453,8 +1438,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Primary,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            SetCategoryContentDialog.Opened += ContentDialog_Opened;
-            SetCategoryContentDialog.Closed += ContentDialog_Closed;
 
             StackPanel content = new StackPanel
             {
@@ -1527,8 +1510,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            PropertiesContentDialog.Opened += ContentDialog_Opened;
-            PropertiesContentDialog.Closed += ContentDialog_Closed;
             PropertiesContentDialog.CloseButtonClick += PropertiesContentDialog_CloseButtonClick;
 
             int fontSize = 15;
@@ -2055,8 +2036,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Primary,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            DavPlusHotkeysContentDialog.Opened += ContentDialog_Opened;
-            DavPlusHotkeysContentDialog.Closed += ContentDialog_Closed;
 
             return DavPlusHotkeysContentDialog;
         }
@@ -2074,8 +2053,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Primary,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            DavPlusOutputDeviceContentDialog.Opened += ContentDialog_Opened;
-            DavPlusOutputDeviceContentDialog.Closed += ContentDialog_Closed;
 
             return DavPlusOutputDeviceContentDialog;
         }
@@ -2092,8 +2069,6 @@ namespace UniversalSoundboard.Common
                 DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            UpgradeErrorContentDialog.Opened += ContentDialog_Opened;
-            UpgradeErrorContentDialog.Closed += ContentDialog_Closed;
 
             return UpgradeErrorContentDialog;
         }
