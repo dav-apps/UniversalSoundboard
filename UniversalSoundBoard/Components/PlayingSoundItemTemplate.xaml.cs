@@ -606,7 +606,7 @@ namespace UniversalSoundboard.Components
                 // Show dialog which explains that this feature is only for Plus users
                 ContentDialog davPlusOutputDeviceContentDialog = ContentDialogs.CreateDavPlusOutputDeviceContentDialog();
                 davPlusOutputDeviceContentDialog.PrimaryButtonClick += DavPlusOutputDeviceContentDialog_PrimaryButtonClick;
-                await davPlusOutputDeviceContentDialog.ShowAsync();
+                await ContentDialogs.ShowContentDialogAsync(davPlusOutputDeviceContentDialog);
             }
         }
 

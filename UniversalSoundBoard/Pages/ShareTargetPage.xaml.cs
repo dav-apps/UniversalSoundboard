@@ -129,12 +129,12 @@ namespace UniversalSoundboard.Pages
                 if(items.Count == 1)
                 {
                     var addSoundErrorContentDialog = ContentDialogs.CreateAddSoundErrorContentDialog();
-                    await addSoundErrorContentDialog.ShowAsync();
+                    await ContentDialogs.ShowContentDialogAsync(addSoundErrorContentDialog);
                 }
                 else
                 {
                     var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notAddedSounds);
-                    await addSoundsErrorContentDialog.ShowAsync();
+                    await ContentDialogs.ShowContentDialogAsync(addSoundsErrorContentDialog);
                 }
             }
             else

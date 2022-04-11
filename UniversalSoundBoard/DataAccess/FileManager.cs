@@ -3344,10 +3344,6 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task HandleHotkeyPressed(int id)
         {
-            // Don't handle hotkeys if a ContentDialog is open
-            if (ContentDialogs.ContentDialogOpen)
-                return;
-
             if (id >= itemViewHolder.HotkeySoundMapping.Count)
                 return;
 
@@ -3363,7 +3359,7 @@ namespace UniversalSoundboard.DataAccess
                 // Show dialog which explains that this feature is only for Plus users
                 ContentDialog davPlusHotkeysContentDialog = ContentDialogs.CreateDavPlusHotkeysContentDialog();
                 davPlusHotkeysContentDialog.PrimaryButtonClick += DavPlusHotkeysContentDialog_PrimaryButtonClick;
-                await davPlusHotkeysContentDialog.ShowAsync();
+                await ContentDialogs.ShowContentDialogAsync(davPlusHotkeysContentDialog);
             }
         }
 

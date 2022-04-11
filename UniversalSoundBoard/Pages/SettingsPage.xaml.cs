@@ -381,7 +381,7 @@ namespace UniversalSoundboard.Pages
         {
             var ExportDataContentDialog = ContentDialogs.CreateExportDataContentDialog();
             ExportDataContentDialog.PrimaryButtonClick += ExportDataContentDialog_PrimaryButtonClickAsync;
-            await ExportDataContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(ExportDataContentDialog);
         }
 
         private async void ExportDataContentDialog_PrimaryButtonClickAsync(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -394,7 +394,7 @@ namespace UniversalSoundboard.Pages
         {
             var ImportDataContentDialog = ContentDialogs.CreateImportDataContentDialog();
             ImportDataContentDialog.PrimaryButtonClick += ImportDataContentDialog_PrimaryButtonClick;
-            await ImportDataContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(ImportDataContentDialog);
         }
 
         private async void ImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

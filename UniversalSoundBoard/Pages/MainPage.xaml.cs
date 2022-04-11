@@ -881,7 +881,7 @@ namespace UniversalSoundboard.Pages
         {
             var editCategoryContentDialog = ContentDialogs.CreateEditCategoryContentDialog();
             editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
-            await editCategoryContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(editCategoryContentDialog);
         }
 
         private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -906,7 +906,7 @@ namespace UniversalSoundboard.Pages
         {
             var deleteCategoryContentDialog = ContentDialogs.CreateDeleteCategoryContentDialogAsync();
             deleteCategoryContentDialog.PrimaryButtonClick += DeleteCategoryContentDialog_PrimaryButtonClick;
-            await deleteCategoryContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(deleteCategoryContentDialog);
         }
 
         private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -940,7 +940,7 @@ namespace UniversalSoundboard.Pages
 
             var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(sounds, template, listViewItemStyle);
             playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
-            await playSoundsSuccessivelyContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(playSoundsSuccessivelyContentDialog);
         }
 
         private async void PlaySoundsButton_Click(object sender, RoutedEventArgs e)
@@ -988,7 +988,7 @@ namespace UniversalSoundboard.Pages
 
             var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(sounds, template, listViewItemStyle);
             playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
-            await playSoundsSuccessivelyContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(playSoundsSuccessivelyContentDialog);
         }
 
         private async void PlaySoundsSuccessivelyFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -1053,7 +1053,7 @@ namespace UniversalSoundboard.Pages
 
             ContentDialog addSoundsContentDialog = ContentDialogs.CreateAddSoundsContentDialog(template, files);
             addSoundsContentDialog.PrimaryButtonClick += AddSoundsContentDialog_PrimaryButtonClick;
-            await addSoundsContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(addSoundsContentDialog);
         }
 
         private async void AddSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -1147,7 +1147,7 @@ namespace UniversalSoundboard.Pages
                     FileManager.DismissInAppNotification(FileManager.InAppNotificationType.AddSounds);
 
                     var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notAddedSounds);
-                    await addSoundsErrorContentDialog.ShowAsync();
+                    await ContentDialogs.ShowContentDialogAsync(addSoundsErrorContentDialog);
                 };
 
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(null, inAppNotificationArgs);
@@ -1186,7 +1186,7 @@ namespace UniversalSoundboard.Pages
             var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
             var downloadSoundsContentDialog = ContentDialogs.CreateDownloadSoundsContentDialog(infoButtonStyle);
             downloadSoundsContentDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
-            await downloadSoundsContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(downloadSoundsContentDialog);
         }
 
         private async void DownloadSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -1485,7 +1485,7 @@ namespace UniversalSoundboard.Pages
                     FileManager.DismissInAppNotification(FileManager.InAppNotificationType.DownloadSounds);
 
                     var downloadSoundsErrorContentDialog = ContentDialogs.CreateDownloadSoundsErrorContentDialog(notDownloadedSounds);
-                    await downloadSoundsErrorContentDialog.ShowAsync();
+                    await ContentDialogs.ShowContentDialogAsync(downloadSoundsErrorContentDialog);
                 };
 
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(this, inAppNotificationArgs);
@@ -1693,7 +1693,7 @@ namespace UniversalSoundboard.Pages
         public async Task ShowDownloadErrorDialog()
         {
             ContentDialog downloadFileErrorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
-            await downloadFileErrorContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(downloadFileErrorContentDialog);
         }
         #endregion
 
@@ -1702,7 +1702,7 @@ namespace UniversalSoundboard.Pages
         {
             var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(Guid.Empty);
             newCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
-            await newCategoryContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(newCategoryContentDialog);
         }
 
         private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -1901,7 +1901,7 @@ namespace UniversalSoundboard.Pages
                 downloadFilesContentDialog.CloseButtonClick += DownloadFilesContentDialog_CloseButtonClick;
 
                 downloadFilesDialogIsVisible = true;
-                await downloadFilesContentDialog.ShowAsync();
+                await ContentDialogs.ShowContentDialogAsync(downloadFilesContentDialog);
                 downloadFilesDialogIsVisible = false;
 
                 if (downloadFilesCanceled)
@@ -1915,7 +1915,7 @@ namespace UniversalSoundboard.Pages
 
                     // Show the error dialog
                     var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
-                    await errorContentDialog.ShowAsync();
+                    await ContentDialogs.ShowContentDialogAsync(errorContentDialog);
 
                     return false;
                 }
@@ -1940,7 +1940,7 @@ namespace UniversalSoundboard.Pages
 
             var SetCategoryContentDialog = ContentDialogs.CreateSetCategoriesContentDialog(selectedSounds);
             SetCategoryContentDialog.PrimaryButtonClick += SetCategoriesContentDialog_PrimaryButtonClick;
-            await SetCategoryContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(SetCategoryContentDialog);
         }
 
         private async void SetCategoriesContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -2077,7 +2077,7 @@ namespace UniversalSoundboard.Pages
         {
             var newSubCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(selectedCategory);
             newSubCategoryContentDialog.PrimaryButtonClick += NewSubCategoryContentDialog_PrimaryButtonClick;
-            await newSubCategoryContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(newSubCategoryContentDialog);
         }
 
         private async void NewSubCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -2175,7 +2175,7 @@ namespace UniversalSoundboard.Pages
 
             var exportSoundsContentDialog = ContentDialogs.CreateExportSoundsContentDialog(sounds, template, listViewItemStyle);
             exportSoundsContentDialog.PrimaryButtonClick += ExportSoundsContentDialog_PrimaryButtonClick;
-            await exportSoundsContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(exportSoundsContentDialog);
         }
 
         private async void ExportSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -2192,7 +2192,7 @@ namespace UniversalSoundboard.Pages
         {
             var deleteSoundsContentDialog = ContentDialogs.CreateDeleteSoundsContentDialogAsync();
             deleteSoundsContentDialog.PrimaryButtonClick += DeleteSoundsContentDialog_PrimaryButtonClick;
-            await deleteSoundsContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(deleteSoundsContentDialog);
         }
 
         private async void DeleteSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

@@ -859,7 +859,7 @@ namespace UniversalSoundboard.Pages
 
             ContentDialog addSoundsContentDialog = ContentDialogs.CreateAddSoundsContentDialog(template, files);
             addSoundsContentDialog.PrimaryButtonClick += AddSoundsContentDialog_PrimaryButtonClick;
-            await addSoundsContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(addSoundsContentDialog);
         }
 
         private async void AddSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -872,7 +872,7 @@ namespace UniversalSoundboard.Pages
             var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
             var downloadSoundsContentDialog = ContentDialogs.CreateDownloadSoundsContentDialog(infoButtonStyle);
             downloadSoundsContentDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
-            await downloadSoundsContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(downloadSoundsContentDialog);
         }
 
         private void DownloadSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -987,7 +987,7 @@ namespace UniversalSoundboard.Pages
 
             ContentDialog addSoundsContentDialog = ContentDialogs.CreateAddSoundsContentDialog(template, files);
             addSoundsContentDialog.PrimaryButtonClick += AddSoundsContentDialog_PrimaryButtonClick;
-            await addSoundsContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(addSoundsContentDialog);
         }
 
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)

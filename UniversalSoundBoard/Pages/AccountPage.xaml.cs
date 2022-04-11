@@ -193,7 +193,7 @@ namespace UniversalSoundboard.Pages
         {
             var logoutContentDialog = ContentDialogs.CreateLogoutContentDialog();
             logoutContentDialog.PrimaryButtonClick += LogoutContentDialog_PrimaryButtonClick;
-            await logoutContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(logoutContentDialog);
         }
 
         private async void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -267,7 +267,7 @@ namespace UniversalSoundboard.Pages
 
                 // Show dialog for error
                 var errorDialog = ContentDialogs.CreateUpgradeErrorContentDialog();
-                await errorDialog.ShowAsync();
+                await ContentDialogs.ShowContentDialogAsync(errorDialog);
             }
         }
 

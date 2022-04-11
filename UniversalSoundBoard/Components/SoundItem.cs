@@ -70,7 +70,7 @@ namespace UniversalSoundboard.Components
         {
             var SetCategoriesContentDialog = ContentDialogs.CreateSetCategoriesContentDialog(new List<Sound> { sound });
             SetCategoriesContentDialog.PrimaryButtonClick += SetCategoriesContentDialog_PrimaryButtonClick;
-            await SetCategoriesContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(SetCategoriesContentDialog);
         }
 
         private async void SetCategoriesContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -339,7 +339,7 @@ namespace UniversalSoundboard.Components
         {
             var RenameSoundContentDialog = ContentDialogs.CreateRenameSoundContentDialog(sound);
             RenameSoundContentDialog.PrimaryButtonClick += RenameSoundContentDialog_PrimaryButtonClick;
-            await RenameSoundContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(RenameSoundContentDialog);
         }
 
         private async void RenameSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -358,7 +358,7 @@ namespace UniversalSoundboard.Components
         {
             var DeleteSoundContentDialog = ContentDialogs.CreateDeleteSoundContentDialog(sound.Name);
             DeleteSoundContentDialog.PrimaryButtonClick += DeleteSoundContentDialog_PrimaryButtonClick;
-            await DeleteSoundContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(DeleteSoundContentDialog);
         }
 
         private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
@@ -372,7 +372,7 @@ namespace UniversalSoundboard.Components
         private async void Flyout_PropertiesFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             var propertiesContentDialog = await ContentDialogs.CreatePropertiesContentDialog(sound);
-            await propertiesContentDialog.ShowAsync();
+            await ContentDialogs.ShowContentDialogAsync(propertiesContentDialog);
         }
         #endregion
 
@@ -392,7 +392,7 @@ namespace UniversalSoundboard.Components
                 ContentDialogs.CreateDownloadFileContentDialog($"{sound.Name}.{sound.GetAudioFileExtension()}");
                 ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
                 ContentDialogs.DownloadFileContentDialog.CloseButtonClick += DownloadFileContentDialog_CloseButtonClick;
-                await ContentDialogs.DownloadFileContentDialog.ShowAsync();
+                await ContentDialogs.ShowContentDialogAsync(ContentDialogs.DownloadFileContentDialog);
             }
 
             if (downloadFileWasCanceled)
@@ -404,7 +404,7 @@ namespace UniversalSoundboard.Components
             if (downloadFileThrewError)
             {
                 var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
-                await errorContentDialog.ShowAsync();
+                await ContentDialogs.ShowContentDialogAsync(errorContentDialog);
                 downloadFileThrewError = false;
                 return false;
             }
