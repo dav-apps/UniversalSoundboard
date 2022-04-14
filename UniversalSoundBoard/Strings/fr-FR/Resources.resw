@@ -981,4 +981,10 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="Account-ManageSubscriptionButton.Content" xml:space="preserve">
     <value>Gérer votre abonnement</value>
   </data>
+  <data name="NoAudioDeviceContentDialog-Message" xml:space="preserve">
+    <value>Connectez un appareil audio pour jouer des sons.</value>
+  </data>
+  <data name="NoAudioDeviceContentDialog-Title" xml:space="preserve">
+    <value>Aucun appareil audio trouvé</value>
+  </data>
 </root>

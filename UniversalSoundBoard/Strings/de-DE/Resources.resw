@@ -980,4 +980,10 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="Account-ManageSubscriptionButton.Content" xml:space="preserve">
     <value>Abo verwalten</value>
   </data>
+  <data name="NoAudioDeviceContentDialog-Message" xml:space="preserve">
+    <value>Bitte schließe ein Audiogerät an, um Sounds abzuspielen.</value>
+  </data>
+  <data name="NoAudioDeviceContentDialog-Title" xml:space="preserve">
+    <value>Kein Audiogerät gefunden</value>
+  </data>
 </root>

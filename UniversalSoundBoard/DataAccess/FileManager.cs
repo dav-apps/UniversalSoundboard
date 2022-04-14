@@ -3368,6 +3368,21 @@ namespace UniversalSoundboard.DataAccess
             // Navigate to the Account page
             NavigateToAccountPage();
         }
+
+        public static async Task<bool> CheckAudioDevice()
+        {
+            DeviceInformationCollection devices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
+
+            if (devices.Count == 0)
+            {
+                var noAudioDeviceContentDialog = ContentDialogs.CreateNoAudioDeviceContentDialog();
+                await ContentDialogs.ShowContentDialogAsync(noAudioDeviceContentDialog);
+
+                return false;
+            }
+
+            return true;
+        }
         #endregion
 
         #region Helper Methods

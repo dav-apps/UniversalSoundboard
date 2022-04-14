@@ -117,6 +117,7 @@ namespace UniversalSoundboard.Common
         public static ContentDialog DavPlusHotkeysContentDialog;
         public static ContentDialog DavPlusOutputDeviceContentDialog;
         public static ContentDialog UpgradeErrorContentDialog;
+        public static ContentDialog NoAudioDeviceContentDialog;
         #endregion
 
         #region General methods
@@ -2071,6 +2072,22 @@ namespace UniversalSoundboard.Common
             };
 
             return UpgradeErrorContentDialog;
+        }
+        #endregion
+
+        #region NoAudioDevice
+        public static ContentDialog CreateNoAudioDeviceContentDialog()
+        {
+            NoAudioDeviceContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("NoAudioDeviceContentDialog-Title"),
+                Content = loader.GetString("NoAudioDeviceContentDialog-Message"),
+                CloseButtonText = loader.GetString("Actions-Close"),
+                DefaultButton = ContentDialogButton.Close,
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+
+            return NoAudioDeviceContentDialog;
         }
         #endregion
     }

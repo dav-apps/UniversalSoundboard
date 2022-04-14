@@ -922,7 +922,10 @@ namespace UniversalSoundboard.Pages
         private async void SoundGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             if (FileManager.itemViewHolder.MultiSelectionEnabled) return;
-            await PlaySoundAsync((Sound)e.ClickedItem);
+
+            // Check if there is an audio device
+            if (await FileManager.CheckAudioDevice())
+                await PlaySoundAsync((Sound)e.ClickedItem);
         }
 
         private async void SoundContentGrid_DragOver(object sender, DragEventArgs e)

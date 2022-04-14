@@ -982,4 +982,10 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="Account-ManageSubscriptionButton.Content" xml:space="preserve">
     <value>Manage subscription</value>
   </data>
+  <data name="NoAudioDeviceContentDialog-Message" xml:space="preserve">
+    <value>Please connect an audio device to play sounds.</value>
+  </data>
+  <data name="NoAudioDeviceContentDialog-Title" xml:space="preserve">
+    <value>No audio device found</value>
+  </data>
 </root>
