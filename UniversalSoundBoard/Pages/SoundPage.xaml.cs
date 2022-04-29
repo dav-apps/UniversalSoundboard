@@ -508,7 +508,7 @@ namespace UniversalSoundboard.Pages
 
             double appVolume = ((double)FileManager.itemViewHolder.Volume) / 100;
             player.Volume = appVolume * ((double)v / 100);
-            player.IsMuted = m;
+            player.IsMuted = m || FileManager.itemViewHolder.Muted;
             player.PlaybackSession.PlaybackRate = (double)ps / 100;
 
             PlayingSound playingSound = new PlayingSound(player, sound)
