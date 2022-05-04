@@ -58,7 +58,7 @@ namespace UniversalSoundboard.Pages
 
             reversedPlayingSounds.Filter = item =>
             {
-                if (!playingSoundsLoaded) return false;
+                if (!playingSoundsLoaded || item == null) return false;
                 if (FileManager.itemViewHolder.PlayingSounds.Count == 0) return true;
                 return FileManager.itemViewHolder.OpenMultipleSounds || ((PlayingSound)item).Uuid.Equals(FileManager.itemViewHolder.PlayingSounds.Last().Uuid);
             };
@@ -299,6 +299,7 @@ namespace UniversalSoundboard.Pages
         {
             if (nextSinglePlayingSoundToOpen != null)
             {
+                await Task.Delay(20);
                 FileManager.itemViewHolder.PlayingSounds.Add(nextSinglePlayingSoundToOpen);
                 nextSinglePlayingSoundToOpen = null;
             }

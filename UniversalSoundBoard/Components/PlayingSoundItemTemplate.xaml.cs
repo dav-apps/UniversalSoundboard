@@ -274,7 +274,7 @@ namespace UniversalSoundboard.Components
             PlaybackSpeedButton.Visibility = Visibility.Visible;
         }
 
-        private async void PlayingSoundItem_ShowPlayingSound(object sender, EventArgs e)
+        private void PlayingSoundItem_ShowPlayingSound(object sender, EventArgs e)
         {
             if (playingSoundItemVisible) return;
             playingSoundItemVisible = true;
@@ -287,8 +287,6 @@ namespace UniversalSoundboard.Components
                     || !SoundPage.playingSoundsRendered
                 )
             );
-
-            await Task.Delay(5);
 
             // (88 = standard height of PlayingSoundItem with one row of text)
             double contentHeight = ContentRoot.ActualHeight > 0 ? ContentRoot.ActualHeight + ContentRoot.Margin.Top + ContentRoot.Margin.Bottom : 88;
@@ -305,15 +303,19 @@ namespace UniversalSoundboard.Components
                 );
             }
 
-            ShowPlayingSoundItemStoryboardAnimation.To = contentHeight;
-            ShowPlayingSoundItemStoryboard.Begin();
+            //ShowPlayingSoundItemStoryboardAnimation.To = contentHeight;
+            //ShowPlayingSoundItemStoryboard.Begin();
+            FileManager.itemViewHolder.TriggerShowPlayingSoundItemEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
         }
 
-        private void PlayingSoundItem_RemovePlayingSound(object sender, EventArgs e)
+        private async void PlayingSoundItem_RemovePlayingSound(object sender, EventArgs e)
         {
             // Start the animation for hiding the PlayingSoundItem
-            HidePlayingSoundItemStoryboardAnimation.From = PlayingSoundItemTemplateUserControl.ActualHeight;
-            HidePlayingSoundItemStoryboard.Begin();
+            //HidePlayingSoundItemStoryboardAnimation.From = PlayingSoundItemTemplateUserControl.ActualHeight;
+            //HidePlayingSoundItemStoryboard.Begin();
+            await Task.Delay(200);
+            playingSoundItemVisible = false;
+            await PlayingSoundItem.Remove();
         }
 
         private void PlayingSoundItem_DownloadStatusChanged(object sender, DownloadStatusChangedEventArgs e)

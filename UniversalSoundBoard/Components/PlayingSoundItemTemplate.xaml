@@ -10,7 +10,6 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Height="0"
     x:Name="PlayingSoundItemTemplateUserControl"
     Loaded="PlayingSoundTemplate_Loaded"
     SizeChanged="UserControl_SizeChanged">
