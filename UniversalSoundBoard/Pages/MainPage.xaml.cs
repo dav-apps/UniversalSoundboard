@@ -28,6 +28,7 @@ using System.Collections.ObjectModel;
 using Google.Apis.YouTube.v3.Data;
 using Microsoft.AppCenter.Analytics;
 using Windows.System;
+using Windows.Graphics.Display;
 
 namespace UniversalSoundboard.Pages
 {
@@ -50,6 +51,8 @@ namespace UniversalSoundboard.Pages
         public static double windowWidth = 500;
         public static Style buttonRevealStyle;
         public static DataTemplate hotkeyButtonTemplate;
+        public static uint screenWidth = 0;
+        public static uint screenHeight = 0;
 
         public MainPage()
         {
@@ -74,6 +77,11 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.DownloadYoutubeVideo += ItemViewHolder_DownloadYoutubeVideo;
             FileManager.itemViewHolder.DownloadYoutubePlaylist += ItemViewHolder_DownloadYoutubePlaylist;
             FileManager.itemViewHolder.DownloadAudioFile += ItemViewHolder_DownloadAudioFile;
+
+            // Get the screen resolution
+            var displayInfo = DisplayInformation.GetForCurrentView();
+            screenWidth = displayInfo.ScreenWidthInRawPixels;
+            screenHeight = displayInfo.ScreenHeightInRawPixels;
         }
 
         #region Page event handlers

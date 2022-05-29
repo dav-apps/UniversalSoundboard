@@ -59,6 +59,7 @@ namespace UniversalSoundboard
                 settings += $"showCategoriesIcons: {FileManager.itemViewHolder.ShowCategoriesIcons}\n";
                 settings += $"showAcrylicBackground: {FileManager.itemViewHolder.ShowAcrylicBackground}\n";
                 settings += $"isLoggedIn: {Dav.IsLoggedIn}";
+                settings += $"{MainPage.screenWidth}x{MainPage.screenHeight}";
 
                 return new ErrorAttachmentLog[]
                 {
