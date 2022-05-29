@@ -299,7 +299,6 @@ namespace UniversalSoundboard.Pages
         {
             if (nextSinglePlayingSoundToOpen != null)
             {
-                await Task.Delay(20);
                 FileManager.itemViewHolder.PlayingSounds.Add(nextSinglePlayingSoundToOpen);
                 nextSinglePlayingSoundToOpen = null;
             }
