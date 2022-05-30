@@ -986,4 +986,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="NoAudioDeviceContentDialog-Title" xml:space="preserve">
     <value>Kein Audiogerät gefunden</value>
   </data>
+  <data name="OutputDeviceButton.Text" xml:space="preserve">
+    <value>Ausgabegerät</value>
+  </data>
 </root>

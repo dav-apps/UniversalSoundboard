@@ -987,4 +987,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="NoAudioDeviceContentDialog-Title" xml:space="preserve">
     <value>Aucun appareil audio trouvé</value>
   </data>
+  <data name="OutputDeviceButton.Text" xml:space="preserve">
+    <value>Périphérique de sortie</value>
+  </data>
 </root>

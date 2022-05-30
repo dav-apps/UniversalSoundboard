@@ -1821,6 +1821,13 @@ namespace UniversalSoundboard.Pages
         }
         #endregion
 
+        #region OutputDeviceButton
+        private void OutputDeviceButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        #endregion
+
         #region Select all
         private void MoreButton_SelectAllFlyout_Click(object sender, RoutedEventArgs e)
         {

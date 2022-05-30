@@ -988,4 +988,7 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="NoAudioDeviceContentDialog-Title" xml:space="preserve">
     <value>No audio device found</value>
   </data>
+  <data name="OutputDeviceButton.Text" xml:space="preserve">
+    <value>Output device</value>
+  </data>
 </root>
