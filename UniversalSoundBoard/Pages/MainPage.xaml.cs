@@ -280,8 +280,29 @@ namespace UniversalSoundboard.Pages
             await DownloadSoundsContentDialog_AudioFileDownload();
         }
 
-        private void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
+        private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
         {
+            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                UpdateOutputDeviceFlyout();
+            });
+        }
+
+        private async void OutputDeviceItem_Click(object sender, RoutedEventArgs e)
+        {
+            string outputDevice = (string)(sender as ToggleMenuFlyoutItem).Tag;
+
+            if (outputDevice == null)
+            {
+                FileManager.itemViewHolder.UseStandardOutputDevice = true;
+            }
+            else
+            {
+                FileManager.itemViewHolder.UseStandardOutputDevice = false;
+                FileManager.itemViewHolder.OutputDevice = outputDevice;
+            }
+
+            await Task.Delay(100);
             UpdateOutputDeviceFlyout();
         }
 
@@ -464,21 +485,36 @@ namespace UniversalSoundboard.Pages
         private void UpdateOutputDeviceFlyout()
         {
             if (OutputDeviceButton.Flyout != null && OutputDeviceButton.Flyout.IsOpen) return;
+            OutputDeviceButton.Flyout = null;
 
             MenuFlyout menuFlyout = new MenuFlyout
             {
                 Placement = FlyoutPlacementMode.Bottom
             };
 
+            ToggleMenuFlyoutItem standardItem = new ToggleMenuFlyoutItem
+            {
+                Text = loader.GetString("StandardOutputDevice"),
+                IsChecked = true
+            };
+
+            standardItem.Click += OutputDeviceItem_Click;
+            menuFlyout.Items.Add(standardItem);
+
             foreach (var device in FileManager.deviceWatcherHelper.Devices)
             {
                 ToggleMenuFlyoutItem item = new ToggleMenuFlyoutItem
                 {
                     Text = device.Name,
-                    IsChecked = false
+                    Tag = device.Id,
+                    IsChecked = !FileManager.itemViewHolder.UseStandardOutputDevice && FileManager.itemViewHolder.OutputDevice == device.Id
                 };
 
+                item.Click += OutputDeviceItem_Click;
                 menuFlyout.Items.Add(item);
+
+                if (item.IsChecked)
+                    standardItem.IsChecked = false;
             }
 
             OutputDeviceButton.Flyout = menuFlyout;
