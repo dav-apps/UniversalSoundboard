@@ -77,6 +77,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.DownloadYoutubeVideo += ItemViewHolder_DownloadYoutubeVideo;
             FileManager.itemViewHolder.DownloadYoutubePlaylist += ItemViewHolder_DownloadYoutubePlaylist;
             FileManager.itemViewHolder.DownloadAudioFile += ItemViewHolder_DownloadAudioFile;
+            FileManager.deviceWatcherHelper.DevicesChanged += DeviceWatcherHelper_DevicesChanged;
 
             // Get the screen resolution
             var displayInfo = DisplayInformation.GetForCurrentView();
@@ -108,6 +109,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerSoundsLoadedEvent(this);
 
             IncreaseAppStartCounter();
+            UpdateOutputDeviceFlyout();
             await FileManager.StartHotkeyProcess();
             await Dav.SyncData();
         }
@@ -277,6 +279,22 @@ namespace UniversalSoundboard.Pages
         {
             await DownloadSoundsContentDialog_AudioFileDownload();
         }
+
+        private void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
+        {
+            UpdateOutputDeviceFlyout();
+        }
+
+        private async void WriteReviewInAppNotificationEventArgs_PrimaryButtonClick(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NBLGGH51005"));
+            FileManager.DismissInAppNotification(FileManager.InAppNotificationType.WriteReview);
+
+            Analytics.TrackEvent("InAppNotification-WriteReview-PrimaryButtonClick", new Dictionary<string, string>
+            {
+                { "AppStarts", FileManager.itemViewHolder.AppStartCounter.ToString() }
+            });
+        }
         #endregion
 
         #region General methods
@@ -443,15 +461,27 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        private async void WriteReviewInAppNotificationEventArgs_PrimaryButtonClick(object sender, RoutedEventArgs e)
+        private void UpdateOutputDeviceFlyout()
         {
-            await Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NBLGGH51005"));
-            FileManager.DismissInAppNotification(FileManager.InAppNotificationType.WriteReview);
+            if (OutputDeviceButton.Flyout != null && OutputDeviceButton.Flyout.IsOpen) return;
 
-            Analytics.TrackEvent("InAppNotification-WriteReview-PrimaryButtonClick", new Dictionary<string, string>
+            MenuFlyout menuFlyout = new MenuFlyout
             {
-                { "AppStarts", FileManager.itemViewHolder.AppStartCounter.ToString() }
-            });
+                Placement = FlyoutPlacementMode.Bottom
+            };
+
+            foreach (var device in FileManager.deviceWatcherHelper.Devices)
+            {
+                ToggleMenuFlyoutItem item = new ToggleMenuFlyoutItem
+                {
+                    Text = device.Name,
+                    IsChecked = false
+                };
+
+                menuFlyout.Items.Add(item);
+            }
+
+            OutputDeviceButton.Flyout = menuFlyout;
         }
         #endregion
 
@@ -1818,13 +1848,6 @@ namespace UniversalSoundboard.Pages
         {
             FileManager.itemViewHolder.MultiSelectionEnabled = true;
             AdjustLayout();
-        }
-        #endregion
-
-        #region OutputDeviceButton
-        private void OutputDeviceButton_Click(object sender, RoutedEventArgs e)
-        {
-
         }
         #endregion
 

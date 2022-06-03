@@ -307,8 +307,7 @@
                                         VerticalAlignment="Center"
                                         Width="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonWidthConverter}}"
                                         Padding="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonPaddingConverter}}"
-                                        Visibility="{x:Bind mobileSearchVisible, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
-                                        Click="OutputDeviceButton_Click">
+                                        Visibility="{x:Bind mobileSearchVisible, Converter={StaticResource BooleanToInvertedVisibilityConverter}}">
 
                                         <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
                                             <TextBlock
