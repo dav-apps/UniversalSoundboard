@@ -654,12 +654,6 @@ This may take some time, depending on how large the import file is.</value>
   <data name="AddSoundsErrorContentDialog-Title" xml:space="preserve">
     <value>Error in adding sounds</value>
   </data>
-  <data name="SettingsEntry-UseStandardOutputDeviceToggle.Header" xml:space="preserve">
-    <value>Use standard output device</value>
-  </data>
-  <data name="SettingsEntry-OutputDeviceHeaderTextBlock.Text" xml:space="preserve">
-    <value>Choose your output device</value>
-  </data>
   <data name="MoreButton-OutputDevice" xml:space="preserve">
     <value>Output device</value>
   </data>

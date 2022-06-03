@@ -653,12 +653,6 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="AddSoundsErrorContentDialog-Title" xml:space="preserve">
     <value>Erreur lors de l'ajout de sons</value>
   </data>
-  <data name="SettingsEntry-UseStandardOutputDeviceToggle.Header" xml:space="preserve">
-    <value>Utiliser le périphérique de sortie standard</value>
-  </data>
-  <data name="SettingsEntry-OutputDeviceHeaderTextBlock.Text" xml:space="preserve">
-    <value>Choisir votre périphérique de sortie</value>
-  </data>
   <data name="MoreButton-OutputDevice" xml:space="preserve">
     <value>Périphérique de sortie</value>
   </data>

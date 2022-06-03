@@ -123,32 +123,6 @@
                                 <ComboBoxItem x:Uid="SettingsEntry-SoundOrderReversedComboBox-Descending">Descending</ComboBoxItem>
                             </ComboBox>
                         </StackPanel>
-
-                        <StackPanel
-                            Name="UseStandardOutputDeviceStackPanel"
-                            Style="{StaticResource SettingsEntryStyle}">
-
-                            <ToggleSwitch
-                                Name="UseStandardOutputDeviceToggle"
-                                x:Uid="SettingsEntry-UseStandardOutputDeviceToggle"
-                                Toggled="UseStandardOutputDeviceToggle_Toggled" />
-                        </StackPanel>
-
-                        <StackPanel
-                            Name="OutputDeviceStackPanel"
-                            Style="{StaticResource SettingsEntryStyle}">
-
-                            <TextBlock
-                                Name="OutputDeviceHeaderTextBlock"
-                                x:Uid="SettingsEntry-OutputDeviceHeaderTextBlock" />
-
-                            <ComboBox
-                                Name="OutputDeviceComboBox"
-                                Margin="0,10,0,0"
-                                SelectedIndex="0"
-                                SelectionChanged="OutputDeviceComboBox_SelectionChanged">
-                            </ComboBox>
-                        </StackPanel>
                     </StackPanel>
                 </ScrollViewer>
             </PivotItem>
