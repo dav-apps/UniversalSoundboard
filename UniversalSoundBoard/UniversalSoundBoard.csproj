@@ -145,6 +145,7 @@
     <Compile Include="Components\HotkeyItemTemplate.xaml.cs">
       <DependentUpon>HotkeyItemTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\DeviceWatcherHelper.cs" />
     <Compile Include="Models\InAppNotificationItem.cs" />
     <Compile Include="Components\PlayingSoundItem.cs" />
     <Compile Include="Components\SoundFileDownloadProgressTemplate.xaml.cs">
@@ -162,6 +163,7 @@
     <Compile Include="DataAccess\DatabaseOperations.cs" />
     <Compile Include="DataAccess\FileManager.cs" />
     <Compile Include="Models\Hotkey.cs" />
+    <Compile Include="Models\OutputDevice.cs" />
     <Compile Include="Strings\Env.cs" />
     <Compile Include="Models\OldDatabaseModels.cs" />
     <Compile Include="Models\PlayingSound.cs" />
