@@ -21,7 +21,7 @@
     <AppxAutoIncrementPackageRevision>False</AppxAutoIncrementPackageRevision>
     <AppxBundle>Always</AppxBundle>
     <AppxBundlePlatforms>x86|x64|arm|arm64</AppxBundlePlatforms>
-    <PackageCertificateThumbprint>C7B03428F9E12DF26F2F80AB70FECE104302F6EE</PackageCertificateThumbprint>
+    <PackageCertificateThumbprint>9700B02BE838085FBFA3B00914A12FECAFF5248D</PackageCertificateThumbprint>
     <AppxSymbolPackageEnabled>True</AppxSymbolPackageEnabled>
     <RuntimeIdentifiers>win10-arm;win10-arm-aot;win10-arm64-aot;win10-x86;win10-x86-aot;win10-x64;win10-x64-aot</RuntimeIdentifiers>
     <GenerateAppInstallerFile>False</GenerateAppInstallerFile>
@@ -137,6 +137,7 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\EventArgs.cs" />
+    <Compile Include="Common\Exceptions.cs" />
     <Compile Include="Common\LocalDataSettings.cs" />
     <Compile Include="Common\Callbacks.cs" />
     <Compile Include="Components\CustomTreeViewNode.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Components\HotkeyItemTemplate.xaml.cs">
       <DependentUpon>HotkeyItemTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Models\AudioPlayer.cs" />
     <Compile Include="Models\DeviceWatcherHelper.cs" />
     <Compile Include="Models\InAppNotificationItem.cs" />
     <Compile Include="Components\PlayingSoundItem.cs" />

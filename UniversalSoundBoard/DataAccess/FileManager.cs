@@ -1899,6 +1899,53 @@ namespace UniversalSoundboard.DataAccess
             return player;
         }
 
+        public static async Task<(AudioPlayer, List<Sound>)> CreateAudioPlayer(List<Sound> sounds, int current)
+        {
+            if (sounds.Count == 0) return (null, null);
+
+            if (current >= sounds.Count)
+                current = sounds.Count - 1;
+            else if (current < 0)
+                current = 0;
+
+            var audioPlayer = new AudioPlayer();
+            List<Sound> newSounds = new List<Sound>();
+
+            foreach (Sound sound in sounds)
+                if (sound.GetAudioFileDownloadStatus() != TableObjectFileDownloadStatus.NoFileOrNotLoggedIn)
+                    newSounds.Add(sound);
+
+            if (current < newSounds.Count && newSounds[current].AudioFile != null)
+            {
+                try
+                {
+                    await audioPlayer.Init(newSounds[current].AudioFile);
+                }
+                catch (AudioPlayerInitException e)
+                {
+                    // TODO: Error handling
+                    Debug.WriteLine($"An error occured while initializing the AudioPlayer: {e.Error}");
+                }
+            }
+
+            // Set the volume
+            double appVolume = ((double)itemViewHolder.Volume) / 100;
+
+            if (newSounds.Count == 1)
+            {
+                double defaultSoundVolume = ((double)newSounds[0].DefaultVolume) / 100;
+                audioPlayer.Volume = appVolume * defaultSoundVolume;
+                audioPlayer.IsMuted = newSounds[0].DefaultMuted || itemViewHolder.Muted;
+            }
+            else
+            {
+                audioPlayer.Volume = appVolume;
+                audioPlayer.IsMuted = itemViewHolder.Muted;
+            }
+
+            return (audioPlayer, newSounds);
+        }
+
         /**
          * Update the SMTC to show the appropriate infos and state of the currently active PlayingSound
          */
