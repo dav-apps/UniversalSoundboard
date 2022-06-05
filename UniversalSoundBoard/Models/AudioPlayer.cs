@@ -7,18 +7,33 @@ using UniversalSoundboard.Common;
 using Windows.Media.Audio;
 using Windows.Media.Render;
 using Windows.Storage;
+using Windows.UI.Xaml;
 
 namespace UniversalSoundboard.Models
 {
     public class AudioPlayer
     {
         private bool initialized = false;
+        private bool isPlaying = false;
         private double volume = 1;
         private bool isMuted = false;
+        private double playbackRate = 1.0;
+        private DispatcherTimer positionChangeTimer;
 
         private AudioGraph AudioGraph { get; set; }
         private AudioFileInputNode FileInputNode { get; set; }
         private AudioDeviceOutputNode DeviceOutputNode { get; set; }
+
+        public bool IsPlaying { get => isPlaying; }
+        public TimeSpan Duration
+        {
+            get => FileInputNode?.Duration ?? TimeSpan.Zero;
+        }
+        public TimeSpan Position
+        {
+            get => FileInputNode?.Position ?? TimeSpan.Zero;
+            set => setPosition(value);
+        }
         public double Volume
         {
             get => volume;
@@ -29,6 +44,13 @@ namespace UniversalSoundboard.Models
             get => isMuted;
             set => setIsMuted(value);
         }
+        public double PlaybackRate
+        {
+            get => playbackRate;
+            set => setPlaybackRate(value);
+        }
+
+        public event EventHandler<PositionChangedEventArgs> PositionChanged;
 
         public AudioPlayer()
         {
@@ -65,6 +87,12 @@ namespace UniversalSoundboard.Models
 
             DeviceOutputNode = outputNodeResult.DeviceOutputNode;
             FileInputNode.AddOutgoingConnection(DeviceOutputNode);
+
+            // Init the timer for raising the positionChanged event
+            positionChangeTimer = new DispatcherTimer();
+            positionChangeTimer.Interval = TimeSpan.FromMilliseconds(100);
+            positionChangeTimer.Tick += PositionChangeTimer_Tick;
+
             initialized = true;
         }
 
@@ -73,7 +101,32 @@ namespace UniversalSoundboard.Models
             if (!initialized)
                 throw new AudioPlayerNotInitializedException();
 
+            if (isPlaying) return;
+
             AudioGraph.Start();
+            isPlaying = true;
+            positionChangeTimer.Start();
+        }
+
+        public void Pause()
+        {
+            if (!initialized)
+                throw new AudioPlayerNotInitializedException();
+
+            if (!isPlaying) return;
+
+            AudioGraph.Stop();
+            isPlaying = false;
+            positionChangeTimer.Stop();
+        }
+
+        #region Setter methods
+        private void setPosition(TimeSpan position)
+        {
+            if (!initialized)
+                throw new AudioPlayerNotInitializedException();
+
+            FileInputNode.Seek(position);
         }
 
         private void setVolume(double volume)
@@ -98,7 +151,7 @@ namespace UniversalSoundboard.Models
             if (!initialized)
                 throw new AudioPlayerNotInitializedException();
 
-            // Don't change anything if the value didn't change
+            // Don't change the value if it didn't change
             if (muted == isMuted) return;
 
             if (muted)
@@ -108,5 +161,25 @@ namespace UniversalSoundboard.Models
 
             isMuted = muted;
         }
+
+        private void setPlaybackRate(double playbackRate)
+        {
+            if (!initialized)
+                throw new AudioPlayerNotInitializedException();
+
+            // Don't change the value if it didn't change
+            if (this.playbackRate == playbackRate) return;
+
+            FileInputNode.PlaybackSpeedFactor = playbackRate;
+            this.playbackRate = playbackRate;
+        }
+        #endregion
+
+        #region Event Handlers
+        private void PositionChangeTimer_Tick(object sender, object e)
+        {
+            PositionChanged?.Invoke(this, new PositionChangedEventArgs(FileInputNode.Position));
+        }
+        #endregion
     }
 }
