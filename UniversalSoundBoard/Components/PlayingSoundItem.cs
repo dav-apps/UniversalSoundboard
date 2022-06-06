@@ -379,10 +379,6 @@ namespace UniversalSoundboard.Components
                 PlayingSound.AudioPlayer.Position = PlayingSound.StartPosition.Value;
                 PlayingSound.StartPosition = null;
             }
-            else
-            {
-                PlayingSound.AudioPlayer.Position = TimeSpan.Zero;
-            }
 
             await PlayingSound.AudioPlayer.Init();
 
