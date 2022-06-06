@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
+using Windows.Devices.Enumeration;
 using Windows.Media.Audio;
 using Windows.Media.Render;
 using Windows.Storage;
@@ -14,7 +15,11 @@ namespace UniversalSoundboard.Models
     public class AudioPlayer
     {
         private bool initialized = false;
+        private StorageFile audioFile;
+        private DeviceInformation outputDevice;
+        private bool outputDeviceChanged = false;
         private bool isPlaying = false;
+        private TimeSpan position = TimeSpan.Zero;
         private double volume = 1;
         private bool isMuted = false;
         private double playbackRate = 1.0;
@@ -24,6 +29,16 @@ namespace UniversalSoundboard.Models
         private AudioFileInputNode FileInputNode { get; set; }
         private AudioDeviceOutputNode DeviceOutputNode { get; set; }
 
+        public StorageFile AudioFile
+        {
+            get => audioFile;
+            set => audioFile = value;
+        }
+        public DeviceInformation OutputDevice
+        {
+            get => outputDevice;
+            set => setOutputDevice(value);
+        }
         public bool IsPlaying { get => isPlaying; }
         public TimeSpan Duration
         {
@@ -31,7 +46,7 @@ namespace UniversalSoundboard.Models
         }
         public TimeSpan Position
         {
-            get => FileInputNode?.Position ?? TimeSpan.Zero;
+            get => FileInputNode?.Position ?? position;
             set => setPosition(value);
         }
         public double Volume
@@ -51,49 +66,112 @@ namespace UniversalSoundboard.Models
         }
 
         public event EventHandler<PositionChangedEventArgs> PositionChanged;
+        public event EventHandler<EventArgs> MediaEnded;
 
         public AudioPlayer()
         {
-            
+            InitPositionChangeTimer();
         }
 
-        public async Task Init(StorageFile audioFile)
+        public AudioPlayer(StorageFile audioFile)
         {
-            if (initialized) return;
+            this.audioFile = audioFile;
 
+            InitPositionChangeTimer();
+        }
+
+        public AudioPlayer(DeviceInformation outputDevice)
+        {
+            this.outputDevice = outputDevice;
+
+            InitPositionChangeTimer();
+        }
+
+        public AudioPlayer(StorageFile audioFile, DeviceInformation outputDevice)
+        {
+            this.audioFile = audioFile;
+            this.outputDevice = outputDevice;
+
+            InitPositionChangeTimer();
+        }
+
+        public async Task Init()
+        {
+            if (audioFile == null)
+                throw new AudioPlayerInitException(AudioPlayerInitError.AudioFileNotSpecified);
+
+            positionChangeTimer.Stop();
+
+            if (!initialized || outputDeviceChanged)
+            {
+                // Create the AudioGraph
+                await InitAudioGraph();
+
+                // Create the output node
+                await InitDeviceOutputNode();
+
+                initialized = true;
+            }
+
+            // Create the input node
+            await InitFileInputNode();
+
+            FileInputNode.AddOutgoingConnection(DeviceOutputNode);
+            FileInputNode.FileCompleted += FileInputNode_FileCompleted;
+
+            if (IsPlaying)
+            {
+                AudioGraph.Start();
+                positionChangeTimer.Start();
+            }
+        }
+
+        private async Task InitAudioGraph()
+        {
             var settings = new AudioGraphSettings(AudioRenderCategory.Media);
-
-            // Create the AudioGraph
+            settings.PrimaryRenderDevice = outputDevice;
             var createAudioGraphResult = await AudioGraph.CreateAsync(settings);
 
             if (createAudioGraphResult.Status != AudioGraphCreationStatus.Success)
                 throw new AudioPlayerInitException(createAudioGraphResult.Status);
 
-            AudioGraph = createAudioGraphResult.Graph;
+            if (AudioGraph != null)
+            {
+                AudioGraph.Stop();
+                AudioGraph.Dispose();
+            }
 
-            // Create the input node
+            AudioGraph = createAudioGraphResult.Graph;
+        }
+
+        private async Task InitFileInputNode()
+        {
             var inputNodeResult = await AudioGraph.CreateFileInputNodeAsync(audioFile);
 
             if (inputNodeResult.Status != AudioFileNodeCreationStatus.Success)
                 throw new AudioPlayerInitException(inputNodeResult.Status);
 
             FileInputNode = inputNodeResult.FileInputNode;
+            FileInputNode.Seek(position);
+            FileInputNode.OutgoingGain = volume;
+            FileInputNode.PlaybackSpeedFactor = playbackRate;
+        }
 
-            // Create the output node
+        private async Task InitDeviceOutputNode()
+        {
             var outputNodeResult = await AudioGraph.CreateDeviceOutputNodeAsync();
 
             if (outputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
                 throw new AudioPlayerInitException(outputNodeResult.Status);
 
             DeviceOutputNode = outputNodeResult.DeviceOutputNode;
-            FileInputNode.AddOutgoingConnection(DeviceOutputNode);
+        }
 
-            // Init the timer for raising the positionChanged event
+        private void InitPositionChangeTimer()
+        {
             positionChangeTimer = new DispatcherTimer();
-            positionChangeTimer.Interval = TimeSpan.FromMilliseconds(100);
+            positionChangeTimer.Interval = TimeSpan.FromMilliseconds(200);
             positionChangeTimer.Tick += PositionChangeTimer_Tick;
-
-            initialized = true;
         }
 
         public void Play()
@@ -121,12 +199,21 @@ namespace UniversalSoundboard.Models
         }
 
         #region Setter methods
+        private void setOutputDevice(DeviceInformation outputDevice)
+        {
+            if (this.outputDevice == outputDevice) return;
+
+            this.outputDevice = outputDevice;
+            outputDeviceChanged = true;
+        }
+
         private void setPosition(TimeSpan position)
         {
             if (!initialized)
                 throw new AudioPlayerNotInitializedException();
 
             FileInputNode.Seek(position);
+            this.position = position;
         }
 
         private void setVolume(double volume)
@@ -178,7 +265,13 @@ namespace UniversalSoundboard.Models
         #region Event Handlers
         private void PositionChangeTimer_Tick(object sender, object e)
         {
-            PositionChanged?.Invoke(this, new PositionChangedEventArgs(FileInputNode.Position));
+            position = FileInputNode.Position;
+            PositionChanged?.Invoke(this, new PositionChangedEventArgs(position));
+        }
+
+        private void FileInputNode_FileCompleted(AudioFileInputNode sender, object args)
+        {
+            MediaEnded?.Invoke(this, new EventArgs());
         }
         #endregion
     }

@@ -10,7 +10,8 @@ namespace UniversalSoundboard.Common
         FileFormatNotSupported = 3,
         OutputDeviceNotAvailable = 4,
         OutputDeviceAccessDenied = 5,
-        UnknownFailure = 6
+        AudioFileNotSpecified = 6,
+        UnknownFailure = 7
     }
 
     class AudioPlayerInitException : Exception
