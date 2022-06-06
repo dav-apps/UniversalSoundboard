@@ -1,14 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using Windows.Media.Playback;
 
 namespace UniversalSoundboard.Models
 {
     public class PlayingSound
     {
         public Guid Uuid { get; set; }
-        public MediaPlayer MediaPlayer { get; set; }
+        public AudioPlayer AudioPlayer { get; set; }
         public ObservableCollection<Sound> Sounds { get; set; }
         public int Current { get; set; }
         public int Repetitions { get; set; }
@@ -34,9 +33,9 @@ namespace UniversalSoundboard.Models
             LocalFile = false;
         }
 
-        public PlayingSound(MediaPlayer player, Sound sound)
+        public PlayingSound(AudioPlayer player, Sound sound)
         {
-            MediaPlayer = player;
+            AudioPlayer = player;
             Sounds = new ObservableCollection<Sound> { sound };
             Current = 0;
             Repetitions = 0;
@@ -48,10 +47,10 @@ namespace UniversalSoundboard.Models
             LocalFile = false;
         }
 
-        public PlayingSound(Guid uuid, MediaPlayer player, List<Sound> sounds, int current, int repetitions, bool randomly)
+        public PlayingSound(Guid uuid, AudioPlayer player, List<Sound> sounds, int current, int repetitions, bool randomly)
         {
             Uuid = uuid;
-            MediaPlayer = player;
+            AudioPlayer = player;
             Sounds = new ObservableCollection<Sound>(sounds);
             Current = current;
             Repetitions = repetitions;
@@ -63,10 +62,10 @@ namespace UniversalSoundboard.Models
             LocalFile = false;
         }
 
-        public PlayingSound(Guid uuid, MediaPlayer player, List<Sound> sounds, int current, int repetitions, bool randomly, int volume, bool muted, string outputDevice, int playbackSpeed)
+        public PlayingSound(Guid uuid, AudioPlayer player, List<Sound> sounds, int current, int repetitions, bool randomly, int volume, bool muted, string outputDevice, int playbackSpeed)
         {
             Uuid = uuid;
-            MediaPlayer = player;
+            AudioPlayer = player;
             Sounds = new ObservableCollection<Sound>(sounds);
             Current = current;
             Repetitions = repetitions;

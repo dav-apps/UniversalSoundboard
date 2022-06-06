@@ -496,11 +496,11 @@ namespace UniversalSoundboard.Pages
         {
             List<Sound> soundList = new List<Sound> { sound };
 
-            var createMediaPlayerResult = FileManager.CreateMediaPlayer(soundList, 0);
-            MediaPlayer player = createMediaPlayerResult.Item1;
-            List<Sound> newSounds = createMediaPlayerResult.Item2;
+            var createAudioPlayerResult = await FileManager.CreateAudioPlayer(soundList, 0);
+            AudioPlayer player = createAudioPlayerResult.Item1;
+            List<Sound> newSounds = createAudioPlayerResult.Item2;
             if (player == null || newSounds == null) return;
-            if (position.HasValue) player.PlaybackSession.Position = position.Value;
+            if (position.HasValue) player.Position = position.Value;
 
             int v = volume.HasValue ? volume.Value : sound.DefaultVolume;
             bool m = muted.HasValue ? muted.Value : sound.DefaultMuted;
@@ -509,7 +509,7 @@ namespace UniversalSoundboard.Pages
             double appVolume = ((double)FileManager.itemViewHolder.Volume) / 100;
             player.Volume = appVolume * ((double)v / 100);
             player.IsMuted = m || FileManager.itemViewHolder.Muted;
-            player.PlaybackSession.PlaybackRate = (double)ps / 100;
+            player.PlaybackRate = (double)ps / 100;
 
             PlayingSound playingSound = new PlayingSound(player, sound)
             {
@@ -543,9 +543,9 @@ namespace UniversalSoundboard.Pages
                 sounds = sounds.OrderBy(a => random.Next()).ToList();
             }
 
-            var createMediaPlayerResult = FileManager.CreateMediaPlayer(sounds, 0);
-            MediaPlayer player = createMediaPlayerResult.Item1;
-            List<Sound> newSounds = createMediaPlayerResult.Item2;
+            var createAudioPlayerResult = await FileManager.CreateAudioPlayer(sounds, 0);
+            AudioPlayer player = createAudioPlayerResult.Item1;
+            List<Sound> newSounds = createAudioPlayerResult.Item2;
             if (player == null || newSounds == null) return;
 
             PlayingSound playingSound = new PlayingSound(
@@ -571,14 +571,14 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        public static void PlayLocalSound(StorageFile file)
+        public static async Task PlayLocalSound(StorageFile file)
         {
             Sound sound = new Sound(Guid.NewGuid(), file.DisplayName)
             {
                 AudioFile = file
             };
 
-            MediaPlayer player = FileManager.CreateMediaPlayerForLocalSound(sound);
+            AudioPlayer player = await FileManager.CreateAudioPlayerForLocalSound(sound);
             if (player == null) return;
 
             PlayingSound playingSound = new PlayingSound(Guid.NewGuid(), player, new List<Sound> { sound }, 0, 0, false);
@@ -619,7 +619,7 @@ namespace UniversalSoundboard.Pages
                 return;
             }
 
-            PlayLocalSound(file);
+            await PlayLocalSound(file);
         }
 
         public void ShowAllInAppNotifications()
