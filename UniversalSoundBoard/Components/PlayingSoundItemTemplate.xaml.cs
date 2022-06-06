@@ -8,7 +8,6 @@ using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.Resources;
 using Windows.Devices.Enumeration;
-using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -56,7 +55,7 @@ namespace UniversalSoundboard.Components
 
         private void Init()
         {
-            if (_playingSound == null || _playingSound.MediaPlayer == null) return;
+            if (_playingSound == null || _playingSound.AudioPlayer == null) return;
 
             // Check if the PlayingSound still exists
             int j = FileManager.itemViewHolder.PlayingSounds.ToList().FindIndex(ps => ps.Uuid.Equals(_playingSound.Uuid));
@@ -444,7 +443,7 @@ namespace UniversalSoundboard.Components
                 value = MoreButtonVolumeFlyoutItem.VolumeControlValue;
 
             // Apply the new volume
-            PlayingSound.MediaPlayer.Volume = value / 100 * FileManager.itemViewHolder.Volume / 100;
+            PlayingSound.AudioPlayer.Volume = value / 100 * FileManager.itemViewHolder.Volume / 100;
         }
 
         private void VolumeControl_IconChanged(object sender, string newIcon)
@@ -688,7 +687,7 @@ namespace UniversalSoundboard.Components
 
         private async void MoreButton_OpenSoundSeparatelyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+            if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
             if (PlayingSound.Current >= PlayingSound.Sounds.Count) return;
 
             // Get the current sound
@@ -697,11 +696,11 @@ namespace UniversalSoundboard.Components
             // Open the sound
             await SoundPage.PlaySoundAsync(
                 sound,
-                PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing,
+                PlayingSound.AudioPlayer.IsPlaying,
                 PlayingSound.Volume,
                 PlayingSound.Muted,
                 PlayingSound.PlaybackSpeed,
-                PlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing ? PlayingSound.MediaPlayer.PlaybackSession.Position : TimeSpan.Zero
+                PlayingSound.AudioPlayer.IsPlaying ? PlayingSound.AudioPlayer.Position : TimeSpan.Zero
             );
 
             // Pause this PlayingSound
@@ -710,7 +709,7 @@ namespace UniversalSoundboard.Components
 
         private async void MoreButton_FavouriteItem_Click(object sender, RoutedEventArgs e)
         {
-            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+            if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
             await PlayingSoundItem.ToggleFavourite();
         }
 
@@ -785,7 +784,7 @@ namespace UniversalSoundboard.Components
         #region UI methods
         private void AdjustLayout()
         {
-            if (PlayingSound == null || PlayingSound.MediaPlayer == null) return;
+            if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
 
             // Set the appropriate layout for the PlayingSoundItem
             double windowWidth = Window.Current.Bounds.Width;
