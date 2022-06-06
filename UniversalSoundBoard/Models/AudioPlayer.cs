@@ -146,6 +146,12 @@ namespace UniversalSoundboard.Models
 
         private async Task InitFileInputNode()
         {
+            if (FileInputNode != null)
+            {
+                FileInputNode.Stop();
+                FileInputNode.Dispose();
+            }
+
             var inputNodeResult = await AudioGraph.CreateFileInputNodeAsync(audioFile);
 
             if (inputNodeResult.Status != AudioFileNodeCreationStatus.Success)
@@ -159,6 +165,12 @@ namespace UniversalSoundboard.Models
 
         private async Task InitDeviceOutputNode()
         {
+            if (DeviceOutputNode != null)
+            {
+                DeviceOutputNode.Stop();
+                DeviceOutputNode.Dispose();
+            }
+
             var outputNodeResult = await AudioGraph.CreateDeviceOutputNodeAsync();
 
             if (outputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
@@ -209,18 +221,13 @@ namespace UniversalSoundboard.Models
 
         private void setPosition(TimeSpan position)
         {
-            if (!initialized)
-                throw new AudioPlayerNotInitializedException();
-
-            FileInputNode.Seek(position);
+            FileInputNode?.Seek(position);
             this.position = position;
+            PositionChanged?.Invoke(this, new PositionChangedEventArgs(position));
         }
 
         private void setVolume(double volume)
         {
-            if (!initialized)
-                throw new AudioPlayerNotInitializedException();
-
             // Don't set the volume if the player is muted or if the volume didn't change
             if (isMuted || volume == this.volume) return;
 
@@ -229,31 +236,30 @@ namespace UniversalSoundboard.Models
             else if (volume < 0)
                 volume = 0;
 
-            DeviceOutputNode.OutgoingGain = volume;
+            if (DeviceOutputNode != null)
+                DeviceOutputNode.OutgoingGain = volume;
+
             this.volume = volume;
         }
 
         private void setIsMuted(bool muted)
         {
-            if (!initialized)
-                throw new AudioPlayerNotInitializedException();
-
             // Don't change the value if it didn't change
             if (muted == isMuted) return;
 
-            if (muted)
-                DeviceOutputNode.OutgoingGain = 0;
-            else
-                DeviceOutputNode.OutgoingGain = volume;
+            if (DeviceOutputNode != null)
+            {
+                if (muted)
+                    DeviceOutputNode.OutgoingGain = 0;
+                else
+                    DeviceOutputNode.OutgoingGain = volume;
+            }
 
             isMuted = muted;
         }
 
         private void setPlaybackRate(double playbackRate)
         {
-            if (!initialized)
-                throw new AudioPlayerNotInitializedException();
-
             // Don't change the value if it didn't change
             if (this.playbackRate == playbackRate) return;
 
