@@ -28,8 +28,6 @@ using Windows.ApplicationModel.Resources;
 using Windows.Devices.Enumeration;
 using Windows.Foundation.Metadata;
 using Windows.Media;
-using Windows.Media.Core;
-using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.Storage.Streams;
 using Windows.System;
@@ -1762,7 +1760,7 @@ namespace UniversalSoundboard.DataAccess
                 {
                     await DeletePlayingSoundAsync(playingSound.Uuid);
                 }
-                else if (playingSound.MediaPlayer != null)
+                else if (playingSound.AudioPlayer != null)
                 {
                     var currentPlayingSoundList = itemViewHolder.PlayingSounds.Where(p => p.Uuid == playingSound.Uuid);
 
@@ -1772,10 +1770,7 @@ namespace UniversalSoundboard.DataAccess
                         int index = itemViewHolder.PlayingSounds.IndexOf(currentPlayingSound);
 
                         // Update the current playing sound if it is currently not playing
-                        if (
-                            currentPlayingSound.MediaPlayer.TimelineController != null
-                            && currentPlayingSound.MediaPlayer.TimelineController.State != MediaTimelineControllerState.Running
-                        )
+                        if (!currentPlayingSound.AudioPlayer.IsPlaying)
                         {
                             // Check if the playing sound changed
                             bool soundWasUpdated = (
@@ -1784,8 +1779,8 @@ namespace UniversalSoundboard.DataAccess
                                 || currentPlayingSound.Sounds.Count != playingSound.Sounds.Count
                             );
 
-                            if (currentPlayingSound.MediaPlayer != null && playingSound.MediaPlayer != null && !soundWasUpdated)
-                                soundWasUpdated = currentPlayingSound.MediaPlayer.Volume != playingSound.MediaPlayer.Volume;
+                            if (currentPlayingSound.AudioPlayer != null && playingSound.AudioPlayer != null && !soundWasUpdated)
+                                soundWasUpdated = currentPlayingSound.AudioPlayer.Volume != playingSound.AudioPlayer.Volume;
 
                             // Replace the playing sound if it has changed
                             if (soundWasUpdated)
@@ -1839,66 +1834,14 @@ namespace UniversalSoundboard.DataAccess
 
             // Check if the PlayingSound is currently playing
             if (
-                playingSound.MediaPlayer != null
-                && playingSound.MediaPlayer.TimelineController != null
-                && playingSound.MediaPlayer.TimelineController.State == MediaTimelineControllerState.Running
+                playingSound.AudioPlayer != null
+                && playingSound.AudioPlayer.IsPlaying
             ) return;
 
             // Remove the playing sound
             itemViewHolder.PlayingSounds.Remove(playingSound);
         }
-
-        public static (MediaPlayer, List<Sound>) CreateMediaPlayer(List<Sound> sounds, int current)
-        {
-            if (sounds.Count == 0) return (null, null);
-
-            if (current >= sounds.Count)
-                current = sounds.Count - 1;
-            else if (current < 0)
-                current = 0;
-
-            MediaPlayer player = new MediaPlayer();
-            List<Sound> newSounds = new List<Sound>();
-
-            foreach (Sound sound in sounds)
-                if (sound.GetAudioFileDownloadStatus() != TableObjectFileDownloadStatus.NoFileOrNotLoggedIn)
-                    newSounds.Add(sound);
-
-            player.CommandManager.IsEnabled = false;
-            if(current < newSounds.Count && newSounds[current].AudioFile != null)
-                player.Source = MediaSource.CreateFromStorageFile(newSounds[current].AudioFile);
-
-            // Set the volume
-            double appVolume = ((double)itemViewHolder.Volume) / 100;
-
-            if (newSounds.Count == 1)
-            {
-                double defaultSoundVolume = ((double)newSounds[0].DefaultVolume) / 100;
-                player.Volume = appVolume * defaultSoundVolume;
-                player.IsMuted = newSounds[0].DefaultMuted || itemViewHolder.Muted;
-            }
-            else
-            {
-                player.Volume = appVolume;
-                player.IsMuted = itemViewHolder.Muted;
-            }
-
-            return (player, newSounds);
-        }
-
-        public static MediaPlayer CreateMediaPlayerForLocalSound(Sound sound)
-        {
-            if (sound == null) return null;
-
-            MediaPlayer player = new MediaPlayer();
-            player.CommandManager.IsEnabled = false;
-            player.Source = MediaSource.CreateFromStorageFile(sound.AudioFile);
-            player.Volume = ((double)itemViewHolder.Volume) / 100;
-            player.IsMuted = itemViewHolder.Muted;
-
-            return player;
-        }
-
+        
         public static async Task<(AudioPlayer, List<Sound>)> CreateAudioPlayer(List<Sound> sounds, int current)
         {
             if (sounds.Count == 0) return (null, null);
@@ -1919,7 +1862,8 @@ namespace UniversalSoundboard.DataAccess
             {
                 try
                 {
-                    await audioPlayer.Init(newSounds[current].AudioFile);
+                    audioPlayer.AudioFile = newSounds[current].AudioFile;
+                    await audioPlayer.Init();
                 }
                 catch (AudioPlayerInitException e)
                 {
@@ -1944,6 +1888,19 @@ namespace UniversalSoundboard.DataAccess
             }
 
             return (audioPlayer, newSounds);
+        }
+
+        public static async Task<AudioPlayer> CreateAudioPlayerForLocalSound(Sound sound)
+        {
+            if (sound == null) return null;
+
+            AudioPlayer player = new AudioPlayer(sound.AudioFile);
+            await player.Init();
+
+            player.Volume = ((double)itemViewHolder.Volume) / 100;
+            player.IsMuted = itemViewHolder.Muted;
+
+            return player;
         }
 
         /**
@@ -2001,7 +1958,7 @@ namespace UniversalSoundboard.DataAccess
             if (playing.HasValue)
                 systemMediaTransportControls.PlaybackStatus = playing.Value ? MediaPlaybackStatus.Playing : MediaPlaybackStatus.Paused;
             else
-                systemMediaTransportControls.PlaybackStatus = lastActivePlayingSound.MediaPlayer.PlaybackSession.PlaybackState == MediaPlaybackState.Playing ? MediaPlaybackStatus.Playing : MediaPlaybackStatus.Paused;
+                systemMediaTransportControls.PlaybackStatus = lastActivePlayingSound.AudioPlayer?.IsPlaying == true ? MediaPlaybackStatus.Playing : MediaPlaybackStatus.Paused;
         }
 
         private static async void SystemMediaTransportControls_ButtonPressed(SystemMediaTransportControls sender, SystemMediaTransportControlsButtonPressedEventArgs args)
@@ -2515,10 +2472,10 @@ namespace UniversalSoundboard.DataAccess
             if (!string.IsNullOrEmpty(playbackSpeedString))
                 int.TryParse(playbackSpeedString, out playbackSpeed);
 
-            // Create the media player
-            var createMediaPlayerResult = CreateMediaPlayer(sounds, current);
-            MediaPlayer player = createMediaPlayerResult.Item1;
-            List<Sound> newSounds = createMediaPlayerResult.Item2;
+            // Create the audio player
+            var createAudioPlayerResult = await CreateAudioPlayer(sounds, current);
+            AudioPlayer player = createAudioPlayerResult.Item1;
+            List<Sound> newSounds = createAudioPlayerResult.Item2;
 
             if (player != null)
             {
