@@ -983,4 +983,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="OutputDeviceButton.Text" xml:space="preserve">
     <value>Ausgabegerät</value>
   </data>
+  <data name="AddButton-SoundFiles.Text" xml:space="preserve">
+    <value>Dateien auswählen</value>
+  </data>
 </root>

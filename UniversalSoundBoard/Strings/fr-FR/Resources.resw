@@ -984,4 +984,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="OutputDeviceButton.Text" xml:space="preserve">
     <value>Périphérique de sortie</value>
   </data>
+  <data name="AddButton-SoundFiles.Text" xml:space="preserve">
+    <value>Choisir des fichiers</value>
+  </data>
 </root>

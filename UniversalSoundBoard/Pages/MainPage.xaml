@@ -245,20 +245,48 @@
 
                                         <Button.Flyout>
                                             <MenuFlyout Placement="Bottom">
-                                                <MenuFlyoutItem
-                                                    Name="NewSoundFlyoutItem"
+                                                <MenuFlyoutSubItem
+                                                    Name="AddButtonSoundFlyoutItem"
                                                     x:Uid="AddButton-Sound"
-                                                    IsEnabled="{Binding AddingSounds, Converter={StaticResource InvertBooleanConverter}}"
-                                                    Click="NewSoundFlyoutItem_Click" />
+                                                    IsEnabled="{Binding AddingSounds, Converter={StaticResource InvertBooleanConverter}}">
+
+                                                    <MenuFlyoutSubItem.Icon>
+                                                        <FontIcon Glyph="&#xE189;" />
+                                                    </MenuFlyoutSubItem.Icon>
+
+                                                    <MenuFlyoutSubItem.Items>
+                                                        <MenuFlyoutItem
+                                                            Name="AddButtonSoundFilesFlyoutItem"
+                                                            x:Uid="AddButton-SoundFiles"
+                                                            Click="AddButtonSoundFilesFlyoutItem_Click">
+
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE160;" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                        
+                                                        <MenuFlyoutItem
+                                                            Name="DownloadSoundsFlyoutItem"
+                                                            x:Uid="AddButton-Download"
+                                                            IsEnabled="{Binding AddingSounds, Converter={StaticResource InvertBooleanConverter}}"
+                                                            Click="DownloadSoundsFlyoutItem_Click">
+
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE118;" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
+                                                    </MenuFlyoutSubItem.Items>
+                                                </MenuFlyoutSubItem>
+
                                                 <MenuFlyoutItem
-                                                    Name="DownloadSoundsFlyoutItem"
-                                                    x:Uid="AddButton-Download"
-                                                    IsEnabled="{Binding AddingSounds, Converter={StaticResource InvertBooleanConverter}}"
-                                                    Click="DownloadSoundsFlyoutItem_Click" />
-                                                <MenuFlyoutItem
-                                                    Name="NewCategoryFlyoutItem"
+                                                    Name="AddButtonCategoryFlyoutItem"
                                                     x:Uid="AddButton-Category"
-                                                    Click="NewCategoryFlyoutItem_Click" />
+                                                    Click="AddButtonCategoryFlyoutItem_Click">
+
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xE179;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
                                             </MenuFlyout>
                                         </Button.Flyout>
 

@@ -1116,7 +1116,7 @@ namespace UniversalSoundboard.Pages
         #endregion
 
         #region AddSounds
-        private async void NewSoundFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void AddButtonSoundFilesFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             // Show file picker for new sounds
             var files = await PickFilesForAddSoundsContentDialog();
@@ -1772,7 +1772,7 @@ namespace UniversalSoundboard.Pages
         #endregion
 
         #region New Category
-        private async void NewCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void AddButtonCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(Guid.Empty);
             newCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
