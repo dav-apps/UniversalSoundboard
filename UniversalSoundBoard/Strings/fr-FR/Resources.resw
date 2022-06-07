@@ -987,4 +987,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="AddButton-SoundFiles.Text" xml:space="preserve">
     <value>Choisir des fichiers</value>
   </data>
+  <data name="AddButton-Record.Text" xml:space="preserve">
+    <value>Enregistrer des sons</value>
+  </data>
 </root>

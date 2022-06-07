@@ -988,4 +988,7 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="AddButton-SoundFiles.Text" xml:space="preserve">
     <value>Select files</value>
   </data>
+  <data name="AddButton-Record.Text" xml:space="preserve">
+    <value>Record sounds</value>
+  </data>
 </root>

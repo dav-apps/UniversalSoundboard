@@ -986,4 +986,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="AddButton-SoundFiles.Text" xml:space="preserve">
     <value>Dateien auswählen</value>
   </data>
+  <data name="AddButton-Record.Text" xml:space="preserve">
+    <value>Sounds aufnehmen</value>
+  </data>
 </root>

@@ -275,6 +275,16 @@
                                                                 <FontIcon Glyph="&#xE118;" />
                                                             </MenuFlyoutItem.Icon>
                                                         </MenuFlyoutItem>
+
+                                                        <MenuFlyoutItem
+                                                            Name="AddButtonRecordFlyoutItem"
+                                                            x:Uid="AddButton-Record"
+                                                            Click="AddButtonRecordFlyoutItem_Click">
+
+                                                            <MenuFlyoutItem.Icon>
+                                                                <FontIcon Glyph="&#xE1D6;" />
+                                                            </MenuFlyoutItem.Icon>
+                                                        </MenuFlyoutItem>
                                                     </MenuFlyoutSubItem.Items>
                                                 </MenuFlyoutSubItem>
 

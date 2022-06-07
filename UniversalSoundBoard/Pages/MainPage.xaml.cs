@@ -1771,6 +1771,33 @@ namespace UniversalSoundboard.Pages
         }
         #endregion
 
+        #region RecordSounds
+        private async void AddButtonRecordFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            int viewId = 0;
+
+            await CoreApplication.CreateNewView().Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                var currentWindow = CoreWindow.GetForCurrentThread();
+                var dispatcher = currentWindow.Dispatcher;
+
+                var frame = new Frame();
+                frame.Navigate(typeof(SoundRecorderPage));
+                Window.Current.Content = frame;
+                Window.Current.Activate();
+                ApplicationView.GetForCurrentView().Title = "Sound Recorder";
+                viewId = ApplicationView.GetApplicationViewIdForWindow(CoreWindow.GetForCurrentThread());
+            });
+
+            await ApplicationViewSwitcher.TryShowAsStandaloneAsync(
+                viewId,
+                ViewSizePreference.UseMinimum,
+                ApplicationView.GetForCurrentView().Id,
+                ViewSizePreference.UseMinimum
+            );
+        }
+        #endregion
+
         #region New Category
         private async void AddButtonCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
