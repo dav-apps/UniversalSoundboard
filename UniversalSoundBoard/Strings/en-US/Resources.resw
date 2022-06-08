@@ -991,4 +991,10 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="AddButton-Record.Text" xml:space="preserve">
     <value>Record sounds</value>
   </data>
+  <data name="SoundRecorderPage-WindowTitleTextBlock.Text" xml:space="preserve">
+    <value>Sound Recorder - UniversalSoundboard</value>
+  </data>
+  <data name="SoundRecorder-Title" xml:space="preserve">
+    <value>Sound Recorder</value>
+  </data>
 </root>

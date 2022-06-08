@@ -1778,6 +1778,7 @@ namespace UniversalSoundboard.Pages
         {
             AppWindow appWindow = await AppWindow.TryCreateAsync();
             appWindow.RequestSize(new Size(500, 500));
+            appWindow.Title = loader.GetString("SoundRecorder-Title");
             appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
             appWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Dark ? Colors.White : Colors.Black;
             appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;

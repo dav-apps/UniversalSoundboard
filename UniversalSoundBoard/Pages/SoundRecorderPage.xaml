@@ -9,8 +9,8 @@
     <Grid Name="RootGrid" Background="{Binding SecondaryWindowAcrylicBackgroundBrush}">
         <TextBlock
             Name="WindowTitleTextBlock"
+            x:Uid="SoundRecorderPage-WindowTitleTextBlock"
             Style="{StaticResource CaptionTextBlockStyle}"
-            Text="Sound Recorder - UniversalSoundboard"
             Margin="13,8,0,0" />
     </Grid>
 </Page>
