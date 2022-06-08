@@ -165,7 +165,7 @@
     <Compile Include="DataAccess\DatabaseOperations.cs" />
     <Compile Include="DataAccess\FileManager.cs" />
     <Compile Include="Models\Hotkey.cs" />
-    <Compile Include="Models\OutputDevice.cs" />
+    <Compile Include="Models\DeviceInfo.cs" />
     <Compile Include="Pages\SoundRecorderPage.xaml.cs">
       <DependentUpon>SoundRecorderPage.xaml</DependentUpon>
     </Compile>
