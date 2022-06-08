@@ -2,13 +2,13 @@
 
 namespace UniversalSoundboard.Models
 {
-    public class OutputDevice
+    public class DeviceInfo
     {
         public DeviceInformation DeviceInformation { get; }
         public string Id => DeviceInformation.Id;
         public string Name => DeviceInformation.Name;
 
-        public OutputDevice(DeviceInformation deviceInfo)
+        public DeviceInfo(DeviceInformation deviceInfo)
         {
             DeviceInformation = deviceInfo;
         }

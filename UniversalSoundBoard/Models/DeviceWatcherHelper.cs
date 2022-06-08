@@ -9,8 +9,8 @@ namespace UniversalSoundboard.Models
     public class DeviceWatcherHelper
     {
         DeviceWatcher deviceWatcher;
-        ObservableCollection<OutputDevice> devices;
-        public List<OutputDevice> Devices
+        ObservableCollection<DeviceInfo> devices;
+        public List<DeviceInfo> Devices
         {
             get => devices.ToList();
         }
@@ -20,7 +20,7 @@ namespace UniversalSoundboard.Models
         public DeviceWatcherHelper(DeviceClass deviceClass)
         {
             deviceWatcher = DeviceInformation.CreateWatcher(deviceClass);
-            devices = new ObservableCollection<OutputDevice>();
+            devices = new ObservableCollection<DeviceInfo>();
 
             deviceWatcher.Added += DeviceWatcher_Added;
             deviceWatcher.Updated += DeviceWatcher_Updated;
@@ -31,13 +31,13 @@ namespace UniversalSoundboard.Models
 
         private void DeviceWatcher_Added(DeviceWatcher sender, DeviceInformation deviceInfo)
         {
-            devices.Add(new OutputDevice(deviceInfo));
+            devices.Add(new DeviceInfo(deviceInfo));
             DevicesChanged?.Invoke(this, new EventArgs());
         }
 
         private void DeviceWatcher_Updated(DeviceWatcher sender, DeviceInformationUpdate deviceInfo)
         {
-            foreach (OutputDevice device in devices)
+            foreach (DeviceInfo device in devices)
             {
                 if (device.Id == deviceInfo.Id) device.Update(deviceInfo);
             }
@@ -47,7 +47,7 @@ namespace UniversalSoundboard.Models
 
         private void DeviceWatcher_Removed(DeviceWatcher sender, DeviceInformationUpdate deviceInfo)
         {
-            foreach (OutputDevice device in devices)
+            foreach (DeviceInfo device in devices)
             {
                 if (device.Id == deviceInfo.Id)
                 {
