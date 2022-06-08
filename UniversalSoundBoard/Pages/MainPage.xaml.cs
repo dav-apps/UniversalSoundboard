@@ -29,6 +29,8 @@ using Google.Apis.YouTube.v3.Data;
 using Microsoft.AppCenter.Analytics;
 using Windows.System;
 using Windows.Graphics.Display;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.WindowManagement;
 
 namespace UniversalSoundboard.Pages
 {
@@ -1774,27 +1776,17 @@ namespace UniversalSoundboard.Pages
         #region RecordSounds
         private async void AddButtonRecordFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            int viewId = 0;
-
-            await CoreApplication.CreateNewView().Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                var currentWindow = CoreWindow.GetForCurrentThread();
-                var dispatcher = currentWindow.Dispatcher;
-
-                var frame = new Frame();
-                frame.Navigate(typeof(SoundRecorderPage));
-                Window.Current.Content = frame;
-                Window.Current.Activate();
-                ApplicationView.GetForCurrentView().Title = "Sound Recorder";
-                viewId = ApplicationView.GetApplicationViewIdForWindow(CoreWindow.GetForCurrentThread());
-            });
-
-            await ApplicationViewSwitcher.TryShowAsStandaloneAsync(
-                viewId,
-                ViewSizePreference.UseMinimum,
-                ApplicationView.GetForCurrentView().Id,
-                ViewSizePreference.UseMinimum
-            );
+            AppWindow appWindow = await AppWindow.TryCreateAsync();
+            appWindow.RequestSize(new Size(500, 500));
+            appWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+            appWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Dark ? Colors.White : Colors.Black;
+            appWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+            appWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+            
+            Frame appWindowContentFrame = new Frame();
+            appWindowContentFrame.Navigate(typeof(SoundRecorderPage));
+            ElementCompositionPreview.SetAppWindowContent(appWindow, appWindowContentFrame);
+            await appWindow.TryShowAsync();
         }
         #endregion
 

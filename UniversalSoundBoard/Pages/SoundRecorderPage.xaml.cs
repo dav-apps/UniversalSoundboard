@@ -1,17 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
-using Windows.UI.Xaml;
+﻿using System.ComponentModel;
+using UniversalSoundboard.Common;
+using UniversalSoundboard.DataAccess;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundboard.Pages
 {
@@ -19,7 +9,21 @@ namespace UniversalSoundboard.Pages
     {
         public SoundRecorderPage()
         {
-            this.InitializeComponent();
+            InitializeComponent();
+
+            RootGrid.DataContext = FileManager.itemViewHolder;
+
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
+        }
+
+        private void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case ItemViewHolder.CurrentThemeKey:
+                    RequestedTheme = FileManager.GetRequestedTheme();
+                    break;
+            }
         }
     }
 }

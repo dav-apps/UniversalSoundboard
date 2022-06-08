@@ -55,10 +55,13 @@ namespace UniversalSoundboard.DataAccess
         #region Colors for the background of PlayingSoundsBar and SideBar
         private static readonly double sideBarAcrylicBackgroundTintOpacity = 0.6;
         private static readonly double playingSoundsBarAcrylicBackgroundTintOpacity = 0.85;
+        private static readonly double secondaryWindowAcrylicBackgroundTintOpacity = 0.85;
         private static Color sideBarLightBackgroundColor = Color.FromArgb(255, 245, 245, 245);            // #f5f5f5
         private static Color sideBarDarkBackgroundColor = Color.FromArgb(255, 29, 34, 49);                // #1d2231
         private static Color playingSoundsBarLightBackgroundColor = Color.FromArgb(255, 253, 253, 253);   // #fdfdfd
         private static Color playingSoundsBarDarkBackgroundColor = Color.FromArgb(255, 15, 20, 35);       // #0f1423
+        private static Color secondaryWindowLightBackgroundColor = Color.FromArgb(255, 255, 255, 255);    // #ffffff
+        private static Color secondaryWindowDarkBackgroundColor = Color.FromArgb(255, 13, 18, 33);        // #0d1221
         #endregion
 
         #region dav Keys
@@ -3218,35 +3221,45 @@ namespace UniversalSoundboard.DataAccess
                 // Add the transparency effect
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).BackgroundSource = AcrylicBackgroundSource.HostBackdrop;
                 itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.HostBackdrop;
+                itemViewHolder.SecondaryWindowAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.HostBackdrop;
 
                 // Set the default tint opacity
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintOpacity = sideBarAcrylicBackgroundTintOpacity;
                 itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintOpacity = playingSoundsBarAcrylicBackgroundTintOpacity;
+                itemViewHolder.SecondaryWindowAcrylicBackgroundBrush.TintOpacity = secondaryWindowAcrylicBackgroundTintOpacity;
 
                 // Set the tint color
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintColor = appThemeColor;
                 itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = appThemeColor;
+                itemViewHolder.SecondaryWindowAcrylicBackgroundBrush.TintColor = appThemeColor;
             }
             else if (GetRequestedTheme() == ElementTheme.Dark)
             {   // If the acrylic background is disabled and the theme is dark
                 // Remove the transparency effect
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).BackgroundSource = AcrylicBackgroundSource.Backdrop;
                 itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.Backdrop;
+                itemViewHolder.SecondaryWindowAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.Backdrop;
 
                 // Set the background color
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintColor = sideBarDarkBackgroundColor;
                 itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = playingSoundsBarDarkBackgroundColor;
+                itemViewHolder.SecondaryWindowAcrylicBackgroundBrush.TintColor = secondaryWindowDarkBackgroundColor;
             }
             else
             {   // If the acrylic background is disabled and the theme is Light
                 // Remove the transparency effect
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).BackgroundSource = AcrylicBackgroundSource.Backdrop;
                 itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.Backdrop;
+                itemViewHolder.SecondaryWindowAcrylicBackgroundBrush.BackgroundSource = AcrylicBackgroundSource.Backdrop;
 
                 // Set the background color
                 (Application.Current.Resources["NavigationViewExpandedPaneBackground"] as AcrylicBrush).TintColor = sideBarLightBackgroundColor;
                 itemViewHolder.PlayingSoundsBarAcrylicBackgroundBrush.TintColor = playingSoundsBarLightBackgroundColor;
+                itemViewHolder.SecondaryWindowAcrylicBackgroundBrush.TintColor = secondaryWindowLightBackgroundColor;
             }
+
+            // Set the fallback color
+            itemViewHolder.SecondaryWindowAcrylicBackgroundBrush.FallbackColor = GetRequestedTheme() == ElementTheme.Dark ? secondaryWindowDarkBackgroundColor : secondaryWindowLightBackgroundColor;
 
             // Set the color for the NavigationViewHeader background
             (Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush).TintColor = appThemeColor;

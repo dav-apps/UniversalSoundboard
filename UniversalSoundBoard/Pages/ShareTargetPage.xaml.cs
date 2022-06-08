@@ -51,7 +51,7 @@ namespace UniversalSoundboard.Pages
 
         private async void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
-            if(e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
+            if (e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 await currentDispatcher.RunAsync(CoreDispatcherPriority.Low, () => SetThemeColors());
         }
 
@@ -60,17 +60,17 @@ namespace UniversalSoundboard.Pages
             await currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, LoadCategories);
         }
 
-        private async void ItemViewHolder_CategoryAdded(object sender, UniversalSoundboard.Common.CategoryEventArgs e)
+        private async void ItemViewHolder_CategoryAdded(object sender, CategoryEventArgs e)
         {
             await currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, LoadCategories);
         }
 
-        private async void ItemViewHolder_CategoryUpdated(object sender, UniversalSoundboard.Common.CategoryEventArgs e)
+        private async void ItemViewHolder_CategoryUpdated(object sender, CategoryEventArgs e)
         {
             await currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, LoadCategories);
         }
 
-        private async void ItemViewHolder_CategoryDeleted(object sender, UniversalSoundboard.Common.CategoryEventArgs e)
+        private async void ItemViewHolder_CategoryDeleted(object sender, CategoryEventArgs e)
         {
             await currentDispatcher.RunAsync(CoreDispatcherPriority.Normal, LoadCategories);
         }

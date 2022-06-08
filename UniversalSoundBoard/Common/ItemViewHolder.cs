@@ -104,6 +104,7 @@ namespace UniversalSoundboard.Common
         private SymbolIcon _selectAllFlyoutIcon;                            // The icon of the Select All flyout item in the Navigation View Header
         private double _soundTileWidth;                                     // The width of all sound tiles in the GridViews
         private AcrylicBrush _playingSoundsBarAcrylicBackgroundBrush;       // This represents the background of the PlayingSoundsBar
+        private AcrylicBrush _secondaryWindowAcrylicBackgroundBrush;        // This represents the background of the secondary windows
         private bool _exportAndImportButtonsEnabled;                        // If true shows the export and import buttons on the settings page
         #endregion
         #endregion
@@ -213,6 +214,7 @@ namespace UniversalSoundboard.Common
             {
                 _selectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll);
                 _playingSoundsBarAcrylicBackgroundBrush = new AcrylicBrush();
+                _secondaryWindowAcrylicBackgroundBrush = new AcrylicBrush();
             }
             catch { }
             #endregion
@@ -771,6 +773,20 @@ namespace UniversalSoundboard.Common
                 if (_playingSoundsBarAcrylicBackgroundBrush.Equals(value)) return;
                 _playingSoundsBarAcrylicBackgroundBrush = value;
                 NotifyPropertyChanged(PlayingSoundsBarAcrylicBackgroundBrushKey);
+            }
+        }
+        #endregion
+
+        #region SecondaryWindowAcrylicBackgroundBrush
+        public const string SecondaryWindowAcrylicBackgroundBrushKey = "SecondaryWindowAcrylicBackgroundBrush";
+        public AcrylicBrush SecondaryWindowAcrylicBackgroundBrush
+        {
+            get => _secondaryWindowAcrylicBackgroundBrush;
+            set
+            {
+                if (_secondaryWindowAcrylicBackgroundBrush.Equals(value)) return;
+                _secondaryWindowAcrylicBackgroundBrush = value;
+                NotifyPropertyChanged(SecondaryWindowAcrylicBackgroundBrushKey);
             }
         }
         #endregion
