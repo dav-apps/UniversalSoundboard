@@ -147,6 +147,7 @@
       <DependentUpon>HotkeyItemTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\AudioPlayer.cs" />
+    <Compile Include="Models\AudioRecorder.cs" />
     <Compile Include="Models\DeviceWatcherHelper.cs" />
     <Compile Include="Models\InAppNotificationItem.cs" />
     <Compile Include="Components\PlayingSoundItem.cs" />

@@ -15,6 +15,7 @@ namespace UniversalSoundboard.Models
     public class AudioPlayer
     {
         private bool initialized = false;
+        private bool isInitializing = false;
         private StorageFile audioFile;
         private DeviceInformation outputDevice;
         private bool outputDeviceChanged = false;
@@ -25,9 +26,9 @@ namespace UniversalSoundboard.Models
         private double playbackRate = 1.0;
         private DispatcherTimer positionChangeTimer;
 
-        private AudioGraph AudioGraph { get; set; }
-        private AudioFileInputNode FileInputNode { get; set; }
-        private AudioDeviceOutputNode DeviceOutputNode { get; set; }
+        private AudioGraph AudioGraph;
+        private AudioFileInputNode FileInputNode;
+        private AudioDeviceOutputNode DeviceOutputNode;
 
         public StorageFile AudioFile
         {
@@ -100,6 +101,9 @@ namespace UniversalSoundboard.Models
             if (audioFile == null)
                 throw new AudioPlayerInitException(AudioPlayerInitError.AudioFileNotSpecified);
 
+            if (isInitializing) return;
+            isInitializing = true;
+
             positionChangeTimer.Stop();
 
             if (!initialized || outputDeviceChanged)
@@ -121,6 +125,8 @@ namespace UniversalSoundboard.Models
                 AudioGraph.Start();
                 positionChangeTimer.Start();
             }
+
+            isInitializing = false;
         }
 
         private async Task InitAudioGraph()
@@ -130,7 +136,7 @@ namespace UniversalSoundboard.Models
             var createAudioGraphResult = await AudioGraph.CreateAsync(settings);
 
             if (createAudioGraphResult.Status != AudioGraphCreationStatus.Success)
-                throw new AudioPlayerInitException(createAudioGraphResult.Status);
+                throw new AudioGraphInitException(createAudioGraphResult.Status);
 
             if (AudioGraph != null)
                 AudioGraph.Stop();
@@ -146,7 +152,7 @@ namespace UniversalSoundboard.Models
             var inputNodeResult = await AudioGraph.CreateFileInputNodeAsync(audioFile);
 
             if (inputNodeResult.Status != AudioFileNodeCreationStatus.Success)
-                throw new AudioPlayerInitException(inputNodeResult.Status);
+                throw new FileInputNodeInitException(inputNodeResult.Status);
 
             FileInputNode = inputNodeResult.FileInputNode;
             FileInputNode.Seek(position);
@@ -165,7 +171,7 @@ namespace UniversalSoundboard.Models
             var outputNodeResult = await AudioGraph.CreateDeviceOutputNodeAsync();
 
             if (outputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
-                throw new AudioPlayerInitException(outputNodeResult.Status);
+                throw new DeviceOutputNodeInitException(outputNodeResult.Status);
 
             DeviceOutputNode = outputNodeResult.DeviceOutputNode;
         }

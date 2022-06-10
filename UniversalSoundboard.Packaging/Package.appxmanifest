@@ -100,5 +100,6 @@
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />
     <uap3:Capability Name="backgroundMediaPlayback"/>
+    <DeviceCapability Name="microphone"/>
   </Capabilities>
 </Package>
