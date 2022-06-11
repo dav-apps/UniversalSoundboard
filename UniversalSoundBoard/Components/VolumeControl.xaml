@@ -25,7 +25,7 @@
             Margin="-8,0,0,0"
             Padding="0"
             Content="&#xE995;"
-            FontFamily="Segoe MDL2 Assets"
+            FontFamily="{StaticResource FluentIconsFontFamily}"
             FontSize="16"
             Click="MuteButton_Click" />
 

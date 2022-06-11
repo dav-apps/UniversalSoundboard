@@ -66,7 +66,7 @@
                 <TextBlock
                     Name="CategoriesIconsTextBlock"
                     Text="{x:Bind Sound.Categories, Converter={StaticResource CategoriesIconsConverter}, ConverterParameter=list}"
-                    FontFamily="Segoe MDL2 Assets" 
+                    FontFamily="{StaticResource FluentIconsFontFamily}" 
                     FontSize="20"
                     Margin="{x:Bind Sound.Categories, Converter={StaticResource CategoriesMarginConverter}}"
                     Visibility="{Binding ShowCategoriesIcons}"

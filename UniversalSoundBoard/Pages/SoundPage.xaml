@@ -319,7 +319,7 @@
                             <TextBlock
                                 Text="&#xE109;"
                                 FontSize="18"
-                                FontFamily="Segoe MDL2 Assets" />
+                                FontFamily="{StaticResource FluentIconsFontFamily}" />
 
                             <TextBlock
                                 x:Uid="StartMessageAddFirstSoundButton"
@@ -368,7 +368,7 @@
                                 <TextBlock
                                     Text="&#xE13D;"
                                     FontSize="18"
-                                    FontFamily="Segoe MDL2 Assets" />
+                                    FontFamily="{StaticResource FluentIconsFontFamily}" />
 
                                 <TextBlock
                                     x:Uid="StartMessageLoginButton"
@@ -389,7 +389,7 @@
                                 <TextBlock
                                     Text="&#xE838;"
                                     FontSize="18"
-                                    FontFamily="Segoe MDL2 Assets" />
+                                    FontFamily="{StaticResource FluentIconsFontFamily}" />
 
                                 <TextBlock
                                     x:Uid="StartMessageImportExistingSoundboardButton"
@@ -441,7 +441,7 @@
                             <TextBlock
                                 Text="&#xE109;"
                                 FontSize="18"
-                                FontFamily="Segoe MDL2 Assets" />
+                                FontFamily="{StaticResource FluentIconsFontFamily}" />
 
                             <TextBlock
                                 x:Uid="StartMessageAddFirstSoundButton"
@@ -618,7 +618,7 @@
                         <TextBlock
                             Name="GridSplitterIconTextBlock"
                             Text="&#xE784;"
-                            FontFamily="Segoe MDL2 Assets"
+                            FontFamily="{StaticResource FluentIconsFontFamily}"
                             Margin="-4,0,0,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
@@ -683,7 +683,7 @@
                     <Grid Height="16" Background="{StaticResource NavigationViewHeaderBackgroundBrush}">
                         <TextBlock
                             Text="&#xE76F;"
-                            FontFamily="Segoe MDL2 Assets"
+                            FontFamily="{StaticResource FluentIconsFontFamily}"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             IsHitTestVisible="False" />

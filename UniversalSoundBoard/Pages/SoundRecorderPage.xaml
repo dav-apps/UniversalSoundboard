@@ -24,9 +24,10 @@
             CornerRadius="30"
             Margin="0,0,0,50"
             Background="#D44054"
+            Foreground="White"
             FontSize="20"
-            FontFamily="Segoe MDL2 Assets"
-            Content="&#xE1D6;"
+            FontFamily="{StaticResource FluentIconsFontFamily}"
+            Content="&#xE7C8;"
             Click="RecordButton_Click">
 
             <ToolTipService.ToolTip>

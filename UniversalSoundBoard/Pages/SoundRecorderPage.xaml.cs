@@ -38,7 +38,7 @@ namespace UniversalSoundboard.Pages
             UpdateInputDeviceComboBox();
 
             // Create an output file in the cache
-            outputFile = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync("record", CreationCollisionOption.ReplaceExisting);
+            outputFile = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync(Guid.NewGuid().ToString(), CreationCollisionOption.ReplaceExisting);
             audioRecorder = new AudioRecorder(outputFile);
 
             // Set up the default input device
@@ -93,7 +93,8 @@ namespace UniversalSoundboard.Pages
         {
             if (audioRecorder.IsRecording)
             {
-                RecordButton.Content = "\uE1D6";
+                RecordButton.Content = "\uE7C8";
+                RecordButton.Foreground = new SolidColorBrush(Colors.White);
                 RecordButton.Background = new SolidColorBrush(Color.FromArgb(255, 212, 64, 84));
 
                 await audioRecorder.Stop();
@@ -101,7 +102,8 @@ namespace UniversalSoundboard.Pages
             }
             else
             {
-                RecordButton.Content = "\uE15B";
+                RecordButton.Content = "\uEE95";
+                RecordButton.Foreground = new SolidColorBrush(Colors.Black);
                 RecordButton.Background = new SolidColorBrush(Colors.Transparent);
 
                 audioRecorder.Start();

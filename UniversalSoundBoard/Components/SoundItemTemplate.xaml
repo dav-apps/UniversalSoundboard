@@ -39,7 +39,7 @@
             <TextBlock
                 Name="CategoriesIconsTextBlock"
                 Text="{x:Bind Sound.Categories, Converter={StaticResource CategoriesIconsConverter}, ConverterParameter=list}"
-                FontFamily="Segoe MDL2 Assets"
+                FontFamily="{StaticResource FluentIconsFontFamily}"
                 Margin="{x:Bind Sound.Categories, Converter={StaticResource CategoriesMarginConverter}}"
                 RelativePanel.LeftOf="RemoveSoundButton"
                 RelativePanel.AlignVerticalCenterWithPanel="True" />
@@ -48,7 +48,7 @@
                 Name="RemoveSoundButton"
                 Style="{StaticResource ButtonRevealStyle}"
                 Background="Transparent"
-                FontFamily="Segoe MDL2 Assets"
+                FontFamily="{StaticResource FluentIconsFontFamily}"
                 Content="&#xE108;"
                 Height="35"
                 Width="35"

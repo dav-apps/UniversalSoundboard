@@ -497,7 +497,7 @@ namespace UniversalSoundboard.Components
                 Text = loader.GetString("MoreButton-OutputDevice"),
                 Icon = new FontIcon
                 {
-                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
                     Glyph = "\uE7F5"
                 }
             };
@@ -513,7 +513,7 @@ namespace UniversalSoundboard.Components
                 Text = loader.GetString("PlaybackSpeed"),
                 Icon = new FontIcon
                 {
-                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
                     Glyph = "\uEC58"
                 }
             };

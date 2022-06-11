@@ -21,7 +21,7 @@
             Name="AddHotkeyButton"
             Style="{StaticResource ButtonRevealStyle}"
             Content="&#xE109;"
-            FontFamily="Segoe MDL2 Assets"
+            FontFamily="{StaticResource FluentIconsFontFamily}"
             Width="35"
             Height="35"
             Padding="0"

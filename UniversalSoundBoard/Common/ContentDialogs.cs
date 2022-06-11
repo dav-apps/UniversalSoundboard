@@ -641,14 +641,14 @@ namespace UniversalSoundboard.Common
 
             IconSelectionComboBox = new ComboBox
             {
-                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
                 FontSize = 25,
                 Margin = new Thickness(15),
                 HorizontalAlignment = HorizontalAlignment.Center
             };
 
             foreach (string icon in IconsList)
-                IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = icon, FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 });
+                IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = icon, FontFamily = new FontFamily(FileManager.FluentIconsFontFamily), FontSize = 25 });
 
             Random random = new Random();
             int randomNumber = random.Next(IconsList.Count);
@@ -697,7 +697,7 @@ namespace UniversalSoundboard.Common
 
             IconSelectionComboBox = new ComboBox
             {
-                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
                 FontSize = 25,
                 Margin = new Thickness(15),
                 HorizontalAlignment = HorizontalAlignment.Center
@@ -708,7 +708,7 @@ namespace UniversalSoundboard.Common
 
             foreach (string icon in IconsList)
             {
-                ComboBoxItem item = new ComboBoxItem { Content = icon, FontFamily = new FontFamily("Segoe MDL2 Assets"), FontSize = 25 };
+                ComboBoxItem item = new ComboBoxItem { Content = icon, FontFamily = new FontFamily(FileManager.FluentIconsFontFamily), FontSize = 25 };
                 if (icon == currentCategory.Icon)
                     item.IsSelected = true;
 
@@ -950,7 +950,7 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
                 Content = "\uE838",
                 FontSize = 18,
                 Width = 35,
@@ -1038,7 +1038,7 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
                 Content = "\uE838",
                 FontSize = 18,
                 Width = 35,
@@ -1103,7 +1103,7 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
                 Content = "\uE838",
                 FontSize = 18,
                 Width = 35,
@@ -1376,7 +1376,7 @@ namespace UniversalSoundboard.Common
 
             Button folderButton = new Button
             {
-                FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
                 Content = "\uE838",
                 FontSize = 18,
                 Width = 35,
@@ -1864,7 +1864,7 @@ namespace UniversalSoundboard.Common
                 {
                     Style = MainPage.buttonRevealStyle,
                     Content = "\uE946",
-                    FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                    FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
                     FontSize = 14,
                     Width = 32,
                     Height = 32,

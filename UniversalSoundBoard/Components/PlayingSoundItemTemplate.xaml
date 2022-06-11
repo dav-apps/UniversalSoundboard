@@ -343,13 +343,13 @@
             <Setter Property="Height" Value="40" />
             <Setter Property="Width" Value="40" />
             <Setter Property="Background" Value="Transparent" />
-            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="FontFamily" Value="{StaticResource FluentIconsFontFamily}" />
             <Setter Property="FontSize" Value="15" />
             <Setter Property="Margin" Value="1,0" />
         </Style>
 
         <Style x:Key="TopCommandButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
-            <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+            <Setter Property="FontFamily" Value="{StaticResource FluentIconsFontFamily}" />
             <Setter Property="Height" Value="32" />
             <Setter Property="Width" Value="32" />
             <Setter Property="CornerRadius" Value="18" />

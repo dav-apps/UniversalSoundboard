@@ -28,7 +28,7 @@
                 RelativePanel.AlignVerticalCenterWithPanel="True"
                 RelativePanel.RightOf="FileNameTextBlock"
                 Background="Transparent"
-                FontFamily="Segoe MDL2 Assets"
+                FontFamily="{StaticResource FluentIconsFontFamily}"
                 Content="&#xE108;"
                 Height="35"
                 Width="35"
