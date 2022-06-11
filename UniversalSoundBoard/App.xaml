@@ -22,6 +22,8 @@
             <Color x:Key="DarkThemeBackgroundColor">#0d1221</Color>
             <Color x:Key="DarkThemeSecondaryBackgroundColor">#161C2B</Color>
 
+            <FontFamily x:Key="FluentIconsFontFamily">/Assets/Fonts/SegoeFluentIcons.ttf#Segoe Fluent Icons</FontFamily>
+
             <!-- Override the background of the MediaTransportControls -->
             <SolidColorBrush x:Key="MediaTransportControlsPanelBackground" Color="Transparent" />
 
@@ -49,7 +51,7 @@
 
             <Style x:Key="InfoButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
                 <Setter Property="Grid.Column" Value="1" />
-                <Setter Property="FontFamily" Value="Segoe MDL2 Assets" />
+                <Setter Property="FontFamily" Value="{StaticResource FluentIconsFontFamily}" />
                 <Setter Property="FontSize" Value="14" />
                 <Setter Property="Width" Value="32" />
                 <Setter Property="Height" Value="32" />

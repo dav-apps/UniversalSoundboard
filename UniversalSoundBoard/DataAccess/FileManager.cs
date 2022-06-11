@@ -142,6 +142,8 @@ namespace UniversalSoundboard.DataAccess
         public const string ExportDataFileName = "data.json";
         public const string TileFolderName = "tile";
 
+        public const string FluentIconsFontFamily = "/Assets/Fonts/SegoeFluentIcons.ttf#Segoe Fluent Icons";
+
         public static List<string> allowedFileTypes = new List<string>
         {
             ".mp3",
