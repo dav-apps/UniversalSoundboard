@@ -23,10 +23,11 @@
             Width="50"
             CornerRadius="30"
             Margin="0,0,0,50"
-            Background="Transparent"
+            Background="#D44054"
             FontSize="20"
             FontFamily="Segoe MDL2 Assets"
-            Content="&#xE1D6;">
+            Content="&#xE1D6;"
+            Click="RecordButton_Click">
 
             <ToolTipService.ToolTip>
                 <TextBlock Name="RecordButtonToolTip" Text="Start recording" />

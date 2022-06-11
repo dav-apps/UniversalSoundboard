@@ -136,7 +136,10 @@ namespace UniversalSoundboard.Models
             var createAudioGraphResult = await AudioGraph.CreateAsync(settings);
 
             if (createAudioGraphResult.Status != AudioGraphCreationStatus.Success)
+            {
+                isInitializing = false;
                 throw new AudioGraphInitException(createAudioGraphResult.Status);
+            }
 
             if (AudioGraph != null)
                 AudioGraph.Stop();
@@ -152,7 +155,10 @@ namespace UniversalSoundboard.Models
             var inputNodeResult = await AudioGraph.CreateFileInputNodeAsync(audioFile);
 
             if (inputNodeResult.Status != AudioFileNodeCreationStatus.Success)
+            {
+                isInitializing = false;
                 throw new FileInputNodeInitException(inputNodeResult.Status);
+            }
 
             FileInputNode = inputNodeResult.FileInputNode;
             FileInputNode.Seek(position);
@@ -171,7 +177,10 @@ namespace UniversalSoundboard.Models
             var outputNodeResult = await AudioGraph.CreateDeviceOutputNodeAsync();
 
             if (outputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
+            {
+                isInitializing = false;
                 throw new DeviceOutputNodeInitException(outputNodeResult.Status);
+            }
 
             DeviceOutputNode = outputNodeResult.DeviceOutputNode;
         }

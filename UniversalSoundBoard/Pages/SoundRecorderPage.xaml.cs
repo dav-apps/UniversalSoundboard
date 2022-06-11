@@ -1,11 +1,17 @@
 ﻿using System;
 using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.Devices.Enumeration;
+using Windows.Media.Devices;
+using Windows.Storage;
+using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 
 namespace UniversalSoundboard.Pages
 {
@@ -13,6 +19,9 @@ namespace UniversalSoundboard.Pages
     {
         DeviceWatcherHelper deviceWatcherHelper = new DeviceWatcherHelper(DeviceClass.AudioCapture);
         DeviceInfo inputDevice;
+        StorageFile outputFile;
+        AudioRecorder audioRecorder;
+        private bool skipInputDeviceComboBoxChanged = false;
 
         public SoundRecorderPage()
         {
@@ -24,9 +33,33 @@ namespace UniversalSoundboard.Pages
             deviceWatcherHelper.DevicesChanged += DeviceWatcherHelper_DevicesChanged;
         }
 
-        private void Page_Loaded(object sender, RoutedEventArgs e)
+        private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateInputDeviceComboBox();
+
+            // Create an output file in the cache
+            outputFile = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync("record", CreationCollisionOption.ReplaceExisting);
+            audioRecorder = new AudioRecorder(outputFile);
+
+            // Set up the default input device
+            var defaultDeviceId = MediaDevice.GetDefaultAudioCaptureId(AudioDeviceRole.Default);
+
+            int i = deviceWatcherHelper.Devices.FindIndex(d => d.Id == defaultDeviceId);
+            skipInputDeviceComboBoxChanged = true;
+
+            if (i == -1)
+            {
+                inputDevice = deviceWatcherHelper.Devices.First();
+                InputDeviceComboBox.SelectedIndex = 0;
+            }
+            else
+            {
+                inputDevice = deviceWatcherHelper.Devices.ElementAt(i);
+                InputDeviceComboBox.SelectedIndex = i;
+            }
+
+            await UpdateInputDevice();
+            skipInputDeviceComboBoxChanged = false;
         }
 
         private void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
@@ -39,18 +72,46 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        private void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
+        private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
         {
-            UpdateInputDeviceComboBox();
+            await MainPage.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => UpdateInputDeviceComboBox());
         }
 
-        private void InputDeviceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private async void InputDeviceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (skipInputDeviceComboBoxChanged) return;
+
             var inputDeviceId = (InputDeviceComboBox.SelectedItem as ComboBoxItem).Tag;
             int i = deviceWatcherHelper.Devices.FindIndex(d => d.Id.Equals(inputDeviceId));
+            if (i == -1) return;
 
-            if (i != -1)
-                inputDevice = deviceWatcherHelper.Devices[i];
+            inputDevice = deviceWatcherHelper.Devices[i];
+            await UpdateInputDevice();
+        }
+
+        private async void RecordButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (audioRecorder.IsRecording)
+            {
+                RecordButton.Content = "\uE1D6";
+                RecordButton.Background = new SolidColorBrush(Color.FromArgb(255, 212, 64, 84));
+
+                await audioRecorder.Stop();
+                await audioRecorder.Init();
+            }
+            else
+            {
+                RecordButton.Content = "\uE15B";
+                RecordButton.Background = new SolidColorBrush(Colors.Transparent);
+
+                audioRecorder.Start();
+            }
+        }
+
+        private async Task UpdateInputDevice()
+        {
+            audioRecorder.InputDevice = inputDevice.DeviceInformation;
+            await audioRecorder.Init();
         }
 
         private void UpdateInputDeviceComboBox()
