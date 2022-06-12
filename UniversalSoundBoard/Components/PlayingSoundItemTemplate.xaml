@@ -344,7 +344,7 @@
             <Setter Property="Width" Value="40" />
             <Setter Property="Background" Value="Transparent" />
             <Setter Property="FontFamily" Value="{StaticResource FluentIconsFontFamily}" />
-            <Setter Property="FontSize" Value="15" />
+            <Setter Property="FontSize" Value="16" />
             <Setter Property="Margin" Value="1,0" />
         </Style>
 
@@ -896,11 +896,11 @@
                                 VolumeControl_LostFocus="VolumeControl_LostFocus"
                                 VolumeControl_MuteChanged="VolumeControl_MuteChanged" />
                             <MenuFlyoutSubItem Name="MoreButtonRepeatFlyoutSubItem" Text="Repeat" Icon="RepeatAll">
-                                <MenuFlyoutItem Name="MoreButton_Repeat_0x" Text="0x" Click="MoreButton_Repeat_0x_Click" />
-                                <MenuFlyoutItem Name="MoreButton_Repeat_1x" Text="1x" Click="MoreButton_Repeat_1x_Click" />
-                                <MenuFlyoutItem Name="MoreButton_Repeat_2x" Text="2x" Click="MoreButton_Repeat_2x_Click" />
-                                <MenuFlyoutItem Name="MoreButton_Repeat_5x" Text="5x" Click="MoreButton_Repeat_5x_Click" />
-                                <MenuFlyoutItem Name="MoreButton_Repeat_10x" Text="10x" Click="MoreButton_Repeat_10x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_0x" Text="0×" Click="MoreButton_Repeat_0x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_1x" Text="1×" Click="MoreButton_Repeat_1x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_2x" Text="2×" Click="MoreButton_Repeat_2x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_5x" Text="5×" Click="MoreButton_Repeat_5x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_10x" Text="10×" Click="MoreButton_Repeat_10x_Click" />
                                 <MenuFlyoutItem Name="MoreButton_Repeat_endless" Text="∞" Click="MoreButton_Repeat_endless_Click" />
                             </MenuFlyoutSubItem>
                             <MenuFlyoutItem Name="MoreButtonOpenSoundSeparatelyFlyoutItem" x:Uid="MoreButton-OpenSoundSeparately" Click="MoreButton_OpenSoundSeparatelyFlyoutItem_Click">

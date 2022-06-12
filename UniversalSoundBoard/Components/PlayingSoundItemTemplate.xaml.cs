@@ -235,31 +235,31 @@ namespace UniversalSoundboard.Components
             switch (e.PlaybackSpeed)
             {
                 case 25:
-                    PlaybackSpeedButton.Content = "0.25x";
+                    PlaybackSpeedButton.Content = "0.25×";
                     PlaybackSpeedButton.FontSize = 11;
                     break;
                 case 50:
-                    PlaybackSpeedButton.Content = "0.5x";
+                    PlaybackSpeedButton.Content = "0.5×";
                     PlaybackSpeedButton.FontSize = 12;
                     break;
                 case 75:
-                    PlaybackSpeedButton.Content = "0.75x";
+                    PlaybackSpeedButton.Content = "0.75×";
                     PlaybackSpeedButton.FontSize = 11;
                     break;
                 case 125:
-                    PlaybackSpeedButton.Content = "1.25x";
+                    PlaybackSpeedButton.Content = "1.25×";
                     PlaybackSpeedButton.FontSize = 11;
                     break;
                 case 150:
-                    PlaybackSpeedButton.Content = "1.5x";
+                    PlaybackSpeedButton.Content = "1.5×";
                     PlaybackSpeedButton.FontSize = 12;
                     break;
                 case 175:
-                    PlaybackSpeedButton.Content = "1.75x";
+                    PlaybackSpeedButton.Content = "1.75×";
                     PlaybackSpeedButton.FontSize = 11;
                     break;
                 case 200:
-                    PlaybackSpeedButton.Content = "2x";
+                    PlaybackSpeedButton.Content = "2×";
                     PlaybackSpeedButton.FontSize = 12;
                     break;
                 default:
@@ -550,35 +550,35 @@ namespace UniversalSoundboard.Components
             #endregion
 
             #region Playback speed
-            ToggleMenuFlyoutItem playbackSpeedItem_0_25 = new ToggleMenuFlyoutItem { Text = "0.25x", IsChecked = PlayingSound.PlaybackSpeed == 25 };
+            ToggleMenuFlyoutItem playbackSpeedItem_0_25 = new ToggleMenuFlyoutItem { Text = "0.25×", IsChecked = PlayingSound.PlaybackSpeed == 25 };
             playbackSpeedItem_0_25.Click += MoreButton_PlaybackSpeed_0_25_Click;
             playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_0_25);
 
-            ToggleMenuFlyoutItem playbackSpeedItem_0_5 = new ToggleMenuFlyoutItem { Text = "0.5x", IsChecked = PlayingSound.PlaybackSpeed == 50 };
+            ToggleMenuFlyoutItem playbackSpeedItem_0_5 = new ToggleMenuFlyoutItem { Text = "0.5×", IsChecked = PlayingSound.PlaybackSpeed == 50 };
             playbackSpeedItem_0_5.Click += MoreButton_PlaybackSpeed_0_5x_Click;
             playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_0_5);
 
-            ToggleMenuFlyoutItem playbackSpeedItem_0_75 = new ToggleMenuFlyoutItem { Text = "0.75x", IsChecked = PlayingSound.PlaybackSpeed == 75 };
+            ToggleMenuFlyoutItem playbackSpeedItem_0_75 = new ToggleMenuFlyoutItem { Text = "0.75×", IsChecked = PlayingSound.PlaybackSpeed == 75 };
             playbackSpeedItem_0_75.Click += MoreButton_PlaybackSpeed_0_75x_Click;
             playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_0_75);
 
-            ToggleMenuFlyoutItem playbackSpeedItem_1_0 = new ToggleMenuFlyoutItem { Text = "1.0x", IsChecked = PlayingSound.PlaybackSpeed == 100 };
+            ToggleMenuFlyoutItem playbackSpeedItem_1_0 = new ToggleMenuFlyoutItem { Text = "1.0×", IsChecked = PlayingSound.PlaybackSpeed == 100 };
             playbackSpeedItem_1_0.Click += MoreButton_PlaybackSpeed_1_0x_Click;
             playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_1_0);
 
-            ToggleMenuFlyoutItem playbackSpeedItem_1_25 = new ToggleMenuFlyoutItem { Text = "1.25x", IsChecked = PlayingSound.PlaybackSpeed == 125 };
+            ToggleMenuFlyoutItem playbackSpeedItem_1_25 = new ToggleMenuFlyoutItem { Text = "1.25×", IsChecked = PlayingSound.PlaybackSpeed == 125 };
             playbackSpeedItem_1_25.Click += MoreButton_PlaybackSpeed_1_25x_Click;
             playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_1_25);
             
-            ToggleMenuFlyoutItem playbackSpeedItem_1_5 = new ToggleMenuFlyoutItem { Text = "1.5x", IsChecked = PlayingSound.PlaybackSpeed == 150 };
+            ToggleMenuFlyoutItem playbackSpeedItem_1_5 = new ToggleMenuFlyoutItem { Text = "1.5×", IsChecked = PlayingSound.PlaybackSpeed == 150 };
             playbackSpeedItem_1_5.Click += MoreButton_PlaybackSpeed_1_5x_Click;
             playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_1_5);
 
-            ToggleMenuFlyoutItem playbackSpeedItem_1_75 = new ToggleMenuFlyoutItem { Text = "1.75x", IsChecked = PlayingSound.PlaybackSpeed == 175 };
+            ToggleMenuFlyoutItem playbackSpeedItem_1_75 = new ToggleMenuFlyoutItem { Text = "1.75×", IsChecked = PlayingSound.PlaybackSpeed == 175 };
             playbackSpeedItem_1_75.Click += MoreButton_PlaybackSpeed_1_75x_Click;
             playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_1_75);
 
-            ToggleMenuFlyoutItem playbackSpeedItem_2_0 = new ToggleMenuFlyoutItem { Text = "2.0x", IsChecked = PlayingSound.PlaybackSpeed == 200 };
+            ToggleMenuFlyoutItem playbackSpeedItem_2_0 = new ToggleMenuFlyoutItem { Text = "2.0×", IsChecked = PlayingSound.PlaybackSpeed == 200 };
             playbackSpeedItem_2_0.Click += MoreButton_PlaybackSpeed_2_0x_Click;
             playbackSpeedFlyoutItem.Items.Add(playbackSpeedItem_2_0);
             #endregion
