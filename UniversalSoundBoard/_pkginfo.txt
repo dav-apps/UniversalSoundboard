@@ -1,1 +1,0 @@
-C:\Users\dav20\Documents\Projekte\UniversalSoundBoard\UniversalSoundBoard\bin\ARM\Release\Upload\UniversalSoundBoard_2.0.9.0\UniversalSoundBoard_2.0.9.0_x86_x64_arm.msixbundle
