@@ -1794,6 +1794,10 @@ namespace UniversalSoundboard.Pages
                 ElementCompositionPreview.SetAppWindowContent(recorderAppWindow, appWindowContentFrame);
                 await recorderAppWindow.TryShowAsync();
             }
+            else
+            {
+                await recorderAppWindow.TryShowAsync();
+            }
         }
         #endregion
 
