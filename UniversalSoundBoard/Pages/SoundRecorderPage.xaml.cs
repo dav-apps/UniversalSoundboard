@@ -94,8 +94,6 @@ namespace UniversalSoundboard.Pages
             if (audioRecorder.IsRecording)
             {
                 RecordButton.Content = "\uE7C8";
-                RecordButton.Foreground = new SolidColorBrush(Colors.White);
-                RecordButton.Background = new SolidColorBrush(Color.FromArgb(255, 212, 64, 84));
 
                 await audioRecorder.Stop();
                 await audioRecorder.Init();
@@ -103,8 +101,6 @@ namespace UniversalSoundboard.Pages
             else
             {
                 RecordButton.Content = "\uEE95";
-                RecordButton.Foreground = new SolidColorBrush(Colors.Black);
-                RecordButton.Background = new SolidColorBrush(Colors.Transparent);
 
                 audioRecorder.Start();
             }
