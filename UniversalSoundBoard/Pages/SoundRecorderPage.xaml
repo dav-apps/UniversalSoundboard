@@ -85,6 +85,14 @@
             Style="{StaticResource CaptionTextBlockStyle}"
             Margin="13,8,0,0" />
 
+        <Canvas
+            Name="WaveformCanvas"
+            RelativePanel.AlignVerticalCenterWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            Background="Transparent"
+            Height="200" />
+
         <Button
             Name="RecordButton"
             Style="{StaticResource RecordButtonStyle}"
@@ -93,7 +101,6 @@
             Height="50"
             Width="50"
             CornerRadius="30"
-            Margin="0,0,0,50"
             Background="#D44054"
             Foreground="White"
             FontSize="20"
@@ -111,7 +118,7 @@
             RelativePanel.Below="RecordButton"
             RelativePanel.AlignHorizontalCenterWithPanel="True"
             PlaceholderText="Select an input device"
-            Margin="0,0,10,0"
+            Margin="0,50,10,0"
             SelectionChanged="InputDeviceComboBox_SelectionChanged" />
     </RelativePanel>
 </Page>
