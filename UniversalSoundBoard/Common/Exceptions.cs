@@ -26,7 +26,8 @@ namespace UniversalSoundboard.Common
     {
         AudioFileNotSpecified = 0,
         NotInitialized = 1,
-        NotAllowedWhileRecording = 2
+        NotAllowedWhileRecording = 2,
+        NoOutputSpecified = 3
     }
 
     class AudioRecorderInitException : Exception

@@ -2,6 +2,7 @@
 using System.IO;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
+using Windows.Media;
 using Windows.UI.Xaml;
 
 namespace UniversalSoundboard.Common
@@ -271,6 +272,18 @@ namespace UniversalSoundboard.Common
         public HotkeyEventArgs(Hotkey hotkey)
         {
             Hotkey = hotkey;
+        }
+    }
+    #endregion
+
+    #region AudioRecorder
+    public class AudioRecorderQuantumStartedEventArgs : EventArgs
+    {
+        public AudioFrame AudioFrame { get; set; }
+
+        public AudioRecorderQuantumStartedEventArgs(AudioFrame audioFrame)
+        {
+            AudioFrame = audioFrame;
         }
     }
     #endregion

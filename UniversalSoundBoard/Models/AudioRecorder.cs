@@ -21,7 +21,19 @@ namespace UniversalSoundboard.Models
         private AudioGraph AudioGraph;
         private AudioDeviceInputNode DeviceInputNode;
         private AudioFileOutputNode FileOutputNode;
+        private AudioFrameOutputNode FrameOutputNode;
         MediaEncodingProfile recordingFormat;
+
+        public int SamplesPerQuantum
+        {
+            get => AudioGraph != null ? AudioGraph.SamplesPerQuantum : 0;
+        }
+        public int ChannelCount
+        {
+            get => AudioGraph != null ? (int)AudioGraph.EncodingProperties.ChannelCount : 2;
+        }
+
+        public event EventHandler<AudioRecorderQuantumStartedEventArgs> QuantumStarted;
 
         public StorageFile AudioFile
         {
@@ -67,11 +79,14 @@ namespace UniversalSoundboard.Models
         private void InitRecordingFormat()
         {
             recordingFormat = MediaEncodingProfile.CreateWav(AudioEncodingQuality.Auto);
-            recordingFormat.Audio = AudioEncodingProperties.CreatePcm(16000, 1, 16);
+            recordingFormat.Audio = AudioEncodingProperties.CreatePcm(16000, 2, 16);
         }
 
-        public async Task Init()
+        public async Task Init(bool fileOutput = true, bool frameOutput = false)
         {
+            if (!fileOutput && !frameOutput)
+                throw new AudioRecorderInitException(AudioRecorderInitError.NoOutputSpecified);
+
             if (audioFile == null)
                 throw new AudioRecorderInitException(AudioRecorderInitError.AudioFileNotSpecified);
 
@@ -92,8 +107,12 @@ namespace UniversalSoundboard.Models
                 initialized = true;
             }
 
-            // Create the output node
-            await InitFileOutputNode();
+            // Create the output nodes
+            if (fileOutput)
+                await InitFileOutputNode();
+
+            if (frameOutput)
+                InitFrameOutputNode();
 
             isInitializing = false;
         }
@@ -141,6 +160,17 @@ namespace UniversalSoundboard.Models
 
             FileOutputNode = outputNodeResult.FileOutputNode;
             DeviceInputNode.AddOutgoingConnection(FileOutputNode);
+        }
+
+        private void InitFrameOutputNode()
+        {
+            FrameOutputNode = AudioGraph.CreateFrameOutputNode(recordingFormat.Audio);
+            DeviceInputNode.AddOutgoingConnection(FrameOutputNode);
+
+            AudioGraph.QuantumStarted += (AudioGraph sender, object args) =>
+            {
+                QuantumStarted?.Invoke(this, new AudioRecorderQuantumStartedEventArgs(FrameOutputNode.GetFrame()));
+            };
         }
 
         public void Start()
