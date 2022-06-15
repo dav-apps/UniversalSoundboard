@@ -154,6 +154,9 @@
     <Compile Include="Components\HotkeyItemTemplate.xaml.cs">
       <DependentUpon>HotkeyItemTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\RecordedSoundItemTemplate.xaml.cs">
+      <DependentUpon>RecordedSoundItemTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Models\AudioPlayer.cs" />
     <Compile Include="Models\AudioRecorder.cs" />
     <Compile Include="Models\DeviceWatcherHelper.cs" />
@@ -175,6 +178,7 @@
     <Compile Include="DataAccess\FileManager.cs" />
     <Compile Include="Models\Hotkey.cs" />
     <Compile Include="Models\DeviceInfo.cs" />
+    <Compile Include="Models\RecordedSoundItem.cs" />
     <Compile Include="Pages\SoundRecorderPage.xaml.cs">
       <DependentUpon>SoundRecorderPage.xaml</DependentUpon>
     </Compile>
@@ -316,6 +320,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Components\HotkeyItemTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\RecordedSoundItemTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
