@@ -4,10 +4,19 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="using:UniversalSoundboard.Models"
+    xmlns:components="using:UniversalSoundboard.Components"
     mc:Ignorable="d"
-    Loaded="Page_Loaded">
+    Loaded="Page_Loaded"
+    SizeChanged="Page_SizeChanged">
 
     <Page.Resources>
+        <!-- DataTemplates -->
+        <DataTemplate x:Key="RecordedSoundsListViewDataTemplate" x:DataType="models:RecordedSoundItem">
+            <components:RecordedSoundItemTemplate />
+        </DataTemplate>
+        
+        <!-- Styles -->
         <Style TargetType="Button" x:Key="RecordButtonStyle">
             <Setter Property="Background" Value="{ThemeResource ButtonRevealBackground}" />
             <Setter Property="Foreground" Value="{ThemeResource ButtonForeground}" />
@@ -76,49 +85,94 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <!-- Storyboards -->
+        <Storyboard x:Name="ExpandRecorderStoryboard" Completed="ExpandRecorderStoryboard_Completed">
+            <DoubleAnimation
+                x:Name="ExpandRecorderStoryboardAnimation"
+                Storyboard.TargetName="RecordingRelativePanel"
+                Storyboard.TargetProperty="Height"
+                EnableDependentAnimation="True"
+                Duration="0:0:0.2" />
+        </Storyboard>
+
+        <Storyboard x:Name="ShrinkRecorderStoryboard">
+            <DoubleAnimation
+                x:Name="ShrinkRecorderStoryboardAnimation"
+                Storyboard.TargetName="RecordingRelativePanel"
+                Storyboard.TargetProperty="Height"
+                EnableDependentAnimation="True"
+                Duration="0:0:0.2" />
+        </Storyboard>
     </Page.Resources>
 
     <RelativePanel Name="ContentRoot" Background="{Binding SecondaryWindowAcrylicBackgroundBrush}">
-        <TextBlock
-            Name="WindowTitleTextBlock"
-            x:Uid="SoundRecorderPage-WindowTitleTextBlock"
-            Style="{StaticResource CaptionTextBlockStyle}"
-            Margin="13,8,0,0" />
-
-        <Canvas
-            Name="WaveformCanvas"
-            RelativePanel.AlignVerticalCenterWithPanel="True"
+        <RelativePanel
+            Name="RecordingRelativePanel"
+            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            Background="Transparent"
-            Height="200" />
+            RelativePanel.AlignRightWithPanel="True">
+            
+            <TextBlock
+                Name="WindowTitleTextBlock"
+                x:Uid="SoundRecorderPage-WindowTitleTextBlock"
+                Style="{StaticResource CaptionTextBlockStyle}"
+                Margin="13,8,0,0" />
 
-        <Button
-            Name="RecordButton"
-            Style="{StaticResource RecordButtonStyle}"
-            RelativePanel.AlignHorizontalCenterWithPanel="True"
-            RelativePanel.AlignVerticalCenterWithPanel="True"
-            Height="50"
-            Width="50"
-            CornerRadius="30"
-            Background="#D44054"
-            Foreground="White"
-            FontSize="20"
-            FontFamily="{StaticResource FluentIconsFontFamily}"
-            Content="&#xE7C8;"
-            Click="RecordButton_Click">
+            <Canvas
+                Name="WaveformCanvas"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                Background="Transparent"
+                Height="200" />
 
-            <ToolTipService.ToolTip>
-                <TextBlock Name="RecordButtonToolTip" Text="Start recording" />
-            </ToolTipService.ToolTip>
-        </Button>
+            <Button
+                Name="RecordButton"
+                Style="{StaticResource RecordButtonStyle}"
+                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                RelativePanel.AlignVerticalCenterWithPanel="True"
+                Height="50"
+                Width="50"
+                CornerRadius="30"
+                Background="#D44054"
+                Foreground="White"
+                FontSize="20"
+                FontFamily="{StaticResource FluentIconsFontFamily}"
+                Content="&#xE7C8;"
+                Click="RecordButton_Click">
 
-        <ComboBox
-            Name="InputDeviceComboBox"
-            RelativePanel.Below="RecordButton"
-            RelativePanel.AlignHorizontalCenterWithPanel="True"
-            PlaceholderText="Select an input device"
-            Margin="0,50,10,0"
-            SelectionChanged="InputDeviceComboBox_SelectionChanged" />
+                <ToolTipService.ToolTip>
+                    <TextBlock Name="RecordButtonToolTip" Text="Start recording" />
+                </ToolTipService.ToolTip>
+            </Button>
+
+            <ComboBox
+                Name="InputDeviceComboBox"
+                RelativePanel.Below="RecordButton"
+                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                PlaceholderText="Select an input device"
+                Margin="0,40,10,0"
+                SelectionChanged="InputDeviceComboBox_SelectionChanged" />
+        </RelativePanel>
+
+        <RelativePanel
+            Name="RecordedSoundsRelativePanel"
+            RelativePanel.Below="RecordingRelativePanel"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True">
+
+            <ListView
+                Name="RecordedSoundsListView"
+                RelativePanel.AlignHorizontalCenterWithPanel="True"
+                RelativePanel.AlignTopWithPanel="True"
+                RelativePanel.AlignBottomWithPanel="True"
+                ItemTemplate="{StaticResource RecordedSoundsListViewDataTemplate}"
+                ItemsSource="{x:Bind recordedSoundItems}"
+                Width="300"
+                SelectionMode="None" />
+        </RelativePanel>
     </RelativePanel>
 </Page>

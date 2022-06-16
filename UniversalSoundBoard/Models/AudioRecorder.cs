@@ -96,16 +96,11 @@ namespace UniversalSoundboard.Models
             if (isInitializing) return;
             isInitializing = true;
 
-            if (!initialized)
-            {
-                // Create the AudioGraph
-                await InitAudioGraph();
+            // Create the AudioGraph
+            await InitAudioGraph();
 
-                // Create the input node
-                await InitDeviceInputNode();
-
-                initialized = true;
-            }
+            // Create the input node
+            await InitDeviceInputNode();
 
             // Create the output nodes
             if (fileOutput)
@@ -114,6 +109,7 @@ namespace UniversalSoundboard.Models
             if (frameOutput)
                 InitFrameOutputNode();
 
+            initialized = true;
             isInitializing = false;
         }
 
@@ -193,6 +189,7 @@ namespace UniversalSoundboard.Models
 
             AudioGraph.Stop();
             await FileOutputNode.FinalizeAsync();
+            AudioGraph.ResetAllNodes();
             isRecording = false;
         }
 

@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -13,6 +15,7 @@ using Windows.Media;
 using Windows.Media.Devices;
 using Windows.Storage;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -26,8 +29,9 @@ namespace UniversalSoundboard.Pages
         DeviceInfo inputDevice;
         StorageFile outputFile;
         AudioRecorder audioRecorder;
-        List<List<float>> channelValues = new List<List<float>>();
         DispatcherTimer timer;
+        List<List<float>> channelValues = new List<List<float>>();
+        ObservableCollection<RecordedSoundItem> recordedSoundItems = new ObservableCollection<RecordedSoundItem>();
         private bool skipInputDeviceComboBoxChanged = false;
         private int channelCount = 2;
 
@@ -81,6 +85,11 @@ namespace UniversalSoundboard.Pages
             skipInputDeviceComboBoxChanged = false;
         }
 
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            SetSize();
+        }
+
         private void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
@@ -93,7 +102,7 @@ namespace UniversalSoundboard.Pages
 
         private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
         {
-            await MainPage.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () => UpdateInputDeviceComboBox());
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => UpdateInputDeviceComboBox());
         }
 
         private async void InputDeviceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -116,10 +125,22 @@ namespace UniversalSoundboard.Pages
 
                 timer.Stop();
                 await audioRecorder.Stop();
-                await audioRecorder.Init(true, true);
 
                 InputDeviceComboBox.IsEnabled = true;
                 WaveformCanvas.Children.Clear();
+                channelValues[0].Clear();
+                channelValues[1].Clear();
+
+                // Add the new recorded sounds to the list
+                recordedSoundItems.Insert(0, new RecordedSoundItem($"Aufnahme {recordedSoundItems.Count + 1}", audioRecorder.AudioFile));
+
+                await audioRecorder.Init(true, true);
+
+                // Show the list of recorded sounds
+                RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, false);
+                ShrinkRecorderStoryboardAnimation.From = RecordingRelativePanel.ActualHeight;
+                ShrinkRecorderStoryboardAnimation.To = RecordingRelativePanel.ActualHeight / 2;
+                ShrinkRecorderStoryboard.Begin();
             }
             else
             {
@@ -129,6 +150,14 @@ namespace UniversalSoundboard.Pages
                 audioRecorder.Start();
 
                 InputDeviceComboBox.IsEnabled = false;
+
+                if (recordedSoundItems.Count > 0)
+                {
+                    // Hide the list of recorded sounds
+                    ExpandRecorderStoryboardAnimation.From = RecordingRelativePanel.ActualHeight;
+                    ExpandRecorderStoryboardAnimation.To = ContentRoot.ActualHeight;
+                    ExpandRecorderStoryboard.Begin();
+                }
             }
         }
 
@@ -141,6 +170,28 @@ namespace UniversalSoundboard.Pages
         {
             WaveformCanvas.Children.Clear();
             DrawWaveform();
+        }
+
+        private void ExpandRecorderStoryboard_Completed(object sender, object e)
+        {
+            RecordingRelativePanel.Height = double.NaN;
+            RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, true);
+        }
+
+        private void SetSize()
+        {
+            if (audioRecorder == null) return;
+
+            if (!audioRecorder.IsRecording && recordedSoundItems.Count > 0)
+            {
+                RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, false);
+                RecordingRelativePanel.Height = MainPage.recorderAppWindow.GetPlacement().Size.Height / 1.5;
+            }
+            else
+            {
+                RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, true);
+                RecordingRelativePanel.Height = MainPage.recorderAppWindow.GetPlacement().Size.Height;
+            }
         }
 
         private void DrawWaveform()
@@ -240,6 +291,8 @@ namespace UniversalSoundboard.Pages
 
         unsafe private void ProcessFrameOutput(AudioFrame frame)
         {
+            if (audioRecorder.SamplesPerQuantum == 0) return;
+
             using (AudioBuffer buffer = frame.LockBuffer(AudioBufferAccessMode.Read))
             using (IMemoryBufferReference reference = buffer.CreateReference())
             {
@@ -250,17 +303,17 @@ namespace UniversalSoundboard.Pages
                 var dataInFloat = (float*)dataInBytes;
                 float firstChannelSum = 0;
                 float secondChannelSum = 0;
-
-                for (int i = 0; i < audioRecorder.SamplesPerQuantum; i++)
+                
+                for (int i = 0; i < capacityInBytes / sizeof(float); i++)
                 {
                     float val = dataInFloat[i];
 
-                    if (float.IsNaN(val) || float.IsInfinity(val)) continue;
+                    if (float.IsNaN(val) || float.IsInfinity(val) || val > 10) continue;
 
                     if (i % 2 == 0)
-                        firstChannelSum += Math.Abs(dataInFloat[i]);
+                        firstChannelSum += Math.Abs(val);
                     else
-                        secondChannelSum += Math.Abs(dataInFloat[i]);
+                        secondChannelSum += Math.Abs(val);
                 }
 
                 channelValues[0].Insert(0, firstChannelSum / audioRecorder.SamplesPerQuantum);

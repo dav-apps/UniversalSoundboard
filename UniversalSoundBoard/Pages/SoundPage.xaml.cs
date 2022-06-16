@@ -14,7 +14,6 @@ using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
 using Windows.Devices.Enumeration;
 using Windows.Foundation.Collections;
-using Windows.Media.Playback;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;

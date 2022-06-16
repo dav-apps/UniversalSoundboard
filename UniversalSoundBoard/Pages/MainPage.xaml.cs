@@ -39,7 +39,7 @@ namespace UniversalSoundboard.Pages
         readonly ResourceLoader loader = new ResourceLoader();
         public static CoreDispatcher dispatcher;                            // Dispatcher for ShareTargetPage
         string appTitle = "UniversalSoundboard";                            // The app name displayed in the title bar
-        private AppWindow recorderAppWindow;
+        public static AppWindow recorderAppWindow;
         private readonly ObservableCollection<object> menuItems = new ObservableCollection<object>();
         private Guid initialCategory = Guid.Empty;                          // The category that was selected before the sounds started loading
         private Guid selectedCategory = Guid.Empty;                         // The category that was right clicked for the flyout
@@ -1792,12 +1792,9 @@ namespace UniversalSoundboard.Pages
                 Frame appWindowContentFrame = new Frame();
                 appWindowContentFrame.Navigate(typeof(SoundRecorderPage));
                 ElementCompositionPreview.SetAppWindowContent(recorderAppWindow, appWindowContentFrame);
-                await recorderAppWindow.TryShowAsync();
             }
-            else
-            {
-                await recorderAppWindow.TryShowAsync();
-            }
+
+            await recorderAppWindow.TryShowAsync();
         }
         #endregion
 
