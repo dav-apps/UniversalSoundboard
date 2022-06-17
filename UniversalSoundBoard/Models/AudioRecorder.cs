@@ -84,6 +84,8 @@ namespace UniversalSoundboard.Models
 
         public async Task Init(bool fileOutput = true, bool frameOutput = false)
         {
+            if (initialized) return;
+
             if (!fileOutput && !frameOutput)
                 throw new AudioRecorderInitException(AudioRecorderInitError.NoOutputSpecified);
 
@@ -190,6 +192,7 @@ namespace UniversalSoundboard.Models
             AudioGraph.Stop();
             await FileOutputNode.FinalizeAsync();
             AudioGraph.ResetAllNodes();
+            initialized = false;
             isRecording = false;
         }
 

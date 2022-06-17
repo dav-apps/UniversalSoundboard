@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using Windows.Devices.Enumeration;
@@ -30,6 +27,10 @@ namespace UniversalSoundboard.Models
         private AudioFileInputNode FileInputNode;
         private AudioDeviceOutputNode DeviceOutputNode;
 
+        public bool IsInitialized
+        {
+            get => initialized;
+        }
         public StorageFile AudioFile
         {
             get => audioFile;

@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Threading.Tasks;
@@ -52,17 +51,7 @@ namespace UniversalSoundboard.Pages
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             UpdateInputDeviceComboBox();
-
-            // Create an output file in the cache
-            outputFile = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync(Guid.NewGuid().ToString(), CreationCollisionOption.ReplaceExisting);
-            audioRecorder = new AudioRecorder(outputFile);
-            audioRecorder.QuantumStarted += AudioRecorder_QuantumStarted;
-
-            channelValues.Clear();
-            channelCount = audioRecorder.ChannelCount;
-
-            for (int c = 0; c < channelCount; c++)
-                channelValues.Add(new List<float>());
+            await InitAudioRecorder();
 
             // Set up the default input device
             var defaultDeviceId = MediaDevice.GetDefaultAudioCaptureId(AudioDeviceRole.Default);
@@ -128,18 +117,18 @@ namespace UniversalSoundboard.Pages
 
                 InputDeviceComboBox.IsEnabled = true;
                 WaveformCanvas.Children.Clear();
-                channelValues[0].Clear();
-                channelValues[1].Clear();
 
                 // Add the new recorded sounds to the list
-                recordedSoundItems.Insert(0, new RecordedSoundItem($"Aufnahme {recordedSoundItems.Count + 1}", audioRecorder.AudioFile));
+                var recordedSoundItem = new RecordedSoundItem($"Aufnahme {recordedSoundItems.Count + 1}", outputFile);
+                recordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
+                recordedSoundItems.Insert(0, recordedSoundItem);
 
-                await audioRecorder.Init(true, true);
+                await InitAudioRecorder();
 
                 // Show the list of recorded sounds
                 RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, false);
                 ShrinkRecorderStoryboardAnimation.From = RecordingRelativePanel.ActualHeight;
-                ShrinkRecorderStoryboardAnimation.To = RecordingRelativePanel.ActualHeight / 2;
+                ShrinkRecorderStoryboardAnimation.To = RecordingRelativePanel.ActualHeight / 1.5;
                 ShrinkRecorderStoryboard.Begin();
             }
             else
@@ -161,6 +150,18 @@ namespace UniversalSoundboard.Pages
             }
         }
 
+        private void RecordedSoundItem_AudioPlayerStarted(object sender, EventArgs e)
+        {
+            RecordedSoundItem clickedItem = (RecordedSoundItem)sender;
+
+            foreach (var item in recordedSoundItems)
+            {
+                if (item.Uuid.Equals(clickedItem.Uuid)) continue;
+
+                item.Pause();
+            }
+        }
+
         private void AudioRecorder_QuantumStarted(object sender, AudioRecorderQuantumStartedEventArgs e)
         {
             ProcessFrameOutput(e.AudioFrame);
@@ -176,6 +177,22 @@ namespace UniversalSoundboard.Pages
         {
             RecordingRelativePanel.Height = double.NaN;
             RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, true);
+        }
+
+        private async Task InitAudioRecorder()
+        {
+            // Create an output file in the cache
+            outputFile = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync(Guid.NewGuid().ToString(), CreationCollisionOption.ReplaceExisting);
+            audioRecorder = new AudioRecorder(outputFile);
+            audioRecorder.QuantumStarted += AudioRecorder_QuantumStarted;
+
+            await audioRecorder.Init(true, true);
+
+            channelValues.Clear();
+            channelCount = audioRecorder.ChannelCount;
+
+            for (int c = 0; c < channelCount; c++)
+                channelValues.Add(new List<float>());
         }
 
         private void SetSize()

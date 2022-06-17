@@ -1,18 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
 using UniversalSoundboard.Models;
-using Windows.Foundation;
-using Windows.Foundation.Collections;
+using UniversalSoundboard.Pages;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
-using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Data;
-using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundboard.Components
 {
@@ -24,6 +15,42 @@ namespace UniversalSoundboard.Components
         {
             InitializeComponent();
             DataContextChanged += (s, e) => Bindings.Update();
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            RecordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
+            RecordedSoundItem.AudioPlayerPaused += RecordedSoundItem_AudioPlayerPaused;
+        }
+
+        private async void RecordedSoundItem_AudioPlayerStarted(object sender, EventArgs e)
+        {
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                PlayPauseButton.Content = "\uE62E";
+            });
+        }
+
+        private async void RecordedSoundItem_AudioPlayerPaused(object sender, EventArgs e)
+        {
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                PlayPauseButton.Content = "\uF5B0";
+            });
+        }
+
+        private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (RecordedSoundItem.IsPlaying)
+            {
+                RecordedSoundItem.Pause();
+                PlayPauseButton.Content = "\uF5B0";
+            }
+            else
+            {
+                await RecordedSoundItem.Play();
+                PlayPauseButton.Content = "\uE62E";
+            }
         }
     }
 }
