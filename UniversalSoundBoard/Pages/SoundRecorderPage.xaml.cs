@@ -121,6 +121,7 @@ namespace UniversalSoundboard.Pages
                 // Add the new recorded sounds to the list
                 var recordedSoundItem = new RecordedSoundItem($"Aufnahme {recordedSoundItems.Count + 1}", outputFile);
                 recordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
+                recordedSoundItem.Removed += RecordedSoundItem_Removed;
                 recordedSoundItems.Insert(0, recordedSoundItem);
 
                 await InitAudioRecorder();
@@ -141,12 +142,7 @@ namespace UniversalSoundboard.Pages
                 InputDeviceComboBox.IsEnabled = false;
 
                 if (recordedSoundItems.Count > 0)
-                {
-                    // Hide the list of recorded sounds
-                    ExpandRecorderStoryboardAnimation.From = RecordingRelativePanel.ActualHeight;
-                    ExpandRecorderStoryboardAnimation.To = ContentRoot.ActualHeight;
-                    ExpandRecorderStoryboard.Begin();
-                }
+                    ExpandRecorder();
             }
         }
 
@@ -160,6 +156,15 @@ namespace UniversalSoundboard.Pages
 
                 item.Pause();
             }
+        }
+
+        private void RecordedSoundItem_Removed(object sender, EventArgs e)
+        {
+            var recordedSoundItem = (RecordedSoundItem)sender;
+            bool removeResult = recordedSoundItems.Remove(recordedSoundItem);
+
+            if (removeResult && recordedSoundItems.Count == 0)
+                ExpandRecorder();
         }
 
         private void AudioRecorder_QuantumStarted(object sender, AudioRecorderQuantumStartedEventArgs e)
@@ -209,6 +214,13 @@ namespace UniversalSoundboard.Pages
                 RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, true);
                 RecordingRelativePanel.Height = MainPage.recorderAppWindow.GetPlacement().Size.Height;
             }
+        }
+
+        private void ExpandRecorder()
+        {
+            ExpandRecorderStoryboardAnimation.From = RecordingRelativePanel.ActualHeight;
+            ExpandRecorderStoryboardAnimation.To = ContentRoot.ActualHeight;
+            ExpandRecorderStoryboard.Begin();
         }
 
         private void DrawWaveform()

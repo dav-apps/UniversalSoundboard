@@ -16,6 +16,7 @@ namespace UniversalSoundboard.Models
 
         public event EventHandler<EventArgs> AudioPlayerStarted;
         public event EventHandler<EventArgs> AudioPlayerPaused;
+        public event EventHandler<EventArgs> Removed;
 
         public RecordedSoundItem(string name, StorageFile file)
         {
@@ -42,6 +43,14 @@ namespace UniversalSoundboard.Models
 
             audioPlayer.Pause();
             AudioPlayerPaused?.Invoke(this, EventArgs.Empty);
+        }
+
+        public void Remove()
+        {
+            if (audioPlayer.IsPlaying)
+                audioPlayer.Pause();
+
+            Removed?.Invoke(this, EventArgs.Empty);
         }
 
         private async void AudioPlayer_MediaEnded(object sender, EventArgs e)

@@ -238,12 +238,12 @@ namespace UniversalSoundboard.DataAccess
         public static ItemViewHolder itemViewHolder;
         public static davClassLibrary.Environment Environment = davClassLibrary.Environment.Production;
 
+        public static readonly ResourceLoader loader = new ResourceLoader();
         public static HttpClient httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(60) };
         public static YouTubeService youtubeService = new YouTubeService(new BaseClientService.Initializer { ApiKey = Env.YoutubeApiKey });
 
         public static readonly DeviceWatcherHelper deviceWatcherHelper = new DeviceWatcherHelper(DeviceClass.AudioRender);
 
-        private static readonly ResourceLoader loader = new ResourceLoader();
         internal static bool syncFinished = false;
         private static bool isCalculatingSoundboardSize = false;
         private static bool isShowAllSoundsOrCategoryRunning = false;

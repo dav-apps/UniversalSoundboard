@@ -1,4 +1,5 @@
 ﻿using System;
+using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.UI.Core;
@@ -19,8 +20,13 @@ namespace UniversalSoundboard.Components
 
         private void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
-            RecordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
-            RecordedSoundItem.AudioPlayerPaused += RecordedSoundItem_AudioPlayerPaused;
+            PlayPauseButtonTooltip.Text = FileManager.loader.GetString("PlayButtonToolTip");
+
+            if (RecordedSoundItem != null)
+            {
+                RecordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
+                RecordedSoundItem.AudioPlayerPaused += RecordedSoundItem_AudioPlayerPaused;
+            }
         }
 
         private async void RecordedSoundItem_AudioPlayerStarted(object sender, EventArgs e)
@@ -28,6 +34,7 @@ namespace UniversalSoundboard.Components
             await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 PlayPauseButton.Content = "\uE62E";
+                PlayPauseButtonTooltip.Text = FileManager.loader.GetString("PauseButtonToolTip");
             });
         }
 
@@ -36,6 +43,7 @@ namespace UniversalSoundboard.Components
             await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 PlayPauseButton.Content = "\uF5B0";
+                PlayPauseButtonTooltip.Text = FileManager.loader.GetString("PlayButtonToolTip");
             });
         }
 
@@ -51,6 +59,11 @@ namespace UniversalSoundboard.Components
                 await RecordedSoundItem.Play();
                 PlayPauseButton.Content = "\uE62E";
             }
+        }
+
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            RecordedSoundItem.Remove();
         }
     }
 }

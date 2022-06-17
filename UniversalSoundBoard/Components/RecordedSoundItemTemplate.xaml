@@ -24,7 +24,24 @@
                 Name="PlayPauseButton"
                 FontFamily="{StaticResource FluentIconsFontFamily}"
                 Content="&#xF5B0;"
-                Click="PlayPauseButton_Click" />
+                Click="PlayPauseButton_Click">
+
+                <ToolTipService.ToolTip>
+                    <TextBlock Name="PlayPauseButtonTooltip" />
+                </ToolTipService.ToolTip>
+            </Button>
+
+            <Button
+                Name="RemoveButton"
+                Margin="10,0,0,0"
+                FontFamily="{StaticResource FluentIconsFontFamily}"
+                Content="&#xE74D;"
+                Click="RemoveButton_Click">
+
+                <ToolTipService.ToolTip>
+                    <TextBlock x:Uid="RemoveButton" />
+                </ToolTipService.ToolTip>
+            </Button>
         </StackPanel>
     </RelativePanel>
 </UserControl>
