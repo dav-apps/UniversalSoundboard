@@ -1009,4 +1009,7 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="Recording" xml:space="preserve">
     <value>Recording {0}</value>
   </data>
+  <data name="AddToSoundboardButton.Text" xml:space="preserve">
+    <value>Add to soundboard</value>
+  </data>
 </root>

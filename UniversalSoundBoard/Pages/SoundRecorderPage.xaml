@@ -171,7 +171,7 @@
                 RelativePanel.AlignBottomWithPanel="True"
                 ItemTemplate="{StaticResource RecordedSoundsListViewDataTemplate}"
                 ItemsSource="{x:Bind recordedSoundItems}"
-                Width="300"
+                Width="400"
                 SelectionMode="None" />
         </RelativePanel>
     </RelativePanel>

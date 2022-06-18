@@ -1007,4 +1007,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="Recording" xml:space="preserve">
     <value>Aufzeichnung {0}</value>
   </data>
+  <data name="AddToSoundboardButton.Text" xml:space="preserve">
+    <value>Zum Soundboard hinzufügen</value>
+  </data>
 </root>

@@ -17,17 +17,22 @@ namespace UniversalSoundboard.Components
         public RecordedSoundItemTemplate()
         {
             InitializeComponent();
-            DataContextChanged += (s, e) => Bindings.Update();
+            DataContextChanged += RecordedSoundItemTemplate_DataContextChanged;
         }
 
-        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            PlayPauseButtonTooltip.Text = FileManager.loader.GetString("PlayButtonToolTip");
+        }
+
+        private async void RecordedSoundItemTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             if (RecordedSoundItem == null) return;
 
+            RecordedSoundItem.AudioPlayerStarted -= RecordedSoundItem_AudioPlayerStarted;
             RecordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
+            RecordedSoundItem.AudioPlayerPaused -= RecordedSoundItem_AudioPlayerPaused;
             RecordedSoundItem.AudioPlayerPaused += RecordedSoundItem_AudioPlayerPaused;
-
-            PlayPauseButtonTooltip.Text = FileManager.loader.GetString("PlayButtonToolTip");
 
             TimeSpan duration = await RecordedSoundItem.GetDuration();
             recordedSoundLengthText = string.Format("{0:D2}:{1:D2}", duration.Minutes, duration.Seconds);
@@ -65,6 +70,11 @@ namespace UniversalSoundboard.Components
                 await RecordedSoundItem.Play();
                 PlayPauseButton.Content = "\uE62E";
             }
+        }
+
+        private void AddToSoundboardButton_Click(object sender, RoutedEventArgs e)
+        {
+
         }
 
         private void RemoveButton_Click(object sender, RoutedEventArgs e)

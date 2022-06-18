@@ -20,7 +20,7 @@
             Name="LengthTextBlock"
             RelativePanel.RightOf="NameTextBlock"
             RelativePanel.AlignVerticalCenterWithPanel="True"
-            Margin="18,0,0,0"
+            Margin="22,0,0,0"
             FontWeight="Thin"
             Text="{x:Bind recordedSoundLengthText}" />
 
@@ -37,6 +37,18 @@
 
                 <ToolTipService.ToolTip>
                     <TextBlock Name="PlayPauseButtonTooltip" />
+                </ToolTipService.ToolTip>
+            </Button>
+
+            <Button
+                Name="AddToSoundboardButton"
+                Margin="10,0,0,0"
+                FontFamily="{StaticResource FluentIconsFontFamily}"
+                Content="&#xE74E;"
+                Click="AddToSoundboardButton_Click">
+
+                <ToolTipService.ToolTip>
+                    <TextBlock x:Uid="AddToSoundboardButton" />
                 </ToolTipService.ToolTip>
             </Button>
 
