@@ -1006,4 +1006,7 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="InputDeviceComboBox.PlaceholderText" xml:space="preserve">
     <value>Select an input device</value>
   </data>
+  <data name="Recording" xml:space="preserve">
+    <value>Recording {0}</value>
+  </data>
 </root>

@@ -12,21 +12,27 @@ namespace UniversalSoundboard.Components
     {
         public RecordedSoundItem RecordedSoundItem { get { return DataContext as RecordedSoundItem; } }
 
+        private string recordedSoundLengthText = "";
+
         public RecordedSoundItemTemplate()
         {
             InitializeComponent();
             DataContextChanged += (s, e) => Bindings.Update();
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private async void UserControl_Loaded(object sender, RoutedEventArgs e)
         {
+            if (RecordedSoundItem == null) return;
+
+            RecordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
+            RecordedSoundItem.AudioPlayerPaused += RecordedSoundItem_AudioPlayerPaused;
+
             PlayPauseButtonTooltip.Text = FileManager.loader.GetString("PlayButtonToolTip");
 
-            if (RecordedSoundItem != null)
-            {
-                RecordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
-                RecordedSoundItem.AudioPlayerPaused += RecordedSoundItem_AudioPlayerPaused;
-            }
+            TimeSpan duration = await RecordedSoundItem.GetDuration();
+            recordedSoundLengthText = string.Format("{0:D2}:{1:D2}", duration.Minutes, duration.Seconds);
+
+            Bindings.Update();
         }
 
         private async void RecordedSoundItem_AudioPlayerStarted(object sender, EventArgs e)

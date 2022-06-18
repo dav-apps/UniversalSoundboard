@@ -1005,4 +1005,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="InputDeviceComboBox.PlaceholderText" xml:space="preserve">
     <value>Sélectionner le périphérique d'entrée</value>
   </data>
+  <data name="Recording" xml:space="preserve">
+    <value>Enregistrement {0}</value>
+  </data>
 </root>

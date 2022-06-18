@@ -28,6 +28,14 @@ namespace UniversalSoundboard.Models
             audioPlayer.MediaEnded += AudioPlayer_MediaEnded;
         }
 
+        public async Task<TimeSpan> GetDuration()
+        {
+            if (!audioPlayer.IsInitialized)
+                await audioPlayer.Init();
+
+            return audioPlayer.Duration;
+        }
+
         public async Task Play()
         {
             if (!audioPlayer.IsInitialized)

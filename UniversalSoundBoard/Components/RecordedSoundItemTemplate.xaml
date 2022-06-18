@@ -11,9 +11,18 @@
 
     <RelativePanel>
         <TextBlock
+            Name="NameTextBlock"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignVerticalCenterWithPanel="True"
             Text="{x:Bind RecordedSoundItem.Name}" />
+
+        <TextBlock
+            Name="LengthTextBlock"
+            RelativePanel.RightOf="NameTextBlock"
+            RelativePanel.AlignVerticalCenterWithPanel="True"
+            Margin="18,0,0,0"
+            FontWeight="Thin"
+            Text="{x:Bind recordedSoundLengthText}" />
 
         <StackPanel
             RelativePanel.AlignRightWithPanel="True"

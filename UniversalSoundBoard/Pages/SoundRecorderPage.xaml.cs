@@ -33,6 +33,7 @@ namespace UniversalSoundboard.Pages
         ObservableCollection<RecordedSoundItem> recordedSoundItems = new ObservableCollection<RecordedSoundItem>();
         private bool skipInputDeviceComboBoxChanged = false;
         private int channelCount = 2;
+        private int soundItemsCounter = 0;
 
         public SoundRecorderPage()
         {
@@ -122,7 +123,7 @@ namespace UniversalSoundboard.Pages
                 WaveformCanvas.Children.Clear();
 
                 // Add the new recorded sounds to the list
-                var recordedSoundItem = new RecordedSoundItem($"Aufnahme {recordedSoundItems.Count + 1}", outputFile);
+                var recordedSoundItem = new RecordedSoundItem(string.Format(FileManager.loader.GetString("Recording"), soundItemsCounter), outputFile);
                 recordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
                 recordedSoundItem.Removed += RecordedSoundItem_Removed;
                 recordedSoundItems.Insert(0, recordedSoundItem);
@@ -147,6 +148,8 @@ namespace UniversalSoundboard.Pages
 
                 if (recordedSoundItems.Count > 0)
                     ExpandRecorder();
+
+                soundItemsCounter++;
             }
         }
 
