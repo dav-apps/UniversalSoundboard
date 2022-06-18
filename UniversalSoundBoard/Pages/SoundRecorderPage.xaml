@@ -144,15 +144,15 @@
                 Click="RecordButton_Click">
 
                 <ToolTipService.ToolTip>
-                    <TextBlock Name="RecordButtonToolTip" Text="Start recording" />
+                    <TextBlock Name="RecordButtonToolTip" />
                 </ToolTipService.ToolTip>
             </Button>
 
             <ComboBox
                 Name="InputDeviceComboBox"
+                x:Uid="InputDeviceComboBox"
                 RelativePanel.Below="RecordButton"
                 RelativePanel.AlignHorizontalCenterWithPanel="True"
-                PlaceholderText="Select an input device"
                 Margin="0,40,10,0"
                 SelectionChanged="InputDeviceComboBox_SelectionChanged" />
         </RelativePanel>

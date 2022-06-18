@@ -996,4 +996,13 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="SoundRecorder-Title" xml:space="preserve">
     <value>Enregistreur de son</value>
   </data>
+  <data name="StartRecording" xml:space="preserve">
+    <value>Démarrer l'enregistrement</value>
+  </data>
+  <data name="StopRecording" xml:space="preserve">
+    <value>Arrêter l'enregistrement</value>
+  </data>
+  <data name="InputDeviceComboBox.PlaceholderText" xml:space="preserve">
+    <value>Sélectionner le périphérique d'entrée</value>
+  </data>
 </root>

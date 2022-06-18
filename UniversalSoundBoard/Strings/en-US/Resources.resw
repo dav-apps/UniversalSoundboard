@@ -997,4 +997,13 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="SoundRecorder-Title" xml:space="preserve">
     <value>Sound Recorder</value>
   </data>
+  <data name="StartRecording" xml:space="preserve">
+    <value>Start recording</value>
+  </data>
+  <data name="StopRecording" xml:space="preserve">
+    <value>Stop recording</value>
+  </data>
+  <data name="InputDeviceComboBox.PlaceholderText" xml:space="preserve">
+    <value>Select an input device</value>
+  </data>
 </root>

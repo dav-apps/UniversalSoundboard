@@ -50,6 +50,8 @@ namespace UniversalSoundboard.Pages
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
+            RecordButtonToolTip.Text = FileManager.loader.GetString("StartRecording");
+
             UpdateInputDeviceComboBox();
             await InitAudioRecorder();
 
@@ -111,6 +113,7 @@ namespace UniversalSoundboard.Pages
             if (audioRecorder.IsRecording)
             {
                 RecordButton.Content = "\uE7C8";
+                RecordButtonToolTip.Text = FileManager.loader.GetString("StartRecording");
 
                 timer.Stop();
                 await audioRecorder.Stop();
@@ -135,6 +138,7 @@ namespace UniversalSoundboard.Pages
             else
             {
                 RecordButton.Content = "\uEE95";
+                RecordButtonToolTip.Text = FileManager.loader.GetString("StopRecording");
 
                 timer.Start();
                 audioRecorder.Start();

@@ -995,4 +995,13 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="SoundRecorder-Title" xml:space="preserve">
     <value>Sound-Recorder</value>
   </data>
+  <data name="StartRecording" xml:space="preserve">
+    <value>Aufzeichnung starten</value>
+  </data>
+  <data name="StopRecording" xml:space="preserve">
+    <value>Aufzeichnung beenden</value>
+  </data>
+  <data name="InputDeviceComboBox.PlaceholderText" xml:space="preserve">
+    <value>Eingabegerät auswählen</value>
+  </data>
 </root>
