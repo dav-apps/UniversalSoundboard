@@ -132,17 +132,11 @@
   <data name="DeleteCategoryContentDialog-Content" xml:space="preserve">
     <value>Are you sure? Your Sounds are not impacted.</value>
   </data>
-  <data name="DeleteCategoryContentDialog-PrimaryButton" xml:space="preserve">
-    <value>Delete</value>
-  </data>
   <data name="DeleteCategoryContentDialog-Title" xml:space="preserve">
     <value>Delete category </value>
   </data>
   <data name="DeleteSoundContentDialog-Content" xml:space="preserve">
     <value>Are you sure?</value>
-  </data>
-  <data name="DeleteSoundContentDialog-PrimaryButton" xml:space="preserve">
-    <value>Delete</value>
   </data>
   <data name="DeleteSoundContentDialog-Title" xml:space="preserve">
     <value>Delete </value>
@@ -150,17 +144,11 @@
   <data name="DeleteSoundsContentDialog-Content" xml:space="preserve">
     <value>Are you sure?</value>
   </data>
-  <data name="DeleteSoundsContentDialog-PrimaryButton" xml:space="preserve">
-    <value>Delete</value>
-  </data>
   <data name="DeleteSoundsContentDialog-Title" xml:space="preserve">
     <value>Delete sounds</value>
   </data>
   <data name="Drop" xml:space="preserve">
     <value>Drop to add new sounds</value>
-  </data>
-  <data name="EditCategoryContentDialog-PrimaryButton" xml:space="preserve">
-    <value>Save</value>
   </data>
   <data name="EditCategoryContentDialog-Title" xml:space="preserve">
     <value>Edit Category</value>
@@ -255,9 +243,6 @@
   <data name="SettingsEntry-ImportDataButton.Content" xml:space="preserve">
     <value>Import soundboard</value>
   </data>
-  <data name="ExportDataContentDialog-PrimaryButton" xml:space="preserve">
-    <value>Export</value>
-  </data>
   <data name="ExportDataContentDialog-Text1" xml:space="preserve">
     <value>You can export your soundboard as a backup or to import your sounds on another device.
 
@@ -270,7 +255,7 @@ This may take some time, depending on how large your soundboard is.</value>
   <data name="ExportDataContentDialog-Title" xml:space="preserve">
     <value>Export Soundboard</value>
   </data>
-  <data name="ImportDataContentDialog-PrimaryButton" xml:space="preserve">
+  <data name="Import" xml:space="preserve">
     <value>Import</value>
   </data>
   <data name="ImportDataContentDialog-Text1" xml:space="preserve">
@@ -1011,5 +996,17 @@ Log in and upgrade your plan to use this feature.</value>
   </data>
   <data name="AddToSoundboardButton.Text" xml:space="preserve">
     <value>Add to soundboard</value>
+  </data>
+  <data name="Actions-Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Actions-Remove" xml:space="preserve">
+    <value>Remove</value>
+  </data>
+  <data name="RemoveRecordedSoundContentDialog-Message" xml:space="preserve">
+    <value>Are you sure you want to remove this recording?</value>
+  </data>
+  <data name="RemoveRecordedSoundContentDialog-Title" xml:space="preserve">
+    <value>Remove "{0}"?</value>
   </data>
 </root>

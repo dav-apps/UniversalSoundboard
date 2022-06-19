@@ -148,6 +148,7 @@
     <Compile Include="Common\Exceptions.cs" />
     <Compile Include="Common\LocalDataSettings.cs" />
     <Compile Include="Common\Callbacks.cs" />
+    <Compile Include="Common\Types.cs" />
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
     <Compile Include="Components\HotkeyItem.cs" />

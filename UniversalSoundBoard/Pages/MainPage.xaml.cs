@@ -39,7 +39,8 @@ namespace UniversalSoundboard.Pages
         readonly ResourceLoader loader = new ResourceLoader();
         public static CoreDispatcher dispatcher;                            // Dispatcher for ShareTargetPage
         string appTitle = "UniversalSoundboard";                            // The app name displayed in the title bar
-        public static AppWindow recorderAppWindow;
+        public static AppWindow soundRecorderAppWindow;
+        public static Frame soundRecorderAppWindowContentFrame;
         private readonly ObservableCollection<object> menuItems = new ObservableCollection<object>();
         private Guid initialCategory = Guid.Empty;                          // The category that was selected before the sounds started loading
         private Guid selectedCategory = Guid.Empty;                         // The category that was right clicked for the flyout
@@ -1777,24 +1778,24 @@ namespace UniversalSoundboard.Pages
         #region RecordSounds
         private async void AddButtonRecordFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            if (recorderAppWindow == null)
+            if (soundRecorderAppWindow == null)
             {
-                recorderAppWindow = await AppWindow.TryCreateAsync();
-                recorderAppWindow.RequestSize(new Size(500, 500));
-                recorderAppWindow.Title = loader.GetString("SoundRecorder-Title");
-                recorderAppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-                recorderAppWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Dark ? Colors.White : Colors.Black;
-                recorderAppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-                recorderAppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+                soundRecorderAppWindow = await AppWindow.TryCreateAsync();
+                soundRecorderAppWindow.RequestSize(new Size(500, 500));
+                soundRecorderAppWindow.Title = loader.GetString("SoundRecorder-Title");
+                soundRecorderAppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                soundRecorderAppWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Dark ? Colors.White : Colors.Black;
+                soundRecorderAppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                soundRecorderAppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
-                recorderAppWindow.Closed += (AppWindow window, AppWindowClosedEventArgs args) => recorderAppWindow = null;
+                soundRecorderAppWindow.Closed += (AppWindow window, AppWindowClosedEventArgs args) => soundRecorderAppWindow = null;
 
-                Frame appWindowContentFrame = new Frame();
-                appWindowContentFrame.Navigate(typeof(SoundRecorderPage));
-                ElementCompositionPreview.SetAppWindowContent(recorderAppWindow, appWindowContentFrame);
+                soundRecorderAppWindowContentFrame = new Frame();
+                soundRecorderAppWindowContentFrame.Navigate(typeof(SoundRecorderPage));
+                ElementCompositionPreview.SetAppWindowContent(soundRecorderAppWindow, soundRecorderAppWindowContentFrame);
             }
 
-            await recorderAppWindow.TryShowAsync();
+            await soundRecorderAppWindow.TryShowAsync();
         }
         #endregion
 

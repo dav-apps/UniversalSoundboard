@@ -132,26 +132,17 @@
   <data name="DeleteCategoryContentDialog-Content" xml:space="preserve">
     <value>Êtes-vous sûr(e) ? (vos sons ne sont pas impactés.)</value>
   </data>
-  <data name="DeleteCategoryContentDialog-PrimaryButton" xml:space="preserve">
-    <value>Supprimer</value>
-  </data>
   <data name="DeleteCategoryContentDialog-Title" xml:space="preserve">
     <value>Supprimer la catégorie </value>
   </data>
   <data name="DeleteSoundContentDialog-Content" xml:space="preserve">
     <value>Êtes-vous sûr(e) ?</value>
   </data>
-  <data name="DeleteSoundContentDialog-PrimaryButton" xml:space="preserve">
-    <value>Supprimer</value>
-  </data>
   <data name="DeleteSoundContentDialog-Title" xml:space="preserve">
     <value>Supprimer</value>
   </data>
   <data name="DeleteSoundsContentDialog-Content" xml:space="preserve">
     <value>Êtes-vous sûr(e) ?</value>
-  </data>
-  <data name="DeleteSoundsContentDialog-PrimaryButton" xml:space="preserve">
-    <value>Supprimer</value>
   </data>
   <data name="DeleteSoundsContentDialog-Title" xml:space="preserve">
     <value>Supprimer les sons</value>
@@ -160,9 +151,6 @@
   <data name="Drop" xml:space="preserve">
     <value>Déposer pour ajouter de nouveaux sons</value>
     <comment>Glisser/déposer pour référencer de nouveaux sons</comment>
-  </data>
-  <data name="EditCategoryContentDialog-PrimaryButton" xml:space="preserve">
-    <value>Sauvegarder</value>
   </data>
   <data name="EditCategoryContentDialog-Title" xml:space="preserve">
     <value>Editer la catégorie</value>
@@ -255,9 +243,6 @@
   <data name="SettingsEntry-ImportDataButton.Content" xml:space="preserve">
     <value>Importer votre Soundboard</value>
   </data>
-  <data name="ExportDataContentDialog-PrimaryButton" xml:space="preserve">
-    <value>Exporter</value>
-  </data>
   <data name="ExportDataContentDialog-Text1" xml:space="preserve">
     <value>Vous pouvez exporter votre Soundboard pour le sauvegarder ou l'importer sur un autre appareil.
 
@@ -269,7 +254,7 @@
   <data name="ExportDataContentDialog-Title" xml:space="preserve">
     <value>Exporter le Soundboard</value>
   </data>
-  <data name="ImportDataContentDialog-PrimaryButton" xml:space="preserve">
+  <data name="Import" xml:space="preserve">
     <value>Importer</value>
   </data>
   <data name="ImportDataContentDialog-Text1" xml:space="preserve">
@@ -1010,5 +995,17 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   </data>
   <data name="AddToSoundboardButton.Text" xml:space="preserve">
     <value>Ajouter au Soundboard</value>
+  </data>
+  <data name="Actions-Delete" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="Actions-Remove" xml:space="preserve">
+    <value>Supprimer</value>
+  </data>
+  <data name="RemoveRecordedSoundContentDialog-Message" xml:space="preserve">
+    <value>Voulez-vous vraiment supprimer cet enregistrement ?</value>
+  </data>
+  <data name="RemoveRecordedSoundContentDialog-Title" xml:space="preserve">
+    <value>Voulez-vous supprimer « {0} » ?</value>
   </data>
 </root>
