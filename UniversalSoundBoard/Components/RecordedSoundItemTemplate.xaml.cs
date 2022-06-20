@@ -93,7 +93,7 @@ namespace UniversalSoundboard.Components
             await FileManager.AddSound(uuid);
 
             // Remove the recorded sound from the recorder window
-            RecordedSoundItem.Remove();
+            await RecordedSoundItem.Remove();
         }
 
         private async void RemoveButton_Click(object sender, RoutedEventArgs e)
@@ -103,9 +103,9 @@ namespace UniversalSoundboard.Components
             await ContentDialogs.ShowContentDialogAsync(removeRecordedSoundContentDialog, AppWindowType.SoundRecorder);
         }
 
-        private void RemoveRecordedSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void RemoveRecordedSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            RecordedSoundItem.Remove();
+            await RecordedSoundItem.Remove();
         }
     }
 }

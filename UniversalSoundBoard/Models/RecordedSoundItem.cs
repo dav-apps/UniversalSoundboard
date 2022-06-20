@@ -53,12 +53,15 @@ namespace UniversalSoundboard.Models
             AudioPlayerPaused?.Invoke(this, EventArgs.Empty);
         }
 
-        public void Remove()
+        public async Task Remove()
         {
             if (audioPlayer.IsPlaying)
                 audioPlayer.Pause();
 
             Removed?.Invoke(this, EventArgs.Empty);
+
+            if (System.IO.File.Exists(File.Path))
+                await File.DeleteAsync();
         }
 
         private async void AudioPlayer_MediaEnded(object sender, EventArgs e)

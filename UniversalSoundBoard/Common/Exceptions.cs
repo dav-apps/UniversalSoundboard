@@ -7,6 +7,8 @@ namespace UniversalSoundboard.Common
 
     class AudioRecorderNotInitializedException : Exception { }
 
+    class AudioRecorderDisposedException : Exception { }
+
     enum AudioPlayerInitError
     {
         AudioFileNotSpecified = 0

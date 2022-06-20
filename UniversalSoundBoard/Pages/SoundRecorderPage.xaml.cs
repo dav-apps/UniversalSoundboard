@@ -33,6 +33,7 @@ namespace UniversalSoundboard.Pages
         List<List<float>> channelValues = new List<List<float>>();
         ObservableCollection<RecordedSoundItem> recordedSoundItems = new ObservableCollection<RecordedSoundItem>();
         private bool skipInputDeviceComboBoxChanged = false;
+        private bool skipRecordedSoundItemRemoved = false;
         private int channelCount = 2;
         private int soundItemsCounter = 0;
 
@@ -101,18 +102,24 @@ namespace UniversalSoundboard.Pages
 
         private async void SoundRecorderAppWindow_CloseRequested(AppWindow sender, AppWindowCloseRequestedEventArgs args)
         {
-            if (recordedSoundItems.Count == 0) return;
+            if (recordedSoundItems.Count > 0)
+            {
+                args.Cancel = true;
 
-            args.Cancel = true;
-
-            // Show warning dialog
-            var soundRecorderCloseWarningContentDialog = ContentDialogs.CreateSoundRecorderCloseWarningContentDialog();
-            soundRecorderCloseWarningContentDialog.PrimaryButtonClick += SoundRecorderCloseWarningContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(soundRecorderCloseWarningContentDialog, AppWindowType.SoundRecorder);
+                // Show warning dialog
+                var soundRecorderCloseWarningContentDialog = ContentDialogs.CreateSoundRecorderCloseWarningContentDialog();
+                soundRecorderCloseWarningContentDialog.PrimaryButtonClick += SoundRecorderCloseWarningContentDialog_PrimaryButtonClick;
+                await ContentDialogs.ShowContentDialogAsync(soundRecorderCloseWarningContentDialog, AppWindowType.SoundRecorder);
+            }
+            else
+            {
+                await ClearPageData();
+            }
         }
 
         private async void SoundRecorderCloseWarningContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
+            await ClearPageData();
             await MainPage.soundRecorderAppWindow.CloseAsync();
         }
 
@@ -186,6 +193,8 @@ namespace UniversalSoundboard.Pages
 
         private void RecordedSoundItem_Removed(object sender, EventArgs e)
         {
+            if (skipRecordedSoundItemRemoved) return;
+
             var recordedSoundItem = (RecordedSoundItem)sender;
             bool removeResult = recordedSoundItems.Remove(recordedSoundItem);
 
@@ -240,6 +249,20 @@ namespace UniversalSoundboard.Pages
                 RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, true);
                 RecordingRelativePanel.Height = MainPage.soundRecorderAppWindow.GetPlacement().Size.Height;
             }
+        }
+
+        private async Task ClearPageData()
+        {
+            skipRecordedSoundItemRemoved = true;
+
+            foreach (var recordedSoundItem in recordedSoundItems)
+                await recordedSoundItem.Remove();
+
+            recordedSoundItems.Clear();
+            audioRecorder.Dispose();
+
+            if (System.IO.File.Exists(outputFile.Path))
+                await outputFile.DeleteAsync();
         }
 
         private void ExpandRecorder()

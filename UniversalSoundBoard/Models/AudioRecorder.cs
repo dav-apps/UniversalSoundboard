@@ -17,6 +17,7 @@ namespace UniversalSoundboard.Models
         private StorageFile audioFile;
         private DeviceInformation inputDevice;
         private bool isRecording = false;
+        private bool isDisposed = false;
 
         private AudioGraph AudioGraph;
         private AudioDeviceInputNode DeviceInputNode;
@@ -43,7 +44,7 @@ namespace UniversalSoundboard.Models
         public DeviceInformation InputDevice
         {
             get => inputDevice;
-            set => setInputDevice(value);
+            set => SetInputDevice(value);
         }
         public bool IsRecording
         {
@@ -84,6 +85,9 @@ namespace UniversalSoundboard.Models
 
         public async Task Init(bool fileOutput = true, bool frameOutput = false)
         {
+            if (isDisposed)
+                throw new AudioRecorderDisposedException();
+
             if (initialized) return;
 
             if (!fileOutput && !frameOutput)
@@ -173,6 +177,9 @@ namespace UniversalSoundboard.Models
 
         public void Start()
         {
+            if (isDisposed)
+                throw new AudioRecorderDisposedException();
+
             if (!initialized)
                 throw new AudioRecorderNotInitializedException();
 
@@ -184,6 +191,9 @@ namespace UniversalSoundboard.Models
 
         public async Task Stop()
         {
+            if (isDisposed)
+                throw new AudioRecorderDisposedException();
+
             if (!initialized)
                 throw new AudioRecorderNotInitializedException();
 
@@ -196,7 +206,18 @@ namespace UniversalSoundboard.Models
             isRecording = false;
         }
 
-        private void setInputDevice(DeviceInformation inputDevice)
+        public void Dispose()
+        {
+            if (isDisposed) return;
+
+            AudioGraph.Stop();
+            AudioGraph.Dispose();
+            initialized = false;
+            isRecording = false;
+            isDisposed = true;
+        }
+        
+        private void SetInputDevice(DeviceInformation inputDevice)
         {
             if (isRecording)
                 throw new AudioRecorderInitException(AudioRecorderInitError.NotAllowedWhileRecording);
