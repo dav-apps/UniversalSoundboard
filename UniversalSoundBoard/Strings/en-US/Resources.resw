@@ -1012,4 +1012,13 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="AddRecordedSoundToSoundboardContentDialog-Title" xml:space="preserve">
     <value>Add to soundboard</value>
   </data>
+  <data name="Actions-CloseWindow" xml:space="preserve">
+    <value>Close window</value>
+  </data>
+  <data name="SoundRecorderCloseWarningContentDialog-Message" xml:space="preserve">
+    <value>Are you sure? All recorded sounds that you have not saved will be lost.</value>
+  </data>
+  <data name="SoundRecorderCloseWarningContentDialog-Title" xml:space="preserve">
+    <value>Close Sound Recorder</value>
+  </data>
 </root>

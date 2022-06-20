@@ -1010,4 +1010,13 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="AddRecordedSoundToSoundboardContentDialog-Title" xml:space="preserve">
     <value>Zum Soundboard hinzufügen</value>
   </data>
+  <data name="Actions-CloseWindow" xml:space="preserve">
+    <value>Fenster schließen</value>
+  </data>
+  <data name="SoundRecorderCloseWarningContentDialog-Message" xml:space="preserve">
+    <value>Bist du dir sicher? Alle aufgenommenen Sounds, die du nicht gespeichert hast, gehen verloren.</value>
+  </data>
+  <data name="SoundRecorderCloseWarningContentDialog-Title" xml:space="preserve">
+    <value>Sound-Recorder schließen</value>
+  </data>
 </root>

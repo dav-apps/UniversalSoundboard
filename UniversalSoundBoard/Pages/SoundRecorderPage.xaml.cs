@@ -15,6 +15,7 @@ using Windows.Media.Devices;
 using Windows.Storage;
 using Windows.UI;
 using Windows.UI.Core;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -43,6 +44,7 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             deviceWatcherHelper.DevicesChanged += DeviceWatcherHelper_DevicesChanged;
+            MainPage.soundRecorderAppWindow.CloseRequested += SoundRecorderAppWindow_CloseRequested;
 
             timer = new DispatcherTimer();
             timer.Interval = TimeSpan.FromMilliseconds(50);
@@ -95,6 +97,23 @@ namespace UniversalSoundboard.Pages
         private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
         {
             await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => UpdateInputDeviceComboBox());
+        }
+
+        private async void SoundRecorderAppWindow_CloseRequested(AppWindow sender, AppWindowCloseRequestedEventArgs args)
+        {
+            if (recordedSoundItems.Count == 0) return;
+
+            args.Cancel = true;
+
+            // Show warning dialog
+            var soundRecorderCloseWarningContentDialog = ContentDialogs.CreateSoundRecorderCloseWarningContentDialog();
+            soundRecorderCloseWarningContentDialog.PrimaryButtonClick += SoundRecorderCloseWarningContentDialog_PrimaryButtonClick;
+            await ContentDialogs.ShowContentDialogAsync(soundRecorderCloseWarningContentDialog, AppWindowType.SoundRecorder);
+        }
+
+        private async void SoundRecorderCloseWarningContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            await MainPage.soundRecorderAppWindow.CloseAsync();
         }
 
         private async void InputDeviceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
