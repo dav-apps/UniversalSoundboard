@@ -1007,4 +1007,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="RemoveRecordedSoundContentDialog-Title" xml:space="preserve">
     <value>"{0}" entfernen?</value>
   </data>
+  <data name="AddRecordedSoundToSoundboardContentDialog-Title" xml:space="preserve">
+    <value>Zum Soundboard hinzufügen</value>
+  </data>
 </root>

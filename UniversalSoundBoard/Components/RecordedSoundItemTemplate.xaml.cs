@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
@@ -72,12 +74,36 @@ namespace UniversalSoundboard.Components
             }
         }
 
-        private void AddToSoundboardButton_Click(object sender, RoutedEventArgs e)
+        private async void AddToSoundboardButton_Click(object sender, RoutedEventArgs e)
         {
-
+            var addToSoundboardContentDialog = ContentDialogs.CreateAddRecordedSoundToSoundboardContentDialog(RecordedSoundItem.Name);
+            addToSoundboardContentDialog.PrimaryButtonClick += AddToSoundboardContentDialog_PrimaryButtonClick;
+            await ContentDialogs.ShowContentDialogAsync(addToSoundboardContentDialog, AppWindowType.SoundRecorder);
         }
 
-        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        private async void AddToSoundboardContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Get the name of the sound
+            string soundName = ContentDialogs.RecordedSoundNameTextBox.Text;
+
+            // Create the sound
+            Guid uuid = await FileManager.CreateSoundAsync(null, soundName, new List<Guid>(), RecordedSoundItem.File);
+
+            // Add the sound to the list of sounds
+            await FileManager.AddSound(uuid);
+
+            // Remove the recorded sound from the recorder window
+            RecordedSoundItem.Remove();
+        }
+
+        private async void RemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            var removeRecordedSoundContentDialog = ContentDialogs.CreateRemoveRecordedSoundContentDialog(RecordedSoundItem.Name);
+            removeRecordedSoundContentDialog.PrimaryButtonClick += RemoveRecordedSoundContentDialog_PrimaryButtonClick;
+            await ContentDialogs.ShowContentDialogAsync(removeRecordedSoundContentDialog, AppWindowType.SoundRecorder);
+        }
+
+        private void RemoveRecordedSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             RecordedSoundItem.Remove();
         }

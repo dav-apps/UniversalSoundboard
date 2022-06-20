@@ -194,7 +194,7 @@ namespace UniversalSoundboard.Pages
         private async Task InitAudioRecorder()
         {
             // Create an output file in the cache
-            outputFile = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync(Guid.NewGuid().ToString(), CreationCollisionOption.ReplaceExisting);
+            outputFile = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync(string.Format("{0}.wav", Guid.NewGuid()), CreationCollisionOption.ReplaceExisting);
             audioRecorder = new AudioRecorder(outputFile);
             audioRecorder.QuantumStarted += AudioRecorder_QuantumStarted;
 

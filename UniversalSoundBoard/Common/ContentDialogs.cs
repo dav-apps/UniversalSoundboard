@@ -89,6 +89,7 @@ namespace UniversalSoundboard.Common
         public static ComboBox PlaybackSpeedComboBox;
         public static List<ObservableCollection<HotkeyItem>> PropertiesDialogHotkeys = new List<ObservableCollection<HotkeyItem>>();
         public static StackPanel davPlusHotkeyInfoStackPanel;
+        public static TextBox RecordedSoundNameTextBox;
         public static ContentDialog AddSoundsContentDialog;
         public static ContentDialog DownloadSoundsContentDialog;
         public static ContentDialog NewCategoryContentDialog;
@@ -115,6 +116,7 @@ namespace UniversalSoundboard.Common
         public static ContentDialog DavPlusOutputDeviceContentDialog;
         public static ContentDialog UpgradeErrorContentDialog;
         public static ContentDialog NoAudioDeviceContentDialog;
+        public static ContentDialog AddRecordedSoundToSoundboardContentDialog;
         public static ContentDialog RemoveRecordedSoundContentDialog;
         #endregion
 
@@ -2098,6 +2100,44 @@ namespace UniversalSoundboard.Common
             };
 
             return NoAudioDeviceContentDialog;
+        }
+        #endregion
+
+        #region AddRecordedSoundToSoundboard
+        public static ContentDialog CreateAddRecordedSoundToSoundboardContentDialog(string recordedSoundName)
+        {
+            AddRecordedSoundToSoundboardContentDialog = new ContentDialog
+            {
+                Title = loader.GetString("AddRecordedSoundToSoundboardContentDialog-Title"),
+                PrimaryButtonText = loader.GetString("Actions-Add"),
+                CloseButtonText = loader.GetString("Actions-Cancel"),
+                DefaultButton = ContentDialogButton.Primary,
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+
+            StackPanel rootStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical
+            };
+
+            RecordedSoundNameTextBox = new TextBox
+            {
+                Text = recordedSoundName,
+                PlaceholderText = loader.GetString("RenameSoundContentDialog-RenameSoundTextBoxPlaceholder"),
+                Width = 300
+            };
+
+            rootStackPanel.Children.Add(RecordedSoundNameTextBox);
+
+            AddRecordedSoundToSoundboardContentDialog.Content = rootStackPanel;
+            RecordedSoundNameTextBox.TextChanged += RecordedSoundNameTextBox_TextChanged;
+
+            return AddRecordedSoundToSoundboardContentDialog;
+        }
+
+        private static void RecordedSoundNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            AddRecordedSoundToSoundboardContentDialog.IsPrimaryButtonEnabled = RecordedSoundNameTextBox.Text.Length >= 3;
         }
         #endregion
 
