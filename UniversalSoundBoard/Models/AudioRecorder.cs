@@ -23,7 +23,7 @@ namespace UniversalSoundboard.Models
         private AudioDeviceInputNode DeviceInputNode;
         private AudioFileOutputNode FileOutputNode;
         private AudioFrameOutputNode FrameOutputNode;
-        MediaEncodingProfile recordingFormat;
+        private MediaEncodingProfile recordingFormat;
 
         public int SamplesPerQuantum
         {
@@ -51,7 +51,8 @@ namespace UniversalSoundboard.Models
             get => isRecording;
         }
 
-        public AudioRecorder() {
+        public AudioRecorder()
+        {
             InitRecordingFormat();
         }
 

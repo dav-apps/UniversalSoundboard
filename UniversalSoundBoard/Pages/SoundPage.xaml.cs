@@ -12,7 +12,6 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
-using Windows.Devices.Enumeration;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -43,8 +42,6 @@ namespace UniversalSoundboard.Pages
         bool canReorderItems = false;
         Visibility startMessageVisibility = Visibility.Collapsed;
         Visibility emptyCategoryMessageVisibility = Visibility.Collapsed;
-        private bool outputDevicesLoaded = false;
-        private List<DeviceInformation> outputDevices = new List<DeviceInformation>();
         
         public SoundPage()
         {
@@ -101,9 +98,6 @@ namespace UniversalSoundboard.Pages
             await UpdatePlayingSoundsListAsync();
             await UpdateGridSplitterRange();
             UpdateCanReorderItems();
-
-            // Load the output devices
-            await LoadOutputDevices();
         }
 
         private async void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -667,19 +661,9 @@ namespace UniversalSoundboard.Pages
             Bindings.Update();
         }
 
-        private async Task LoadOutputDevices()
-        {
-            DeviceInformationCollection devices = await DeviceInformation.FindAllAsync(DeviceClass.AudioRender);
-
-            foreach (var device in devices)
-                outputDevices.Add(device);
-
-            outputDevicesLoaded = true;
-        }
-
         private async Task<bool> CheckAudioDevices()
         {
-            if (!outputDevicesLoaded || outputDevices.Count > 0) return true;
+            if (FileManager.deviceWatcherHelper.Devices.Count > 0) return true;
 
             var noAudioDeviceContentDialog = ContentDialogs.CreateNoAudioDeviceContentDialog();
             await ContentDialogs.ShowContentDialogAsync(noAudioDeviceContentDialog);
