@@ -10,6 +10,7 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <!-- Other merged dictionaries here -->
                 <ResourceDictionary Source="Themes/VolumeMenuFlyoutItem.xaml" />
+                <ResourceDictionary Source="Themes/Setting.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <SolidColorBrush x:Key="LightThemeButtonColor" Color="#EAEAEA" />
@@ -18,7 +19,7 @@
             <Color x:Key="LightThemeBorderColor">LightGray</Color>
             <Color x:Key="DarkThemeBorderColor">#373c4d</Color>
 
-            <Color x:Key="LightThemeBackgroundColor">White</Color>
+            <Color x:Key="LightThemeBackgroundColor">#F3F3F3</Color>
             <Color x:Key="DarkThemeBackgroundColor">#0d1221</Color>
             <Color x:Key="DarkThemeSecondaryBackgroundColor">#161C2B</Color>
 
@@ -287,9 +288,9 @@
                                                 </Storyboard>
                                             </VisualTransition>
                                         </VisualStateGroup.Transitions>
-                                        
+
                                         <VisualState x:Name="NoIndicator" />
-                                        
+
                                         <VisualState x:Name="TouchIndicator">
                                             <Storyboard>
                                                 <ObjectAnimationUsingKeyFrames Storyboard.TargetName="VerticalScrollBar" Storyboard.TargetProperty="IndicatorMode">
@@ -405,7 +406,7 @@
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    
+
                                     <ScrollContentPresenter x:Name="ScrollContentPresenter"
                                         Grid.RowSpan="2"
                                         Grid.ColumnSpan="2"
