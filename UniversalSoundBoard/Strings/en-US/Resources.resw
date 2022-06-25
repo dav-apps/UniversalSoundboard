@@ -204,7 +204,7 @@
   <data name="MoreButton-Repeat" xml:space="preserve">
     <value>Repeat</value>
   </data>
-  <data name="SettingsEntry-ShowPlayingSoundsListToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowPlayingSoundsList.Header" xml:space="preserve">
     <value>Show opened sounds</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetFavourite" xml:space="preserve">
@@ -234,7 +234,7 @@
   <data name="SettingsSoundBoardSize" xml:space="preserve">
     <value>The size of your Soundboard is {0}.</value>
   </data>
-  <data name="SettingsEntry-ShowSoundsPivotToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
     <value>Show favourites tab</value>
   </data>
   <data name="SettingsEntry-ExportDataButton.Content" xml:space="preserve">
@@ -348,7 +348,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="ShareDialog-Title" xml:space="preserve">
     <value>Shared with UniversalSoundboard</value>
   </data>
-  <data name="SettingsEntry-SavePlayingSoundsToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-SavePlayingSounds.Header" xml:space="preserve">
     <value>Save opened sounds</value>
   </data>
   <data name="Pin" xml:space="preserve">
@@ -453,23 +453,23 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SetCategoryContentDialog-NoCategoriesText" xml:space="preserve">
     <value>Add your first category by clicking the Plus-Button.</value>
   </data>
-  <data name="SettingsEntry-SoundOrderComboBox-CreationDate.Content" xml:space="preserve">
-    <value>Creation Date</value>
+  <data name="SettingsEntry-SoundOrderComboBox-CreationDateAscending.Content" xml:space="preserve">
+    <value>Creation Date, old -&gt; new</value>
+  </data>
+  <data name="SettingsEntry-SoundOrderComboBox-CreationDateDescending.Content" xml:space="preserve">
+    <value>Creation Date, new -&gt; old</value>
   </data>
   <data name="SettingsEntry-SoundOrderComboBox-Custom.Content" xml:space="preserve">
     <value>Custom</value>
   </data>
-  <data name="SettingsEntry-SoundOrderComboBox-Name.Content" xml:space="preserve">
-    <value>Name</value>
+  <data name="SettingsEntry-SoundOrderComboBox-NameAscending.Content" xml:space="preserve">
+    <value>Name, A -&gt; Z</value>
   </data>
-  <data name="SettingsEntry-SoundOrderHeaderTextBlock.Text" xml:space="preserve">
-    <value>Sort sounds by</value>
+  <data name="SettingsEntry-SoundOrderComboBox-NameDescending.Content" xml:space="preserve">
+    <value>Name, Z -&gt; A</value>
   </data>
-  <data name="SettingsEntry-SoundOrderReversedComboBox-Ascending.Content" xml:space="preserve">
-    <value>Ascending</value>
-  </data>
-  <data name="SettingsEntry-SoundOrderReversedComboBox-Descending.Content" xml:space="preserve">
-    <value>Descending</value>
+  <data name="SettingsEntry-SoundOrder.Header" xml:space="preserve">
+    <value>Sound order</value>
   </data>
   <data name="UpdateSoundsMessage" xml:space="preserve">
     <value>Updating sounds...</value>
@@ -552,13 +552,13 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Blog-Link.Content" xml:space="preserve">
     <value>News and updates</value>
   </data>
-  <data name="SettingsEntry-MultiSoundPlaybackToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-MultiSoundPlayback.Header" xml:space="preserve">
     <value>Allow the playback of multiple sounds simultaneously</value>
   </data>
   <data name="SettingsEntry-LiveTileToggle.Header" xml:space="preserve">
     <value>Live Tile</value>
   </data>
-  <data name="SettingsEntry-OpenMultipleSoundsToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-OpenMultipleSounds.Header" xml:space="preserve">
     <value>Allow multiple opened sounds</value>
   </data>
   <data name="CategoryDeleteButton.Text" xml:space="preserve">

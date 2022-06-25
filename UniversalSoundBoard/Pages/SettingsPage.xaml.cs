@@ -68,7 +68,6 @@ namespace UniversalSoundboard.Pages
             SetMultiSoundPlaybackToggle();
             SetShowSoundsPivotToggle();
             SetSoundOrderComboBox();
-            SetSoundOrderReversedComboBox();
             SetShowListViewToggle();
             SetShowCategoriesIconsToggle();
             SetShowAcrylicBackgroundToggle();
@@ -179,33 +178,13 @@ namespace UniversalSoundboard.Pages
             SoundOrderComboBox.SelectedIndex = (int)FileManager.itemViewHolder.SoundOrder;
         }
 
-        private void SetSoundOrderReversedComboBox()
-        {
-            SoundOrderReversedComboBox.SelectedIndex = FileManager.itemViewHolder.SoundOrderReversed ? 1 : 0;
-            UpdateSoundOrderReversedComboBoxVisibility();
-        }
-
         private void SoundOrderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!initialized) return;
-            FileManager.itemViewHolder.SoundOrder = (FileManager.SoundOrder)SoundOrderComboBox.SelectedIndex;
+            FileManager.itemViewHolder.SoundOrder = (NewSoundOrder)SoundOrderComboBox.SelectedIndex;
 
-            if (FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom)
+            if (FileManager.itemViewHolder.SoundOrder == NewSoundOrder.Custom)
                 FileManager.itemViewHolder.AllSoundsChanged = true;
-
-            UpdateSoundOrderReversedComboBoxVisibility();
-        }
-
-        private void SoundOrderReversedComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
-        {
-            if (!initialized) return;
-            FileManager.itemViewHolder.SoundOrderReversed = SoundOrderReversedComboBox.SelectedIndex != 0;
-        }
-
-        private void UpdateSoundOrderReversedComboBoxVisibility()
-        {
-            // Hide the combo box if custom sound order is selected
-            SoundOrderReversedComboBox.Visibility = FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom ? Visibility.Collapsed : Visibility.Visible;
         }
         #endregion
 

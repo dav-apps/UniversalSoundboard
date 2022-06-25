@@ -226,9 +226,15 @@
     <AppxManifest Include="Package.appxmanifest">
       <SubType>Designer</SubType>
     </AppxManifest>
-    <PRIResource Include="Strings\en-US\Resources.resw" />
-    <PRIResource Include="Strings\de-DE\Resources.resw" />
-    <PRIResource Include="Strings\fr-FR\Resources.resw" />
+    <PRIResource Include="Strings\en-US\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\de-DE\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
+    <PRIResource Include="Strings\fr-FR\Resources.resw">
+      <SubType>Designer</SubType>
+    </PRIResource>
     <Content Include="Assets\Fonts\SegoeFluentIcons.ttf" />
     <None Include="UniversalSoundBoard_StoreKey.pfx" />
     <None Include="UniversalSoundBoard_TemporaryKey.pfx" />
