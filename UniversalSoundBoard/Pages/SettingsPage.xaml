@@ -603,19 +603,17 @@
 
                             <components:Setting x:Uid="SettingsEntry-SoundOrder">
                                 <components:Setting.ActionContent>
-                                    <StackPanel Orientation="Horizontal">
-                                        <ComboBox
-                                            Name="SoundOrderComboBox"
-                                            SelectedIndex="0"
-                                            SelectionChanged="SoundOrderComboBox_SelectionChanged">
+                                    <ComboBox
+                                        Name="SoundOrderComboBox"
+                                        SelectedIndex="0"
+                                        SelectionChanged="SoundOrderComboBox_SelectionChanged">
 
-                                            <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-Custom" />
-                                            <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-NameAscending" />
-                                            <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-NameDescending" />
-                                            <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-CreationDateAscending" />
-                                            <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-CreationDateDescending" />
-                                        </ComboBox>
-                                    </StackPanel>
+                                        <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-Custom" />
+                                        <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-NameAscending" />
+                                        <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-NameDescending" />
+                                        <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-CreationDateAscending" />
+                                        <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-CreationDateDescending" />
+                                    </ComboBox>
                                 </components:Setting.ActionContent>
                             </components:Setting>
                         </StackPanel>
@@ -627,56 +625,64 @@
                 <ScrollViewer Style="{StaticResource SettingsPageScrollViewerStyle}">
                     <StackPanel Name="SettingsDesignStackPanel" Style="{StaticResource SettingsContentStyle}">
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <ToggleSwitch
-                                Name="ShowListViewToggle"
-                                x:Uid="SettingsEntry-ShowListViewToggle"
-                                Toggled="ShowListViewToggle_Toggled" />
+                            <components:Setting x:Uid="SettingsEntry-ShowListView">
+                                <components:Setting.ActionContent>
+                                    <ToggleSwitch
+                                        Name="ShowListViewToggle"
+                                        Style="{StaticResource SettingToggleSwitchStyle}"
+                                        Toggled="ShowListViewToggle_Toggled" />
+                                </components:Setting.ActionContent>
+                            </components:Setting>
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <ToggleSwitch
-                                Name="ShowCategoriesIconsToggle"
-                                x:Uid="SettingsEntry-ShowCategoriesIconsToggle"
-                                Toggled="ShowCategoriesIconsToggle_Toggled" />
+                            <components:Setting x:Uid="SettingsEntry-ShowCategoriesIcons">
+                                <components:Setting.ActionContent>
+                                    <ToggleSwitch
+                                        Name="ShowCategoriesIconsToggle"
+                                        Style="{StaticResource SettingToggleSwitchStyle}"
+                                        Toggled="ShowCategoriesIconsToggle_Toggled" />
+                                </components:Setting.ActionContent>
+                            </components:Setting>
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <ToggleSwitch
-                                Name="ShowAcrylicBackgroundToggle"
-                                x:Uid="SettingsEntry-ShowAcrylicBackgroundToggle"
-                                Toggled="ShowAcrylicBackgroundToggle_Toggled" />
+                            <components:Setting x:Uid="SettingsEntry-ShowAcrylicBackground">
+                                <components:Setting.ActionContent>
+                                    <ToggleSwitch
+                                        Name="ShowAcrylicBackgroundToggle"
+                                        Style="{StaticResource SettingToggleSwitchStyle}"
+                                        Toggled="ShowAcrylicBackgroundToggle_Toggled" />
+                                </components:Setting.ActionContent>
+                            </components:Setting>
                         </StackPanel>
 
                         <StackPanel
                             Style="{StaticResource SettingsEntryStyle}"
                             Visibility="{x:Bind liveTileSettingVisibility}">
-                            
-                            <ToggleSwitch
-                                Name="LiveTileToggle"
-                                x:Uid="SettingsEntry-LiveTileToggle"
-                                Toggled="LiveTileToggle_Toggled" />
+
+                            <components:Setting x:Uid="SettingsEntry-LiveTile">
+                                <components:Setting.ActionContent>
+                                    <ToggleSwitch
+                                        Name="LiveTileToggle"
+                                        Style="{StaticResource SettingToggleSwitchStyle}"
+                                        Toggled="LiveTileToggle_Toggled" />
+                                </components:Setting.ActionContent>
+                            </components:Setting>
                         </StackPanel>
 
                         <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <TextBlock
-                                x:Uid="SettingsEntry-ThemeTextBlock"
-                                FontSize="16"
-                                Margin="0,0,0,5" />
-                            
-                            <RadioButton
-                                Name="LightThemeRadioButton"
-                                x:Uid="SettingsEntry-LightThemeRadioButton"
-                                Checked="ThemeRadioButton_Checked" />
-                            
-                            <RadioButton
-                                Name="DarkThemeRadioButton"
-                                x:Uid="SettingsEntry-DarkThemeRadioButton"
-                                Checked="ThemeRadioButton_Checked" />
+                            <components:Setting x:Uid="SettingsEntry-Theme">
+                                <ComboBox
+                                    Name="ThemeComboBox"
+                                    SelectedIndex="0"
+                                    SelectionChanged="ThemeComboBox_SelectionChanged">
 
-                            <RadioButton
-                                Name="SystemThemeRadioButton" 
-                                x:Uid="SettingsEntry-SystemThemeRadioButton"
-                                Checked="ThemeRadioButton_Checked" />
+                                    <ComboBoxItem x:Uid="SettingsEntry-ThemeComboBox-System" />
+                                    <ComboBoxItem x:Uid="SettingsEntry-ThemeComboBox-Light" />
+                                    <ComboBoxItem x:Uid="SettingsEntry-ThemeComboBox-Dark" />
+                                </ComboBox>
+                            </components:Setting>
                         </StackPanel>
                     </StackPanel>
                 </ScrollViewer>

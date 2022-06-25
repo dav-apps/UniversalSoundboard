@@ -216,7 +216,7 @@
   <data name="SoundsPivotHeader.Header" xml:space="preserve">
     <value>Sounds</value>
   </data>
-  <data name="SettingsEntry-ShowCategoriesIconsToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowCategoriesIcons.Header" xml:space="preserve">
     <value>Icons der Kategorien an Sounds anzeigen</value>
   </data>
   <data name="SettingsPivot-Data.Header" xml:space="preserve">
@@ -316,17 +316,17 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Shuffle" xml:space="preserve">
     <value>Zufallswiedergabe</value>
   </data>
-  <data name="SettingsEntry-DarkThemeRadioButton.Content" xml:space="preserve">
+  <data name="SettingsEntry-ThemeComboBox-Dark.Content" xml:space="preserve">
     <value>Dunkel</value>
   </data>
-  <data name="SettingsEntry-LightThemeRadioButton.Content" xml:space="preserve">
+  <data name="SettingsEntry-ThemeComboBox-Light.Content" xml:space="preserve">
     <value>Hell</value>
   </data>
-  <data name="SettingsEntry-SystemThemeRadioButton.Content" xml:space="preserve">
-    <value>Systemeinstellung verwenden</value>
+  <data name="SettingsEntry-ThemeComboBox-System.Content" xml:space="preserve">
+    <value>Windows-Standard</value>
   </data>
-  <data name="SettingsEntry-ThemeTextBlock.Text" xml:space="preserve">
-    <value>Thema</value>
+  <data name="SettingsEntry-Theme.Header" xml:space="preserve">
+    <value>App-Design</value>
   </data>
   <data name="ShareTarget-AddButton.Content" xml:space="preserve">
     <value>Hinzufügen</value>
@@ -436,7 +436,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="DeleteSoundsMessage" xml:space="preserve">
     <value>Sounds werden gelöscht...</value>
   </data>
-  <data name="SettingsEntry-ShowAcrylicBackgroundToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
     <value>Transparenz-Effekte</value>
   </data>
   <data name="Actions-Save" xml:space="preserve">
@@ -472,7 +472,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="UpdateSoundsMessage" xml:space="preserve">
     <value>Sounds werden aktualisiert...</value>
   </data>
-  <data name="SettingsEntry-ShowListViewToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowListView.Header" xml:space="preserve">
     <value>Sounds als Liste anzeigen</value>
   </data>
   <data name="CategoryOptionsFlyout-AddSubCategory" xml:space="preserve">
@@ -553,7 +553,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SettingsEntry-MultiSoundPlayback.Header" xml:space="preserve">
     <value>Erlaube das Abspielen von mehreren Sounds gleichzeitig</value>
   </data>
-  <data name="SettingsEntry-LiveTileToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-LiveTile.Header" xml:space="preserve">
     <value>Live-Kachel</value>
   </data>
   <data name="SettingsEntry-OpenMultipleSounds.Header" xml:space="preserve">

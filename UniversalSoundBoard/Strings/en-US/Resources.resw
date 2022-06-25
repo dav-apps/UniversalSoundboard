@@ -219,7 +219,7 @@
   <data name="SoundsPivotHeader.Header" xml:space="preserve">
     <value>Sounds</value>
   </data>
-  <data name="SettingsEntry-ShowCategoriesIconsToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowCategoriesIcons.Header" xml:space="preserve">
     <value>Show the icons of the categories on the sound</value>
   </data>
   <data name="SettingsPivot-Data.Header" xml:space="preserve">
@@ -318,17 +318,17 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Shuffle" xml:space="preserve">
     <value>Shuffle</value>
   </data>
-  <data name="SettingsEntry-DarkThemeRadioButton.Content" xml:space="preserve">
+  <data name="SettingsEntry-ThemeComboBox-Dark.Content" xml:space="preserve">
     <value>Dark</value>
   </data>
-  <data name="SettingsEntry-LightThemeRadioButton.Content" xml:space="preserve">
+  <data name="SettingsEntry-ThemeComboBox-Light.Content" xml:space="preserve">
     <value>Light</value>
   </data>
-  <data name="SettingsEntry-SystemThemeRadioButton.Content" xml:space="preserve">
-    <value>Use system setting</value>
+  <data name="SettingsEntry-ThemeComboBox-System.Content" xml:space="preserve">
+    <value>Windows default</value>
   </data>
-  <data name="SettingsEntry-ThemeTextBlock.Text" xml:space="preserve">
-    <value>Theme</value>
+  <data name="SettingsEntry-Theme.Header" xml:space="preserve">
+    <value>App theme</value>
   </data>
   <data name="ShareTarget-AddButton.Content" xml:space="preserve">
     <value>Add</value>
@@ -438,7 +438,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="DeleteSoundsMessage" xml:space="preserve">
     <value>Deleting sounds...</value>
   </data>
-  <data name="SettingsEntry-ShowAcrylicBackgroundToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
     <value>Transparency effects</value>
   </data>
   <data name="Actions-Save" xml:space="preserve">
@@ -474,7 +474,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="UpdateSoundsMessage" xml:space="preserve">
     <value>Updating sounds...</value>
   </data>
-  <data name="SettingsEntry-ShowListViewToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowListView.Header" xml:space="preserve">
     <value>Show sounds as a list</value>
   </data>
   <data name="CategoryOptionsFlyout-AddSubCategory" xml:space="preserve">
@@ -555,7 +555,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SettingsEntry-MultiSoundPlayback.Header" xml:space="preserve">
     <value>Allow the playback of multiple sounds simultaneously</value>
   </data>
-  <data name="SettingsEntry-LiveTileToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-LiveTile.Header" xml:space="preserve">
     <value>Live Tile</value>
   </data>
   <data name="SettingsEntry-OpenMultipleSounds.Header" xml:space="preserve">

@@ -72,7 +72,7 @@ namespace UniversalSoundboard.Pages
             SetShowCategoriesIconsToggle();
             SetShowAcrylicBackgroundToggle();
             SetLiveTileToggle();
-            SetThemeRadioButton();
+            SetThemeComboBox();
             initialized = true;
         }
 
@@ -249,41 +249,29 @@ namespace UniversalSoundboard.Pages
         #endregion
 
         #region Theme
-        private void SetThemeRadioButton()
+        private void SetThemeComboBox()
         {
-            switch (FileManager.itemViewHolder.Theme)
-            {
-                case FileManager.AppTheme.Light:
-                    LightThemeRadioButton.IsChecked = true;
-                    break;
-                case FileManager.AppTheme.Dark:
-                    DarkThemeRadioButton.IsChecked = true;
-                    break;
-                case FileManager.AppTheme.System:
-                    SystemThemeRadioButton.IsChecked = true;
-                    break;
-            }
+            ThemeComboBox.SelectedIndex = (int)FileManager.itemViewHolder.Theme;
         }
 
-        private void ThemeRadioButton_Checked(object sender, RoutedEventArgs e)
+        private void ThemeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!initialized) return;
-            RadioButton radioButton = sender as RadioButton;
 
-            if (radioButton == LightThemeRadioButton)
+            switch (ThemeComboBox.SelectedIndex)
             {
-                FileManager.itemViewHolder.Theme = FileManager.AppTheme.Light;
-                FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Light;
-            }
-            else if (radioButton == DarkThemeRadioButton)
-            {
-                FileManager.itemViewHolder.Theme = FileManager.AppTheme.Dark;
-                FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Dark;
-            }
-            else if (radioButton == SystemThemeRadioButton)
-            {
-                FileManager.itemViewHolder.Theme = FileManager.AppTheme.System;
-                FileManager.itemViewHolder.CurrentTheme = (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? FileManager.AppTheme.Dark : FileManager.AppTheme.Light;
+                case 0:
+                    FileManager.itemViewHolder.Theme = FileManager.AppTheme.System;
+                    FileManager.itemViewHolder.CurrentTheme = (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? FileManager.AppTheme.Dark : FileManager.AppTheme.Light;
+                    break;
+                case 1:
+                    FileManager.itemViewHolder.Theme = FileManager.AppTheme.Light;
+                    FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Light;
+                    break;
+                case 2:
+                    FileManager.itemViewHolder.Theme = FileManager.AppTheme.Dark;
+                    FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Dark;
+                    break;
             }
         }
         #endregion

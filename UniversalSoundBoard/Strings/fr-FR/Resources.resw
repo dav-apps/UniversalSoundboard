@@ -181,7 +181,7 @@
   </data>
   <data name="Search.PlaceholderText" xml:space="preserve">
     <value>Rechercher des sons</value>
-    <comment>Recherche des sons parmi ceux référencés dans l'application</comment>
+    <comment>Recherche des sons parmi ceux référencés dans l’application</comment>
   </data>
   <data name="Settings-Title" xml:space="preserve">
     <value>Paramètres</value>
@@ -219,7 +219,7 @@
   <data name="SoundsPivotHeader.Header" xml:space="preserve">
     <value>Sons</value>
   </data>
-  <data name="SettingsEntry-ShowCategoriesIconsToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowCategoriesIcons.Header" xml:space="preserve">
     <value>Afficher les icônes des catégories sur le son</value>
   </data>
   <data name="SettingsPivot-Data.Header" xml:space="preserve">
@@ -235,7 +235,7 @@
     <value>La taille de votre Soundboard est {0}.</value>
   </data>
   <data name="SettingsEntry-ShowSoundsPivot.Header" xml:space="preserve">
-    <value>Afficher l'onglet des favoris</value>
+    <value>Afficher l’onglet des favoris</value>
   </data>
   <data name="SettingsEntry-ExportDataButton.Content" xml:space="preserve">
     <value>Exporter votre Soundboard</value>
@@ -244,12 +244,12 @@
     <value>Importer votre Soundboard</value>
   </data>
   <data name="ExportDataContentDialog-Text1" xml:space="preserve">
-    <value>Vous pouvez exporter votre Soundboard pour le sauvegarder ou l'importer sur un autre appareil.
+    <value>Vous pouvez exporter votre Soundboard pour le sauvegarder ou l’importer sur un autre appareil.
 
  Choissisez le dossier où stocker le fichier exporté.</value>
   </data>
   <data name="ExportDataContentDialog-Text2" xml:space="preserve">
-    <value>Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer jusqu'à ce que l'export soit terminé.</value>
+    <value>Vous pouvez continuer à utiliser l’application, mais merci de ne pas la fermer jusqu’à ce que l’export soit terminé.</value>
   </data>
   <data name="ExportDataContentDialog-Title" xml:space="preserve">
     <value>Exporter le Soundboard</value>
@@ -264,7 +264,7 @@ Sélectionner le fichier du Soundboard préalablement exporté.</value>
   <data name="ImportDataContentDialog-Text2" xml:space="preserve">
     <value>Les nouveaux sons seront ajoutés à ce Soundboard.
 
-Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer jusqu'à ce que l'import soit terminé.</value>
+Vous pouvez continuer à utiliser l’application, mais merci de ne pas la fermer jusqu’à ce que l’import soit terminé.</value>
   </data>
   <data name="ImportDataContentDialog-Title" xml:space="preserve">
     <value>Importer un Soundboard</value>
@@ -312,22 +312,22 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Jouer</value>
   </data>
   <data name="PlaySoundsSuccessivelyContentDialog-Title" xml:space="preserve">
-    <value>Jouer les sons l'un après l'autre</value>
+    <value>Jouer les sons l’un après l’autre</value>
   </data>
   <data name="Shuffle" xml:space="preserve">
     <value>Aléatoire</value>
   </data>
-  <data name="SettingsEntry-DarkThemeRadioButton.Content" xml:space="preserve">
+  <data name="SettingsEntry-ThemeComboBox-Dark.Content" xml:space="preserve">
     <value>Sombre</value>
   </data>
-  <data name="SettingsEntry-LightThemeRadioButton.Content" xml:space="preserve">
+  <data name="SettingsEntry-ThemeComboBox-Light.Content" xml:space="preserve">
     <value>Clair</value>
   </data>
-  <data name="SettingsEntry-SystemThemeRadioButton.Content" xml:space="preserve">
-    <value>Utiliser le paramètre système</value>
+  <data name="SettingsEntry-ThemeComboBox-System.Content" xml:space="preserve">
+    <value>Valeur par défaut de Windows</value>
   </data>
-  <data name="SettingsEntry-ThemeTextBlock.Text" xml:space="preserve">
-    <value>Thème</value>
+  <data name="SettingsEntry-Theme.Header" xml:space="preserve">
+    <value>Thème de l’application</value>
   </data>
   <data name="ShareTarget-AddButton.Content" xml:space="preserve">
     <value>Ajouter</value>
@@ -381,10 +381,10 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Accéder au même Soundboard sur différents appareils</value>
   </data>
   <data name="Account-LandingText2.Text" xml:space="preserve">
-    <value>S'assurer de ne rien perdre de ses sons et de la personnalisation</value>
+    <value>S’assurer de ne rien perdre de ses sons et de la personnalisation</value>
   </data>
   <data name="Account-LandingText-Header.Text" xml:space="preserve">
-    <value>Synchronisez votre Soundboard et accédez-y de n'importe où.</value>
+    <value>Synchronisez votre Soundboard et accédez-y de n’importe où.</value>
   </data>
   <data name="SignupButton.Content" xml:space="preserve">
     <value>Créer un compte</value>
@@ -429,7 +429,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Politique de confidentialité</value>
   </data>
   <data name="Drop-FileTypeNotSupported" xml:space="preserve">
-    <value>Ce type de fichier n'est pas supporté</value>
+    <value>Ce type de fichier n’est pas supporté</value>
   </data>
   <data name="AddSoundsMessage" xml:space="preserve">
     <value>Ajouter des sons....</value>
@@ -437,7 +437,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="DeleteSoundsMessage" xml:space="preserve">
     <value>Supprimer des sons...</value>
   </data>
-  <data name="SettingsEntry-ShowAcrylicBackgroundToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-ShowAcrylicBackground.Header" xml:space="preserve">
     <value>Effets de transparence</value>
   </data>
   <data name="Actions-Save" xml:space="preserve">
@@ -473,8 +473,8 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="UpdateSoundsMessage" xml:space="preserve">
     <value>Actualiser des sons...</value>
   </data>
-  <data name="SettingsEntry-ShowListViewToggle.Header" xml:space="preserve">
-    <value>Affichage des sons sous la forme d'une liste</value>
+  <data name="SettingsEntry-ShowListView.Header" xml:space="preserve">
+    <value>Affichage des sons sous la forme d’une liste</value>
   </data>
   <data name="CategoryOptionsFlyout-AddSubCategory" xml:space="preserve">
     <value>Ajouter une sous-catégorie</value>
@@ -522,13 +522,13 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Bienvenue à UniversalSoundboard !</value>
   </data>
   <data name="StartMessageImportDataContentDialog-Text2" xml:space="preserve">
-    <value>L'import peut prendre un certain temps, en fonction de la dimension de votre Soundboard.</value>
+    <value>L’import peut prendre un certain temps, en fonction de la dimension de votre Soundboard.</value>
   </data>
   <data name="ImportMessage-0" xml:space="preserve">
     <value>Importer votre Soundboard</value>
   </data>
   <data name="MoreButton.Text" xml:space="preserve">
-    <value>Plus d'options</value>
+    <value>Plus d’options</value>
   </data>
   <data name="NextButton.Text" xml:space="preserve">
     <value>Piste suivante</value>
@@ -554,7 +554,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
   <data name="SettingsEntry-MultiSoundPlayback.Header" xml:space="preserve">
     <value>Permettre la lecture de plusieurs sons en même temps</value>
   </data>
-  <data name="SettingsEntry-LiveTileToggle.Header" xml:space="preserve">
+  <data name="SettingsEntry-LiveTile.Header" xml:space="preserve">
     <value>Vignette dynamique</value>
   </data>
   <data name="SettingsEntry-OpenMultipleSounds.Header" xml:space="preserve">
@@ -597,10 +597,10 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Mo</value>
   </data>
   <data name="PropertiesContentDialog-ImageSize" xml:space="preserve">
-    <value>Taille de l'image :</value>
+    <value>Taille de l’image :</value>
   </data>
   <data name="PropertiesContentDialog-ImageFileType" xml:space="preserve">
-    <value>Type de fichier d'image :</value>
+    <value>Type de fichier d’image :</value>
   </data>
   <data name="PropertiesContentDialog-Volume" xml:space="preserve">
     <value>Volume par défaut :</value>
@@ -621,22 +621,22 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>15 Go espace de stockage en ligne</value>
   </data>
   <data name="Account-PlusCardFeature-SupportTextBlock.Text" xml:space="preserve">
-    <value>Soutenir le développement de l'application</value>
+    <value>Soutenir le développement de l’application</value>
   </data>
   <data name="Account-PlusCard-PriceTextBlock.Text" xml:space="preserve">
     <value>3 € par mois</value>
   </data>
   <data name="AddSoundErrorContentDialog-Content" xml:space="preserve">
-    <value>Le son n'a pas pu être ajouté.</value>
+    <value>Le son n’a pas pu être ajouté.</value>
   </data>
   <data name="AddSoundErrorContentDialog-Title" xml:space="preserve">
-    <value>Erreur lors de l'ajout du son</value>
+    <value>Erreur lors de l’ajout du son</value>
   </data>
   <data name="AddSoundsErrorContentDialog-Content" xml:space="preserve">
-    <value>Les sons suivants n'ont pas pu être ajoutés :{0}</value>
+    <value>Les sons suivants n’ont pas pu être ajoutés :{0}</value>
   </data>
   <data name="AddSoundsErrorContentDialog-Title" xml:space="preserve">
-    <value>Erreur lors de l'ajout de sons</value>
+    <value>Erreur lors de l’ajout de sons</value>
   </data>
   <data name="MoreButton-OutputDevice" xml:space="preserve">
     <value>Périphérique de sortie</value>
@@ -735,7 +735,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Vitesse de lecture par défaut :</value>
   </data>
   <data name="Account-PlusCardFeature-HotkeysFlyoutTextBlock.Text" xml:space="preserve">
-    <value>Ajoutez des raccourcis à vos sons. Ainsi, vous pouvez jouer des sons spécifiques à tout moment sans avoir à les rechercher dans l'application.</value>
+    <value>Ajoutez des raccourcis à vos sons. Ainsi, vous pouvez jouer des sons spécifiques à tout moment sans avoir à les rechercher dans l’application.</value>
   </data>
   <data name="Account-PlusCardFeature-HotkeysTextBlock.Text" xml:space="preserve">
     <value>Attribuer des raccourcis clavier aux sons</value>
@@ -750,7 +750,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Réglez le périphérique de sortie pour chaque son individuellement</value>
   </data>
   <data name="Actions-LearnMore" xml:space="preserve">
-    <value>Plus d'informations</value>
+    <value>Plus d’informations</value>
   </data>
   <data name="DavPlusHotkeysContentDialog-Content" xml:space="preserve">
     <value>Les raccourcis ne sont disponibles que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
@@ -759,13 +759,13 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>dav Plus requis</value>
   </data>
   <data name="DavPlusOutputDeviceContentDialog-Content" xml:space="preserve">
-    <value>La modification du périphérique de sortie pour certains sons ouverts n'est disponible que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
+    <value>La modification du périphérique de sortie pour certains sons ouverts n’est disponible que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
   </data>
   <data name="PropertiesContentDialog-HotkeysRestricted" xml:space="preserve">
     <value>La fonction des raccourcis clavier est limitée.</value>
   </data>
   <data name="Export-Image" xml:space="preserve">
-    <value>Exporter l'image</value>
+    <value>Exporter l’image</value>
   </data>
   <data name="Export-Sound" xml:space="preserve">
     <value>Exporter le son</value>
@@ -774,7 +774,7 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Ouvrir le dossier</value>
   </data>
   <data name="InAppNotification-ImageExportSuccessful" xml:space="preserve">
-    <value>L'image a été exportée avec succès</value>
+    <value>L’image a été exportée avec succès</value>
   </data>
   <data name="InAppNotification-SoundExportSuccessful" xml:space="preserve">
     <value>Le son a été exporté avec succès</value>
@@ -816,10 +816,10 @@ Vous pouvez continuer à utiliser l'application, mais merci de ne pas la fermer 
     <value>Afficher les détails</value>
   </data>
   <data name="InAppNotification-AddSoundsErrorMultipleSounds" xml:space="preserve">
-    <value>{0} sons n'ont pas pu être ajoutés</value>
+    <value>{0} sons n’ont pas pu être ajoutés</value>
   </data>
   <data name="InAppNotification-AddSoundsErrorOneSound" xml:space="preserve">
-    <value>Un son n'a pas pu être ajouté</value>
+    <value>Un son n’a pas pu être ajouté</value>
   </data>
   <data name="AddButton-Download.Text" xml:space="preserve">
     <value>Télécharger des sons</value>
@@ -845,7 +845,7 @@ Les liens vers des fichiers audio et des vidéos YouTube sont acceptés.</value>
     <value>Le son a été téléchargé avec succès</value>
   </data>
   <data name="InAppNotification-DownloadSoundError" xml:space="preserve">
-    <value>Le son n'a pas pu être téléchargé</value>
+    <value>Le son n’a pas pu être téléchargé</value>
   </data>
   <data name="DownloadSoundsContentDialog-DefaultSoundName" xml:space="preserve">
     <value>Son téléchargé</value>
@@ -863,7 +863,7 @@ Les liens vers des fichiers audio et des vidéos YouTube sont acceptés.</value>
     <value>Télécharger la playlist complète</value>
   </data>
   <data name="DownloadSoundsContentDialog-DavPlusPlaylistDownload" xml:space="preserve">
-    <value>Le téléchargement de tous les sons d'une playlist YouTube n'est disponible que pour les utilisateurs de dav Plus.
+    <value>Le téléchargement de tous les sons d’une playlist YouTube n’est disponible que pour les utilisateurs de dav Plus.
 
 Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
   </data>
@@ -874,16 +874,16 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
     <value>{0} sons ont été téléchargés avec succès</value>
   </data>
   <data name="DownloadSoundsErrorContentDialog-Description" xml:space="preserve">
-    <value>Les sons suivants n'ont pas pu être téléchargés :</value>
+    <value>Les sons suivants n’ont pas pu être téléchargés :</value>
   </data>
   <data name="DownloadSoundsErrorContentDialog-Title" xml:space="preserve">
     <value>Erreur lors du téléchargement des sons</value>
   </data>
   <data name="InAppNotification-DownloadSoundsErrorMultipleSounds" xml:space="preserve">
-    <value>{0} sons n'ont pas pu être téléchargés</value>
+    <value>{0} sons n’ont pas pu être téléchargés</value>
   </data>
   <data name="InAppNotification-DownloadSoundsErrorOneSound" xml:space="preserve">
-    <value>Un son n'a pas pu être téléchargé</value>
+    <value>Un son n’a pas pu être téléchargé</value>
   </data>
   <data name="InAppNotification-DownloadSoundsPlaylistError" xml:space="preserve">
     <value>Erreur lors du chargement de la playlist. Veuillez vérifier votre connexion Internet.</value>
@@ -892,7 +892,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
     <value>Créer une nouvelle catégorie pour la playlist</value>
   </data>
   <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock1.Text" xml:space="preserve">
-    <value>Cette fonction vous permet de télécharger tous les sons d'une playlist et de les enregistrer directement dans une nouvelle catégorie.</value>
+    <value>Cette fonction vous permet de télécharger tous les sons d’une playlist et de les enregistrer directement dans une nouvelle catégorie.</value>
   </data>
   <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock2.Text" xml:space="preserve">
     <value>Cette option est présentée lorsque vous essayez de télécharger une vidéo YouTube dans une playlist.</value>
@@ -907,7 +907,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
     <value>Ajouter au Soundboard</value>
   </data>
   <data name="LocalFileFlyoutText.Text" xml:space="preserve">
-    <value>Ce son est un fichier local qui n'appartient pas à votre Soundboard.</value>
+    <value>Ce son est un fichier local qui n’appartient pas à votre Soundboard.</value>
   </data>
   <data name="SettingsEntry-CreateIssueButton.Content" xml:space="preserve">
     <value>Créer un issue sur GitHub</value>
@@ -928,7 +928,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
     <value>À Propos</value>
   </data>
   <data name="SettingsEntry-ImportExportDescription.Text" xml:space="preserve">
-    <value>Tu peux sauvegarder ton Soundboard en dehors de l'application et l'utiliser sur différents appareils.</value>
+    <value>Tu peux sauvegarder ton Soundboard en dehors de l’application et l’utiliser sur différents appareils.</value>
   </data>
   <data name="NewCategoryContentDialog-NewCategoryTextBoxPlaceholder" xml:space="preserve">
     <value>Nom de la catégorie</value>
@@ -937,7 +937,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
     <value>Nom du son</value>
   </data>
   <data name="InAppNotification-Sync" xml:space="preserve">
-    <value>Tes données sont en train d'être téléchargées. Cela peut prendre un certain temps...</value>
+    <value>Tes données sont en train d’être téléchargées. Cela peut prendre un certain temps...</value>
   </data>
   <data name="Actions-WriteReview" xml:space="preserve">
     <value>Écrire une évaluation</value>
@@ -982,13 +982,13 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
     <value>Enregistreur de son</value>
   </data>
   <data name="StartRecording" xml:space="preserve">
-    <value>Démarrer l'enregistrement</value>
+    <value>Démarrer l’enregistrement</value>
   </data>
   <data name="StopRecording" xml:space="preserve">
-    <value>Arrêter l'enregistrement</value>
+    <value>Arrêter l’enregistrement</value>
   </data>
   <data name="InputDeviceComboBox.PlaceholderText" xml:space="preserve">
-    <value>Sélectionner le périphérique d'entrée</value>
+    <value>Sélectionner le périphérique d’entrée</value>
   </data>
   <data name="Recording" xml:space="preserve">
     <value>Enregistrement {0}</value>
@@ -1015,9 +1015,9 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
     <value>Fermer la fenêtre</value>
   </data>
   <data name="SoundRecorderCloseWarningContentDialog-Message" xml:space="preserve">
-    <value>Tu es sûr ? Tous les sons enregistrés que tu n'as pas sauvegardés seront perdus.</value>
+    <value>Tu es sûr ? Tous les sons enregistrés que tu n’as pas sauvegardés seront perdus.</value>
   </data>
   <data name="SoundRecorderCloseWarningContentDialog-Title" xml:space="preserve">
-    <value>Fermer l'enregistreur de son</value>
+    <value>Fermer l’enregistreur de son</value>
   </data>
 </root>
