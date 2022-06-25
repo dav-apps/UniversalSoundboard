@@ -947,8 +947,8 @@ namespace UniversalSoundboard.DataAccess
             }
 
             // Sort the sounds
-            var sortedSounds = await SortSoundsList(allSounds, itemViewHolder.SoundOrder, itemViewHolder.SoundOrderReversed, Guid.Empty, false);
-            var sortedFavouriteSounds = await SortSoundsList(allFavouriteSounds, itemViewHolder.SoundOrder, itemViewHolder.SoundOrderReversed, Guid.Empty, true);
+            var sortedSounds = await SortSoundsList(allSounds, itemViewHolder.SoundOrder, Guid.Empty, false);
+            var sortedFavouriteSounds = await SortSoundsList(allFavouriteSounds, itemViewHolder.SoundOrder, Guid.Empty, true);
 
             itemViewHolder.Sounds.Clear();
             itemViewHolder.FavouriteSounds.Clear();
@@ -993,8 +993,8 @@ namespace UniversalSoundboard.DataAccess
             }
 
             // Sort the sounds
-            var sortedSounds = await SortSoundsList(sounds, itemViewHolder.SoundOrder, itemViewHolder.SoundOrderReversed, categoryUuid, false);
-            var sortedFavouriteSounds = await SortSoundsList(favouriteSounds, itemViewHolder.SoundOrder, itemViewHolder.SoundOrderReversed, categoryUuid, true);
+            var sortedSounds = await SortSoundsList(sounds, itemViewHolder.SoundOrder, categoryUuid, false);
+            var sortedFavouriteSounds = await SortSoundsList(favouriteSounds, itemViewHolder.SoundOrder, categoryUuid, true);
 
             itemViewHolder.Sounds.Clear();
             itemViewHolder.FavouriteSounds.Clear();
@@ -1144,21 +1144,25 @@ namespace UniversalSoundboard.DataAccess
                 // Add the sound at the correct position
                 switch (itemViewHolder.SoundOrder)
                 {
-                    case SoundOrder.Name:
+                    case NewSoundOrder.NameAscending:
                         var soundsList = itemViewHolder.Sounds.ToList();
                         soundsList.Add(sound);
                         soundsList.Sort((x, y) => string.Compare(x.Name, y.Name));
 
-                        if (itemViewHolder.SoundOrderReversed)
-                            soundsList.Reverse();
-
                         itemViewHolder.Sounds.Insert(soundsList.IndexOf(sound), sound);
                         break;
-                    case SoundOrder.CreationDate:
-                        if (itemViewHolder.SoundOrderReversed)
-                            itemViewHolder.Sounds.Insert(0, sound);
-                        else
-                            itemViewHolder.Sounds.Add(sound);
+                    case NewSoundOrder.NameDescending:
+                        var soundsList2 = itemViewHolder.Sounds.ToList();
+                        soundsList2.Add(sound);
+                        soundsList2.Sort((x, y) => string.Compare(y.Name, x.Name));
+
+                        itemViewHolder.Sounds.Insert(soundsList2.IndexOf(sound), sound);
+                        break;
+                    case NewSoundOrder.CreationDateAscending:
+                        itemViewHolder.Sounds.Add(sound);
+                        break;
+                    case NewSoundOrder.CreationDateDescending:
+                        itemViewHolder.Sounds.Insert(0, sound);
                         break;
                     default:
                         itemViewHolder.Sounds.Add(sound);
@@ -2652,29 +2656,36 @@ namespace UniversalSoundboard.DataAccess
         /**
          * Sorts the sounds list by the given sound order
          */
-        private static async Task<List<Sound>> SortSoundsList(List<Sound> sounds, SoundOrder order, bool reversed, Guid categoryUuid, bool favourite)
+        private static async Task<List<Sound>> SortSoundsList(List<Sound> sounds, NewSoundOrder order, Guid categoryUuid, bool favourite)
         {
             List<Sound> sortedSounds = new List<Sound>();
 
             switch (order)
             {
-                case SoundOrder.Name:
+                case NewSoundOrder.NameAscending:
                     sounds.Sort((x, y) => string.Compare(x.Name, y.Name));
 
                     foreach (var sound in sounds)
                         sortedSounds.Add(sound);
 
-                    if (reversed)
-                        sortedSounds.Reverse();
-
                     break;
-                case SoundOrder.CreationDate:
+                case NewSoundOrder.NameDescending:
+                    sounds.Sort((x, y) => string.Compare(y.Name, x.Name));
+
                     foreach (var sound in sounds)
                         sortedSounds.Add(sound);
 
-                    if (reversed)
-                        sortedSounds.Reverse();
+                    break;
+                case NewSoundOrder.CreationDateAscending:
+                    foreach (var sound in sounds)
+                        sortedSounds.Add(sound);
 
+                    break;
+                case NewSoundOrder.CreationDateDescending:
+                    foreach (var sound in sounds)
+                        sortedSounds.Add(sound);
+
+                    sortedSounds.Reverse();
                     break;
                 default:
                     // Custom order

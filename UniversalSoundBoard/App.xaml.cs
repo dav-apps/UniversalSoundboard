@@ -54,7 +54,6 @@ namespace UniversalSoundboard
                 settings += $"multiSoundPlayback: {FileManager.itemViewHolder.MultiSoundPlayback}\n";
                 settings += $"showSoundsPivot: {FileManager.itemViewHolder.ShowSoundsPivot}\n";
                 settings += $"soundOrder: {FileManager.itemViewHolder.SoundOrder}\n";
-                settings += $"soundOrderReversed: {FileManager.itemViewHolder.SoundOrderReversed}\n";
                 settings += $"showListView: {FileManager.itemViewHolder.ShowListView}\n";
                 settings += $"showCategoriesIcons: {FileManager.itemViewHolder.ShowCategoriesIcons}\n";
                 settings += $"showAcrylicBackground: {FileManager.itemViewHolder.ShowAcrylicBackground}\n";

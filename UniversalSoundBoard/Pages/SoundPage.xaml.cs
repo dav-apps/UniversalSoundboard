@@ -653,7 +653,7 @@ namespace UniversalSoundboard.Pages
         {
             if (FileManager.itemViewHolder.MultiSelectionEnabled)
                 canReorderItems = false;
-            else if (FileManager.itemViewHolder.SoundOrder == FileManager.SoundOrder.Custom)
+            else if (FileManager.itemViewHolder.SoundOrder == NewSoundOrder.Custom)
                 canReorderItems = true;
             else
                 canReorderItems = false;

@@ -24,6 +24,7 @@ namespace UniversalSoundboard.Common
         private const string showSoundsPivotKey = "showSoundsPivot";
         private const string soundOrderKey = "soundOrder";
         private const string soundOrderReversedKey = "soundOrderReversed";
+        private const string newSoundOrderKey = "newSoundOrder";
         private const string useStandardOutputDeviceKey = "useStandardOutputDevice";
         private const string outputDeviceKey = "outputDevice";
         private const string showListViewKey = "showListView";
@@ -115,8 +116,7 @@ namespace UniversalSoundboard.Common
         private bool _openMultipleSounds;               // If false, removes all PlayingSounds whenever the user opens a new one; if true, adds new opened sounds to existing PlayingSounds
         private bool _multiSoundPlayback;               // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
         private bool _showSoundsPivot;                  // If true shows the pivot to select Sounds or Favourite sounds
-        private FileManager.SoundOrder _soundOrder;     // The selected sound order in the settings
-        private bool _soundOrderReversed;               // If the sound order is descending (false) or ascending (true)
+        private NewSoundOrder _soundOrder;              // The selected sound order in the settings
         private bool _useStandardOutputDevice;          // If true, the standard output device of the OS is used for playback
         private string _outputDevice;                   // The id of the selected output device
         private bool _showListView;                     // If true, shows the sounds on the SoundPage in a ListView
@@ -256,17 +256,48 @@ namespace UniversalSoundboard.Common
             #endregion
 
             #region soundOrder
-            if (localSettings.Values[soundOrderKey] == null)
-                _soundOrder = soundOrderDefault;
-            else
-                _soundOrder = (FileManager.SoundOrder)localSettings.Values[soundOrderKey];
-            #endregion
+            if (localSettings.Values[newSoundOrderKey] == null)
+            {
+                // Try to get the old settings
+                var oldSoundOrder = soundOrderDefault;
 
-            #region soundOrderReversed
-            if (localSettings.Values[soundOrderReversedKey] == null)
-                _soundOrderReversed = soundOrderReversedDefault;
+                if (localSettings.Values[soundOrderKey] != null)
+                    oldSoundOrder = (FileManager.SoundOrder)localSettings.Values[soundOrderKey];
+
+                var oldSoundOrderReversed = soundOrderReversedDefault;
+
+                if (localSettings.Values[soundOrderReversedKey] != null)
+                    oldSoundOrderReversed = (bool)localSettings.Values[soundOrderReversedKey];
+
+                // Set the new settings
+                NewSoundOrder newSoundOrder = NewSoundOrder.Custom;
+
+                switch (oldSoundOrder)
+                {
+                    case FileManager.SoundOrder.Name:
+                        if (oldSoundOrderReversed)
+                            newSoundOrder = NewSoundOrder.NameDescending;
+                        else
+                            newSoundOrder = NewSoundOrder.NameAscending;
+
+                        break;
+                    case FileManager.SoundOrder.CreationDate:
+                        if (oldSoundOrderReversed)
+                            newSoundOrder = NewSoundOrder.CreationDateDescending;
+                        else
+                            newSoundOrder = NewSoundOrder.CreationDateAscending;
+
+                        break;
+                }
+
+                // Save the new sound order
+                localSettings.Values[newSoundOrderKey] = (int)newSoundOrder;
+                _soundOrder = newSoundOrder;
+            }
             else
-                _soundOrderReversed = (bool)localSettings.Values[soundOrderReversedKey];
+            {
+                _soundOrder = (NewSoundOrder)localSettings.Values[newSoundOrderKey];
+            }
             #endregion
 
             #region useStandardOutputDevice
@@ -885,30 +916,15 @@ namespace UniversalSoundboard.Common
 
         #region SoundOrder
         public const string SoundOrderKey = "SoundOrder";
-        public FileManager.SoundOrder SoundOrder
+        public NewSoundOrder SoundOrder
         {
             get => _soundOrder;
             set
             {
                 if (_soundOrder.Equals(value)) return;
-                localSettings.Values[soundOrderKey] = (int)value;
+                localSettings.Values[newSoundOrderKey] = (int)value;
                 _soundOrder = value;
                 NotifyPropertyChanged(SoundOrderKey);
-            }
-        }
-        #endregion
-
-        #region SoundOrderReversed
-        public const string SoundOrderReversedKey = "SoundOrderReversed";
-        public bool SoundOrderReversed
-        {
-            get => _soundOrderReversed;
-            set
-            {
-                if (_soundOrderReversed.Equals(value)) return;
-                localSettings.Values[soundOrderReversedKey] = value;
-                _soundOrderReversed = value;
-                NotifyPropertyChanged(SoundOrderReversedKey);
             }
         }
         #endregion
