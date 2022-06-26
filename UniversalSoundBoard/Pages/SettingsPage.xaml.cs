@@ -53,10 +53,6 @@ namespace UniversalSoundboard.Pages
             RequestedTheme = FileManager.GetRequestedTheme();
             SolidColorBrush appThemeColorBrush = new SolidColorBrush(FileManager.GetApplicationThemeColor());
             ContentRoot.Background = appThemeColorBrush;
-            SettingsGeneralStackPanel.Background = appThemeColorBrush;
-            SettingsDesignStackPanel.Background = appThemeColorBrush;
-            SettingsDataStackPanel.Background = appThemeColorBrush;
-            SettingsAboutStackPanel.Background = appThemeColorBrush;
         }
 
         private void InitSettings()

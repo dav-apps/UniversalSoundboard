@@ -18,15 +18,15 @@
         <Style TargetType="PivotItem">
             <Setter Property="Margin" Value="0" />
         </Style>
-        
+
         <Style x:Key="SettingsPageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
-            <Setter Property="Padding" Value="0,123,0,0" />
+            <Setter Property="Padding" Value="0,85,0,0" />
         </Style>
-        
-        <Style x:Key="SettingsContentStyle" TargetType="StackPanel">
-            <Setter Property="Orientation" Value="Vertical" />
-            <Setter Property="Background" Value="Transparent" />
-            <Setter Property="Padding" Value="16,123,16,0" />
+
+        <Style x:Key="SettingsHeaderStyle" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="21" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,25,0,10" />
         </Style>
 
         <Style x:Key="SettingsEntryStyle" TargetType="StackPanel">
@@ -516,322 +516,320 @@
         </Style>
     </Page.Resources>
 
-    <Grid Name="ContentRoot">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="*" />
-        </Grid.RowDefinitions>
+    <RelativePanel>
+        <ScrollViewer
+            Name="ContentRoot"
+            Style="{StaticResource SettingsPageScrollViewerStyle}"
+            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True">
 
-        <Pivot
-            Name="SettingsPivot"
-            Style="{StaticResource CustomPivotStyle}"
-            Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
-            Padding="0,85,0,0">
+            <StackPanel Orientation="Vertical" Padding="16,85,16,16">
+                <TextBlock
+                    x:Uid="SettingsHeader-General"
+                    Style="{StaticResource SettingsHeaderStyle}"
+                    Margin="0,0,0,10" />
 
-            <PivotItem x:Uid="SettingsPivot-General">
-                <ScrollViewer Style="{StaticResource SettingsPageScrollViewerStyle}">
+                <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                    <components:Setting x:Uid="SettingsEntry-ShowPlayingSoundsList">
+                        <components:Setting.ActionContent>
+                            <ToggleSwitch
+                                Name="ShowPlayingSoundsListToggle"
+                                Style="{StaticResource SettingToggleSwitchStyle}"
+                                Toggled="ShowPlayingSoundsListToggle_Toggled" />
+                        </components:Setting.ActionContent>
+                    </components:Setting>
+                </StackPanel>
+
+                <StackPanel
+                    Name="SavePlayingSoundsStackPanel"
+                    Style="{StaticResource SettingsEntryStyle}">
+
+                    <components:Setting x:Uid="SettingsEntry-SavePlayingSounds">
+                        <components:Setting.ActionContent>
+                            <ToggleSwitch
+                                Name="SavePlayingSoundsToggle"
+                                Style="{StaticResource SettingToggleSwitchStyle}"
+                                Toggled="SavePlayingSoundsToggle_Toggled" />
+                        </components:Setting.ActionContent>
+                    </components:Setting>
+                </StackPanel>
+
+                <StackPanel
+                    Name="OpenMultipleSoundsStackPanel"
+                    Style="{StaticResource SettingsEntryStyle}">
+
+                    <components:Setting x:Uid="SettingsEntry-OpenMultipleSounds">
+                        <components:Setting.ActionContent>
+                            <ToggleSwitch
+                                Name="OpenMultipleSoundsToggle"
+                                Style="{StaticResource SettingToggleSwitchStyle}"
+                                Toggled="OpenMultipleSoundsToggle_Toggled" />
+                        </components:Setting.ActionContent>
+                    </components:Setting>
+                </StackPanel>
+
+                <StackPanel
+                    Name="MultiSoundPlaybackStackPanel"
+                    Style="{StaticResource SettingsEntryStyle}">
+
+                    <components:Setting x:Uid="SettingsEntry-MultiSoundPlayback">
+                        <components:Setting.ActionContent>
+                            <ToggleSwitch
+                                Name="MultiSoundPlaybackToggle"
+                                Style="{StaticResource SettingToggleSwitchStyle}"
+                                Toggled="MultiSoundPlaybackToggle_Toggled" />
+                        </components:Setting.ActionContent>
+                    </components:Setting>
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                    <components:Setting x:Uid="SettingsEntry-ShowSoundsPivot">
+                        <components:Setting.ActionContent>
+                            <ToggleSwitch
+                                Name="ShowSoundsPivotToggle"
+                                Style="{StaticResource SettingToggleSwitchStyle}"
+                                Toggled="ShowSoundsPivotToggle_Toggled" />
+                        </components:Setting.ActionContent>
+                    </components:Setting>
+                </StackPanel>
+
+                <StackPanel
+                    Name="SoundOrderStackPanel"
+                    Style="{StaticResource SettingsEntryStyle}">
+
+                    <components:Setting x:Uid="SettingsEntry-SoundOrder">
+                        <components:Setting.ActionContent>
+                            <ComboBox
+                                Name="SoundOrderComboBox"
+                                SelectedIndex="0"
+                                SelectionChanged="SoundOrderComboBox_SelectionChanged">
+
+                                <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-Custom" />
+                                <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-NameAscending" />
+                                <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-NameDescending" />
+                                <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-CreationDateAscending" />
+                                <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-CreationDateDescending" />
+                            </ComboBox>
+                        </components:Setting.ActionContent>
+                    </components:Setting>
+                </StackPanel>
+
+                <TextBlock
+                    Style="{StaticResource SettingsHeaderStyle}"
+                    x:Uid="SettingsHeader-Design" />
+
+                <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                    <components:Setting x:Uid="SettingsEntry-ShowListView">
+                        <components:Setting.ActionContent>
+                            <ToggleSwitch
+                                Name="ShowListViewToggle"
+                                Style="{StaticResource SettingToggleSwitchStyle}"
+                                Toggled="ShowListViewToggle_Toggled" />
+                        </components:Setting.ActionContent>
+                    </components:Setting>
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                    <components:Setting x:Uid="SettingsEntry-ShowCategoriesIcons">
+                        <components:Setting.ActionContent>
+                            <ToggleSwitch
+                                Name="ShowCategoriesIconsToggle"
+                                Style="{StaticResource SettingToggleSwitchStyle}"
+                                Toggled="ShowCategoriesIconsToggle_Toggled" />
+                        </components:Setting.ActionContent>
+                    </components:Setting>
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                    <components:Setting x:Uid="SettingsEntry-ShowAcrylicBackground">
+                        <components:Setting.ActionContent>
+                            <ToggleSwitch
+                                Name="ShowAcrylicBackgroundToggle"
+                                Style="{StaticResource SettingToggleSwitchStyle}"
+                                Toggled="ShowAcrylicBackgroundToggle_Toggled" />
+                        </components:Setting.ActionContent>
+                    </components:Setting>
+                </StackPanel>
+
+                <StackPanel
+                    Style="{StaticResource SettingsEntryStyle}"
+                    Visibility="{x:Bind liveTileSettingVisibility}">
+
+                    <components:Setting x:Uid="SettingsEntry-LiveTile">
+                        <components:Setting.ActionContent>
+                            <ToggleSwitch
+                                Name="LiveTileToggle"
+                                Style="{StaticResource SettingToggleSwitchStyle}"
+                                Toggled="LiveTileToggle_Toggled" />
+                        </components:Setting.ActionContent>
+                    </components:Setting>
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                    <components:Setting x:Uid="SettingsEntry-Theme">
+                        <ComboBox
+                            Name="ThemeComboBox"
+                            SelectedIndex="0"
+                            SelectionChanged="ThemeComboBox_SelectionChanged">
+
+                            <ComboBoxItem x:Uid="SettingsEntry-ThemeComboBox-System" />
+                            <ComboBoxItem x:Uid="SettingsEntry-ThemeComboBox-Light" />
+                            <ComboBoxItem x:Uid="SettingsEntry-ThemeComboBox-Dark" />
+                        </ComboBox>
+                    </components:Setting>
+                </StackPanel>
+
+                <TextBlock
+                    x:Uid="SettingsHeader-Data"
+                    Style="{StaticResource SettingsHeaderStyle}" />
+
+                <StackPanel
+                    Style="{StaticResource SettingsEntryStyle}" 
+                    Margin="0,10,0,0"
+                    MaxWidth="400"
+                    HorizontalAlignment="Left">
+
+                    <TextBlock
+                        Name="ImportExportDescriptionTextBlock"
+                        x:Uid="SettingsEntry-ImportExportDescription"
+                        TextWrapping="WrapWholeWords" />
+
+                    <TextBlock
+                        Name="SoundBoardSizeTextBlock" 
+                        Margin="0,16,0,0"
+                        TextWrapping="WrapWholeWords"
+                        Text="{x:Bind soundboardSize}"
+                        Visibility="{x:Bind soundboardSizeVisibility}" />
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
+                    <Button
+                        Name="ExportDataButton"
+                        x:Uid="SettingsEntry-ExportDataButton"
+                        IsEnabled="{Binding ExportAndImportButtonsEnabled}"
+                        Click="ExportDataButton_Click" />
+
+                    <Button
+                        Name="ImportDataButton"
+                        x:Uid="SettingsEntry-ImportDataButton"
+                        Margin="10,0,0,0"
+                        IsEnabled="{Binding ExportAndImportButtonsEnabled}"
+                        Click="ImportDataButton_Click" />
+                </StackPanel>
+
+                <StackPanel
+                    Orientation="Horizontal"
+                    Margin="0,10,0,5"
+                    Visibility="{Binding Importing, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <winui:ProgressRing
+                        Name="ImportDataProgressRing"
+                        Height="20"
+                        Width="20">
+                    </winui:ProgressRing>
+
+                    <TextBlock
+                        Name="ImportMessageTextBlock"
+                        Text="{Binding ImportMessage}"
+                        FontSize="14"
+                        Margin="10,0,0,0" />
+                </StackPanel>
+
+                <StackPanel
+                    Orientation="Horizontal"
+                    Margin="0,10,0,5"
+                    Visibility="{Binding Exporting, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <winui:ProgressRing
+                        Name="ExportDataProgressRing"
+                        Height="20"
+                        Width="20">
+                    </winui:ProgressRing>
+
+                    <TextBlock
+                        Name="ExportMessageTextBlock"
+                        Text="{Binding ExportMessage}"
+                        FontSize="14"
+                        Margin="10,0,0,0" />
+                </StackPanel>
+
+                <TextBlock
+                    x:Uid="SettingsHeader-About"
+                    Style="{StaticResource SettingsHeaderStyle}" />
+
+                <StackPanel Margin="0,5,0,5">
+                    <TextBlock
+                        x:Uid="SettingsEntry-ReviewHeader"
+                        FontSize="16" />
+
+                    <Button
+                        Name="ReviewButton"
+                        x:Uid="SettingsEntry-ReviewButton"
+                        Margin="0,10,0,0"
+                        Click="ReviewButton_Click" />
+                </StackPanel>
+
+                <StackPanel Margin="0,15,0,5">
+                    <TextBlock
+                        x:Uid="SettingsEntry-FeedbackHeader"
+                        FontSize="16" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                        <Button
+                            Name="SendFeedbackButton"
+                            x:Uid="SettingsEntry-SendFeedbackButton"
+                            Click="SendFeedbackButton_Click"/>
+
+                        <Button
+                            Name="CreateIssueButton"
+                            x:Uid="SettingsEntry-CreateIssueButton"
+                            Margin="10,0,0,0"
+                            Click="CreateIssueButton_Click" />
+                    </StackPanel>
+                </StackPanel>
+
+                <StackPanel Margin="0,15,0,5">
+                    <HyperlinkButton
+                        x:Uid="Blog-Link"
+                        NavigateUri="https://blog.dav-apps.tech/tag/universalsoundboard"
+                        Margin="-12,0,0,0" />
+
+                    <HyperlinkButton
+                        x:Uid="Github-Link"
+                        NavigateUri="https://github.com/dav-apps/UniversalSoundboard"
+                        Margin="-12,-8,0,0" />
+
+                    <HyperlinkButton
+                        x:Uid="PrivacyPolicy-Link"
+                        NavigateUri="https://dav-apps.tech/privacy"
+                        Margin="-12,-8,0,0" />
+
                     <StackPanel
-                        Name="SettingsGeneralStackPanel"
-                        Style="{StaticResource SettingsContentStyle}">
+                        Orientation="Horizontal"
+                        Margin="0,7,0,0">
 
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <components:Setting x:Uid="SettingsEntry-ShowPlayingSoundsList">
-                                <components:Setting.ActionContent>
-                                    <ToggleSwitch
-                                        Name="ShowPlayingSoundsListToggle"
-                                        Style="{StaticResource SettingToggleSwitchStyle}"
-                                        Toggled="ShowPlayingSoundsListToggle_Toggled" />
-                                </components:Setting.ActionContent>
-                            </components:Setting>
-                        </StackPanel>
+                        <TextBlock
+                            Text="Version"
+                            IsTextSelectionEnabled="True"
+                            Margin="0,0,4,0" />
 
-                        <StackPanel
-                            Name="SavePlayingSoundsStackPanel"
-                            Style="{StaticResource SettingsEntryStyle}">
-
-                            <components:Setting x:Uid="SettingsEntry-SavePlayingSounds">
-                                <components:Setting.ActionContent>
-                                    <ToggleSwitch
-                                        Name="SavePlayingSoundsToggle"
-                                        Style="{StaticResource SettingToggleSwitchStyle}"
-                                        Toggled="SavePlayingSoundsToggle_Toggled" />
-                                </components:Setting.ActionContent>
-                            </components:Setting>
-                        </StackPanel>
-
-                        <StackPanel
-                            Name="OpenMultipleSoundsStackPanel"
-                            Style="{StaticResource SettingsEntryStyle}">
-
-                            <components:Setting x:Uid="SettingsEntry-OpenMultipleSounds">
-                                <components:Setting.ActionContent>
-                                    <ToggleSwitch
-                                        Name="OpenMultipleSoundsToggle"
-                                        Style="{StaticResource SettingToggleSwitchStyle}"
-                                        Toggled="OpenMultipleSoundsToggle_Toggled" />
-                                </components:Setting.ActionContent>
-                            </components:Setting>
-                        </StackPanel>
-
-                        <StackPanel
-                            Name="MultiSoundPlaybackStackPanel"
-                            Style="{StaticResource SettingsEntryStyle}">
-
-                            <components:Setting x:Uid="SettingsEntry-MultiSoundPlayback">
-                                <components:Setting.ActionContent>
-                                    <ToggleSwitch
-                                        Name="MultiSoundPlaybackToggle"
-                                        Style="{StaticResource SettingToggleSwitchStyle}"
-                                        Toggled="MultiSoundPlaybackToggle_Toggled" />
-                                </components:Setting.ActionContent>
-                            </components:Setting>
-                        </StackPanel>
-
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <components:Setting x:Uid="SettingsEntry-ShowSoundsPivot">
-                                <components:Setting.ActionContent>
-                                    <ToggleSwitch
-                                        Name="ShowSoundsPivotToggle"
-                                        Style="{StaticResource SettingToggleSwitchStyle}"
-                                        Toggled="ShowSoundsPivotToggle_Toggled" />
-                                </components:Setting.ActionContent>
-                            </components:Setting>
-                        </StackPanel>
-
-                        <StackPanel
-                            Name="SoundOrderStackPanel"
-                            Style="{StaticResource SettingsEntryStyle}">
-
-                            <components:Setting x:Uid="SettingsEntry-SoundOrder">
-                                <components:Setting.ActionContent>
-                                    <ComboBox
-                                        Name="SoundOrderComboBox"
-                                        SelectedIndex="0"
-                                        SelectionChanged="SoundOrderComboBox_SelectionChanged">
-
-                                        <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-Custom" />
-                                        <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-NameAscending" />
-                                        <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-NameDescending" />
-                                        <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-CreationDateAscending" />
-                                        <ComboBoxItem x:Uid="SettingsEntry-SoundOrderComboBox-CreationDateDescending" />
-                                    </ComboBox>
-                                </components:Setting.ActionContent>
-                            </components:Setting>
-                        </StackPanel>
+                        <TextBlock
+                            x:Uid="Version"
+                            IsTextSelectionEnabled="True" />
                     </StackPanel>
-                </ScrollViewer>
-            </PivotItem>
-            
-            <PivotItem x:Uid="SettingsPivot-Design">
-                <ScrollViewer Style="{StaticResource SettingsPageScrollViewerStyle}">
-                    <StackPanel Name="SettingsDesignStackPanel" Style="{StaticResource SettingsContentStyle}">
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <components:Setting x:Uid="SettingsEntry-ShowListView">
-                                <components:Setting.ActionContent>
-                                    <ToggleSwitch
-                                        Name="ShowListViewToggle"
-                                        Style="{StaticResource SettingToggleSwitchStyle}"
-                                        Toggled="ShowListViewToggle_Toggled" />
-                                </components:Setting.ActionContent>
-                            </components:Setting>
-                        </StackPanel>
 
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <components:Setting x:Uid="SettingsEntry-ShowCategoriesIcons">
-                                <components:Setting.ActionContent>
-                                    <ToggleSwitch
-                                        Name="ShowCategoriesIconsToggle"
-                                        Style="{StaticResource SettingToggleSwitchStyle}"
-                                        Toggled="ShowCategoriesIconsToggle_Toggled" />
-                                </components:Setting.ActionContent>
-                            </components:Setting>
-                        </StackPanel>
+                    <TextBlock Text="Copyright © 2022 by dav" />
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
 
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <components:Setting x:Uid="SettingsEntry-ShowAcrylicBackground">
-                                <components:Setting.ActionContent>
-                                    <ToggleSwitch
-                                        Name="ShowAcrylicBackgroundToggle"
-                                        Style="{StaticResource SettingToggleSwitchStyle}"
-                                        Toggled="ShowAcrylicBackgroundToggle_Toggled" />
-                                </components:Setting.ActionContent>
-                            </components:Setting>
-                        </StackPanel>
-
-                        <StackPanel
-                            Style="{StaticResource SettingsEntryStyle}"
-                            Visibility="{x:Bind liveTileSettingVisibility}">
-
-                            <components:Setting x:Uid="SettingsEntry-LiveTile">
-                                <components:Setting.ActionContent>
-                                    <ToggleSwitch
-                                        Name="LiveTileToggle"
-                                        Style="{StaticResource SettingToggleSwitchStyle}"
-                                        Toggled="LiveTileToggle_Toggled" />
-                                </components:Setting.ActionContent>
-                            </components:Setting>
-                        </StackPanel>
-
-                        <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                            <components:Setting x:Uid="SettingsEntry-Theme">
-                                <ComboBox
-                                    Name="ThemeComboBox"
-                                    SelectedIndex="0"
-                                    SelectionChanged="ThemeComboBox_SelectionChanged">
-
-                                    <ComboBoxItem x:Uid="SettingsEntry-ThemeComboBox-System" />
-                                    <ComboBoxItem x:Uid="SettingsEntry-ThemeComboBox-Light" />
-                                    <ComboBoxItem x:Uid="SettingsEntry-ThemeComboBox-Dark" />
-                                </ComboBox>
-                            </components:Setting>
-                        </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
-            </PivotItem>
-            
-            <PivotItem x:Uid="SettingsPivot-Data">
-                <ScrollViewer Style="{StaticResource SettingsPageScrollViewerStyle}">
-                    <StackPanel Name="SettingsDataStackPanel" Style="{StaticResource SettingsContentStyle}">
-                        <StackPanel
-                            Style="{StaticResource SettingsEntryStyle}" 
-                            Margin="0,10,0,0"
-                            MaxWidth="400"
-                            HorizontalAlignment="Left">
-
-                            <TextBlock
-                                Name="ImportExportDescriptionTextBlock"
-                                x:Uid="SettingsEntry-ImportExportDescription"
-                                TextWrapping="WrapWholeWords" />
-
-                            <TextBlock
-                                Name="SoundBoardSizeTextBlock" 
-                                Margin="0,16,0,0"
-                                TextWrapping="WrapWholeWords"
-                                Text="{x:Bind soundboardSize}"
-                                Visibility="{x:Bind soundboardSizeVisibility}" />
-                        </StackPanel>
-
-                        <StackPanel Orientation="Horizontal" Margin="0,20,0,0">
-                            <Button
-                                Name="ExportDataButton"
-                                x:Uid="SettingsEntry-ExportDataButton"
-                                IsEnabled="{Binding ExportAndImportButtonsEnabled}"
-                                Click="ExportDataButton_Click" />
-
-                            <Button
-                                Name="ImportDataButton"
-                                x:Uid="SettingsEntry-ImportDataButton"
-                                Margin="10,0,0,0"
-                                IsEnabled="{Binding ExportAndImportButtonsEnabled}"
-                                Click="ImportDataButton_Click" />
-                        </StackPanel>
-
-                        <StackPanel
-                            Orientation="Horizontal"
-                            Margin="0,10,0,5"
-                            Visibility="{Binding Importing, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                            <winui:ProgressRing
-                                Name="ImportDataProgressRing"
-                                Height="20"
-                                Width="20">
-                            </winui:ProgressRing>
-
-                            <TextBlock
-                                Name="ImportMessageTextBlock"
-                                Text="{Binding ImportMessage}"
-                                FontSize="14"
-                                Margin="10,0,0,0" />
-                        </StackPanel>
-
-                        <StackPanel
-                            Orientation="Horizontal"
-                            Margin="0,10,0,5"
-                            Visibility="{Binding Exporting, Converter={StaticResource BooleanToVisibilityConverter}}">
-
-                            <winui:ProgressRing
-                                Name="ExportDataProgressRing"
-                                Height="20"
-                                Width="20">
-                            </winui:ProgressRing>
-
-                            <TextBlock
-                                Name="ExportMessageTextBlock"
-                                Text="{Binding ExportMessage}"
-                                FontSize="14"
-                                Margin="10,0,0,0" />
-                        </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
-            </PivotItem>
-
-            <PivotItem x:Uid="SettingsPivot-About">
-                <ScrollViewer Style="{StaticResource SettingsPageScrollViewerStyle}">
-                    <StackPanel Name="SettingsAboutStackPanel" Style="{StaticResource SettingsContentStyle}">
-                        <StackPanel Margin="0,5,0,5">
-                            <TextBlock
-                                x:Uid="SettingsEntry-ReviewHeader"
-                                FontSize="16" />
-
-                            <Button
-                                Name="ReviewButton"
-                                x:Uid="SettingsEntry-ReviewButton"
-                                Margin="0,10,0,0"
-                                Click="ReviewButton_Click" />
-                        </StackPanel>
-
-                        <StackPanel Margin="0,15,0,5">
-                            <TextBlock
-                                x:Uid="SettingsEntry-FeedbackHeader"
-                                FontSize="16" />
-
-                            <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
-                                <Button
-                                    Name="SendFeedbackButton"
-                                    x:Uid="SettingsEntry-SendFeedbackButton"
-                                    Click="SendFeedbackButton_Click"/>
-
-                                <Button
-                                    Name="CreateIssueButton"
-                                    x:Uid="SettingsEntry-CreateIssueButton"
-                                    Margin="10,0,0,0"
-                                    Click="CreateIssueButton_Click" />
-                            </StackPanel>
-                        </StackPanel>
-
-                        <StackPanel Margin="0,15,0,5">
-                            <HyperlinkButton
-                                x:Uid="Blog-Link"
-                                NavigateUri="https://blog.dav-apps.tech/tag/universalsoundboard" />
-
-                            <HyperlinkButton
-                                x:Uid="Github-Link"
-                                NavigateUri="https://github.com/dav-apps/UniversalSoundboard"
-                                Margin="0,-8,0,0" />
-
-                            <HyperlinkButton
-                                x:Uid="PrivacyPolicy-Link"
-                                NavigateUri="https://dav-apps.tech/privacy"
-                                Margin="0,-8,0,0" />
-
-                            <StackPanel
-                                Orientation="Horizontal"
-                                Margin="0,7,0,0">
-
-                                <TextBlock
-                                    Text="Version"
-                                    IsTextSelectionEnabled="True"
-                                    Margin="0,0,4,0" />
-
-                                <TextBlock
-                                    x:Uid="Version"
-                                    IsTextSelectionEnabled="True" />
-                            </StackPanel>
-
-                            <TextBlock Text="Copyright © 2022 by dav" />
-                        </StackPanel>
-                    </StackPanel>
-                </ScrollViewer>
-            </PivotItem>
-        </Pivot>
-    </Grid>
+        <Grid
+            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            Height="85"
+            Background="{StaticResource NavigationViewHeaderBackgroundBrush}" />
+    </RelativePanel>
 </Page>

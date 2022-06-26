@@ -219,13 +219,13 @@
   <data name="SettingsEntry-ShowCategoriesIcons.Header" xml:space="preserve">
     <value>Icons der Kategorien an Sounds anzeigen</value>
   </data>
-  <data name="SettingsPivot-Data.Header" xml:space="preserve">
+  <data name="SettingsHeader-Data.Text" xml:space="preserve">
     <value>Daten</value>
   </data>
-  <data name="SettingsPivot-Design.Header" xml:space="preserve">
-    <value>Design</value>
+  <data name="SettingsHeader-Design.Text" xml:space="preserve">
+    <value>Darstellung</value>
   </data>
-  <data name="SettingsPivot-General.Header" xml:space="preserve">
+  <data name="SettingsHeader-General.Text" xml:space="preserve">
     <value>Allgemein</value>
   </data>
   <data name="SettingsSoundBoardSize" xml:space="preserve">
@@ -923,8 +923,8 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="SettingsEntry-SendFeedbackButton.Content" xml:space="preserve">
     <value>Feedback senden</value>
   </data>
-  <data name="SettingsPivot-About.Header" xml:space="preserve">
-    <value>Info</value>
+  <data name="SettingsHeader-About.Text" xml:space="preserve">
+    <value>App-Info</value>
   </data>
   <data name="SettingsEntry-ImportExportDescription.Text" xml:space="preserve">
     <value>Du kannst dein Soundboard außerhalb der App sichern und auf unterschiedlichen Geräten benutzen.</value>

@@ -222,13 +222,13 @@
   <data name="SettingsEntry-ShowCategoriesIcons.Header" xml:space="preserve">
     <value>Afficher les icônes des catégories sur le son</value>
   </data>
-  <data name="SettingsPivot-Data.Header" xml:space="preserve">
+  <data name="SettingsHeader-Data.Text" xml:space="preserve">
     <value>Données</value>
   </data>
-  <data name="SettingsPivot-Design.Header" xml:space="preserve">
-    <value>Affichage</value>
+  <data name="SettingsHeader-Design.Text" xml:space="preserve">
+    <value>Apparence</value>
   </data>
-  <data name="SettingsPivot-General.Header" xml:space="preserve">
+  <data name="SettingsHeader-General.Text" xml:space="preserve">
     <value>Général</value>
   </data>
   <data name="SettingsSoundBoardSize" xml:space="preserve">
@@ -924,7 +924,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="SettingsEntry-SendFeedbackButton.Content" xml:space="preserve">
     <value>Envoyer des commentaires</value>
   </data>
-  <data name="SettingsPivot-About.Header" xml:space="preserve">
+  <data name="SettingsHeader-About.Text" xml:space="preserve">
     <value>À Propos</value>
   </data>
   <data name="SettingsEntry-ImportExportDescription.Text" xml:space="preserve">
