@@ -112,6 +112,7 @@ namespace UniversalSoundboard.Common
         public static ContentDialog SetCategoryContentDialog;
         public static ContentDialog CategoryOrderContentDialog;
         public static ContentDialog PropertiesContentDialog;
+        public static ContentDialog DefaultSoundOptionsContentDialog;
         public static ContentDialog DavPlusHotkeysContentDialog;
         public static ContentDialog DavPlusOutputDeviceContentDialog;
         public static ContentDialog UpgradeErrorContentDialog;
@@ -1513,24 +1514,17 @@ namespace UniversalSoundboard.Common
         #region Properties
         public static async Task<ContentDialog> CreatePropertiesContentDialog(Sound sound)
         {
-            selectedPropertiesSound = sound;
-            propertiesDefaultVolumeChanged = false;
-            propertiesDefaultMutedChanged = false;
-
             PropertiesContentDialog = new ContentDialog
             {
                 Title = loader.GetString("SoundItemOptionsFlyout-Properties"),
                 CloseButtonText = loader.GetString("Actions-Close"),
-                DefaultButton = ContentDialogButton.Close,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            PropertiesContentDialog.CloseButtonClick += PropertiesContentDialog_CloseButtonClick;
 
             int fontSize = 15;
             int row = 0;
             int contentGridWidth = 500;
             int leftColumnWidth = 210;
-            int rightColumnWidth = contentGridWidth - leftColumnWidth;
 
             Grid contentGrid = new Grid { Width = contentGridWidth };
 
@@ -1571,7 +1565,8 @@ namespace UniversalSoundboard.Common
 
             #region File type
             string audioFileType = sound.GetAudioFileExtension();
-            if(audioFileType != null)
+
+            if (audioFileType != null)
             {
                 // Add the row
                 var fileTypeRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
@@ -1603,7 +1598,8 @@ namespace UniversalSoundboard.Common
 
             #region Image file type
             string imageFileType = sound.GetImageFileExtension();
-            if(imageFileType != null)
+
+            if (imageFileType != null)
             {
                 // Add the row
                 var imageFileTypeRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
@@ -1635,6 +1631,7 @@ namespace UniversalSoundboard.Common
 
             #region Size
             var audioFile = sound.AudioFile;
+
             if (audioFile != null)
             {
                 // Add the row
@@ -1667,7 +1664,8 @@ namespace UniversalSoundboard.Common
 
             #region Image size
             var imageFile = sound.ImageFile;
-            if(imageFile != null)
+
+            if (imageFile != null)
             {
                 // Add the row
                 var imageSizeRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
@@ -1696,6 +1694,60 @@ namespace UniversalSoundboard.Common
                 contentGrid.Children.Add(imageSizeDataStackPanel);
             }
             #endregion
+
+            PropertiesContentDialog.Content = contentGrid;
+            return PropertiesContentDialog;
+        }
+
+        private static StackPanel GenerateTableCell(int row, int column, string text, int fontSize, bool isTextSelectionEnabled, Thickness? margin)
+        {
+            StackPanel contentStackPanel = new StackPanel();
+            Grid.SetRow(contentStackPanel, row);
+            Grid.SetColumn(contentStackPanel, column);
+
+            TextBlock contentTextBlock = new TextBlock
+            {
+                Text = text,
+                Margin = margin ?? new Thickness(0, 10, 0, 0),
+                FontSize = fontSize,
+                TextWrapping = TextWrapping.WrapWholeWords,
+                IsTextSelectionEnabled = isTextSelectionEnabled
+            };
+
+            contentStackPanel.Children.Add(contentTextBlock);
+            return contentStackPanel;
+        }
+        #endregion
+
+        #region DefaultSoundOptions
+        public static ContentDialog CreateDefaultSoundOptionsContentDialog(Sound sound)
+        {
+            selectedPropertiesSound = sound;
+            propertiesDefaultVolumeChanged = false;
+            propertiesDefaultMutedChanged = false;
+
+            DefaultSoundOptionsContentDialog = new ContentDialog
+            {
+                Title = string.Format("Default values for \"{0}\"", sound.Name),
+                CloseButtonText = loader.GetString("Actions-Close"),
+                RequestedTheme = FileManager.GetRequestedTheme()
+            };
+            DefaultSoundOptionsContentDialog.CloseButtonClick += DefaultSoundOptionsContentDialog_CloseButtonClick;
+
+            int fontSize = 15;
+            int row = 0;
+            int contentGridWidth = 500;
+            int leftColumnWidth = 200;
+            int rightColumnWidth = contentGridWidth - leftColumnWidth;
+
+            Grid contentGrid = new Grid { Width = contentGridWidth };
+
+            // Create the columns
+            var firstColumn = new ColumnDefinition { Width = new GridLength(leftColumnWidth, GridUnitType.Pixel) };
+            var secondColumn = new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) };
+
+            contentGrid.ColumnDefinitions.Add(firstColumn);
+            contentGrid.ColumnDefinitions.Add(secondColumn);
 
             #region Volume
             // Add the row
@@ -1754,14 +1806,14 @@ namespace UniversalSoundboard.Common
 
             // Create the ComboBox with the playback speed items
             PlaybackSpeedComboBox = new ComboBox();
-            PlaybackSpeedComboBox.Items.Add("0.25x");
-            PlaybackSpeedComboBox.Items.Add("0.5x");
-            PlaybackSpeedComboBox.Items.Add("0.75x");
-            PlaybackSpeedComboBox.Items.Add("1.0x");
-            PlaybackSpeedComboBox.Items.Add("1.25x");
-            PlaybackSpeedComboBox.Items.Add("1.5x");
-            PlaybackSpeedComboBox.Items.Add("1.75x");
-            PlaybackSpeedComboBox.Items.Add("2.0x");
+            PlaybackSpeedComboBox.Items.Add("0.25×");
+            PlaybackSpeedComboBox.Items.Add("0.5×");
+            PlaybackSpeedComboBox.Items.Add("0.75×");
+            PlaybackSpeedComboBox.Items.Add("1.0×");
+            PlaybackSpeedComboBox.Items.Add("1.25×");
+            PlaybackSpeedComboBox.Items.Add("1.5×");
+            PlaybackSpeedComboBox.Items.Add("1.75×");
+            PlaybackSpeedComboBox.Items.Add("2.0×");
             PlaybackSpeedComboBox.SelectionChanged += PlaybackSpeedComboBox_SelectionChanged;
 
             // Select the correct item
@@ -1909,9 +1961,8 @@ namespace UniversalSoundboard.Common
             }
             #endregion
 
-            PropertiesContentDialog.Content = contentGrid;
-
-            return PropertiesContentDialog;
+            DefaultSoundOptionsContentDialog.Content = contentGrid;
+            return DefaultSoundOptionsContentDialog;
         }
 
         private static void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -2005,7 +2056,7 @@ namespace UniversalSoundboard.Common
             await FileManager.StartHotkeyProcess();
         }
 
-        private static async void PropertiesContentDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private static async void DefaultSoundOptionsContentDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (!propertiesDefaultVolumeChanged && !propertiesDefaultMutedChanged) return;
 
@@ -2016,25 +2067,6 @@ namespace UniversalSoundboard.Common
 
             // Update the sound in the database
             await FileManager.SetDefaultVolumeOfSoundAsync(selectedPropertiesSound.Uuid, PropertiesVolumeControl.Value, PropertiesVolumeControl.Muted);
-        }
-
-        private static StackPanel GenerateTableCell(int row, int column, string text, int fontSize, bool isTextSelectionEnabled, Thickness? margin)
-        {
-            StackPanel contentStackPanel = new StackPanel();
-            Grid.SetRow(contentStackPanel, row);
-            Grid.SetColumn(contentStackPanel, column);
-
-            TextBlock contentTextBlock = new TextBlock
-            {
-                Text = text,
-                Margin = margin ?? new Thickness(0, 10, 0, 0),
-                FontSize = fontSize,
-                TextWrapping = TextWrapping.WrapWholeWords,
-                IsTextSelectionEnabled = isTextSelectionEnabled
-            };
-
-            contentStackPanel.Children.Add(contentTextBlock);
-            return contentStackPanel;
         }
         #endregion
 

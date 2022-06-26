@@ -52,6 +52,7 @@ namespace UniversalSoundboard.Components
             var flyout = new SoundItemOptionsFlyout(sound.Uuid, sound.Favourite, sound.ImageFile != null && sound.ImageFileTableObject != null);
 
             flyout.SetCategoriesFlyoutItemClick += OptionsFlyout_SetCategoriesFlyoutItemClick;
+            flyout.SetDefaultSoundOptionsFlyoutItemClick += OptionsFlyout_SetDefaultSoundOptionsFlyoutItemClick;
             flyout.SetFavouriteFlyoutItemClick += OptionsFlyout_SetFavouriteFlyoutItemClick;
             flyout.ShareFlyoutItemClick += OptionsFlyout_ShareFlyoutItemClick;
             flyout.ExportSoundFlyoutItemClick += OptionsFlyout_ExportSoundFlyoutItemClick;
@@ -83,6 +84,14 @@ namespace UniversalSoundboard.Components
             // Update and reload the sound
             await FileManager.SetCategoriesOfSoundAsync(sound.Uuid, categoryUuids);
             await FileManager.ReloadSound(sound.Uuid);
+        }
+        #endregion
+
+        #region SetDefaultSoundOptions
+        private async void OptionsFlyout_SetDefaultSoundOptionsFlyoutItemClick(object sender, RoutedEventArgs e)
+        {
+            var setDefaultSoundOptionsContentDialog = ContentDialogs.CreateDefaultSoundOptionsContentDialog(sound);
+            await setDefaultSoundOptionsContentDialog.ShowAsync();
         }
         #endregion
 
@@ -455,6 +464,7 @@ namespace UniversalSoundboard.Components
 
         public event EventHandler<object> FlyoutOpened;
         public event RoutedEventHandler SetCategoriesFlyoutItemClick;
+        public event RoutedEventHandler SetDefaultSoundOptionsFlyoutItemClick;
         public event RoutedEventHandler SetFavouriteFlyoutItemClick;
         public event RoutedEventHandler ShareFlyoutItemClick;
         public event RoutedEventHandler ExportSoundFlyoutItemClick;
@@ -465,7 +475,8 @@ namespace UniversalSoundboard.Components
         public event RoutedEventHandler DeleteFlyoutItemClick;
         public event RoutedEventHandler PropertiesFlyoutItemClick;
 
-        public SoundItemOptionsFlyout(Guid soundUuid, bool favourite, bool hasImage) {
+        public SoundItemOptionsFlyout(Guid soundUuid, bool favourite, bool hasImage)
+        {
             loader = new ResourceLoader();
 
             // Create the flyout
@@ -473,15 +484,29 @@ namespace UniversalSoundboard.Components
             optionsFlyout.Opened += (object sender, object e) => FlyoutOpened?.Invoke(sender, e);
 
             // Set categories
-            MenuFlyoutItem setCategoriesFlyoutItem = new MenuFlyoutItem {
+            MenuFlyoutItem setCategoriesFlyoutItem = new MenuFlyoutItem
+            {
                 Text = loader.GetString("SoundItemOptionsFlyout-SetCategories"),
                 Icon = new FontIcon { Glyph = "\uE179" }
             };
             setCategoriesFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetCategoriesFlyoutItemClick?.Invoke(sender, e);
             optionsFlyout.Items.Add(setCategoriesFlyoutItem);
 
+            // Set default values
+            MenuFlyoutItem setDefaultSoundOptionsFlyoutItem = new MenuFlyoutItem
+            {
+                Text = "Set default options",
+                Icon = new FontIcon { Glyph = "\uE713" }
+            };
+            setDefaultSoundOptionsFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetDefaultSoundOptionsFlyoutItemClick?.Invoke(sender, e);
+            optionsFlyout.Items.Add(setDefaultSoundOptionsFlyoutItem);
+
+            // Separator
+            optionsFlyout.Items.Add(new MenuFlyoutSeparator());
+
             // Set favourite
-            setFavouriteFlyoutItem = new MenuFlyoutItem {
+            setFavouriteFlyoutItem = new MenuFlyoutItem
+            {
                 Text = loader.GetString(favourite ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite"),
                 Icon = new FontIcon { Glyph = favourite ? "\uE195" : "\uE113" }
             };
@@ -489,7 +514,8 @@ namespace UniversalSoundboard.Components
             optionsFlyout.Items.Add(setFavouriteFlyoutItem);
 
             // Share
-            MenuFlyoutItem shareFlyoutItem = new MenuFlyoutItem {
+            MenuFlyoutItem shareFlyoutItem = new MenuFlyoutItem
+            {
                 Text = loader.GetString("Share"),
                 Icon = new FontIcon { Glyph = "\uE72D" }
             };
