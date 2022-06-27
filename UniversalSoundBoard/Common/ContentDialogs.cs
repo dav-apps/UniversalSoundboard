@@ -112,7 +112,7 @@ namespace UniversalSoundboard.Common
         public static ContentDialog SetCategoryContentDialog;
         public static ContentDialog CategoryOrderContentDialog;
         public static ContentDialog PropertiesContentDialog;
-        public static ContentDialog DefaultSoundOptionsContentDialog;
+        public static ContentDialog DefaultSoundSettingsContentDialog;
         public static ContentDialog DavPlusHotkeysContentDialog;
         public static ContentDialog DavPlusOutputDeviceContentDialog;
         public static ContentDialog UpgradeErrorContentDialog;
@@ -1719,25 +1719,25 @@ namespace UniversalSoundboard.Common
         }
         #endregion
 
-        #region DefaultSoundOptions
-        public static ContentDialog CreateDefaultSoundOptionsContentDialog(Sound sound)
+        #region DefaultSoundSettings
+        public static ContentDialog CreateDefaultSoundSettingsContentDialog(Sound sound)
         {
             selectedPropertiesSound = sound;
             propertiesDefaultVolumeChanged = false;
             propertiesDefaultMutedChanged = false;
 
-            DefaultSoundOptionsContentDialog = new ContentDialog
+            DefaultSoundSettingsContentDialog = new ContentDialog
             {
-                Title = string.Format("Default values for \"{0}\"", sound.Name),
+                Title = string.Format(loader.GetString("DefaultSoundSettingsContentDialog-Title"), sound.Name),
                 CloseButtonText = loader.GetString("Actions-Close"),
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
-            DefaultSoundOptionsContentDialog.CloseButtonClick += DefaultSoundOptionsContentDialog_CloseButtonClick;
+            DefaultSoundSettingsContentDialog.CloseButtonClick += DefaultSoundOptionsContentDialog_CloseButtonClick;
 
             int fontSize = 15;
             int row = 0;
             int contentGridWidth = 500;
-            int leftColumnWidth = 200;
+            int leftColumnWidth = 210;
             int rightColumnWidth = contentGridWidth - leftColumnWidth;
 
             Grid contentGrid = new Grid { Width = contentGridWidth };
@@ -1749,6 +1749,30 @@ namespace UniversalSoundboard.Common
             contentGrid.ColumnDefinitions.Add(firstColumn);
             contentGrid.ColumnDefinitions.Add(secondColumn);
 
+            #region Description
+            // Add the row
+            var descriptionRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+            contentGrid.RowDefinitions.Add(descriptionRow);
+
+            StackPanel descriptionStackPanel = new StackPanel();
+            Grid.SetRow(descriptionStackPanel, row);
+            Grid.SetColumn(descriptionStackPanel, 0);
+            Grid.SetColumnSpan(descriptionStackPanel, 2);
+
+            TextBlock descriptionTextBlock = new TextBlock
+            {
+                Text = loader.GetString("DefaultSoundSettingsContentDialog-Description"),
+                Margin = new Thickness(0, 0, 0, 0),
+                FontSize = fontSize,
+                TextWrapping = TextWrapping.WrapWholeWords
+            };
+
+            descriptionStackPanel.Children.Add(descriptionTextBlock);
+
+            row++;
+            contentGrid.Children.Add(descriptionStackPanel);
+            #endregion
+
             #region Volume
             // Add the row
             var volumeRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
@@ -1757,7 +1781,7 @@ namespace UniversalSoundboard.Common
             StackPanel volumeHeaderStackPanel = GenerateTableCell(
                 row,
                 0,
-                loader.GetString("PropertiesContentDialog-Volume"),
+                loader.GetString("DefaultSoundSettingsContentDialog-Volume"),
                 fontSize,
                 false,
                 new Thickness(0, 16, 0, 0)
@@ -1794,7 +1818,7 @@ namespace UniversalSoundboard.Common
             StackPanel playbackSpeedHeaderStackPanel = GenerateTableCell(
                 row,
                 0,
-                loader.GetString("PropertiesContentDialog-PlaybackSpeed"),
+                loader.GetString("DefaultSoundSettingsContentDialog-PlaybackSpeed"),
                 fontSize,
                 false,
                 new Thickness(0, 16, 0, 0)
@@ -1961,8 +1985,8 @@ namespace UniversalSoundboard.Common
             }
             #endregion
 
-            DefaultSoundOptionsContentDialog.Content = contentGrid;
-            return DefaultSoundOptionsContentDialog;
+            DefaultSoundSettingsContentDialog.Content = contentGrid;
+            return DefaultSoundSettingsContentDialog;
         }
 
         private static void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)

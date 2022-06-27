@@ -187,7 +187,7 @@
     <value>Paramètres</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetCategories" xml:space="preserve">
-    <value>Affecter des catégories</value>
+    <value>Catégories</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetImage" xml:space="preserve">
     <value>Changer la vignette</value>
@@ -444,7 +444,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
     <value>Sauvegarder</value>
   </data>
   <data name="SetCategoryContentDialog-Title" xml:space="preserve">
-    <value>Affecter aux catégories : {0}</value>
+    <value>Définir les catégories pour « {0} »</value>
   </data>
   <data name="SetCategoryForMultipleSoundsContentDialog-Title" xml:space="preserve">
     <value>Définir les catégories pour {0} sons</value>
@@ -602,8 +602,8 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="PropertiesContentDialog-ImageFileType" xml:space="preserve">
     <value>Type de fichier d’image :</value>
   </data>
-  <data name="PropertiesContentDialog-Volume" xml:space="preserve">
-    <value>Volume par défaut :</value>
+  <data name="DefaultSoundSettingsContentDialog-Volume" xml:space="preserve">
+    <value>Volume :</value>
   </data>
   <data name="EmptyCategoryMessageTitleTextBlock.Text" xml:space="preserve">
     <value>Cette catégorie est vide...</value>
@@ -731,8 +731,8 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="PlaybackSpeedButtonToolTip" xml:space="preserve">
     <value>Ce son est joué à {0} fois la vitesse normale.</value>
   </data>
-  <data name="PropertiesContentDialog-PlaybackSpeed" xml:space="preserve">
-    <value>Vitesse de lecture par défaut :</value>
+  <data name="DefaultSoundSettingsContentDialog-PlaybackSpeed" xml:space="preserve">
+    <value>Vitesse de lecture :</value>
   </data>
   <data name="Account-PlusCardFeature-HotkeysFlyoutTextBlock.Text" xml:space="preserve">
     <value>Ajoutez des raccourcis à vos sons. Ainsi, vous pouvez jouer des sons spécifiques à tout moment sans avoir à les rechercher dans l’application.</value>
@@ -1019,5 +1019,14 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   </data>
   <data name="SoundRecorderCloseWarningContentDialog-Title" xml:space="preserve">
     <value>Fermer l’enregistreur de son</value>
+  </data>
+  <data name="DefaultSoundSettingsContentDialog-Description" xml:space="preserve">
+    <value>Les paramètres suivants sont utilisés lorsque vous jouez ce son séparément.</value>
+  </data>
+  <data name="DefaultSoundSettingsContentDialog-Title" xml:space="preserve">
+    <value>Paramètres par défaut pour « {0} »</value>
+  </data>
+  <data name="SoundItemOptionsFlyout-SetDefaultSettings" xml:space="preserve">
+    <value>Paramètres par défaut</value>
   </data>
 </root>

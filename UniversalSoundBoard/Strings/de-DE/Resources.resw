@@ -184,7 +184,7 @@
     <value>Einstellungen</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetCategories" xml:space="preserve">
-    <value>Kategorien festlegen</value>
+    <value>Kategorien</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetImage" xml:space="preserve">
     <value>Bild wechseln</value>
@@ -443,7 +443,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>Speichern</value>
   </data>
   <data name="SetCategoryContentDialog-Title" xml:space="preserve">
-    <value>Kategorien festlegen: {0}</value>
+    <value>Kategorien festlegen für "{0}"</value>
   </data>
   <data name="SetCategoryForMultipleSoundsContentDialog-Title" xml:space="preserve">
     <value>Kategorien für {0} Sounds festlegen</value>
@@ -604,8 +604,8 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PropertiesContentDialog-ImageFileType" xml:space="preserve">
     <value>Dateityp des Bildes:</value>
   </data>
-  <data name="PropertiesContentDialog-Volume" xml:space="preserve">
-    <value>Standard-Lautstärke:</value>
+  <data name="DefaultSoundSettingsContentDialog-Volume" xml:space="preserve">
+    <value>Lautstärke:</value>
   </data>
   <data name="EmptyCategoryMessageTitleTextBlock.Text" xml:space="preserve">
     <value>Diese Kategorie ist leer...</value>
@@ -730,8 +730,8 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PlaybackSpeedButtonToolTip" xml:space="preserve">
     <value>Dieser Sound wird mit {0}-facher Geschwindigkeit abgespielt.</value>
   </data>
-  <data name="PropertiesContentDialog-PlaybackSpeed" xml:space="preserve">
-    <value>Standard-Wiedergabegeschwindigkeit:</value>
+  <data name="DefaultSoundSettingsContentDialog-PlaybackSpeed" xml:space="preserve">
+    <value>Wiedergabegeschwindigkeit:</value>
   </data>
   <data name="Account-PlusCardFeature-HotkeysFlyoutTextBlock.Text" xml:space="preserve">
     <value>Füge Tastenkombinationen zu deinen Sounds hinzu. So kannst du jederzeit bestimmte Sounds abspielen, ohne sie zuerst in der App zu suchen.</value>
@@ -1018,5 +1018,14 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   </data>
   <data name="SoundRecorderCloseWarningContentDialog-Title" xml:space="preserve">
     <value>Sound-Recorder schließen</value>
+  </data>
+  <data name="DefaultSoundSettingsContentDialog-Description" xml:space="preserve">
+    <value>Die folgenden Einstellungen werden verwendet, wenn du diesen Sound einzeln abspielst.</value>
+  </data>
+  <data name="DefaultSoundSettingsContentDialog-Title" xml:space="preserve">
+    <value>Standard-Einstellungen für "{0}"</value>
+  </data>
+  <data name="SoundItemOptionsFlyout-SetDefaultSettings" xml:space="preserve">
+    <value>Standard-Einstellungen</value>
   </data>
 </root>

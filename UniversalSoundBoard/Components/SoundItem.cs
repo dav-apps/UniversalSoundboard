@@ -52,7 +52,7 @@ namespace UniversalSoundboard.Components
             var flyout = new SoundItemOptionsFlyout(sound.Uuid, sound.Favourite, sound.ImageFile != null && sound.ImageFileTableObject != null);
 
             flyout.SetCategoriesFlyoutItemClick += OptionsFlyout_SetCategoriesFlyoutItemClick;
-            flyout.SetDefaultSoundOptionsFlyoutItemClick += OptionsFlyout_SetDefaultSoundOptionsFlyoutItemClick;
+            flyout.SetDefaultSoundSettingsFlyoutItemClick += OptionsFlyout_SetDefaultSoundSettingsFlyoutItemClick;
             flyout.SetFavouriteFlyoutItemClick += OptionsFlyout_SetFavouriteFlyoutItemClick;
             flyout.ShareFlyoutItemClick += OptionsFlyout_ShareFlyoutItemClick;
             flyout.ExportSoundFlyoutItemClick += OptionsFlyout_ExportSoundFlyoutItemClick;
@@ -88,10 +88,10 @@ namespace UniversalSoundboard.Components
         #endregion
 
         #region SetDefaultSoundOptions
-        private async void OptionsFlyout_SetDefaultSoundOptionsFlyoutItemClick(object sender, RoutedEventArgs e)
+        private async void OptionsFlyout_SetDefaultSoundSettingsFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            var setDefaultSoundOptionsContentDialog = ContentDialogs.CreateDefaultSoundOptionsContentDialog(sound);
-            await setDefaultSoundOptionsContentDialog.ShowAsync();
+            var setDefaultSoundSettingsContentDialog = ContentDialogs.CreateDefaultSoundSettingsContentDialog(sound);
+            await setDefaultSoundSettingsContentDialog.ShowAsync();
         }
         #endregion
 
@@ -464,7 +464,7 @@ namespace UniversalSoundboard.Components
 
         public event EventHandler<object> FlyoutOpened;
         public event RoutedEventHandler SetCategoriesFlyoutItemClick;
-        public event RoutedEventHandler SetDefaultSoundOptionsFlyoutItemClick;
+        public event RoutedEventHandler SetDefaultSoundSettingsFlyoutItemClick;
         public event RoutedEventHandler SetFavouriteFlyoutItemClick;
         public event RoutedEventHandler ShareFlyoutItemClick;
         public event RoutedEventHandler ExportSoundFlyoutItemClick;
@@ -492,14 +492,14 @@ namespace UniversalSoundboard.Components
             setCategoriesFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetCategoriesFlyoutItemClick?.Invoke(sender, e);
             optionsFlyout.Items.Add(setCategoriesFlyoutItem);
 
-            // Set default values
-            MenuFlyoutItem setDefaultSoundOptionsFlyoutItem = new MenuFlyoutItem
+            // Set default settings
+            MenuFlyoutItem setDefaultSoundSettingsFlyoutItem = new MenuFlyoutItem
             {
-                Text = "Set default options",
+                Text = loader.GetString("SoundItemOptionsFlyout-SetDefaultSettings"),
                 Icon = new FontIcon { Glyph = "\uE713" }
             };
-            setDefaultSoundOptionsFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetDefaultSoundOptionsFlyoutItemClick?.Invoke(sender, e);
-            optionsFlyout.Items.Add(setDefaultSoundOptionsFlyoutItem);
+            setDefaultSoundSettingsFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetDefaultSoundSettingsFlyoutItemClick?.Invoke(sender, e);
+            optionsFlyout.Items.Add(setDefaultSoundSettingsFlyoutItem);
 
             // Separator
             optionsFlyout.Items.Add(new MenuFlyoutSeparator());
