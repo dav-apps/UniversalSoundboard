@@ -82,7 +82,7 @@ namespace UniversalSoundboard.Pages
             ShowAllInAppNotifications();
 
             // Enable or disable StartMessage buttons
-            startMessageButtonsEnabled = !FileManager.itemViewHolder.Importing && FileManager.itemViewHolder.AppState != FileManager.AppState.InitialSync;
+            startMessageButtonsEnabled = !FileManager.itemViewHolder.Importing && FileManager.itemViewHolder.AppState != AppState.InitialSync;
             Bindings.Update();
         }
 
@@ -831,13 +831,13 @@ namespace UniversalSoundboard.Pages
         {
             startMessageVisibility = (
                     (
-                        FileManager.itemViewHolder.AppState == FileManager.AppState.Empty
-                        || FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync
+                        FileManager.itemViewHolder.AppState == AppState.Empty
+                        || FileManager.itemViewHolder.AppState == AppState.InitialSync
                     )
                     && FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty)
                 ) ? Visibility.Visible : Visibility.Collapsed;
 
-            startMessageButtonsEnabled = FileManager.itemViewHolder.AppState != FileManager.AppState.InitialSync;
+            startMessageButtonsEnabled = FileManager.itemViewHolder.AppState != AppState.InitialSync;
 
             if (FileManager.itemViewHolder.AllSounds.Count > 0)
                 EmptyCategoryMessageRelativePanel.Margin = new Thickness(0, 220, 0, 25);
@@ -847,7 +847,7 @@ namespace UniversalSoundboard.Pages
             emptyCategoryMessageVisibility = (
                 !FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty)
                 && FileManager.itemViewHolder.Sounds.Count == 0
-                && FileManager.itemViewHolder.AppState != FileManager.AppState.Loading
+                && FileManager.itemViewHolder.AppState != AppState.Loading
             ) ? Visibility.Visible : Visibility.Collapsed;
 
             Bindings.Update();
@@ -885,14 +885,14 @@ namespace UniversalSoundboard.Pages
 
         private void DownloadSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (ContentDialogs.DownloadSoundsResult == FileManager.DownloadSoundsResultType.Youtube)
+            if (ContentDialogs.DownloadSoundsResult == DownloadSoundsResultType.Youtube)
             {
                 if (ContentDialogs.DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox.IsChecked == true)
                     FileManager.itemViewHolder.TriggerDownloadYoutubePlaylistEvent(this, new EventArgs());
                 else
                     FileManager.itemViewHolder.TriggerDownloadYoutubeVideoEvent(this, new EventArgs());
             }
-            else if (ContentDialogs.DownloadSoundsResult == FileManager.DownloadSoundsResultType.AudioFile)
+            else if (ContentDialogs.DownloadSoundsResult == DownloadSoundsResultType.AudioFile)
                 FileManager.itemViewHolder.TriggerDownloadAudioFileEvent(this, new EventArgs());
         }
 
@@ -916,7 +916,7 @@ namespace UniversalSoundboard.Pages
 
         private async void StartMessageImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
+            FileManager.itemViewHolder.AppState = AppState.Normal;
             await FileManager.ImportDataAsync(ContentDialogs.ImportFile, true);
             FileManager.UpdatePlayAllButtonVisibility();
 

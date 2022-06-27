@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.Media;
 using Windows.UI.Xaml;
@@ -72,7 +71,7 @@ namespace UniversalSoundboard.Common
 
     public class ShowInAppNotificationEventArgs : EventArgs
     {
-        public FileManager.InAppNotificationType Type { get; set; }
+        public InAppNotificationType Type { get; set; }
         public string Message { get; set; }
         public int Duration { get; set; }
         public bool ShowProgressRing { get; set; }
@@ -83,7 +82,7 @@ namespace UniversalSoundboard.Common
         public event EventHandler<RoutedEventArgs> SecondaryButtonClick;
 
         public ShowInAppNotificationEventArgs(
-            FileManager.InAppNotificationType type,
+            InAppNotificationType type,
             string message,
             int duration = 0,
             bool showProgressRing = false,

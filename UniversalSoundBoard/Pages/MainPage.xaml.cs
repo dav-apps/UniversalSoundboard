@@ -152,12 +152,12 @@ namespace UniversalSoundboard.Pages
                     var visibility = Visibility.Collapsed;
 
                     if (
-                        FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync
-                        || FileManager.itemViewHolder.AppState == FileManager.AppState.Empty
+                        FileManager.itemViewHolder.AppState == AppState.InitialSync
+                        || FileManager.itemViewHolder.AppState == AppState.Empty
                     ) visibility = FileManager.itemViewHolder.Page == typeof(SoundPage) ? Visibility.Collapsed : Visibility.Visible;
-                    else if (FileManager.itemViewHolder.AppState == FileManager.AppState.Normal)
+                    else if (FileManager.itemViewHolder.AppState == AppState.Normal)
                         visibility = Visibility.Visible;
-                    else if(FileManager.itemViewHolder.AppState == FileManager.AppState.Loading)
+                    else if(FileManager.itemViewHolder.AppState == AppState.Loading)
                         visibility = playingSoundsLoaded ? Visibility.Visible : Visibility.Collapsed;
 
                     NavigationViewHeader.Visibility = visibility;
@@ -313,7 +313,7 @@ namespace UniversalSoundboard.Pages
         private async void WriteReviewInAppNotificationEventArgs_PrimaryButtonClick(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NBLGGH51005"));
-            FileManager.DismissInAppNotification(FileManager.InAppNotificationType.WriteReview);
+            FileManager.DismissInAppNotification(InAppNotificationType.WriteReview);
 
             Analytics.TrackEvent("InAppNotification-WriteReview-PrimaryButtonClick", new Dictionary<string, string>
             {
@@ -326,7 +326,7 @@ namespace UniversalSoundboard.Pages
         private void CustomiseTitleBar()
         {
             ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
-            titleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Dark ? Colors.White : Colors.Black;
+            titleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark ? Colors.White : Colors.Black;
             titleBar.ButtonBackgroundColor = Colors.Transparent;
             titleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
@@ -473,7 +473,7 @@ namespace UniversalSoundboard.Pages
             {
                 // Show InAppNotification for writing a review
                 var args = new ShowInAppNotificationEventArgs(
-                    FileManager.InAppNotificationType.WriteReview,
+                    InAppNotificationType.WriteReview,
                     loader.GetString("InAppNotification-WriteReview"),
                     0,
                     false,
@@ -914,7 +914,7 @@ namespace UniversalSoundboard.Pages
                 if (categoryUuid.Equals(FileManager.itemViewHolder.SelectedCategory) && FileManager.itemViewHolder.Page == typeof(SoundPage)) return;
 
                 // Set initialCategory if the playing sounds weren't still loaded
-                if (FileManager.itemViewHolder.AppState == FileManager.AppState.Loading && !playingSoundsLoaded)
+                if (FileManager.itemViewHolder.AppState == AppState.Loading && !playingSoundsLoaded)
                     initialCategory = categoryUuid;
                 else if (Equals(categoryUuid, Guid.Empty))
                     await FileManager.ShowAllSoundsAsync();
@@ -1165,7 +1165,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 null,
                 new ShowInAppNotificationEventArgs(
-                    FileManager.InAppNotificationType.AddSounds,
+                    InAppNotificationType.AddSounds,
                     string.Format(loader.GetString("InAppNotification-AddSounds"), 0, ContentDialogs.AddSoundsSelectedFiles.Count),
                     0,
                     true
@@ -1192,7 +1192,7 @@ namespace UniversalSoundboard.Pages
                     await FileManager.AddSound(uuid);
 
                     FileManager.SetInAppNotificationMessage(
-                        FileManager.InAppNotificationType.AddSounds,
+                        InAppNotificationType.AddSounds,
                         string.Format(loader.GetString("InAppNotification-AddSounds"), i + 1, ContentDialogs.AddSoundsSelectedFiles.Count)
                     );
 
@@ -1202,8 +1202,8 @@ namespace UniversalSoundboard.Pages
 
             FileManager.UpdatePlayAllButtonVisibility();
 
-            if (FileManager.itemViewHolder.AppState == FileManager.AppState.Empty)
-                FileManager.itemViewHolder.AppState = FileManager.AppState.Normal;
+            if (FileManager.itemViewHolder.AppState == AppState.Empty)
+                FileManager.itemViewHolder.AppState = AppState.Normal;
 
             if (notAddedSounds.Count > 0)
             {
@@ -1212,7 +1212,7 @@ namespace UniversalSoundboard.Pages
                     : string.Format(loader.GetString("InAppNotification-AddSoundsErrorMultipleSounds"), notAddedSounds.Count);
 
                 var inAppNotificationArgs = new ShowInAppNotificationEventArgs(
-                    FileManager.InAppNotificationType.AddSounds,
+                    InAppNotificationType.AddSounds,
                     message,
                     0,
                     false,
@@ -1222,7 +1222,7 @@ namespace UniversalSoundboard.Pages
 
                 inAppNotificationArgs.PrimaryButtonClick += async (sender, args) =>
                 {
-                    FileManager.DismissInAppNotification(FileManager.InAppNotificationType.AddSounds);
+                    FileManager.DismissInAppNotification(InAppNotificationType.AddSounds);
 
                     var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notAddedSounds);
                     await ContentDialogs.ShowContentDialogAsync(addSoundsErrorContentDialog);
@@ -1239,7 +1239,7 @@ namespace UniversalSoundboard.Pages
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                     null,
                     new ShowInAppNotificationEventArgs(
-                        FileManager.InAppNotificationType.AddSounds,
+                        InAppNotificationType.AddSounds,
                         message,
                         8000,
                         false,
@@ -1269,14 +1269,14 @@ namespace UniversalSoundboard.Pages
 
         private async void DownloadSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (ContentDialogs.DownloadSoundsResult == FileManager.DownloadSoundsResultType.Youtube)
+            if (ContentDialogs.DownloadSoundsResult == DownloadSoundsResultType.Youtube)
             {
                 if (ContentDialogs.DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox.IsChecked == true)
                     await DownloadSoundsContentDialog_YoutubePlaylistDownload();
                 else
                     await DownloadSoundsContentDialog_YoutubeVideoDownload();
             }
-            else if (ContentDialogs.DownloadSoundsResult == FileManager.DownloadSoundsResultType.AudioFile)
+            else if (ContentDialogs.DownloadSoundsResult == DownloadSoundsResultType.AudioFile)
                 await DownloadSoundsContentDialog_AudioFileDownload();
         }
 
@@ -1292,7 +1292,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
                 new ShowInAppNotificationEventArgs(
-                    FileManager.InAppNotificationType.DownloadSound,
+                    InAppNotificationType.DownloadSound,
                     loader.GetString("InAppNotification-DownloadSound"),
                     0,
                     true
@@ -1326,7 +1326,7 @@ namespace UniversalSoundboard.Pages
 
             // Download the audio track
             StorageFile audioFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
-            var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(FileManager.InAppNotificationType.DownloadSound, false, value));
+            var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSound, false, value));
             bool audioFileDownloadResult = false;
 
             await Task.Run(async () =>
@@ -1365,7 +1365,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
                 new ShowInAppNotificationEventArgs(
-                    FileManager.InAppNotificationType.DownloadSound,
+                    InAppNotificationType.DownloadSound,
                     loader.GetString("InAppNotification-DownloadSoundSuccessful"),
                     8000,
                     false,
@@ -1393,7 +1393,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
                 new ShowInAppNotificationEventArgs(
-                    FileManager.InAppNotificationType.DownloadSounds,
+                    InAppNotificationType.DownloadSounds,
                     string.Format(loader.GetString("InAppNotification-DownloadSounds"), 1, playlistItemResponse.PageInfo.TotalResults.GetValueOrDefault()),
                     0,
                     true
@@ -1424,7 +1424,7 @@ namespace UniversalSoundboard.Pages
                     FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                         this,
                         new ShowInAppNotificationEventArgs(
-                            FileManager.InAppNotificationType.DownloadSounds,
+                            InAppNotificationType.DownloadSounds,
                             loader.GetString("InAppNotification-DownloadSoundsPlaylistError"),
                             0,
                             false,
@@ -1461,7 +1461,7 @@ namespace UniversalSoundboard.Pages
             for (int i = 0; i < playlistItems.Count; i++)
             {
                 FileManager.SetInAppNotificationMessage(
-                    FileManager.InAppNotificationType.DownloadSounds,
+                    InAppNotificationType.DownloadSounds,
                     string.Format(loader.GetString("InAppNotification-DownloadSounds"), i + 1, playlistItems.Count)
                 );
 
@@ -1498,7 +1498,7 @@ namespace UniversalSoundboard.Pages
 
                 // Download the audio track
                 StorageFile audioFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
-                var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(FileManager.InAppNotificationType.DownloadSounds, false, value));
+                var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSounds, false, value));
                 bool audioFileDownloadResult = false;
 
                 await Task.Run(async () =>
@@ -1523,7 +1523,7 @@ namespace UniversalSoundboard.Pages
                     }
                 }
 
-                FileManager.SetInAppNotificationProgress(FileManager.InAppNotificationType.DownloadSounds);
+                FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSounds);
 
                 // Add the files as a new sound
                 Guid uuid = await FileManager.CreateSoundAsync(
@@ -1550,7 +1550,7 @@ namespace UniversalSoundboard.Pages
                     : string.Format(loader.GetString("InAppNotification-DownloadSoundsErrorMultipleSounds"), notDownloadedSounds.Count);
 
                 var inAppNotificationArgs = new ShowInAppNotificationEventArgs(
-                    FileManager.InAppNotificationType.DownloadSounds,
+                    InAppNotificationType.DownloadSounds,
                     message,
                     0,
                     false,
@@ -1560,7 +1560,7 @@ namespace UniversalSoundboard.Pages
 
                 inAppNotificationArgs.PrimaryButtonClick += async (sender, args) =>
                 {
-                    FileManager.DismissInAppNotification(FileManager.InAppNotificationType.DownloadSounds);
+                    FileManager.DismissInAppNotification(InAppNotificationType.DownloadSounds);
 
                     var downloadSoundsErrorContentDialog = ContentDialogs.CreateDownloadSoundsErrorContentDialog(notDownloadedSounds);
                     await ContentDialogs.ShowContentDialogAsync(downloadSoundsErrorContentDialog);
@@ -1573,7 +1573,7 @@ namespace UniversalSoundboard.Pages
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                     this,
                     new ShowInAppNotificationEventArgs(
-                        FileManager.InAppNotificationType.DownloadSounds,
+                        InAppNotificationType.DownloadSounds,
                         string.Format(loader.GetString("InAppNotification-DownloadSoundsSuccessful"), playlistItems.Count),
                         8000,
                         false,
@@ -1690,7 +1690,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
                 new ShowInAppNotificationEventArgs(
-                    FileManager.InAppNotificationType.DownloadSound,
+                    InAppNotificationType.DownloadSound,
                     loader.GetString("InAppNotification-DownloadSound"),
                     0,
                     true
@@ -1702,7 +1702,7 @@ namespace UniversalSoundboard.Pages
 
             string soundUrl = ContentDialogs.DownloadSoundsUrlTextBox.Text;
             bool result = false;
-            var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(FileManager.InAppNotificationType.DownloadSound, false, value));
+            var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSound, false, value));
 
             await Task.Run(async () =>
             {
@@ -1715,7 +1715,7 @@ namespace UniversalSoundboard.Pages
                 return;
             }
 
-            FileManager.SetInAppNotificationProgress(FileManager.InAppNotificationType.DownloadSound);
+            FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSound);
 
             Guid uuid = await FileManager.CreateSoundAsync(
                 null,
@@ -1735,7 +1735,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
                 new ShowInAppNotificationEventArgs(
-                    FileManager.InAppNotificationType.DownloadSound,
+                    InAppNotificationType.DownloadSound,
                     loader.GetString("InAppNotification-DownloadSoundSuccessful"),
                     8000,
                     false,
@@ -1756,7 +1756,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.AddingSounds = false;
 
             var inAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
-                FileManager.InAppNotificationType.DownloadSound,
+                InAppNotificationType.DownloadSound,
                 loader.GetString("InAppNotification-DownloadSoundError"),
                 0,
                 false,
@@ -1784,7 +1784,7 @@ namespace UniversalSoundboard.Pages
                 soundRecorderAppWindow.RequestSize(new Size(500, 500));
                 soundRecorderAppWindow.Title = loader.GetString("SoundRecorder-Title");
                 soundRecorderAppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-                soundRecorderAppWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Dark ? Colors.White : Colors.Black;
+                soundRecorderAppWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark ? Colors.White : Colors.Black;
                 soundRecorderAppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
                 soundRecorderAppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 

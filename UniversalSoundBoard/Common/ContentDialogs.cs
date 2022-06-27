@@ -62,7 +62,7 @@ namespace UniversalSoundboard.Common
         public static PlaylistItemListResponse DownloadSoundsPlaylistItemListResponse;
         public static string DownloadSoundsPlaylistId = "";
         public static string DownloadSoundsPlaylistTitle = "";
-        public static FileManager.DownloadSoundsResultType DownloadSoundsResult = FileManager.DownloadSoundsResultType.None;
+        public static DownloadSoundsResultType DownloadSoundsResult = DownloadSoundsResultType.None;
         public static string DownloadSoundsAudioFileName = "";
         public static string DownloadSoundsAudioFileType = "";
         public static TextBox NewCategoryTextBox;
@@ -420,7 +420,7 @@ namespace UniversalSoundboard.Common
         private static async void DownloadSoundsUrlTextBox_TextChanged(object sender, TextChangedEventArgs args)
         {
             DownloadSoundsContentDialog.IsPrimaryButtonEnabled = false;
-            DownloadSoundsResult = FileManager.DownloadSoundsResultType.None;
+            DownloadSoundsResult = DownloadSoundsResultType.None;
             HideAllMessageElementsInDownloadSoundsContentDialog();
 
             // Check if the input is a valid link
@@ -497,7 +497,7 @@ namespace UniversalSoundboard.Common
                 }
 
                 DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Collapsed;
-                DownloadSoundsResult = FileManager.DownloadSoundsResultType.Youtube;
+                DownloadSoundsResult = DownloadSoundsResultType.Youtube;
                 DownloadSoundsContentDialog.IsPrimaryButtonEnabled = true;
 
                 if (DownloadSoundsPlaylistId != null)
@@ -598,7 +598,7 @@ namespace UniversalSoundboard.Common
 
                 DownloadSoundsLoadingMessageStackPanel.Visibility = Visibility.Collapsed;
                 DownloadSoundsYoutubeInfoGrid.Visibility = Visibility.Collapsed;
-                DownloadSoundsResult = FileManager.DownloadSoundsResultType.AudioFile;
+                DownloadSoundsResult = DownloadSoundsResultType.AudioFile;
                 DownloadSoundsContentDialog.IsPrimaryButtonEnabled = true;
             }
         }

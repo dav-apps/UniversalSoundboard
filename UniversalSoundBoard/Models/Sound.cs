@@ -102,7 +102,7 @@ namespace UniversalSoundboard.Models
         public static Uri GetDefaultImageUri()
         {
             Uri defaultImageUri;
-            if (FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Dark)
+            if (FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark)
                 defaultImageUri = new Uri(DefaultDarkSoundImageUri, UriKind.Absolute);
             else
                 defaultImageUri = new Uri(DefaultLightSoundImageUri, UriKind.Absolute);

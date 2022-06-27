@@ -45,7 +45,7 @@ namespace UniversalSoundboard.Common
         private const bool openMultipleSoundsDefault = true;
         private const bool multiSoundPlaybackDefault = false;
         private const bool showSoundsPivotDefault = true;
-        private const FileManager.SoundOrder soundOrderDefault = FileManager.SoundOrder.Custom;
+        private const SoundOrder soundOrderDefault = Common.SoundOrder.Custom;
         private const bool soundOrderReversedDefault = false;
         private const bool useStandardOutputDeviceDefault = true;
         private const string outputDeviceDefault = "";
@@ -53,7 +53,7 @@ namespace UniversalSoundboard.Common
         private const bool showCategoriesIconsDefault = false;
         private const bool showAcrylicBackgroundDefault = true;
         private const bool liveTileDefault = true;
-        private const FileManager.AppTheme themeDefault = FileManager.AppTheme.System;
+        private const AppTheme themeDefault = AppTheme.System;
         private const double playingSoundsBarWidthDefault = 0.35;
         private const bool mutedDefault = false;
         private const int volumeDefault = 100;
@@ -63,7 +63,7 @@ namespace UniversalSoundboard.Common
 
         #region Variables
         #region State
-        private FileManager.AppState _appState;     // The current state of the app
+        private AppState _appState;     // The current state of the app
         private string _title;                      // The title text
         private Type _page;                         // The current page
         private string _searchQuery;                // The string entered into the search box
@@ -90,7 +90,7 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Layout & Design
-        private FileManager.AppTheme _currentTheme;                         // The current theme of the app; is either Light or Dark
+        private AppTheme _currentTheme;                         // The current theme of the app; is either Light or Dark
         private bool _progressRingIsActive;                                 // Shows the Progress Ring if true
         private bool _loadingScreenVisible;                                 // If true, the large loading screen is visible
         private string _loadingScreenMessage;                               // The text that is shown in the loading screen
@@ -123,7 +123,7 @@ namespace UniversalSoundboard.Common
         private bool _showCategoriesIcons;              // If true shows the icon of the category on the sound tile
         private bool _showAcrylicBackground;            // If true the acrylic background is visible
         private bool _liveTile;                         // If true, shows the live tile
-        private FileManager.AppTheme _theme;            // The design theme of the app
+        private AppTheme _theme;                        // The design theme of the app
         private double _playingSoundsBarWidth;          // The relative width of the PlayingSoundsBar in percent
         private bool _muted;                            // If true, the volume is muted
         private int _volume;                            // The volume of the entire app, between 0 and 100
@@ -196,7 +196,7 @@ namespace UniversalSoundboard.Common
             #endregion
 
             #region Layout & Design
-            _currentTheme = FileManager.AppTheme.Light;
+            _currentTheme = AppTheme.Light;
             _progressRingIsActive = false;
             _loadingScreenVisible = false;
             _loadingScreenMessage = "";
@@ -262,7 +262,7 @@ namespace UniversalSoundboard.Common
                 var oldSoundOrder = soundOrderDefault;
 
                 if (localSettings.Values[soundOrderKey] != null)
-                    oldSoundOrder = (FileManager.SoundOrder)localSettings.Values[soundOrderKey];
+                    oldSoundOrder = (SoundOrder)localSettings.Values[soundOrderKey];
 
                 var oldSoundOrderReversed = soundOrderReversedDefault;
 
@@ -274,14 +274,14 @@ namespace UniversalSoundboard.Common
 
                 switch (oldSoundOrder)
                 {
-                    case FileManager.SoundOrder.Name:
+                    case Common.SoundOrder.Name:
                         if (oldSoundOrderReversed)
                             newSoundOrder = NewSoundOrder.NameDescending;
                         else
                             newSoundOrder = NewSoundOrder.NameAscending;
 
                         break;
-                    case FileManager.SoundOrder.CreationDate:
+                    case Common.SoundOrder.CreationDate:
                         if (oldSoundOrderReversed)
                             newSoundOrder = NewSoundOrder.CreationDateDescending;
                         else
@@ -350,13 +350,13 @@ namespace UniversalSoundboard.Common
                 switch ((string)localSettings.Values[themeKey])
                 {
                     case "light":
-                        _theme = FileManager.AppTheme.Light;
+                        _theme = AppTheme.Light;
                         break;
                     case "dark":
-                        _theme = FileManager.AppTheme.Dark;
+                        _theme = AppTheme.Dark;
                         break;
                     case "system":
-                        _theme = FileManager.AppTheme.System;
+                        _theme = AppTheme.System;
                         break;
                 }
             }
@@ -416,7 +416,7 @@ namespace UniversalSoundboard.Common
         #region State
         #region AppState
         public const string AppStateKey = "AppState";
-        public FileManager.AppState AppState
+        public AppState AppState
         {
             get => _appState;
             set
@@ -600,7 +600,7 @@ namespace UniversalSoundboard.Common
         #region Layout & Design
         #region CurrentTheme
         public const string CurrentThemeKey = "CurrentTheme";
-        public FileManager.AppTheme CurrentTheme
+        public AppTheme CurrentTheme
         {
             get => _currentTheme;
             set
@@ -1021,7 +1021,7 @@ namespace UniversalSoundboard.Common
 
         #region Theme
         public const string ThemeKey = "Theme";
-        public FileManager.AppTheme Theme
+        public AppTheme Theme
         {
             get => _theme;
             set
@@ -1030,10 +1030,10 @@ namespace UniversalSoundboard.Common
                 string themeString = "system";
                 switch (value)
                 {
-                    case FileManager.AppTheme.Light:
+                    case AppTheme.Light:
                         themeString = "light";
                         break;
-                    case FileManager.AppTheme.Dark:
+                    case AppTheme.Dark:
                         themeString = "dark";
                         break;
                 }

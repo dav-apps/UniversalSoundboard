@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
@@ -214,7 +215,7 @@ namespace UniversalSoundboard.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return FileManager.itemViewHolder.CurrentTheme == FileManager.AppTheme.Light ? "ms-appx:///Assets/Images/usb-logo.png" : "ms-appx:///Assets/Images/usb-logo-white.png";
+            return FileManager.itemViewHolder.CurrentTheme == AppTheme.Light ? "ms-appx:///Assets/Images/usb-logo.png" : "ms-appx:///Assets/Images/usb-logo-white.png";
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -227,7 +228,7 @@ namespace UniversalSoundboard.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return FileManager.itemViewHolder.AppState == FileManager.AppState.Loading;
+            return FileManager.itemViewHolder.AppState == AppState.Loading;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
@@ -240,7 +241,7 @@ namespace UniversalSoundboard.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
-            return FileManager.itemViewHolder.AppState == FileManager.AppState.Normal;
+            return FileManager.itemViewHolder.AppState == AppState.Normal;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)

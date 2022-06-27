@@ -145,7 +145,7 @@ namespace UniversalSoundboard.Pages
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                     null,
                     new ShowInAppNotificationEventArgs(
-                        FileManager.InAppNotificationType.Sync,
+                        InAppNotificationType.Sync,
                         new ResourceLoader().GetString("InAppNotification-Sync"),
                         0,
                         true
@@ -153,7 +153,7 @@ namespace UniversalSoundboard.Pages
                 );
 
                 if (FileManager.itemViewHolder.AllSounds.Count == 0)
-                    FileManager.itemViewHolder.AppState = FileManager.AppState.InitialSync;
+                    FileManager.itemViewHolder.AppState = AppState.InitialSync;
 
                 return true;
             }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
-using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Common;
 using Windows.UI.Xaml.Controls;
 using WinUI = Microsoft.UI.Xaml.Controls;
 
@@ -8,7 +8,7 @@ namespace UniversalSoundboard.Models
     public class InAppNotificationItem
     {
         public InAppNotification InAppNotification { get; }
-        public FileManager.InAppNotificationType InAppNotificationType { get; }
+        public InAppNotificationType InAppNotificationType { get; }
         public int Duration { get; set; }
         public WinUI.ProgressRing ProgressRing { get; set; }
         public TextBlock MessageTextBlock { get; }
@@ -18,7 +18,7 @@ namespace UniversalSoundboard.Models
 
         public InAppNotificationItem(
             InAppNotification inAppNotification,
-            FileManager.InAppNotificationType inAppNotificationType,
+            InAppNotificationType inAppNotificationType,
             int duration,
             WinUI.ProgressRing progressRing,
             TextBlock messageTextBlock,

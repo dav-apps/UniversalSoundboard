@@ -18,8 +18,8 @@ namespace UniversalSoundboard.Common
             if (tableId == FileManager.SoundTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
                 {
-                    if (FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync)
-                        FileManager.itemViewHolder.AppState = FileManager.AppState.Loading;
+                    if (FileManager.itemViewHolder.AppState == AppState.InitialSync)
+                        FileManager.itemViewHolder.AppState = AppState.Loading;
 
                     FileManager.itemViewHolder.AllSoundsChanged = true;
 
@@ -99,10 +99,10 @@ namespace UniversalSoundboard.Common
         public void SyncFinished()
         {
             FileManager.syncFinished = true;
-            FileManager.DismissInAppNotification(FileManager.InAppNotificationType.Sync);
+            FileManager.DismissInAppNotification(InAppNotificationType.Sync);
 
-            if (FileManager.itemViewHolder.AppState == FileManager.AppState.InitialSync)
-                FileManager.itemViewHolder.AppState = FileManager.itemViewHolder.AllSounds.Count > 0 ? FileManager.AppState.Normal : FileManager.AppState.Empty;
+            if (FileManager.itemViewHolder.AppState == AppState.InitialSync)
+                FileManager.itemViewHolder.AppState = FileManager.itemViewHolder.AllSounds.Count > 0 ? AppState.Normal : AppState.Empty;
         }
     }
 }

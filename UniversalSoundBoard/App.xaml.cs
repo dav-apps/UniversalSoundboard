@@ -97,12 +97,12 @@ namespace UniversalSoundboard
             FileManager.itemViewHolder = new ItemViewHolder();
 
             // Set the theme
-            if (FileManager.itemViewHolder.Theme == FileManager.AppTheme.Light)
-                FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Light;
-            else if (FileManager.itemViewHolder.Theme == FileManager.AppTheme.Dark)
-                FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Dark;
+            if (FileManager.itemViewHolder.Theme == AppTheme.Light)
+                FileManager.itemViewHolder.CurrentTheme = AppTheme.Light;
+            else if (FileManager.itemViewHolder.Theme == AppTheme.Dark)
+                FileManager.itemViewHolder.CurrentTheme = AppTheme.Dark;
             else
-                FileManager.itemViewHolder.CurrentTheme = RequestedTheme == ApplicationTheme.Light ? FileManager.AppTheme.Light : FileManager.AppTheme.Dark;
+                FileManager.itemViewHolder.CurrentTheme = RequestedTheme == ApplicationTheme.Light ? AppTheme.Light : AppTheme.Dark;
         }
 
         /// <summary>
@@ -225,10 +225,10 @@ namespace UniversalSoundboard
 
         private void RootFrame_ActualThemeChanged(FrameworkElement sender, object args)
         {
-            if (FileManager.itemViewHolder.Theme != FileManager.AppTheme.System) return;
+            if (FileManager.itemViewHolder.Theme != AppTheme.System) return;
 
             // Update the theme
-            FileManager.itemViewHolder.CurrentTheme = sender.ActualTheme == ElementTheme.Dark ? FileManager.AppTheme.Dark : FileManager.AppTheme.Light;
+            FileManager.itemViewHolder.CurrentTheme = sender.ActualTheme == ElementTheme.Dark ? AppTheme.Dark : AppTheme.Light;
         }
 
         private Frame CreateRootFrame(ApplicationExecutionState previousExecutionState, string arguments, Type page)

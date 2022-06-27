@@ -257,16 +257,16 @@ namespace UniversalSoundboard.Pages
             switch (ThemeComboBox.SelectedIndex)
             {
                 case 0:
-                    FileManager.itemViewHolder.Theme = FileManager.AppTheme.System;
-                    FileManager.itemViewHolder.CurrentTheme = (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? FileManager.AppTheme.Dark : FileManager.AppTheme.Light;
+                    FileManager.itemViewHolder.Theme = AppTheme.System;
+                    FileManager.itemViewHolder.CurrentTheme = (App.Current as App).RequestedTheme == ApplicationTheme.Dark ? AppTheme.Dark : AppTheme.Light;
                     break;
                 case 1:
-                    FileManager.itemViewHolder.Theme = FileManager.AppTheme.Light;
-                    FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Light;
+                    FileManager.itemViewHolder.Theme = AppTheme.Light;
+                    FileManager.itemViewHolder.CurrentTheme = AppTheme.Light;
                     break;
                 case 2:
-                    FileManager.itemViewHolder.Theme = FileManager.AppTheme.Dark;
-                    FileManager.itemViewHolder.CurrentTheme = FileManager.AppTheme.Dark;
+                    FileManager.itemViewHolder.Theme = AppTheme.Dark;
+                    FileManager.itemViewHolder.CurrentTheme = AppTheme.Dark;
                     break;
             }
         }
