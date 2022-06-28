@@ -11,7 +11,8 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundboard.Models
 {
-    public class Sound{
+    public class Sound
+    {
         private const string DefaultLightSoundImageUri = "ms-appx:///Assets/Images/default.png";
         private const string DefaultDarkSoundImageUri = "ms-appx:///Assets/Images/default-dark.png";
 
@@ -22,6 +23,7 @@ namespace UniversalSoundboard.Models
         public int DefaultVolume { get; set; }
         public bool DefaultMuted { get; set; }
         public int DefaultPlaybackSpeed { get; set; }
+        public int DefaultRepetitions { get; set; }
         public List<Hotkey> Hotkeys { get; set; }
         public BitmapImage Image { get; set; }
         public TableObject AudioFileTableObject { get; set; }
@@ -39,6 +41,7 @@ namespace UniversalSoundboard.Models
             DefaultVolume = 100;
             DefaultMuted = false;
             DefaultPlaybackSpeed = 100;
+            DefaultRepetitions = 0;
             Hotkeys = new List<Hotkey>();
 
             FileManager.itemViewHolder.TableObjectFileDownloadCompleted += ItemViewHolder_TableObjectFileDownloadCompleted;

@@ -510,6 +510,7 @@ namespace UniversalSoundboard.Pages
                 Volume = v,
                 Muted = m,
                 PlaybackSpeed = ps,
+                Repetitions = sound.DefaultRepetitions,
                 StartPlaying = startPlaying,
                 StartPosition = position
             };

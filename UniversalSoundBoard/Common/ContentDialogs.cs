@@ -37,10 +37,11 @@ namespace UniversalSoundboard.Common
         #region Variables
         private static readonly ResourceLoader loader = new ResourceLoader();
 
-        private static Sound selectedPropertiesSound;
-        private static VolumeControl PropertiesVolumeControl;
-        private static bool propertiesDefaultVolumeChanged = false;
-        private static bool propertiesDefaultMutedChanged = false;
+        private static Sound defaultSoundSettingsSelectedSound;
+        private static VolumeControl DefaultSoundSettingsVolumeControl;
+        private static bool defaultSoundSettingsVolumeChanged = false;
+        private static bool defaultSoundSettingsMutedChanged = false;
+        private static bool defaultSoundSettingsRepetitionsChanged = false;
         private static List<KeyValuePair<AppWindowType, ContentDialog>> contentDialogQueue = new List<KeyValuePair<AppWindowType, ContentDialog>>();
 
         private static bool _contentDialogVisible = false;
@@ -86,6 +87,7 @@ namespace UniversalSoundboard.Common
         public static StorageFolder ExportSoundsFolder;
         public static ListView CategoriesListView;
         public static WinUI.TreeView CategoriesTreeView;
+        public static ComboBox DefaultSoundSettingsRepetitionsComboBox;
         public static ComboBox PlaybackSpeedComboBox;
         public static List<ObservableCollection<HotkeyItem>> PropertiesDialogHotkeys = new List<ObservableCollection<HotkeyItem>>();
         public static StackPanel davPlusHotkeyInfoStackPanel;
@@ -1722,9 +1724,10 @@ namespace UniversalSoundboard.Common
         #region DefaultSoundSettings
         public static ContentDialog CreateDefaultSoundSettingsContentDialog(Sound sound)
         {
-            selectedPropertiesSound = sound;
-            propertiesDefaultVolumeChanged = false;
-            propertiesDefaultMutedChanged = false;
+            defaultSoundSettingsSelectedSound = sound;
+            defaultSoundSettingsVolumeChanged = false;
+            defaultSoundSettingsMutedChanged = false;
+            defaultSoundSettingsRepetitionsChanged = false;
 
             DefaultSoundSettingsContentDialog = new ContentDialog
             {
@@ -1794,20 +1797,71 @@ namespace UniversalSoundboard.Common
             RelativePanel volumeRelativePanel = new RelativePanel();
             volumeDataStackPanel.Children.Add(volumeRelativePanel);
 
-            PropertiesVolumeControl = new VolumeControl
+            DefaultSoundSettingsVolumeControl = new VolumeControl
             {
                 Value = sound.DefaultVolume,
                 Muted = sound.DefaultMuted,
                 Margin = new Thickness(8, 10, 0, 0)
             };
-            PropertiesVolumeControl.ValueChanged += VolumeControl_ValueChanged;
-            PropertiesVolumeControl.MuteChanged += VolumeControl_MuteChanged;
+            DefaultSoundSettingsVolumeControl.ValueChanged += VolumeControl_ValueChanged;
+            DefaultSoundSettingsVolumeControl.MuteChanged += VolumeControl_MuteChanged;
 
-            volumeRelativePanel.Children.Add(PropertiesVolumeControl);
+            volumeRelativePanel.Children.Add(DefaultSoundSettingsVolumeControl);
 
             row++;
             contentGrid.Children.Add(volumeHeaderStackPanel);
             contentGrid.Children.Add(volumeDataStackPanel);
+            #endregion
+
+            #region Repetitions
+            // Add the row
+            var repetitionsRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+            contentGrid.RowDefinitions.Add(repetitionsRow);
+
+            StackPanel repetitionsHeaderStackPanel = GenerateTableCell(
+                row,
+                0,
+                loader.GetString("DefaultSoundSettingsContentDialog-Repetitions"),
+                fontSize,
+                false,
+                new Thickness(0, 16, 0, 0)
+            );
+
+            RelativePanel repetitionsDataRelativePanel = new RelativePanel { Margin = new Thickness(0, 10, 0, 0) };
+            Grid.SetRow(repetitionsDataRelativePanel, row);
+            Grid.SetColumn(repetitionsDataRelativePanel, 1);
+
+            List<int> defaultRepetitionsValues = new List<int> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30, 40, 50, 100 };
+
+            if (sound.DefaultRepetitions != int.MaxValue && !defaultRepetitionsValues.Contains(sound.DefaultRepetitions))
+            {
+                defaultRepetitionsValues.Add(sound.DefaultRepetitions);
+                defaultRepetitionsValues.Sort();
+            }
+
+            DefaultSoundSettingsRepetitionsComboBox = new ComboBox
+            {
+                IsEditable = true
+            };
+            DefaultSoundSettingsRepetitionsComboBox.SelectionChanged += DefaultSoundSettingsRepetitionsComboBox_SelectionChanged;
+            DefaultSoundSettingsRepetitionsComboBox.TextSubmitted += DefaultSoundSettingsRepetitionsComboBox_TextSubmitted;
+
+            foreach (int value in defaultRepetitionsValues)
+                DefaultSoundSettingsRepetitionsComboBox.Items.Add(value.ToString());
+
+            DefaultSoundSettingsRepetitionsComboBox.Items.Add("∞");
+
+            if (sound.DefaultRepetitions == int.MaxValue)
+                DefaultSoundSettingsRepetitionsComboBox.SelectedValue = "∞";
+            else
+                DefaultSoundSettingsRepetitionsComboBox.SelectedValue = sound.DefaultRepetitions.ToString();
+
+            RelativePanel.SetAlignVerticalCenterWithPanel(DefaultSoundSettingsRepetitionsComboBox, true);
+            repetitionsDataRelativePanel.Children.Add(DefaultSoundSettingsRepetitionsComboBox);
+
+            row++;
+            contentGrid.Children.Add(repetitionsHeaderStackPanel);
+            contentGrid.Children.Add(repetitionsDataRelativePanel);
             #endregion
 
             #region Playback speed
@@ -1841,7 +1895,7 @@ namespace UniversalSoundboard.Common
             PlaybackSpeedComboBox.SelectionChanged += PlaybackSpeedComboBox_SelectionChanged;
 
             // Select the correct item
-            switch (selectedPropertiesSound.DefaultPlaybackSpeed)
+            switch (defaultSoundSettingsSelectedSound.DefaultPlaybackSpeed)
             {
                 case 25:
                     PlaybackSpeedComboBox.SelectedIndex = 0;
@@ -1919,7 +1973,7 @@ namespace UniversalSoundboard.Common
                 ScrollViewer hotkeyItemsScrollViewer = new ScrollViewer { MaxHeight = 117.5 };
                 hotkeyItemsScrollViewer.Content = hotkeyItemsRepeater;
 
-                foreach (Hotkey hotkey in selectedPropertiesSound.Hotkeys)
+                foreach (Hotkey hotkey in defaultSoundSettingsSelectedSound.Hotkeys)
                 {
                     if (hotkey.IsEmpty())
                         continue;
@@ -1991,12 +2045,26 @@ namespace UniversalSoundboard.Common
 
         private static void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-            propertiesDefaultVolumeChanged = true;
+            defaultSoundSettingsVolumeChanged = true;
         }
 
         private static void VolumeControl_MuteChanged(object sender, bool e)
         {
-            propertiesDefaultMutedChanged = true;
+            defaultSoundSettingsMutedChanged = true;
+        }
+
+        private static void DefaultSoundSettingsRepetitionsComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            defaultSoundSettingsRepetitionsChanged = true;
+        }
+
+        private static void DefaultSoundSettingsRepetitionsComboBox_TextSubmitted(ComboBox sender, ComboBoxTextSubmittedEventArgs args)
+        {
+            defaultSoundSettingsRepetitionsChanged = true;
+
+            if (args.Text == "∞") return;
+            if (!int.TryParse(args.Text, out int value) || value < 0)
+                DefaultSoundSettingsRepetitionsComboBox.Text = "1";
         }
 
         private static async void PlaybackSpeedComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -2031,9 +2099,9 @@ namespace UniversalSoundboard.Common
                     break;
             }
 
-            selectedPropertiesSound.DefaultPlaybackSpeed = selectedPlaybackSpeed;
+            defaultSoundSettingsSelectedSound.DefaultPlaybackSpeed = selectedPlaybackSpeed;
 
-            await FileManager.SetDefaultPlaybackSpeedOfSoundAsync(selectedPropertiesSound.Uuid, selectedPlaybackSpeed);
+            await FileManager.SetDefaultPlaybackSpeedOfSoundAsync(defaultSoundSettingsSelectedSound.Uuid, selectedPlaybackSpeed);
         }
 
         private static void UpdateDavPlusHotkeyInfoStackPanelVisibility()
@@ -2047,7 +2115,7 @@ namespace UniversalSoundboard.Common
         private static async void AddHotkeyItem_HotkeyAdded(object sender, HotkeyEventArgs e)
         {
             // Add the new hotkey to the sound and list of hotkeys
-            selectedPropertiesSound.Hotkeys.Add(e.Hotkey);
+            defaultSoundSettingsSelectedSound.Hotkeys.Add(e.Hotkey);
             HotkeyItem newHotkeyItem = new HotkeyItem(e.Hotkey);
             newHotkeyItem.RemoveHotkey += HotkeyItem_RemoveHotkey;
             PropertiesDialogHotkeys.Last().Add(newHotkeyItem);
@@ -2056,7 +2124,7 @@ namespace UniversalSoundboard.Common
             UpdateDavPlusHotkeyInfoStackPanelVisibility();
 
             // Save the hotkeys of the sound
-            await FileManager.SetHotkeysOfSoundAsync(selectedPropertiesSound.Uuid, selectedPropertiesSound.Hotkeys);
+            await FileManager.SetHotkeysOfSoundAsync(defaultSoundSettingsSelectedSound.Uuid, defaultSoundSettingsSelectedSound.Hotkeys);
 
             // Update the Hotkey process with the new hotkeys
             await FileManager.StartHotkeyProcess();
@@ -2065,8 +2133,8 @@ namespace UniversalSoundboard.Common
         private static async void HotkeyItem_RemoveHotkey(object sender, HotkeyEventArgs e)
         {
             // Remove the hotkey from the list of hotkeys
-            int index = selectedPropertiesSound.Hotkeys.FindIndex(h => h.Modifiers == e.Hotkey.Modifiers && h.Key == e.Hotkey.Key);
-            if (index != -1) selectedPropertiesSound.Hotkeys.RemoveAt(index);
+            int index = defaultSoundSettingsSelectedSound.Hotkeys.FindIndex(h => h.Modifiers == e.Hotkey.Modifiers && h.Key == e.Hotkey.Key);
+            if (index != -1) defaultSoundSettingsSelectedSound.Hotkeys.RemoveAt(index);
 
             PropertiesDialogHotkeys.Last().Remove((HotkeyItem)sender);
 
@@ -2074,7 +2142,7 @@ namespace UniversalSoundboard.Common
             UpdateDavPlusHotkeyInfoStackPanelVisibility();
 
             // Save the hotkeys of the sound
-            await FileManager.SetHotkeysOfSoundAsync(selectedPropertiesSound.Uuid, selectedPropertiesSound.Hotkeys);
+            await FileManager.SetHotkeysOfSoundAsync(defaultSoundSettingsSelectedSound.Uuid, defaultSoundSettingsSelectedSound.Hotkeys);
 
             // Update the Hotkey process with the new hotkeys
             await FileManager.StartHotkeyProcess();
@@ -2082,15 +2150,38 @@ namespace UniversalSoundboard.Common
 
         private static async void DefaultSoundOptionsContentDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (!propertiesDefaultVolumeChanged && !propertiesDefaultMutedChanged) return;
+            if (
+                !defaultSoundSettingsVolumeChanged
+                && !defaultSoundSettingsMutedChanged
+                && !defaultSoundSettingsRepetitionsChanged
+            ) return;
 
-            // Set the new values and update the DefaultVolume and DefaultMuted of all Sounds in all lists in ItemViewHolder
-            selectedPropertiesSound.DefaultVolume = PropertiesVolumeControl.Value;
-            selectedPropertiesSound.DefaultMuted = PropertiesVolumeControl.Muted;
-            await FileManager.ReloadSound(selectedPropertiesSound);
+            if (defaultSoundSettingsVolumeChanged || defaultSoundSettingsMutedChanged)
+            {
+                // Set the new values and update the DefaultVolume and DefaultMuted of all Sounds in all lists in ItemViewHolder
+                defaultSoundSettingsSelectedSound.DefaultVolume = DefaultSoundSettingsVolumeControl.Value;
+                defaultSoundSettingsSelectedSound.DefaultMuted = DefaultSoundSettingsVolumeControl.Muted;
 
-            // Update the sound in the database
-            await FileManager.SetDefaultVolumeOfSoundAsync(selectedPropertiesSound.Uuid, PropertiesVolumeControl.Value, PropertiesVolumeControl.Muted);
+                // Update the sound in the database
+                await FileManager.SetDefaultVolumeOfSoundAsync(defaultSoundSettingsSelectedSound.Uuid, DefaultSoundSettingsVolumeControl.Value, DefaultSoundSettingsVolumeControl.Muted);
+            }
+
+            if (defaultSoundSettingsRepetitionsChanged)
+            {
+                // Get the selected repetitions
+                string defaultRepetitionsString = DefaultSoundSettingsRepetitionsComboBox.Text;
+                int defaultRepetitions = 0;
+
+                if (defaultRepetitionsString == "∞")
+                    defaultRepetitions = int.MaxValue;
+                else
+                    int.TryParse(defaultRepetitionsString, out defaultRepetitions);
+
+                defaultSoundSettingsSelectedSound.DefaultRepetitions = defaultRepetitions;
+                await FileManager.SetDefaultRepetitionsOfSoundAsync(defaultSoundSettingsSelectedSound.Uuid, defaultRepetitions);
+            }
+
+            await FileManager.ReloadSound(defaultSoundSettingsSelectedSound);
         }
         #endregion
 

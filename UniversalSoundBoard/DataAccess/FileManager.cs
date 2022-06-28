@@ -109,6 +109,7 @@ namespace UniversalSoundboard.DataAccess
         public const string SoundTableDefaultVolumePropertyName = "default_volume";
         public const string SoundTableDefaultMutedPropertyName = "default_muted";
         public const string SoundTableDefaultPlaybackSpeedPropertyName = "default_playback_speed";
+        public const string SoundTableDefaultRepetitionsPropertyName = "default_repetitions";
         public const string SoundTableHotkeysPropertyName = "hotkeys";
 
         public const string CategoryTableParentPropertyName = "parent";
@@ -832,6 +833,14 @@ namespace UniversalSoundboard.DataAccess
                 int.TryParse(defaultPlaybackSpeedString, out defaultPlaybackSpeed);
 
             sound.DefaultPlaybackSpeed = defaultPlaybackSpeed;
+
+            // DefaultRepetitions
+            int defaultRepetitions = 0;
+            string defaultRepetitionsString = soundTableObject.GetPropertyValue(SoundTableDefaultRepetitionsPropertyName);
+            if (!string.IsNullOrEmpty(defaultRepetitionsString))
+                int.TryParse(defaultRepetitionsString, out defaultRepetitions);
+
+            sound.DefaultRepetitions = defaultRepetitions;
 
             // Hotkeys
             string hotkeysString = soundTableObject.GetPropertyValue(SoundTableHotkeysPropertyName);
@@ -2033,6 +2042,15 @@ namespace UniversalSoundboard.DataAccess
             if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
 
             await soundTableObject.SetPropertyValueAsync(SoundTableDefaultPlaybackSpeedPropertyName, defaultPlaybackSpeed.ToString());
+        }
+
+        public static async Task SetDefaultRepetitionsOfSoundAsync(Guid uuid, int defaultRepetitions)
+        {
+            // Get the sound table object
+            var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+
+            await soundTableObject.SetPropertyValueAsync(SoundTableDefaultRepetitionsPropertyName, defaultRepetitions.ToString());
         }
 
         public static async Task SetHotkeysOfSoundAsync(Guid uuid, List<Hotkey> hotkeys)
