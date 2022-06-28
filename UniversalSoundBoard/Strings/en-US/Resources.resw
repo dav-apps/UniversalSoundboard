@@ -183,7 +183,7 @@
   <data name="Settings-Title" xml:space="preserve">
     <value>Settings</value>
   </data>
-  <data name="SoundItemOptionsFlyout-SetCategories" xml:space="preserve">
+  <data name="SoundItemOptionsFlyout-Categories" xml:space="preserve">
     <value>Categories</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetImage" xml:space="preserve">
@@ -1027,10 +1027,13 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="DefaultSoundSettingsContentDialog-Title" xml:space="preserve">
     <value>Default settings for "{0}"</value>
   </data>
-  <data name="SoundItemOptionsFlyout-SetDefaultSettings" xml:space="preserve">
+  <data name="SoundItemOptionsFlyout-DefaultSettings" xml:space="preserve">
     <value>Default settings</value>
   </data>
   <data name="DefaultSoundSettingsContentDialog-Repetitions" xml:space="preserve">
     <value>Repetitions:</value>
+  </data>
+  <data name="SoundItemOptionsFlyout-Hotkeys" xml:space="preserve">
+    <value>Hotkeys</value>
   </data>
 </root>

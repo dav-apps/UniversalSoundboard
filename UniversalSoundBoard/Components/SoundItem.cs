@@ -51,8 +51,9 @@ namespace UniversalSoundboard.Components
             if (sound == null) return;
             var flyout = new SoundItemOptionsFlyout(sound.Uuid, sound.Favourite, sound.ImageFile != null && sound.ImageFileTableObject != null);
 
-            flyout.SetCategoriesFlyoutItemClick += OptionsFlyout_SetCategoriesFlyoutItemClick;
-            flyout.SetDefaultSoundSettingsFlyoutItemClick += OptionsFlyout_SetDefaultSoundSettingsFlyoutItemClick;
+            flyout.CategoriesFlyoutItemClick += OptionsFlyout_CategoriesFlyoutItemClick;
+            flyout.HotkeysFlyoutItemClick += OptionsFlyout_HotkeysFlyoutItemClick;
+            flyout.DefaultSoundSettingsFlyoutItemClick += OptionsFlyout_DefaultSoundSettingsFlyoutItemClick;
             flyout.SetFavouriteFlyoutItemClick += OptionsFlyout_SetFavouriteFlyoutItemClick;
             flyout.ShareFlyoutItemClick += OptionsFlyout_ShareFlyoutItemClick;
             flyout.ExportSoundFlyoutItemClick += OptionsFlyout_ExportSoundFlyoutItemClick;
@@ -66,8 +67,8 @@ namespace UniversalSoundboard.Components
             flyout.ShowAt(sender as UIElement, position);
         }
 
-        #region SetCategories
-        private async void OptionsFlyout_SetCategoriesFlyoutItemClick(object sender, RoutedEventArgs e)
+        #region Categories
+        private async void OptionsFlyout_CategoriesFlyoutItemClick(object sender, RoutedEventArgs e)
         {
             var SetCategoriesContentDialog = ContentDialogs.CreateSetCategoriesContentDialog(new List<Sound> { sound });
             SetCategoriesContentDialog.PrimaryButtonClick += SetCategoriesContentDialog_PrimaryButtonClick;
@@ -87,11 +88,18 @@ namespace UniversalSoundboard.Components
         }
         #endregion
 
-        #region SetDefaultSoundOptions
-        private async void OptionsFlyout_SetDefaultSoundSettingsFlyoutItemClick(object sender, RoutedEventArgs e)
+        #region Hotkeys
+        private void OptionsFlyout_HotkeysFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            var setDefaultSoundSettingsContentDialog = ContentDialogs.CreateDefaultSoundSettingsContentDialog(sound);
-            await setDefaultSoundSettingsContentDialog.ShowAsync();
+
+        }
+        #endregion
+
+        #region DefaultSoundOptions
+        private async void OptionsFlyout_DefaultSoundSettingsFlyoutItemClick(object sender, RoutedEventArgs e)
+        {
+            var defaultSoundSettingsContentDialog = ContentDialogs.CreateDefaultSoundSettingsContentDialog(sound);
+            await defaultSoundSettingsContentDialog.ShowAsync();
         }
         #endregion
 
@@ -463,8 +471,9 @@ namespace UniversalSoundboard.Components
         private MenuFlyoutItem pinFlyoutItem;
 
         public event EventHandler<object> FlyoutOpened;
-        public event RoutedEventHandler SetCategoriesFlyoutItemClick;
-        public event RoutedEventHandler SetDefaultSoundSettingsFlyoutItemClick;
+        public event RoutedEventHandler CategoriesFlyoutItemClick;
+        public event RoutedEventHandler HotkeysFlyoutItemClick;
+        public event RoutedEventHandler DefaultSoundSettingsFlyoutItemClick;
         public event RoutedEventHandler SetFavouriteFlyoutItemClick;
         public event RoutedEventHandler ShareFlyoutItemClick;
         public event RoutedEventHandler ExportSoundFlyoutItemClick;
@@ -483,23 +492,32 @@ namespace UniversalSoundboard.Components
             optionsFlyout = new MenuFlyout();
             optionsFlyout.Opened += (object sender, object e) => FlyoutOpened?.Invoke(sender, e);
 
-            // Set categories
-            MenuFlyoutItem setCategoriesFlyoutItem = new MenuFlyoutItem
+            // Categories
+            MenuFlyoutItem categoriesFlyoutItem = new MenuFlyoutItem
             {
-                Text = loader.GetString("SoundItemOptionsFlyout-SetCategories"),
+                Text = loader.GetString("SoundItemOptionsFlyout-Categories"),
                 Icon = new FontIcon { Glyph = "\uE179" }
             };
-            setCategoriesFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetCategoriesFlyoutItemClick?.Invoke(sender, e);
-            optionsFlyout.Items.Add(setCategoriesFlyoutItem);
+            categoriesFlyoutItem.Click += (object sender, RoutedEventArgs e) => CategoriesFlyoutItemClick?.Invoke(sender, e);
+            optionsFlyout.Items.Add(categoriesFlyoutItem);
 
-            // Set default settings
-            MenuFlyoutItem setDefaultSoundSettingsFlyoutItem = new MenuFlyoutItem
+            // Hotkeys
+            MenuFlyoutItem hotkeysFlyoutItem = new MenuFlyoutItem
             {
-                Text = loader.GetString("SoundItemOptionsFlyout-SetDefaultSettings"),
+                Text = loader.GetString("SoundItemOptionsFlyout-Hotkeys"),
+                Icon = new FontIcon { Glyph = "\uE765" }
+            };
+            hotkeysFlyoutItem.Click += (object sender, RoutedEventArgs e) => HotkeysFlyoutItemClick?.Invoke(sender, e);
+            optionsFlyout.Items.Add(hotkeysFlyoutItem);
+
+            // Default settings
+            MenuFlyoutItem defaultSoundSettingsFlyoutItem = new MenuFlyoutItem
+            {
+                Text = loader.GetString("SoundItemOptionsFlyout-DefaultSettings"),
                 Icon = new FontIcon { Glyph = "\uE713" }
             };
-            setDefaultSoundSettingsFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetDefaultSoundSettingsFlyoutItemClick?.Invoke(sender, e);
-            optionsFlyout.Items.Add(setDefaultSoundSettingsFlyoutItem);
+            defaultSoundSettingsFlyoutItem.Click += (object sender, RoutedEventArgs e) => DefaultSoundSettingsFlyoutItemClick?.Invoke(sender, e);
+            optionsFlyout.Items.Add(defaultSoundSettingsFlyoutItem);
 
             // Separator
             optionsFlyout.Items.Add(new MenuFlyoutSeparator());
