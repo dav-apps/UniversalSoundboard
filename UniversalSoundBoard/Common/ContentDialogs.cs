@@ -2197,22 +2197,6 @@ namespace UniversalSoundboard.Common
         }
         #endregion
 
-        #region UpgradeError
-        public static ContentDialog CreateUpgradeErrorContentDialog()
-        {
-            UpgradeErrorContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("UpgradeErrorContentDialog-Title"),
-                Content = loader.GetString("UpgradeErrorContentDialog-Message"),
-                CloseButtonText = loader.GetString("Actions-Close"),
-                DefaultButton = ContentDialogButton.Close,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return UpgradeErrorContentDialog;
-        }
-        #endregion
-
         #region AddRecordedSoundToSoundboard
         public static ContentDialog CreateAddRecordedSoundToSoundboardContentDialog(string recordedSoundName)
         {

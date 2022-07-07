@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation.Metadata;
 using Windows.Security.Authentication.Web;
@@ -266,8 +267,7 @@ namespace UniversalSoundboard.Pages
                 }
 
                 // Show dialog for error
-                var errorDialog = ContentDialogs.CreateUpgradeErrorContentDialog();
-                await ContentDialogs.ShowContentDialogAsync(errorDialog);
+                await new UpgradeErrorDialog().ShowAsync();
             }
         }
 

@@ -134,8 +134,7 @@ namespace UniversalSoundboard.Pages
                 }
                 else
                 {
-                    var addSoundsErrorDialog = new AddSoundsErrorDialog(notAddedSounds);
-                    await addSoundsErrorDialog.ShowAsync();
+                    await new AddSoundsErrorDialog(notAddedSounds).ShowAsync();
                 }
             }
             else

@@ -951,10 +951,10 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="Drop-AlreadyAddingSounds" xml:space="preserve">
     <value>Des sons sont déjà ajoutés</value>
   </data>
-  <data name="UpgradeErrorContentDialog-Message" xml:space="preserve">
+  <data name="UpgradeErrorDialog-Message" xml:space="preserve">
     <value>Merci de vérifier votre connexion Internet et de réessayer.</value>
   </data>
-  <data name="UpgradeErrorContentDialog-Title" xml:space="preserve">
+  <data name="UpgradeErrorDialog-Title" xml:space="preserve">
     <value>Une erreur est survenue</value>
   </data>
   <data name="Account-ManageSubscriptionButton.Content" xml:space="preserve">

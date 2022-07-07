@@ -667,8 +667,7 @@ namespace UniversalSoundboard.Pages
         {
             if (FileManager.deviceWatcherHelper.Devices.Count > 0) return true;
 
-            var noAudioDeviceDialog = new NoAudioDeviceDialog();
-            await noAudioDeviceDialog.ShowAsync();
+            await new NoAudioDeviceDialog().ShowAsync();
 
             return false;
         }
