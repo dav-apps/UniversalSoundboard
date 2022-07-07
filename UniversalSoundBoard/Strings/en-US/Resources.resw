@@ -633,10 +633,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="AddSoundErrorContentDialog-Title" xml:space="preserve">
     <value>Error in adding the sound</value>
   </data>
-  <data name="AddSoundsErrorContentDialog-Content" xml:space="preserve">
+  <data name="AddSoundsErrorDialog-Content" xml:space="preserve">
     <value>The following sounds could not be added:{0}</value>
   </data>
-  <data name="AddSoundsErrorContentDialog-Title" xml:space="preserve">
+  <data name="AddSoundsErrorDialog-Title" xml:space="preserve">
     <value>Error in adding sounds</value>
   </data>
   <data name="MoreButton-OutputDevice" xml:space="preserve">
@@ -1035,5 +1035,8 @@ Log in and upgrade your plan to use this feature.</value>
   </data>
   <data name="SoundItemOptionsFlyout-Hotkeys" xml:space="preserve">
     <value>Hotkeys</value>
+  </data>
+  <data name="HotkeysContentDialog-Title" xml:space="preserve">
+    <value>Hotkeys for "{0}"</value>
   </data>
 </root>

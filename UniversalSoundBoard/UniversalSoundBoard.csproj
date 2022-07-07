@@ -159,9 +159,11 @@
       <DependentUpon>RecordedSoundItemTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Components\Setting.cs" />
+    <Compile Include="Models\AddSoundsErrorDialog.cs" />
     <Compile Include="Models\AudioPlayer.cs" />
     <Compile Include="Models\AudioRecorder.cs" />
     <Compile Include="Models\DeviceWatcherHelper.cs" />
+    <Compile Include="Models\Dialog.cs" />
     <Compile Include="Models\InAppNotificationItem.cs" />
     <Compile Include="Components\PlayingSoundItem.cs" />
     <Compile Include="Components\SoundFileDownloadProgressTemplate.xaml.cs">

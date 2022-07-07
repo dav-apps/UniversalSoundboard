@@ -631,10 +631,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="AddSoundErrorContentDialog-Title" xml:space="preserve">
     <value>Fehler beim Hinzufügen des Sounds</value>
   </data>
-  <data name="AddSoundsErrorContentDialog-Content" xml:space="preserve">
+  <data name="AddSoundsErrorDialog-Content" xml:space="preserve">
     <value>Folgende Sounds konnten nicht hinzugefügt werden:{0}</value>
   </data>
-  <data name="AddSoundsErrorContentDialog-Title" xml:space="preserve">
+  <data name="AddSoundsErrorDialog-Title" xml:space="preserve">
     <value>Fehler beim Hinzufügen der Sounds</value>
   </data>
   <data name="MoreButton-OutputDevice" xml:space="preserve">
@@ -1033,5 +1033,8 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   </data>
   <data name="SoundItemOptionsFlyout-Hotkeys" xml:space="preserve">
     <value>Tastenkombinationen</value>
+  </data>
+  <data name="HotkeysContentDialog-Title" xml:space="preserve">
+    <value>Tastenkombinationen für "{0}"</value>
   </data>
 </root>

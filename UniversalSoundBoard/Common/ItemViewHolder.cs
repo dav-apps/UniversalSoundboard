@@ -63,7 +63,7 @@ namespace UniversalSoundboard.Common
 
         #region Variables
         #region State
-        private AppState _appState;     // The current state of the app
+        private AppState _appState;                 // The current state of the app
         private string _title;                      // The title text
         private Type _page;                         // The current page
         private string _searchQuery;                // The string entered into the search box
@@ -90,7 +90,7 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Layout & Design
-        private AppTheme _currentTheme;                         // The current theme of the app; is either Light or Dark
+        private AppTheme _currentTheme;                                     // The current theme of the app; is either Light or Dark
         private bool _progressRingIsActive;                                 // Shows the Progress Ring if true
         private bool _loadingScreenVisible;                                 // If true, the large loading screen is visible
         private string _loadingScreenMessage;                               // The text that is shown in the loading screen

@@ -19,7 +19,7 @@
         <Setter Property="IsTabStop" Value="False" />
         <Setter Property="Background" Value="{ThemeResource ExpanderContentBackground}" />
         <Setter Property="Padding" Value="16,8" />
-        <Setter Property="CornerRadius" Value="2,2,2,2" />
+        <Setter Property="CornerRadius" Value="2" />
         <Setter Property="BorderBrush" Value="{ThemeResource ExpanderContentBorderBrush}" />
         <Setter Property="BorderThickness" Value="1,0,1,1" />
         <Setter Property="Template">

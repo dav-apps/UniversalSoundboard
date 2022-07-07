@@ -781,28 +781,6 @@ namespace UniversalSoundboard.Common
         }
         #endregion
 
-        #region AddSoundsError
-        public static ContentDialog CreateAddSoundsErrorContentDialog(List<string> soundsList)
-        {
-            string soundNames = "";
-            foreach(var name in soundsList)
-                soundNames += $"\n- {name}";
-
-            string content = string.Format(loader.GetString("AddSoundsErrorContentDialog-Content"), soundNames);
-
-            AddSoundsErrorContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("AddSoundsErrorContentDialog-Title"),
-                Content = content,
-                CloseButtonText = loader.GetString("Actions-Close"),
-                DefaultButton = ContentDialogButton.Close,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return AddSoundsErrorContentDialog;
-        }
-        #endregion
-
         #region DownloadSoundsError
         public static ContentDialog CreateDownloadSoundsErrorContentDialog(List<KeyValuePair<string, string>> soundsList)
         {

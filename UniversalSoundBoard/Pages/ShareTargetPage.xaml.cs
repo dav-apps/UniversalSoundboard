@@ -124,17 +124,17 @@ namespace UniversalSoundboard.Pages
             AddButton.IsEnabled = true;
             LoadingControl.IsLoading = false;
 
-            if(notAddedSounds.Count > 0)
+            if (notAddedSounds.Count > 0)
             {
-                if(items.Count == 1)
+                if (items.Count == 1)
                 {
                     var addSoundErrorContentDialog = ContentDialogs.CreateAddSoundErrorContentDialog();
                     await ContentDialogs.ShowContentDialogAsync(addSoundErrorContentDialog);
                 }
                 else
                 {
-                    var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notAddedSounds);
-                    await ContentDialogs.ShowContentDialogAsync(addSoundsErrorContentDialog);
+                    var addSoundsErrorDialog = new AddSoundsErrorDialog(notAddedSounds);
+                    await addSoundsErrorDialog.ShowAsync();
                 }
             }
             else

@@ -1224,8 +1224,8 @@ namespace UniversalSoundboard.Pages
                 {
                     FileManager.DismissInAppNotification(InAppNotificationType.AddSounds);
 
-                    var addSoundsErrorContentDialog = ContentDialogs.CreateAddSoundsErrorContentDialog(notAddedSounds);
-                    await ContentDialogs.ShowContentDialogAsync(addSoundsErrorContentDialog);
+                    var addSoundsErrorDialog = new AddSoundsErrorDialog(notAddedSounds);
+                    await addSoundsErrorDialog.ShowAsync();
                 };
 
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(null, inAppNotificationArgs);
