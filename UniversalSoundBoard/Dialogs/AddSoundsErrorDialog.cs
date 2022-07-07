@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UniversalSoundboard.DataAccess;
 
-namespace UniversalSoundboard.Models
+namespace UniversalSoundboard.Dialogs
 {
     public class AddSoundsErrorDialog : Dialog
     {

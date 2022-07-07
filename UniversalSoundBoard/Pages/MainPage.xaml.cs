@@ -31,6 +31,7 @@ using Windows.System;
 using Windows.Graphics.Display;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.WindowManagement;
+using UniversalSoundboard.Dialogs;
 
 namespace UniversalSoundboard.Pages
 {

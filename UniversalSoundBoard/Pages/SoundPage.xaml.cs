@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
@@ -666,8 +667,9 @@ namespace UniversalSoundboard.Pages
         {
             if (FileManager.deviceWatcherHelper.Devices.Count > 0) return true;
 
-            var noAudioDeviceContentDialog = ContentDialogs.CreateNoAudioDeviceContentDialog();
-            await ContentDialogs.ShowContentDialogAsync(noAudioDeviceContentDialog);
+            var noAudioDeviceDialog = new NoAudioDeviceDialog();
+            await noAudioDeviceDialog.ShowAsync();
+
             return false;
         }
         #endregion

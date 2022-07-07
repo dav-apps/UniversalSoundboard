@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
 using Windows.ApplicationModel.Resources;

@@ -2213,22 +2213,6 @@ namespace UniversalSoundboard.Common
         }
         #endregion
 
-        #region NoAudioDevice
-        public static ContentDialog CreateNoAudioDeviceContentDialog()
-        {
-            NoAudioDeviceContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("NoAudioDeviceContentDialog-Title"),
-                Content = loader.GetString("NoAudioDeviceContentDialog-Message"),
-                CloseButtonText = loader.GetString("Actions-Close"),
-                DefaultButton = ContentDialogButton.Close,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return NoAudioDeviceContentDialog;
-        }
-        #endregion
-
         #region AddRecordedSoundToSoundboard
         public static ContentDialog CreateAddRecordedSoundToSoundboardContentDialog(string recordedSoundName)
         {

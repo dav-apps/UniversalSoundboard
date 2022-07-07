@@ -4,7 +4,7 @@ using UniversalSoundboard.DataAccess;
 using Windows.Foundation;
 using Windows.UI.Xaml.Controls;
 
-namespace UniversalSoundboard.Models
+namespace UniversalSoundboard.Dialogs
 {
     public class Dialog
     {
