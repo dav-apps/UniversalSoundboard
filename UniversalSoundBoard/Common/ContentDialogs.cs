@@ -2234,22 +2234,5 @@ namespace UniversalSoundboard.Common
             AddRecordedSoundToSoundboardContentDialog.IsPrimaryButtonEnabled = RecordedSoundNameTextBox.Text.Length >= 3;
         }
         #endregion
-
-        #region RemoveRecordedSound
-        public static ContentDialog CreateRemoveRecordedSoundContentDialog(string recordedSoundName)
-        {
-            RemoveRecordedSoundContentDialog = new ContentDialog
-            {
-                Title = string.Format(loader.GetString("RemoveRecordedSoundContentDialog-Title"), recordedSoundName),
-                Content = loader.GetString("RemoveRecordedSoundContentDialog-Message"),
-                PrimaryButtonText = loader.GetString("Actions-Remove"),
-                CloseButtonText = loader.GetString("Actions-Cancel"),
-                DefaultButton = ContentDialogButton.Close,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return RemoveRecordedSoundContentDialog;
-        }
-        #endregion
     }
 }

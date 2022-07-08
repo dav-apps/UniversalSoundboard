@@ -1001,10 +1001,10 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="Actions-Remove" xml:space="preserve">
     <value>Entfernen</value>
   </data>
-  <data name="RemoveRecordedSoundContentDialog-Message" xml:space="preserve">
+  <data name="RemoveRecordedSoundDialog-Message" xml:space="preserve">
     <value>Bist du dir sicher, dass du diese Aufzeichnung entfernen willst?</value>
   </data>
-  <data name="RemoveRecordedSoundContentDialog-Title" xml:space="preserve">
+  <data name="RemoveRecordedSoundDialog-Title" xml:space="preserve">
     <value>"{0}" entfernen?</value>
   </data>
   <data name="AddRecordedSoundToSoundboardContentDialog-Title" xml:space="preserve">

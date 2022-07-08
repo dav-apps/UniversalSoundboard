@@ -1003,10 +1003,10 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="Actions-Remove" xml:space="preserve">
     <value>Remove</value>
   </data>
-  <data name="RemoveRecordedSoundContentDialog-Message" xml:space="preserve">
+  <data name="RemoveRecordedSoundDialog-Message" xml:space="preserve">
     <value>Are you sure you want to remove this recording?</value>
   </data>
-  <data name="RemoveRecordedSoundContentDialog-Title" xml:space="preserve">
+  <data name="RemoveRecordedSoundDialog-Title" xml:space="preserve">
     <value>Remove "{0}"?</value>
   </data>
   <data name="AddRecordedSoundToSoundboardContentDialog-Title" xml:space="preserve">

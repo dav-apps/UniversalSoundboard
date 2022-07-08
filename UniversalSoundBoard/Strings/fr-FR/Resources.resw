@@ -1002,10 +1002,10 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="Actions-Remove" xml:space="preserve">
     <value>Supprimer</value>
   </data>
-  <data name="RemoveRecordedSoundContentDialog-Message" xml:space="preserve">
+  <data name="RemoveRecordedSoundDialog-Message" xml:space="preserve">
     <value>Voulez-vous vraiment supprimer cet enregistrement ?</value>
   </data>
-  <data name="RemoveRecordedSoundContentDialog-Title" xml:space="preserve">
+  <data name="RemoveRecordedSoundDialog-Title" xml:space="preserve">
     <value>Voulez-vous supprimer « {0} » ?</value>
   </data>
   <data name="AddRecordedSoundToSoundboardContentDialog-Title" xml:space="preserve">

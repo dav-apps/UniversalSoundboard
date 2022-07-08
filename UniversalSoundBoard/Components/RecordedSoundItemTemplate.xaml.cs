@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.UI.Core;
@@ -98,9 +99,9 @@ namespace UniversalSoundboard.Components
 
         private async void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
-            var removeRecordedSoundContentDialog = ContentDialogs.CreateRemoveRecordedSoundContentDialog(RecordedSoundItem.Name);
-            removeRecordedSoundContentDialog.PrimaryButtonClick += RemoveRecordedSoundContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(removeRecordedSoundContentDialog, AppWindowType.SoundRecorder);
+            var removeRecordedSoundDialog = new RemoveRecordedSoundDialog(RecordedSoundItem.Name);
+            removeRecordedSoundDialog.PrimaryButtonClick += RemoveRecordedSoundContentDialog_PrimaryButtonClick;
+            await removeRecordedSoundDialog.ShowAsync(AppWindowType.SoundRecorder);
         }
 
         private async void RemoveRecordedSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
