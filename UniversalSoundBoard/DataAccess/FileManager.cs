@@ -20,6 +20,7 @@ using System.Text;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
+using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.ApplicationModel;
@@ -3336,13 +3337,13 @@ namespace UniversalSoundboard.DataAccess
             else
             {
                 // Show dialog which explains that this feature is only for Plus users
-                ContentDialog davPlusHotkeysContentDialog = ContentDialogs.CreateDavPlusHotkeysContentDialog();
-                davPlusHotkeysContentDialog.PrimaryButtonClick += DavPlusHotkeysContentDialog_PrimaryButtonClick;
-                await ContentDialogs.ShowContentDialogAsync(davPlusHotkeysContentDialog);
+                var davPlusHotkeysDialog = new DavPlusHotkeysDialog();
+                davPlusHotkeysDialog.PrimaryButtonClick += DavPlusHotkeysContentDialog_PrimaryButtonClick;
+                await davPlusHotkeysDialog.ShowAsync();
             }
         }
 
-        private static void DavPlusHotkeysContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private static void DavPlusHotkeysContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Navigate to the Account page
             NavigateToAccountPage();

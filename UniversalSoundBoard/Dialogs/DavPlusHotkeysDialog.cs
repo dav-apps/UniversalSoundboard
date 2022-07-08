@@ -2,12 +2,12 @@
 
 namespace UniversalSoundboard.Dialogs
 {
-    public class DavPlusOutputDeviceDialog : Dialog
+    public class DavPlusHotkeysDialog : Dialog
     {
-        public DavPlusOutputDeviceDialog()
+        public DavPlusHotkeysDialog()
             : base(
                   FileManager.loader.GetString("DavPlusDialog-Title"),
-                  FileManager.loader.GetString("DavPlusOutputDeviceDialog-Content"),
+                  FileManager.loader.GetString("DavPlusHotkeysDialog-Content"),
                   FileManager.loader.GetString("Actions-LearnMore"),
                   FileManager.loader.GetString("Actions-Close")
             ) { }

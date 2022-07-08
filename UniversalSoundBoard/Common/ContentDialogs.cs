@@ -2162,22 +2162,5 @@ namespace UniversalSoundboard.Common
             await FileManager.ReloadSound(defaultSoundSettingsSelectedSound);
         }
         #endregion
-
-        #region DavPlusHotkeys
-        public static ContentDialog CreateDavPlusHotkeysContentDialog()
-        {
-            DavPlusHotkeysContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("DavPlusContentDialog-Title"),
-                Content = loader.GetString("DavPlusHotkeysContentDialog-Content"),
-                PrimaryButtonText = loader.GetString("Actions-LearnMore"),
-                CloseButtonText = loader.GetString("Actions-Close"),
-                DefaultButton = ContentDialogButton.Primary,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return DavPlusHotkeysContentDialog;
-        }
-        #endregion
     }
 }
