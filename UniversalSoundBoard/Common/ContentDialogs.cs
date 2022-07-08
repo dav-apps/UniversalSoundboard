@@ -2251,22 +2251,5 @@ namespace UniversalSoundboard.Common
             return RemoveRecordedSoundContentDialog;
         }
         #endregion
-
-        #region SoundRecorderCloseWarning
-        public static ContentDialog CreateSoundRecorderCloseWarningContentDialog()
-        {
-            SoundRecorderCloseWarningContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("SoundRecorderCloseWarningContentDialog-Title"),
-                Content = loader.GetString("SoundRecorderCloseWarningContentDialog-Message"),
-                PrimaryButtonText = loader.GetString("Actions-CloseWindow"),
-                CloseButtonText = loader.GetString("Actions-Cancel"),
-                DefaultButton = ContentDialogButton.Close,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return SoundRecorderCloseWarningContentDialog;
-        }
-        #endregion
     }
 }

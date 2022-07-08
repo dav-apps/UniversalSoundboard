@@ -1015,10 +1015,10 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="Actions-CloseWindow" xml:space="preserve">
     <value>Close window</value>
   </data>
-  <data name="SoundRecorderCloseWarningContentDialog-Message" xml:space="preserve">
+  <data name="SoundRecorderCloseWarningDialog-Message" xml:space="preserve">
     <value>Are you sure? All recorded sounds that you have not saved will be lost.</value>
   </data>
-  <data name="SoundRecorderCloseWarningContentDialog-Title" xml:space="preserve">
+  <data name="SoundRecorderCloseWarningDialog-Title" xml:space="preserve">
     <value>Close Sound Recorder</value>
   </data>
   <data name="DefaultSoundSettingsContentDialog-Description" xml:space="preserve">

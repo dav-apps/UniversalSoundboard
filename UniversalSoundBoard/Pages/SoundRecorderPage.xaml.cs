@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using Windows.Devices.Enumeration;
 using Windows.Foundation;
@@ -107,9 +108,9 @@ namespace UniversalSoundboard.Pages
                 args.Cancel = true;
 
                 // Show warning dialog
-                var soundRecorderCloseWarningContentDialog = ContentDialogs.CreateSoundRecorderCloseWarningContentDialog();
-                soundRecorderCloseWarningContentDialog.PrimaryButtonClick += SoundRecorderCloseWarningContentDialog_PrimaryButtonClick;
-                await ContentDialogs.ShowContentDialogAsync(soundRecorderCloseWarningContentDialog, AppWindowType.SoundRecorder);
+                var soundRecorderCloseWarningDialog = new SoundRecorderCloseWarningDialog();
+                soundRecorderCloseWarningDialog.PrimaryButtonClick += SoundRecorderCloseWarningContentDialog_PrimaryButtonClick;
+                await soundRecorderCloseWarningDialog.ShowAsync(AppWindowType.SoundRecorder);
             }
             else
             {

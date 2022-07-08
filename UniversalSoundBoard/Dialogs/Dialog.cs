@@ -41,9 +41,9 @@ namespace UniversalSoundboard.Dialogs
             ContentDialog.CloseButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => CloseButtonClick?.Invoke(sender, args);
         }
 
-        public async Task ShowAsync()
+        public async Task ShowAsync(AppWindowType appWindowType = AppWindowType.Main)
         {
-            await ContentDialogs.ShowContentDialogAsync(ContentDialog);
+            await ContentDialogs.ShowContentDialogAsync(ContentDialog, appWindowType);
         }
     }
 }

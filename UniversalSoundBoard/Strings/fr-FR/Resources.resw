@@ -1014,10 +1014,10 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="Actions-CloseWindow" xml:space="preserve">
     <value>Fermer la fenêtre</value>
   </data>
-  <data name="SoundRecorderCloseWarningContentDialog-Message" xml:space="preserve">
+  <data name="SoundRecorderCloseWarningDialog-Message" xml:space="preserve">
     <value>Tu es sûr ? Tous les sons enregistrés que tu n’as pas sauvegardés seront perdus.</value>
   </data>
-  <data name="SoundRecorderCloseWarningContentDialog-Title" xml:space="preserve">
+  <data name="SoundRecorderCloseWarningDialog-Title" xml:space="preserve">
     <value>Fermer l’enregistreur de son</value>
   </data>
   <data name="DefaultSoundSettingsContentDialog-Description" xml:space="preserve">

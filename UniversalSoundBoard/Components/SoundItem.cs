@@ -11,6 +11,7 @@ using UniversalSoundboard.Models;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
+using Windows.Foundation.Metadata;
 using Windows.Storage;
 using Windows.System;
 using Windows.UI.Notifications;
@@ -91,7 +92,7 @@ namespace UniversalSoundboard.Components
         #region Hotkeys
         private void OptionsFlyout_HotkeysFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-
+            
         }
         #endregion
 
@@ -501,14 +502,17 @@ namespace UniversalSoundboard.Components
             categoriesFlyoutItem.Click += (object sender, RoutedEventArgs e) => CategoriesFlyoutItemClick?.Invoke(sender, e);
             optionsFlyout.Items.Add(categoriesFlyoutItem);
 
-            // Hotkeys
-            MenuFlyoutItem hotkeysFlyoutItem = new MenuFlyoutItem
+            if (ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0))
             {
-                Text = loader.GetString("SoundItemOptionsFlyout-Hotkeys"),
-                Icon = new FontIcon { Glyph = "\uE765" }
-            };
-            hotkeysFlyoutItem.Click += (object sender, RoutedEventArgs e) => HotkeysFlyoutItemClick?.Invoke(sender, e);
-            optionsFlyout.Items.Add(hotkeysFlyoutItem);
+                // Hotkeys
+                MenuFlyoutItem hotkeysFlyoutItem = new MenuFlyoutItem
+                {
+                    Text = loader.GetString("SoundItemOptionsFlyout-Hotkeys"),
+                    Icon = new FontIcon { Glyph = "\uE765" }
+                };
+                hotkeysFlyoutItem.Click += (object sender, RoutedEventArgs e) => HotkeysFlyoutItemClick?.Invoke(sender, e);
+                optionsFlyout.Items.Add(hotkeysFlyoutItem);
+            }
 
             // Default settings
             MenuFlyoutItem defaultSoundSettingsFlyoutItem = new MenuFlyoutItem
