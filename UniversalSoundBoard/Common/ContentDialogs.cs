@@ -2196,43 +2196,5 @@ namespace UniversalSoundboard.Common
             return DavPlusOutputDeviceContentDialog;
         }
         #endregion
-
-        #region AddRecordedSoundToSoundboard
-        public static ContentDialog CreateAddRecordedSoundToSoundboardContentDialog(string recordedSoundName)
-        {
-            AddRecordedSoundToSoundboardContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("AddRecordedSoundToSoundboardContentDialog-Title"),
-                PrimaryButtonText = loader.GetString("Actions-Add"),
-                CloseButtonText = loader.GetString("Actions-Cancel"),
-                DefaultButton = ContentDialogButton.Primary,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            StackPanel rootStackPanel = new StackPanel
-            {
-                Orientation = Orientation.Vertical
-            };
-
-            RecordedSoundNameTextBox = new TextBox
-            {
-                Text = recordedSoundName,
-                PlaceholderText = loader.GetString("RenameSoundContentDialog-RenameSoundTextBoxPlaceholder"),
-                Width = 300
-            };
-
-            rootStackPanel.Children.Add(RecordedSoundNameTextBox);
-
-            AddRecordedSoundToSoundboardContentDialog.Content = rootStackPanel;
-            RecordedSoundNameTextBox.TextChanged += RecordedSoundNameTextBox_TextChanged;
-
-            return AddRecordedSoundToSoundboardContentDialog;
-        }
-
-        private static void RecordedSoundNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            AddRecordedSoundToSoundboardContentDialog.IsPrimaryButtonEnabled = RecordedSoundNameTextBox.Text.Length >= 3;
-        }
-        #endregion
     }
 }

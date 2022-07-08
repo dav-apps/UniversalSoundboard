@@ -77,15 +77,15 @@ namespace UniversalSoundboard.Components
 
         private async void AddToSoundboardButton_Click(object sender, RoutedEventArgs e)
         {
-            var addToSoundboardContentDialog = ContentDialogs.CreateAddRecordedSoundToSoundboardContentDialog(RecordedSoundItem.Name);
-            addToSoundboardContentDialog.PrimaryButtonClick += AddToSoundboardContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(addToSoundboardContentDialog, AppWindowType.SoundRecorder);
+            var addToSoundboardDialog = new AddRecordedSoundToSoundboardDialog(RecordedSoundItem.Name);
+            addToSoundboardDialog.PrimaryButtonClick += AddToSoundboardContentDialog_PrimaryButtonClick;
+            await addToSoundboardDialog.ShowAsync(AppWindowType.SoundRecorder);
         }
 
-        private async void AddToSoundboardContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void AddToSoundboardContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Get the name of the sound
-            string soundName = ContentDialogs.RecordedSoundNameTextBox.Text;
+            string soundName = (sender as AddRecordedSoundToSoundboardDialog).Name;
 
             // Create the sound
             Guid uuid = await FileManager.CreateSoundAsync(null, soundName, new List<Guid>(), RecordedSoundItem.File);
@@ -104,7 +104,7 @@ namespace UniversalSoundboard.Components
             await removeRecordedSoundDialog.ShowAsync(AppWindowType.SoundRecorder);
         }
 
-        private async void RemoveRecordedSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void RemoveRecordedSoundContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             await RecordedSoundItem.Remove();
         }

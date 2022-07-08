@@ -8,11 +8,25 @@ namespace UniversalSoundboard.Dialogs
 {
     public class Dialog
     {
-        private ContentDialog ContentDialog { get; }
-        public event TypedEventHandler<ContentDialog, ContentDialogButtonClickEventArgs> PrimaryButtonClick;
-        public event TypedEventHandler<ContentDialog, ContentDialogButtonClickEventArgs> CloseButtonClick;
+        protected ContentDialog ContentDialog { get; }
+        public object Content
+        {
+            get => ContentDialog?.Content;
+            protected set
+            {
+                if (ContentDialog == null) return;
+                ContentDialog.Content = value;
+            }
+        }
 
-        public Dialog(string title, string content, string closeButtonText)
+        public event TypedEventHandler<Dialog, ContentDialogButtonClickEventArgs> PrimaryButtonClick;
+        public event TypedEventHandler<Dialog, ContentDialogButtonClickEventArgs> CloseButtonClick;
+
+        public Dialog(
+            string title,
+            object content,
+            string closeButtonText
+        )
         {
             ContentDialog = new ContentDialog
             {
@@ -22,10 +36,29 @@ namespace UniversalSoundboard.Dialogs
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
-            ContentDialog.CloseButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => CloseButtonClick?.Invoke(sender, args);
+            ContentDialog.CloseButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => CloseButtonClick?.Invoke(this, args);
         }
 
-        public Dialog(string title, string content, string primaryButtonText, string closeButtonText, ContentDialogButton defaultButton = ContentDialogButton.Primary)
+        public Dialog(
+            string title,
+            string primaryButtonText,
+            string closeButtonText,
+            ContentDialogButton defaultButton = ContentDialogButton.Primary
+        ) : this(
+            title,
+            null,
+            primaryButtonText,
+            closeButtonText,
+            defaultButton
+        ) { }
+
+        public Dialog(
+            string title,
+            object content,
+            string primaryButtonText,
+            string closeButtonText,
+            ContentDialogButton defaultButton = ContentDialogButton.Primary
+        )
         {
             ContentDialog = new ContentDialog
             {
@@ -37,8 +70,8 @@ namespace UniversalSoundboard.Dialogs
                 RequestedTheme = FileManager.GetRequestedTheme()
             };
 
-            ContentDialog.PrimaryButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => PrimaryButtonClick?.Invoke(sender, args);
-            ContentDialog.CloseButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => CloseButtonClick?.Invoke(sender, args);
+            ContentDialog.PrimaryButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => PrimaryButtonClick?.Invoke(this, args);
+            ContentDialog.CloseButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => CloseButtonClick?.Invoke(this, args);
         }
 
         public async Task ShowAsync(AppWindowType appWindowType = AppWindowType.Main)

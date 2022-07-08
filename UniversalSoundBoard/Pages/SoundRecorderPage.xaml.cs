@@ -118,7 +118,7 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        private async void SoundRecorderCloseWarningContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void SoundRecorderCloseWarningContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             await ClearPageData();
             await MainPage.soundRecorderAppWindow.CloseAsync();

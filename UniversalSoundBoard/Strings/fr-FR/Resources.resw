@@ -933,7 +933,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="NewCategoryContentDialog-NewCategoryTextBoxPlaceholder" xml:space="preserve">
     <value>Nom de la catégorie</value>
   </data>
-  <data name="RenameSoundContentDialog-RenameSoundTextBoxPlaceholder" xml:space="preserve">
+  <data name="RenameSoundDialog-RenameSoundTextBoxPlaceholder" xml:space="preserve">
     <value>Nom du son</value>
   </data>
   <data name="InAppNotification-Sync" xml:space="preserve">
@@ -1008,7 +1008,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="RemoveRecordedSoundDialog-Title" xml:space="preserve">
     <value>Voulez-vous supprimer « {0} » ?</value>
   </data>
-  <data name="AddRecordedSoundToSoundboardContentDialog-Title" xml:space="preserve">
+  <data name="AddRecordedSoundToSoundboardDialog-Title" xml:space="preserve">
     <value>Ajouter au Soundboard</value>
   </data>
   <data name="Actions-CloseWindow" xml:space="preserve">
