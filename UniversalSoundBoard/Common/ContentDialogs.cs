@@ -2179,22 +2179,5 @@ namespace UniversalSoundboard.Common
             return DavPlusHotkeysContentDialog;
         }
         #endregion
-
-        #region DavPlusOutputDevice
-        public static ContentDialog CreateDavPlusOutputDeviceContentDialog()
-        {
-            DavPlusOutputDeviceContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("DavPlusContentDialog-Title"),
-                Content = loader.GetString("DavPlusOutputDeviceContentDialog-Content"),
-                PrimaryButtonText = loader.GetString("Actions-LearnMore"),
-                CloseButtonText = loader.GetString("Actions-Close"),
-                DefaultButton = ContentDialogButton.Primary,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return DavPlusOutputDeviceContentDialog;
-        }
-        #endregion
     }
 }

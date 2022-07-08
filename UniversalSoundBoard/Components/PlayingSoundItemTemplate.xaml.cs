@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.Resources;
@@ -603,13 +604,13 @@ namespace UniversalSoundboard.Components
             else
             {
                 // Show dialog which explains that this feature is only for Plus users
-                ContentDialog davPlusOutputDeviceContentDialog = ContentDialogs.CreateDavPlusOutputDeviceContentDialog();
-                davPlusOutputDeviceContentDialog.PrimaryButtonClick += DavPlusOutputDeviceContentDialog_PrimaryButtonClick;
-                await ContentDialogs.ShowContentDialogAsync(davPlusOutputDeviceContentDialog);
+                var davPlusOutputDeviceDialog = new DavPlusOutputDeviceDialog();
+                davPlusOutputDeviceDialog.PrimaryButtonClick += DavPlusOutputDeviceContentDialog_PrimaryButtonClick;
+                await davPlusOutputDeviceDialog.ShowAsync();
             }
         }
 
-        private void DavPlusOutputDeviceContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void DavPlusOutputDeviceContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Navigate to the Account page
             FileManager.NavigateToAccountPage();
