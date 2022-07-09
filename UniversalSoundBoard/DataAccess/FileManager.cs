@@ -2033,7 +2033,11 @@ namespace UniversalSoundboard.DataAccess
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
 
-            await soundTableObject.SetPropertyValueAsync(SoundTableDefaultVolumePropertyName, defaultVolume.ToString());
+            await soundTableObject.SetPropertyValuesAsync(new Dictionary<string, string>
+            {
+                { SoundTableDefaultVolumePropertyName, defaultVolume.ToString() },
+                { SoundTableDefaultMutedPropertyName, defaultMuted.ToString() }
+            });
         }
 
         public static async Task SetDefaultPlaybackSpeedOfSoundAsync(Guid uuid, int defaultPlaybackSpeed)

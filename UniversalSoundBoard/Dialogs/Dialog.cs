@@ -24,14 +24,12 @@ namespace UniversalSoundboard.Dialogs
 
         public Dialog(
             string title,
-            object content,
             string closeButtonText
         )
         {
             ContentDialog = new ContentDialog
             {
                 Title = title,
-                Content = content,
                 CloseButtonText = closeButtonText,
                 RequestedTheme = FileManager.GetRequestedTheme()
             };

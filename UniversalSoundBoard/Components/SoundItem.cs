@@ -7,6 +7,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
@@ -99,8 +100,8 @@ namespace UniversalSoundboard.Components
         #region DefaultSoundOptions
         private async void OptionsFlyout_DefaultSoundSettingsFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            var defaultSoundSettingsContentDialog = ContentDialogs.CreateDefaultSoundSettingsContentDialog(sound);
-            await defaultSoundSettingsContentDialog.ShowAsync();
+            var defaultSoundSettingsDialog = new DefaultSoundSettingsDialog(sound);
+            await defaultSoundSettingsDialog.ShowAsync();
         }
         #endregion
 

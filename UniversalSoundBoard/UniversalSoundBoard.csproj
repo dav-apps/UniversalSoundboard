@@ -163,6 +163,7 @@
     <Compile Include="Dialogs\AddSoundsErrorDialog.cs" />
     <Compile Include="Dialogs\DavPlusHotkeysDialog.cs" />
     <Compile Include="Dialogs\DavPlusOutputDeviceDialog.cs" />
+    <Compile Include="Dialogs\DefaultSoundSettingsDialog.cs" />
     <Compile Include="Dialogs\NoAudioDeviceDialog.cs" />
     <Compile Include="Dialogs\RemoveRecordedSoundDialog.cs" />
     <Compile Include="Dialogs\SoundRecorderCloseWarningDialog.cs" />

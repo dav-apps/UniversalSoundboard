@@ -604,7 +604,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PropertiesContentDialog-ImageFileType" xml:space="preserve">
     <value>Dateityp des Bildes:</value>
   </data>
-  <data name="DefaultSoundSettingsContentDialog-Volume" xml:space="preserve">
+  <data name="DefaultSoundSettingsDialog-Volume" xml:space="preserve">
     <value>Lautstärke:</value>
   </data>
   <data name="EmptyCategoryMessageTitleTextBlock.Text" xml:space="preserve">
@@ -730,7 +730,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PlaybackSpeedButtonToolTip" xml:space="preserve">
     <value>Dieser Sound wird mit {0}-facher Geschwindigkeit abgespielt.</value>
   </data>
-  <data name="DefaultSoundSettingsContentDialog-PlaybackSpeed" xml:space="preserve">
+  <data name="DefaultSoundSettingsDialog-PlaybackSpeed" xml:space="preserve">
     <value>Wiedergabegeschwindigkeit:</value>
   </data>
   <data name="Account-PlusCardFeature-HotkeysFlyoutTextBlock.Text" xml:space="preserve">
@@ -1019,16 +1019,16 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="SoundRecorderCloseWarningDialog-Title" xml:space="preserve">
     <value>Sound-Recorder schließen</value>
   </data>
-  <data name="DefaultSoundSettingsContentDialog-Description" xml:space="preserve">
+  <data name="DefaultSoundSettingsDialog-Description" xml:space="preserve">
     <value>Die folgenden Einstellungen werden verwendet, wenn du diesen Sound einzeln abspielst.</value>
   </data>
-  <data name="DefaultSoundSettingsContentDialog-Title" xml:space="preserve">
+  <data name="DefaultSoundSettingsDialog-Title" xml:space="preserve">
     <value>Standard-Einstellungen für "{0}"</value>
   </data>
   <data name="SoundItemOptionsFlyout-DefaultSettings" xml:space="preserve">
     <value>Standard-Einstellungen</value>
   </data>
-  <data name="DefaultSoundSettingsContentDialog-Repetitions" xml:space="preserve">
+  <data name="DefaultSoundSettingsDialog-Repetitions" xml:space="preserve">
     <value>Wiederholungen:</value>
   </data>
   <data name="SoundItemOptionsFlyout-Hotkeys" xml:space="preserve">
