@@ -2039,19 +2039,20 @@ namespace UniversalSoundboard.Pages
             foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
                 selectedSounds.Add(sound);
 
-            var SetCategoryContentDialog = ContentDialogs.CreateSetCategoriesContentDialog(selectedSounds);
-            SetCategoryContentDialog.PrimaryButtonClick += SetCategoriesContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(SetCategoryContentDialog);
+            var setCategoriesDialog = new SetCategoriesDialog(selectedSounds);
+            setCategoriesDialog.PrimaryButtonClick += SetCategoriesContentDialog_PrimaryButtonClick;
+            await setCategoriesDialog.ShowAsync();
         }
 
-        private async void SetCategoriesContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void SetCategoriesContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
+            var dialog = sender as SetCategoriesDialog;
             FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("UpdateSoundsMessage");
             FileManager.itemViewHolder.LoadingScreenVisible = true;
 
             // Get the selected categories
             List<Guid> categoryUuids = new List<Guid>();
-            foreach (var item in ContentDialogs.CategoriesTreeView.SelectedItems)
+            foreach (var item in dialog.SelectedItems)
                 categoryUuids.Add((Guid)((CustomTreeViewNode)item).Tag);
 
             // Get the selected sounds

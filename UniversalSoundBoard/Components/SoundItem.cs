@@ -72,16 +72,18 @@ namespace UniversalSoundboard.Components
         #region Categories
         private async void OptionsFlyout_CategoriesFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            var SetCategoriesContentDialog = ContentDialogs.CreateSetCategoriesContentDialog(new List<Sound> { sound });
-            SetCategoriesContentDialog.PrimaryButtonClick += SetCategoriesContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(SetCategoriesContentDialog);
+            var setCategoriesDialog = new SetCategoriesDialog(new List<Sound> { sound });
+            setCategoriesDialog.PrimaryButtonClick += SetCategoriesContentDialog_PrimaryButtonClick;
+            await setCategoriesDialog.ShowAsync();
         }
 
-        private async void SetCategoriesContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void SetCategoriesContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
+            var dialog = sender as SetCategoriesDialog;
+
             // Get the selected categories
             List<Guid> categoryUuids = new List<Guid>();
-            foreach (var item in ContentDialogs.CategoriesTreeView.SelectedItems)
+            foreach (var item in dialog.SelectedItems)
                 categoryUuids.Add((Guid)((CustomTreeViewNode)item).Tag);
 
             // Update and reload the sound

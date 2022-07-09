@@ -77,7 +77,6 @@ namespace UniversalSoundboard.Common
         public static CheckBox ExportSoundsAsZipCheckBox;
         public static StorageFolder ExportSoundsFolder;
         public static ListView CategoriesListView;
-        public static WinUI.TreeView CategoriesTreeView;
         public static ComboBox DefaultSoundSettingsRepetitionsComboBox;
         public static ComboBox PlaybackSpeedComboBox;
         public static List<ObservableCollection<HotkeyItem>> PropertiesDialogHotkeys = new List<ObservableCollection<HotkeyItem>>();
@@ -1407,78 +1406,6 @@ namespace UniversalSoundboard.Common
                 if(SoundsList.Count > 0)
                     ExportSoundsContentDialog.IsPrimaryButtonEnabled = true;
             }
-        }
-        #endregion
-
-        #region SetCategories
-        public static ContentDialog CreateSetCategoriesContentDialog(List<Sound> sounds)
-        {
-            if (sounds.Count == 0) return null;
-
-            string title = string.Format(loader.GetString("SetCategoryForMultipleSoundsContentDialog-Title"), sounds.Count);
-            if (sounds.Count == 1) title = string.Format(loader.GetString("SetCategoryContentDialog-Title"), sounds[0].Name);
-
-            SetCategoryContentDialog = new ContentDialog
-            {
-                Title = title,
-                DefaultButton = ContentDialogButton.Primary,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            StackPanel content = new StackPanel
-            {
-                Orientation = Orientation.Vertical
-            };
-
-            CategoriesTreeView = new WinUI.TreeView
-            {
-                Height = 300,
-                SelectionMode = WinUI.TreeViewSelectionMode.Multiple,
-                CanDrag = false,
-                CanDragItems = false,
-                CanReorderItems = false,
-                AllowDrop = false
-            };
-
-            // Get all categories
-            List<Category> categories = new List<Category>();
-            for (int i = 1; i < FileManager.itemViewHolder.Categories.Count; i++)
-                categories.Add(FileManager.itemViewHolder.Categories[i]);
-
-            // Find the intersection of the categories of all sounds
-            List<Guid> soundCategories = new List<Guid>();
-            foreach(var category in sounds.First().Categories)
-                if (sounds.TrueForAll(s => s.Categories.Exists(c => c.Uuid == category.Uuid)))
-                    soundCategories.Add(category.Uuid);
-
-            // Create the nodes and add them to the tree view
-            List<CustomTreeViewNode> selectedNodes = new List<CustomTreeViewNode>();
-            foreach (var node in FileManager.CreateTreeViewNodesFromCategories(categories, selectedNodes, soundCategories))
-                CategoriesTreeView.RootNodes.Add(node);
-
-            foreach (var node in selectedNodes)
-                CategoriesTreeView.SelectedNodes.Add(node);
-
-            if(categories.Count > 0)
-            {
-                content.Children.Add(CategoriesTreeView);
-
-                SetCategoryContentDialog.PrimaryButtonText = loader.GetString("Actions-Save");
-                SetCategoryContentDialog.CloseButtonText = loader.GetString("Actions-Cancel");
-            }
-            else
-            {
-                TextBlock noCategoriesTextBlock = new TextBlock
-                {
-                    Text = loader.GetString("SetCategoryContentDialog-NoCategoriesText")
-                };
-                content.Children.Add(noCategoriesTextBlock);
-
-                SetCategoryContentDialog.CloseButtonText = loader.GetString("Actions-Close");
-            }
-
-            SetCategoryContentDialog.Content = content;
-            return SetCategoryContentDialog;
         }
         #endregion
     }

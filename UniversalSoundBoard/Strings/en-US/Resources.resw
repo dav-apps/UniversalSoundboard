@@ -444,13 +444,13 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Actions-Save" xml:space="preserve">
     <value>Save</value>
   </data>
-  <data name="SetCategoryContentDialog-Title" xml:space="preserve">
+  <data name="SetCategoriesDialog-Title" xml:space="preserve">
     <value>Set categories for "{0}"</value>
   </data>
-  <data name="SetCategoryForMultipleSoundsContentDialog-Title" xml:space="preserve">
+  <data name="SetCategoriesDialog-MultipleSounds-Title" xml:space="preserve">
     <value>Set categories for {0} sounds</value>
   </data>
-  <data name="SetCategoryContentDialog-NoCategoriesText" xml:space="preserve">
+  <data name="SetCategoriesDialog-NoCategories" xml:space="preserve">
     <value>Add your first category by clicking the Plus-Button.</value>
   </data>
   <data name="SettingsEntry-SoundOrderComboBox-CreationDateAscending.Content" xml:space="preserve">
