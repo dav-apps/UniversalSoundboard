@@ -151,10 +151,6 @@
     <Compile Include="Common\Types.cs" />
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
-    <Compile Include="Components\HotkeyItem.cs" />
-    <Compile Include="Components\HotkeyItemTemplate.xaml.cs">
-      <DependentUpon>HotkeyItemTemplate.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Components\RecordedSoundItemTemplate.xaml.cs">
       <DependentUpon>RecordedSoundItemTemplate.xaml</DependentUpon>
     </Compile>
@@ -164,6 +160,7 @@
     <Compile Include="Dialogs\DavPlusHotkeysDialog.cs" />
     <Compile Include="Dialogs\DavPlusOutputDeviceDialog.cs" />
     <Compile Include="Dialogs\DefaultSoundSettingsDialog.cs" />
+    <Compile Include="Dialogs\ExportSoundsDialog.cs" />
     <Compile Include="Dialogs\NoAudioDeviceDialog.cs" />
     <Compile Include="Dialogs\PropertiesDialog.cs" />
     <Compile Include="Dialogs\RemoveRecordedSoundDialog.cs" />
@@ -339,10 +336,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Components\HotkeyItemTemplate.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Components\RecordedSoundItemTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

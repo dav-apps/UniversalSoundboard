@@ -54,8 +54,6 @@ namespace UniversalSoundboard.Pages
         bool mobileSearchVisible = false;                                   // If true, the app window is small, the search box is visible and the other top buttons are hidden
         bool playingSoundsLoaded = false;
         public static double windowWidth = 500;
-        public static Style buttonRevealStyle;
-        public static DataTemplate hotkeyButtonTemplate;
         public static uint screenWidth = 0;
         public static uint screenHeight = 0;
 
@@ -339,10 +337,6 @@ namespace UniversalSoundboard.Pages
 
         private void InitLayout()
         {
-            // Init the static styles
-            buttonRevealStyle = Resources["ButtonRevealStyle"] as Style;
-            hotkeyButtonTemplate = Resources["HotkeyButtonTemplate"] as DataTemplate;
-
             SideBar.ExpandedModeThresholdWidth = FileManager.sideBarCollapsedMaxWidth;
 
             // Set the background of the sidebar content
@@ -2275,17 +2269,19 @@ namespace UniversalSoundboard.Pages
             var template = (DataTemplate)Resources["SoundItemTemplate"];
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
 
-            var exportSoundsContentDialog = ContentDialogs.CreateExportSoundsContentDialog(sounds, template, listViewItemStyle);
-            exportSoundsContentDialog.PrimaryButtonClick += ExportSoundsContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(exportSoundsContentDialog);
+            var exportSoundsDialog = new ExportSoundsDialog(sounds, template, listViewItemStyle);
+            exportSoundsDialog.PrimaryButtonClick += ExportSoundsContentDialog_PrimaryButtonClick;
+            await exportSoundsDialog.ShowAsync();
         }
 
-        private async void ExportSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void ExportSoundsContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
+            var dialog = sender as ExportSoundsDialog;
+
             // Disable multi-selection mode
             FileManager.itemViewHolder.MultiSelectionEnabled = false;
 
-            await FileManager.ExportSoundsAsync(ContentDialogs.SoundsList.ToList(), ContentDialogs.ExportSoundsAsZipCheckBox.IsChecked.Value, ContentDialogs.ExportSoundsFolder);
+            await FileManager.ExportSoundsAsync(dialog.Sounds, dialog.ExportSoundsAsZip, dialog.ExportSoundsFolder);
         }
         #endregion
 
