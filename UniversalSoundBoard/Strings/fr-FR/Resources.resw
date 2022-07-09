@@ -578,13 +578,13 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="SoundItemOptionsFlyout-Properties" xml:space="preserve">
     <value>Propriétés</value>
   </data>
-  <data name="PropertiesContentDialog-FileType" xml:space="preserve">
+  <data name="PropertiesDialog-FileType" xml:space="preserve">
     <value>Type du fichier :</value>
   </data>
-  <data name="PropertiesContentDialog-Name" xml:space="preserve">
+  <data name="PropertiesDialog-Name" xml:space="preserve">
     <value>Nom :</value>
   </data>
-  <data name="PropertiesContentDialog-Size" xml:space="preserve">
+  <data name="PropertiesDialog-Size" xml:space="preserve">
     <value>Taille :</value>
   </data>
   <data name="Sizes-GB" xml:space="preserve">
@@ -596,10 +596,10 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="Sizes-MB" xml:space="preserve">
     <value>Mo</value>
   </data>
-  <data name="PropertiesContentDialog-ImageSize" xml:space="preserve">
+  <data name="PropertiesDialog-ImageSize" xml:space="preserve">
     <value>Taille de l’image :</value>
   </data>
-  <data name="PropertiesContentDialog-ImageFileType" xml:space="preserve">
+  <data name="PropertiesDialog-ImageFileType" xml:space="preserve">
     <value>Type de fichier d’image :</value>
   </data>
   <data name="DefaultSoundSettingsDialog-Volume" xml:space="preserve">
@@ -659,26 +659,8 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="MoreButton-OpenSoundSeparately.Text" xml:space="preserve">
     <value>Ouvrir ce son séparément</value>
   </data>
-  <data name="PropertiesContentDialog-Hotkeys" xml:space="preserve">
-    <value>Raccourcis clavier :</value>
-  </data>
   <data name="Actions-Add" xml:space="preserve">
     <value>Ajouter</value>
-  </data>
-  <data name="PropertiesContentDialog-AddHotkeyButtonTooltip.Text" xml:space="preserve">
-    <value>Ajouter un raccourci clavier</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyFlyoutText" xml:space="preserve">
-    <value>Appuyez sur une combinaison de touches</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyFlyoutAddButton.Content" xml:space="preserve">
-    <value>Ajouter</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyButtonFlyoutText.Text" xml:space="preserve">
-    <value>Voulez-vous supprimer cette raccourci clavier ?</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyFlyoutRemoveButton.Content" xml:space="preserve">
-    <value>Supprimer</value>
   </data>
   <data name="Keys-Control" xml:space="preserve">
     <value>Ctrl</value>
@@ -760,9 +742,6 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   </data>
   <data name="DavPlusOutputDeviceDialog-Content" xml:space="preserve">
     <value>La modification du périphérique de sortie pour certains sons ouverts n’est disponible que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeysRestricted" xml:space="preserve">
-    <value>La fonction des raccourcis clavier est limitée.</value>
   </data>
   <data name="Export-Image" xml:space="preserve">
     <value>Exporter l’image</value>

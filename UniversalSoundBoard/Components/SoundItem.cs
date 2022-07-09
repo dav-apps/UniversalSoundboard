@@ -390,8 +390,15 @@ namespace UniversalSoundboard.Components
         #region Properties
         private async void Flyout_PropertiesFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            var propertiesContentDialog = await ContentDialogs.CreatePropertiesContentDialog(sound);
-            await ContentDialogs.ShowContentDialogAsync(propertiesContentDialog);
+            ulong audioFileSize = 0;
+            if (sound.AudioFile != null)
+                audioFileSize = await FileManager.GetFileSizeAsync(sound.AudioFile);
+
+            ulong imageFileSize = 0;
+            if (sound.ImageFile != null)
+                imageFileSize = await FileManager.GetFileSizeAsync(sound.ImageFile);
+
+            await new PropertiesDialog(sound, audioFileSize, imageFileSize).ShowAsync();
         }
         #endregion
 

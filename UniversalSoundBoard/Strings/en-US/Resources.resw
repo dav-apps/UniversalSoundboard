@@ -582,13 +582,13 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Actions-Close" xml:space="preserve">
     <value>Close</value>
   </data>
-  <data name="PropertiesContentDialog-FileType" xml:space="preserve">
+  <data name="PropertiesDialog-FileType" xml:space="preserve">
     <value>File type:</value>
   </data>
-  <data name="PropertiesContentDialog-Name" xml:space="preserve">
+  <data name="PropertiesDialog-Name" xml:space="preserve">
     <value>Name:</value>
   </data>
-  <data name="PropertiesContentDialog-Size" xml:space="preserve">
+  <data name="PropertiesDialog-Size" xml:space="preserve">
     <value>Size:</value>
   </data>
   <data name="Sizes-GB" xml:space="preserve">
@@ -600,10 +600,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Sizes-MB" xml:space="preserve">
     <value>MB</value>
   </data>
-  <data name="PropertiesContentDialog-ImageSize" xml:space="preserve">
+  <data name="PropertiesDialog-ImageSize" xml:space="preserve">
     <value>Image size:</value>
   </data>
-  <data name="PropertiesContentDialog-ImageFileType" xml:space="preserve">
+  <data name="PropertiesDialog-ImageFileType" xml:space="preserve">
     <value>Image file type:</value>
   </data>
   <data name="DefaultSoundSettingsDialog-Volume" xml:space="preserve">
@@ -660,26 +660,8 @@ This may take some time, depending on how large the import file is.</value>
   <data name="MoreButton-OpenSoundSeparately.Text" xml:space="preserve">
     <value>Open this sound separately</value>
   </data>
-  <data name="PropertiesContentDialog-Hotkeys" xml:space="preserve">
-    <value>Hotkeys:</value>
-  </data>
   <data name="Actions-Add" xml:space="preserve">
     <value>Add</value>
-  </data>
-  <data name="PropertiesContentDialog-AddHotkeyButtonTooltip.Text" xml:space="preserve">
-    <value>Add hotkey</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyFlyoutText" xml:space="preserve">
-    <value>Press a key combination</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyFlyoutAddButton.Content" xml:space="preserve">
-    <value>Add</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyButtonFlyoutText.Text" xml:space="preserve">
-    <value>Do you want to remove this hotkey?</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyFlyoutRemoveButton.Content" xml:space="preserve">
-    <value>Remove</value>
   </data>
   <data name="Keys-Control" xml:space="preserve">
     <value>Ctrl</value>
@@ -761,9 +743,6 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="DavPlusOutputDeviceDialog-Content" xml:space="preserve">
     <value>Changing the output device for particular opened sounds is only available for dav Plus users. Log in and upgrade your plan to use this feature.</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeysRestricted" xml:space="preserve">
-    <value>The function of hotkeys is restricted.</value>
   </data>
   <data name="Export-Image" xml:space="preserve">
     <value>Export image</value>

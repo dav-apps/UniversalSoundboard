@@ -580,13 +580,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Actions-Close" xml:space="preserve">
     <value>Schließen</value>
   </data>
-  <data name="PropertiesContentDialog-FileType" xml:space="preserve">
+  <data name="PropertiesDialog-FileType" xml:space="preserve">
     <value>Dateityp:</value>
   </data>
-  <data name="PropertiesContentDialog-Name" xml:space="preserve">
+  <data name="PropertiesDialog-Name" xml:space="preserve">
     <value>Name:</value>
   </data>
-  <data name="PropertiesContentDialog-Size" xml:space="preserve">
+  <data name="PropertiesDialog-Size" xml:space="preserve">
     <value>Größe:</value>
   </data>
   <data name="Sizes-GB" xml:space="preserve">
@@ -598,10 +598,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Sizes-MB" xml:space="preserve">
     <value>MB</value>
   </data>
-  <data name="PropertiesContentDialog-ImageSize" xml:space="preserve">
+  <data name="PropertiesDialog-ImageSize" xml:space="preserve">
     <value>Größe des Bildes:</value>
   </data>
-  <data name="PropertiesContentDialog-ImageFileType" xml:space="preserve">
+  <data name="PropertiesDialog-ImageFileType" xml:space="preserve">
     <value>Dateityp des Bildes:</value>
   </data>
   <data name="DefaultSoundSettingsDialog-Volume" xml:space="preserve">
@@ -658,26 +658,8 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="MoreButton-OpenSoundSeparately.Text" xml:space="preserve">
     <value>Diesen Sound separat öffnen</value>
   </data>
-  <data name="PropertiesContentDialog-Hotkeys" xml:space="preserve">
-    <value>Tastenkombinationen:</value>
-  </data>
   <data name="Actions-Add" xml:space="preserve">
     <value>Hinzufügen</value>
-  </data>
-  <data name="PropertiesContentDialog-AddHotkeyButtonTooltip.Text" xml:space="preserve">
-    <value>Tastenkombination hinzufügen</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyFlyoutText" xml:space="preserve">
-    <value>Drücke eine Tastenkombination</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyFlyoutAddButton.Content" xml:space="preserve">
-    <value>Hinzufügen</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyButtonFlyoutText.Text" xml:space="preserve">
-    <value>Willst du diese Tastenkombination entfernen?</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeyFlyoutRemoveButton.Content" xml:space="preserve">
-    <value>Entfernen</value>
   </data>
   <data name="Keys-Control" xml:space="preserve">
     <value>Strg</value>
@@ -759,9 +741,6 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="DavPlusOutputDeviceDialog-Content" xml:space="preserve">
     <value>Das Ändern des Ausgabegeräts für bestimmte geöffnete Sounds ist nur für Nutzer von dav Plus verfügbar. Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
-  </data>
-  <data name="PropertiesContentDialog-HotkeysRestricted" xml:space="preserve">
-    <value>Die Funktion von Tastenkombinationen ist eingeschränkt.</value>
   </data>
   <data name="Export-Image" xml:space="preserve">
     <value>Bild exportieren</value>
