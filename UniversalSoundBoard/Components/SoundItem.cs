@@ -29,6 +29,7 @@ namespace UniversalSoundboard.Components
         public event EventHandler<EventArgs> ImageUpdated;
 
         private readonly ResourceLoader loader = new ResourceLoader();
+        private DownloadFileDialog downloadFileDialog;
         private bool downloadFileWasCanceled = false;
         private bool downloadFileThrewError = false;
         private bool downloadFileIsExecuting = false;
@@ -417,10 +418,9 @@ namespace UniversalSoundboard.Components
                 Progress<(Guid, int)> progress = new Progress<(Guid, int)>(FileDownloadProgress);
                 sound.ScheduleAudioFileDownload(progress);
 
-                ContentDialogs.CreateDownloadFileContentDialog($"{sound.Name}.{sound.GetAudioFileExtension()}");
-                ContentDialogs.downloadFileProgressBar.IsIndeterminate = true;
-                ContentDialogs.DownloadFileContentDialog.CloseButtonClick += DownloadFileContentDialog_CloseButtonClick;
-                await ContentDialogs.ShowContentDialogAsync(ContentDialogs.DownloadFileContentDialog);
+                downloadFileDialog = new DownloadFileDialog($"{sound.Name}.{sound.GetAudioFileExtension()}");
+                downloadFileDialog.CloseButtonClick += DownloadFileContentDialog_CloseButtonClick;
+                await downloadFileDialog.ShowAsync();
             }
 
             if (downloadFileWasCanceled)
@@ -448,23 +448,23 @@ namespace UniversalSoundboard.Components
                 // There was an error
                 downloadFileThrewError = true;
                 downloadFileIsExecuting = false;
-                ContentDialogs.DownloadFileContentDialog.Hide();
+                downloadFileDialog.Hide();
             }
             else if (value.Item2 > 100)
             {
                 // Download was successful
                 downloadFileThrewError = false;
                 downloadFileIsExecuting = false;
-                ContentDialogs.DownloadFileContentDialog.Hide();
+                downloadFileDialog.Hide();
             }
             else
             {
-                ContentDialogs.downloadFileProgressBar.IsIndeterminate = false;
-                ContentDialogs.downloadFileProgressBar.Value = value.Item2;
+                downloadFileDialog.ProgressBar.IsIndeterminate = false;
+                downloadFileDialog.ProgressBar.Value = value.Item2;
             }
         }
 
-        private void DownloadFileContentDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void DownloadFileContentDialog_CloseButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             downloadFileWasCanceled = true;
             downloadFileIsExecuting = false;

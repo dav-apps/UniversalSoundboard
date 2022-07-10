@@ -84,5 +84,10 @@ namespace UniversalSoundboard.Dialogs
         {
             await ContentDialogs.ShowContentDialogAsync(ContentDialog, appWindowType);
         }
+
+        public void Hide()
+        {
+            ContentDialog.Hide();
+        }
     }
 }

@@ -389,7 +389,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="SignupButton.Content" xml:space="preserve">
     <value>Créer un compte</value>
   </data>
-  <data name="DownloadFileContentDialog-Title" xml:space="preserve">
+  <data name="DownloadFileDialog-Title" xml:space="preserve">
     <value>Téléchargement du fichier {0}...</value>
   </data>
   <data name="DownloadFileErrorDialog-Message" xml:space="preserve">

@@ -70,7 +70,6 @@ namespace UniversalSoundboard.Common
         public static ListView SoundsListView;
         public static ComboBox RepeatsComboBox;
         public static ObservableCollection<Sound> SoundsList = new ObservableCollection<Sound>();
-        public static ProgressBar downloadFileProgressBar;
         public static List<Sound> downloadingFilesSoundsList = new List<Sound>();
         public static ListView ExportSoundsListView;
         public static TextBox ExportSoundsFolderTextBox;
@@ -96,7 +95,6 @@ namespace UniversalSoundboard.Common
         public static ContentDialog ImportDataContentDialog;
         public static ContentDialog PlaySoundsSuccessivelyContentDialog;
         public static ContentDialog LogoutContentDialog;
-        public static ContentDialog DownloadFileContentDialog;
         public static ContentDialog DownloadFilesContentDialog;
         public static ContentDialog DownloadFileErrorContentDialog;
         public static ContentDialog ExportSoundsContentDialog;
@@ -1232,64 +1230,6 @@ namespace UniversalSoundboard.Common
             };
 
             return LogoutContentDialog;
-        }
-        #endregion
-
-        #region DownloadFile
-        public static ContentDialog CreateDownloadFileContentDialog(string filename)
-        {
-            DownloadFileContentDialog = new ContentDialog
-            {
-                Title = string.Format(loader.GetString("DownloadFileContentDialog-Title"), filename),
-                CloseButtonText = loader.GetString("Actions-Cancel"),
-                DefaultButton = ContentDialogButton.None,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            StackPanel content = new StackPanel
-            {
-                Margin = new Thickness(0, 30, 0, 0),
-                Orientation = Orientation.Vertical
-            };
-
-            downloadFileProgressBar = new ProgressBar();
-            content.Children.Add(downloadFileProgressBar);
-            DownloadFileContentDialog.Content = content;
-
-            return DownloadFileContentDialog;
-        }
-        #endregion
-
-        #region DownloadFiles
-        public static ContentDialog CreateDownloadFilesContentDialog(List<Sound> sounds, DataTemplate itemTemplate, Style itemStyle)
-        {
-            downloadingFilesSoundsList = sounds;
-
-            DownloadFilesContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("DownloadFilesContentDialog-Title"),
-                CloseButtonText = loader.GetString("Actions-Cancel"),
-                DefaultButton = ContentDialogButton.None,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            ListView progressListView = new ListView
-            {
-                ItemTemplate = itemTemplate,
-                ItemsSource = sounds,
-                ItemContainerStyle = itemStyle,
-                SelectionMode = ListViewSelectionMode.None
-            };
-
-            Grid containerGrid = new Grid
-            {
-                Width = 500
-            };
-
-            containerGrid.Children.Add(progressListView);
-            DownloadFilesContentDialog.Content = containerGrid;
-
-            return DownloadFilesContentDialog;
         }
         #endregion
     }
