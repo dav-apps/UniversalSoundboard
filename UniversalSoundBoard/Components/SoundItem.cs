@@ -431,8 +431,7 @@ namespace UniversalSoundboard.Components
 
             if (downloadFileThrewError)
             {
-                var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
-                await ContentDialogs.ShowContentDialogAsync(errorContentDialog);
+                await new DownloadFileErrorDialog().ShowAsync();
                 downloadFileThrewError = false;
                 return false;
             }

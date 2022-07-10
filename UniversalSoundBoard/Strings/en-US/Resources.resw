@@ -393,10 +393,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="DownloadFileContentDialog-Title" xml:space="preserve">
     <value>Downloading file {0}...</value>
   </data>
-  <data name="DownloadFileErrorContentDialog-Message" xml:space="preserve">
+  <data name="DownloadFileErrorDialog-Message" xml:space="preserve">
     <value>Please check your internet connection and try it again.</value>
   </data>
-  <data name="DownloadFileErrorContentDialog-Title" xml:space="preserve">
+  <data name="DownloadFileErrorDialog-Title" xml:space="preserve">
     <value>Error in downloading the file</value>
   </data>
   <data name="MoreButton-Volume.Text" xml:space="preserve">

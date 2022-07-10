@@ -22,6 +22,14 @@ namespace UniversalSoundboard.Dialogs
         public event TypedEventHandler<Dialog, ContentDialogButtonClickEventArgs> PrimaryButtonClick;
         public event TypedEventHandler<Dialog, ContentDialogButtonClickEventArgs> CloseButtonClick;
 
+        public Dialog()
+        {
+            ContentDialog = new ContentDialog();
+
+            ContentDialog.PrimaryButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => PrimaryButtonClick?.Invoke(this, args);
+            ContentDialog.CloseButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => CloseButtonClick?.Invoke(this, args);
+        }
+
         public Dialog(
             string title,
             string closeButtonText

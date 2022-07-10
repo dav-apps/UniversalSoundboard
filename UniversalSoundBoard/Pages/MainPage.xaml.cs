@@ -1763,8 +1763,7 @@ namespace UniversalSoundboard.Pages
 
         public async Task ShowDownloadErrorDialog()
         {
-            ContentDialog downloadFileErrorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
-            await ContentDialogs.ShowContentDialogAsync(downloadFileErrorContentDialog);
+            await new DownloadFileErrorDialog().ShowAsync();
         }
         #endregion
 
@@ -2009,9 +2008,7 @@ namespace UniversalSoundboard.Pages
                     downloadFilesFailed = false;
 
                     // Show the error dialog
-                    var errorContentDialog = ContentDialogs.CreateDownloadFileErrorContentDialog();
-                    await ContentDialogs.ShowContentDialogAsync(errorContentDialog);
-
+                    await new DownloadFileErrorDialog().ShowAsync();
                     return false;
                 }
             }

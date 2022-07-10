@@ -1292,21 +1292,5 @@ namespace UniversalSoundboard.Common
             return DownloadFilesContentDialog;
         }
         #endregion
-
-        #region DownloadFileError
-        public static ContentDialog CreateDownloadFileErrorContentDialog()
-        {
-            DownloadFileErrorContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("DownloadFileErrorContentDialog-Title"),
-                Content = loader.GetString("DownloadFileErrorContentDialog-Message"),
-                CloseButtonText = loader.GetString("Actions-Close"),
-                DefaultButton = ContentDialogButton.Close,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return DownloadFileErrorContentDialog;
-        }
-        #endregion
     }
 }
