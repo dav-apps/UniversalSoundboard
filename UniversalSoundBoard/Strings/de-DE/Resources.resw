@@ -255,17 +255,17 @@ Dies kann einige Zeit dauern, je nachdem wie groß dein Soundboard ist.</value>
   <data name="Import" xml:space="preserve">
     <value>Importieren</value>
   </data>
-  <data name="ImportDataContentDialog-Text1" xml:space="preserve">
+  <data name="ImportSoundboardDialog-Text1" xml:space="preserve">
     <value>Du kannst ein bestehendes Soundboard importieren.
 Wähle einfach die Datei aus, die beim Exportieren erstellt wurde.</value>
   </data>
-  <data name="ImportDataContentDialog-Text2" xml:space="preserve">
+  <data name="ImportSoundboardDialog-Text2" xml:space="preserve">
     <value>Die importierten Sounds werden zu deinem bestehenden Soundboard hinzugefügt.
 
 Du kannst die App weiterhin verwenden, aber bitte schließe die App nicht, bevor dieser Prozess vollständig abgeschlossen ist.
 Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboard ist.</value>
   </data>
-  <data name="ImportDataContentDialog-Title" xml:space="preserve">
+  <data name="ImportSoundboardDialog-Title" xml:space="preserve">
     <value>Soundboard importieren</value>
   </data>
   <data name="ExportImportMessage-TidyUp" xml:space="preserve">
@@ -520,7 +520,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StartMessageTitleTextBlock.Text" xml:space="preserve">
     <value>Willkommen bei UniversalSoundboard!</value>
   </data>
-  <data name="StartMessageImportDataContentDialog-Text2" xml:space="preserve">
+  <data name="ImportSoundboardDialog-StartMessage-Text2" xml:space="preserve">
     <value>Der Import kann einige Zeit dauern, je nachdem wie groß dein Soundboard ist.</value>
   </data>
   <data name="ImportMessage-0" xml:space="preserve">

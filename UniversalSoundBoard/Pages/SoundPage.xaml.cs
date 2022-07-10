@@ -911,15 +911,17 @@ namespace UniversalSoundboard.Pages
 
         private async void StartMessageImportButton_Click(object sender, RoutedEventArgs e)
         {
-            var startMessageImportDataContentDialog = ContentDialogs.CreateStartMessageImportDataContentDialog();
-            startMessageImportDataContentDialog.PrimaryButtonClick += StartMessageImportDataContentDialog_PrimaryButtonClick;
-            await startMessageImportDataContentDialog.ShowAsync();
+            var startMessageImportSoundboardDialog = new ImportSoundboardDialog(true);
+            startMessageImportSoundboardDialog.PrimaryButtonClick += StartMessageImportDataContentDialog_PrimaryButtonClick;
+            await startMessageImportSoundboardDialog.ShowAsync();
         }
 
-        private async void StartMessageImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void StartMessageImportDataContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
+            var dialog = sender as ImportSoundboardDialog;
+
             FileManager.itemViewHolder.AppState = AppState.Normal;
-            await FileManager.ImportDataAsync(ContentDialogs.ImportFile, true);
+            await FileManager.ImportDataAsync(dialog.ImportFile, true);
             FileManager.UpdatePlayAllButtonVisibility();
 
             Analytics.TrackEvent("ImportData", new Dictionary<string, string>

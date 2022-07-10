@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
 using Windows.ApplicationModel.Resources;
 using Windows.System;
 using Windows.UI.Notifications;
@@ -296,14 +297,17 @@ namespace UniversalSoundboard.Pages
 
         private async void ImportDataButton_Click(object sender, RoutedEventArgs e)
         {
-            var ImportDataContentDialog = ContentDialogs.CreateImportDataContentDialog();
-            ImportDataContentDialog.PrimaryButtonClick += ImportDataContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(ImportDataContentDialog);
+            var importSoundboardDialog = new ImportSoundboardDialog();
+            importSoundboardDialog.PrimaryButtonClick += ImportDataContentDialog_PrimaryButtonClick;
+            await importSoundboardDialog.ShowAsync();
         }
 
-        private async void ImportDataContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void ImportDataContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.ImportDataAsync(ContentDialogs.ImportFile, false);
+            var dialog = sender as ImportSoundboardDialog;
+
+            await FileManager.ImportDataAsync(dialog.ImportFile, false);
+
             Analytics.TrackEvent("ImportData", new Dictionary<string, string>
             {
                 { "Context", "Settings" }
