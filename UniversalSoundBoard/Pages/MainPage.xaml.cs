@@ -1008,7 +1008,7 @@ namespace UniversalSoundboard.Pages
                 foreach (Sound sound in FileManager.itemViewHolder.FavouriteSounds)
                     sounds.Add(sound);
 
-            var template = (DataTemplate)Resources["SoundItemTemplate"];
+            var template = (DataTemplate)Resources["DialogSoundListItemTemplate"];
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
 
             var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(sounds, template, listViewItemStyle);
@@ -1056,7 +1056,7 @@ namespace UniversalSoundboard.Pages
             foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
                 sounds.Add(sound);
 
-            var template = (DataTemplate)Resources["SoundItemTemplate"];
+            var template = (DataTemplate)Resources["DialogSoundListItemTemplate"];
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
 
             var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(sounds, template, listViewItemStyle);
@@ -2266,7 +2266,7 @@ namespace UniversalSoundboard.Pages
             foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
                 sounds.Add(sound);
 
-            var template = (DataTemplate)Resources["SoundItemTemplate"];
+            var template = (DataTemplate)Resources["DialogSoundListItemTemplate"];
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
 
             var exportSoundsDialog = new ExportSoundsDialog(sounds, template, listViewItemStyle);

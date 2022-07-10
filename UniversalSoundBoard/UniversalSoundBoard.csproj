@@ -171,6 +171,7 @@
     <Compile Include="Models\AudioRecorder.cs" />
     <Compile Include="Models\DeviceWatcherHelper.cs" />
     <Compile Include="Dialogs\Dialog.cs" />
+    <Compile Include="Models\DialogSoundListItem.cs" />
     <Compile Include="Models\InAppNotificationItem.cs" />
     <Compile Include="Components\PlayingSoundItem.cs" />
     <Compile Include="Components\SoundFileDownloadProgressTemplate.xaml.cs">
@@ -217,8 +218,8 @@
     <Compile Include="Pages\ShareTargetPage.xaml.cs">
       <DependentUpon>ShareTargetPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Components\SoundItemTemplate.xaml.cs">
-      <DependentUpon>SoundItemTemplate.xaml</DependentUpon>
+    <Compile Include="Components\DialogSoundListItemTemplate.xaml.cs">
+      <DependentUpon>DialogSoundListItemTemplate.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\SoundPage.xaml.cs">
       <DependentUpon>SoundPage.xaml</DependentUpon>
@@ -372,7 +373,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Components\SoundItemTemplate.xaml">
+    <Page Include="Components\DialogSoundListItemTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

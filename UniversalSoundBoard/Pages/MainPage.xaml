@@ -29,8 +29,8 @@
             <components:SoundFileItemTemplate />
         </DataTemplate>
         
-        <DataTemplate x:Key="SoundItemTemplate" x:DataType="models:Sound">
-            <components:SoundItemTemplate />
+        <DataTemplate x:Key="DialogSoundListItemTemplate" x:DataType="models:DialogSoundListItem">
+            <components:DialogSoundListItemTemplate />
         </DataTemplate>
 
         <DataTemplate x:Key="SoundFileDownloadProgressTemplate" x:DataType="models:Sound">
