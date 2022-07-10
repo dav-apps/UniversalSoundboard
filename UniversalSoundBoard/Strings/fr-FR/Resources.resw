@@ -608,7 +608,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="EmptyCategoryMessageTitleTextBlock.Text" xml:space="preserve">
     <value>Cette catégorie est vide...</value>
   </data>
-  <data name="DownloadFilesContentDialog-Title" xml:space="preserve">
+  <data name="DownloadFilesDialog-Title" xml:space="preserve">
     <value>Télécharger des fichiers...</value>
   </data>
   <data name="Actions-Close" xml:space="preserve">

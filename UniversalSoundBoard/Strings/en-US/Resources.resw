@@ -612,7 +612,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="EmptyCategoryMessageTitleTextBlock.Text" xml:space="preserve">
     <value>This category is empty...</value>
   </data>
-  <data name="DownloadFilesContentDialog-Title" xml:space="preserve">
+  <data name="DownloadFilesDialog-Title" xml:space="preserve">
     <value>Downloading files...</value>
   </data>
   <data name="Account-Card-SelectButton.Content" xml:space="preserve">

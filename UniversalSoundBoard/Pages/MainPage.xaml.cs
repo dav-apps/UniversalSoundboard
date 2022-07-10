@@ -1991,11 +1991,11 @@ namespace UniversalSoundboard.Pages
                 var itemTemplate = (DataTemplate)Resources["SoundFileDownloadProgressTemplate"];
                 var itemStyle = Resources["ListViewItemStyle"] as Style;
 
-                var downloadFilesContentDialog = ContentDialogs.CreateDownloadFilesContentDialog(selectedSounds.ToList(), itemTemplate, itemStyle);
-                downloadFilesContentDialog.CloseButtonClick += DownloadFilesContentDialog_CloseButtonClick;
+                var downloadFilesDialog = new DownloadFilesDialog(selectedSounds.ToList(), itemTemplate, itemStyle);
+                downloadFilesDialog.CloseButtonClick += DownloadFilesContentDialog_CloseButtonClick;
 
                 downloadFilesDialogIsVisible = true;
-                await ContentDialogs.ShowContentDialogAsync(downloadFilesContentDialog);
+                await downloadFilesDialog.ShowAsync();
                 downloadFilesDialogIsVisible = false;
 
                 if (downloadFilesCanceled)
@@ -2016,7 +2016,7 @@ namespace UniversalSoundboard.Pages
             return true;
         }
 
-        private void DownloadFilesContentDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void DownloadFilesContentDialog_CloseButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             downloadFilesCanceled = true;
         }

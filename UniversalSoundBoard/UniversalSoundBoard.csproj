@@ -161,6 +161,7 @@
     <Compile Include="Dialogs\DavPlusOutputDeviceDialog.cs" />
     <Compile Include="Dialogs\DefaultSoundSettingsDialog.cs" />
     <Compile Include="Dialogs\DownloadFileErrorDialog.cs" />
+    <Compile Include="Dialogs\DownloadFilesDialog.cs" />
     <Compile Include="Dialogs\ExportSoundsDialog.cs" />
     <Compile Include="Dialogs\NoAudioDeviceDialog.cs" />
     <Compile Include="Dialogs\PropertiesDialog.cs" />
