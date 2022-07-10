@@ -1215,22 +1215,5 @@ namespace UniversalSoundboard.Common
                 RepeatsComboBox.Text = "1";
         }
         #endregion
-
-        #region Logout
-        public static ContentDialog CreateLogoutContentDialog()
-        {
-            LogoutContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("Logout"),
-                Content = loader.GetString("Account-LogoutMessage"),
-                PrimaryButtonText = loader.GetString("Logout"),
-                CloseButtonText = loader.GetString("Actions-Cancel"),
-                DefaultButton = ContentDialogButton.Close,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return LogoutContentDialog;
-        }
-        #endregion
     }
 }

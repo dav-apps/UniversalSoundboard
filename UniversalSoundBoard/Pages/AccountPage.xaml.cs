@@ -192,12 +192,12 @@ namespace UniversalSoundboard.Pages
 
         private async void LogoutButton_Click(object sender, RoutedEventArgs e)
         {
-            var logoutContentDialog = ContentDialogs.CreateLogoutContentDialog();
-            logoutContentDialog.PrimaryButtonClick += LogoutContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(logoutContentDialog);
+            var logoutDialog = new LogoutDialog();
+            logoutDialog.PrimaryButtonClick += LogoutContentDialog_PrimaryButtonClick;
+            await logoutDialog.ShowAsync();
         }
 
-        private async void LogoutContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void LogoutContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             Dav.Logout();
             UpdateUserLayout();
