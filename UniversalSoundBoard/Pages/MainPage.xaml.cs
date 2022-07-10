@@ -43,6 +43,7 @@ namespace UniversalSoundboard.Pages
         public static AppWindow soundRecorderAppWindow;
         public static Frame soundRecorderAppWindowContentFrame;
         private readonly ObservableCollection<object> menuItems = new ObservableCollection<object>();
+        private PlaySoundsSuccessivelyDialog playSoundsSuccessivelyDialog;
         private Guid initialCategory = Guid.Empty;                          // The category that was selected before the sounds started loading
         private Guid selectedCategory = Guid.Empty;                         // The category that was right clicked for the flyout
         private List<string> Suggestions = new List<string>();              // The suggestions for the SearchAutoSuggestBox
@@ -1011,9 +1012,9 @@ namespace UniversalSoundboard.Pages
             var template = (DataTemplate)Resources["DialogSoundListItemTemplate"];
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
 
-            var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(sounds, template, listViewItemStyle);
-            playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(playSoundsSuccessivelyContentDialog);
+            playSoundsSuccessivelyDialog = new PlaySoundsSuccessivelyDialog(sounds, template, listViewItemStyle);
+            playSoundsSuccessivelyDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
+            await playSoundsSuccessivelyDialog.ShowAsync();
         }
 
         private async void PlaySoundsButton_Click(object sender, RoutedEventArgs e)
@@ -1059,9 +1060,9 @@ namespace UniversalSoundboard.Pages
             var template = (DataTemplate)Resources["DialogSoundListItemTemplate"];
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
 
-            var playSoundsSuccessivelyContentDialog = ContentDialogs.CreatePlaySoundsSuccessivelyContentDialog(sounds, template, listViewItemStyle);
-            playSoundsSuccessivelyContentDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(playSoundsSuccessivelyContentDialog);
+            playSoundsSuccessivelyDialog = new PlaySoundsSuccessivelyDialog(sounds, template, listViewItemStyle);
+            playSoundsSuccessivelyDialog.PrimaryButtonClick += PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick;
+            await playSoundsSuccessivelyDialog.ShowAsync();
         }
 
         private async void PlaySoundsSuccessivelyFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -1069,16 +1070,16 @@ namespace UniversalSoundboard.Pages
             await ShowPlaySelectedSoundsSuccessivelyDialog();
         }
 
-        private async void PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            bool randomly = (bool)ContentDialogs.RandomCheckBox.IsChecked;
+            bool randomly = playSoundsSuccessivelyDialog.Random;
             int rounds = int.MaxValue;
 
-            if (ContentDialogs.RepeatsComboBox.SelectedItem != ContentDialogs.RepeatsComboBox.Items.Last())
-                if (int.TryParse(ContentDialogs.RepeatsComboBox.SelectedValue.ToString(), out rounds))
+            if (playSoundsSuccessivelyDialog.RepetitionsComboBox.SelectedItem != playSoundsSuccessivelyDialog.RepetitionsComboBox.Items.Last())
+                if (int.TryParse(playSoundsSuccessivelyDialog.RepetitionsComboBox.SelectedValue.ToString(), out rounds))
                     rounds--;
 
-            await SoundPage.PlaySoundsAsync(ContentDialogs.SoundsList.ToList(), rounds, randomly);
+            await SoundPage.PlaySoundsAsync(playSoundsSuccessivelyDialog.Sounds, rounds, randomly);
 
             // Disable multi-selection mode
             FileManager.itemViewHolder.MultiSelectionEnabled = false;

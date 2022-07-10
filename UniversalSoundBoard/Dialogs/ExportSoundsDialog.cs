@@ -54,7 +54,7 @@ namespace UniversalSoundboard.Dialogs
             }
 
             ContentDialog.IsPrimaryButtonEnabled = false;
-            ContentDialog.Content = GetContent(itemTemplate, listViewItemStyle);
+            Content = GetContent(itemTemplate, listViewItemStyle);
         }
 
         private StackPanel GetContent(DataTemplate itemTemplate, Style listViewItemStyle)

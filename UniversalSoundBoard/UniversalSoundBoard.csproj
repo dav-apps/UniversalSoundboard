@@ -166,6 +166,7 @@
     <Compile Include="Dialogs\ExportSoundsDialog.cs" />
     <Compile Include="Dialogs\LogoutDialog.cs" />
     <Compile Include="Dialogs\NoAudioDeviceDialog.cs" />
+    <Compile Include="Dialogs\PlaySoundsSuccessivelyDialog.cs" />
     <Compile Include="Dialogs\PropertiesDialog.cs" />
     <Compile Include="Dialogs\RemoveRecordedSoundDialog.cs" />
     <Compile Include="Dialogs\SetCategoriesDialog.cs" />

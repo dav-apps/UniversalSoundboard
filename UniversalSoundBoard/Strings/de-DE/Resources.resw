@@ -307,10 +307,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="VolumeButton.Text" xml:space="preserve">
     <value>Lautstärke</value>
   </data>
-  <data name="PlaySoundsSuccessivelyContentDialog-PrimaryButton" xml:space="preserve">
+  <data name="PlaySoundsSuccessivelyDialog-PrimaryButton" xml:space="preserve">
     <value>Abspielen</value>
   </data>
-  <data name="PlaySoundsSuccessivelyContentDialog-Title" xml:space="preserve">
+  <data name="PlaySoundsSuccessivelyDialog-Title" xml:space="preserve">
     <value>Sounds nacheinander abspielen</value>
   </data>
   <data name="Shuffle" xml:space="preserve">

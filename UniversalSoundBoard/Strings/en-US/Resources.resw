@@ -309,10 +309,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="VolumeButton.Text" xml:space="preserve">
     <value>Volume</value>
   </data>
-  <data name="PlaySoundsSuccessivelyContentDialog-PrimaryButton" xml:space="preserve">
+  <data name="PlaySoundsSuccessivelyDialog-PrimaryButton" xml:space="preserve">
     <value>Play</value>
   </data>
-  <data name="PlaySoundsSuccessivelyContentDialog-Title" xml:space="preserve">
+  <data name="PlaySoundsSuccessivelyDialog-Title" xml:space="preserve">
     <value>Play sounds one after another</value>
   </data>
   <data name="Shuffle" xml:space="preserve">
