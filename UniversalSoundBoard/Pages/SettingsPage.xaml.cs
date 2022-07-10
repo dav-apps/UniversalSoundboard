@@ -284,14 +284,15 @@ namespace UniversalSoundboard.Pages
 
         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)
         {
-            var ExportDataContentDialog = ContentDialogs.CreateExportDataContentDialog();
-            ExportDataContentDialog.PrimaryButtonClick += ExportDataContentDialog_PrimaryButtonClickAsync;
-            await ContentDialogs.ShowContentDialogAsync(ExportDataContentDialog);
+            var exportSoundboardDialog = new ExportSoundboardDialog();
+            exportSoundboardDialog.PrimaryButtonClick += ExportDataContentDialog_PrimaryButtonClickAsync;
+            await exportSoundboardDialog.ShowAsync();
         }
 
-        private async void ExportDataContentDialog_PrimaryButtonClickAsync(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void ExportDataContentDialog_PrimaryButtonClickAsync(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.ExportDataAsync(ContentDialogs.ExportFolder);
+            var dialog = sender as ExportSoundboardDialog;
+            await FileManager.ExportDataAsync(dialog.ExportFolder);
             Analytics.TrackEvent("ExportData");
         }
 

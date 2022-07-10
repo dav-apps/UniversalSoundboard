@@ -240,16 +240,16 @@
   <data name="SettingsEntry-ImportDataButton.Content" xml:space="preserve">
     <value>Soundboard importieren</value>
   </data>
-  <data name="ExportDataContentDialog-Text1" xml:space="preserve">
+  <data name="ExportSoundboardDialog-Text1" xml:space="preserve">
     <value>Du kannst dein Soundboard exportieren, um ein Backup zu machen oder um deine Sounds auf einem anderen Gerät zu importieren.
 
 Bitte wähle den Ordner, in dem dein Soundboard gespeichert werden soll.</value>
   </data>
-  <data name="ExportDataContentDialog-Text2" xml:space="preserve">
+  <data name="ExportSoundboardDialog-Text2" xml:space="preserve">
     <value>Du kannst die App weiterhin verwenden, aber bitte schließe die App nicht, bevor dieser Prozess vollständig abgeschlossen ist.
 Dies kann einige Zeit dauern, je nachdem wie groß dein Soundboard ist.</value>
   </data>
-  <data name="ExportDataContentDialog-Title" xml:space="preserve">
+  <data name="ExportSoundboardDialog-Title" xml:space="preserve">
     <value>Soundboard exportieren</value>
   </data>
   <data name="Import" xml:space="preserve">
