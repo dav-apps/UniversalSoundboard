@@ -406,7 +406,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="MoreButton-Export.Text" xml:space="preserve">
     <value>Exportieren</value>
   </data>
-  <data name="ExportSoundsContentDialog-Title" xml:space="preserve">
+  <data name="ExportSoundsDialog-Title" xml:space="preserve">
     <value>Sounds exportieren</value>
   </data>
   <data name="SaveAsZip" xml:space="preserve">

@@ -79,7 +79,6 @@ namespace UniversalSoundboard.Common
         public static ListView CategoriesListView;
         public static ComboBox DefaultSoundSettingsRepetitionsComboBox;
         public static ComboBox PlaybackSpeedComboBox;
-        public static List<ObservableCollection<HotkeyItem>> PropertiesDialogHotkeys = new List<ObservableCollection<HotkeyItem>>();
         public static StackPanel davPlusHotkeyInfoStackPanel;
         public static TextBox RecordedSoundNameTextBox;
         public static ContentDialog AddSoundsContentDialog;
@@ -1307,105 +1306,6 @@ namespace UniversalSoundboard.Common
             };
 
             return DownloadFileErrorContentDialog;
-        }
-        #endregion
-
-        #region ExportSounds
-        public static ContentDialog CreateExportSoundsContentDialog(List<Sound> sounds, DataTemplate itemTemplate, Style listViewItemStyle)
-        {
-            SoundsList.Clear();
-            foreach (var sound in sounds)
-                SoundsList.Add(sound);
-
-            ExportSoundsContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("ExportSoundsContentDialog-Title"),
-                PrimaryButtonText = loader.GetString("Export"),
-                CloseButtonText = loader.GetString("Actions-Cancel"),
-                DefaultButton = ContentDialogButton.Primary,
-                IsPrimaryButtonEnabled = false,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            if (SoundsList.Count == 0)
-                ExportSoundsContentDialog.IsPrimaryButtonEnabled = false;
-
-            StackPanel content = new StackPanel
-            {
-                Orientation = Orientation.Vertical
-            };
-
-            ExportSoundsListView = new ListView
-            {
-                ItemTemplate = itemTemplate,
-                ItemsSource = SoundsList,
-                SelectionMode = ListViewSelectionMode.None,
-                Height = 300,
-                ItemContainerStyle = listViewItemStyle,
-                CanReorderItems = true,
-                AllowDrop = true
-            };
-
-            // Create StackPanel with TextBox and Folder button
-            StackPanel folderStackPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(0, 20, 0, 0)
-            };
-
-            ExportSoundsFolderTextBox = new TextBox
-            {
-                IsReadOnly = true
-            };
-
-            Button folderButton = new Button
-            {
-                FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
-                Content = "\uE838",
-                FontSize = 18,
-                Width = 35,
-                Height = 35,
-                Padding = new Thickness(0)
-            };
-            folderButton.Tapped += ExportSoundsFolderButton_Tapped;
-
-            ExportSoundsAsZipCheckBox = new CheckBox
-            {
-                Content = loader.GetString("SaveAsZip"),
-                Margin = new Thickness(0, 20, 0, 0)
-            };
-
-            folderStackPanel.Children.Add(folderButton);
-            folderStackPanel.Children.Add(ExportSoundsFolderTextBox);
-
-            content.Children.Add(ExportSoundsListView);
-            content.Children.Add(folderStackPanel);
-            content.Children.Add(ExportSoundsAsZipCheckBox);
-
-            ExportSoundsContentDialog.Content = content;
-            return ExportSoundsContentDialog;
-        }
-
-        private async static void ExportSoundsFolderButton_Tapped(object sender, Windows.UI.Xaml.Input.TappedRoutedEventArgs e)
-        {
-            var folderPicker = new FolderPicker
-            {
-                SuggestedStartLocation = PickerLocationId.Downloads
-            };
-
-            folderPicker.FileTypeFilter.Add("*");
-            StorageFolder folder = await folderPicker.PickSingleFolderAsync();
-
-            if (folder != null)
-            {
-                StorageApplicationPermissions.FutureAccessList.AddOrReplace("PickedFolderToken", folder);
-
-                // Set TextBox text and StorageFolder variable and make primary button clickable
-                ExportSoundsFolder = folder;
-                ExportSoundsFolderTextBox.Text = folder.Path;
-                if(SoundsList.Count > 0)
-                    ExportSoundsContentDialog.IsPrimaryButtonEnabled = true;
-            }
         }
         #endregion
     }

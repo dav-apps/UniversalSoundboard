@@ -407,7 +407,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="MoreButton-Export.Text" xml:space="preserve">
     <value>Exporter</value>
   </data>
-  <data name="ExportSoundsContentDialog-Title" xml:space="preserve">
+  <data name="ExportSoundsDialog-Title" xml:space="preserve">
     <value>Exporter les sons</value>
   </data>
   <data name="SaveAsZip" xml:space="preserve">
