@@ -141,10 +141,10 @@
   <data name="DeleteSoundContentDialog-Title" xml:space="preserve">
     <value>Supprimer</value>
   </data>
-  <data name="DeleteSoundsContentDialog-Content" xml:space="preserve">
+  <data name="DeleteSoundsDialog-Content" xml:space="preserve">
     <value>Êtes-vous sûr(e) ?</value>
   </data>
-  <data name="DeleteSoundsContentDialog-Title" xml:space="preserve">
+  <data name="DeleteSoundsDialog-Title" xml:space="preserve">
     <value>Supprimer les sons</value>
     <comment>Supprimer plusieurs sons</comment>
   </data>

@@ -2286,12 +2286,12 @@ namespace UniversalSoundboard.Pages
         #region Delete Sounds
         private async void DeleteSoundsButton_Click(object sender, RoutedEventArgs e)
         {
-            var deleteSoundsContentDialog = ContentDialogs.CreateDeleteSoundsContentDialogAsync();
-            deleteSoundsContentDialog.PrimaryButtonClick += DeleteSoundsContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(deleteSoundsContentDialog);
+            var deleteSoundsDialog = new DeleteSoundsDialog();
+            deleteSoundsDialog.PrimaryButtonClick += DeleteSoundsContentDialog_PrimaryButtonClick;
+            await deleteSoundsDialog.ShowAsync();
         }
 
-        private async void DeleteSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void DeleteSoundsContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("DeleteSoundsMessage");
             FileManager.itemViewHolder.LoadingScreenVisible = true;

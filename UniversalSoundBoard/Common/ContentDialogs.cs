@@ -875,22 +875,5 @@ namespace UniversalSoundboard.Common
             return DeleteSoundContentDialog;
         }
         #endregion
-
-        #region DeleteSounds
-        public static ContentDialog CreateDeleteSoundsContentDialogAsync()
-        {
-            DeleteSoundsContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("DeleteSoundsContentDialog-Title"),
-                Content = loader.GetString("DeleteSoundsContentDialog-Content"),
-                PrimaryButtonText = loader.GetString("Actions-Delete"),
-                CloseButtonText = loader.GetString("Actions-Cancel"),
-                DefaultButton = ContentDialogButton.Close,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return DeleteSoundsContentDialog;
-        }
-        #endregion
     }
 }
