@@ -18,7 +18,6 @@ using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.Resources;
 using Windows.Storage;
-using Windows.Storage.AccessCache;
 using Windows.Storage.Pickers;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -749,22 +748,6 @@ namespace UniversalSoundboard.Common
             };
 
             return DeleteCategoryContentDialog;
-        }
-        #endregion
-
-        #region AddSoundError
-        public static ContentDialog CreateAddSoundErrorContentDialog()
-        {
-            AddSoundErrorContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("AddSoundErrorContentDialog-Title"),
-                Content = loader.GetString("AddSoundErrorContentDialog-Content"),
-                CloseButtonText = loader.GetString("Actions-Close"),
-                DefaultButton = ContentDialogButton.Close,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return AddSoundErrorContentDialog;
         }
         #endregion
     }

@@ -626,10 +626,10 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="Account-PlusCard-PriceTextBlock.Text" xml:space="preserve">
     <value>3 € par mois</value>
   </data>
-  <data name="AddSoundErrorContentDialog-Content" xml:space="preserve">
+  <data name="AddSoundErrorDialog-Content" xml:space="preserve">
     <value>Le son n’a pas pu être ajouté.</value>
   </data>
-  <data name="AddSoundErrorContentDialog-Title" xml:space="preserve">
+  <data name="AddSoundErrorDialog-Title" xml:space="preserve">
     <value>Erreur lors de l’ajout du son</value>
   </data>
   <data name="AddSoundsErrorDialog-Content" xml:space="preserve">
