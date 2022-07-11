@@ -1555,9 +1555,7 @@ namespace UniversalSoundboard.Pages
                 inAppNotificationArgs.PrimaryButtonClick += async (sender, args) =>
                 {
                     FileManager.DismissInAppNotification(InAppNotificationType.DownloadSounds);
-
-                    var downloadSoundsErrorContentDialog = ContentDialogs.CreateDownloadSoundsErrorContentDialog(notDownloadedSounds);
-                    await ContentDialogs.ShowContentDialogAsync(downloadSoundsErrorContentDialog);
+                    await new DownloadSoundsErrorDialog(notDownloadedSounds).ShowAsync();
                 };
 
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(this, inAppNotificationArgs);

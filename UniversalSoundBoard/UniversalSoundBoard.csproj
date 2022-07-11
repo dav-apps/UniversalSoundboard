@@ -165,6 +165,7 @@
     <Compile Include="Dialogs\DownloadFileDialog.cs" />
     <Compile Include="Dialogs\DownloadFileErrorDialog.cs" />
     <Compile Include="Dialogs\DownloadFilesDialog.cs" />
+    <Compile Include="Dialogs\DownloadSoundsErrorDialog.cs" />
     <Compile Include="Dialogs\ExportSoundboardDialog.cs" />
     <Compile Include="Dialogs\ExportSoundsDialog.cs" />
     <Compile Include="Dialogs\ImportSoundboardDialog.cs" />

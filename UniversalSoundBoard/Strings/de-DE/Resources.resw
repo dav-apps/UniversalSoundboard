@@ -851,10 +851,10 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="InAppNotification-DownloadSoundsSuccessful" xml:space="preserve">
     <value>{0} Sounds wurden erfolgreich heruntergeladen</value>
   </data>
-  <data name="DownloadSoundsErrorContentDialog-Description" xml:space="preserve">
+  <data name="DownloadSoundsErrorDialog-Description" xml:space="preserve">
     <value>Folgende Sounds konnten nicht heruntergeladen werden:</value>
   </data>
-  <data name="DownloadSoundsErrorContentDialog-Title" xml:space="preserve">
+  <data name="DownloadSoundsErrorDialog-Title" xml:space="preserve">
     <value>Fehler beim Herunterladen der Sounds</value>
   </data>
   <data name="InAppNotification-DownloadSoundsErrorMultipleSounds" xml:space="preserve">
