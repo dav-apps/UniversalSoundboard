@@ -858,22 +858,5 @@ namespace UniversalSoundboard.Common
             RenameSoundContentDialog.IsPrimaryButtonEnabled = RenameSoundTextBox.Text.Length >= 3;
         }
         #endregion
-
-        #region DeleteSound
-        public static ContentDialog CreateDeleteSoundContentDialog(string soundName)
-        {
-            DeleteSoundContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("DeleteSoundContentDialog-Title") + soundName,
-                Content = loader.GetString("DeleteSoundContentDialog-Content"),
-                PrimaryButtonText = loader.GetString("Actions-Delete"),
-                CloseButtonText = loader.GetString("Actions-Cancel"),
-                DefaultButton = ContentDialogButton.Close,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return DeleteSoundContentDialog;
-        }
-        #endregion
     }
 }

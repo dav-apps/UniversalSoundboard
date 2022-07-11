@@ -135,11 +135,11 @@
   <data name="DeleteCategoryContentDialog-Title" xml:space="preserve">
     <value>Supprimer la catégorie </value>
   </data>
-  <data name="DeleteSoundContentDialog-Content" xml:space="preserve">
-    <value>Êtes-vous sûr(e) ?</value>
+  <data name="DeleteSoundDialog-Content" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir supprimer ce son ?</value>
   </data>
-  <data name="DeleteSoundContentDialog-Title" xml:space="preserve">
-    <value>Supprimer</value>
+  <data name="DeleteSoundDialog-Title" xml:space="preserve">
+    <value>Supprimer « {0} »</value>
   </data>
   <data name="DeleteSoundsDialog-Content" xml:space="preserve">
     <value>Êtes-vous sûr(e) ?</value>

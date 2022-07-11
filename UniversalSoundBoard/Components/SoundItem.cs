@@ -378,12 +378,12 @@ namespace UniversalSoundboard.Components
         #region Delete
         private async void OptionsFlyout_DeleteFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            var DeleteSoundContentDialog = ContentDialogs.CreateDeleteSoundContentDialog(sound.Name);
-            DeleteSoundContentDialog.PrimaryButtonClick += DeleteSoundContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(DeleteSoundContentDialog);
+            var deleteSoundDialog = new DeleteSoundDialog(sound.Name);
+            deleteSoundDialog.PrimaryButtonClick += DeleteSoundContentDialog_PrimaryButtonClick;
+            await deleteSoundDialog.ShowAsync();
         }
 
-        private async void DeleteSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void DeleteSoundContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.DeleteSoundAsync(sound.Uuid);
             FileManager.RemoveSound(sound.Uuid);
