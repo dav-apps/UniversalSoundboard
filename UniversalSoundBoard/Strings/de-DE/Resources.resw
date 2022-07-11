@@ -171,10 +171,10 @@
   <data name="PlaySoundsSuccessively" xml:space="preserve">
     <value>Nacheinander abspielen</value>
   </data>
-  <data name="RenameSoundContentDialog-PrimaryButton" xml:space="preserve">
+  <data name="RenameSoundDialog-PrimaryButton" xml:space="preserve">
     <value>Speichern</value>
   </data>
-  <data name="RenameSoundContentDialog-Title" xml:space="preserve">
+  <data name="RenameSoundDialog-Title" xml:space="preserve">
     <value>Umbenennen</value>
   </data>
   <data name="Search.PlaceholderText" xml:space="preserve">

@@ -359,17 +359,19 @@ namespace UniversalSoundboard.Components
         #region Rename
         private async void OptionsFlyout_RenameFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            var RenameSoundContentDialog = ContentDialogs.CreateRenameSoundContentDialog(sound);
-            RenameSoundContentDialog.PrimaryButtonClick += RenameSoundContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(RenameSoundContentDialog);
+            var renameSoundDialog = new RenameSoundDialog(sound);
+            renameSoundDialog.PrimaryButtonClick += RenameSoundContentDialog_PrimaryButtonClick;
+            await renameSoundDialog.ShowAsync();
         }
 
-        private async void RenameSoundContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void RenameSoundContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            // Save new name
-            if (ContentDialogs.RenameSoundTextBox.Text != sound.Name)
+            var dialog = sender as RenameSoundDialog;
+
+            if (dialog.SoundName != sound.Name)
             {
-                await FileManager.RenameSoundAsync(sound.Uuid, ContentDialogs.RenameSoundTextBox.Text);
+                // Update the sound with the new name
+                await FileManager.RenameSoundAsync(sound.Uuid, dialog.SoundName);
                 await FileManager.ReloadSound(sound.Uuid);
             }
         }

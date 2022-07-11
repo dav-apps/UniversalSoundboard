@@ -173,6 +173,7 @@
     <Compile Include="Dialogs\PlaySoundsSuccessivelyDialog.cs" />
     <Compile Include="Dialogs\PropertiesDialog.cs" />
     <Compile Include="Dialogs\RemoveRecordedSoundDialog.cs" />
+    <Compile Include="Dialogs\RenameSoundDialog.cs" />
     <Compile Include="Dialogs\SetCategoriesDialog.cs" />
     <Compile Include="Dialogs\SoundRecorderCloseWarningDialog.cs" />
     <Compile Include="Dialogs\UpgradeErrorDialog.cs" />
