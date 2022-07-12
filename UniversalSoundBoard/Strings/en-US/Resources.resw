@@ -159,10 +159,10 @@
   <data name="MoreButton-SetCategories.Text" xml:space="preserve">
     <value>Set categories</value>
   </data>
-  <data name="NewCategoryContentDialog-PrimaryButton" xml:space="preserve">
+  <data name="NewCategoryDialog-PrimaryButton" xml:space="preserve">
     <value>Create</value>
   </data>
-  <data name="NewCategoryContentDialog-Title" xml:space="preserve">
+  <data name="NewCategoryDialog-Title" xml:space="preserve">
     <value>New category</value>
   </data>
   <data name="PlaySoundsSimultaneously" xml:space="preserve">
@@ -480,7 +480,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="CategoryOptionsFlyout-AddSubCategory" xml:space="preserve">
     <value>Add subcategory</value>
   </data>
-  <data name="NewSubCategoryContentDialog-Title" xml:space="preserve">
+  <data name="NewCategoryDialog-SubCategory-Title" xml:space="preserve">
     <value>New subcategory</value>
   </data>
   <data name="DeleteSoundsButton.Text" xml:space="preserve">

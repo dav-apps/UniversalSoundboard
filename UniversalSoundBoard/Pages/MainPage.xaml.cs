@@ -1796,18 +1796,16 @@ namespace UniversalSoundboard.Pages
         #region New Category
         private async void AddButtonCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            var newCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(Guid.Empty);
-            newCategoryContentDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(newCategoryContentDialog);
+            var newCategoryDialog = new NewCategoryDialog();
+            newCategoryDialog.PrimaryButtonClick += NewCategoryContentDialog_PrimaryButtonClick;
+            await newCategoryDialog.ShowAsync();
         }
 
-        private async void NewCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void NewCategoryContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            // Get combobox value
-            ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
-            string icon = typeItem.Content.ToString();
+            var dialog = sender as NewCategoryDialog;
 
-            Guid categoryUuid = await FileManager.CreateCategoryAsync(null, null, ContentDialogs.NewCategoryTextBox.Text, icon);
+            Guid categoryUuid = await FileManager.CreateCategoryAsync(null, null, dialog.Name, dialog.Icon);
             Category newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
 
             // Add the category to the Categories list
@@ -2170,18 +2168,16 @@ namespace UniversalSoundboard.Pages
         #region Create SubCategory
         private async void CreateSubCategoryFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            var newSubCategoryContentDialog = ContentDialogs.CreateNewCategoryContentDialog(selectedCategory);
-            newSubCategoryContentDialog.PrimaryButtonClick += NewSubCategoryContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(newSubCategoryContentDialog);
+            var newSubCategoryDialog = new NewCategoryDialog(true);
+            newSubCategoryDialog.PrimaryButtonClick += NewSubCategoryContentDialog_PrimaryButtonClick;
+            await newSubCategoryDialog.ShowAsync();
         }
 
-        private async void NewSubCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void NewSubCategoryContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            // Get combobox value
-            ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
-            string icon = typeItem.Content.ToString();
+            var dialog = sender as NewCategoryDialog;
 
-            Guid categoryUuid = await FileManager.CreateCategoryAsync(null, selectedCategory, ContentDialogs.NewCategoryTextBox.Text, icon);
+            Guid categoryUuid = await FileManager.CreateCategoryAsync(null, selectedCategory, dialog.Name, dialog.Icon);
             Category newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
 
             // Add the category to the categories list

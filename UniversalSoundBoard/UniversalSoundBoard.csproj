@@ -173,6 +173,7 @@
     <Compile Include="Dialogs\ExportSoundsDialog.cs" />
     <Compile Include="Dialogs\ImportSoundboardDialog.cs" />
     <Compile Include="Dialogs\LogoutDialog.cs" />
+    <Compile Include="Dialogs\NewCategoryDialog.cs" />
     <Compile Include="Dialogs\NoAudioDeviceDialog.cs" />
     <Compile Include="Dialogs\PlaySoundsSuccessivelyDialog.cs" />
     <Compile Include="Dialogs\PropertiesDialog.cs" />
