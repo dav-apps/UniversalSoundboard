@@ -150,7 +150,7 @@
   <data name="Drop" xml:space="preserve">
     <value>Fallen lassen, um neue Sounds hinzuzufügen</value>
   </data>
-  <data name="EditCategoryContentDialog-Title" xml:space="preserve">
+  <data name="EditCategoryDialog-Title" xml:space="preserve">
     <value>Kategorie bearbeiten</value>
   </data>
   <data name="CancelButton.Content" xml:space="preserve">
@@ -908,7 +908,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="SettingsEntry-ImportExportDescription.Text" xml:space="preserve">
     <value>Du kannst dein Soundboard außerhalb der App sichern und auf unterschiedlichen Geräten benutzen.</value>
   </data>
-  <data name="NewCategoryContentDialog-NewCategoryTextBoxPlaceholder" xml:space="preserve">
+  <data name="NewCategoryDialog-NewCategoryTextBoxPlaceholder" xml:space="preserve">
     <value>Name der Kategorie</value>
   </data>
   <data name="RenameSoundDialog-RenameSoundTextBoxPlaceholder" xml:space="preserve">

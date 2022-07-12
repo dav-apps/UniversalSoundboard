@@ -953,18 +953,19 @@ namespace UniversalSoundboard.Pages
         #region Edit Category
         private async void CategoryEditButton_Click(object sender, RoutedEventArgs e)
         {
-            var editCategoryContentDialog = ContentDialogs.CreateEditCategoryContentDialog();
-            editCategoryContentDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(editCategoryContentDialog);
+            Category currentCategory = FileManager.FindCategory(FileManager.itemViewHolder.SelectedCategory);
+
+            var editCategoryDialog = new EditCategoryDialog(currentCategory);
+            editCategoryDialog.PrimaryButtonClick += EditCategoryContentDialog_PrimaryButtonClick;
+            await editCategoryDialog.ShowAsync();
         }
 
-        private async void EditCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void EditCategoryContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            // Get categories List and save with new value
-            // Get combobox value
-            ComboBoxItem typeItem = (ComboBoxItem)ContentDialogs.IconSelectionComboBox.SelectedItem;
-            string icon = typeItem.Content.ToString();
-            string newName = ContentDialogs.EditCategoryTextBox.Text;
+            var dialog = sender as EditCategoryDialog;
+
+            string newName = dialog.Name;
+            string icon = dialog.Icon;
 
             // Update the category in the database
             await FileManager.UpdateCategoryAsync(FileManager.itemViewHolder.SelectedCategory, newName, icon);
