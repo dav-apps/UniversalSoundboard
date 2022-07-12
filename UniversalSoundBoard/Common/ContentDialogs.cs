@@ -731,24 +731,5 @@ namespace UniversalSoundboard.Common
             EditCategoryContentDialog.IsPrimaryButtonEnabled = EditCategoryTextBox.Text.Length >= 2;
         }
         #endregion
-
-        #region DeleteCategory
-        public static ContentDialog CreateDeleteCategoryContentDialogAsync()
-        {
-            Category currentCategory = FileManager.FindCategory(FileManager.itemViewHolder.SelectedCategory);
-
-            DeleteCategoryContentDialog = new ContentDialog
-            {
-                Title = loader.GetString("DeleteCategoryContentDialog-Title") + currentCategory.Name,
-                Content = loader.GetString("DeleteCategoryContentDialog-Content"),
-                PrimaryButtonText = loader.GetString("Actions-Delete"),
-                CloseButtonText = loader.GetString("Actions-Cancel"),
-                DefaultButton = ContentDialogButton.Close,
-                RequestedTheme = FileManager.GetRequestedTheme()
-            };
-
-            return DeleteCategoryContentDialog;
-        }
-        #endregion
     }
 }

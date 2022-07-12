@@ -978,12 +978,14 @@ namespace UniversalSoundboard.Pages
         #region Delete Category
         private async void CategoryDeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            var deleteCategoryContentDialog = ContentDialogs.CreateDeleteCategoryContentDialogAsync();
-            deleteCategoryContentDialog.PrimaryButtonClick += DeleteCategoryContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(deleteCategoryContentDialog);
+            Category currentCategory = FileManager.FindCategory(FileManager.itemViewHolder.SelectedCategory);
+
+            var deleteCategoryDialog = new DeleteCategoryDialog(currentCategory.Name);
+            deleteCategoryDialog.PrimaryButtonClick += DeleteCategoryContentDialog_PrimaryButtonClick;
+            await deleteCategoryDialog.ShowAsync();
         }
 
-        private async void DeleteCategoryContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void DeleteCategoryContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             await FileManager.DeleteCategoryAsync(FileManager.itemViewHolder.SelectedCategory);
 

@@ -161,6 +161,7 @@
     <Compile Include="Dialogs\DavPlusHotkeysDialog.cs" />
     <Compile Include="Dialogs\DavPlusOutputDeviceDialog.cs" />
     <Compile Include="Dialogs\DefaultSoundSettingsDialog.cs" />
+    <Compile Include="Dialogs\DeleteCategoryDialog.cs" />
     <Compile Include="Dialogs\DeleteSoundDialog.cs" />
     <Compile Include="Dialogs\DeleteSoundsDialog.cs" />
     <Compile Include="Dialogs\DownloadFileDialog.cs" />

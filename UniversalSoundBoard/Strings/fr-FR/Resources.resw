@@ -129,11 +129,11 @@
   <data name="Actions-Cancel" xml:space="preserve">
     <value>Annuler</value>
   </data>
-  <data name="DeleteCategoryContentDialog-Content" xml:space="preserve">
-    <value>Êtes-vous sûr(e) ? (vos sons ne sont pas impactés.)</value>
+  <data name="DeleteCategoryDialog-Content" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir supprimer la catégorie ? Aucun de vos sons ne sera supprimé.</value>
   </data>
-  <data name="DeleteCategoryContentDialog-Title" xml:space="preserve">
-    <value>Supprimer la catégorie </value>
+  <data name="DeleteCategoryDialog-Title" xml:space="preserve">
+    <value>Supprimer « {0} »</value>
   </data>
   <data name="DeleteSoundDialog-Content" xml:space="preserve">
     <value>Êtes-vous sûr de vouloir supprimer ce son ?</value>
