@@ -803,18 +803,18 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="AddButton-Download.Text" xml:space="preserve">
     <value>Télécharger des sons</value>
   </data>
-  <data name="DownloadSoundsContentDialog-Title" xml:space="preserve">
+  <data name="DownloadSoundsDialog-Title" xml:space="preserve">
     <value>Télécharger des sons</value>
   </data>
-  <data name="DownloadSoundsContentDialog-Description" xml:space="preserve">
+  <data name="DownloadSoundsDialog-Description" xml:space="preserve">
     <value>Vous pouvez télécharger des sons directement depuis Internet. Saisissez le lien ci-dessous.
 
 Les liens vers des fichiers audio et des vidéos YouTube sont acceptés.</value>
   </data>
-  <data name="DownloadSoundsContentDialog-RetrievingInfo" xml:space="preserve">
+  <data name="DownloadSoundsDialog-RetrievingInfo" xml:space="preserve">
     <value>Obtenir des informations...</value>
   </data>
-  <data name="DownloadSoundsContentDialog-UrlTextBoxPlaceholder" xml:space="preserve">
+  <data name="DownloadSoundsDialog-UrlTextBoxPlaceholder" xml:space="preserve">
     <value>Lien vers un fichier audio ou vidéo</value>
   </data>
   <data name="InAppNotification-DownloadSound" xml:space="preserve">
@@ -826,7 +826,7 @@ Les liens vers des fichiers audio et des vidéos YouTube sont acceptés.</value>
   <data name="InAppNotification-DownloadSoundError" xml:space="preserve">
     <value>Le son n’a pas pu être téléchargé</value>
   </data>
-  <data name="DownloadSoundsContentDialog-DefaultSoundName" xml:space="preserve">
+  <data name="DownloadSoundsDialog-DefaultSoundName" xml:space="preserve">
     <value>Son téléchargé</value>
   </data>
   <data name="FileName" xml:space="preserve">
@@ -838,10 +838,10 @@ Les liens vers des fichiers audio et des vidéos YouTube sont acceptés.</value>
   <data name="FileType" xml:space="preserve">
     <value>Type de fichier</value>
   </data>
-  <data name="DownloadSoundsContentDialog-DownloadPlaylist" xml:space="preserve">
+  <data name="DownloadSoundsDialog-DownloadPlaylist" xml:space="preserve">
     <value>Télécharger la playlist complète</value>
   </data>
-  <data name="DownloadSoundsContentDialog-DavPlusPlaylistDownload" xml:space="preserve">
+  <data name="DownloadSoundsDialog-DavPlusPlaylistDownload" xml:space="preserve">
     <value>Le téléchargement de tous les sons d’une playlist YouTube n’est disponible que pour les utilisateurs de dav Plus.
 
 Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
@@ -867,7 +867,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="InAppNotification-DownloadSoundsPlaylistError" xml:space="preserve">
     <value>Erreur lors du chargement de la playlist. Veuillez vérifier votre connexion Internet.</value>
   </data>
-  <data name="DownloadSoundsContentDialog-CreateCategoryForPlaylist" xml:space="preserve">
+  <data name="DownloadSoundsDialog-CreateCategoryForPlaylist" xml:space="preserve">
     <value>Créer une nouvelle catégorie pour la playlist</value>
   </data>
   <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock1.Text" xml:space="preserve">

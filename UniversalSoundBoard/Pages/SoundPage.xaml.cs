@@ -880,22 +880,25 @@ namespace UniversalSoundboard.Pages
         private async void StartMessageDownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
-            var downloadSoundsContentDialog = ContentDialogs.CreateDownloadSoundsContentDialog(infoButtonStyle);
-            downloadSoundsContentDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(downloadSoundsContentDialog);
+
+            var downloadSoundsDialog = new DownloadSoundsDialog(infoButtonStyle);
+            downloadSoundsDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
+            await downloadSoundsDialog.ShowAsync();
         }
 
-        private void DownloadSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private void DownloadSoundsContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (ContentDialogs.DownloadSoundsResult == DownloadSoundsResultType.Youtube)
+            var dialog = sender as DownloadSoundsDialog;
+
+            if (dialog.DownloadSoundsResult == DownloadSoundsResultType.Youtube)
             {
-                if (ContentDialogs.DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox.IsChecked == true)
-                    FileManager.itemViewHolder.TriggerDownloadYoutubePlaylistEvent(this, new EventArgs());
+                if (dialog.DownloadPlaylist)
+                    FileManager.itemViewHolder.TriggerDownloadYoutubePlaylistEvent(sender, new EventArgs());
                 else
-                    FileManager.itemViewHolder.TriggerDownloadYoutubeVideoEvent(this, new EventArgs());
+                    FileManager.itemViewHolder.TriggerDownloadYoutubeVideoEvent(sender, new EventArgs());
             }
-            else if (ContentDialogs.DownloadSoundsResult == DownloadSoundsResultType.AudioFile)
-                FileManager.itemViewHolder.TriggerDownloadAudioFileEvent(this, new EventArgs());
+            else if (dialog.DownloadSoundsResult == DownloadSoundsResultType.AudioFile)
+                FileManager.itemViewHolder.TriggerDownloadAudioFileEvent(sender, new EventArgs());
         }
 
         private async void StartMessageLoginButton_Click(object sender, RoutedEventArgs e)

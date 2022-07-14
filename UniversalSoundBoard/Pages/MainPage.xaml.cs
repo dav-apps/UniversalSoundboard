@@ -271,12 +271,12 @@ namespace UniversalSoundboard.Pages
 
         private async void ItemViewHolder_DownloadYoutubeVideo(object sender, EventArgs e)
         {
-            await DownloadSoundsContentDialog_YoutubeVideoDownload();
+            await DownloadSoundsContentDialog_YoutubeVideoDownload(sender as DownloadSoundsDialog);
         }
 
         private async void ItemViewHolder_DownloadYoutubePlaylist(object sender, EventArgs e)
         {
-            await DownloadSoundsContentDialog_YoutubePlaylistDownload();
+            await DownloadSoundsContentDialog_YoutubePlaylistDownload(sender as DownloadSoundsDialog);
         }
 
         private async void ItemViewHolder_DownloadAudioFile(object sender, EventArgs e)
@@ -1259,32 +1259,32 @@ namespace UniversalSoundboard.Pages
         private async void DownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
-            var downloadSoundsContentDialog = ContentDialogs.CreateDownloadSoundsContentDialog(infoButtonStyle);
-            downloadSoundsContentDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(downloadSoundsContentDialog);
+
+            var downloadSoundsDialog = new DownloadSoundsDialog(infoButtonStyle);
+            downloadSoundsDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
+            await downloadSoundsDialog.ShowAsync();
         }
 
-        private async void DownloadSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void DownloadSoundsContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (ContentDialogs.DownloadSoundsResult == DownloadSoundsResultType.Youtube)
+            var dialog = sender as DownloadSoundsDialog;
+
+            if (dialog.DownloadSoundsResult == DownloadSoundsResultType.Youtube)
             {
-                if (ContentDialogs.DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox.IsChecked == true)
-                    await DownloadSoundsContentDialog_YoutubePlaylistDownload();
+                if (dialog.DownloadPlaylist)
+                    await DownloadSoundsContentDialog_YoutubePlaylistDownload(dialog);
                 else
-                    await DownloadSoundsContentDialog_YoutubeVideoDownload();
+                    await DownloadSoundsContentDialog_YoutubeVideoDownload(dialog);
             }
-            else if (ContentDialogs.DownloadSoundsResult == DownloadSoundsResultType.AudioFile)
+            else if (dialog.DownloadSoundsResult == DownloadSoundsResultType.AudioFile)
                 await DownloadSoundsContentDialog_AudioFileDownload();
         }
 
-        public async Task DownloadSoundsContentDialog_YoutubeVideoDownload()
+        public async Task DownloadSoundsContentDialog_YoutubeVideoDownload(DownloadSoundsDialog dialog)
         {
+            if (dialog.GrabResult == null) return;
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
-
-            // Get the url in the text box
-            var grabResult = ContentDialogs.DownloadSoundsGrabResult;
-            if (grabResult == null) return;
-
+            
             // Show InAppNotification
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
@@ -1299,8 +1299,8 @@ namespace UniversalSoundboard.Pages
             // Disable the ability to add or download sounds
             FileManager.itemViewHolder.AddingSounds = true;
 
-            var mediaResources = grabResult.Resources<GrabbedMedia>();
-            var imageResources = grabResult.Resources<GrabbedImage>();
+            var mediaResources = dialog.GrabResult.Resources<GrabbedMedia>();
+            var imageResources = dialog.GrabResult.Resources<GrabbedImage>();
 
             // Find the audio track with the highest sample rate
             GrabbedMedia bestAudio = FindBestAudioOfYoutubeVideo(mediaResources);
@@ -1349,7 +1349,7 @@ namespace UniversalSoundboard.Pages
             }
 
             // Add the files as a new sound
-            Guid uuid = await FileManager.CreateSoundAsync(null, grabResult.Title, new List<Guid> { currentCategoryUuid }, audioFile, imageFile);
+            Guid uuid = await FileManager.CreateSoundAsync(null, dialog.GrabResult.Title, new List<Guid> { currentCategoryUuid }, audioFile, imageFile);
 
             if (uuid.Equals(Guid.Empty))
             {
@@ -1375,7 +1375,7 @@ namespace UniversalSoundboard.Pages
             Analytics.TrackEvent("YoutubeVideoDownload");
         }
 
-        public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload()
+        public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload(DownloadSoundsDialog dialog)
         {
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
 
@@ -1384,7 +1384,7 @@ namespace UniversalSoundboard.Pages
 
             var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
             List<KeyValuePair<string, string>> notDownloadedSounds = new List<KeyValuePair<string, string>>();
-            var playlistItemResponse = ContentDialogs.DownloadSoundsPlaylistItemListResponse;
+            var playlistItemResponse = dialog.PlaylistItemListResponse;
 
             // Show InAppNotification
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
@@ -1407,7 +1407,7 @@ namespace UniversalSoundboard.Pages
             {
                 // Get the next page of the playlist
                 var listOperation = FileManager.youtubeService.PlaylistItems.List("contentDetails");
-                listOperation.PlaylistId = ContentDialogs.DownloadSoundsPlaylistId;
+                listOperation.PlaylistId = dialog.PlaylistId;
                 listOperation.MaxResults = 50;
                 listOperation.PageToken = playlistItemResponse.NextPageToken;
 
@@ -1438,13 +1438,13 @@ namespace UniversalSoundboard.Pages
             // Create category for playlist, if the option is checked
             Category newCategory = null;
 
-            if (ContentDialogs.DownloadSoundsYoutubeInfoCreateCategoryForPlaylistCheckbox.IsChecked.GetValueOrDefault())
+            if (dialog.CreateCategoryForPlaylist)
             {
                 // Create category
                 List<string> iconsList = FileManager.GetIconsList();
                 int randomNumber = new Random().Next(iconsList.Count);
 
-                Guid categoryUuid = await FileManager.CreateCategoryAsync(null, null, ContentDialogs.DownloadSoundsPlaylistTitle, iconsList[randomNumber]);
+                Guid categoryUuid = await FileManager.CreateCategoryAsync(null, null, dialog.PlaylistTitle, iconsList[randomNumber]);
                 newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
 
                 // Add the category to the Categories list

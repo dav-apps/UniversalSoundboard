@@ -804,18 +804,18 @@ This may take some time, depending on how large the import file is.</value>
   <data name="AddButton-Download.Text" xml:space="preserve">
     <value>Download sounds</value>
   </data>
-  <data name="DownloadSoundsContentDialog-Title" xml:space="preserve">
+  <data name="DownloadSoundsDialog-Title" xml:space="preserve">
     <value>Download sounds</value>
   </data>
-  <data name="DownloadSoundsContentDialog-Description" xml:space="preserve">
+  <data name="DownloadSoundsDialog-Description" xml:space="preserve">
     <value>You can download sounds directly from the Internet. Just enter the link below.
 
 Supported are links to audio files and YouTube videos.</value>
   </data>
-  <data name="DownloadSoundsContentDialog-RetrievingInfo" xml:space="preserve">
+  <data name="DownloadSoundsDialog-RetrievingInfo" xml:space="preserve">
     <value>Retrieving information...</value>
   </data>
-  <data name="DownloadSoundsContentDialog-UrlTextBoxPlaceholder" xml:space="preserve">
+  <data name="DownloadSoundsDialog-UrlTextBoxPlaceholder" xml:space="preserve">
     <value>Link to audio or video</value>
   </data>
   <data name="InAppNotification-DownloadSound" xml:space="preserve">
@@ -827,7 +827,7 @@ Supported are links to audio files and YouTube videos.</value>
   <data name="InAppNotification-DownloadSoundError" xml:space="preserve">
     <value>Sound could not be downloaded</value>
   </data>
-  <data name="DownloadSoundsContentDialog-DefaultSoundName" xml:space="preserve">
+  <data name="DownloadSoundsDialog-DefaultSoundName" xml:space="preserve">
     <value>Downloaded sound</value>
   </data>
   <data name="FileName" xml:space="preserve">
@@ -839,10 +839,10 @@ Supported are links to audio files and YouTube videos.</value>
   <data name="FileType" xml:space="preserve">
     <value>File type</value>
   </data>
-  <data name="DownloadSoundsContentDialog-DownloadPlaylist" xml:space="preserve">
+  <data name="DownloadSoundsDialog-DownloadPlaylist" xml:space="preserve">
     <value>Download entire playlist</value>
   </data>
-  <data name="DownloadSoundsContentDialog-DavPlusPlaylistDownload" xml:space="preserve">
+  <data name="DownloadSoundsDialog-DavPlusPlaylistDownload" xml:space="preserve">
     <value>Downloading all sounds from a YouTube playlist is only available for dav Plus users.
 
 Log in and upgrade your plan to use this feature.</value>
@@ -868,7 +868,7 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="InAppNotification-DownloadSoundsPlaylistError" xml:space="preserve">
     <value>Error in loading the playlist. Please check your internet connection.</value>
   </data>
-  <data name="DownloadSoundsContentDialog-CreateCategoryForPlaylist" xml:space="preserve">
+  <data name="DownloadSoundsDialog-CreateCategoryForPlaylist" xml:space="preserve">
     <value>Create new category for playlist</value>
   </data>
   <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock1.Text" xml:space="preserve">
