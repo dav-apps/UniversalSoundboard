@@ -774,16 +774,16 @@ This may take some time, depending on how large the import file is.</value>
   <data name="InAppNotification-SoundboardImportSuccessful" xml:space="preserve">
     <value>Your soundboard was imported successfully</value>
   </data>
-  <data name="AddSoundsContentDialog-PrimaryButton" xml:space="preserve">
+  <data name="AddSoundsDialog-PrimaryButton" xml:space="preserve">
     <value>Add</value>
   </data>
-  <data name="AddSoundsContentDialog-SelectFiles" xml:space="preserve">
+  <data name="AddSoundsDialog-SelectFiles" xml:space="preserve">
     <value>Select files</value>
   </data>
-  <data name="AddSoundsContentDialog-Title" xml:space="preserve">
+  <data name="AddSoundsDialog-Title" xml:space="preserve">
     <value>Add sounds</value>
   </data>
-  <data name="AddSoundsContentDialog-NoFilesSelected" xml:space="preserve">
+  <data name="AddSoundsDialog-NoFilesSelected" xml:space="preserve">
     <value>No files selected</value>
   </data>
   <data name="InAppNotification-AddSounds" xml:space="preserve">

@@ -157,6 +157,7 @@
     <Compile Include="Components\Setting.cs" />
     <Compile Include="Dialogs\AddRecordedSoundToSoundboardDialog.cs" />
     <Compile Include="Dialogs\AddSoundErrorDialog.cs" />
+    <Compile Include="Dialogs\AddSoundsDialog.cs" />
     <Compile Include="Dialogs\AddSoundsErrorDialog.cs" />
     <Compile Include="Dialogs\DavPlusHotkeysDialog.cs" />
     <Compile Include="Dialogs\DavPlusOutputDeviceDialog.cs" />

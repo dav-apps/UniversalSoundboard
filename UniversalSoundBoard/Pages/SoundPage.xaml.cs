@@ -867,14 +867,15 @@ namespace UniversalSoundboard.Pages
             // Show the dialog for adding the sounds
             var template = (DataTemplate)Resources["SoundFileItemTemplate"];
 
-            ContentDialog addSoundsContentDialog = ContentDialogs.CreateAddSoundsContentDialog(template, files);
-            addSoundsContentDialog.PrimaryButtonClick += AddSoundsContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(addSoundsContentDialog);
+            var addSoundsDialog = new AddSoundsDialog(template, files);
+            addSoundsDialog.PrimaryButtonClick += AddSoundsContentDialog_PrimaryButtonClick;
+            await addSoundsDialog.ShowAsync();
         }
 
-        private async void AddSoundsContentDialog_PrimaryButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)
+        private async void AddSoundsContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await MainPage.AddSelectedSoundFiles();
+            var dialog = sender as AddSoundsDialog;
+            await MainPage.AddSelectedSoundFiles(dialog.SelectedFiles);
         }
 
         private async void StartMessageDownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
@@ -1003,9 +1004,9 @@ namespace UniversalSoundboard.Pages
             // Show the dialog for adding the sounds
             var template = (DataTemplate)Resources["SoundFileItemTemplate"];
 
-            ContentDialog addSoundsContentDialog = ContentDialogs.CreateAddSoundsContentDialog(template, files);
-            addSoundsContentDialog.PrimaryButtonClick += AddSoundsContentDialog_PrimaryButtonClick;
-            await ContentDialogs.ShowContentDialogAsync(addSoundsContentDialog);
+            var addSoundsDialog = new AddSoundsDialog(template, files);
+            addSoundsDialog.PrimaryButtonClick += AddSoundsContentDialog_PrimaryButtonClick;
+            await addSoundsDialog.ShowAsync();
         }
 
         private void SoundGridView_SelectionChanged(object sender, SelectionChangedEventArgs e)
