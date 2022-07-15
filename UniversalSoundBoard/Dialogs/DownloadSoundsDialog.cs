@@ -35,9 +35,13 @@ namespace UniversalSoundboard.Dialogs
         public GrabResult GrabResult { get; private set; }
         public PlaylistItemListResponse PlaylistItemListResponse { get; private set; }
         public string PlaylistTitle { get; private set; }
-        private string AudioFileType;
-        private string AudioFileName;
+        public string AudioFileName { get; private set; }
+        public string AudioFileType { get; private set; }
 
+        public string Url
+        {
+            get => UrlTextBox?.Text;
+        }
         public bool DownloadPlaylist
         {
             get => (bool)YoutubeInfoDownloadPlaylistCheckbox.IsChecked;

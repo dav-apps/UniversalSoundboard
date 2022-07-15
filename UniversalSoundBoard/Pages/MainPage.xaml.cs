@@ -213,11 +213,12 @@ namespace UniversalSoundboard.Pages
 
         private async void ItemViewHolder_TableObjectFileDownloadProgressChanged(object sender, TableObjectFileDownloadProgressChangedEventArgs e)
         {
-            if(e.Value == -1)
+            if (e.Value == -1)
             {
                 // Check if this value belongs to a sound in the Download dialog
                 int i = ContentDialogs.downloadingFilesSoundsList.FindIndex(sound => sound.AudioFileTableObject.Uuid.Equals(e.Uuid));
-                if(i != -1)
+
+                if (i != -1)
                 {
                     // Show download error dialog
                     downloadFilesFailed = true;
@@ -281,7 +282,7 @@ namespace UniversalSoundboard.Pages
 
         private async void ItemViewHolder_DownloadAudioFile(object sender, EventArgs e)
         {
-            await DownloadSoundsContentDialog_AudioFileDownload();
+            await DownloadSoundsContentDialog_AudioFileDownload(sender as DownloadSoundsDialog);
         }
 
         private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
@@ -1278,7 +1279,7 @@ namespace UniversalSoundboard.Pages
                     await DownloadSoundsContentDialog_YoutubeVideoDownload(dialog);
             }
             else if (dialog.DownloadSoundsResult == DownloadSoundsResultType.AudioFile)
-                await DownloadSoundsContentDialog_AudioFileDownload();
+                await DownloadSoundsContentDialog_AudioFileDownload(dialog);
         }
 
         public async Task DownloadSoundsContentDialog_YoutubeVideoDownload(DownloadSoundsDialog dialog)
@@ -1677,7 +1678,7 @@ namespace UniversalSoundboard.Pages
             return false;
         }
 
-        public async Task DownloadSoundsContentDialog_AudioFileDownload()
+        public async Task DownloadSoundsContentDialog_AudioFileDownload(DownloadSoundsDialog dialog)
         {
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
             FileManager.itemViewHolder.AddingSounds = true;
@@ -1694,9 +1695,9 @@ namespace UniversalSoundboard.Pages
             );
 
             StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-            StorageFile audioFile = await cacheFolder.CreateFileAsync(string.Format("download.{0}", ContentDialogs.DownloadSoundsAudioFileType), CreationCollisionOption.GenerateUniqueName);
+            StorageFile audioFile = await cacheFolder.CreateFileAsync(string.Format("download.{0}", dialog.AudioFileType), CreationCollisionOption.GenerateUniqueName);
 
-            string soundUrl = ContentDialogs.DownloadSoundsUrlTextBox.Text;
+            string soundUrl = dialog.Url;
             bool result = false;
             var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSound, false, value));
 
@@ -1715,7 +1716,7 @@ namespace UniversalSoundboard.Pages
 
             Guid uuid = await FileManager.CreateSoundAsync(
                 null,
-                ContentDialogs.DownloadSoundsAudioFileName,
+                dialog.AudioFileName,
                 new List<Guid> { currentCategoryUuid },
                 audioFile
             );
@@ -1743,7 +1744,7 @@ namespace UniversalSoundboard.Pages
 
             Analytics.TrackEvent("AudioFileDownload", new Dictionary<string, string>
             {
-                { "File extension", ContentDialogs.DownloadSoundsAudioFileType }
+                { "File extension", dialog.AudioFileType }
             });
         }
 
