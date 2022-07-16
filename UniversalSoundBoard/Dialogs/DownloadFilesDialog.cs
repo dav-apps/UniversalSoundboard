@@ -8,6 +8,8 @@ namespace UniversalSoundboard.Dialogs
 {
     public class DownloadFilesDialog : Dialog
     {
+        public List<Sound> Sounds { get; private set; }
+
         public DownloadFilesDialog(
             List<Sound> sounds,
             DataTemplate itemTemplate,
@@ -17,15 +19,16 @@ namespace UniversalSoundboard.Dialogs
                   FileManager.loader.GetString("Actions-Cancel")
             )
         {
-            Content = GetContent(sounds, itemTemplate, itemStyle);
+            Sounds = sounds;
+            Content = GetContent(itemTemplate, itemStyle);
         }
 
-        private Grid GetContent(List<Sound> sounds, DataTemplate itemTemplate, Style itemStyle)
+        private Grid GetContent(DataTemplate itemTemplate, Style itemStyle)
         {
             ListView progressListView = new ListView
             {
                 ItemTemplate = itemTemplate,
-                ItemsSource = sounds,
+                ItemsSource = Sounds,
                 ItemContainerStyle = itemStyle,
                 SelectionMode = ListViewSelectionMode.None
             };

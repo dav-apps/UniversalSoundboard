@@ -215,20 +215,26 @@ namespace UniversalSoundboard.Pages
         {
             if (e.Value == -1)
             {
-                // Check if this value belongs to a sound in the Download dialog
-                int i = ContentDialogs.downloadingFilesSoundsList.FindIndex(sound => sound.AudioFileTableObject.Uuid.Equals(e.Uuid));
-
-                if (i != -1)
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    // Show download error dialog
-                    downloadFilesFailed = true;
-
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                    // Check if the DownloadFilesDialog is visible
+                    if (Dialog.CurrentlyVisibleDialog != null && Dialog.CurrentlyVisibleDialog is DownloadFilesDialog)
                     {
-                        // Close the download files dialog
-                        ContentDialogs.DownloadFilesContentDialog.Hide();
-                    });
-                }
+                        var dialog = Dialog.CurrentlyVisibleDialog as DownloadFilesDialog;
+
+                        // Check if this value belongs to a sound in the Download dialog
+                        int i = dialog.Sounds.FindIndex(sound => sound.AudioFileTableObject.Uuid.Equals(e.Uuid));
+
+                        if (i != -1)
+                        {
+                            // Show download error dialog
+                            downloadFilesFailed = true;
+
+                            // Close the download files dialog
+                            dialog.Hide();
+                        }
+                    }
+                });
             }
         }
 
@@ -236,31 +242,29 @@ namespace UniversalSoundboard.Pages
         {
             if (downloadFilesDialogIsVisible && !downloadFilesFailed)
             {
-                bool isDownloading = false;
-
-                // Check if all files were downloaded
-                foreach(var sound in ContentDialogs.downloadingFilesSoundsList)
+                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    var downloadStatus = sound.GetAudioFileDownloadStatus();
-
-                    if (
-                        downloadStatus == TableObjectFileDownloadStatus.Downloading
-                        || downloadStatus == TableObjectFileDownloadStatus.NotDownloaded
-                    )
+                    // Check if the DownloadFilesDialog is visible
+                    if (Dialog.CurrentlyVisibleDialog != null && Dialog.CurrentlyVisibleDialog is DownloadFilesDialog)
                     {
-                        isDownloading = true;
-                        break;
+                        var dialog = Dialog.CurrentlyVisibleDialog as DownloadFilesDialog;
+
+                        foreach (var sound in dialog.Sounds)
+                        {
+                            var downloadStatus = sound.GetAudioFileDownloadStatus();
+
+                            if (
+                                downloadStatus == TableObjectFileDownloadStatus.Downloading
+                                || downloadStatus == TableObjectFileDownloadStatus.NotDownloaded
+                            )
+                            {
+                                // Close the dialog
+                                dialog.Hide();
+                                break;
+                            }
+                        }
                     }
-                }
-
-                if (!isDownloading)
-                {
-                    await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                    {
-                        // Close the download files dialog
-                        ContentDialogs.DownloadFilesContentDialog.Hide();
-                    });
-                }
+                });
             }
         }
 

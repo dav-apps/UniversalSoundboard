@@ -221,7 +221,6 @@
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Models\Category.cs" />
-    <Compile Include="Common\ContentDialogs.cs" />
     <Compile Include="Models\Data.cs" />
     <Compile Include="Models\Sound.cs" />
     <Compile Include="Models\SoundDetails.cs" />
