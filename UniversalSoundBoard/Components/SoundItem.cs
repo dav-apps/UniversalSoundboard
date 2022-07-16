@@ -94,9 +94,9 @@ namespace UniversalSoundboard.Components
         #endregion
 
         #region Hotkeys
-        private void OptionsFlyout_HotkeysFlyoutItemClick(object sender, RoutedEventArgs e)
+        private async void OptionsFlyout_HotkeysFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            
+            await new HotkeysDialog(sound).ShowAsync();
         }
         #endregion
 

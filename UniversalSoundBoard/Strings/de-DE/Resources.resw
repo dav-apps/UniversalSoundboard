@@ -1013,7 +1013,13 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="SoundItemOptionsFlyout-Hotkeys" xml:space="preserve">
     <value>Tastenkombinationen</value>
   </data>
-  <data name="HotkeysContentDialog-Title" xml:space="preserve">
+  <data name="HotkeysDialog-Title" xml:space="preserve">
     <value>Tastenkombinationen für "{0}"</value>
+  </data>
+  <data name="HotkeysDialog-Description" xml:space="preserve">
+    <value>Dieser Sound wird abgespielt, wenn du einen der folgenden Tastenkombinationen drückst.</value>
+  </data>
+  <data name="HotkeysDialog-FlyoutText" xml:space="preserve">
+    <value>Drücke eine Tastenkombination</value>
   </data>
 </root>

@@ -173,6 +173,7 @@
     <Compile Include="Dialogs\EditCategoryDialog.cs" />
     <Compile Include="Dialogs\ExportSoundboardDialog.cs" />
     <Compile Include="Dialogs\ExportSoundsDialog.cs" />
+    <Compile Include="Dialogs\HotkeysDialog.cs" />
     <Compile Include="Dialogs\ImportSoundboardDialog.cs" />
     <Compile Include="Dialogs\LogoutDialog.cs" />
     <Compile Include="Dialogs\NewCategoryDialog.cs" />

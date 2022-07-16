@@ -1014,7 +1014,13 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="SoundItemOptionsFlyout-Hotkeys" xml:space="preserve">
     <value>Raccourcis clavier</value>
   </data>
-  <data name="HotkeysContentDialog-Title" xml:space="preserve">
+  <data name="HotkeysDialog-Title" xml:space="preserve">
     <value>Raccourcis clavier pour « {0} »</value>
+  </data>
+  <data name="HotkeysDialog-Description" xml:space="preserve">
+    <value>Ce son est joué lorsque vous appuyez sur l'une des combinaisons de touches suivantes.</value>
+  </data>
+  <data name="HotkeysDialog-FlyoutText" xml:space="preserve">
+    <value>Appuyez sur une combinaison de touches</value>
   </data>
 </root>
