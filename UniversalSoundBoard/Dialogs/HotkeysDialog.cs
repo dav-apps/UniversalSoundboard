@@ -1,4 +1,5 @@
-﻿using System;
+﻿using davClassLibrary;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UniversalSoundboard.Common;
@@ -9,6 +10,7 @@ using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
+using WinUI = Microsoft.UI.Xaml.Controls;
 
 namespace UniversalSoundboard.Dialogs
 {
@@ -51,12 +53,31 @@ namespace UniversalSoundboard.Dialogs
                 Orientation = Orientation.Vertical
             };
 
+            if (!Dav.IsLoggedIn || Dav.User.Plan == Plan.Free)
+            {
+                // Add message for dav Plus required
+                WinUI.InfoBar infoBar = new WinUI.InfoBar
+                {
+                    IsOpen = true,
+                    Severity = WinUI.InfoBarSeverity.Warning,
+                    IsClosable = false,
+                    Title = FileManager.loader.GetString("DavPlusDialog-Title"),
+                    Message = FileManager.loader.GetString("DavPlusHotkeysDialog-Content"),
+                    Margin = new Thickness(0, 0, 0, 10)
+                };
+
+                contentStackPanel.Children.Add(infoBar);
+            }
+
+            // Add description
             TextBlock descriptionTextBlock = new TextBlock
             {
                 Margin = new Thickness(0, 0, 0, 10),
                 Text = FileManager.loader.GetString("HotkeysDialog-Description"),
                 TextWrapping = TextWrapping.WrapWholeWords
             };
+
+            contentStackPanel.Children.Add(descriptionTextBlock);
 
             // Add the add button
             Button addButton = new Button
@@ -114,10 +135,10 @@ namespace UniversalSoundboard.Dialogs
                 ItemTemplate = hotkeyItemTemplate,
                 ItemsSource = HotkeyItems,
                 SelectionMode = ListViewSelectionMode.None,
-                Margin = new Thickness(-16, 0, 0, 0)
+                Margin = new Thickness(-16, 0, 0, 0),
+                MaxHeight = 120
             };
 
-            contentStackPanel.Children.Add(descriptionTextBlock);
             contentStackPanel.Children.Add(addButton);
             contentStackPanel.Children.Add(hotkeyListView);
 
@@ -131,10 +152,10 @@ namespace UniversalSoundboard.Dialogs
             // Add the hotkey to the list
             var hotkeyItem = new HotkeyItem(PressedHotkey);
             hotkeyItem.RemoveHotkey += HotkeyItem_RemoveHotkey;
-            HotkeyItems.Add(hotkeyItem);
+            HotkeyItems.Insert(0, hotkeyItem);
 
             // Add the hotkey to the hotkeys of the sound
-            Sound.Hotkeys.Add(PressedHotkey);
+            Sound.Hotkeys.Insert(0, PressedHotkey);
 
             // Save the hotkeys of the sound
             await FileManager.SetHotkeysOfSoundAsync(Sound.Uuid, Sound.Hotkeys);
