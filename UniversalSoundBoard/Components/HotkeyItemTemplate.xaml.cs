@@ -11,12 +11,12 @@ namespace UniversalSoundboard.Components
     {
         HotkeyItem HotkeyItem { get; set; }
 
-        private string Text
+        private string text
         {
             get => HotkeyItem?.Text ?? "";
         }
-        private SolidColorBrush Background = new SolidColorBrush();
-        private SolidColorBrush BorderBrush = new SolidColorBrush();
+        private SolidColorBrush background = new SolidColorBrush();
+        private SolidColorBrush borderBrush = new SolidColorBrush();
 
         public HotkeyItemTemplate()
         {
@@ -36,13 +36,13 @@ namespace UniversalSoundboard.Components
         {
             if (FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark)
             {
-                Background = new SolidColorBrush(Color.FromArgb(13, 255, 255, 255));
-                BorderBrush = new SolidColorBrush(Color.FromArgb(25, 0, 0, 0));
+                background = new SolidColorBrush(Color.FromArgb(13, 255, 255, 255));
+                borderBrush = new SolidColorBrush(Color.FromArgb(25, 0, 0, 0));
             }
             else
             {
-                Background = new SolidColorBrush(Color.FromArgb(15, 0, 0, 0));
-                BorderBrush = new SolidColorBrush(Color.FromArgb(15, 0, 0, 0));
+                background = new SolidColorBrush(Color.FromArgb(15, 0, 0, 0));
+                borderBrush = new SolidColorBrush(Color.FromArgb(15, 0, 0, 0));
             }
 
             Bindings.Update();

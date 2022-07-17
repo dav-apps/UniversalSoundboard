@@ -7,21 +7,22 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
+    HorizontalContentAlignment="Stretch"
     Loaded="UserControl_Loaded">
 
     <RelativePanel
         HorizontalAlignment="Left"
         CornerRadius="2"
         Padding="8,4"
-        Background="{x:Bind Background}"
-        BorderBrush="{x:Bind BorderBrush}"
+        Background="{x:Bind background}"
+        BorderBrush="{x:Bind borderBrush}"
         BorderThickness="1,0,1,1">
 
         <TextBlock
             Name="HotkeyTextBlock"
             RelativePanel.AlignVerticalCenterWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
-            Text="{x:Bind Text}" />
+            Text="{x:Bind text}" />
 
         <Button
             Name="RemoveButton"

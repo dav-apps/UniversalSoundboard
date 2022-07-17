@@ -15,6 +15,7 @@ namespace UniversalSoundboard.Dialogs
     public class HotkeysDialog : Dialog
     {
         private Sound Sound;
+        private Flyout AddButtonFlyout;
         private TextBlock AddHotkeyButtonFlyoutTextBlock;
         private Button AddHotkeyButtonFlyoutAddButton;
         private readonly List<VirtualKey> CurrentlyPressedKeys = new List<VirtualKey>();
@@ -61,11 +62,11 @@ namespace UniversalSoundboard.Dialogs
             Button addButton = new Button
             {
                 Content = FileManager.loader.GetString("Actions-Add"),
-                Margin = new Thickness(0, 4, 0, 4)
+                Margin = new Thickness(0, 4, 0, 6)
             };
 
-            var addButtonFlyout = new Flyout();
-            addButtonFlyout.Closed += AddButtonFlyout_Closed;
+            AddButtonFlyout = new Flyout();
+            AddButtonFlyout.Closed += AddButtonFlyout_Closed;
 
             StackPanel addButtonFlyoutStackPanel = new StackPanel
             {
@@ -90,7 +91,7 @@ namespace UniversalSoundboard.Dialogs
                 Content = FileManager.loader.GetString("Actions-Cancel"),
                 Margin = new Thickness(0, 0, 10, 0)
             };
-            addHotkeyButtonFlyoutCancelButton.Click += (object sender, RoutedEventArgs e) => addButtonFlyout.Hide();
+            addHotkeyButtonFlyoutCancelButton.Click += (object sender, RoutedEventArgs e) => AddButtonFlyout.Hide();
 
             AddHotkeyButtonFlyoutAddButton = new Button
             {
@@ -105,14 +106,15 @@ namespace UniversalSoundboard.Dialogs
             addButtonFlyoutStackPanel.Children.Add(AddHotkeyButtonFlyoutTextBlock);
             addButtonFlyoutStackPanel.Children.Add(addHotkeyButtonFlyoutButtonStackPanel);
 
-            addButtonFlyout.Content = addButtonFlyoutStackPanel;
-            addButton.Flyout = addButtonFlyout;
+            AddButtonFlyout.Content = addButtonFlyoutStackPanel;
+            addButton.Flyout = AddButtonFlyout;
 
             ListView hotkeyListView = new ListView
             {
                 ItemTemplate = hotkeyItemTemplate,
                 ItemsSource = HotkeyItems,
                 SelectionMode = ListViewSelectionMode.None,
+                Margin = new Thickness(-16, 0, 0, 0)
             };
 
             contentStackPanel.Children.Add(descriptionTextBlock);
@@ -122,9 +124,23 @@ namespace UniversalSoundboard.Dialogs
             return contentStackPanel;
         }
 
-        private void AddHotkeyButtonFlyoutAddButton_Click(object sender, RoutedEventArgs e)
+        private async void AddHotkeyButtonFlyoutAddButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            AddButtonFlyout.Hide();
+
+            // Add the hotkey to the list
+            var hotkeyItem = new HotkeyItem(PressedHotkey);
+            hotkeyItem.RemoveHotkey += HotkeyItem_RemoveHotkey;
+            HotkeyItems.Add(hotkeyItem);
+
+            // Add the hotkey to the hotkeys of the sound
+            Sound.Hotkeys.Add(PressedHotkey);
+
+            // Save the hotkeys of the sound
+            await FileManager.SetHotkeysOfSoundAsync(Sound.Uuid, Sound.Hotkeys);
+
+            // Update the Hotkey process with the new hotkeys
+            await FileManager.StartHotkeyProcess();
         }
 
         private async void HotkeyItem_RemoveHotkey(object sender, HotkeyEventArgs e)
