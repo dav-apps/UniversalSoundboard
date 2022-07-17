@@ -37,6 +37,10 @@
             <components:SoundFileItemTemplate />
         </DataTemplate>
 
+        <DataTemplate x:Key="HotkeyItemTemplate" x:DataType="components:HotkeyItem">
+            <components:HotkeyItemTemplate />
+        </DataTemplate>
+
         <!-- Styles -->
         <Style x:Name="StartMessageLogoStyle" TargetType="Image">
             <Setter Property="Height" Value="160" />

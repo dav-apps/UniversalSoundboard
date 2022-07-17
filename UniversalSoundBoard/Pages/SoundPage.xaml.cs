@@ -43,6 +43,7 @@ namespace UniversalSoundboard.Pages
         bool canReorderItems = false;
         Visibility startMessageVisibility = Visibility.Collapsed;
         Visibility emptyCategoryMessageVisibility = Visibility.Collapsed;
+        public static DataTemplate hotkeyItemTemplate;
         
         public SoundPage()
         {
@@ -90,6 +91,7 @@ namespace UniversalSoundboard.Pages
         #region Page event handlers
         async void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
+            hotkeyItemTemplate = (DataTemplate)Resources["HotkeyItemTemplate"];
             soundsPivotSelected = true;
 
             // Set the height of the BottomPlayingSoundsBar if the user is navigating from another page

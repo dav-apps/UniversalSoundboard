@@ -1024,4 +1024,7 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="HotkeysDialog-FlyoutText" xml:space="preserve">
     <value>Press a key combination</value>
   </data>
+  <data name="HotkeyItem-RemoveButtonTooltip.Text" xml:space="preserve">
+    <value>Remove hotkey</value>
+  </data>
 </root>

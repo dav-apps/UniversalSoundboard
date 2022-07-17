@@ -9,6 +9,7 @@ using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
+using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.DataTransfer;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
@@ -96,7 +97,7 @@ namespace UniversalSoundboard.Components
         #region Hotkeys
         private async void OptionsFlyout_HotkeysFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            await new HotkeysDialog(sound).ShowAsync();
+            await new HotkeysDialog(sound, SoundPage.hotkeyItemTemplate).ShowAsync();
         }
         #endregion
 

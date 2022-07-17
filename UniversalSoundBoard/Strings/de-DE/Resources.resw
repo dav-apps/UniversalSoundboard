@@ -1017,9 +1017,12 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
     <value>Tastenkombinationen für "{0}"</value>
   </data>
   <data name="HotkeysDialog-Description" xml:space="preserve">
-    <value>Dieser Sound wird abgespielt, wenn du einen der folgenden Tastenkombinationen drückst.</value>
+    <value>Dieser Sound wird abgespielt, wenn du eine der folgenden Tastenkombinationen drückst.</value>
   </data>
   <data name="HotkeysDialog-FlyoutText" xml:space="preserve">
     <value>Drücke eine Tastenkombination</value>
+  </data>
+  <data name="HotkeyItem-RemoveButtonTooltip.Text" xml:space="preserve">
+    <value>Tastenkombination entfernen</value>
   </data>
 </root>

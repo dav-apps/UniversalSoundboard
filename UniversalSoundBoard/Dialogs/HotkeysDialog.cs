@@ -1,58 +1,60 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UniversalSoundboard.Common;
+using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.System;
-using Windows.UI;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Windows.UI.Xaml.Media;
 
 namespace UniversalSoundboard.Dialogs
 {
     public class HotkeysDialog : Dialog
     {
+        private Sound Sound;
         private TextBlock AddHotkeyButtonFlyoutTextBlock;
         private Button AddHotkeyButtonFlyoutAddButton;
         private readonly List<VirtualKey> CurrentlyPressedKeys = new List<VirtualKey>();
         private Hotkey PressedHotkey = new Hotkey();
+        ObservableCollection<HotkeyItem> HotkeyItems = new ObservableCollection<HotkeyItem>();
 
-        public HotkeysDialog(Sound sound)
+        public HotkeysDialog(Sound sound, DataTemplate hotkeyItemTemplate)
             : base(
                   string.Format(FileManager.loader.GetString("HotkeysDialog-Title"), sound.Name),
                   FileManager.loader.GetString("Actions-Close")
             )
         {
-            Content = GetContent(sound);
+            Sound = sound;
+
+            foreach (var hotkey in sound.Hotkeys)
+            {
+                if (hotkey.IsEmpty())
+                    continue;
+
+                var hotkeyItem = new HotkeyItem(hotkey);
+                hotkeyItem.RemoveHotkey += HotkeyItem_RemoveHotkey;
+
+                HotkeyItems.Add(hotkeyItem);
+            }
+
+            Content = GetContent(hotkeyItemTemplate);
         }
 
-        private RelativePanel GetContent(Sound sound)
+        private StackPanel GetContent(DataTemplate hotkeyItemTemplate)
         {
-            RelativePanel contentRelativePanel = new RelativePanel();
-
-            StackPanel textStackPanel = new StackPanel
+            StackPanel contentStackPanel = new StackPanel
             {
-                Margin = new Thickness(0, 0, 0, 10)
+                Orientation = Orientation.Vertical
             };
-            RelativePanel.SetAlignTopWithPanel(textStackPanel, true);
-            RelativePanel.SetAlignLeftWithPanel(textStackPanel, true);
-            RelativePanel.SetAlignRightWithPanel(textStackPanel, true);
 
             TextBlock descriptionTextBlock = new TextBlock
             {
+                Margin = new Thickness(0, 0, 0, 10),
                 Text = FileManager.loader.GetString("HotkeysDialog-Description"),
                 TextWrapping = TextWrapping.WrapWholeWords
-            };
-
-            textStackPanel.Children.Add(descriptionTextBlock);
-
-            ScrollViewer scrollViewer = new ScrollViewer();
-            RelativePanel.SetBelow(scrollViewer, textStackPanel);
-
-            StackPanel itemsStackPanel = new StackPanel
-            {
-                Orientation = Orientation.Vertical
             };
 
             // Add the add button
@@ -95,6 +97,7 @@ namespace UniversalSoundboard.Dialogs
                 Content = FileManager.loader.GetString("Actions-Add"),
                 IsEnabled = false
             };
+            AddHotkeyButtonFlyoutAddButton.Click += AddHotkeyButtonFlyoutAddButton_Click;
 
             addHotkeyButtonFlyoutButtonStackPanel.Children.Add(addHotkeyButtonFlyoutCancelButton);
             addHotkeyButtonFlyoutButtonStackPanel.Children.Add(AddHotkeyButtonFlyoutAddButton);
@@ -105,71 +108,39 @@ namespace UniversalSoundboard.Dialogs
             addButtonFlyout.Content = addButtonFlyoutStackPanel;
             addButton.Flyout = addButtonFlyout;
 
-            itemsStackPanel.Children.Add(addButton);
-
-            // Add an item for each hotkey
-            foreach (var hotkey in sound.Hotkeys)
+            ListView hotkeyListView = new ListView
             {
-                if (hotkey.IsEmpty())
-                    continue;
+                ItemTemplate = hotkeyItemTemplate,
+                ItemsSource = HotkeyItems,
+                SelectionMode = ListViewSelectionMode.None,
+            };
 
-                RelativePanel itemRelativePanel = new RelativePanel
-                {
-                    CornerRadius = new CornerRadius(2),
-                    Margin = new Thickness(0, 4, 0, 4),
-                    Padding = new Thickness(8, 4, 8, 4),
-                    BorderBrush = new SolidColorBrush(),
-                    BorderThickness = new Thickness(1, 0, 1, 1)
-                };
+            contentStackPanel.Children.Add(descriptionTextBlock);
+            contentStackPanel.Children.Add(addButton);
+            contentStackPanel.Children.Add(hotkeyListView);
 
-                if (FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark)
-                {
-                    itemRelativePanel.Background = new SolidColorBrush(Color.FromArgb(13, 255, 255, 255));
-                    itemRelativePanel.BorderBrush = new SolidColorBrush(Color.FromArgb(25, 0, 0, 0));
-                }
-                else
-                {
-                    itemRelativePanel.Background = new SolidColorBrush(Color.FromArgb(15, 0, 0, 0));
-                    itemRelativePanel.BorderBrush = new SolidColorBrush(Color.FromArgb(15, 0, 0, 0));
-                }
+            return contentStackPanel;
+        }
 
-                TextBlock hotkeyTextBlock = new TextBlock
-                {
-                    Text = hotkey.ToString(),
-                    FontSize = 14,
-                    Padding = new Thickness(0),
-                    Margin = new Thickness(0)
-                };
+        private void AddHotkeyButtonFlyoutAddButton_Click(object sender, RoutedEventArgs e)
+        {
+            
+        }
 
-                Button closeButton = new Button
-                {
-                    FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
-                    Content = "\uE894",
-                    FontSize = 16,
-                    HorizontalAlignment = HorizontalAlignment.Right,
-                    Background = new SolidColorBrush(Colors.Transparent),
-                    Margin = new Thickness(8, 0, 0, 0),
-                    Padding = new Thickness(0),
-                    BorderThickness = new Thickness(0)
-                };
+        private async void HotkeyItem_RemoveHotkey(object sender, HotkeyEventArgs e)
+        {
+            // Remove the hotkey item from the list
+            HotkeyItems.Remove(sender as HotkeyItem);
 
-                RelativePanel.SetAlignVerticalCenterWithPanel(hotkeyTextBlock, true);
-                RelativePanel.SetAlignVerticalCenterWithPanel(closeButton, true);
-                RelativePanel.SetAlignLeftWithPanel(hotkeyTextBlock, true);
-                RelativePanel.SetAlignRightWithPanel(closeButton, true);
-                RelativePanel.SetRightOf(closeButton, hotkeyTextBlock);
+            // Remove the hotkey from the list of hotkeys
+            int i = Sound.Hotkeys.FindIndex(h => h.Modifiers == e.Hotkey.Modifiers && h.Key == e.Hotkey.Key);
+            if (i != -1) Sound.Hotkeys.RemoveAt(i);
 
-                itemRelativePanel.Children.Add(hotkeyTextBlock);
-                itemRelativePanel.Children.Add(closeButton);
-                itemsStackPanel.Children.Add(itemRelativePanel);
-            }
+            // Save the hotkeys of the sound
+            await FileManager.SetHotkeysOfSoundAsync(Sound.Uuid, Sound.Hotkeys);
 
-            scrollViewer.Content = itemsStackPanel;
-
-            contentRelativePanel.Children.Add(textStackPanel);
-            contentRelativePanel.Children.Add(scrollViewer);
-
-            return contentRelativePanel;
+            // Update the Hotkey process with the new hotkeys
+            await FileManager.StartHotkeyProcess();
         }
 
         private void AddButtonFlyout_Closed(object sender, object e)
