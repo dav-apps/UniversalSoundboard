@@ -121,8 +121,7 @@ namespace UniversalSoundboard.DataAccess
         public const string PlayingSoundTableCurrentPropertyName = "current";
         public const string PlayingSoundTableRepetitionsPropertyName = "repetitions";
         public const string PlayingSoundTableRandomlyPropertyName = "randomly";
-        public const string PlayingSoundTableVolumePropertyName = "volume";
-        public const string PlayingSoundTableVolume2PropertyName = "volume2";
+        public const string PlayingSoundTableVolumePropertyName = "volume2";
         public const string PlayingSoundTableMutedPropertyName = "muted";
         public const string PlayingSoundTableOutputDevicePropertyName = "output_device";
         public const string PlayingSoundTablePlaybackSpeedPropertyName = "playback_speed";
@@ -2313,7 +2312,7 @@ namespace UniversalSoundboard.DataAccess
             else if (volume < 0)
                 volume = 0;
 
-            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableVolume2PropertyName, volume.ToString());
+            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableVolumePropertyName, volume.ToString());
         }
 
         public static async Task SetMutedOfPlayingSoundAsync(Guid uuid, bool muted)
@@ -2404,22 +2403,10 @@ namespace UniversalSoundboard.DataAccess
             if (!string.IsNullOrEmpty(randomlyString))
                 bool.TryParse(randomlyString, out randomly);
 
-            // Backwards compatibility for volume saved as double
-            // Read from volume (double, 0 - 1), save to volume2 (int, 0 - 100)
-            string volumeString = tableObject.GetPropertyValue(PlayingSoundTableVolumePropertyName);
-            string volume2String = tableObject.GetPropertyValue(PlayingSoundTableVolume2PropertyName);
             double volume = 100;
-
-            // Use volume2 if it exists, otherwise use volume
-            if (!string.IsNullOrEmpty(volume2String))
-            {
-                double.TryParse(volume2String, out volume);
-            }
-            else if (!string.IsNullOrEmpty(volumeString))
-            {
+            string volumeString = tableObject.GetPropertyValue(PlayingSoundTableVolumePropertyName);
+            if (!string.IsNullOrEmpty(volumeString))
                 double.TryParse(volumeString, out volume);
-                volume *= 100;
-            }
 
             bool muted = false;
             string mutedString = tableObject.GetPropertyValue(PlayingSoundTableMutedPropertyName);

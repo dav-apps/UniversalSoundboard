@@ -161,7 +161,7 @@ namespace UniversalSoundboard.DataAccess
                 new Property{ Name = FileManager.PlayingSoundTableCurrentPropertyName, Value = current.ToString() },
                 new Property{ Name = FileManager.PlayingSoundTableRepetitionsPropertyName, Value = repetitions.ToString() },
                 new Property{ Name = FileManager.PlayingSoundTableRandomlyPropertyName, Value = randomly.ToString() },
-                new Property{ Name = FileManager.PlayingSoundTableVolume2PropertyName, Value = volume.ToString() },
+                new Property{ Name = FileManager.PlayingSoundTableVolumePropertyName, Value = volume.ToString() },
                 new Property{ Name = FileManager.PlayingSoundTableMutedPropertyName, Value = muted.ToString() }
             };
 
