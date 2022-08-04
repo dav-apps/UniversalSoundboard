@@ -83,4 +83,14 @@
         Sync,
         WriteReview
     }
+
+    enum PlayingSoundItemLayoutType
+    {
+        SingleSoundSmall,
+        SingleSoundLarge,
+        Compact,
+        Mini,
+        Small,
+        Large
+    }
 }

@@ -9,6 +9,7 @@ using System.Timers;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
+using UniversalSoundboard.Pages;
 using Windows.Devices.Enumeration;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -20,7 +21,7 @@ namespace UniversalSoundboard.Components
      * 
      * Each PlayingSoundItemTemplate is assigned to a PlayingSoundItem class, so that all logic runs in the PlayingSoundItem
      * and the PlayingSoundItemTemplate only updates the UI.
-     * Each PlayingSoundItem can have multiple (2 for both lists) PlayingSoundItemTemplates.
+     * Each PlayingSoundItem can belong to multiple (2 for both lists) PlayingSoundItemTemplates.
      * 
      * The PlayingSoundItems are stored as a list in ItemViewHolder. Whenever a new PlayingSoundItemTemplate is initialized,
      * it will check if a PlayingSoundItem already exists for the given PlayingSound in the list.
@@ -36,7 +37,6 @@ namespace UniversalSoundboard.Components
         public TimeSpan CurrentSoundTotalDuration { get => currentSoundTotalDuration; }
 
         #region Local variables
-        private CoreDispatcher dispatcher;
         private bool initialized = false;
         private bool skipSoundsCollectionChanged = false;
         private bool soundsListVisible = false;
@@ -52,10 +52,6 @@ namespace UniversalSoundboard.Components
         const int fadeOutFrames = 10;
         int currentFadeOutFrame = 0;
         double fadeOutVolumeDiff;
-
-        private Visibility previousButtonVisibility = Visibility.Visible;
-        private Visibility nextButtonVisibility = Visibility.Visible;
-        private Visibility expandButtonVisibility = Visibility.Visible;
         #endregion
         
         #region Events
@@ -79,91 +75,110 @@ namespace UniversalSoundboard.Components
         public event EventHandler<DownloadStatusChangedEventArgs> DownloadStatusChanged;
         #endregion
 
-        public PlayingSoundItem(PlayingSound playingSound, CoreDispatcher dispatcher)
+        public PlayingSoundItem(PlayingSound playingSound)
         {
             PlayingSound = playingSound;
-            this.dispatcher = dispatcher;
+        }
+
+        public static PlayingSoundItem Subscribe(PlayingSound playingSound)
+        {
+            PlayingSoundItem playingSoundItem;
+
+            // Try to find the appropriate PlayingSoundItem
+            int i = FileManager.itemViewHolder.PlayingSoundItems.FindIndex(item => item.Uuid.Equals(playingSound.Uuid));
+
+            if (i == -1)
+            {
+                // Create a new PlayingSoundItem
+                playingSoundItem = new PlayingSoundItem(playingSound);
+                FileManager.itemViewHolder.PlayingSoundItems.Add(playingSoundItem);
+            }
+            else
+            {
+                // Subscribe to the PlayingSoundItem
+                playingSoundItem = FileManager.itemViewHolder.PlayingSoundItems.ElementAt(i);
+            }
+
+            return playingSoundItem;
         }
 
         public async void Init()
         {
-            bool oldInitialized = initialized;
+            if (
+                initialized
+                || PlayingSound.AudioPlayer == null
+            )
+            {
+                UpdateUI();
+                return;
+            }
+
+            initialized = true;
+
+            // Subscribe to ItemViewHolder events
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
+            FileManager.itemViewHolder.SoundDeleted += ItemViewHolder_SoundDeleted;
+            FileManager.itemViewHolder.PlayingSoundItemStartSoundsListAnimation += ItemViewHolder_PlayingSoundItemStartSoundsListAnimation;
+
+            // Subscribe to MediaPlayer events
+            PlayingSound.AudioPlayer.MediaEnded += AudioPlayer_MediaEnded;
+            PlayingSound.AudioPlayer.PositionChanged += AudioPlayer_PositionChanged;
+
+            // Subscribe to other events
+            PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
+
+            // Set the initial UI element states
+            UpdateUI();
+
+            // Set initial values
+            PlayingSound.AudioPlayer.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
+            PlayingSound.AudioPlayer.Volume = (double)PlayingSound.Volume / 100;
+            PlayingSound.AudioPlayer.IsMuted = PlayingSound.Muted;
+
+            // Play the animation for showing the sound
+            ShowPlayingSound?.Invoke(this, new EventArgs());
 
             // Set the appropriate output device
-            _ = UpdateOutputDevice();
+            await UpdateOutputDevice();
+            await InitAudioPlayer();
 
-            if (!initialized)
+            if (Dav.IsLoggedIn && !PlayingSound.LocalFile)
             {
-                initialized = true;
+                // Add each sound file that is not downloaded to the download queue
+                List<int> fileDownloads = new List<int>();
 
-                if (PlayingSound.Current >= PlayingSound.Sounds.Count)
-                    PlayingSound.Current = PlayingSound.Sounds.Count - 1;
-                else if (PlayingSound.Current < 0)
-                    PlayingSound.Current = 0;
-
-                // Subscribe to ItemViewHolder events
-                FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
-                FileManager.itemViewHolder.SoundDeleted += ItemViewHolder_SoundDeleted;
-                FileManager.itemViewHolder.PlayingSoundItemStartSoundsListAnimation += ItemViewHolder_PlayingSoundItemStartSoundsListAnimation;
-
-                // Subscribe to MediaPlayer events
-                PlayingSound.AudioPlayer.MediaEnded += AudioPlayer_MediaEnded;
-                PlayingSound.AudioPlayer.PositionChanged += AudioPlayer_PositionChanged;
-
-                // Subscribe to other event handlers
-                PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
-
-                // Stop all other PlayingSounds if this PlayingSound was just started
-                if(PlayingSound.StartPlaying)
-                    StopAllOtherPlayingSounds();
-
-                // Set the initial playback speed
-                PlayingSound.AudioPlayer.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
-
-                await InitAudioPlayer();
-
-                if (Dav.IsLoggedIn && !PlayingSound.LocalFile)
+                for (int i = 0; i < PlayingSound.Sounds.Count; i++)
                 {
-                    // Add each sound file that is not downloaded to the download queue
-                    List<int> fileDownloads = new List<int>();
+                    // Check the download status of the file
+                    if (PlayingSound.Sounds[i].AudioFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.Downloaded)
+                        continue;
 
-                    for (int i = 0; i < PlayingSound.Sounds.Count; i++)
+                    if (i == 0)
                     {
-                        // Check the download status of the file
-                        if (PlayingSound.Sounds[i].AudioFileTableObject.FileDownloadStatus == TableObjectFileDownloadStatus.Downloaded)
-                            continue;
-
-                        if (i == 0)
-                        {
-                            fileDownloads.Add(PlayingSound.Current);
-                            continue;
-                        }
-
-                        // First, add the next sound
-                        int nextSoundIndex = PlayingSound.Current + i;
-                        if (nextSoundIndex < PlayingSound.Sounds.Count)
-                            fileDownloads.Add(nextSoundIndex);
-
-                        // Second, add the previous sound
-                        int previousSoundIndex = PlayingSound.Current - i;
-                        if (previousSoundIndex >= 0)
-                            fileDownloads.Add(previousSoundIndex);
+                        fileDownloads.Add(PlayingSound.Current);
+                        continue;
                     }
 
-                    fileDownloads.Reverse();
-                    foreach (int i in fileDownloads)
-                        AddSoundToDownloadQueue(i);
+                    // First, add the next sound
+                    int nextSoundIndex = PlayingSound.Current + i;
+                    if (nextSoundIndex < PlayingSound.Sounds.Count)
+                        fileDownloads.Add(nextSoundIndex);
 
-                    if (CheckFileDownload())
-                    {
-                        PlayingSound.AudioPlayer.Pause();
-                        SetPlayPause(false);
-                    }
-                    else if (PlayingSound.StartPlaying)
-                    {
-                        PlayingSound.AudioPlayer.Play();
-                        SetPlayPause(true);
-                    }
+                    // Second, add the previous sound
+                    int previousSoundIndex = PlayingSound.Current - i;
+                    if (previousSoundIndex >= 0)
+                        fileDownloads.Add(previousSoundIndex);
+                }
+
+                fileDownloads.Reverse();
+
+                foreach (int i in fileDownloads)
+                    AddSoundToDownloadQueue(i);
+
+                if (CheckFileDownload())
+                {
+                    PlayingSound.AudioPlayer.Pause();
+                    SetPlayPause(false);
                 }
                 else if (PlayingSound.StartPlaying)
                 {
@@ -171,27 +186,11 @@ namespace UniversalSoundboard.Components
                     SetPlayPause(true);
                 }
             }
-
-            ShowPlayingSound?.Invoke(this, new EventArgs());
-
-            // Set the correct visibilities and icons for the buttons
-            UpdateButtonVisibility();
-            RepetitionsChanged?.Invoke(this, new RepetitionsChangedEventArgs(PlayingSound.Repetitions));
-            UpdateFavouriteFlyoutItem();
-            UpdateVolumeControl();
-            LocalFileButtonVisibilityChanged?.Invoke(this, new LocalFileButtonVisibilityEventArgs(PlayingSound.LocalFile ? Visibility.Visible : Visibility.Collapsed));
-            ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(soundsListVisible));
-            PositionChanged?.Invoke(this, new PositionChangedEventArgs(PlayingSound.AudioPlayer.Position));
-            PlaybackSpeedChanged?.Invoke(this, new PlaybackSpeedChangedEventArgs(PlayingSound.PlaybackSpeed));
-
-            if (!oldInitialized)
-                SetPlayPause(PlayingSound.AudioPlayer.IsPlaying || PlayingSound.StartPlaying);
-
-            // Update the Play/Pause UI, without setting the PlaybackState of the MediaPlayer
-            PlaybackStateChanged?.Invoke(
-                this,
-                new PlaybackStateChangedEventArgs(PlayingSound.AudioPlayer.IsPlaying || PlayingSound.StartPlaying)
-            );
+            else if (PlayingSound.StartPlaying)
+            {
+                PlayingSound.AudioPlayer.Play();
+                SetPlayPause(true);
+            }
         }
 
         #region ItemViewHolder event handlers
@@ -235,7 +234,7 @@ namespace UniversalSoundboard.Components
         #region MediaPlayer event handlers
         private async void AudioPlayer_MediaEnded(object sender, EventArgs e)
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
                 // Check if the end of the sounds list was reached
                 if (PlayingSound.Current + 1 < PlayingSound.Sounds.Count)
@@ -319,7 +318,7 @@ namespace UniversalSoundboard.Components
 
         private async void AudioPlayer_PositionChanged(object sender, PositionChangedEventArgs e)
         {
-            await dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
             {
                 PositionChanged?.Invoke(this, new PositionChangedEventArgs((sender as AudioPlayer).Position));
             });
@@ -382,7 +381,7 @@ namespace UniversalSoundboard.Components
 
             await PlayingSound.AudioPlayer.Init();
 
-            await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 currentSoundTotalDuration = PlayingSound.AudioPlayer.Duration;
                 DurationChanged?.Invoke(this, new DurationChangedEventArgs(PlayingSound.AudioPlayer.Duration));
@@ -456,13 +455,38 @@ namespace UniversalSoundboard.Components
             }
         }
 
+        private void UpdateUI()
+        {
+            UpdateButtonVisibility();
+            UpdateFavouriteFlyoutItem();
+            UpdateVolumeControl();
+
+            PlaybackStateChanged?.Invoke(this, new PlaybackStateChangedEventArgs(PlayingSound.AudioPlayer.IsPlaying || PlayingSound.StartPlaying));
+            LocalFileButtonVisibilityChanged?.Invoke(this, new LocalFileButtonVisibilityEventArgs(PlayingSound.LocalFile ? Visibility.Visible : Visibility.Collapsed));
+            RepetitionsChanged?.Invoke(this, new RepetitionsChangedEventArgs(PlayingSound.Repetitions));
+            PlaybackSpeedChanged?.Invoke(this, new PlaybackSpeedChangedEventArgs(PlayingSound.PlaybackSpeed));
+            PositionChanged?.Invoke(this, new PositionChangedEventArgs(PlayingSound.AudioPlayer.Position));
+
+            if (CurrentSoundIsDownloading)
+                DownloadStatusChanged?.Invoke(this, new DownloadStatusChangedEventArgs(true, -1));
+
+            soundsListVisible = false;
+        }
+
         private void UpdateButtonVisibility()
         {
-            previousButtonVisibility = PlayingSound.Current > 0 ? Visibility.Visible : Visibility.Collapsed;
-            nextButtonVisibility = PlayingSound.Current != PlayingSound.Sounds.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
-            expandButtonVisibility = PlayingSound.Sounds.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
+            Visibility previousButtonVisibility = PlayingSound.Current > 0 ? Visibility.Visible : Visibility.Collapsed;
+            Visibility nextButtonVisibility = PlayingSound.Current != PlayingSound.Sounds.Count - 1 ? Visibility.Visible : Visibility.Collapsed;
+            Visibility expandButtonVisibility = PlayingSound.Sounds.Count > 1 ? Visibility.Visible : Visibility.Collapsed;
 
-            TriggerButtonVisibilityChangedEvent();
+            ButtonVisibilityChanged?.Invoke(
+                this,
+                new ButtonVisibilityChangedEventArgs(
+                    previousButtonVisibility,
+                    nextButtonVisibility,
+                    expandButtonVisibility
+                )
+            );
         }
 
         private void UpdateFavouriteFlyoutItem()
@@ -484,18 +508,6 @@ namespace UniversalSoundboard.Components
             MutedChanged?.Invoke(
                 this,
                 new MutedChangedEventArgs(PlayingSound.Muted)
-            );
-        }
-
-        private void TriggerButtonVisibilityChangedEvent()
-        {
-            ButtonVisibilityChanged?.Invoke(
-                this,
-                new ButtonVisibilityChangedEventArgs(
-                    previousButtonVisibility,
-                    nextButtonVisibility,
-                    expandButtonVisibility
-                )
             );
         }
 

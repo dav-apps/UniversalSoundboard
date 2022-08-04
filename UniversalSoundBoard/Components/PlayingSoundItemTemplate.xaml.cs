@@ -7,9 +7,7 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
-using Windows.ApplicationModel.Resources;
 using Windows.Devices.Enumeration;
-using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -20,27 +18,26 @@ namespace UniversalSoundboard.Components
 {
     public sealed partial class PlayingSoundItemTemplate : UserControl
     {
-        private PlayingSound _playingSound;
-        PlayingSound PlayingSound {
+        PlayingSoundItem PlayingSoundItem;
+        PlayingSound PlayingSound
+        {
             get
             {
                 if (PlayingSoundItem == null) return null;
                 return PlayingSoundItem.PlayingSound;
             }
-            set
-            {
-                _playingSound = value;
-            }
         }
-        PlayingSoundItem PlayingSoundItem;
 
-        private readonly ResourceLoader loader = new ResourceLoader();
+        private bool initialized = false;
         PlayingSoundItemLayoutType layoutType = PlayingSoundItemLayoutType.Small;
         Guid selectedSoundUuid;
         Thickness singlePlayingSoundTitleMargin = new Thickness(0);
         private bool skipSoundsListViewSelectionChanged;
         private bool skipProgressSliderValueChanged = false;
-        private bool inBottomPlayingSoundsBar = false;
+        private bool inBottomPlayingSoundsBar
+        {
+            get => Tag != null;
+        }
         private bool playingSoundItemVisible = false;
 
         private const string MoreButtonOutputDeviceFlyoutSubItemName = "MoreButtonOutputDeviceFlyoutSubItem";
@@ -56,33 +53,25 @@ namespace UniversalSoundboard.Components
 
         private void Init()
         {
-            if (_playingSound == null || _playingSound.AudioPlayer == null) return;
+            // Take the PlayingSound from the data context and use it to initialize the PlayingSoundItem
+            var playingSound = DataContext as PlayingSound;
 
-            // Check if the PlayingSound still exists
-            int j = FileManager.itemViewHolder.PlayingSounds.ToList().FindIndex(ps => ps.Uuid.Equals(_playingSound.Uuid));
+            if (
+                playingSound == null
+                || playingSound.AudioPlayer == null
+                || initialized
+            ) return;
+
+            initialized = true;
+
+            // Check if the PlayingSound exists
+            int j = FileManager.itemViewHolder.PlayingSounds.ToList().FindIndex(ps => ps.Uuid.Equals(playingSound.Uuid));
             if (j == -1) return;
 
-            inBottomPlayingSoundsBar = Tag != null;
-
-            if(!inBottomPlayingSoundsBar)
+            if (!inBottomPlayingSoundsBar)
                 PlayingSoundItemTemplateUserControl.Height = double.NaN;
 
-            // Subscribe to the appropriate PlayingSoundItem
-            int i = FileManager.itemViewHolder.PlayingSoundItems.FindIndex(item => item.Uuid.Equals(_playingSound.Uuid));
-
-            if (i == -1)
-            {
-                // Create a new PlayingSoundItem
-                PlayingSoundItem = new PlayingSoundItem(_playingSound, CoreWindow.GetForCurrentThread().Dispatcher);
-                FileManager.itemViewHolder.PlayingSoundItems.Add(PlayingSoundItem);
-            }
-            else
-            {
-                PlayingSoundItem = FileManager.itemViewHolder.PlayingSoundItems.ElementAt(i);
-                if (PlayingSoundItem.CurrentSoundIsDownloading)
-                    ShowIndetermindateProgressBar();
-            }
-            _playingSound = null;
+            PlayingSoundItem = PlayingSoundItem.Subscribe(playingSound);
 
             PlayingSoundItem.PlaybackStateChanged -= PlayingSoundItem_PlaybackStateChanged;
             PlayingSoundItem.PlaybackStateChanged += PlayingSoundItem_PlaybackStateChanged;
@@ -120,9 +109,10 @@ namespace UniversalSoundboard.Components
             PlayingSoundItem.RemovePlayingSound += PlayingSoundItem_RemovePlayingSound;
             PlayingSoundItem.DownloadStatusChanged -= PlayingSoundItem_DownloadStatusChanged;
             PlayingSoundItem.DownloadStatusChanged += PlayingSoundItem_DownloadStatusChanged;
+
             PlayingSoundItem.Init();
 
-            SoundsListView.ItemsSource = PlayingSound.Sounds;
+            SoundsListView.ItemsSource = playingSound.Sounds;
             UpdateUI();
         }
 
@@ -142,7 +132,11 @@ namespace UniversalSoundboard.Components
         {
             if (DataContext == null) return;
 
-            _playingSound = DataContext as PlayingSound;
+            var playingSound = DataContext as PlayingSound;
+
+            if (PlayingSound != null && !(PlayingSound.Uuid.Equals(playingSound.Uuid)))
+                initialized = false;
+
             Init();
         }
         #endregion
@@ -268,7 +262,7 @@ namespace UniversalSoundboard.Components
                     return;
             }
 
-            string playbackSpeedText = loader.GetString("PlaybackSpeedButtonToolTip").Replace("{0}", ((double)e.PlaybackSpeed / 100).ToString());
+            string playbackSpeedText = FileManager.loader.GetString("PlaybackSpeedButtonToolTip").Replace("{0}", ((double)e.PlaybackSpeed / 100).ToString());
             PlaybackSpeedButtonToolTip.Text = playbackSpeedText;
             PlaybackSpeedFlyoutText.Text = playbackSpeedText;
             PlaybackSpeedButton.Visibility = Visibility.Visible;
@@ -495,7 +489,7 @@ namespace UniversalSoundboard.Components
             MenuFlyoutSubItem outputDeviceFlyoutItem = new MenuFlyoutSubItem
             {
                 Name = MoreButtonOutputDeviceFlyoutSubItemName,
-                Text = loader.GetString("MoreButton-OutputDevice"),
+                Text = FileManager.loader.GetString("MoreButton-OutputDevice"),
                 Icon = new FontIcon
                 {
                     FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
@@ -511,7 +505,7 @@ namespace UniversalSoundboard.Components
             MenuFlyoutSubItem playbackSpeedFlyoutItem = new MenuFlyoutSubItem
             {
                 Name = MoreButtonPlaybackSpeedFlyoutSubItemName,
-                Text = loader.GetString("PlaybackSpeed"),
+                Text = FileManager.loader.GetString("PlaybackSpeed"),
                 Icon = new FontIcon
                 {
                     FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
@@ -528,7 +522,7 @@ namespace UniversalSoundboard.Components
 
             ToggleMenuFlyoutItem standardItem = new ToggleMenuFlyoutItem
             {
-                Text = loader.GetString("StandardOutputDevice"),
+                Text = FileManager.loader.GetString("StandardOutputDevice"),
                 IsChecked = true
             };
             standardItem.Click += MoreButton_OutputDevice_Click;
@@ -737,7 +731,7 @@ namespace UniversalSoundboard.Components
             {
                 MenuFlyoutItem removeFlyoutItem = new MenuFlyoutItem
                 {
-                    Text = loader.GetString("Remove"),
+                    Text = FileManager.loader.GetString("Remove"),
                     Icon = new FontIcon { Glyph = "\uE106" }
                 };
                 removeFlyoutItem.Click += RemoveFlyoutItem_Click;
@@ -966,12 +960,12 @@ namespace UniversalSoundboard.Components
             if (isPlaying)
             {
                 PlayPauseButton.Content = "\uE103";
-                PlayPauseButtonToolTip.Text = loader.GetString("PauseButtonToolTip");
+                PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PauseButtonToolTip");
             }
             else
             {
                 PlayPauseButton.Content = "\uE102";
-                PlayPauseButtonToolTip.Text = loader.GetString("PlayButtonToolTip");
+                PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PlayButtonToolTip");
             }
         }
 
@@ -981,7 +975,7 @@ namespace UniversalSoundboard.Components
             {
                 // Set the icon for the expand button
                 ExpandButton.Content = "\uE098";
-                ExpandButtonToolTip.Text = loader.GetString("CollapseButtonTooltip");
+                ExpandButtonToolTip.Text = FileManager.loader.GetString("CollapseButtonTooltip");
 
                 // Show the sound list
                 SoundsListViewStackPanel.Height = SoundsListView.ActualHeight;
@@ -990,7 +984,7 @@ namespace UniversalSoundboard.Components
             {
                 // Set the icon for the expand button
                 ExpandButton.Content = "\uE099";
-                ExpandButtonToolTip.Text = loader.GetString("ExpandButtonTooltip");
+                ExpandButtonToolTip.Text = FileManager.loader.GetString("ExpandButtonTooltip");
 
                 // Hide the sound list
                 SoundsListViewStackPanel.Height = 0;
@@ -1001,18 +995,18 @@ namespace UniversalSoundboard.Components
         {
             // Set the text of the repeat flyout item
             if (repetitions == 0)
-                MoreButtonRepeatFlyoutSubItem.Text = loader.GetString("MoreButton-Repeat");
+                MoreButtonRepeatFlyoutSubItem.Text = FileManager.loader.GetString("MoreButton-Repeat");
             else if (repetitions == int.MaxValue)
-                MoreButtonRepeatFlyoutSubItem.Text = string.Format(loader.GetString("MoreButton-RepeatWithNumber"), "∞");
+                MoreButtonRepeatFlyoutSubItem.Text = string.Format(FileManager.loader.GetString("MoreButton-RepeatWithNumber"), "∞");
             else if (repetitions > 100)
-                MoreButtonRepeatFlyoutSubItem.Text = string.Format(loader.GetString("MoreButton-RepeatWithNumber"), ">100");
+                MoreButtonRepeatFlyoutSubItem.Text = string.Format(FileManager.loader.GetString("MoreButton-RepeatWithNumber"), ">100");
             else
-                MoreButtonRepeatFlyoutSubItem.Text = string.Format(loader.GetString("MoreButton-RepeatWithNumber"), repetitions);
+                MoreButtonRepeatFlyoutSubItem.Text = string.Format(FileManager.loader.GetString("MoreButton-RepeatWithNumber"), repetitions);
         }
 
         private void SetFavouriteFlyoutItemText(bool fav)
         {
-            MoreButtonFavouriteFlyoutItem.Text = loader.GetString(fav ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite");
+            MoreButtonFavouriteFlyoutItem.Text = FileManager.loader.GetString(fav ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite");
             MoreButtonFavouriteFlyoutItem.Icon = new FontIcon { Glyph = fav ? "\uE195" : "\uE113" };
             MoreButtonFavouriteFlyoutItem.Visibility = PlayingSound.LocalFile ? Visibility.Collapsed : Visibility.Visible;
         }
@@ -1048,15 +1042,5 @@ namespace UniversalSoundboard.Components
             await PlayingSoundItem.Remove();
         }
         #endregion
-    }
-
-    enum PlayingSoundItemLayoutType
-    {
-        SingleSoundSmall,
-        SingleSoundLarge,
-        Compact,
-        Mini,
-        Small,
-        Large
     }
 }
