@@ -111,6 +111,7 @@ namespace UniversalSoundboard.DataAccess
         public const string SoundTableDefaultMutedPropertyName = "default_muted";
         public const string SoundTableDefaultPlaybackSpeedPropertyName = "default_playback_speed";
         public const string SoundTableDefaultRepetitionsPropertyName = "default_repetitions";
+        public const string SoundTableDefaultOutputDevicePropertyName = "default_output_device";
         public const string SoundTableHotkeysPropertyName = "hotkeys";
 
         public const string CategoryTableParentPropertyName = "parent";
@@ -841,6 +842,9 @@ namespace UniversalSoundboard.DataAccess
                 int.TryParse(defaultRepetitionsString, out defaultRepetitions);
 
             sound.DefaultRepetitions = defaultRepetitions;
+
+            // DefaultOutputDevice
+            sound.DefaultOutputDevice = soundTableObject.GetPropertyValue(SoundTableDefaultOutputDevicePropertyName);
 
             // Hotkeys
             string hotkeysString = soundTableObject.GetPropertyValue(SoundTableHotkeysPropertyName);
@@ -2055,6 +2059,15 @@ namespace UniversalSoundboard.DataAccess
             if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
 
             await soundTableObject.SetPropertyValueAsync(SoundTableDefaultRepetitionsPropertyName, defaultRepetitions.ToString());
+        }
+
+        public static async Task SetDefaultOutputDeviceOfSoundAsync(Guid uuid, string defaultOutputDevice)
+        {
+            // Get the sound table object
+            var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
+            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+
+            await soundTableObject.SetPropertyValueAsync(SoundTableDefaultOutputDevicePropertyName, defaultOutputDevice);
         }
 
         public static async Task SetHotkeysOfSoundAsync(Guid uuid, List<Hotkey> hotkeys)

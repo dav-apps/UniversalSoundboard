@@ -515,7 +515,8 @@ namespace UniversalSoundboard.Pages
                 PlaybackSpeed = ps,
                 Repetitions = sound.DefaultRepetitions,
                 StartPlaying = startPlaying,
-                StartPosition = position
+                StartPosition = position,
+                OutputDevice = sound.DefaultOutputDevice
             };
 
             if (FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSoundItems.Count == 0)
