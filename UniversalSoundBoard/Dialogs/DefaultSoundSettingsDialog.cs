@@ -1,7 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
+using UniversalSoundboard.Pages;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -14,6 +17,7 @@ namespace UniversalSoundboard.Dialogs
         private VolumeControl VolumeControl;
         private ComboBox RepetitionsComboBox;
         private ComboBox PlaybackSpeedComboBox;
+        private ComboBox OutputDeviceComboBox;
         private bool volumeChanged = false;
         private bool mutedChanged = false;
         private bool repetitionsChanged = false;
@@ -26,6 +30,7 @@ namespace UniversalSoundboard.Dialogs
         {
             this.sound = sound;
             Content = GetContent();
+            FileManager.deviceWatcherHelper.DevicesChanged += DeviceWatcherHelper_DevicesChanged;
             ContentDialog.CloseButtonClick += ContentDialog_CloseButtonClick;
         }
 
@@ -225,7 +230,75 @@ namespace UniversalSoundboard.Dialogs
             contentGrid.Children.Add(playbackSpeedDataRelativePanel);
             #endregion
 
+            #region Output device
+            // Add the row
+            var outputDeviceRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+            contentGrid.RowDefinitions.Add(outputDeviceRow);
+
+            StackPanel outputDeviceHeaderStackPanel = GenerateTableCell(
+                row,
+                0,
+                FileManager.loader.GetString("DefaultSoundSettingsDialog-OutputDevice"),
+                fontSize,
+                false,
+                new Thickness(0, 16, 0, 0)
+            );
+
+            RelativePanel outputDeviceDataRelativePanel = new RelativePanel { Margin = new Thickness(0, 10, 0, 0) };
+            Grid.SetRow(outputDeviceDataRelativePanel, row);
+            Grid.SetColumn(outputDeviceDataRelativePanel, 1);
+
+            // Create the ComboBox with the output devices
+            OutputDeviceComboBox = new ComboBox();
+            CreateOutputDeviceComboBox();
+
+            RelativePanel.SetAlignVerticalCenterWithPanel(OutputDeviceComboBox, true);
+            outputDeviceDataRelativePanel.Children.Add(OutputDeviceComboBox);
+
+            row++;
+            contentGrid.Children.Add(outputDeviceHeaderStackPanel);
+            contentGrid.Children.Add(outputDeviceDataRelativePanel);
+            #endregion
+
             return contentGrid;
+        }
+
+        private void CreateOutputDeviceComboBox()
+        {
+            OutputDeviceComboBox.SelectionChanged -= OutputDeviceComboBox_SelectionChanged;
+
+            OutputDeviceComboBox.Items.Clear();
+            OutputDeviceComboBox.Items.Add(new ComboBoxItem
+            {
+                Content = FileManager.loader.GetString("StandardOutputDevice")
+            });
+
+            OutputDeviceComboBox.SelectedIndex = 0;
+            int i = 1;
+
+            foreach (var device in FileManager.deviceWatcherHelper.Devices)
+            {
+                OutputDeviceComboBox.Items.Add(new ComboBoxItem
+                {
+                    Tag = device.Id,
+                    Content = device.Name
+                });
+
+                if (sound.DefaultOutputDevice == device.Id)
+                    OutputDeviceComboBox.SelectedIndex = i;
+
+                i++;
+            }
+
+            OutputDeviceComboBox.SelectionChanged += OutputDeviceComboBox_SelectionChanged;
+        }
+
+        private async void OutputDeviceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            string outputDevice = (string)(OutputDeviceComboBox.SelectedItem as ComboBoxItem).Tag;
+
+            sound.DefaultOutputDevice = outputDevice;
+            await FileManager.SetDefaultOutputDeviceOfSoundAsync(sound.Uuid, outputDevice);
         }
 
         private void VolumeControl_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -305,6 +378,14 @@ namespace UniversalSoundboard.Dialogs
 
             contentStackPanel.Children.Add(contentTextBlock);
             return contentStackPanel;
+        }
+
+        private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
+        {
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                CreateOutputDeviceComboBox();
+            });
         }
 
         private async void ContentDialog_CloseButtonClick(ContentDialog sender, ContentDialogButtonClickEventArgs args)

@@ -1025,4 +1025,7 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="HotkeyItem-RemoveButtonTooltip.Text" xml:space="preserve">
     <value>Tastenkombination entfernen</value>
   </data>
+  <data name="DefaultSoundSettingsDialog-OutputDevice" xml:space="preserve">
+    <value>Ausgabegerät:</value>
+  </data>
 </root>

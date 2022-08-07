@@ -1026,4 +1026,7 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="HotkeyItem-RemoveButtonTooltip.Text" xml:space="preserve">
     <value>Supprimer le raccourci clavier</value>
   </data>
+  <data name="DefaultSoundSettingsDialog-OutputDevice" xml:space="preserve">
+    <value>Périphérique de sortie:</value>
+  </data>
 </root>
