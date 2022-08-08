@@ -1,4 +1,5 @@
-﻿using Microsoft.AppCenter.Analytics;
+﻿using davClassLibrary;
+using Microsoft.AppCenter.Analytics;
 using Microsoft.Toolkit.Uwp.UI;
 using System;
 using System.Collections;
@@ -516,7 +517,7 @@ namespace UniversalSoundboard.Pages
                 Repetitions = sound.DefaultRepetitions,
                 StartPlaying = startPlaying,
                 StartPosition = position,
-                OutputDevice = sound.DefaultOutputDevice
+                OutputDevice = Dav.IsLoggedIn && Dav.User.Plan > 0 ? sound.DefaultOutputDevice : null
             };
 
             if (FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSoundItems.Count == 0)

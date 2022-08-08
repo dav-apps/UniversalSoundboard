@@ -1,4 +1,5 @@
-﻿using System;
+﻿using davClassLibrary;
+using System;
 using System.Collections.Generic;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
@@ -22,19 +23,19 @@ namespace UniversalSoundboard.Dialogs
         private bool mutedChanged = false;
         private bool repetitionsChanged = false;
 
-        public DefaultSoundSettingsDialog(Sound sound)
+        public DefaultSoundSettingsDialog(Sound sound, Style infoButtonStyle)
             : base(
                   string.Format(FileManager.loader.GetString("DefaultSoundSettingsDialog-Title"), sound.Name),
                   FileManager.loader.GetString("Actions-Close")
             )
         {
             this.sound = sound;
-            Content = GetContent();
+            Content = GetContent(infoButtonStyle);
             FileManager.deviceWatcherHelper.DevicesChanged += DeviceWatcherHelper_DevicesChanged;
             ContentDialog.CloseButtonClick += ContentDialog_CloseButtonClick;
         }
 
-        private Grid GetContent()
+        private Grid GetContent(Style infoButtonStyle)
         {
             int fontSize = 15;
             int row = 0;
@@ -244,20 +245,49 @@ namespace UniversalSoundboard.Dialogs
                 new Thickness(0, 16, 0, 0)
             );
 
-            RelativePanel outputDeviceDataRelativePanel = new RelativePanel { Margin = new Thickness(0, 10, 0, 0) };
-            Grid.SetRow(outputDeviceDataRelativePanel, row);
-            Grid.SetColumn(outputDeviceDataRelativePanel, 1);
+            StackPanel outputDeviceDataStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+
+            Grid.SetRow(outputDeviceDataStackPanel, row);
+            Grid.SetColumn(outputDeviceDataStackPanel, 1);
 
             // Create the ComboBox with the output devices
-            OutputDeviceComboBox = new ComboBox();
+            OutputDeviceComboBox = new ComboBox
+            {
+                MaxWidth = rightColumnWidth * 0.8
+            };
+
             CreateOutputDeviceComboBox();
+            outputDeviceDataStackPanel.Children.Add(OutputDeviceComboBox);
 
-            RelativePanel.SetAlignVerticalCenterWithPanel(OutputDeviceComboBox, true);
-            outputDeviceDataRelativePanel.Children.Add(OutputDeviceComboBox);
+            if (!Dav.IsLoggedIn || Dav.User.Plan == 0)
+            {
+                OutputDeviceComboBox.IsEnabled = false;
 
+                // Create the info button
+                Button infoButton = new Button
+                {
+                    Style = infoButtonStyle,
+                    Margin = new Thickness(10, 0, 6, 0)
+                };
+
+                TextBlock infoButtonTextBlock = new TextBlock
+                {
+                    Text = FileManager.loader.GetString("DavPlusOutputDeviceDialog-Content"),
+                    TextWrapping = TextWrapping.WrapWholeWords,
+                    MaxWidth = 300
+                };
+
+                infoButton.Flyout = new Flyout { Content = infoButtonTextBlock };
+                outputDeviceDataStackPanel.Children.Add(infoButton);
+            }
+            
             row++;
             contentGrid.Children.Add(outputDeviceHeaderStackPanel);
-            contentGrid.Children.Add(outputDeviceDataRelativePanel);
+            contentGrid.Children.Add(outputDeviceDataStackPanel);
             #endregion
 
             return contentGrid;

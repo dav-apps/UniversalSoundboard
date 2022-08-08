@@ -104,7 +104,7 @@ namespace UniversalSoundboard.Components
         #region DefaultSoundOptions
         private async void OptionsFlyout_DefaultSoundSettingsFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            var defaultSoundSettingsDialog = new DefaultSoundSettingsDialog(sound);
+            var defaultSoundSettingsDialog = new DefaultSoundSettingsDialog(sound, MainPage.infoButtonStyle);
             await defaultSoundSettingsDialog.ShowAsync();
         }
         #endregion
