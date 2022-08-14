@@ -374,7 +374,7 @@ namespace UniversalSoundboard.Dialogs
                 AudioFileName = FileManager.loader.GetString("DownloadSoundsDialog-DefaultSoundName");
                 bool defaultFileName = true;
 
-                string lastPart = input.Split('/').Last();
+                string lastPart = HttpUtility.UrlDecode(input.Split('/').Last());
 
                 if (fileNameRegex.IsMatch(lastPart))
                 {
