@@ -1029,4 +1029,16 @@ Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.
   <data name="DefaultSoundSettingsDialog-OutputDevice" xml:space="preserve">
     <value>Périphérique de sortie:</value>
   </data>
+  <data name="Actions-ContinueDownload" xml:space="preserve">
+    <value>Continuer le téléchargement</value>
+  </data>
+  <data name="Actions-StopDownload" xml:space="preserve">
+    <value>Annuler le téléchargement</value>
+  </data>
+  <data name="CancelYouTubePlaylistDownloadDialog-Message" xml:space="preserve">
+    <value>Êtes-vous sûr de vouloir annuler le téléchargement de la playlist ?</value>
+  </data>
+  <data name="CancelYouTubePlaylistDownloadDialog-Title" xml:space="preserve">
+    <value>Annuler le téléchargement de la playlist</value>
+  </data>
 </root>

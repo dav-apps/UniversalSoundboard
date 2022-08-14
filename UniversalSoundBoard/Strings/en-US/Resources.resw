@@ -1030,4 +1030,16 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="DefaultSoundSettingsDialog-OutputDevice" xml:space="preserve">
     <value>Output device:</value>
   </data>
+  <data name="Actions-ContinueDownload" xml:space="preserve">
+    <value>Continue download</value>
+  </data>
+  <data name="Actions-StopDownload" xml:space="preserve">
+    <value>Stop download</value>
+  </data>
+  <data name="CancelYouTubePlaylistDownloadDialog-Message" xml:space="preserve">
+    <value>Are you sure you want to cancel the download of the playlist?</value>
+  </data>
+  <data name="CancelYouTubePlaylistDownloadDialog-Title" xml:space="preserve">
+    <value>Cancel playlist download</value>
+  </data>
 </root>

@@ -1429,16 +1429,34 @@ namespace UniversalSoundboard.Pages
             var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
             List<KeyValuePair<string, string>> notDownloadedSounds = new List<KeyValuePair<string, string>>();
             var playlistItemResponse = dialog.PlaylistItemListResponse;
+            var cancellationTokenSource = new CancellationTokenSource();
+
+            var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
+                InAppNotificationType.DownloadSounds,
+                string.Format(loader.GetString("InAppNotification-DownloadSounds"), 1, playlistItemResponse.PageInfo.TotalResults.GetValueOrDefault()),
+                0,
+                true,
+                false,
+                FileManager.loader.GetString("Actions-Cancel")
+            );
+
+            showInAppNotificationEventArgs.PrimaryButtonClick += async (object sender, RoutedEventArgs e) =>
+            {
+                // Show Dialog for canceling Playlist download
+                var cancelDownloadDialog = new CancelYouTubePlaylistDownloadDialog();
+
+                cancelDownloadDialog.PrimaryButtonClick += (Dialog d, ContentDialogButtonClickEventArgs args) =>
+                {
+                    cancellationTokenSource.Cancel();
+                };
+
+                await cancelDownloadDialog.ShowAsync();
+            };
 
             // Show InAppNotification
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
-                new ShowInAppNotificationEventArgs(
-                    InAppNotificationType.DownloadSounds,
-                    string.Format(loader.GetString("InAppNotification-DownloadSounds"), 1, playlistItemResponse.PageInfo.TotalResults.GetValueOrDefault()),
-                    0,
-                    true
-                )
+                showInAppNotificationEventArgs
             );
 
             // Load all items from all pages of the playlist
@@ -1478,6 +1496,14 @@ namespace UniversalSoundboard.Pages
                 foreach (var item in playlistItemResponse.Items)
                     playlistItems.Add(item);
             }
+
+            if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                return;
+            
+            Analytics.TrackEvent("YoutubePlaylistDownload", new Dictionary<string, string>
+            {
+                { "Count", playlistItems.Count.ToString() }
+            });
 
             // Create category for playlist, if the option is checked
             Category newCategory = null;
@@ -1544,7 +1570,14 @@ namespace UniversalSoundboard.Pages
 
                 await Task.Run(async () =>
                 {
-                    audioFileDownloadResult = (await FileManager.DownloadBinaryDataToFile(audioFile, bestAudio.ResourceUri, progress)).Key;
+                    audioFileDownloadResult = (
+                        await FileManager.DownloadBinaryDataToFile(
+                            audioFile,
+                            bestAudio.ResourceUri,
+                            progress,
+                            cancellationTokenSource.Token
+                        )
+                    ).Key;
                 });
 
                 if (!audioFileDownloadResult)
@@ -1552,10 +1585,23 @@ namespace UniversalSoundboard.Pages
                     // Wait a few seconds and try it again
                     await Task.Delay(15000);
 
+                    if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                        return;
+
                     await Task.Run(async () =>
                     {
-                        audioFileDownloadResult = (await FileManager.DownloadBinaryDataToFile(audioFile, bestAudio.ResourceUri, progress)).Key;
+                        audioFileDownloadResult = (
+                            await FileManager.DownloadBinaryDataToFile(
+                                audioFile,
+                                bestAudio.ResourceUri,
+                                progress,
+                                cancellationTokenSource.Token
+                            )
+                        ).Key;
                     });
+
+                    if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                        return;
 
                     if (!audioFileDownloadResult)
                     {
@@ -1622,8 +1668,6 @@ namespace UniversalSoundboard.Pages
             }
 
             FileManager.itemViewHolder.AddingSounds = false;
-
-            Analytics.TrackEvent("YoutubePlaylistDownload");
         }
 
         private GrabbedMedia FindBestAudioOfYoutubeVideo(IEnumerable<GrabbedMedia> mediaResources)
@@ -1838,6 +1882,7 @@ namespace UniversalSoundboard.Pages
             {
                 // Hide the IAN
                 FileManager.DismissInAppNotification(InAppNotificationType.DownloadSound);
+                FileManager.DismissInAppNotification(InAppNotificationType.DownloadSounds);
                 FileManager.itemViewHolder.AddingSounds = false;
 
                 return true;
