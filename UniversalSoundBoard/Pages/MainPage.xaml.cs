@@ -32,6 +32,7 @@ using Windows.Graphics.Display;
 using Windows.UI.Xaml.Hosting;
 using Windows.UI.WindowManagement;
 using UniversalSoundboard.Dialogs;
+using System.Threading;
 
 namespace UniversalSoundboard.Pages
 {
@@ -1294,16 +1295,26 @@ namespace UniversalSoundboard.Pages
         {
             if (dialog.GrabResult == null) return;
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
-            
+            var cancellationTokenSource = new CancellationTokenSource();
+
+            var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
+                InAppNotificationType.DownloadSound,
+                loader.GetString("InAppNotification-DownloadSound"),
+                0,
+                true,
+                false,
+                FileManager.loader.GetString("Actions-Cancel")
+            );
+
+            showInAppNotificationEventArgs.PrimaryButtonClick += (object sender, RoutedEventArgs e) =>
+            {
+                cancellationTokenSource.Cancel();
+            };
+
             // Show InAppNotification
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
-                new ShowInAppNotificationEventArgs(
-                    InAppNotificationType.DownloadSound,
-                    loader.GetString("InAppNotification-DownloadSound"),
-                    0,
-                    true
-                )
+                showInAppNotificationEventArgs
             );
 
             // Disable the ability to add or download sounds
@@ -1338,18 +1349,41 @@ namespace UniversalSoundboard.Pages
 
             await Task.Run(async () =>
             {
-                audioFileDownloadResult = (await FileManager.DownloadBinaryDataToFile(audioFile, bestAudio.ResourceUri, progress)).Key;
+                audioFileDownloadResult = (
+                    await FileManager.DownloadBinaryDataToFile(
+                        audioFile,
+                        bestAudio.ResourceUri,
+                        progress,
+                        cancellationTokenSource.Token
+                    )
+                ).Key;
             });
+
+            if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                return;
 
             if (!audioFileDownloadResult)
             {
                 // Wait a few seconds and try it again
                 await Task.Delay(15000);
 
+                if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                    return;
+
                 await Task.Run(async () =>
                 {
-                    audioFileDownloadResult = (await FileManager.DownloadBinaryDataToFile(audioFile, bestAudio.ResourceUri, progress)).Key;
+                    audioFileDownloadResult = (
+                        await FileManager.DownloadBinaryDataToFile(
+                            audioFile,
+                            bestAudio.ResourceUri,
+                            progress,
+                            cancellationTokenSource.Token
+                        )
+                    ).Key;
                 });
+
+                if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                    return;
 
                 if (!audioFileDownloadResult)
                 {
@@ -1690,16 +1724,26 @@ namespace UniversalSoundboard.Pages
         {
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
             FileManager.itemViewHolder.AddingSounds = true;
+            var cancellationTokenSource = new CancellationTokenSource();
+
+            var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
+                InAppNotificationType.DownloadSound,
+                loader.GetString("InAppNotification-DownloadSound"),
+                0,
+                true,
+                false,
+                FileManager.loader.GetString("Actions-Cancel")
+            );
+
+            showInAppNotificationEventArgs.PrimaryButtonClick += (object sender, RoutedEventArgs e) =>
+            {
+                cancellationTokenSource.Cancel();
+            };
 
             // Show InAppNotification
             FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                 this,
-                new ShowInAppNotificationEventArgs(
-                    InAppNotificationType.DownloadSound,
-                    loader.GetString("InAppNotification-DownloadSound"),
-                    0,
-                    true
-                )
+                showInAppNotificationEventArgs
             );
 
             StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
@@ -1711,8 +1755,18 @@ namespace UniversalSoundboard.Pages
 
             await Task.Run(async () =>
             {
-                result = (await FileManager.DownloadBinaryDataToFile(audioFile, new Uri(soundUrl), progress)).Key;
+                result = (
+                    await FileManager.DownloadBinaryDataToFile(
+                        audioFile,
+                        new Uri(soundUrl),
+                        progress,
+                        cancellationTokenSource.Token
+                    )
+                ).Key;
             });
+
+            if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                return;
 
             if (!result)
             {
@@ -1776,6 +1830,20 @@ namespace UniversalSoundboard.Pages
         public async Task ShowDownloadErrorDialog()
         {
             await new DownloadFileErrorDialog().ShowAsync();
+        }
+
+        private bool CheckSoundDownloadCancelled(CancellationTokenSource cancellationTokenSource)
+        {
+            if (cancellationTokenSource.IsCancellationRequested)
+            {
+                // Hide the IAN
+                FileManager.DismissInAppNotification(InAppNotificationType.DownloadSound);
+                FileManager.itemViewHolder.AddingSounds = false;
+
+                return true;
+            }
+
+            return false;
         }
         #endregion
 

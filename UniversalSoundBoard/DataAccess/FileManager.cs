@@ -17,6 +17,7 @@ using System.Net;
 using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
@@ -3630,7 +3631,21 @@ namespace UniversalSoundboard.DataAccess
             }
         }
 
-        public static async Task<KeyValuePair<bool, int>> DownloadBinaryDataToFile(StorageFile targetFile, Uri uri, IProgress<int> progress)
+        public static async Task<KeyValuePair<bool, int>> DownloadBinaryDataToFile(
+            StorageFile targetFile,
+            Uri uri,
+            IProgress<int> progress
+        )
+        {
+            return await DownloadBinaryDataToFile(targetFile, uri, progress, CancellationToken.None);
+        }
+
+        public static async Task<KeyValuePair<bool, int>> DownloadBinaryDataToFile(
+            StorageFile targetFile,
+            Uri uri,
+            IProgress<int> progress,
+            CancellationToken cancellationToken
+        )
         {
             Stream fileStream = null;
 
@@ -3655,13 +3670,16 @@ namespace UniversalSoundboard.DataAccess
 
                         if (progress != null && offset != 0 && read != 0 && contentLength != 0)
                             progress.Report((int)Math.Floor((double)offset / contentLength * 100));
-                    } while (read != 0);
+                    } while (read != 0 && !cancellationToken.IsCancellationRequested);
 
                     await fileStream.FlushAsync();
                     fileStream.Close();
                 }
 
-                return new KeyValuePair<bool, int>(true, -1);
+                if (cancellationToken.IsCancellationRequested)
+                    return new KeyValuePair<bool, int>(false, -1);
+                else
+                    return new KeyValuePair<bool, int>(true, -1);
             }
             catch (Exception)
             {
