@@ -2,16 +2,19 @@
 using DotNetTools.SharpGrabber;
 using DotNetTools.SharpGrabber.Grabbed;
 using Google.Apis.YouTube.v3.Data;
+using HtmlAgilityPack;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -30,6 +33,9 @@ namespace UniversalSoundboard.Dialogs
         private CheckBox YoutubeInfoDownloadPlaylistCheckbox;
         private CheckBox YoutubeInfoCreateCategoryForPlaylistCheckbox;
         private TextBlock AudioFileInfoTextBlock;
+        private StackPanel SoundListStackPanel;
+        private ListView SoundListView;
+        private ObservableCollection<SoundDownloadListItem> SoundItems;
         public DownloadSoundsResultType DownloadSoundsResult { get; private set; }
         public string PlaylistId { get; private set; }
         public GrabResult GrabResult { get; private set; }
@@ -51,18 +57,19 @@ namespace UniversalSoundboard.Dialogs
             get => (bool)YoutubeInfoCreateCategoryForPlaylistCheckbox.IsChecked;
         }
 
-        public DownloadSoundsDialog(Style infoButtonStyle)
+        public DownloadSoundsDialog(Style infoButtonStyle, DataTemplate soundDownloadListItemTemplate)
             : base(
                   FileManager.loader.GetString("DownloadSoundsDialog-Title"),
                   FileManager.loader.GetString("Actions-Add"),
                   FileManager.loader.GetString("Actions-Cancel")
             )
         {
+            SoundItems = new ObservableCollection<SoundDownloadListItem>();
             ContentDialog.IsPrimaryButtonEnabled = false;
-            Content = GetContent(infoButtonStyle);
+            Content = GetContent(infoButtonStyle, soundDownloadListItemTemplate);
         }
 
-        private StackPanel GetContent(Style infoButtonStyle)
+        private StackPanel GetContent(Style infoButtonStyle, DataTemplate soundDownloadListItemTemplate)
         {
             StackPanel containerStackPanel = new StackPanel
             {
@@ -83,6 +90,29 @@ namespace UniversalSoundboard.Dialogs
             };
             UrlTextBox.TextChanged += DownloadSoundsUrlTextBox_TextChanged;
 
+			CreateLoadingMessageStackPanel();
+			CreateYoutubeInfoGrid(infoButtonStyle);
+
+            AudioFileInfoTextBlock = new TextBlock
+            {
+                Margin = new Thickness(6, 10, 0, 0),
+                Visibility = Visibility.Collapsed
+            };
+
+            CreateSoundListStackPanel(soundDownloadListItemTemplate);
+
+            containerStackPanel.Children.Add(descriptionTextBlock);
+            containerStackPanel.Children.Add(UrlTextBox);
+            containerStackPanel.Children.Add(LoadingMessageStackPanel);
+            containerStackPanel.Children.Add(YoutubeInfoGrid);
+            containerStackPanel.Children.Add(AudioFileInfoTextBlock);
+            containerStackPanel.Children.Add(SoundListStackPanel);
+
+            return containerStackPanel;
+        }
+
+        private void CreateLoadingMessageStackPanel()
+        {
             LoadingMessageStackPanel = new StackPanel
             {
                 Orientation = Orientation.Horizontal,
@@ -106,7 +136,10 @@ namespace UniversalSoundboard.Dialogs
 
             LoadingMessageStackPanel.Children.Add(progressRing);
             LoadingMessageStackPanel.Children.Add(loadingMessage);
+        }
 
+        private void CreateYoutubeInfoGrid(Style infoButtonStyle)
+        {
             YoutubeInfoGrid = new Grid
             {
                 Margin = new Thickness(0, 10, 0, 0),
@@ -194,27 +227,32 @@ namespace UniversalSoundboard.Dialogs
             YoutubeInfoGrid.Children.Add(YoutubeInfoTextBlock);
             YoutubeInfoGrid.Children.Add(YoutubeInfoDownloadPlaylistStackPanel);
             YoutubeInfoGrid.Children.Add(YoutubeInfoCreateCategoryForPlaylistCheckbox);
+        }
 
-            AudioFileInfoTextBlock = new TextBlock
+        private void CreateSoundListStackPanel(DataTemplate soundDownloadListItemTemplate)
+        {
+            SoundListStackPanel = new StackPanel
             {
-                Margin = new Thickness(6, 10, 0, 0),
                 Visibility = Visibility.Collapsed
             };
 
-            containerStackPanel.Children.Add(descriptionTextBlock);
-            containerStackPanel.Children.Add(UrlTextBox);
-            containerStackPanel.Children.Add(LoadingMessageStackPanel);
-            containerStackPanel.Children.Add(YoutubeInfoGrid);
-            containerStackPanel.Children.Add(AudioFileInfoTextBlock);
+            SoundListView = new ListView
+            {
+                ItemTemplate = soundDownloadListItemTemplate,
+                ItemsSource = SoundItems,
+                Margin = new Thickness(0, 10, 0, 0),
+                Height = 250,
+                SelectionMode = ListViewSelectionMode.Multiple
+            };
 
-            return containerStackPanel;
+            SoundListStackPanel.Children.Add(SoundListView);
         }
 
         private async void DownloadSoundsUrlTextBox_TextChanged(object sender, TextChangedEventArgs args)
         {
             ContentDialog.IsPrimaryButtonEnabled = false;
             DownloadSoundsResult = DownloadSoundsResultType.None;
-            HideAllMessageElementsInDownloadSoundsContentDialog();
+            HideAllMessageElements();
 
             // Check if the input is a valid link
             string input = UrlTextBox.Text;
@@ -222,14 +260,16 @@ namespace UniversalSoundboard.Dialogs
             Regex urlRegex = new Regex("^(https?:\\/\\/)?[\\w.-]+(\\.[\\w.-]+)+[\\w\\-._~/?#@&%\\+,;=]+");
             Regex shortYoutubeUrlRegex = new Regex("^(https?:\\/\\/)?youtu.be\\/");
             Regex youtubeUrlRegex = new Regex("^(https?:\\/\\/)?((www|music).)?youtube.com\\/");
+            Regex zopharRegex = new Regex("^(https?:\\/\\/)?(www.)?zophar.net\\/music\\/[\\w\\-]+\\/[\\w\\-]+");
 
             bool isUrl = urlRegex.IsMatch(input);
             bool isShortYoutubeUrl = shortYoutubeUrlRegex.IsMatch(input);
             bool isYoutubeUrl = youtubeUrlRegex.IsMatch(input);
+            bool isZopharUrl = zopharRegex.IsMatch(input);
 
             if (!isUrl)
             {
-                HideAllMessageElementsInDownloadSoundsContentDialog();
+                HideAllMessageElements();
                 return;
             }
 
@@ -263,18 +303,19 @@ namespace UniversalSoundboard.Dialogs
 
                     if (GrabResult == null)
                     {
-                        HideAllMessageElementsInDownloadSoundsContentDialog();
+                        HideAllMessageElements();
                         return;
                     }
                 }
                 catch (Exception e)
                 {
-                    HideAllMessageElementsInDownloadSoundsContentDialog();
+                    HideAllMessageElements();
 
                     Crashes.TrackError(e, new Dictionary<string, string>
                     {
                         { "YoutubeLink", input }
                     });
+
                     return;
                 }
 
@@ -332,6 +373,61 @@ namespace UniversalSoundboard.Dialogs
 
                 return;
             }
+            else if (isZopharUrl)
+            {
+                var web = new HtmlWeb();
+                var document = await web.LoadFromWebAsync(input);
+
+                // Get the header
+                var headerNode = document.DocumentNode.SelectSingleNode("//div[@id='music_info']/h2");
+                string categoryName = "Default category name";
+
+                if (headerNode != null)
+                    categoryName = headerNode.InnerText;
+
+                // Get the cover
+                var coverNode = document.DocumentNode.SelectSingleNode("//div[@id='music_cover']/img");
+
+                if (coverNode != null)
+                {
+                    string imgSource = coverNode.GetAttributeValue("src", null);
+
+                    if (imgSource != null)
+                    {
+                        // TODO: Download the image
+                    }
+                }
+
+                // Get the tracklist
+                var tracklistNode = document.DocumentNode.SelectNodes("//table[@id='tracklist']/*");
+
+                foreach (var node in tracklistNode)
+                {
+                    // Get the name
+                    var nameNode = node.SelectSingleNode("./td[@class='name']");
+                    if (nameNode == null) continue;
+
+                    string name = nameNode.InnerText;
+
+                    // Get the length
+                    var lengthNode = node.SelectSingleNode("./td[@class='length']");
+                    if (lengthNode == null) continue;
+
+                    string length = lengthNode.InnerText;
+
+                    // Get the download link
+                    var downloadNode = node.SelectSingleNode("./td[@class='download']/a");
+                    if (downloadNode == null) continue;
+
+                    string downloadLink = downloadNode.GetAttributeValue("href", null);
+                    if (downloadLink == null) continue;
+
+                    SoundItems.Add(new SoundDownloadListItem(name, downloadLink, length));
+                }
+
+                LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+                SoundListStackPanel.Visibility = Visibility.Visible;
+            }
             else
             {
                 // Make a GET request to see if this is an audio file
@@ -345,23 +441,25 @@ namespace UniversalSoundboard.Dialogs
                     // Check if the content type is a supported audio format
                     if (!FileManager.allowedAudioMimeTypes.Contains(response.ContentType))
                     {
-                        HideAllMessageElementsInDownloadSoundsContentDialog();
+                        HideAllMessageElements();
 
                         Analytics.TrackEvent("AudioFileDownload-NotSupportedFormat", new Dictionary<string, string>
                         {
                             { "Link", input }
                         });
+
                         return;
                     }
                 }
                 catch (Exception e)
                 {
-                    HideAllMessageElementsInDownloadSoundsContentDialog();
+                    HideAllMessageElements();
 
                     Crashes.TrackError(e, new Dictionary<string, string>
                     {
                         { "Link", input }
                     });
+
                     return;
                 }
 
@@ -370,7 +468,7 @@ namespace UniversalSoundboard.Dialogs
                 long fileSize = response.ContentLength;
 
                 // Try to get the file name
-                Regex fileNameRegex = new Regex("^[\\w\\.\\+\\-_ ]+\\.\\w{3}$");
+                Regex fileNameRegex = new Regex("^.+\\.\\w{3}$");
                 AudioFileName = FileManager.loader.GetString("DownloadSoundsDialog-DefaultSoundName");
                 bool defaultFileName = true;
 
@@ -407,7 +505,7 @@ namespace UniversalSoundboard.Dialogs
             YoutubeInfoCreateCategoryForPlaylistCheckbox.Visibility = Visibility.Collapsed;
         }
 
-        private void HideAllMessageElementsInDownloadSoundsContentDialog()
+        private void HideAllMessageElements()
         {
             LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
             YoutubeInfoGrid.Visibility = Visibility.Collapsed;

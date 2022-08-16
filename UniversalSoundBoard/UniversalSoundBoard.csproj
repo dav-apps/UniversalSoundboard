@@ -158,6 +158,9 @@
     <Compile Include="Components\RecordedSoundItemTemplate.xaml.cs">
       <DependentUpon>RecordedSoundItemTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\SoundDownloadListItemTemplate.xaml.cs">
+      <DependentUpon>SoundDownloadListItemTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Components\Setting.cs" />
     <Compile Include="Dialogs\AddRecordedSoundToSoundboardDialog.cs" />
     <Compile Include="Dialogs\AddSoundErrorDialog.cs" />
@@ -214,6 +217,7 @@
     <Compile Include="Models\Hotkey.cs" />
     <Compile Include="Models\DeviceInfo.cs" />
     <Compile Include="Models\RecordedSoundItem.cs" />
+    <Compile Include="Models\SoundDownloadListItem.cs" />
     <Compile Include="Pages\SoundRecorderPage.xaml.cs">
       <DependentUpon>SoundRecorderPage.xaml</DependentUpon>
     </Compile>
@@ -367,6 +371,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\SoundDownloadListItemTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Components\SoundFileDownloadProgressTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -431,6 +439,9 @@
   <ItemGroup>
     <PackageReference Include="Google.Apis.YouTube.v3">
       <Version>1.57.0.2721</Version>
+    </PackageReference>
+    <PackageReference Include="HtmlAgilityPack">
+      <Version>1.11.43</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
       <Version>4.5.1</Version>

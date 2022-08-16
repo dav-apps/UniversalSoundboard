@@ -885,8 +885,9 @@ namespace UniversalSoundboard.Pages
         private async void StartMessageDownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
+            var soundDownloadListItemTemplate = Resources["SoundDownloadListItemTemplate"] as DataTemplate;
 
-            var downloadSoundsDialog = new DownloadSoundsDialog(infoButtonStyle);
+            var downloadSoundsDialog = new DownloadSoundsDialog(infoButtonStyle, soundDownloadListItemTemplate);
             downloadSoundsDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
             await downloadSoundsDialog.ShowAsync();
         }

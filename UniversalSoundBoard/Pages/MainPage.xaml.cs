@@ -1022,7 +1022,7 @@ namespace UniversalSoundboard.Pages
                 foreach (Sound sound in FileManager.itemViewHolder.FavouriteSounds)
                     sounds.Add(sound);
 
-            var template = (DataTemplate)Resources["DialogSoundListItemTemplate"];
+            var template = Resources["DialogSoundListItemTemplate"] as DataTemplate;
             var listViewItemStyle = Resources["ListViewItemStyle"] as Style;
 
             playSoundsSuccessivelyDialog = new PlaySoundsSuccessivelyDialog(sounds, template, listViewItemStyle);
@@ -1270,8 +1270,9 @@ namespace UniversalSoundboard.Pages
         private async void DownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
+            var soundDownloadListItemTemplate = Resources["SoundDownloadListItemTemplate"] as DataTemplate;
 
-            var downloadSoundsDialog = new DownloadSoundsDialog(infoButtonStyle);
+            var downloadSoundsDialog = new DownloadSoundsDialog(infoButtonStyle, soundDownloadListItemTemplate);
             downloadSoundsDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
             await downloadSoundsDialog.ShowAsync();
         }
