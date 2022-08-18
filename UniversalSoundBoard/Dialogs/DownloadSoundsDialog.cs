@@ -5,6 +5,7 @@ using Google.Apis.YouTube.v3.Data;
 using HtmlAgilityPack;
 using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
+using Microsoft.Toolkit.Uwp.UI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -35,6 +36,8 @@ namespace UniversalSoundboard.Dialogs
         private TextBlock AudioFileInfoTextBlock;
         private StackPanel SoundListStackPanel;
         private ListView SoundListView;
+        private TextBlock SoundListNumberTextBlock;
+        private Button SoundListSelectAllButton;
         private ObservableCollection<SoundDownloadListItem> SoundItems;
         public DownloadSoundsResultType DownloadSoundsResult { get; private set; }
         public string PlaylistId { get; private set; }
@@ -245,7 +248,67 @@ namespace UniversalSoundboard.Dialogs
                 SelectionMode = ListViewSelectionMode.Multiple
             };
 
+            SoundListView.SelectionChanged += SoundListView_SelectionChanged;
+
+            SoundListNumberTextBlock = new TextBlock
+            {
+                Text = string.Format(FileManager.loader.GetString("DownloadSoundsDialog-SelectedSounds"), SoundItems.Count, SoundItems.Count)
+            };
+
+            RelativePanel.SetAlignVerticalCenterWithPanel(SoundListNumberTextBlock, true);
+
+            SoundListSelectAllButton = new Button
+            {
+                Content = FileManager.loader.GetString("Actions-DeselectAll"),
+                FontSize = 13,
+                Margin = new Thickness(10, 0, 0, 0),
+                Padding = new Thickness(5, 3, 5, 3)
+            };
+
+            SoundListSelectAllButton.Click += SoundListSelectAllButton_Click;
+
+            RelativePanel.SetAlignVerticalCenterWithPanel(SoundListSelectAllButton, true);
+            RelativePanel.SetAlignRightWithPanel(SoundListSelectAllButton, true);
+
+            RelativePanel soundListNumberRelativePanel = new RelativePanel
+            {
+                Margin = new Thickness(10, 10, 0, 0)
+            };
+
+            soundListNumberRelativePanel.Children.Add(SoundListNumberTextBlock);
+            soundListNumberRelativePanel.Children.Add(SoundListSelectAllButton);
+
             SoundListStackPanel.Children.Add(SoundListView);
+            SoundListStackPanel.Children.Add(soundListNumberRelativePanel);
+        }
+
+        private void UpdateSoundListNumberText()
+        {
+            SoundListNumberTextBlock.Text = string.Format(
+                FileManager.loader.GetString("DownloadSoundsDialog-SelectedSounds"),
+                SoundListView.SelectedItems.Count,
+                SoundItems.Count
+            );
+
+            if (SoundListView.SelectedItems.Count == SoundItems.Count)
+                SoundListSelectAllButton.Content = FileManager.loader.GetString("Actions-DeselectAll");
+            else
+                SoundListSelectAllButton.Content = FileManager.loader.GetString("Actions-SelectAll");
+
+            ContentDialog.IsPrimaryButtonEnabled = SoundListView.SelectedItems.Count > 0;
+        }
+
+        private void SoundListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateSoundListNumberText();
+        }
+
+        private void SoundListSelectAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SoundListView.SelectedItems.Count == SoundItems.Count)
+                SoundListView.DeselectAll();
+            else
+                SoundListView.SelectAll();
         }
 
         private async void DownloadSoundsUrlTextBox_TextChanged(object sender, TextChangedEventArgs args)
@@ -427,6 +490,7 @@ namespace UniversalSoundboard.Dialogs
 
                 LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
                 SoundListStackPanel.Visibility = Visibility.Visible;
+                SoundListView.SelectAll();
             }
             else
             {

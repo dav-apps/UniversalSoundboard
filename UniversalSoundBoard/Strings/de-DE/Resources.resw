@@ -1040,4 +1040,13 @@ Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   <data name="CancelYouTubePlaylistDownloadDialog-Title" xml:space="preserve">
     <value>Playlist-Download abbrechen</value>
   </data>
+  <data name="Actions-DeselectAll" xml:space="preserve">
+    <value>Alles abwählen</value>
+  </data>
+  <data name="Actions-SelectAll" xml:space="preserve">
+    <value>Alles auswählen</value>
+  </data>
+  <data name="DownloadSoundsDialog-SelectedSounds" xml:space="preserve">
+    <value>{0} von {1} Sounds ausgewählt</value>
+  </data>
 </root>

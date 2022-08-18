@@ -1042,4 +1042,13 @@ Log in and upgrade your plan to use this feature.</value>
   <data name="CancelYouTubePlaylistDownloadDialog-Title" xml:space="preserve">
     <value>Cancel playlist download</value>
   </data>
+  <data name="Actions-DeselectAll" xml:space="preserve">
+    <value>Deselect all</value>
+  </data>
+  <data name="Actions-SelectAll" xml:space="preserve">
+    <value>Select all</value>
+  </data>
+  <data name="DownloadSoundsDialog-SelectedSounds" xml:space="preserve">
+    <value>{0} of {1} sounds selected</value>
+  </data>
 </root>
