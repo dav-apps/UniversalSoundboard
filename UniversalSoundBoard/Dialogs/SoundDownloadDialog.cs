@@ -1,5 +1,4 @@
-﻿using davClassLibrary;
-using DotNetTools.SharpGrabber;
+﻿using DotNetTools.SharpGrabber;
 using DotNetTools.SharpGrabber.Grabbed;
 using Google.Apis.YouTube.v3.Data;
 using HtmlAgilityPack;
@@ -30,9 +29,7 @@ namespace UniversalSoundboard.Dialogs
         private Grid YoutubeInfoGrid;
         private Image YoutubeInfoImage;
         private TextBlock YoutubeInfoTextBlock;
-        private StackPanel YoutubeInfoDownloadPlaylistStackPanel;
-        private CheckBox YoutubeInfoDownloadPlaylistCheckbox;
-        private CheckBox YoutubeInfoCreateCategoryForPlaylistCheckbox;
+        private CheckBox CreateCategoryForPlaylistCheckbox;
         private TextBlock AudioFileInfoTextBlock;
         private StackPanel SoundListStackPanel;
         private ListView SoundListView;
@@ -51,28 +48,24 @@ namespace UniversalSoundboard.Dialogs
         {
             get => UrlTextBox?.Text;
         }
-        public bool DownloadPlaylist
-        {
-            get => (bool)YoutubeInfoDownloadPlaylistCheckbox.IsChecked;
-        }
         public bool CreateCategoryForPlaylist
         {
-            get => (bool)YoutubeInfoCreateCategoryForPlaylistCheckbox.IsChecked;
+            get => (bool)CreateCategoryForPlaylistCheckbox.IsChecked;
         }
 
-        public SoundDownloadDialog(Style infoButtonStyle, DataTemplate soundDownloadListItemTemplate)
+        public SoundDownloadDialog(DataTemplate soundDownloadListItemTemplate)
             : base(
-                  FileManager.loader.GetString("DownloadSoundsDialog-Title"),
+                  FileManager.loader.GetString("SoundDownloadDialog-Title"),
                   FileManager.loader.GetString("Actions-Add"),
                   FileManager.loader.GetString("Actions-Cancel")
             )
         {
             SoundItems = new ObservableCollection<SoundDownloadListItem>();
             ContentDialog.IsPrimaryButtonEnabled = false;
-            Content = GetContent(infoButtonStyle, soundDownloadListItemTemplate);
+            Content = GetContent(soundDownloadListItemTemplate);
         }
 
-        private StackPanel GetContent(Style infoButtonStyle, DataTemplate soundDownloadListItemTemplate)
+        private StackPanel GetContent(DataTemplate soundDownloadListItemTemplate)
         {
             StackPanel containerStackPanel = new StackPanel
             {
@@ -82,19 +75,19 @@ namespace UniversalSoundboard.Dialogs
 
             TextBlock descriptionTextBlock = new TextBlock
             {
-                Text = FileManager.loader.GetString("DownloadSoundsDialog-Description"),
+                Text = FileManager.loader.GetString("SoundDownloadDialog-Description"),
                 TextWrapping = TextWrapping.WrapWholeWords
             };
 
             UrlTextBox = new TextBox
             {
                 Margin = new Thickness(0, 20, 0, 0),
-                PlaceholderText = FileManager.loader.GetString("DownloadSoundsDialog-UrlTextBoxPlaceholder")
+                PlaceholderText = FileManager.loader.GetString("SoundDownloadDialog-UrlTextBoxPlaceholder")
             };
             UrlTextBox.TextChanged += DownloadSoundsUrlTextBox_TextChanged;
 
 			CreateLoadingMessageStackPanel();
-			CreateYoutubeInfoGrid(infoButtonStyle);
+			CreateYoutubeInfoGrid();
 
             AudioFileInfoTextBlock = new TextBlock
             {
@@ -132,7 +125,7 @@ namespace UniversalSoundboard.Dialogs
 
             TextBlock loadingMessage = new TextBlock
             {
-                Text = FileManager.loader.GetString("DownloadSoundsDialog-RetrievingInfo"),
+                Text = FileManager.loader.GetString("SoundDownloadDialog-RetrievingInfo"),
                 FontSize = 14,
                 Margin = new Thickness(10, 0, 0, 0)
             };
@@ -141,7 +134,7 @@ namespace UniversalSoundboard.Dialogs
             LoadingMessageStackPanel.Children.Add(loadingMessage);
         }
 
-        private void CreateYoutubeInfoGrid(Style infoButtonStyle)
+        private void CreateYoutubeInfoGrid()
         {
             YoutubeInfoGrid = new Grid
             {
@@ -170,66 +163,8 @@ namespace UniversalSoundboard.Dialogs
             };
             Grid.SetColumn(YoutubeInfoTextBlock, 1);
 
-            YoutubeInfoDownloadPlaylistStackPanel = new StackPanel
-            {
-                Orientation = Orientation.Horizontal,
-                Margin = new Thickness(5, 10, 0, 0),
-                Visibility = Visibility.Collapsed
-            };
-            Grid.SetRow(YoutubeInfoDownloadPlaylistStackPanel, 1);
-            Grid.SetColumnSpan(YoutubeInfoDownloadPlaylistStackPanel, 2);
-
-            YoutubeInfoDownloadPlaylistCheckbox = new CheckBox
-            {
-                Content = FileManager.loader.GetString("DownloadSoundsDialog-DownloadPlaylist"),
-                IsEnabled = Dav.IsLoggedIn && Dav.User.Plan > 0
-            };
-            YoutubeInfoDownloadPlaylistCheckbox.Checked += DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox_Checked;
-            YoutubeInfoDownloadPlaylistCheckbox.Unchecked += DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox_Unchecked;
-
-            YoutubeInfoDownloadPlaylistStackPanel.Children.Add(YoutubeInfoDownloadPlaylistCheckbox);
-
-            if (!Dav.IsLoggedIn || Dav.User.Plan == 0)
-            {
-                var flyout = new Flyout();
-
-                var flyoutStackPanel = new StackPanel
-                {
-                    MaxWidth = 300
-                };
-
-                var flyoutText = new TextBlock
-                {
-                    Text = FileManager.loader.GetString("DownloadSoundsDialog-DavPlusPlaylistDownload"),
-                    TextWrapping = TextWrapping.WrapWholeWords
-                };
-
-                flyoutStackPanel.Children.Add(flyoutText);
-                flyout.Content = flyoutStackPanel;
-
-                var downloadPlaylistInfoButton = new Button
-                {
-                    Style = infoButtonStyle,
-                    Margin = new Thickness(10, 0, 0, 0),
-                    Flyout = flyout
-                };
-
-                YoutubeInfoDownloadPlaylistStackPanel.Children.Add(downloadPlaylistInfoButton);
-            }
-
-            YoutubeInfoCreateCategoryForPlaylistCheckbox = new CheckBox
-            {
-                Content = FileManager.loader.GetString("DownloadSoundsDialog-CreateCategoryForPlaylist"),
-                Margin = new Thickness(5, 5, 0, 0),
-                Visibility = Visibility.Collapsed
-            };
-            Grid.SetRow(YoutubeInfoCreateCategoryForPlaylistCheckbox, 2);
-            Grid.SetColumnSpan(YoutubeInfoCreateCategoryForPlaylistCheckbox, 2);
-
             YoutubeInfoGrid.Children.Add(YoutubeInfoImage);
             YoutubeInfoGrid.Children.Add(YoutubeInfoTextBlock);
-            YoutubeInfoGrid.Children.Add(YoutubeInfoDownloadPlaylistStackPanel);
-            YoutubeInfoGrid.Children.Add(YoutubeInfoCreateCategoryForPlaylistCheckbox);
         }
 
         private void CreateSoundListStackPanel(DataTemplate soundDownloadListItemTemplate)
@@ -252,7 +187,7 @@ namespace UniversalSoundboard.Dialogs
 
             SoundListNumberTextBlock = new TextBlock
             {
-                Text = string.Format(FileManager.loader.GetString("DownloadSoundsDialog-SelectedSounds"), SoundItems.Count, SoundItems.Count)
+                Text = string.Format(FileManager.loader.GetString("SoundDownloadDialog-SelectedSounds"), SoundItems.Count, SoundItems.Count)
             };
 
             RelativePanel.SetAlignVerticalCenterWithPanel(SoundListNumberTextBlock, true);
@@ -272,20 +207,27 @@ namespace UniversalSoundboard.Dialogs
 
             RelativePanel soundListNumberRelativePanel = new RelativePanel
             {
-                Margin = new Thickness(10, 10, 0, 0)
+                Margin = new Thickness(4, 10, 0, 0)
             };
 
             soundListNumberRelativePanel.Children.Add(SoundListNumberTextBlock);
             soundListNumberRelativePanel.Children.Add(SoundListSelectAllButton);
 
+            CreateCategoryForPlaylistCheckbox = new CheckBox
+            {
+                Content = FileManager.loader.GetString("SoundDownloadDialog-CreateCategoryForPlaylist"),
+                Margin = new Thickness(4, 12, 0, 0)
+            };
+
             SoundListStackPanel.Children.Add(SoundListView);
             SoundListStackPanel.Children.Add(soundListNumberRelativePanel);
+            SoundListStackPanel.Children.Add(CreateCategoryForPlaylistCheckbox);
         }
 
         private void UpdateSoundListNumberText()
         {
             SoundListNumberTextBlock.Text = string.Format(
-                FileManager.loader.GetString("DownloadSoundsDialog-SelectedSounds"),
+                FileManager.loader.GetString("SoundDownloadDialog-SelectedSounds"),
                 SoundListView.SelectedItems.Count,
                 SoundItems.Count
             );
@@ -428,9 +370,6 @@ namespace UniversalSoundboard.Dialogs
                                 PlaylistTitle = result.Items[0].Snippet.Title;
                         }
                         catch (Exception) { }
-
-                        // Show the option to download the playlist
-                        YoutubeInfoDownloadPlaylistStackPanel.Visibility = Visibility.Visible;
                     }
                 }
 
@@ -535,7 +474,7 @@ namespace UniversalSoundboard.Dialogs
 
                 // Try to get the file name
                 Regex fileNameRegex = new Regex("^.+\\.\\w{3}$");
-                AudioFileName = FileManager.loader.GetString("DownloadSoundsDialog-DefaultSoundName");
+                AudioFileName = FileManager.loader.GetString("SoundDownloadDialog-DefaultSoundName");
                 bool defaultFileName = true;
 
                 string lastPart = HttpUtility.UrlDecode(input.Split('/').Last());
@@ -560,22 +499,10 @@ namespace UniversalSoundboard.Dialogs
             }
         }
 
-        private void DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox_Checked(object sender, RoutedEventArgs e)
-        {
-            if (PlaylistTitle.Length > 0)
-                YoutubeInfoCreateCategoryForPlaylistCheckbox.Visibility = Visibility.Visible;
-        }
-
-        private void DownloadSoundsYoutubeInfoDownloadPlaylistCheckbox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            YoutubeInfoCreateCategoryForPlaylistCheckbox.Visibility = Visibility.Collapsed;
-        }
-
         private void HideAllMessageElements()
         {
             LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
             YoutubeInfoGrid.Visibility = Visibility.Collapsed;
-            YoutubeInfoDownloadPlaylistStackPanel.Visibility = Visibility.Collapsed;
             AudioFileInfoTextBlock.Visibility = Visibility.Collapsed;
             SoundListStackPanel.Visibility = Visibility.Collapsed;
             SoundItems.Clear();
