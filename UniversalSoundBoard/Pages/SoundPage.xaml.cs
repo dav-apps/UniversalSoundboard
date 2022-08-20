@@ -887,14 +887,14 @@ namespace UniversalSoundboard.Pages
             var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
             var soundDownloadListItemTemplate = Resources["SoundDownloadListItemTemplate"] as DataTemplate;
 
-            var downloadSoundsDialog = new DownloadSoundsDialog(infoButtonStyle, soundDownloadListItemTemplate);
+            var downloadSoundsDialog = new SoundDownloadDialog(infoButtonStyle, soundDownloadListItemTemplate);
             downloadSoundsDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
             await downloadSoundsDialog.ShowAsync();
         }
 
         private void DownloadSoundsContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var dialog = sender as DownloadSoundsDialog;
+            var dialog = sender as SoundDownloadDialog;
 
             if (dialog.DownloadSoundsResult == DownloadSoundsResultType.Youtube)
             {

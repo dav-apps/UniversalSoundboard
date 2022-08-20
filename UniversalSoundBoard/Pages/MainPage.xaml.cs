@@ -278,17 +278,17 @@ namespace UniversalSoundboard.Pages
 
         private async void ItemViewHolder_DownloadYoutubeVideo(object sender, EventArgs e)
         {
-            await DownloadSoundsContentDialog_YoutubeVideoDownload(sender as DownloadSoundsDialog);
+            await DownloadSoundsContentDialog_YoutubeVideoDownload(sender as SoundDownloadDialog);
         }
 
         private async void ItemViewHolder_DownloadYoutubePlaylist(object sender, EventArgs e)
         {
-            await DownloadSoundsContentDialog_YoutubePlaylistDownload(sender as DownloadSoundsDialog);
+            await DownloadSoundsContentDialog_YoutubePlaylistDownload(sender as SoundDownloadDialog);
         }
 
         private async void ItemViewHolder_DownloadAudioFile(object sender, EventArgs e)
         {
-            await DownloadSoundsContentDialog_AudioFileDownload(sender as DownloadSoundsDialog);
+            await DownloadSoundsContentDialog_AudioFileDownload(sender as SoundDownloadDialog);
         }
 
         private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
@@ -1272,14 +1272,14 @@ namespace UniversalSoundboard.Pages
             var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
             var soundDownloadListItemTemplate = Resources["SoundDownloadListItemTemplate"] as DataTemplate;
 
-            var downloadSoundsDialog = new DownloadSoundsDialog(infoButtonStyle, soundDownloadListItemTemplate);
+            var downloadSoundsDialog = new SoundDownloadDialog(infoButtonStyle, soundDownloadListItemTemplate);
             downloadSoundsDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
             await downloadSoundsDialog.ShowAsync();
         }
 
         private async void DownloadSoundsContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var dialog = sender as DownloadSoundsDialog;
+            var dialog = sender as SoundDownloadDialog;
 
             if (dialog.DownloadSoundsResult == DownloadSoundsResultType.Youtube)
             {
@@ -1292,7 +1292,7 @@ namespace UniversalSoundboard.Pages
                 await DownloadSoundsContentDialog_AudioFileDownload(dialog);
         }
 
-        public async Task DownloadSoundsContentDialog_YoutubeVideoDownload(DownloadSoundsDialog dialog)
+        public async Task DownloadSoundsContentDialog_YoutubeVideoDownload(SoundDownloadDialog dialog)
         {
             if (dialog.GrabResult == null) return;
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
@@ -1420,7 +1420,7 @@ namespace UniversalSoundboard.Pages
             Analytics.TrackEvent("YoutubeVideoDownload");
         }
 
-        public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload(DownloadSoundsDialog dialog)
+        public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload(SoundDownloadDialog dialog)
         {
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
 
@@ -1765,7 +1765,7 @@ namespace UniversalSoundboard.Pages
             return false;
         }
 
-        public async Task DownloadSoundsContentDialog_AudioFileDownload(DownloadSoundsDialog dialog)
+        public async Task DownloadSoundsContentDialog_AudioFileDownload(SoundDownloadDialog dialog)
         {
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
             FileManager.itemViewHolder.AddingSounds = true;

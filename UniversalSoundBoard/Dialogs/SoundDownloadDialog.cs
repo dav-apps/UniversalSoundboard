@@ -23,7 +23,7 @@ using WinUI = Microsoft.UI.Xaml.Controls;
 
 namespace UniversalSoundboard.Dialogs
 {
-    public class DownloadSoundsDialog : Dialog
+    public class SoundDownloadDialog : Dialog
     {
         private TextBox UrlTextBox;
         private StackPanel LoadingMessageStackPanel;
@@ -60,7 +60,7 @@ namespace UniversalSoundboard.Dialogs
             get => (bool)YoutubeInfoCreateCategoryForPlaylistCheckbox.IsChecked;
         }
 
-        public DownloadSoundsDialog(Style infoButtonStyle, DataTemplate soundDownloadListItemTemplate)
+        public SoundDownloadDialog(Style infoButtonStyle, DataTemplate soundDownloadListItemTemplate)
             : base(
                   FileManager.loader.GetString("DownloadSoundsDialog-Title"),
                   FileManager.loader.GetString("Actions-Add"),
@@ -441,28 +441,14 @@ namespace UniversalSoundboard.Dialogs
                 var web = new HtmlWeb();
                 var document = await web.LoadFromWebAsync(input);
 
-                // Get the header
-                var headerNode = document.DocumentNode.SelectSingleNode("//div[@id='music_info']/h2");
-                string categoryName = "Default category name";
-
-                if (headerNode != null)
-                    categoryName = headerNode.InnerText;
-
-                // Get the cover
-                var coverNode = document.DocumentNode.SelectSingleNode("//div[@id='music_cover']/img");
-
-                if (coverNode != null)
-                {
-                    string imgSource = coverNode.GetAttributeValue("src", null);
-
-                    if (imgSource != null)
-                    {
-                        // TODO: Download the image
-                    }
-                }
-
                 // Get the tracklist
                 var tracklistNode = document.DocumentNode.SelectNodes("//table[@id='tracklist']/*");
+
+                if (tracklistNode == null)
+                {
+                    HideAllMessageElements();
+                    return;
+                }
 
                 foreach (var node in tracklistNode)
                 {
@@ -491,6 +477,22 @@ namespace UniversalSoundboard.Dialogs
                 LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
                 SoundListStackPanel.Visibility = Visibility.Visible;
                 SoundListView.SelectAll();
+
+                // Get the header
+                var headerNode = document.DocumentNode.SelectSingleNode("//div[@id='music_info']/h2");
+                string categoryName = null;
+
+                if (headerNode != null)
+                    categoryName = headerNode.InnerText;
+
+                // Get the cover
+                var coverNode = document.DocumentNode.SelectSingleNode("//div[@id='music_cover']/img");
+                string imgSource = null;
+
+                if (coverNode != null)
+                    imgSource = coverNode.GetAttributeValue("src", null);
+
+
             }
             else
             {
@@ -575,6 +577,8 @@ namespace UniversalSoundboard.Dialogs
             YoutubeInfoGrid.Visibility = Visibility.Collapsed;
             YoutubeInfoDownloadPlaylistStackPanel.Visibility = Visibility.Collapsed;
             AudioFileInfoTextBlock.Visibility = Visibility.Collapsed;
+            SoundListStackPanel.Visibility = Visibility.Collapsed;
+            SoundItems.Clear();
         }
     }
 }
