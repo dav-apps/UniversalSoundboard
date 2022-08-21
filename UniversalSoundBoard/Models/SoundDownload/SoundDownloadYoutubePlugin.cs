@@ -91,9 +91,11 @@ namespace UniversalSoundboard.Models
                 if (playlistId != null)
                 {
                     // Get the playlist
-                    var listOperation = FileManager.youtubeService.PlaylistItems.List("contentDetails");
+                    var listOperation = FileManager.youtubeService.PlaylistItems.List("contentDetails,snippet");
                     listOperation.PlaylistId = playlistId;
                     listOperation.MaxResults = 50;
+                    listOperation.Fields = "nextPageToken,items(contentDetails/videoId,snippet/title)";
+
                     PlaylistItemListResponse listResponse = await listOperation.ExecuteAsync();
 
                     if (listResponse.Items.Count > 1)
@@ -120,11 +122,12 @@ namespace UniversalSoundboard.Models
                         while (listResponse.NextPageToken != null)
                         {
                             // Get the next page of the playlist
-                            listOperation = FileManager.youtubeService.PlaylistItems.List("contentDetails");
+                            listOperation = FileManager.youtubeService.PlaylistItems.List("contentDetails,snippet");
 
                             listOperation.PlaylistId = playlistId;
                             listOperation.MaxResults = 50;
                             listOperation.PageToken = listResponse.NextPageToken;
+                            listOperation.Fields = "nextPageToken,items(contentDetails/videoId,snippet/title)";
 
                             try
                             {
@@ -145,8 +148,11 @@ namespace UniversalSoundboard.Models
                             // Add the playlist items to the sound items list of the result
                             foreach (var playlistItem in playlistItems)
                             {
-                                string videoLink = string.Format("https://youtube.com/watch?v={0}", playlistItem.ContentDetails.VideoId);
+                                string playlistItemVideoId = playlistItem.ContentDetails.VideoId;
+                                string videoTitle = playlistItem.Snippet.Title;
+                                string videoLink = string.Format("https://youtube.com/watch?v={0}", playlistItemVideoId);
 
+                                /*
                                 grabResult = await grabber.GrabAsync(new Uri(videoLink));
 
                                 if (grabResult == null)
@@ -168,8 +174,9 @@ namespace UniversalSoundboard.Models
                                 }
 
                                 var imageUrls = FindThumbnailImagesOfYoutubeVideo(imageResources);
+                                */
 
-                                soundItems.Add(new SoundDownloadListItem(grabResult.Title, bestAudio, imageUrls));
+                                soundItems.Add(new SoundDownloadListItem(videoTitle, new Uri(videoLink), new List<Uri>(), videoId == playlistItemVideoId));
                             }
                         }
                     }

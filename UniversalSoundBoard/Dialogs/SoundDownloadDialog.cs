@@ -1,5 +1,6 @@
 ﻿using Microsoft.Toolkit.Uwp.UI;
 using System.Collections.ObjectModel;
+using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
@@ -268,11 +269,26 @@ namespace UniversalSoundboard.Dialogs
                     if (result.SoundItems.Count > 1)
                     {
                         SoundItems.Clear();
+                        int selectedItemIndex = 0;
+                        int i = 0;
 
                         foreach (var soundItem in result.SoundItems)
+                        {
                             SoundItems.Add(soundItem);
 
+                            if (soundItem.Selected)
+                            {
+                                SoundListView.SelectedItems.Add(soundItem);
+                                selectedItemIndex = i;
+                            }
+
+                            i++;
+                        }
+
                         SoundListStackPanel.Visibility = Visibility.Visible;
+                        UpdateSoundListNumberText();
+                        await Task.Delay(10);
+                        await SoundListView.SmoothScrollIntoViewWithIndexAsync(selectedItemIndex, ScrollItemPlacement.Center);
                     }
 
                     ContentDialog.IsPrimaryButtonEnabled = true;
