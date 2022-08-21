@@ -197,4 +197,6 @@ namespace UniversalSoundboard.Common
             }
         }
     }
+
+    class SoundDownloadException : Exception { }
 }

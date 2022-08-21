@@ -4,13 +4,11 @@
     {
         public string Name { get; set; }
         public string Url { get; set; }
-        public string Length { get; set; }
 
-        public SoundDownloadListItem(string name, string url, string length)
+        public SoundDownloadListItem(string name, string url)
         {
             Name = name;
             Url = url;
-            Length = length;
         }
     }
 }

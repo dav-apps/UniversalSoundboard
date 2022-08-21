@@ -146,6 +146,7 @@
     </Compile>
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\Exceptions.cs" />
+    <Compile Include="Common\ISoundDownloadPlugin.cs" />
     <Compile Include="Common\LocalDataSettings.cs" />
     <Compile Include="Common\Callbacks.cs" />
     <Compile Include="Common\Types.cs" />
@@ -176,7 +177,7 @@
     <Compile Include="Dialogs\DownloadFileDialog.cs" />
     <Compile Include="Dialogs\DownloadFileErrorDialog.cs" />
     <Compile Include="Dialogs\DownloadFilesDialog.cs" />
-    <Compile Include="Dialogs\DownloadSoundsDialog.cs" />
+    <Compile Include="Dialogs\SoundDownloadDialog.cs" />
     <Compile Include="Dialogs\DownloadSoundsErrorDialog.cs" />
     <Compile Include="Dialogs\EditCategoryDialog.cs" />
     <Compile Include="Dialogs\ExportSoundboardDialog.cs" />
@@ -198,6 +199,10 @@
     <Compile Include="Models\DeviceWatcherHelper.cs" />
     <Compile Include="Dialogs\Dialog.cs" />
     <Compile Include="Models\DialogSoundListItem.cs" />
+    <Compile Include="Models\SoundDownloadPlugin.cs" />
+    <Compile Include="Models\SoundDownloadResult.cs" />
+    <Compile Include="Models\SoundDownloadYoutubePlugin.cs" />
+    <Compile Include="Models\SoundDownloadZopharPlugin.cs" />
     <Compile Include="Models\InAppNotificationItem.cs" />
     <Compile Include="Components\PlayingSoundItem.cs" />
     <Compile Include="Components\SoundFileDownloadProgressTemplate.xaml.cs">
