@@ -34,7 +34,7 @@ namespace UniversalSoundboard.Models
             return shortYoutubeUrlRegex.IsMatch(Url);
         }
 
-        public override async Task<SoundDownloadResult> GetResult()
+        public override async Task<SoundDownloadPluginResult> GetResult()
         {
             string videoId = null;
             string playlistId = null;
@@ -113,7 +113,7 @@ namespace UniversalSoundboard.Models
             }
             catch (Exception) { }
 
-            return new SoundDownloadResult(grabResult.Title, imageUri, playlistTitle);
+            return new SoundDownloadYoutubePluginResult(grabResult.Title, imageUri, playlistTitle);
         }
     }
 }

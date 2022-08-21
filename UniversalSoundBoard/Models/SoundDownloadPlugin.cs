@@ -14,6 +14,6 @@ namespace UniversalSoundboard.Models
 
         public abstract bool IsUrlMatch();
 
-        public abstract Task<SoundDownloadResult> GetResult();
+        public abstract Task<SoundDownloadPluginResult> GetResult();
     }
 }

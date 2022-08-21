@@ -1,13 +1,5 @@
-﻿using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using Microsoft.Toolkit.Uwp.UI;
-using System;
-using System.Collections.Generic;
+﻿using Microsoft.Toolkit.Uwp.UI;
 using System.Collections.ObjectModel;
-using System.Linq;
-using System.Net;
-using System.Text.RegularExpressions;
-using System.Web;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
@@ -32,8 +24,6 @@ namespace UniversalSoundboard.Dialogs
         private TextBlock SoundListNumberTextBlock;
         private Button SoundListSelectAllButton;
         private ObservableCollection<SoundDownloadListItem> SoundItems;
-        public string AudioFileName { get; private set; }
-        public string AudioFileType { get; private set; }
 
         public string Url
         {
@@ -249,13 +239,14 @@ namespace UniversalSoundboard.Dialogs
             ContentDialog.IsPrimaryButtonEnabled = false;
             HideAllMessageElements();
 
-            // Check if the input is a valid link
             string input = UrlTextBox.Text;
-            Regex urlRegex = new Regex("^(https?:\\/\\/)?[\\w.-]+(\\.[\\w.-]+)+[\\w\\-._~/?#@&%\\+,;=]+");
-            
-            bool isUrl = urlRegex.IsMatch(input);
 
-            if (!isUrl)
+            var audioFilePlugin = new SoundDownloadAudioFilePlugin(input);
+            var youtubePlugin = new SoundDownloadYoutubePlugin(input);
+            var zopharPlugin = new SoundDownloadZopharPlugin(input);
+            
+            // Check if the input is a valid link
+            if (!audioFilePlugin.IsUrlMatch())
             {
                 HideAllMessageElements();
                 return;
@@ -263,14 +254,11 @@ namespace UniversalSoundboard.Dialogs
 
             LoadingMessageStackPanel.Visibility = Visibility.Visible;
 
-            var youtubePlugin = new SoundDownloadYoutubePlugin(input);
-            var zopharPlugin = new SoundDownloadZopharPlugin(input);
-
             if (youtubePlugin.IsUrlMatch())
             {
                 try
                 {
-                    var result = await youtubePlugin.GetResult();
+                    var result = await youtubePlugin.GetResult() as SoundDownloadYoutubePluginResult;
 
                     LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
                     YoutubeInfoImage.Source = new BitmapImage(result.ImageUrl);
@@ -288,7 +276,7 @@ namespace UniversalSoundboard.Dialogs
             {
                 try
                 {
-                    var result = await zopharPlugin.GetResult();
+                    var result = await zopharPlugin.GetResult() as SoundDownloadZopharPluginResult;
 
                     LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
                     SoundItems.Clear();
@@ -307,66 +295,32 @@ namespace UniversalSoundboard.Dialogs
             }
             else
             {
-                // Make a GET request to see if this is an audio file
-                WebResponse response;
-
                 try
                 {
-                    var req = WebRequest.Create(input);
-                    response = await req.GetResponseAsync();
+                    var result = await audioFilePlugin.GetResult() as SoundDownloadAudioFilePluginResult;
 
-                    // Check if the content type is a supported audio format
-                    if (!FileManager.allowedAudioMimeTypes.Contains(response.ContentType))
-                    {
-                        HideAllMessageElements();
+                    LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+                    YoutubeInfoGrid.Visibility = Visibility.Collapsed;
+                    AudioFileInfoTextBlock.Text = "";
 
-                        Analytics.TrackEvent("AudioFileDownload-NotSupportedFormat", new Dictionary<string, string>
-                        {
-                            { "Link", input }
-                        });
+                    string audioFileName = FileManager.loader.GetString("SoundDownloadDialog-DefaultSoundName");
 
-                        return;
-                    }
+                    if (result.FileName != null)
+                        AudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", FileManager.loader.GetString("FileName"), result.FileName);
+
+                    AudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", FileManager.loader.GetString("FileType"), result.FileType);
+
+                    if (result.FileSize > 0)
+                        AudioFileInfoTextBlock.Text += string.Format("{0}: {1}", FileManager.loader.GetString("FileSize"), FileManager.GetFormattedSize((ulong)result.FileSize));
+
+                    AudioFileInfoTextBlock.Visibility = Visibility.Visible;
+                    ContentDialog.IsPrimaryButtonEnabled = true;
                 }
-                catch (Exception e)
+                catch (SoundDownloadException)
                 {
                     HideAllMessageElements();
-
-                    Crashes.TrackError(e, new Dictionary<string, string>
-                    {
-                        { "Link", input }
-                    });
-
                     return;
                 }
-
-                // Get file type and file size
-                AudioFileType = FileManager.FileTypeToExt(response.ContentType);
-                long fileSize = response.ContentLength;
-
-                // Try to get the file name
-                Regex fileNameRegex = new Regex("^.+\\.\\w{3}$");
-                AudioFileName = FileManager.loader.GetString("SoundDownloadDialog-DefaultSoundName");
-                bool defaultFileName = true;
-
-                string lastPart = HttpUtility.UrlDecode(input.Split('/').Last());
-
-                if (fileNameRegex.IsMatch(lastPart))
-                {
-                    var parts = lastPart.Split('.');
-                    AudioFileName = string.Join(".", parts.Take(parts.Count() - 1));
-                    defaultFileName = false;
-                }
-
-                AudioFileInfoTextBlock.Text = "";
-                if (!defaultFileName) AudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", FileManager.loader.GetString("FileName"), AudioFileName);
-                AudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", FileManager.loader.GetString("FileType"), AudioFileType);
-                if (fileSize > 0) AudioFileInfoTextBlock.Text += string.Format("{0}: {1}", FileManager.loader.GetString("FileSize"), FileManager.GetFormattedSize((ulong)fileSize));
-                AudioFileInfoTextBlock.Visibility = Visibility.Visible;
-
-                LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
-                YoutubeInfoGrid.Visibility = Visibility.Collapsed;
-                ContentDialog.IsPrimaryButtonEnabled = true;
             }
         }
 

@@ -17,10 +17,29 @@ namespace UniversalSoundboard.Models
             return urlRegex.IsMatch(Url);
         }
 
-        public override async Task<SoundDownloadResult> GetResult()
+        public override async Task<SoundDownloadPluginResult> GetResult()
         {
             var web = new HtmlWeb();
             var document = await web.LoadFromWebAsync(Url);
+
+            // Get the header
+            var headerNode = document.DocumentNode.SelectSingleNode("//div[@id='music_info']/h2");
+            string categoryName = null;
+
+            if (headerNode != null)
+                categoryName = headerNode.InnerText;
+
+            // Get the cover
+            var coverNode = document.DocumentNode.SelectSingleNode("//div[@id='music_cover']/img");
+            Uri imgSourceUri = null;
+
+            if (coverNode != null)
+            {
+                string imgSource = coverNode.GetAttributeValue("src", null);
+
+                if (imgSource != null)
+                    imgSourceUri = new Uri(imgSource);
+            }
 
             // Get the tracklist
             var tracklistNode = document.DocumentNode.SelectNodes("//table[@id='tracklist']/*");
@@ -45,29 +64,10 @@ namespace UniversalSoundboard.Models
                 string downloadLink = downloadNode.GetAttributeValue("href", null);
                 if (downloadLink == null) continue;
 
-                soundItems.Add(new SoundDownloadListItem(name, downloadLink));
+                soundItems.Add(new SoundDownloadListItem(name, new Uri(downloadLink), imgSourceUri));
             }
 
-            // Get the header
-            var headerNode = document.DocumentNode.SelectSingleNode("//div[@id='music_info']/h2");
-            string categoryName = null;
-
-            if (headerNode != null)
-                categoryName = headerNode.InnerText;
-
-            // Get the cover
-            var coverNode = document.DocumentNode.SelectSingleNode("//div[@id='music_cover']/img");
-            Uri imgSourceUri = null;
-
-            if (coverNode != null)
-            {
-                string imgSource = coverNode.GetAttributeValue("src", null);
-
-                if (imgSource != null)
-                    imgSourceUri = new Uri(imgSource);
-            }
-
-            return new SoundDownloadResult(null, imgSourceUri, categoryName, soundItems);
+            return new SoundDownloadZopharPluginResult(categoryName, soundItems);
         }
     }
 }

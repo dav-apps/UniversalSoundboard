@@ -8,6 +8,6 @@ namespace UniversalSoundboard.Common
         string Url { get; }
 
         bool IsUrlMatch();
-        Task<SoundDownloadResult> GetResult();
+        Task<SoundDownloadPluginResult> GetResult();
     }
 }
