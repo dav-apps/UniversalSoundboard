@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace UniversalSoundboard.Models
 {
@@ -6,13 +7,20 @@ namespace UniversalSoundboard.Models
     {
         public string Name { get; set; }
         public Uri Url { get; set; }
-        public Uri ImageUrl { get; set; }
+        public List<Uri> ImageUrls { get; set; }
+
+        public SoundDownloadListItem(string name, Uri url, List<Uri> imageUrls)
+        {
+            Name = name;
+            Url = url;
+            ImageUrls = imageUrls;
+        }
 
         public SoundDownloadListItem(string name, Uri url, Uri imageUrl)
         {
             Name = name;
             Url = url;
-            ImageUrl = imageUrl;
+            ImageUrls = new List<Uri> { imageUrl };
         }
     }
 }

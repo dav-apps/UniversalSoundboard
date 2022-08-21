@@ -264,6 +264,17 @@ namespace UniversalSoundboard.Dialogs
                     YoutubeInfoImage.Source = new BitmapImage(result.ImageUrl);
                     YoutubeInfoTextBlock.Text = result.Title;
                     YoutubeInfoGrid.Visibility = Visibility.Visible;
+
+                    if (result.SoundItems.Count > 1)
+                    {
+                        SoundItems.Clear();
+
+                        foreach (var soundItem in result.SoundItems)
+                            SoundItems.Add(soundItem);
+
+                        SoundListStackPanel.Visibility = Visibility.Visible;
+                    }
+
                     ContentDialog.IsPrimaryButtonEnabled = true;
                 }
                 catch (SoundDownloadException)
@@ -279,6 +290,10 @@ namespace UniversalSoundboard.Dialogs
                     var result = await zopharPlugin.GetResult() as SoundDownloadZopharPluginResult;
 
                     LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+
+                    if (result.SoundItems.Count == 0)
+                        throw new SoundDownloadException();
+
                     SoundItems.Clear();
                     
                     foreach (var soundItem in result.SoundItems)

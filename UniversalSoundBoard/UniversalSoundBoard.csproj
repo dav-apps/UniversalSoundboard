@@ -199,14 +199,14 @@
     <Compile Include="Models\DeviceWatcherHelper.cs" />
     <Compile Include="Dialogs\Dialog.cs" />
     <Compile Include="Models\DialogSoundListItem.cs" />
-    <Compile Include="Models\SoundDownloadAudioFilePlugin.cs" />
-    <Compile Include="Models\SoundDownloadAudioFilePluginResult.cs" />
-    <Compile Include="Models\SoundDownloadPlugin.cs" />
-    <Compile Include="Models\SoundDownloadPluginResult.cs" />
-    <Compile Include="Models\SoundDownloadResult.cs" />
-    <Compile Include="Models\SoundDownloadYoutubePlugin.cs" />
-    <Compile Include="Models\SoundDownloadYoutubePluginResult.cs" />
-    <Compile Include="Models\SoundDownloadZopharPlugin.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadAudioFilePlugin.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadAudioFilePluginResult.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadPlugin.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadPluginResult.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadResult.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadYoutubePlugin.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadYoutubePluginResult.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadZopharPlugin.cs" />
     <Compile Include="Models\InAppNotificationItem.cs" />
     <Compile Include="Components\PlayingSoundItem.cs" />
     <Compile Include="Components\SoundFileDownloadProgressTemplate.xaml.cs">
@@ -226,8 +226,8 @@
     <Compile Include="Models\Hotkey.cs" />
     <Compile Include="Models\DeviceInfo.cs" />
     <Compile Include="Models\RecordedSoundItem.cs" />
-    <Compile Include="Models\SoundDownloadListItem.cs" />
-    <Compile Include="Models\SoundDownloadZopharPluginResult.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadListItem.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadZopharPluginResult.cs" />
     <Compile Include="Pages\SoundRecorderPage.xaml.cs">
       <DependentUpon>SoundRecorderPage.xaml</DependentUpon>
     </Compile>
