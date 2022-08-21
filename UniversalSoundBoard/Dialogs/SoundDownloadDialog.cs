@@ -1,8 +1,4 @@
-﻿using DotNetTools.SharpGrabber;
-using DotNetTools.SharpGrabber.Grabbed;
-using Google.Apis.YouTube.v3.Data;
-using HtmlAgilityPack;
-using Microsoft.AppCenter.Analytics;
+﻿using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Toolkit.Uwp.UI;
 using System;
@@ -36,11 +32,6 @@ namespace UniversalSoundboard.Dialogs
         private TextBlock SoundListNumberTextBlock;
         private Button SoundListSelectAllButton;
         private ObservableCollection<SoundDownloadListItem> SoundItems;
-        public DownloadSoundsResultType DownloadSoundsResult { get; private set; }
-        public string PlaylistId { get; private set; }
-        public GrabResult GrabResult { get; private set; }
-        public PlaylistItemListResponse PlaylistItemListResponse { get; private set; }
-        public string PlaylistTitle { get; private set; }
         public string AudioFileName { get; private set; }
         public string AudioFileType { get; private set; }
 
@@ -256,21 +247,13 @@ namespace UniversalSoundboard.Dialogs
         private async void DownloadSoundsUrlTextBox_TextChanged(object sender, TextChangedEventArgs args)
         {
             ContentDialog.IsPrimaryButtonEnabled = false;
-            DownloadSoundsResult = DownloadSoundsResultType.None;
             HideAllMessageElements();
 
             // Check if the input is a valid link
             string input = UrlTextBox.Text;
-
             Regex urlRegex = new Regex("^(https?:\\/\\/)?[\\w.-]+(\\.[\\w.-]+)+[\\w\\-._~/?#@&%\\+,;=]+");
-            Regex shortYoutubeUrlRegex = new Regex("^(https?:\\/\\/)?youtu.be\\/");
-            Regex youtubeUrlRegex = new Regex("^(https?:\\/\\/)?((www|music).)?youtube.com\\/");
-            Regex zopharRegex = new Regex("^(https?:\\/\\/)?(www.)?zophar.net\\/music\\/[\\w\\-]+\\/[\\w\\-]+");
-
+            
             bool isUrl = urlRegex.IsMatch(input);
-            bool isShortYoutubeUrl = shortYoutubeUrlRegex.IsMatch(input);
-            bool isYoutubeUrl = youtubeUrlRegex.IsMatch(input);
-            bool isZopharUrl = zopharRegex.IsMatch(input);
 
             if (!isUrl)
             {
@@ -280,158 +263,47 @@ namespace UniversalSoundboard.Dialogs
 
             LoadingMessageStackPanel.Visibility = Visibility.Visible;
 
-            if (isShortYoutubeUrl || isYoutubeUrl)
+            var youtubePlugin = new SoundDownloadYoutubePlugin(input);
+            var zopharPlugin = new SoundDownloadZopharPlugin(input);
+
+            if (youtubePlugin.IsUrlMatch())
             {
-                string videoId = null;
-                PlaylistId = null;
-
-                if (isShortYoutubeUrl)
-                {
-                    videoId = input.Split('/').Last();
-                }
-                else
-                {
-                    // Get the video id from the url params
-                    var queryDictionary = HttpUtility.ParseQueryString(input.Split('?').Last());
-
-                    videoId = queryDictionary.Get("v");
-                    PlaylistId = queryDictionary.Get("list");
-                }
-
-                // Build the url
-                string youtubeLink = string.Format("https://youtube.com/watch?v={0}", videoId);
-
                 try
                 {
-                    var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
-                    GrabResult = await grabber.GrabAsync(new Uri(youtubeLink));
+                    var result = await youtubePlugin.GetResult();
 
-                    if (GrabResult == null)
-                    {
-                        HideAllMessageElements();
-                        return;
-                    }
-                }
-                catch (Exception e)
-                {
-                    HideAllMessageElements();
-
-                    Crashes.TrackError(e, new Dictionary<string, string>
-                    {
-                        { "YoutubeLink", input }
-                    });
-
-                    return;
-                }
-
-                YoutubeInfoTextBlock.Text = GrabResult.Title;
-
-                var imageResources = GrabResult.Resources<GrabbedImage>();
-                GrabbedImage smallThumbnail = imageResources.ToList().Find(image => image.ResourceUri.ToString().Split('/').Last() == "default.jpg");
-
-                if (smallThumbnail != null)
-                {
-                    YoutubeInfoImage.Source = new BitmapImage(smallThumbnail.ResourceUri);
+                    LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+                    YoutubeInfoImage.Source = new BitmapImage(result.ImageUrl);
+                    YoutubeInfoTextBlock.Text = result.Title;
                     YoutubeInfoGrid.Visibility = Visibility.Visible;
+                    ContentDialog.IsPrimaryButtonEnabled = true;
                 }
-
-                LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
-                DownloadSoundsResult = DownloadSoundsResultType.Youtube;
-                ContentDialog.IsPrimaryButtonEnabled = true;
-
-                if (PlaylistId != null)
-                {
-                    // Get the playlist
-                    var listOperation = FileManager.youtubeService.PlaylistItems.List("contentDetails");
-                    listOperation.PlaylistId = PlaylistId;
-                    listOperation.MaxResults = 50;
-
-                    try
-                    {
-                        PlaylistItemListResponse = await listOperation.ExecuteAsync();
-                    }
-                    catch (Exception)
-                    {
-                        return;
-                    }
-
-                    if (PlaylistItemListResponse.Items.Count > 1)
-                    {
-                        // Get the name of the playlist
-                        PlaylistTitle = "";
-                        var playlistListOperation = FileManager.youtubeService.Playlists.List("snippet");
-                        playlistListOperation.Id = PlaylistId;
-
-                        try
-                        {
-                            var result = await playlistListOperation.ExecuteAsync();
-
-                            if (result.Items.Count > 0)
-                                PlaylistTitle = result.Items[0].Snippet.Title;
-                        }
-                        catch (Exception) { }
-                    }
-                }
-
-                return;
-            }
-            else if (isZopharUrl)
-            {
-                var web = new HtmlWeb();
-                var document = await web.LoadFromWebAsync(input);
-
-                // Get the tracklist
-                var tracklistNode = document.DocumentNode.SelectNodes("//table[@id='tracklist']/*");
-
-                if (tracklistNode == null)
+                catch (SoundDownloadException)
                 {
                     HideAllMessageElements();
                     return;
                 }
-
-                foreach (var node in tracklistNode)
+            }
+            else if (zopharPlugin.IsUrlMatch())
+            {
+                try
                 {
-                    // Get the name
-                    var nameNode = node.SelectSingleNode("./td[@class='name']");
-                    if (nameNode == null) continue;
+                    var result = await zopharPlugin.GetResult();
 
-                    string name = nameNode.InnerText;
+                    LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+                    SoundItems.Clear();
+                    
+                    foreach (var soundItem in result.SoundItems)
+                        SoundItems.Add(soundItem);
 
-                    // Get the length
-                    var lengthNode = node.SelectSingleNode("./td[@class='length']");
-                    if (lengthNode == null) continue;
-
-                    string length = lengthNode.InnerText;
-
-                    // Get the download link
-                    var downloadNode = node.SelectSingleNode("./td[@class='download']/a");
-                    if (downloadNode == null) continue;
-
-                    string downloadLink = downloadNode.GetAttributeValue("href", null);
-                    if (downloadLink == null) continue;
-
-                    SoundItems.Add(new SoundDownloadListItem(name, downloadLink, length));
+                    SoundListStackPanel.Visibility = Visibility.Visible;
+                    SoundListView.SelectAll();
                 }
-
-                LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
-                SoundListStackPanel.Visibility = Visibility.Visible;
-                SoundListView.SelectAll();
-
-                // Get the header
-                var headerNode = document.DocumentNode.SelectSingleNode("//div[@id='music_info']/h2");
-                string categoryName = null;
-
-                if (headerNode != null)
-                    categoryName = headerNode.InnerText;
-
-                // Get the cover
-                var coverNode = document.DocumentNode.SelectSingleNode("//div[@id='music_cover']/img");
-                string imgSource = null;
-
-                if (coverNode != null)
-                    imgSource = coverNode.GetAttributeValue("src", null);
-
-
+                catch (SoundDownloadException)
+                {
+                    HideAllMessageElements();
+                    return;
+                }
             }
             else
             {
@@ -494,7 +366,6 @@ namespace UniversalSoundboard.Dialogs
 
                 LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
                 YoutubeInfoGrid.Visibility = Visibility.Collapsed;
-                DownloadSoundsResult = DownloadSoundsResultType.AudioFile;
                 ContentDialog.IsPrimaryButtonEnabled = true;
             }
         }
