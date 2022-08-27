@@ -19,28 +19,29 @@ namespace UniversalSoundboard.Models
 
         public override bool IsUrlMatch()
         {
-            return IsYoutubeUrl() || IsShortYoutubeUrl();
+            return IsYoutubeUrl(Url) || IsShortYoutubeUrl(Url);
         }
 
-        private bool IsYoutubeUrl()
+        public static bool IsYoutubeUrl(string url)
         {
             Regex youtubeUrlRegex = new Regex("^(https?:\\/\\/)?((www|music).)?youtube.com\\/");
-            return youtubeUrlRegex.IsMatch(Url);
+            return youtubeUrlRegex.IsMatch(url);
         }
 
-        private bool IsShortYoutubeUrl()
+        public static bool IsShortYoutubeUrl(string url)
         {
             Regex shortYoutubeUrlRegex = new Regex("^(https?:\\/\\/)?youtu.be\\/");
-            return shortYoutubeUrlRegex.IsMatch(Url);
+            return shortYoutubeUrlRegex.IsMatch(url);
         }
 
         public override async Task<SoundDownloadPluginResult> GetResult()
         {
             var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
+            GrabResult grabResult;
             string videoId = null;
             string playlistId = null;
 
-            if (IsShortYoutubeUrl())
+            if (IsShortYoutubeUrl(Url))
             {
                 videoId = Url.Split('/').Last();
             }
@@ -55,7 +56,6 @@ namespace UniversalSoundboard.Models
 
             // Build the url
             string youtubeLink = string.Format("https://youtube.com/watch?v={0}", videoId);
-            GrabResult grabResult;
 
             try
             {
@@ -75,16 +75,16 @@ namespace UniversalSoundboard.Models
             }
 
             string title = grabResult.Title;
-            Uri imageUri = null;
+            string imageUri = null;
             string playlistTitle = null;
             bool playlistLoadSuccessful = true;
-            List<SoundDownloadListItem> soundItems = new List<SoundDownloadListItem>();
+            List<SoundDownloadItem> soundItems = new List<SoundDownloadItem>();
 
             var imageResources = grabResult.Resources<GrabbedImage>();
             GrabbedImage smallThumbnail = imageResources.ToList().Find(image => image.ResourceUri.ToString().Split('/').Last() == "default.jpg");
 
             if (smallThumbnail != null)
-                imageUri = smallThumbnail.ResourceUri;
+                imageUri = smallThumbnail.ResourceUri.ToString();
 
             try
             {
@@ -150,112 +150,38 @@ namespace UniversalSoundboard.Models
                             {
                                 string playlistItemVideoId = playlistItem.ContentDetails.VideoId;
                                 string videoTitle = playlistItem.Snippet.Title;
-                                string videoLink = string.Format("https://youtube.com/watch?v={0}", playlistItemVideoId);
+                                string videoUrl = string.Format("https://youtube.com/watch?v={0}", playlistItemVideoId);
 
-                                /*
-                                grabResult = await grabber.GrabAsync(new Uri(videoLink));
-
-                                if (grabResult == null)
-                                {
-                                    playlistLoadSuccessful = false;
-                                    break;
-                                }
-
-                                var mediaResources = grabResult.Resources<GrabbedMedia>();
-                                imageResources = grabResult.Resources<GrabbedImage>();
-
-                                // Find the audio track with the highest sample rate
-                                Uri bestAudio = FindBestAudioOfYoutubeVideo(mediaResources);
-
-                                if (bestAudio == null)
-                                {
-                                    playlistLoadSuccessful = false;
-                                    break;
-                                }
-
-                                var imageUrls = FindThumbnailImagesOfYoutubeVideo(imageResources);
-                                */
-
-                                soundItems.Add(new SoundDownloadListItem(videoTitle, new Uri(videoLink), new List<Uri>(), videoId == playlistItemVideoId));
+                                soundItems.Add(new SoundDownloadYoutubeItem(videoTitle, videoUrl, videoUrl, "jpg", "m4a", 0, 0, videoId == playlistItemVideoId));
                             }
                         }
                     }
                 }
-            }
-            catch (Exception) { }
-
-            return new SoundDownloadYoutubePluginResult(
-                grabResult.Title,
-                imageUri,
-                playlistTitle,
-                playlistLoadSuccessful ? soundItems : new List<SoundDownloadListItem>()
-            );
-        }
-
-        private Uri FindBestAudioOfYoutubeVideo(IEnumerable<GrabbedMedia> mediaResources)
-        {
-            GrabbedMedia bestAudio = null;
-
-            foreach (var media in mediaResources)
-            {
-                if (media.Format.Extension != "m4a") continue;
-
-                int? bitrate = media.GetBitRate();
-                if (!bitrate.HasValue) continue;
-
-                if (bestAudio == null || bestAudio.GetBitRate().Value < bitrate.Value)
-                    bestAudio = media;
-            }
-
-            return bestAudio.ResourceUri;
-        }
-
-        private List<Uri> FindThumbnailImagesOfYoutubeVideo(IEnumerable<GrabbedImage> imageResources)
-        {
-            // Find the thumbnail image with the highest resolution
-            List<Uri> images = new List<Uri>();
-            GrabbedImage maxresDefaultImage = null;
-            GrabbedImage mqDefaultImage = null;
-            GrabbedImage sdDefaultImage = null;
-            GrabbedImage hqDefaultImage = null;
-            GrabbedImage defaultImage = null;
-
-            foreach (var media in imageResources)
-            {
-                string mediaFileName = media.ResourceUri.ToString().Split('/').Last();
-
-                switch (mediaFileName)
+                else
                 {
-                    case "maxresdefault.jpg":
-                        maxresDefaultImage = media;
-                        break;
-                    case "mqdefault.jpg":
-                        mqDefaultImage = media;
-                        break;
-                    case "sddefault.jpg":
-                        sdDefaultImage = media;
-                        break;
-                    case "hqdefault.jpg":
-                        hqDefaultImage = media;
-                        break;
-                    case "default.jpg":
-                        defaultImage = media;
-                        break;
+                    soundItems.Add(
+                        new SoundDownloadYoutubeItem(
+                            grabResult.Title,
+                            youtubeLink,
+                            youtubeLink,
+                            "jpg",
+                            "m4a",
+                            0,
+                            0
+                        )
+                    );
                 }
             }
+            catch (Exception)
+            {
+                throw new SoundDownloadException();
+            }
 
-            if (maxresDefaultImage != null)
-                images.Add(maxresDefaultImage.ResourceUri);
-            if (mqDefaultImage != null)
-                images.Add(mqDefaultImage.ResourceUri);
-            if (sdDefaultImage != null)
-                images.Add(sdDefaultImage.ResourceUri);
-            if (hqDefaultImage != null)
-                images.Add(hqDefaultImage.ResourceUri);
-            if (defaultImage != null)
-                images.Add(defaultImage.ResourceUri);
-
-            return images;
+            return new SoundDownloadYoutubePluginResult(
+                playlistTitle,
+                imageUri,
+                soundItems
+            );
         }
     }
 }
