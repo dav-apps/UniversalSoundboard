@@ -1,5 +1,7 @@
 ﻿using Microsoft.Toolkit.Uwp.UI;
+using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
@@ -18,22 +20,15 @@ namespace UniversalSoundboard.Dialogs
         private Grid YoutubeInfoGrid;
         private Image YoutubeInfoImage;
         private TextBlock YoutubeInfoTextBlock;
-        private CheckBox CreateCategoryForPlaylistCheckbox;
         private TextBlock AudioFileInfoTextBlock;
         private StackPanel SoundListStackPanel;
         private ListView SoundListView;
         private TextBlock SoundListNumberTextBlock;
         private Button SoundListSelectAllButton;
-        private ObservableCollection<SoundDownloadListItem> SoundItems;
+        private CheckBox CreateCategoryForPlaylistCheckbox;
+        private ObservableCollection<SoundDownloadItem> SoundItems;
 
-        public string Url
-        {
-            get => UrlTextBox?.Text;
-        }
-        public bool CreateCategoryForPlaylist
-        {
-            get => (bool)CreateCategoryForPlaylistCheckbox.IsChecked;
-        }
+        public SoundDownloadResult Result { get; private set; }
 
         public SoundDownloadDialog(DataTemplate soundDownloadListItemTemplate)
             : base(
@@ -42,7 +37,7 @@ namespace UniversalSoundboard.Dialogs
                   FileManager.loader.GetString("Actions-Cancel")
             )
         {
-            SoundItems = new ObservableCollection<SoundDownloadListItem>();
+            SoundItems = new ObservableCollection<SoundDownloadItem>();
             ContentDialog.IsPrimaryButtonEnabled = false;
             Content = GetContent(soundDownloadListItemTemplate);
         }
@@ -201,6 +196,9 @@ namespace UniversalSoundboard.Dialogs
                 Margin = new Thickness(4, 12, 0, 0)
             };
 
+            CreateCategoryForPlaylistCheckbox.Checked += CreateCategoryForPlaylistCheckbox_Checked;
+            CreateCategoryForPlaylistCheckbox.Unchecked += CreateCategoryForPlaylistCheckbox_Unchecked;
+
             SoundListStackPanel.Children.Add(SoundListView);
             SoundListStackPanel.Children.Add(soundListNumberRelativePanel);
             SoundListStackPanel.Children.Add(CreateCategoryForPlaylistCheckbox);
@@ -222,17 +220,16 @@ namespace UniversalSoundboard.Dialogs
             ContentDialog.IsPrimaryButtonEnabled = SoundListView.SelectedItems.Count > 0;
         }
 
-        private void SoundListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void UpdateSelectedSoundItems()
         {
-            UpdateSoundListNumberText();
-        }
+            // De-select all items
+            foreach (var item in SoundItems)
+                item.IsSelected = false;
 
-        private void SoundListSelectAllButton_Click(object sender, RoutedEventArgs e)
-        {
-            if (SoundListView.SelectedItems.Count == SoundItems.Count)
-                SoundListView.DeselectAll();
-            else
-                SoundListView.SelectAll();
+            // Select all selected items
+            foreach (var range in SoundListView.SelectedRanges)
+                for (int i = range.FirstIndex; i < range.LastIndex + 1; i++)
+                    SoundItems.ElementAt(i).IsSelected = true;
         }
 
         private async void DownloadSoundsUrlTextBox_TextChanged(object sender, TextChangedEventArgs args)
@@ -242,7 +239,7 @@ namespace UniversalSoundboard.Dialogs
 
             string input = UrlTextBox.Text;
 
-            var audioFilePlugin = new SoundDownloadAudioFilePlugin(input);
+            var audioFilePlugin = new SoundDownloadPlugin(input);
             var youtubePlugin = new SoundDownloadYoutubePlugin(input);
             var zopharPlugin = new SoundDownloadZopharPlugin(input);
             
@@ -262,8 +259,11 @@ namespace UniversalSoundboard.Dialogs
                     var result = await youtubePlugin.GetResult() as SoundDownloadYoutubePluginResult;
 
                     LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
-                    YoutubeInfoImage.Source = new BitmapImage(result.ImageUrl);
-                    YoutubeInfoTextBlock.Text = result.Title;
+                    YoutubeInfoImage.Source = new BitmapImage(new Uri(result.ImageUrl));
+                    
+                    var selectedSoundItem = result.SoundItems.Find(item => item.IsSelected);
+                    if (selectedSoundItem != null) YoutubeInfoTextBlock.Text = selectedSoundItem.Name;
+
                     YoutubeInfoGrid.Visibility = Visibility.Visible;
 
                     if (result.SoundItems.Count > 1)
@@ -276,10 +276,12 @@ namespace UniversalSoundboard.Dialogs
                         {
                             SoundItems.Add(soundItem);
 
-                            if (soundItem.Selected)
+                            if (soundItem.IsSelected)
                             {
                                 SoundListView.SelectedItems.Add(soundItem);
-                                selectedItemIndex = i;
+
+                                if (selectedItemIndex == 0)
+                                    selectedItemIndex = i;
                             }
 
                             i++;
@@ -290,8 +292,13 @@ namespace UniversalSoundboard.Dialogs
                         await Task.Delay(10);
                         await SoundListView.SmoothScrollIntoViewWithIndexAsync(selectedItemIndex, ScrollItemPlacement.Center);
                     }
+                    else if (result.SoundItems.Count == 1)
+                    {
+                        SoundItems.Add(result.SoundItems.First());
+                    }
 
                     ContentDialog.IsPrimaryButtonEnabled = true;
+                    Result = new SoundDownloadResult(SoundItems, result.PlaylistTitle);
                 }
                 catch (SoundDownloadException)
                 {
@@ -317,6 +324,7 @@ namespace UniversalSoundboard.Dialogs
 
                     SoundListStackPanel.Visibility = Visibility.Visible;
                     SoundListView.SelectAll();
+                    Result = new SoundDownloadResult(SoundItems, result.PlaylistTitle);
                 }
                 catch (SoundDownloadException)
                 {
@@ -328,7 +336,12 @@ namespace UniversalSoundboard.Dialogs
             {
                 try
                 {
-                    var result = await audioFilePlugin.GetResult() as SoundDownloadAudioFilePluginResult;
+                    var result = await audioFilePlugin.GetResult();
+
+                    if (result.SoundItems.Count == 0)
+                        throw new SoundDownloadException();
+
+                    var soundItem = result.SoundItems.First();
 
                     LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
                     YoutubeInfoGrid.Visibility = Visibility.Collapsed;
@@ -336,16 +349,21 @@ namespace UniversalSoundboard.Dialogs
 
                     string audioFileName = FileManager.loader.GetString("SoundDownloadDialog-DefaultSoundName");
 
-                    if (result.FileName != null)
-                        AudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", FileManager.loader.GetString("FileName"), result.FileName);
+                    if (soundItem.Name != null)
+                    {
+                        AudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", FileManager.loader.GetString("FileName"), soundItem.Name);
+                        audioFileName = soundItem.Name;
+                    }
 
-                    AudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", FileManager.loader.GetString("FileType"), result.FileType);
+                    AudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", FileManager.loader.GetString("FileType"), soundItem.AudioFileExt);
 
-                    if (result.FileSize > 0)
-                        AudioFileInfoTextBlock.Text += string.Format("{0}: {1}", FileManager.loader.GetString("FileSize"), FileManager.GetFormattedSize((ulong)result.FileSize));
+                    if (soundItem.AudioFileSize > 0)
+                        AudioFileInfoTextBlock.Text += string.Format("{0}: {1}", FileManager.loader.GetString("FileSize"), FileManager.GetFormattedSize((ulong)soundItem.AudioFileSize));
 
                     AudioFileInfoTextBlock.Visibility = Visibility.Visible;
                     ContentDialog.IsPrimaryButtonEnabled = true;
+
+                    Result = new SoundDownloadResult(new ObservableCollection<SoundDownloadItem> { soundItem }, null);
                 }
                 catch (SoundDownloadException)
                 {
@@ -353,6 +371,32 @@ namespace UniversalSoundboard.Dialogs
                     return;
                 }
             }
+        }
+
+        private void SoundListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            UpdateSoundListNumberText();
+            UpdateSelectedSoundItems();
+        }
+
+        private void SoundListSelectAllButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (SoundListView.SelectedItems.Count == SoundItems.Count)
+                SoundListView.DeselectAll();
+            else
+                SoundListView.SelectAll();
+        }
+
+        private void CreateCategoryForPlaylistCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (Result == null) return;
+            Result.CreateCategoryForPlaylist = true;
+        }
+
+        private void CreateCategoryForPlaylistCheckbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (Result == null) return;
+            Result.CreateCategoryForPlaylist = false;
         }
 
         private void HideAllMessageElements()
