@@ -1,21 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 
 namespace UniversalSoundboard.Models
 {
     public class SoundDownloadResult
     {
-        public string Title { get; }
-        public Uri ImageUrl { get; }
-        public string PlaylistTitle { get; }
-        public List<SoundDownloadListItem> SoundItems { get; }
+        private ObservableCollection<SoundDownloadItem> soundItems;
 
-        public SoundDownloadResult(string title, Uri imageUrl, string playlistTitle, List<SoundDownloadListItem> soundItems)
+        public List<SoundDownloadItem> SoundItems
         {
-            Title = title;
-            ImageUrl = imageUrl;
-            PlaylistTitle = playlistTitle;
-            SoundItems = soundItems;
+            get => soundItems.ToList();
+        }
+        public bool CreateCategoryForPlaylist { get; set; }
+        public string CategoryName { get; set; }
+
+        public SoundDownloadResult(ObservableCollection<SoundDownloadItem> soundItems, string categoryName)
+        {
+            this.soundItems = soundItems;
+            CategoryName = categoryName;
         }
     }
 }
