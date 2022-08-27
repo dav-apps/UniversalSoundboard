@@ -884,27 +884,16 @@ namespace UniversalSoundboard.Pages
 
         private async void StartMessageDownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
             var soundDownloadListItemTemplate = Resources["SoundDownloadListItemTemplate"] as DataTemplate;
 
-            var downloadSoundsDialog = new SoundDownloadDialog(infoButtonStyle, soundDownloadListItemTemplate);
-            downloadSoundsDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
-            await downloadSoundsDialog.ShowAsync();
+            var soundDownloadDialog = new SoundDownloadDialog(soundDownloadListItemTemplate);
+            soundDownloadDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
+            await soundDownloadDialog.ShowAsync();
         }
 
         private void DownloadSoundsContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var dialog = sender as SoundDownloadDialog;
-
-            if (dialog.DownloadSoundsResult == DownloadSoundsResultType.Youtube)
-            {
-                if (dialog.DownloadPlaylist)
-                    FileManager.itemViewHolder.TriggerDownloadYoutubePlaylistEvent(sender, new EventArgs());
-                else
-                    FileManager.itemViewHolder.TriggerDownloadYoutubeVideoEvent(sender, new EventArgs());
-            }
-            else if (dialog.DownloadSoundsResult == DownloadSoundsResultType.AudioFile)
-                FileManager.itemViewHolder.TriggerDownloadAudioFileEvent(sender, new EventArgs());
+            FileManager.itemViewHolder.TriggerSoundDownloadEvent(sender as SoundDownloadDialog, EventArgs.Empty);
         }
 
         private async void StartMessageLoginButton_Click(object sender, RoutedEventArgs e)

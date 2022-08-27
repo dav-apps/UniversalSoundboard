@@ -41,7 +41,7 @@
             <components:HotkeyItemTemplate />
         </DataTemplate>
 
-        <DataTemplate x:Key="SoundDownloadListItemTemplate" x:DataType="models:SoundDownloadListItem">
+        <DataTemplate x:Key="SoundDownloadListItemTemplate" x:DataType="models:SoundDownloadItem">
             <components:SoundDownloadListItemTemplate />
         </DataTemplate>
 

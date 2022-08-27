@@ -80,9 +80,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TableObjectFileDownloadProgressChanged += ItemViewHolder_TableObjectFileDownloadProgressChanged;
             FileManager.itemViewHolder.TableObjectFileDownloadCompleted += ItemViewHolder_TableObjectFileDownloadCompleted;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
-            FileManager.itemViewHolder.DownloadYoutubeVideo += ItemViewHolder_DownloadYoutubeVideo;
-            FileManager.itemViewHolder.DownloadYoutubePlaylist += ItemViewHolder_DownloadYoutubePlaylist;
-            FileManager.itemViewHolder.DownloadAudioFile += ItemViewHolder_DownloadAudioFile;
+            FileManager.itemViewHolder.SoundDownload += ItemViewHolder_SoundDownload;
             FileManager.deviceWatcherHelper.DevicesChanged += DeviceWatcherHelper_DevicesChanged;
 
             // Get the screen resolution
@@ -276,19 +274,9 @@ namespace UniversalSoundboard.Pages
             Bindings.Update();
         }
 
-        private async void ItemViewHolder_DownloadYoutubeVideo(object sender, EventArgs e)
+        private async void ItemViewHolder_SoundDownload(object sender, EventArgs e)
         {
-            await DownloadSoundsContentDialog_YoutubeVideoDownload(sender as SoundDownloadDialog);
-        }
-
-        private async void ItemViewHolder_DownloadYoutubePlaylist(object sender, EventArgs e)
-        {
-            await DownloadSoundsContentDialog_YoutubePlaylistDownload(sender as SoundDownloadDialog);
-        }
-
-        private async void ItemViewHolder_DownloadAudioFile(object sender, EventArgs e)
-        {
-            await DownloadSoundsContentDialog_AudioFileDownload(sender as SoundDownloadDialog);
+            await HandleSoundDownload(sender as SoundDownloadDialog);
         }
 
         private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
@@ -1266,593 +1254,292 @@ namespace UniversalSoundboard.Pages
         }
         #endregion
 
-        #region DownloadSounds
+        #region SoundDownload
         private async void DownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            var infoButtonStyle = Application.Current.Resources["InfoButtonStyle"] as Style;
             var soundDownloadListItemTemplate = Resources["SoundDownloadListItemTemplate"] as DataTemplate;
 
-            var downloadSoundsDialog = new SoundDownloadDialog(infoButtonStyle, soundDownloadListItemTemplate);
-            downloadSoundsDialog.PrimaryButtonClick += DownloadSoundsContentDialog_PrimaryButtonClick;
-            await downloadSoundsDialog.ShowAsync();
+            var soundDownloadDialog = new SoundDownloadDialog(soundDownloadListItemTemplate);
+            soundDownloadDialog.PrimaryButtonClick += SoundDownloadDialog_PrimaryButtonClick;
+            await soundDownloadDialog.ShowAsync();
         }
 
-        private async void DownloadSoundsContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        private async void SoundDownloadDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var dialog = sender as SoundDownloadDialog;
-
-            if (dialog.DownloadSoundsResult == DownloadSoundsResultType.Youtube)
-            {
-                if (dialog.DownloadPlaylist)
-                    await DownloadSoundsContentDialog_YoutubePlaylistDownload(dialog);
-                else
-                    await DownloadSoundsContentDialog_YoutubeVideoDownload(dialog);
-            }
-            else if (dialog.DownloadSoundsResult == DownloadSoundsResultType.AudioFile)
-                await DownloadSoundsContentDialog_AudioFileDownload(dialog);
+            await HandleSoundDownload(sender as SoundDownloadDialog);
         }
 
-        public async Task DownloadSoundsContentDialog_YoutubeVideoDownload(SoundDownloadDialog dialog)
+        public async Task HandleSoundDownload(SoundDownloadDialog dialog)
         {
-            if (dialog.GrabResult == null) return;
+            if (dialog.Result == null) return;
+
+            List<SoundDownloadItem> selectedSoundItems = new List<SoundDownloadItem>();
+
+            foreach (var item in dialog.Result.SoundItems)
+                if (item.IsSelected) selectedSoundItems.Add(item);
+
+            if (selectedSoundItems.Count == 0)
+                return;
+
             Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
             var cancellationTokenSource = new CancellationTokenSource();
-
-            var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
-                InAppNotificationType.DownloadSound,
-                loader.GetString("InAppNotification-DownloadSound"),
-                0,
-                true,
-                false,
-                FileManager.loader.GetString("Actions-Cancel")
-            );
-
-            showInAppNotificationEventArgs.PrimaryButtonClick += (object sender, RoutedEventArgs e) =>
-            {
-                cancellationTokenSource.Cancel();
-            };
-
-            // Show InAppNotification
-            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
-                this,
-                showInAppNotificationEventArgs
-            );
 
             // Disable the ability to add or download sounds
             FileManager.itemViewHolder.AddingSounds = true;
 
-            var mediaResources = dialog.GrabResult.Resources<GrabbedMedia>();
-            var imageResources = dialog.GrabResult.Resources<GrabbedImage>();
-
-            // Find the audio track with the highest sample rate
-            GrabbedMedia bestAudio = FindBestAudioOfYoutubeVideo(mediaResources);
-
-            if (bestAudio == null)
+            if (selectedSoundItems.Count == 1)
             {
-                ShowDownloadSoundErrorInAppNotification();
-                return;
-            }
+                // Single sound download
+                var soundItem = selectedSoundItems.First();
 
-            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-            StorageFile imageFile = await cacheFolder.CreateFileAsync("download.jpg", CreationCollisionOption.GenerateUniqueName);
-            bool imageDownloaded = await DownloadBestImageOfYoutubeVideo(imageFile, imageResources);
-
-            if (!imageDownloaded)
-            {
-                ShowDownloadSoundErrorInAppNotification();
-                return;
-            }
-
-            // Download the audio track
-            StorageFile audioFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
-            var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSound, false, value));
-            bool audioFileDownloadResult = false;
-
-            await Task.Run(async () =>
-            {
-                audioFileDownloadResult = (
-                    await FileManager.DownloadBinaryDataToFile(
-                        audioFile,
-                        bestAudio.ResourceUri,
-                        progress,
-                        cancellationTokenSource.Token
-                    )
-                ).Key;
-            });
-
-            if (CheckSoundDownloadCancelled(cancellationTokenSource))
-                return;
-
-            if (!audioFileDownloadResult)
-            {
-                // Wait a few seconds and try it again
-                await Task.Delay(15000);
-
-                if (CheckSoundDownloadCancelled(cancellationTokenSource))
-                    return;
-
-                await Task.Run(async () =>
-                {
-                    audioFileDownloadResult = (
-                        await FileManager.DownloadBinaryDataToFile(
-                            audioFile,
-                            bestAudio.ResourceUri,
-                            progress,
-                            cancellationTokenSource.Token
-                        )
-                    ).Key;
-                });
-
-                if (CheckSoundDownloadCancelled(cancellationTokenSource))
-                    return;
-
-                if (!audioFileDownloadResult)
-                {
-                    ShowDownloadSoundErrorInAppNotification();
-                    return;
-                }
-            }
-
-            // Add the files as a new sound
-            Guid uuid = await FileManager.CreateSoundAsync(null, dialog.GrabResult.Title, new List<Guid> { currentCategoryUuid }, audioFile, imageFile);
-
-            if (uuid.Equals(Guid.Empty))
-            {
-                ShowDownloadSoundErrorInAppNotification();
-                return;
-            }
-
-            await FileManager.AddSound(uuid);
-
-            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
-                this,
-                new ShowInAppNotificationEventArgs(
+                var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
                     InAppNotificationType.DownloadSound,
-                    loader.GetString("InAppNotification-DownloadSoundSuccessful"),
-                    8000,
+                    loader.GetString("InAppNotification-DownloadSound"),
+                    0,
+                    true,
                     false,
-                    true
-                )
-            );
+                    FileManager.loader.GetString("Actions-Cancel")
+                );
 
-            FileManager.itemViewHolder.AddingSounds = false;
-
-            Analytics.TrackEvent("YoutubeVideoDownload");
-        }
-
-        public async Task DownloadSoundsContentDialog_YoutubePlaylistDownload(SoundDownloadDialog dialog)
-        {
-            Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
-
-            // Disable the ability to add or download sounds
-            FileManager.itemViewHolder.AddingSounds = true;
-
-            var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
-            List<KeyValuePair<string, string>> notDownloadedSounds = new List<KeyValuePair<string, string>>();
-            var playlistItemResponse = dialog.PlaylistItemListResponse;
-            var cancellationTokenSource = new CancellationTokenSource();
-
-            var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
-                InAppNotificationType.DownloadSounds,
-                string.Format(loader.GetString("InAppNotification-DownloadSounds"), 1, playlistItemResponse.PageInfo.TotalResults.GetValueOrDefault()),
-                0,
-                true,
-                false,
-                FileManager.loader.GetString("Actions-Cancel")
-            );
-
-            showInAppNotificationEventArgs.PrimaryButtonClick += async (object sender, RoutedEventArgs e) =>
-            {
-                // Show Dialog for canceling Playlist download
-                var cancelDownloadDialog = new CancelYouTubePlaylistDownloadDialog();
-
-                cancelDownloadDialog.PrimaryButtonClick += (Dialog d, ContentDialogButtonClickEventArgs args) =>
+                showInAppNotificationEventArgs.PrimaryButtonClick += (object s, RoutedEventArgs e) =>
                 {
                     cancellationTokenSource.Cancel();
                 };
 
-                await cancelDownloadDialog.ShowAsync();
-            };
+                // Show InAppNotification
+                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                    this,
+                    showInAppNotificationEventArgs
+                );
 
-            // Show InAppNotification
-            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
-                this,
-                showInAppNotificationEventArgs
-            );
+                // Download the image file, if there is one
+                StorageFile imageFile = await soundItem.DownloadImageFile();
 
-            // Load all items from all pages of the playlist
-            List<PlaylistItem> playlistItems = new List<PlaylistItem>();
-            
-            foreach (var item in playlistItemResponse.Items)
-                playlistItems.Add(item);
+                // Download the audio file
+                var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSound, false, value));
 
-            while (playlistItemResponse.NextPageToken != null)
-            {
-                // Get the next page of the playlist
-                var listOperation = FileManager.youtubeService.PlaylistItems.List("contentDetails");
-                listOperation.PlaylistId = dialog.PlaylistId;
-                listOperation.MaxResults = 50;
-                listOperation.PageToken = playlistItemResponse.NextPageToken;
+                StorageFile audioFile = await soundItem.DownloadAudioFile(progress, cancellationTokenSource.Token);
 
-                try
+                if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                    return;
+
+                if (audioFile == null)
                 {
-                    playlistItemResponse = await listOperation.ExecuteAsync();
-                }
-                catch (Exception)
-                {
-                    // Show InAppNotification for error
-                    FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
-                        this,
-                        new ShowInAppNotificationEventArgs(
-                            InAppNotificationType.DownloadSounds,
-                            loader.GetString("InAppNotification-DownloadSoundsPlaylistError"),
-                            0,
-                            false,
-                            true
-                        )
-                    );
+                    ShowDownloadSoundErrorInAppNotification();
                     return;
                 }
 
-                foreach (var item in playlistItemResponse.Items)
-                    playlistItems.Add(item);
-            }
+                FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSound);
 
-            if (CheckSoundDownloadCancelled(cancellationTokenSource))
-                return;
-            
-            Analytics.TrackEvent("YoutubePlaylistDownload", new Dictionary<string, string>
-            {
-                { "Count", playlistItems.Count.ToString() }
-            });
-
-            // Create category for playlist, if the option is checked
-            Category newCategory = null;
-
-            if (dialog.CreateCategoryForPlaylist)
-            {
-                // Create category
-                List<string> iconsList = FileManager.GetIconsList();
-                int randomNumber = new Random().Next(iconsList.Count);
-
-                Guid categoryUuid = await FileManager.CreateCategoryAsync(null, null, dialog.PlaylistTitle, iconsList[randomNumber]);
-                newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
-
-                // Add the category to the Categories list
-                FileManager.AddCategory(newCategory, Guid.Empty);
-
-                // Add the category to the SideBar
-                AddCategoryMenuItem(menuItems, newCategory, Guid.Empty);
-            }
-
-            // Go through each video of the playlist
-            for (int i = 0; i < playlistItems.Count; i++)
-            {
-                FileManager.SetInAppNotificationMessage(
-                    InAppNotificationType.DownloadSounds,
-                    string.Format(loader.GetString("InAppNotification-DownloadSounds"), i + 1, playlistItems.Count)
-                );
-
-                string videoLink = string.Format("https://youtube.com/watch?v={0}", playlistItems[i].ContentDetails.VideoId);
-
-                GrabResult grabResult = await grabber.GrabAsync(new Uri(videoLink));
-                if (grabResult == null)
-                {
-                    notDownloadedSounds.Add(new KeyValuePair<string, string>(null, videoLink));
-                    continue;
-                }
-
-                var mediaResources = grabResult.Resources<GrabbedMedia>();
-                var imageResources = grabResult.Resources<GrabbedImage>();
-
-                // Find the audio track with the highest sample rate
-                GrabbedMedia bestAudio = FindBestAudioOfYoutubeVideo(mediaResources);
-
-                if (bestAudio == null)
-                {
-                    notDownloadedSounds.Add(new KeyValuePair<string, string>(grabResult.Title, videoLink));
-                    continue;
-                }
-
-                StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-                StorageFile imageFile = await cacheFolder.CreateFileAsync("download.jpg", CreationCollisionOption.GenerateUniqueName);
-                bool imageDownloaded = await DownloadBestImageOfYoutubeVideo(imageFile, imageResources);
-
-                if (!imageDownloaded)
-                {
-                    notDownloadedSounds.Add(new KeyValuePair<string, string>(grabResult.Title, videoLink));
-                    continue;
-                }
-
-                // Download the audio track
-                StorageFile audioFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
-                var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSounds, false, value));
-                bool audioFileDownloadResult = false;
-
-                await Task.Run(async () =>
-                {
-                    audioFileDownloadResult = (
-                        await FileManager.DownloadBinaryDataToFile(
-                            audioFile,
-                            bestAudio.ResourceUri,
-                            progress,
-                            cancellationTokenSource.Token
-                        )
-                    ).Key;
-                });
-
-                if (!audioFileDownloadResult)
-                {
-                    // Wait a few seconds and try it again
-                    await Task.Delay(15000);
-
-                    if (CheckSoundDownloadCancelled(cancellationTokenSource))
-                        return;
-
-                    await Task.Run(async () =>
-                    {
-                        audioFileDownloadResult = (
-                            await FileManager.DownloadBinaryDataToFile(
-                                audioFile,
-                                bestAudio.ResourceUri,
-                                progress,
-                                cancellationTokenSource.Token
-                            )
-                        ).Key;
-                    });
-
-                    if (CheckSoundDownloadCancelled(cancellationTokenSource))
-                        return;
-
-                    if (!audioFileDownloadResult)
-                    {
-                        notDownloadedSounds.Add(new KeyValuePair<string, string>(grabResult.Title, videoLink));
-                        continue;
-                    }
-                }
-
-                FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSounds);
-
-                // Add the files as a new sound
+                // Save the sound in the database
                 Guid uuid = await FileManager.CreateSoundAsync(
                     null,
-                    grabResult.Title,
-                    newCategory != null ? newCategory.Uuid : currentCategoryUuid,
+                    soundItem.Name,
+                    new List<Guid> { currentCategoryUuid },
                     audioFile,
                     imageFile
                 );
 
                 if (uuid.Equals(Guid.Empty))
                 {
-                    notDownloadedSounds.Add(new KeyValuePair<string, string>(grabResult.Title, videoLink));
-                    continue;
+                    ShowDownloadSoundErrorInAppNotification();
+                    return;
                 }
 
+                // Show the sound in the list
                 await FileManager.AddSound(uuid);
-            }
 
-            if (notDownloadedSounds.Count > 0)
-            {
-                string message = notDownloadedSounds.Count == 1 ?
-                    loader.GetString("InAppNotification-DownloadSoundsErrorOneSound")
-                    : string.Format(loader.GetString("InAppNotification-DownloadSoundsErrorMultipleSounds"), notDownloadedSounds.Count);
-
-                var inAppNotificationArgs = new ShowInAppNotificationEventArgs(
-                    InAppNotificationType.DownloadSounds,
-                    message,
-                    0,
-                    false,
-                    true,
-                    loader.GetString("Actions-ShowDetails")
-                );
-
-                inAppNotificationArgs.PrimaryButtonClick += async (sender, args) =>
-                {
-                    FileManager.DismissInAppNotification(InAppNotificationType.DownloadSounds);
-                    await new DownloadSoundsErrorDialog(notDownloadedSounds).ShowAsync();
-                };
-
-                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(this, inAppNotificationArgs);
-            }
-            else
-            {
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                     this,
                     new ShowInAppNotificationEventArgs(
-                        InAppNotificationType.DownloadSounds,
-                        string.Format(loader.GetString("InAppNotification-DownloadSoundsSuccessful"), playlistItems.Count),
+                        InAppNotificationType.DownloadSound,
+                        loader.GetString("InAppNotification-DownloadSoundSuccessful"),
                         8000,
                         false,
                         true
                     )
                 );
-            }
 
-            FileManager.itemViewHolder.AddingSounds = false;
-        }
-
-        private GrabbedMedia FindBestAudioOfYoutubeVideo(IEnumerable<GrabbedMedia> mediaResources)
-        {
-            GrabbedMedia bestAudio = null;
-
-            foreach (var media in mediaResources)
-            {
-                if (media.Format.Extension != "m4a") continue;
-
-                int? bitrate = media.GetBitRate();
-                if (!bitrate.HasValue) continue;
-
-                if (bestAudio == null || bestAudio.GetBitRate().Value < bitrate.Value)
-                    bestAudio = media;
-            }
-
-            return bestAudio;
-        }
-
-        private async Task<bool> DownloadBestImageOfYoutubeVideo(StorageFile targetFile, IEnumerable<GrabbedImage> imageResources)
-        {
-            // Find the thumbnail image with the highest resolution
-            List<GrabbedImage> images = new List<GrabbedImage>();
-            GrabbedImage maxresDefaultImage = null;
-            GrabbedImage mqDefaultImage = null;
-            GrabbedImage sdDefaultImage = null;
-            GrabbedImage hqDefaultImage = null;
-            GrabbedImage defaultImage = null;
-
-            foreach (var media in imageResources)
-            {
-                string mediaFileName = media.ResourceUri.ToString().Split('/').Last();
-
-                switch (mediaFileName)
+                Analytics.TrackEvent("AudioFileDownload", new Dictionary<string, string>
                 {
-                    case "maxresdefault.jpg":
-                        maxresDefaultImage = media;
-                        break;
-                    case "mqdefault.jpg":
-                        mqDefaultImage = media;
-                        break;
-                    case "sddefault.jpg":
-                        sdDefaultImage = media;
-                        break;
-                    case "hqdefault.jpg":
-                        hqDefaultImage = media;
-                        break;
-                    case "default.jpg":
-                        defaultImage = media;
-                        break;
-                }
+                    { "File extension", soundItem.AudioFileExt }
+                });
             }
-
-            if (maxresDefaultImage != null)
-                images.Add(maxresDefaultImage);
-            if (mqDefaultImage != null)
-                images.Add(mqDefaultImage);
-            if (sdDefaultImage != null)
-                images.Add(sdDefaultImage);
-            if (hqDefaultImage != null)
-                images.Add(hqDefaultImage);
-            if (defaultImage != null)
-                images.Add(defaultImage);
-
-            // Download the thumbnail image
-            GrabbedImage currentImage;
-
-            while (images.Count() > 0)
+            else
             {
-                currentImage = images[0];
-                images.RemoveAt(0);
+                // Playlist download
+                var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
+                    InAppNotificationType.DownloadSounds,
+                    string.Format(loader.GetString("InAppNotification-DownloadSounds"), 1, selectedSoundItems.Count),
+                    0,
+                    true,
+                    false,
+                    FileManager.loader.GetString("Actions-Cancel")
+                );
 
-                var imageFileDownloadResult = await FileManager.DownloadBinaryDataToFile(targetFile, currentImage.ResourceUri, null);
-
-                if (!imageFileDownloadResult.Key)
+                showInAppNotificationEventArgs.PrimaryButtonClick += async (object s, RoutedEventArgs e) =>
                 {
-                    if (imageFileDownloadResult.Value == 404)
+                    // Show Dialog for canceling Playlist download
+                    var cancelDownloadDialog = new CancelYouTubePlaylistDownloadDialog();
+
+                    cancelDownloadDialog.PrimaryButtonClick += (Dialog d, ContentDialogButtonClickEventArgs a) =>
                     {
-                        // Try to download the next image in the list
+                        cancellationTokenSource.Cancel();
+                    };
+
+                    await cancelDownloadDialog.ShowAsync();
+                };
+
+                // Show InAppNotification
+                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                    this,
+                    showInAppNotificationEventArgs
+                );
+
+                Analytics.TrackEvent("YoutubePlaylistDownload", new Dictionary<string, string>
+                {
+                    { "Count", selectedSoundItems.Count.ToString() }
+                });
+
+                // Create category for playlist, if the option is checked
+                Category newCategory = null;
+
+                if (dialog.Result.CreateCategoryForPlaylist)
+                {
+                    // Create category
+                    List<string> iconsList = FileManager.GetIconsList();
+                    int randomNumber = new Random().Next(iconsList.Count);
+
+                    Guid categoryUuid = await FileManager.CreateCategoryAsync(null, null, dialog.Result.CategoryName, iconsList[randomNumber]);
+                    newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
+
+                    // Add the category to the Categories list
+                    FileManager.AddCategory(newCategory, Guid.Empty);
+
+                    // Add the category to the SideBar
+                    AddCategoryMenuItem(menuItems, newCategory, Guid.Empty);
+                }
+
+                List<SoundDownloadItem> notDownloadedSounds = new List<SoundDownloadItem>();
+
+                // Go through each video of the playlist
+                for (int i = 0; i < selectedSoundItems.Count; i++)
+                {
+                    var currentSoundItem = selectedSoundItems[i];
+
+                    FileManager.SetInAppNotificationMessage(
+                        InAppNotificationType.DownloadSounds,
+                        string.Format(loader.GetString("InAppNotification-DownloadSounds"), i + 1, selectedSoundItems.Count)
+                    );
+
+                    StorageFile imageFile = null;
+
+                    if (currentSoundItem.ImageFileUrl != null)
+                    {
+                        imageFile = await currentSoundItem.DownloadImageFile();
+
+                        if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                            return;
+
+                        if (imageFile == null && currentSoundItem.ImageFileUrl != null)
+                        {
+                            notDownloadedSounds.Add(currentSoundItem);
+                            continue;
+                        }
+                    }
+
+                    var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSounds, false, value));
+
+                    StorageFile audioFile = await currentSoundItem.DownloadAudioFile(
+                        progress,
+                        cancellationTokenSource.Token
+                    );
+
+                    if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                        return;
+
+                    if (audioFile == null)
+                    {
+                        // Wait a few seconds and try it again
+                        await Task.Delay(15000);
+
+                        if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                            return;
+
+                        audioFile = await currentSoundItem.DownloadAudioFile(
+                            progress,
+                            cancellationTokenSource.Token
+                        );
+
+                        if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                            return;
+
+                        if (audioFile == null)
+                        {
+                            notDownloadedSounds.Add(currentSoundItem);
+                            continue;
+                        }
+                    }
+
+                    FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSounds);
+
+                    // Create the new sound in the database
+                    Guid uuid = await FileManager.CreateSoundAsync(
+                        null,
+                        currentSoundItem.Name,
+                        newCategory != null ? newCategory.Uuid : currentCategoryUuid,
+                        audioFile,
+                        imageFile
+                    );
+
+                    if (uuid.Equals(Guid.Empty))
+                    {
+                        notDownloadedSounds.Add(currentSoundItem);
                         continue;
                     }
-                    else
+
+                    await FileManager.AddSound(uuid);
+                }
+
+                if (notDownloadedSounds.Count > 0)
+                {
+                    string message = notDownloadedSounds.Count == 1 ?
+                        loader.GetString("InAppNotification-DownloadSoundsErrorOneSound")
+                        : string.Format(loader.GetString("InAppNotification-DownloadSoundsErrorMultipleSounds"), notDownloadedSounds.Count);
+
+                    var inAppNotificationArgs = new ShowInAppNotificationEventArgs(
+                        InAppNotificationType.DownloadSounds,
+                        message,
+                        0,
+                        false,
+                        true,
+                        loader.GetString("Actions-ShowDetails")
+                    );
+
+                    inAppNotificationArgs.PrimaryButtonClick += async (s, a) =>
                     {
-                        return false;
-                    }
+                        FileManager.DismissInAppNotification(InAppNotificationType.DownloadSounds);
+                        await new DownloadSoundsErrorDialog(notDownloadedSounds).ShowAsync();
+                    };
+
+                    FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(this, inAppNotificationArgs);
                 }
                 else
                 {
-                    return true;
+                    FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                        this,
+                        new ShowInAppNotificationEventArgs(
+                            InAppNotificationType.DownloadSounds,
+                            string.Format(loader.GetString("InAppNotification-DownloadSoundsSuccessful"), selectedSoundItems.Count),
+                            8000,
+                            false,
+                            true
+                        )
+                    );
                 }
             }
 
-            return false;
-        }
-
-        public async Task DownloadSoundsContentDialog_AudioFileDownload(SoundDownloadDialog dialog)
-        {
-            Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
-            FileManager.itemViewHolder.AddingSounds = true;
-            var cancellationTokenSource = new CancellationTokenSource();
-
-            var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
-                InAppNotificationType.DownloadSound,
-                loader.GetString("InAppNotification-DownloadSound"),
-                0,
-                true,
-                false,
-                FileManager.loader.GetString("Actions-Cancel")
-            );
-
-            showInAppNotificationEventArgs.PrimaryButtonClick += (object sender, RoutedEventArgs e) =>
-            {
-                cancellationTokenSource.Cancel();
-            };
-
-            // Show InAppNotification
-            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
-                this,
-                showInAppNotificationEventArgs
-            );
-
-            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-            StorageFile audioFile = await cacheFolder.CreateFileAsync(string.Format("download.{0}", dialog.AudioFileType), CreationCollisionOption.GenerateUniqueName);
-
-            string soundUrl = dialog.Url;
-            bool result = false;
-            var progress = new Progress<int>((int value) => FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSound, false, value));
-
-            await Task.Run(async () =>
-            {
-                result = (
-                    await FileManager.DownloadBinaryDataToFile(
-                        audioFile,
-                        new Uri(soundUrl),
-                        progress,
-                        cancellationTokenSource.Token
-                    )
-                ).Key;
-            });
-
-            if (CheckSoundDownloadCancelled(cancellationTokenSource))
-                return;
-
-            if (!result)
-            {
-                ShowDownloadSoundErrorInAppNotification();
-                return;
-            }
-
-            FileManager.SetInAppNotificationProgress(InAppNotificationType.DownloadSound);
-
-            Guid uuid = await FileManager.CreateSoundAsync(
-                null,
-                dialog.AudioFileName,
-                new List<Guid> { currentCategoryUuid },
-                audioFile
-            );
-
-            if (uuid.Equals(Guid.Empty))
-            {
-                ShowDownloadSoundErrorInAppNotification();
-                return;
-            }
-
-            await FileManager.AddSound(uuid);
-
-            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
-                this,
-                new ShowInAppNotificationEventArgs(
-                    InAppNotificationType.DownloadSound,
-                    loader.GetString("InAppNotification-DownloadSoundSuccessful"),
-                    8000,
-                    false,
-                    true
-                )
-            );
-
             FileManager.itemViewHolder.AddingSounds = false;
-
-            Analytics.TrackEvent("AudioFileDownload", new Dictionary<string, string>
-            {
-                { "File extension", dialog.AudioFileType }
-            });
         }
 
         public void ShowDownloadSoundErrorInAppNotification()

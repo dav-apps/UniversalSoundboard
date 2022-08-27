@@ -3633,6 +3633,14 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task<KeyValuePair<bool, int>> DownloadBinaryDataToFile(
             StorageFile targetFile,
+            Uri uri
+        )
+        {
+            return await DownloadBinaryDataToFile(targetFile, uri, null, CancellationToken.None);
+        }
+
+        public static async Task<KeyValuePair<bool, int>> DownloadBinaryDataToFile(
+            StorageFile targetFile,
             Uri uri,
             IProgress<int> progress
         )
