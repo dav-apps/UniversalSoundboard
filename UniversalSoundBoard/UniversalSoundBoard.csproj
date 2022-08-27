@@ -199,11 +199,11 @@
     <Compile Include="Models\DeviceWatcherHelper.cs" />
     <Compile Include="Dialogs\Dialog.cs" />
     <Compile Include="Models\DialogSoundListItem.cs" />
-    <Compile Include="Models\SoundDownload\SoundDownloadAudioFilePlugin.cs" />
-    <Compile Include="Models\SoundDownload\SoundDownloadAudioFilePluginResult.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadItem.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadPlugin.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadPluginResult.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadResult.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadYoutubeItem.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadYoutubePlugin.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadYoutubePluginResult.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadZopharPlugin.cs" />
@@ -226,7 +226,6 @@
     <Compile Include="Models\Hotkey.cs" />
     <Compile Include="Models\DeviceInfo.cs" />
     <Compile Include="Models\RecordedSoundItem.cs" />
-    <Compile Include="Models\SoundDownload\SoundDownloadListItem.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadZopharPluginResult.cs" />
     <Compile Include="Pages\SoundRecorderPage.xaml.cs">
       <DependentUpon>SoundRecorderPage.xaml</DependentUpon>
