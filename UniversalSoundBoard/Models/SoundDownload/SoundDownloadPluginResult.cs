@@ -1,6 +1,14 @@
-﻿namespace UniversalSoundboard.Models
+﻿using System.Collections.Generic;
+
+namespace UniversalSoundboard.Models
 {
-    public abstract class SoundDownloadPluginResult
+    public class SoundDownloadPluginResult
     {
+        public List<SoundDownloadItem> SoundItems;
+
+        public SoundDownloadPluginResult(List<SoundDownloadItem> soundItems)
+        {
+            SoundItems = soundItems;
+        }
     }
 }
