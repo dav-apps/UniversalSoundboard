@@ -5,8 +5,8 @@ namespace UniversalSoundboard.Components
 {
     public sealed partial class SoundDownloadListItemTemplate : UserControl
     {
-        public SoundDownloadListItem SoundDownloadListItem { get => DataContext as SoundDownloadListItem; }
-        public string SoundName { get => SoundDownloadListItem?.Name; }
+        public SoundDownloadItem SoundDownloadItem { get => DataContext as SoundDownloadItem; }
+        public string SoundName { get => SoundDownloadItem?.Name; }
 
         public SoundDownloadListItemTemplate()
         {
