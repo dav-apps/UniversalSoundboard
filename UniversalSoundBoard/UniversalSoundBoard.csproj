@@ -146,7 +146,6 @@
     </Compile>
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\Exceptions.cs" />
-    <Compile Include="Common\ISoundDownloadPlugin.cs" />
     <Compile Include="Common\LocalDataSettings.cs" />
     <Compile Include="Common\Callbacks.cs" />
     <Compile Include="Common\Types.cs" />
