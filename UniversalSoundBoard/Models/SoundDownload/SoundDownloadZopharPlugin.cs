@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
-using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
@@ -19,6 +19,7 @@ namespace UniversalSoundboard.Models
 
         public override async Task<SoundDownloadPluginResult> GetResult()
         {
+            Regex fileNameRegex = new Regex("^.+\\.\\w{3}$");
             var web = new HtmlWeb();
             var document = await web.LoadFromWebAsync(Url);
 
@@ -31,15 +32,14 @@ namespace UniversalSoundboard.Models
 
             // Get the cover
             var coverNode = document.DocumentNode.SelectSingleNode("//div[@id='music_cover']/img");
-            Uri imgSourceUri = null;
+            string imageFileUrl = null;
+            string imageFileExt = "jpg";
 
             if (coverNode != null)
-            {
-                string imgSource = coverNode.GetAttributeValue("src", null);
+                imageFileUrl = coverNode.GetAttributeValue("src", null);
 
-                if (imgSource != null)
-                    imgSourceUri = new Uri(imgSource);
-            }
+            if (imageFileUrl != null && fileNameRegex.IsMatch(imageFileUrl))
+                imageFileExt = imageFileUrl.Split(".").Last();
 
             // Get the tracklist
             var tracklistNode = document.DocumentNode.SelectNodes("//table[@id='tracklist']/*");
@@ -47,7 +47,7 @@ namespace UniversalSoundboard.Models
             if (tracklistNode == null)
                 throw new SoundDownloadException();
 
-            List<SoundDownloadListItem> soundItems = new List<SoundDownloadListItem>();
+            List<SoundDownloadItem> soundItems = new List<SoundDownloadItem>();
 
             foreach (var node in tracklistNode)
             {
@@ -61,13 +61,30 @@ namespace UniversalSoundboard.Models
                 var downloadNode = node.SelectSingleNode("./td[@class='download']/a");
                 if (downloadNode == null) continue;
 
-                string downloadLink = downloadNode.GetAttributeValue("href", null);
-                if (downloadLink == null) continue;
+                string audioFileUrl = downloadNode.GetAttributeValue("href", null);
+                if (audioFileUrl == null) continue;
 
-                soundItems.Add(new SoundDownloadListItem(name, new Uri(downloadLink), imgSourceUri));
+                // Get the file ext
+                string audioFileExt = "mp3";
+
+                if (fileNameRegex.IsMatch(audioFileUrl))
+                    audioFileExt = audioFileUrl.Split(".").Last();
+
+                soundItems.Add(
+                    new SoundDownloadItem(
+                        name,
+                        imageFileUrl,
+                        audioFileUrl,
+                        imageFileExt,
+                        audioFileExt,
+                        0,
+                        0,
+                        true
+                    )
+                );
             }
 
-            return new SoundDownloadZopharPluginResult(categoryName, soundItems);
+            return new SoundDownloadZopharPluginResult(categoryName, imageFileUrl, soundItems);
         }
     }
 }
