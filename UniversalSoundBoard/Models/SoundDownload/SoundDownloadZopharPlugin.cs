@@ -64,6 +64,15 @@ namespace UniversalSoundboard.Models
                 string audioFileUrl = downloadNode.GetAttributeValue("href", null);
                 if (audioFileUrl == null) continue;
 
+                // Fix broken characters
+                name = name
+                    .Replace("Ã©", "é")         // https://fi.zophar.net/soundfiles/nintendo-ds-2sf/pokemon-black-white/110%20-%20Pok%C3%83%C2%A9mon%20Laboratory.mp3
+                    .Replace("Â", "");          // https://fi.zophar.net/soundfiles/nintendo-wii/super-smash-bros-brawl/R09%20-%20Golden%20Forest%20-%201080%C3%82%C2%B0%20Snowboarding%20%28Composer%20-%20Kenta%20Nagata%29.mp3
+
+                audioFileUrl = audioFileUrl
+                    .Replace("%C3%83%C2%A9", "%C3%A9")
+                    .Replace("%C3%82", "");
+
                 // Get the file ext
                 string audioFileExt = "mp3";
 
