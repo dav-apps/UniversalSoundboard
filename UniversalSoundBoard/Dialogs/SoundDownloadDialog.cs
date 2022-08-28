@@ -1,5 +1,7 @@
-﻿using Microsoft.Toolkit.Uwp.UI;
+﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.Toolkit.Uwp.UI;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -379,6 +381,11 @@ namespace UniversalSoundboard.Dialogs
                     return;
                 }
             }
+
+            Analytics.TrackEvent("SoundDownloadDialog-UrlChanged", new Dictionary<string, string>
+            {
+                { "Url", input }
+            });
         }
 
         private void SoundListView_SelectionChanged(object sender, SelectionChangedEventArgs e)

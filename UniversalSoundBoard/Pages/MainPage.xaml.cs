@@ -1359,11 +1359,6 @@ namespace UniversalSoundboard.Pages
                         true
                     )
                 );
-
-                Analytics.TrackEvent("AudioFileDownload", new Dictionary<string, string>
-                {
-                    { "File extension", soundItem.AudioFileExt }
-                });
             }
             else
             {
@@ -1395,11 +1390,6 @@ namespace UniversalSoundboard.Pages
                     this,
                     showInAppNotificationEventArgs
                 );
-
-                Analytics.TrackEvent("YoutubePlaylistDownload", new Dictionary<string, string>
-                {
-                    { "Count", selectedSoundItems.Count.ToString() }
-                });
 
                 // Create category for playlist, if the option is checked
                 Category newCategory = null;
@@ -1523,6 +1513,17 @@ namespace UniversalSoundboard.Pages
                     };
 
                     FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(this, inAppNotificationArgs);
+
+                    // Save not downloaded sounds in dict for analytics
+                    var notDownloadedSoundsDict = new Dictionary<string, string>();
+
+                    for (int i = 0; i < notDownloadedSounds.Count; i++)
+                    {
+                        notDownloadedSoundsDict.Add($"Sound-{i}", notDownloadedSounds[i].AudioFileUrl);
+                        if (i > 10) break;
+                    }
+
+                    Analytics.TrackEvent("PlaylistDownload-NotDownloadedSounds", notDownloadedSoundsDict);
                 }
                 else
                 {
