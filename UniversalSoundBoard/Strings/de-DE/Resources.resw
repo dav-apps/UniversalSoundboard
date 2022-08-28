@@ -806,9 +806,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>Sounds herunterladen</value>
   </data>
   <data name="SoundDownloadDialog-Description" xml:space="preserve">
-    <value>Du kannst Sounds direkt aus dem Internet herunterladen. Gebe einfach den Link unten ein.
-
-Unterstützt werden Links zu Audiodateien und YouTube-Videos.</value>
+    <value>Du kannst Sounds direkt aus dem Internet herunterladen. Gebe einfach den Link unten ein.</value>
   </data>
   <data name="SoundDownloadDialog-RetrievingInfo" xml:space="preserve">
     <value>Informationen werden abgerufen...</value>
@@ -1040,5 +1038,8 @@ Unterstützt werden Links zu Audiodateien und YouTube-Videos.</value>
   </data>
   <data name="SoundDownloadDialog-SelectedSounds" xml:space="preserve">
     <value>{0} von {1} Sounds ausgewählt</value>
+  </data>
+  <data name="SoundDownloadDialog-DescriptionLink" xml:space="preserve">
+    <value>Mehr zu Sound-Downloads</value>
   </data>
 </root>

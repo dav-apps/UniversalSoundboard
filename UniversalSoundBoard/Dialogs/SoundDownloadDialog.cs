@@ -56,6 +56,13 @@ namespace UniversalSoundboard.Dialogs
                 TextWrapping = TextWrapping.WrapWholeWords
             };
 
+            HyperlinkButton infoHyperlinkButton = new HyperlinkButton
+            {
+                Content = FileManager.loader.GetString("SoundDownloadDialog-DescriptionLink"),
+                NavigateUri = new Uri("https://github.com/dav-apps/UniversalSoundboard/wiki/Sound-downloads"),
+                Padding = new Thickness(0)
+            };
+
             UrlTextBox = new TextBox
             {
                 Margin = new Thickness(0, 20, 0, 0),
@@ -75,6 +82,7 @@ namespace UniversalSoundboard.Dialogs
             CreateSoundListStackPanel(soundDownloadListItemTemplate);
 
             containerStackPanel.Children.Add(descriptionTextBlock);
+            containerStackPanel.Children.Add(infoHyperlinkButton);
             containerStackPanel.Children.Add(UrlTextBox);
             containerStackPanel.Children.Add(LoadingMessageStackPanel);
             containerStackPanel.Children.Add(YoutubeInfoGrid);

@@ -807,9 +807,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
     <value>Télécharger des sons</value>
   </data>
   <data name="SoundDownloadDialog-Description" xml:space="preserve">
-    <value>Vous pouvez télécharger des sons directement depuis Internet. Saisissez le lien ci-dessous.
-
-Les liens vers des fichiers audio et des vidéos YouTube sont acceptés.</value>
+    <value>Vous pouvez télécharger des sons directement depuis Internet. Saisissez le lien ci-dessous.</value>
   </data>
   <data name="SoundDownloadDialog-RetrievingInfo" xml:space="preserve">
     <value>Obtenir des informations...</value>
@@ -1041,5 +1039,8 @@ Les liens vers des fichiers audio et des vidéos YouTube sont acceptés.</value>
   </data>
   <data name="SoundDownloadDialog-SelectedSounds" xml:space="preserve">
     <value>{0} de {1} sons sélectionnés</value>
+  </data>
+  <data name="SoundDownloadDialog-DescriptionLink" xml:space="preserve">
+    <value>En savoir plus sur les téléchargements de sons</value>
   </data>
 </root>

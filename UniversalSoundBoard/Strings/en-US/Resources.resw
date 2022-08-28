@@ -808,9 +808,7 @@ This may take some time, depending on how large the import file is.</value>
     <value>Download sounds</value>
   </data>
   <data name="SoundDownloadDialog-Description" xml:space="preserve">
-    <value>You can download sounds directly from the Internet. Just enter the link below.
-
-Supported are links to audio files and YouTube videos.</value>
+    <value>You can download sounds directly from the web. Just enter the link below.</value>
   </data>
   <data name="SoundDownloadDialog-RetrievingInfo" xml:space="preserve">
     <value>Retrieving information...</value>
@@ -1042,5 +1040,8 @@ Supported are links to audio files and YouTube videos.</value>
   </data>
   <data name="SoundDownloadDialog-SelectedSounds" xml:space="preserve">
     <value>{0} of {1} sounds selected</value>
+  </data>
+  <data name="SoundDownloadDialog-DescriptionLink" xml:space="preserve">
+    <value>More about sound downloads</value>
   </data>
 </root>
