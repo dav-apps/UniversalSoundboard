@@ -42,6 +42,13 @@ namespace UniversalSoundboard.Dialogs
             SoundItems = new ObservableCollection<SoundDownloadItem>();
             ContentDialog.IsPrimaryButtonEnabled = false;
             Content = GetContent(soundDownloadListItemTemplate);
+            ContentDialog.Opened += ContentDialog_Opened;
+        }
+
+        private void ContentDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
+        {
+            if (UrlTextBox != null)
+                UrlTextBox.Focus(FocusState.Keyboard);
         }
 
         private StackPanel GetContent(DataTemplate soundDownloadListItemTemplate)
