@@ -75,6 +75,7 @@
         AddSounds,
         DownloadSound,
         DownloadSounds,
+        ContinuePlaylistDownload,
         Export,
         Import,
         ImageExport,

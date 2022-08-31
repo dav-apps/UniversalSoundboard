@@ -1042,4 +1042,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SoundDownloadDialog-DescriptionLink" xml:space="preserve">
     <value>Mehr zu Sound-Downloads</value>
   </data>
+  <data name="InAppNotification-ContinuePlaylistDownload" xml:space="preserve">
+    <value>Der Playlist-Download wurde beim letzten Mal untergebrochen. Möchtest du den Download fortsetzen?</value>
+  </data>
 </root>

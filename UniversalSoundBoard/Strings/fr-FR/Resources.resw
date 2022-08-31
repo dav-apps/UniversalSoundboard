@@ -1043,4 +1043,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="SoundDownloadDialog-DescriptionLink" xml:space="preserve">
     <value>En savoir plus sur les téléchargements de sons</value>
   </data>
+  <data name="InAppNotification-ContinuePlaylistDownload" xml:space="preserve">
+    <value>Le téléchargement de la playlist a été interrompu la dernière fois. Souhaitez-vous poursuivre le téléchargement ?</value>
+  </data>
 </root>

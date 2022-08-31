@@ -1044,4 +1044,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SoundDownloadDialog-DescriptionLink" xml:space="preserve">
     <value>More about sound downloads</value>
   </data>
+  <data name="InAppNotification-ContinuePlaylistDownload" xml:space="preserve">
+    <value>The playlist download was interrupted last time. Do you want to continue the download?</value>
+  </data>
 </root>

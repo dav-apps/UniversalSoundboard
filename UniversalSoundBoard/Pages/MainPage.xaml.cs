@@ -22,10 +22,7 @@ using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using davClassLibrary;
-using DotNetTools.SharpGrabber;
-using DotNetTools.SharpGrabber.Grabbed;
 using System.Collections.ObjectModel;
-using Google.Apis.YouTube.v3.Data;
 using Microsoft.AppCenter.Analytics;
 using Windows.System;
 using Windows.Graphics.Display;
@@ -114,6 +111,7 @@ namespace UniversalSoundboard.Pages
 
             IncreaseAppStartCounter();
             UpdateOutputDeviceFlyout();
+            await ContinuePlaylistDownload();
             await FileManager.StartHotkeyProcess();
             await Dav.SyncData();
         }
@@ -276,7 +274,7 @@ namespace UniversalSoundboard.Pages
 
         private async void ItemViewHolder_SoundDownload(object sender, EventArgs e)
         {
-            await HandleSoundDownload(sender as SoundDownloadDialog);
+            await StartSoundDownload(sender as SoundDownloadDialog);
         }
 
         private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
@@ -516,6 +514,39 @@ namespace UniversalSoundboard.Pages
             }
 
             OutputDeviceButton.Flyout = menuFlyout;
+        }
+
+        private async Task ContinuePlaylistDownload()
+        {
+            // Check if there was a playlist download in the previous session
+            var soundDownloadState = await SoundDownloadState.Load();
+            var soundDownloadStateItems = await SoundDownloadStateItems.Load();
+
+            if (soundDownloadState == null || soundDownloadStateItems == null)
+                return;
+
+            // Show IAN for continuing playlist download
+            var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
+                InAppNotificationType.ContinuePlaylistDownload,
+                string.Format(loader.GetString("InAppNotification-ContinuePlaylistDownload"), 1, soundDownloadStateItems.SoundItems.Count),
+                0,
+                false,
+                true,
+                FileManager.loader.GetString("Actions-ContinueDownload")
+            );
+
+            showInAppNotificationEventArgs.PrimaryButtonClick += async (object sender, RoutedEventArgs e) =>
+            {
+                // Hide the IAN
+                FileManager.DismissInAppNotification(InAppNotificationType.ContinuePlaylistDownload);
+
+                await ContinueSoundDownload(soundDownloadState, soundDownloadStateItems);
+            };
+
+            FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
+                this,
+                showInAppNotificationEventArgs
+            );
         }
         #endregion
 
@@ -1266,22 +1297,70 @@ namespace UniversalSoundboard.Pages
 
         private async void SoundDownloadDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await HandleSoundDownload(sender as SoundDownloadDialog);
+            await StartSoundDownload(sender as SoundDownloadDialog);
         }
 
-        public async Task HandleSoundDownload(SoundDownloadDialog dialog)
+        public async Task StartSoundDownload(SoundDownloadDialog dialog)
         {
             if (dialog.Result == null) return;
 
+            await HandleSoundDownload(
+                dialog.Result.SoundItems,
+                Guid.Empty,
+                dialog.Result.CreateCategoryForPlaylist,
+                dialog.Result.CategoryName
+            );
+        }
+
+        public async Task ContinueSoundDownload(SoundDownloadState soundDownloadState, SoundDownloadStateItems soundDownloadStateItems)
+        {
+            List<SoundDownloadItem> soundItems = new List<SoundDownloadItem>();
+
+            foreach (var soundItem in soundDownloadStateItems.SoundItems)
+            {
+                if (soundDownloadStateItems.Class == "SoundDownloadYoutubeItem")
+                {
+                    soundItems.Add(new SoundDownloadYoutubeItem(
+                        soundItem.Name,
+                        soundItem.ImageFileUrl,
+                        soundItem.AudioFileUrl,
+                        soundItem.ImageFileExt,
+                        soundItem.AudioFileExt,
+                        soundItem.ImageFileSize,
+                        soundItem.AudioFileSize,
+                        soundItem.IsSelected
+                    ));
+                }
+                else
+                    soundItems.Add(soundItem);
+            }
+
+            await HandleSoundDownload(
+                soundItems: soundItems,
+                category: soundDownloadState.CategoryUuid,
+                startIndex: soundDownloadState.CurrentIndex
+            );
+        }
+
+        public async Task HandleSoundDownload(
+            List<SoundDownloadItem> soundItems,
+            Guid category,
+            bool createCategoryForPlaylist = false,
+            string categoryName = null,
+            int startIndex = 0
+        )
+        {
             List<SoundDownloadItem> selectedSoundItems = new List<SoundDownloadItem>();
 
-            foreach (var item in dialog.Result.SoundItems)
+            foreach (var item in soundItems)
                 if (item.IsSelected) selectedSoundItems.Add(item);
 
-            if (selectedSoundItems.Count == 0)
-                return;
+            if (
+                selectedSoundItems.Count == 0
+                || startIndex >= selectedSoundItems.Count
+            ) return;
 
-            Guid currentCategoryUuid = FileManager.itemViewHolder.SelectedCategory;
+            Guid currentCategoryUuid = !category.Equals(Guid.Empty) ? category : FileManager.itemViewHolder.SelectedCategory;
             var cancellationTokenSource = new CancellationTokenSource();
 
             // Disable the ability to add or download sounds
@@ -1391,16 +1470,18 @@ namespace UniversalSoundboard.Pages
                     showInAppNotificationEventArgs
                 );
 
+                var soundDownloadState = new SoundDownloadState(0, currentCategoryUuid);
+
                 // Create category for playlist, if the option is checked
                 Category newCategory = null;
 
-                if (dialog.Result.CreateCategoryForPlaylist)
+                if (createCategoryForPlaylist && categoryName != null)
                 {
                     // Create category
                     List<string> iconsList = FileManager.GetIconsList();
                     int randomNumber = new Random().Next(iconsList.Count);
 
-                    Guid categoryUuid = await FileManager.CreateCategoryAsync(null, null, dialog.Result.CategoryName, iconsList[randomNumber]);
+                    Guid categoryUuid = await FileManager.CreateCategoryAsync(null, null, categoryName, iconsList[randomNumber]);
                     newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
 
                     // Add the category to the Categories list
@@ -1408,13 +1489,22 @@ namespace UniversalSoundboard.Pages
 
                     // Add the category to the SideBar
                     AddCategoryMenuItem(menuItems, newCategory, Guid.Empty);
+
+                    soundDownloadState.CategoryUuid = categoryUuid;
                 }
 
                 List<SoundDownloadItem> notDownloadedSounds = new List<SoundDownloadItem>();
 
+                // Save the selected items
+                await new SoundDownloadStateItems(selectedSoundItems).Save();
+
                 // Go through each video of the playlist
-                for (int i = 0; i < selectedSoundItems.Count; i++)
+                for (int i = startIndex; i < selectedSoundItems.Count; i++)
                 {
+                    // Save the current state
+                    soundDownloadState.CurrentIndex = i;
+                    await soundDownloadState.Save();
+
                     var currentSoundItem = selectedSoundItems[i];
 
                     FileManager.SetInAppNotificationMessage(
