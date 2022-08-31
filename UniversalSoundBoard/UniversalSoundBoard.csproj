@@ -202,6 +202,8 @@
     <Compile Include="Models\SoundDownload\SoundDownloadPlugin.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadPluginResult.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadResult.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadState.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadStateItems.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadYoutubeItem.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadYoutubePlugin.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadYoutubePluginResult.cs" />
