@@ -1310,10 +1310,11 @@ namespace UniversalSoundboard.Pages
             if (dialog.Result == null) return;
 
             await HandleSoundDownload(
-                dialog.Result.SoundItems,
-                Guid.Empty,
-                dialog.Result.CreateCategoryForPlaylist,
-                dialog.Result.CategoryName
+                soundItems: dialog.Result.SoundItems,
+                category: Guid.Empty,
+                createCategoryForPlaylist: dialog.Result.CreateCategoryForPlaylist,
+                categoryName: dialog.Result.CategoryName,
+                notDownloadedSounds: new List<int>()
             );
         }
 
@@ -1343,13 +1344,15 @@ namespace UniversalSoundboard.Pages
             await HandleSoundDownload(
                 soundItems: soundItems,
                 category: soundDownloadState.CategoryUuid,
-                startIndex: soundDownloadState.CurrentIndex
+                startIndex: soundDownloadState.CurrentIndex,
+                notDownloadedSounds: soundDownloadState.NotDownloadedSounds
             );
         }
 
         public async Task HandleSoundDownload(
             List<SoundDownloadItem> soundItems,
             Guid category,
+            List<int> notDownloadedSounds,
             bool createCategoryForPlaylist = false,
             string categoryName = null,
             int startIndex = 0
@@ -1498,8 +1501,6 @@ namespace UniversalSoundboard.Pages
                     soundDownloadState.CategoryUuid = categoryUuid;
                 }
 
-                List<SoundDownloadItem> notDownloadedSounds = new List<SoundDownloadItem>();
-
                 // Save the selected items
                 await new SoundDownloadStateItems(selectedSoundItems).Save();
                 FileManager.itemViewHolder.ShowContinuePlaylistDownloadIAN = true;
@@ -1509,6 +1510,7 @@ namespace UniversalSoundboard.Pages
                 {
                     // Save the current state
                     soundDownloadState.CurrentIndex = i;
+                    soundDownloadState.NotDownloadedSounds = notDownloadedSounds;
                     await soundDownloadState.Save();
 
                     var currentSoundItem = selectedSoundItems[i];
@@ -1529,7 +1531,7 @@ namespace UniversalSoundboard.Pages
 
                         if (imageFile == null && currentSoundItem.ImageFileUrl != null)
                         {
-                            notDownloadedSounds.Add(currentSoundItem);
+                            notDownloadedSounds.Add(i);
                             continue;
                         }
                     }
@@ -1562,7 +1564,7 @@ namespace UniversalSoundboard.Pages
 
                         if (audioFile == null)
                         {
-                            notDownloadedSounds.Add(currentSoundItem);
+                            notDownloadedSounds.Add(i);
                             continue;
                         }
                     }
@@ -1580,7 +1582,7 @@ namespace UniversalSoundboard.Pages
 
                     if (uuid.Equals(Guid.Empty))
                     {
-                        notDownloadedSounds.Add(currentSoundItem);
+                        notDownloadedSounds.Add(i);
                         continue;
                     }
 
@@ -1606,10 +1608,16 @@ namespace UniversalSoundboard.Pages
                         loader.GetString("Actions-ShowDetails")
                     );
 
+                    // Get the not downloaded sound items
+                    List<SoundDownloadItem> notDownloadedSoundItems = new List<SoundDownloadItem>();
+
+                    foreach (int index in notDownloadedSounds)
+                        notDownloadedSoundItems.Add(selectedSoundItems.ElementAt(index));
+
                     inAppNotificationArgs.PrimaryButtonClick += async (s, a) =>
                     {
                         FileManager.DismissInAppNotification(InAppNotificationType.DownloadSounds);
-                        await new DownloadSoundsErrorDialog(notDownloadedSounds).ShowAsync();
+                        await new DownloadSoundsErrorDialog(notDownloadedSoundItems).ShowAsync();
                     };
 
                     FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(this, inAppNotificationArgs);
@@ -1619,7 +1627,7 @@ namespace UniversalSoundboard.Pages
 
                     for (int i = 0; i < notDownloadedSounds.Count; i++)
                     {
-                        notDownloadedSoundsDict.Add($"Sound-{i}", notDownloadedSounds[i].AudioFileUrl);
+                        notDownloadedSoundsDict.Add($"Sound-{i}", notDownloadedSoundItems[i].AudioFileUrl);
                         if (i > 10) break;
                     }
 

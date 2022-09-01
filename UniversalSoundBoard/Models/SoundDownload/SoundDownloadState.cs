@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.Storage;
@@ -11,11 +12,13 @@ namespace UniversalSoundboard.Models
 
         public int CurrentIndex { get; set; }
         public Guid CategoryUuid { get; set; }
+        public List<int> NotDownloadedSounds { get; set; }
 
         public SoundDownloadState(int currentIndex, Guid categoryUuid)
         {
             CurrentIndex = currentIndex;
             CategoryUuid = categoryUuid;
+            NotDownloadedSounds = new List<int>();
         }
 
         public string ToJson()
