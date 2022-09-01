@@ -37,6 +37,7 @@ namespace UniversalSoundboard.Common
         private const string volumeKey = "volume";
         private const string appStartCounterKey = "appStartCounter";
         private const string appReviewedKey = "appReviewed";
+        private const string showContinuePlaylistDownloadIANKey = "showContinuePlaylistDownloadIAN";
         #endregion
 
         #region Constants for localSettings defaults
@@ -59,6 +60,7 @@ namespace UniversalSoundboard.Common
         private const int volumeDefault = 100;
         private const int appStartCounterDefault = 0;
         private const bool appReviewedDefault = false;
+        private const bool showContinuePlaylistDownloadIANDefault = false;
         #endregion
 
         #region Variables
@@ -129,6 +131,7 @@ namespace UniversalSoundboard.Common
         private int _volume;                            // The volume of the entire app, between 0 and 100
         private int _appStartCounter;                   // Counts the number of app starts
         private bool _appReviewed;                      // If true, the user has followed the link to the MS Store to write a review
+        private bool _showContinuePlaylistDownloadIAN;  // Determines whether to show the IAN for continuing the playlist download
         #endregion
 
         #region Events
@@ -406,6 +409,13 @@ namespace UniversalSoundboard.Common
                 _appReviewed = appReviewedDefault;
             else
                 _appReviewed = (bool)localSettings.Values[appReviewedKey];
+            #endregion
+
+            #region showContinuePlaylistDownloadIAN
+            if (localSettings.Values[showContinuePlaylistDownloadIANKey] == null)
+                _showContinuePlaylistDownloadIAN = showContinuePlaylistDownloadIANDefault;
+            else
+                _showContinuePlaylistDownloadIAN = (bool)localSettings.Values[showContinuePlaylistDownloadIANKey];
             #endregion
             #endregion
         }
@@ -1114,6 +1124,21 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[appReviewedKey] = value;
                 _appReviewed = value;
                 NotifyPropertyChanged(AppReviewedKey);
+            }
+        }
+        #endregion
+
+        #region ShowContinuePlaylistDownloadIAN
+        public const string ShowContinuePlaylistDownloadIANKey = "ShowContinuePlaylistDownloadIAN";
+        public bool ShowContinuePlaylistDownloadIAN
+        {
+            get => _showContinuePlaylistDownloadIAN;
+            set
+            {
+                if (_showContinuePlaylistDownloadIAN.Equals(value)) return;
+                localSettings.Values[showContinuePlaylistDownloadIANKey] = value;
+                _showContinuePlaylistDownloadIAN = value;
+                NotifyPropertyChanged(ShowContinuePlaylistDownloadIANKey);
             }
         }
         #endregion

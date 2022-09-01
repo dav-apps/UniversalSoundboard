@@ -518,6 +518,11 @@ namespace UniversalSoundboard.Pages
 
         private async Task ContinuePlaylistDownload()
         {
+            if (!FileManager.itemViewHolder.ShowContinuePlaylistDownloadIAN)
+                return;
+
+            FileManager.itemViewHolder.ShowContinuePlaylistDownloadIAN = false;
+
             // Check if there was a playlist download in the previous session
             var soundDownloadState = await SoundDownloadState.Load();
             var soundDownloadStateItems = await SoundDownloadStateItems.Load();
@@ -1497,6 +1502,7 @@ namespace UniversalSoundboard.Pages
 
                 // Save the selected items
                 await new SoundDownloadStateItems(selectedSoundItems).Save();
+                FileManager.itemViewHolder.ShowContinuePlaylistDownloadIAN = true;
 
                 // Go through each video of the playlist
                 for (int i = startIndex; i < selectedSoundItems.Count; i++)
@@ -1580,6 +1586,10 @@ namespace UniversalSoundboard.Pages
 
                     await FileManager.AddSound(uuid);
                 }
+
+                await SoundDownloadState.Delete();
+                await SoundDownloadStateItems.Delete();
+                FileManager.itemViewHolder.ShowContinuePlaylistDownloadIAN = false;
 
                 if (notDownloadedSounds.Count > 0)
                 {

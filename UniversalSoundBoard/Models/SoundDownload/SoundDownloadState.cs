@@ -46,5 +46,16 @@ namespace UniversalSoundboard.Models
 
             return JsonSerializer.Deserialize<SoundDownloadState>(stateJson);
         }
+
+        public static async Task Delete()
+        {
+            StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
+            StorageFile soundDownloadStateFile = await localCacheFolder.TryGetItemAsync(SoundDownloadStateFileName) as StorageFile;
+
+            if (soundDownloadStateFile == null)
+                return;
+
+            await soundDownloadStateFile.DeleteAsync();
+        }
     }
 }
