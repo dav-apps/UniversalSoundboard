@@ -243,12 +243,12 @@ namespace UniversalSoundboard.Pages
             if (!audioRecorder.IsRecording && recordedSoundItems.Count > 0)
             {
                 RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, false);
-                RecordingRelativePanel.Height = MainPage.soundRecorderAppWindow.GetPlacement().Size.Height / 1.5;
+                RecordingRelativePanel.Height = ContentRoot.ActualHeight / 1.5;
             }
             else
             {
                 RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, true);
-                RecordingRelativePanel.Height = MainPage.soundRecorderAppWindow.GetPlacement().Size.Height;
+                RecordingRelativePanel.Height = ContentRoot.ActualHeight;
             }
         }
 
