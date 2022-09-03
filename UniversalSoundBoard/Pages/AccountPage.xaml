@@ -258,20 +258,15 @@
 
                                 <TextBlock
                                     Style="{StaticResource PlusCardFeatureTextStyle}"
-                                    x:Uid="Account-PlusCardFeature-PlaylistDownloadTextBlock" />
+                                    x:Uid="Account-PlusCardFeature-SoundRecorderTextBlock" />
 
                                 <Button Style="{StaticResource InfoButtonStyle}">
                                     <Button.Flyout>
                                         <Flyout>
                                             <StackPanel MaxWidth="300">
                                                 <TextBlock
-                                                    x:Uid="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock1"
+                                                    x:Uid="Account-PlusCardFeature-SoundRecorderFlyoutTextBlock"
                                                     TextWrapping="WrapWholeWords" />
-
-                                                <TextBlock
-                                                    x:Uid="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock2"
-                                                    TextWrapping="WrapWholeWords"
-                                                    Margin="0,10,0,0" />
                                             </StackPanel>
                                         </Flyout>
                                     </Button.Flyout>

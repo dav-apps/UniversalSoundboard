@@ -859,15 +859,6 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SoundDownloadDialog-CreateCategoryForPlaylist" xml:space="preserve">
     <value>Neue Kategorie für Playlist erstellen</value>
   </data>
-  <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock1.Text" xml:space="preserve">
-    <value>Diese Funktion ermöglicht es dir, alle Sounds einer Playlist herunterzuladen und direkt in einer neuen Kategorie zu speichern.</value>
-  </data>
-  <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock2.Text" xml:space="preserve">
-    <value>Diese Option wird dir angezeigt, wenn du ein YouTube-Video herunterladen möchtest, das sich in einer Playlist befindet.</value>
-  </data>
-  <data name="Account-PlusCardFeature-PlaylistDownloadTextBlock.Text" xml:space="preserve">
-    <value>Lade komplette YouTube-Playlisten herunter</value>
-  </data>
   <data name="LocalFileButtonToolTip.Text" xml:space="preserve">
     <value>Dieser Sound ist eine lokale Datei.</value>
   </data>
@@ -1044,5 +1035,11 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="InAppNotification-ContinuePlaylistDownload" xml:space="preserve">
     <value>Der Playlist-Download wurde beim letzten Mal untergebrochen. Möchtest du den Download fortsetzen?</value>
+  </data>
+  <data name="Account-PlusCardFeature-SoundRecorderFlyoutTextBlock.Text" xml:space="preserve">
+    <value>Mit dem Sound-Recorder kannst du Sounds aufnehmen und zu deinem Soundboard hinzufügen.</value>
+  </data>
+  <data name="Account-PlusCardFeature-SoundRecorderTextBlock.Text" xml:space="preserve">
+    <value>Bekomme Zugriff zum Sound-Recorder</value>
   </data>
 </root>

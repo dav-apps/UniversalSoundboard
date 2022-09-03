@@ -860,15 +860,6 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="SoundDownloadDialog-CreateCategoryForPlaylist" xml:space="preserve">
     <value>Créer une nouvelle catégorie pour la playlist</value>
   </data>
-  <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock1.Text" xml:space="preserve">
-    <value>Cette fonction vous permet de télécharger tous les sons d’une playlist et de les enregistrer directement dans une nouvelle catégorie.</value>
-  </data>
-  <data name="Account-PlusCardFeature-PlaylistDownloadFlyoutTextBlock2.Text" xml:space="preserve">
-    <value>Cette option est présentée lorsque vous essayez de télécharger une vidéo YouTube dans une playlist.</value>
-  </data>
-  <data name="Account-PlusCardFeature-PlaylistDownloadTextBlock.Text" xml:space="preserve">
-    <value>Téléchargez des playlists YouTube complètes</value>
-  </data>
   <data name="LocalFileButtonToolTip.Text" xml:space="preserve">
     <value>Ce son est un fichier local</value>
   </data>
@@ -1045,5 +1036,11 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   </data>
   <data name="InAppNotification-ContinuePlaylistDownload" xml:space="preserve">
     <value>Le téléchargement de la playlist a été interrompu la dernière fois. Souhaitez-vous poursuivre le téléchargement ?</value>
+  </data>
+  <data name="Account-PlusCardFeature-SoundRecorderFlyoutTextBlock.Text" xml:space="preserve">
+    <value>Avec l'enregistreur de son, vous pouvez enregistrer des sons et les ajouter à votre Soundboard.</value>
+  </data>
+  <data name="Account-PlusCardFeature-SoundRecorderTextBlock.Text" xml:space="preserve">
+    <value>Accéder à l'enregistreur de son</value>
   </data>
 </root>
