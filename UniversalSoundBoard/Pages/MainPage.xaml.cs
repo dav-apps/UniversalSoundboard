@@ -1407,7 +1407,7 @@ namespace UniversalSoundboard.Pages
 
                 StorageFile audioFile = await soundItem.DownloadAudioFile(progress, cancellationTokenSource.Token);
 
-                if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                if (await CheckSoundDownloadCancelled(cancellationTokenSource))
                     return;
 
                 if (audioFile == null)
@@ -1526,7 +1526,7 @@ namespace UniversalSoundboard.Pages
                     {
                         imageFile = await currentSoundItem.DownloadImageFile();
 
-                        if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                        if (await CheckSoundDownloadCancelled(cancellationTokenSource))
                             return;
 
                         if (imageFile == null && currentSoundItem.ImageFileUrl != null)
@@ -1543,7 +1543,7 @@ namespace UniversalSoundboard.Pages
                         cancellationTokenSource.Token
                     );
 
-                    if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                    if (await CheckSoundDownloadCancelled(cancellationTokenSource))
                         return;
 
                     if (audioFile == null)
@@ -1551,7 +1551,7 @@ namespace UniversalSoundboard.Pages
                         // Wait a few seconds and try it again
                         await Task.Delay(15000);
 
-                        if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                        if (await CheckSoundDownloadCancelled(cancellationTokenSource))
                             return;
 
                         audioFile = await currentSoundItem.DownloadAudioFile(
@@ -1559,7 +1559,7 @@ namespace UniversalSoundboard.Pages
                             cancellationTokenSource.Token
                         );
 
-                        if (CheckSoundDownloadCancelled(cancellationTokenSource))
+                        if (await CheckSoundDownloadCancelled(cancellationTokenSource))
                             return;
 
                         if (audioFile == null)
@@ -1673,7 +1673,7 @@ namespace UniversalSoundboard.Pages
             await new DownloadFileErrorDialog().ShowAsync();
         }
 
-        private bool CheckSoundDownloadCancelled(CancellationTokenSource cancellationTokenSource)
+        private async Task<bool> CheckSoundDownloadCancelled(CancellationTokenSource cancellationTokenSource)
         {
             if (cancellationTokenSource.IsCancellationRequested)
             {
@@ -1681,6 +1681,10 @@ namespace UniversalSoundboard.Pages
                 FileManager.DismissInAppNotification(InAppNotificationType.DownloadSound);
                 FileManager.DismissInAppNotification(InAppNotificationType.DownloadSounds);
                 FileManager.itemViewHolder.AddingSounds = false;
+
+                // Delete the download state files
+                await SoundDownloadState.Delete();
+                await SoundDownloadStateItems.Delete();
 
                 return true;
             }
