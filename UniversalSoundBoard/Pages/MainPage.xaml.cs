@@ -1696,24 +1696,40 @@ namespace UniversalSoundboard.Pages
         #region RecordSounds
         private async void AddButtonRecordFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            if (soundRecorderAppWindow == null)
+            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
             {
-                soundRecorderAppWindow = await AppWindow.TryCreateAsync();
-                soundRecorderAppWindow.RequestSize(new Size(500, 500));
-                soundRecorderAppWindow.Title = loader.GetString("SoundRecorder-Title");
-                soundRecorderAppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
-                soundRecorderAppWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark ? Colors.White : Colors.Black;
-                soundRecorderAppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
-                soundRecorderAppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
+                if (soundRecorderAppWindow == null)
+                {
+                    soundRecorderAppWindow = await AppWindow.TryCreateAsync();
+                    soundRecorderAppWindow.RequestSize(new Size(500, 500));
+                    soundRecorderAppWindow.Title = loader.GetString("SoundRecorder-Title");
+                    soundRecorderAppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                    soundRecorderAppWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark ? Colors.White : Colors.Black;
+                    soundRecorderAppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                    soundRecorderAppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
-                soundRecorderAppWindow.Closed += (AppWindow window, AppWindowClosedEventArgs args) => soundRecorderAppWindow = null;
+                    soundRecorderAppWindow.Closed += (AppWindow window, AppWindowClosedEventArgs args) => soundRecorderAppWindow = null;
 
-                soundRecorderAppWindowContentFrame = new Frame();
-                soundRecorderAppWindowContentFrame.Navigate(typeof(SoundRecorderPage));
-                ElementCompositionPreview.SetAppWindowContent(soundRecorderAppWindow, soundRecorderAppWindowContentFrame);
+                    soundRecorderAppWindowContentFrame = new Frame();
+                    soundRecorderAppWindowContentFrame.Navigate(typeof(SoundRecorderPage));
+                    ElementCompositionPreview.SetAppWindowContent(soundRecorderAppWindow, soundRecorderAppWindowContentFrame);
+                }
+
+                await soundRecorderAppWindow.TryShowAsync();
             }
-
-            await soundRecorderAppWindow.TryShowAsync();
+            else
+            {
+                // Show dialog which explains that this feature is only for Plus users
+                var davPlusSoundRecorderDialog = new DavPlusSoundRecorderDialog();
+                davPlusSoundRecorderDialog.PrimaryButtonClick += DavPlusSoundRecorderDialog_PrimaryButtonClick;
+                await davPlusSoundRecorderDialog.ShowAsync();
+            }
+        }
+        
+        private void DavPlusSoundRecorderDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Navigate to the Account page
+            FileManager.NavigateToAccountPage();
         }
         #endregion
 

@@ -1042,4 +1042,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Account-PlusCardFeature-SoundRecorderTextBlock.Text" xml:space="preserve">
     <value>Bekomme Zugriff zum Sound-Recorder</value>
   </data>
+  <data name="DavPlusSoundRecorderDialog-Content" xml:space="preserve">
+    <value>Das Aufnehmen von Sounds ist nur für Nutzer von dav Plus verfügbar. Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
+  </data>
 </root>

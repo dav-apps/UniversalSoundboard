@@ -1044,4 +1044,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Account-PlusCardFeature-SoundRecorderTextBlock.Text" xml:space="preserve">
     <value>Get access to the sound recorder</value>
   </data>
+  <data name="DavPlusSoundRecorderDialog-Content" xml:space="preserve">
+    <value>Sound recording is only available for dav Plus users. Log in and upgrade your plan to use this feature.</value>
+  </data>
 </root>

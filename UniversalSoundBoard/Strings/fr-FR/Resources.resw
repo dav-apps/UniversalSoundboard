@@ -1043,4 +1043,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="Account-PlusCardFeature-SoundRecorderTextBlock.Text" xml:space="preserve">
     <value>Accéder à l'enregistreur de son</value>
   </data>
+  <data name="DavPlusSoundRecorderDialog-Content" xml:space="preserve">
+    <value>L'enregistrement de sons n’est disponible que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
+  </data>
 </root>
