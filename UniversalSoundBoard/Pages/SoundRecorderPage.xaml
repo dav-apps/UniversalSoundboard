@@ -6,12 +6,16 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:models="using:UniversalSoundboard.Models"
+    xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
     mc:Ignorable="d"
     Loaded="Page_Loaded"
     SizeChanged="Page_SizeChanged">
 
     <Page.Resources>
+        <!-- Converters -->
+        <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
+        
         <!-- DataTemplates -->
         <DataTemplate x:Key="RecordedSoundsListViewDataTemplate" x:DataType="models:RecordedSoundItem">
             <components:RecordedSoundItemTemplate />
@@ -123,7 +127,8 @@
             <StackPanel
                 RelativePanel.AlignTopWithPanel="True"
                 RelativePanel.AlignLeftWithPanel="True"
-                RelativePanel.AlignRightWithPanel="True">
+                RelativePanel.AlignRightWithPanel="True"
+                Visibility="{Binding SoundRecorderMinimizeWarningClosed, Converter={StaticResource BooleanToInvertedVisibilityConverter}}">
 
                 <winui:InfoBar
                     Name="MinimizeWarningInfoBar"

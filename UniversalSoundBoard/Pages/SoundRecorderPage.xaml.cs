@@ -223,7 +223,7 @@ namespace UniversalSoundboard.Pages
 
         private void MinimizeWarningInfoBar_Closed(WinUI.InfoBar sender, WinUI.InfoBarClosedEventArgs args)
         {
-
+            FileManager.itemViewHolder.SoundRecorderMinimizeWarningClosed = true;
         }
 
         private async Task InitAudioRecorder()

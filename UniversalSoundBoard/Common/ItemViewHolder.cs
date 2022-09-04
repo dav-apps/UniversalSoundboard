@@ -38,6 +38,7 @@ namespace UniversalSoundboard.Common
         private const string appStartCounterKey = "appStartCounter";
         private const string appReviewedKey = "appReviewed";
         private const string showContinuePlaylistDownloadIANKey = "showContinuePlaylistDownloadIAN";
+        private const string soundRecorderMinimizeWarningClosedKey = "soundRecorderMinimizeWarningClosed";
         #endregion
 
         #region Constants for localSettings defaults
@@ -61,6 +62,7 @@ namespace UniversalSoundboard.Common
         private const int appStartCounterDefault = 0;
         private const bool appReviewedDefault = false;
         private const bool showContinuePlaylistDownloadIANDefault = false;
+        private const bool soundRecorderMinimizeWarningClosedDefault = false;
         #endregion
 
         #region Variables
@@ -113,25 +115,26 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Settings
-        private bool _playingSoundsListVisible;         // If true shows the Playing Sounds list at the right
-        private bool _savePlayingSounds;                // If true saves the PlayingSounds and loads them when starting the app
-        private bool _openMultipleSounds;               // If false, removes all PlayingSounds whenever the user opens a new one; if true, adds new opened sounds to existing PlayingSounds
-        private bool _multiSoundPlayback;               // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
-        private bool _showSoundsPivot;                  // If true shows the pivot to select Sounds or Favourite sounds
-        private NewSoundOrder _soundOrder;              // The selected sound order in the settings
-        private bool _useStandardOutputDevice;          // If true, the standard output device of the OS is used for playback
-        private string _outputDevice;                   // The id of the selected output device
-        private bool _showListView;                     // If true, shows the sounds on the SoundPage in a ListView
-        private bool _showCategoriesIcons;              // If true shows the icon of the category on the sound tile
-        private bool _showAcrylicBackground;            // If true the acrylic background is visible
-        private bool _liveTile;                         // If true, shows the live tile
-        private AppTheme _theme;                        // The design theme of the app
-        private double _playingSoundsBarWidth;          // The relative width of the PlayingSoundsBar in percent
-        private bool _muted;                            // If true, the volume is muted
-        private int _volume;                            // The volume of the entire app, between 0 and 100
-        private int _appStartCounter;                   // Counts the number of app starts
-        private bool _appReviewed;                      // If true, the user has followed the link to the MS Store to write a review
-        private bool _showContinuePlaylistDownloadIAN;  // Determines whether to show the IAN for continuing the playlist download
+        private bool _playingSoundsListVisible;             // If true shows the Playing Sounds list at the right
+        private bool _savePlayingSounds;                    // If true saves the PlayingSounds and loads them when starting the app
+        private bool _openMultipleSounds;                   // If false, removes all PlayingSounds whenever the user opens a new one; if true, adds new opened sounds to existing PlayingSounds
+        private bool _multiSoundPlayback;                   // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
+        private bool _showSoundsPivot;                      // If true shows the pivot to select Sounds or Favourite sounds
+        private NewSoundOrder _soundOrder;                  // The selected sound order in the settings
+        private bool _useStandardOutputDevice;              // If true, the standard output device of the OS is used for playback
+        private string _outputDevice;                       // The id of the selected output device
+        private bool _showListView;                         // If true, shows the sounds on the SoundPage in a ListView
+        private bool _showCategoriesIcons;                  // If true shows the icon of the category on the sound tile
+        private bool _showAcrylicBackground;                // If true the acrylic background is visible
+        private bool _liveTile;                             // If true, shows the live tile
+        private AppTheme _theme;                            // The design theme of the app
+        private double _playingSoundsBarWidth;              // The relative width of the PlayingSoundsBar in percent
+        private bool _muted;                                // If true, the volume is muted
+        private int _volume;                                // The volume of the entire app, between 0 and 100
+        private int _appStartCounter;                       // Counts the number of app starts
+        private bool _appReviewed;                          // If true, the user has followed the link to the MS Store to write a review
+        private bool _showContinuePlaylistDownloadIAN;      // Determines whether to show the IAN for continuing the playlist download
+        private bool _soundRecorderMinimizeWarningClosed;   // If true, the warning for minimizing the window on the Sound Recorder was closed by the user and should not be shown again
         #endregion
 
         #region Events
@@ -416,6 +419,13 @@ namespace UniversalSoundboard.Common
                 _showContinuePlaylistDownloadIAN = showContinuePlaylistDownloadIANDefault;
             else
                 _showContinuePlaylistDownloadIAN = (bool)localSettings.Values[showContinuePlaylistDownloadIANKey];
+            #endregion
+
+            #region soundRecorderMinimizeWarningClosed
+            if (localSettings.Values[soundRecorderMinimizeWarningClosedKey] == null)
+                _soundRecorderMinimizeWarningClosed = soundRecorderMinimizeWarningClosedDefault;
+            else
+                _soundRecorderMinimizeWarningClosed = (bool)localSettings.Values[soundRecorderMinimizeWarningClosedKey];
             #endregion
             #endregion
         }
@@ -1139,6 +1149,21 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[showContinuePlaylistDownloadIANKey] = value;
                 _showContinuePlaylistDownloadIAN = value;
                 NotifyPropertyChanged(ShowContinuePlaylistDownloadIANKey);
+            }
+        }
+        #endregion
+
+        #region SoundRecorderMinimizeWarningClosed
+        public const string SoundRecorderMinimizeWarningClosedKey = "SoundRecorderMinimizeWarningClosed";
+        public bool SoundRecorderMinimizeWarningClosed
+        {
+            get => _soundRecorderMinimizeWarningClosed;
+            set
+            {
+                if (_soundRecorderMinimizeWarningClosed.Equals(value)) return;
+                localSettings.Values[soundRecorderMinimizeWarningClosedKey] = value;
+                _soundRecorderMinimizeWarningClosed = value;
+                NotifyPropertyChanged(SoundRecorderMinimizeWarningClosedKey);
             }
         }
         #endregion
