@@ -1046,4 +1046,10 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="DavPlusSoundRecorderDialog-Content" xml:space="preserve">
     <value>L'enregistrement de sons n’est disponible que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
   </data>
+  <data name="SoundRecorderPage-MinimizeWarningInfoBar.Message" xml:space="preserve">
+    <value>L'application ne peut pas enregistrer d'audio lorsqu'elle est réduite.</value>
+  </data>
+  <data name="SoundRecorderPage-MinimizeWarningInfoBar.Title" xml:space="preserve">
+    <value>Laissez cette fenêtre ouverte pendant l'enregistrement.</value>
+  </data>
 </root>

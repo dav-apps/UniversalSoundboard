@@ -1045,4 +1045,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="DavPlusSoundRecorderDialog-Content" xml:space="preserve">
     <value>Das Aufnehmen von Sounds ist nur für Nutzer von dav Plus verfügbar. Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   </data>
+  <data name="SoundRecorderPage-MinimizeWarningInfoBar.Message" xml:space="preserve">
+    <value>Die App kann kein Audio aufnehmen, wenn sie minimiert ist.</value>
+  </data>
+  <data name="SoundRecorderPage-MinimizeWarningInfoBar.Title" xml:space="preserve">
+    <value>Lass dieses Fenster bei der Aufnahme geöffnet.</value>
+  </data>
 </root>

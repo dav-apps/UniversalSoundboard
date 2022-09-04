@@ -1047,4 +1047,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="DavPlusSoundRecorderDialog-Content" xml:space="preserve">
     <value>Sound recording is only available for dav Plus users. Log in and upgrade your plan to use this feature.</value>
   </data>
+  <data name="SoundRecorderPage-MinimizeWarningInfoBar.Message" xml:space="preserve">
+    <value>The app can' t record audio when minimized.</value>
+  </data>
+  <data name="SoundRecorderPage-MinimizeWarningInfoBar.Title" xml:space="preserve">
+    <value>Keep this window open while recording.</value>
+  </data>
 </root>

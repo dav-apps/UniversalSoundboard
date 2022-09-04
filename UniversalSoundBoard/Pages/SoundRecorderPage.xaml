@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:models="using:UniversalSoundboard.Models"
     xmlns:components="using:UniversalSoundboard.Components"
     mc:Ignorable="d"
@@ -118,6 +119,20 @@
                 x:Uid="SoundRecorderPage-WindowTitleTextBlock"
                 Style="{StaticResource CaptionTextBlockStyle}"
                 Margin="13,8,0,0" />
+
+            <StackPanel
+                RelativePanel.AlignTopWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True">
+
+                <winui:InfoBar
+                    Name="MinimizeWarningInfoBar"
+                    x:Uid="SoundRecorderPage-MinimizeWarningInfoBar"
+                    Severity="Informational"
+                    IsOpen="True"
+                    Margin="30,40"
+                    Closed="MinimizeWarningInfoBar_Closed" />
+            </StackPanel>
 
             <Canvas
                 Name="WaveformCanvas"

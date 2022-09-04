@@ -21,6 +21,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Shapes;
+using WinUI = Microsoft.UI.Xaml.Controls;
 
 namespace UniversalSoundboard.Pages
 {
@@ -218,6 +219,11 @@ namespace UniversalSoundboard.Pages
         {
             RecordingRelativePanel.Height = double.NaN;
             RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, true);
+        }
+
+        private void MinimizeWarningInfoBar_Closed(WinUI.InfoBar sender, WinUI.InfoBarClosedEventArgs args)
+        {
+
         }
 
         private async Task InitAudioRecorder()
