@@ -390,6 +390,7 @@ namespace UniversalSoundboard.Components
         {
             await FileManager.DeleteSoundAsync(sound.Uuid);
             FileManager.RemoveSound(sound.Uuid);
+            FileManager.UpdatePlayAllButtonVisibility();
         }
         #endregion
 

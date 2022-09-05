@@ -1433,8 +1433,9 @@ namespace UniversalSoundboard.Pages
                     return;
                 }
 
-                // Show the sound in the list
+                // Add the sound to the list
                 await FileManager.AddSound(uuid);
+                FileManager.UpdatePlayAllButtonVisibility();
 
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
                     this,
@@ -1586,7 +1587,9 @@ namespace UniversalSoundboard.Pages
                         continue;
                     }
 
+                    // Add the sound to the list
                     await FileManager.AddSound(uuid);
+                    FileManager.UpdatePlayAllButtonVisibility();
                 }
 
                 await SoundDownloadState.Delete();
@@ -2246,6 +2249,8 @@ namespace UniversalSoundboard.Pages
                 foreach (var soundUuid in soundUuids)
                     FileManager.RemoveSound(soundUuid);
             }
+
+            FileManager.UpdatePlayAllButtonVisibility();
 
             // Clear selected sounds list
             FileManager.itemViewHolder.SelectedSounds.Clear();
