@@ -808,7 +808,7 @@ This may take some time, depending on how large the import file is.</value>
     <value>Download sounds</value>
   </data>
   <data name="SoundDownloadDialog-Description" xml:space="preserve">
-    <value>You can download sounds directly from the web. Just enter the link below.</value>
+    <value>You can download sounds directly from the web. Just enter a link below.</value>
   </data>
   <data name="SoundDownloadDialog-RetrievingInfo" xml:space="preserve">
     <value>Retrieving information...</value>

@@ -807,7 +807,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
     <value>Télécharger des sons</value>
   </data>
   <data name="SoundDownloadDialog-Description" xml:space="preserve">
-    <value>Vous pouvez télécharger des sons directement depuis Internet. Saisissez le lien ci-dessous.</value>
+    <value>Vous pouvez télécharger des sons directement à partir d'Internet. Pour ce faire, entre un lien ci-dessous.</value>
   </data>
   <data name="SoundDownloadDialog-RetrievingInfo" xml:space="preserve">
     <value>Obtenir des informations...</value>
