@@ -1078,7 +1078,8 @@ namespace UniversalSoundboard.DataAccess
 
             // Check if the sound belongs to the selected category
             bool soundBelongsToSelectedCategory =
-                itemViewHolder.SelectedCategory == Guid.Empty
+                (itemViewHolder.SelectedCategory == Guid.Empty && string.IsNullOrEmpty(itemViewHolder.SearchQuery))
+                || (!string.IsNullOrEmpty(itemViewHolder.SearchQuery) && sound.Name.ToLower().Contains(itemViewHolder.SearchQuery.ToLower()))
                 || parentCategories.Exists(c => c.Uuid == itemViewHolder.SelectedCategory);
 
             // Add to the current sounds
