@@ -1113,8 +1113,7 @@ namespace UniversalSoundboard.Pages
             int rounds = int.MaxValue;
 
             if (playSoundsSuccessivelyDialog.RepetitionsComboBox.SelectedItem != playSoundsSuccessivelyDialog.RepetitionsComboBox.Items.Last())
-                if (int.TryParse(playSoundsSuccessivelyDialog.RepetitionsComboBox.SelectedValue.ToString(), out rounds))
-                    rounds--;
+                int.TryParse(playSoundsSuccessivelyDialog.RepetitionsComboBox.SelectedValue.ToString(), out rounds);
 
             await SoundPage.PlaySoundsAsync(playSoundsSuccessivelyDialog.Sounds, rounds, randomly);
 

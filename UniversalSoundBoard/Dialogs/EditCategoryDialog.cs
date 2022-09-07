@@ -50,7 +50,7 @@ namespace UniversalSoundboard.Dialogs
             {
                 FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
                 FontSize = 25,
-                Margin = new Thickness(15),
+                Margin = new Thickness(0, 15, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Center
             };
 

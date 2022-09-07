@@ -1053,4 +1053,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SoundRecorderPage-MinimizeWarningInfoBar.Title" xml:space="preserve">
     <value>Keep this window open while recording.</value>
   </data>
+  <data name="PlaySoundsSuccessivelyDialog-Repetitions" xml:space="preserve">
+    <value>Repetitions:</value>
+  </data>
 </root>

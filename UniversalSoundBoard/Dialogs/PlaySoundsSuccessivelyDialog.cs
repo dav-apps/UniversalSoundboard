@@ -70,12 +70,19 @@ namespace UniversalSoundboard.Dialogs
                 AllowDrop = true
             };
 
+            StackPanel repetitionsStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(0, 10, 0, 0)
+            };
+
             RepetitionsComboBox = new ComboBox
             {
                 Margin = new Thickness(0, 10, 0, 0),
                 IsEditable = true,
                 Items =
                 {
+                    "0",
                     "1",
                     "2",
                     "3",
@@ -99,6 +106,14 @@ namespace UniversalSoundboard.Dialogs
             };
             RepetitionsComboBox.TextSubmitted += RepetitionsComboBox_TextSubmitted;
 
+            TextBlock repetitionsTextBlock = new TextBlock
+            {
+                Text = FileManager.loader.GetString("PlaySoundsSuccessivelyDialog-Repetitions")
+            };
+
+            repetitionsStackPanel.Children.Add(repetitionsTextBlock);
+            repetitionsStackPanel.Children.Add(RepetitionsComboBox);
+
             RandomCheckBox = new CheckBox
             {
                 Content = FileManager.loader.GetString("Shuffle"),
@@ -106,7 +121,7 @@ namespace UniversalSoundboard.Dialogs
             };
 
             content.Children.Add(SoundsListView);
-            content.Children.Add(RepetitionsComboBox);
+            content.Children.Add(repetitionsStackPanel);
             content.Children.Add(RandomCheckBox);
 
             return content;
@@ -116,7 +131,7 @@ namespace UniversalSoundboard.Dialogs
         {
             if (args.Text == "∞") return;
             if (!int.TryParse(args.Text, out int value) || value <= 0)
-                RepetitionsComboBox.Text = "1";
+                RepetitionsComboBox.Text = "0";
         }
 
         private void SoundItem_RemoveButtonClick(object sender, EventArgs e)
