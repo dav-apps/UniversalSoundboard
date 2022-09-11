@@ -7,8 +7,10 @@ namespace UniversalSoundboard.Dialogs
         public NoAudioDeviceDialog()
             : base(
                   FileManager.loader.GetString("NoAudioDeviceDialog-Title"),
-                  FileManager.loader.GetString("NoAudioDeviceDialog-Message"),
                   FileManager.loader.GetString("Actions-Close")
-            ) { }
+            )
+        {
+            Content = FileManager.loader.GetString("NoAudioDeviceDialog-Message");
+        }
     }
 }
