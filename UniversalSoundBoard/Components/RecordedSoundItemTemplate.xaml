@@ -9,24 +9,28 @@
     d:DesignWidth="400"
     Loaded="UserControl_Loaded">
 
-    <RelativePanel>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+
         <TextBlock
             Name="NameTextBlock"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignVerticalCenterWithPanel="True"
-            Text="{x:Bind RecordedSoundItem.Name}" />
+            Text="{x:Bind RecordedSoundItem.Name}"
+            VerticalAlignment="Center" />
 
         <TextBlock
             Name="LengthTextBlock"
-            RelativePanel.RightOf="NameTextBlock"
-            RelativePanel.AlignVerticalCenterWithPanel="True"
+            Grid.Column="1"
+            Text="{x:Bind recordedSoundLengthText}"
+            VerticalAlignment="Center"
             Margin="22,0,0,0"
-            FontWeight="Thin"
-            Text="{x:Bind recordedSoundLengthText}" />
+            FontWeight="Thin" />
 
         <StackPanel
-            RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignVerticalCenterWithPanel="True"
+            Grid.Column="2"
             Orientation="Horizontal">
 
             <Button
@@ -64,5 +68,5 @@
                 </ToolTipService.ToolTip>
             </Button>
         </StackPanel>
-    </RelativePanel>
+    </Grid>
 </UserControl>

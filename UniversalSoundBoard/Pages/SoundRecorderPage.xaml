@@ -18,9 +18,9 @@
         
         <!-- DataTemplates -->
         <DataTemplate x:Key="RecordedSoundsListViewDataTemplate" x:DataType="models:RecordedSoundItem">
-            <components:RecordedSoundItemTemplate />
+            <components:RecordedSoundItemTemplate VerticalContentAlignment="Stretch" />
         </DataTemplate>
-        
+
         <!-- Styles -->
         <Style TargetType="Button" x:Key="RecordButtonStyle">
             <Setter Property="Background" Value="{ThemeResource ButtonRevealBackground}" />
@@ -88,6 +88,10 @@
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+        </Style>
+
+        <Style x:Key="RecordedSoundItemStyle" TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
 
         <!-- Storyboards -->
@@ -190,6 +194,7 @@
                 RelativePanel.AlignBottomWithPanel="True"
                 ItemTemplate="{StaticResource RecordedSoundsListViewDataTemplate}"
                 ItemsSource="{x:Bind recordedSoundItems}"
+                ItemContainerStyle="{StaticResource RecordedSoundItemStyle}"
                 Width="400"
                 SelectionMode="None" />
         </RelativePanel>
