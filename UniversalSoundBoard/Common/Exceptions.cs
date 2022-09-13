@@ -3,18 +3,20 @@ using Windows.Media.Audio;
 
 namespace UniversalSoundboard.Common
 {
-    class AudioPlayerNotInitializedException : Exception { }
+    class AudioIOException : Exception { }
 
-    class AudioRecorderNotInitializedException : Exception { }
+    class AudioPlayerNotInitializedException : AudioIOException { }
 
-    class AudioRecorderDisposedException : Exception { }
+    class AudioRecorderNotInitializedException : AudioIOException { }
+
+    class AudioRecorderDisposedException : AudioIOException { }
 
     enum AudioPlayerInitError
     {
         AudioFileNotSpecified = 0
     }
 
-    class AudioPlayerInitException : Exception
+    class AudioPlayerInitException : AudioIOException
     {
         public AudioPlayerInitError Error;
 
@@ -32,7 +34,7 @@ namespace UniversalSoundboard.Common
         NoOutputSpecified = 3
     }
 
-    class AudioRecorderInitException : Exception
+    class AudioRecorderInitException : AudioIOException
     {
         public AudioRecorderInitError Error;
 
@@ -49,7 +51,7 @@ namespace UniversalSoundboard.Common
         UnknownFailure = 3
     }
 
-    class AudioGraphInitException : Exception
+    class AudioGraphInitException : AudioIOException
     {
         public AudioGraphInitError Error;
 
@@ -78,7 +80,7 @@ namespace UniversalSoundboard.Common
         UnknownFailure = 4
     }
 
-    class FileInputNodeInitException : Exception
+    class FileInputNodeInitException : AudioIOException
     {
         public FileInputNodeInitError Error;
 
@@ -110,7 +112,7 @@ namespace UniversalSoundboard.Common
         AccessDenied = 4
     }
 
-    class DeviceInputNodeInitException : Exception
+    class DeviceInputNodeInitException : AudioIOException
     {
         public DeviceInputNodeInitError Error;
 
@@ -142,7 +144,7 @@ namespace UniversalSoundboard.Common
         UnknownFailure = 4
     }
 
-    class FileOutputNodeInitException : Exception
+    class FileOutputNodeInitException : AudioIOException
     {
         public FileOutputNodeInitError Error;
 
@@ -174,7 +176,7 @@ namespace UniversalSoundboard.Common
         AccessDenied = 4
     }
 
-    class DeviceOutputNodeInitException : Exception
+    class DeviceOutputNodeInitException : AudioIOException
     {
         public DeviceOutputNodeInitError Error;
 
