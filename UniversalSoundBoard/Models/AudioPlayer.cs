@@ -11,7 +11,7 @@ namespace UniversalSoundboard.Models
 {
     public class AudioPlayer
     {
-        private bool initialized = false;
+        private bool isInitialized = false;
         private bool isInitializing = false;
         private StorageFile audioFile;
         private DeviceInformation outputDevice;
@@ -29,7 +29,7 @@ namespace UniversalSoundboard.Models
 
         public bool IsInitialized
         {
-            get => initialized;
+            get => isInitialized;
         }
         public StorageFile AudioFile
         {
@@ -107,7 +107,7 @@ namespace UniversalSoundboard.Models
 
             positionChangeTimer.Stop();
 
-            if (!initialized || outputDeviceChanged)
+            if (!isInitialized || outputDeviceChanged)
             {
                 // Create the AudioGraph
                 await InitAudioGraph();
@@ -115,7 +115,7 @@ namespace UniversalSoundboard.Models
                 // Create the output node
                 await InitDeviceOutputNode();
 
-                initialized = true;
+                isInitialized = true;
             }
 
             // Create the input node
@@ -132,6 +132,9 @@ namespace UniversalSoundboard.Models
 
         private async Task InitAudioGraph()
         {
+            if (AudioGraph != null)
+                return;
+
             var settings = new AudioGraphSettings(AudioRenderCategory.Media);
             settings.PrimaryRenderDevice = outputDevice;
             var createAudioGraphResult = await AudioGraph.CreateAsync(settings);
@@ -141,9 +144,6 @@ namespace UniversalSoundboard.Models
                 isInitializing = false;
                 throw new AudioGraphInitException(createAudioGraphResult.Status);
             }
-
-            if (AudioGraph != null)
-                AudioGraph.Stop();
 
             AudioGraph = createAudioGraphResult.Graph;
         }
@@ -195,7 +195,7 @@ namespace UniversalSoundboard.Models
 
         public void Play()
         {
-            if (!initialized)
+            if (!isInitialized)
                 throw new AudioPlayerNotInitializedException();
 
             if (isPlaying) return;
@@ -207,7 +207,7 @@ namespace UniversalSoundboard.Models
 
         public void Pause()
         {
-            if (!initialized)
+            if (!isInitialized)
                 throw new AudioPlayerNotInitializedException();
 
             if (!isPlaying) return;

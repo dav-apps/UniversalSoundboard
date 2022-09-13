@@ -12,7 +12,7 @@ namespace UniversalSoundboard.Models
 {
     public class AudioRecorder
     {
-        private bool initialized = false;
+        private bool isInitialized = false;
         private bool isInitializing = false;
         private StorageFile audioFile;
         private DeviceInformation inputDevice;
@@ -45,6 +45,10 @@ namespace UniversalSoundboard.Models
         {
             get => inputDevice;
             set => SetInputDevice(value);
+        }
+        public bool IsInitialized
+        {
+            get => isInitialized;
         }
         public bool IsRecording
         {
@@ -89,12 +93,12 @@ namespace UniversalSoundboard.Models
             if (isDisposed)
                 throw new AudioRecorderDisposedException();
 
-            if (initialized) return;
+            if (isInitialized) return;
 
             if (!fileOutput && !frameOutput)
                 throw new AudioRecorderInitException(AudioRecorderInitError.NoOutputSpecified);
 
-            if (audioFile == null)
+            if (fileOutput && audioFile == null)
                 throw new AudioRecorderInitException(AudioRecorderInitError.AudioFileNotSpecified);
 
             if (isRecording)
@@ -116,12 +120,15 @@ namespace UniversalSoundboard.Models
             if (frameOutput)
                 InitFrameOutputNode();
 
-            initialized = true;
+            isInitialized = true;
             isInitializing = false;
         }
 
         private async Task InitAudioGraph()
         {
+            if (AudioGraph != null)
+                return;
+
             var settings = new AudioGraphSettings(AudioRenderCategory.Media);
             settings.EncodingProperties = recordingFormat.Audio;
             var createAudioGraphResult = await AudioGraph.CreateAsync(settings);
@@ -131,9 +138,6 @@ namespace UniversalSoundboard.Models
                 isInitializing = false;
                 throw new AudioGraphInitException(createAudioGraphResult.Status);
             }
-
-            if (AudioGraph != null)
-                AudioGraph.Stop();
 
             AudioGraph = createAudioGraphResult.Graph;
         }
@@ -150,7 +154,7 @@ namespace UniversalSoundboard.Models
 
             DeviceInputNode = inputNodeResult.DeviceInputNode;
         }
-
+        
         private async Task InitFileOutputNode()
         {
             var outputNodeResult = await AudioGraph.CreateFileOutputNodeAsync(audioFile, recordingFormat);
@@ -164,7 +168,7 @@ namespace UniversalSoundboard.Models
             FileOutputNode = outputNodeResult.FileOutputNode;
             DeviceInputNode.AddOutgoingConnection(FileOutputNode);
         }
-
+        
         private void InitFrameOutputNode()
         {
             FrameOutputNode = AudioGraph.CreateFrameOutputNode(recordingFormat.Audio);
@@ -181,7 +185,7 @@ namespace UniversalSoundboard.Models
             if (isDisposed)
                 throw new AudioRecorderDisposedException();
 
-            if (!initialized)
+            if (!isInitialized)
                 throw new AudioRecorderNotInitializedException();
 
             if (isRecording) return;
@@ -195,7 +199,7 @@ namespace UniversalSoundboard.Models
             if (isDisposed)
                 throw new AudioRecorderDisposedException();
 
-            if (!initialized)
+            if (!isInitialized)
                 throw new AudioRecorderNotInitializedException();
 
             if (!isRecording) return;
@@ -203,7 +207,7 @@ namespace UniversalSoundboard.Models
             AudioGraph.Stop();
             await FileOutputNode.FinalizeAsync();
             AudioGraph.ResetAllNodes();
-            initialized = false;
+            isInitialized = false;
             isRecording = false;
         }
 
@@ -213,7 +217,7 @@ namespace UniversalSoundboard.Models
 
             AudioGraph.Stop();
             AudioGraph.Dispose();
-            initialized = false;
+            isInitialized = false;
             isRecording = false;
             isDisposed = true;
         }
