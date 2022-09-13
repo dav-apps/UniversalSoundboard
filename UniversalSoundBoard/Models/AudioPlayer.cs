@@ -132,9 +132,6 @@ namespace UniversalSoundboard.Models
 
         private async Task InitAudioGraph()
         {
-            if (AudioGraph != null)
-                return;
-
             var settings = new AudioGraphSettings(AudioRenderCategory.Media);
             settings.PrimaryRenderDevice = outputDevice;
             var createAudioGraphResult = await AudioGraph.CreateAsync(settings);
@@ -144,6 +141,9 @@ namespace UniversalSoundboard.Models
                 isInitializing = false;
                 throw new AudioGraphInitException(createAudioGraphResult.Status);
             }
+
+            if (AudioGraph != null)
+                AudioGraph.Stop();
 
             AudioGraph = createAudioGraphResult.Graph;
         }

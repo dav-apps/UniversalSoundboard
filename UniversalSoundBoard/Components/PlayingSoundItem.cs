@@ -177,19 +177,16 @@ namespace UniversalSoundboard.Components
 
                 if (CheckFileDownload())
                 {
-                    PlayingSound.AudioPlayer.Pause();
-                    SetPlayPause(false);
+                    await SetPlayPause(false);
                 }
                 else if (PlayingSound.StartPlaying)
                 {
-                    PlayingSound.AudioPlayer.Play();
-                    SetPlayPause(true);
+                    await SetPlayPause(true);
                 }
             }
             else if (PlayingSound.StartPlaying)
             {
-                PlayingSound.AudioPlayer.Play();
-                SetPlayPause(true);
+                await SetPlayPause(true);
             }
         }
 
@@ -251,7 +248,7 @@ namespace UniversalSoundboard.Components
                     if (PlayingSound.Repetitions < 0)
                     {
                         // Remove the PlayingSound
-                        TriggerRemove();
+                        await TriggerRemove();
                         return;
                     }
 
@@ -302,8 +299,8 @@ namespace UniversalSoundboard.Components
                     {
                         PlayingSound.AudioPlayer.Position = TimeSpan.Zero;
                         PlayingSound.AudioPlayer.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
-                        PlayingSound.AudioPlayer.Play();
-                        SetPlayPause(true);
+
+                        await SetPlayPause(true);
                     }
                 }
             });
@@ -379,13 +376,51 @@ namespace UniversalSoundboard.Components
                 PlayingSound.StartPosition = null;
             }
 
-            await PlayingSound.AudioPlayer.Init();
+            try
+            {
+                await PlayingSound.AudioPlayer.Init();
+            }
+            catch(AudioIOException) { }
 
             await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 currentSoundTotalDuration = PlayingSound.AudioPlayer.Duration;
                 DurationChanged?.Invoke(this, new DurationChangedEventArgs(PlayingSound.AudioPlayer.Duration));
             });
+        }
+
+        private async Task<bool> StartAudioPlayer()
+        {
+            try
+            {
+                if (!PlayingSound.AudioPlayer.IsInitialized)
+                    await InitAudioPlayer();
+
+                PlayingSound.AudioPlayer.Play();
+            }
+            catch (AudioIOException)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> PauseAudioPlayer()
+        {
+            try
+            {
+                if (!PlayingSound.AudioPlayer.IsInitialized)
+                    await InitAudioPlayer();
+
+                PlayingSound.AudioPlayer.Pause();
+            }
+            catch (AudioIOException)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public async Task MoveToSound(int index, bool startPlaying = false)
@@ -430,10 +465,7 @@ namespace UniversalSoundboard.Components
             await InitAudioPlayer();
 
             if (wasPlaying || startPlaying)
-            {
-                PlayingSound.AudioPlayer.Play();
-                SetPlayPause(true);
-            }
+                await SetPlayPause(true);
 
             // Save the new Current
             await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, index);
@@ -442,16 +474,19 @@ namespace UniversalSoundboard.Components
         /**
          * Stops all other PlayingSounds if MultiSoundPlayback is disabled
          */
-        private void StopAllOtherPlayingSounds()
+        private async Task StopAllOtherPlayingSounds()
         {
             if (FileManager.itemViewHolder.MultiSoundPlayback || !FileManager.itemViewHolder.OpenMultipleSounds) return;
 
             // Cause all other PlayingSounds to stop playback
             foreach (var playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
             {
-                if (playingSoundItem.PlayingSound.AudioPlayer == null || playingSoundItem.Uuid.Equals(PlayingSound.Uuid)) continue;
-                playingSoundItem.PlayingSound.AudioPlayer.Pause();
-                playingSoundItem.SetPlayPause(false, false);
+                if (
+                    playingSoundItem.PlayingSound.AudioPlayer == null
+                    || playingSoundItem.Uuid.Equals(PlayingSound.Uuid)
+                ) continue;
+
+                await playingSoundItem.SetPlayPause(false, false);
             }
         }
 
@@ -597,9 +632,8 @@ namespace UniversalSoundboard.Components
                         // Start the current sound
                         if (PlayingSound.StartPlaying)
                         {
-                            PlayingSound.AudioPlayer.Play();
-                            SetPlayPause(true);
-                            StopAllOtherPlayingSounds();
+                            await SetPlayPause(true);
+                            await StopAllOtherPlayingSounds();
                         }
                     }
                 }
@@ -624,7 +658,7 @@ namespace UniversalSoundboard.Components
             DownloadProgressList.RemoveAt(i);
         }
 
-        private void StartFadeOut()
+        private async Task StartFadeOut()
         {
             if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
             if (!PlayingSound.AudioPlayer.IsPlaying) return;
@@ -634,23 +668,20 @@ namespace UniversalSoundboard.Components
             fadeOutVolumeDiff = PlayingSound.AudioPlayer.Volume / fadeOutFrames;
 
             fadeOutTimer = new Timer();
-            fadeOutTimer.Elapsed += (object sender, ElapsedEventArgs e) => FadeOut();
+            fadeOutTimer.Elapsed += async (object sender, ElapsedEventArgs e) => await FadeOut();
 
             fadeOutTimer.Interval = interval;
             fadeOutTimer.Start();
 
-            FadeOut();
+            await FadeOut();
         }
 
-        private void FadeOut()
+        private async Task FadeOut()
         {
             if (currentFadeOutFrame >= fadeOutFrames || PlayingSound.AudioPlayer == null)
             {
-                if (PlayingSound.AudioPlayer != null)
-                {
-                    PlayingSound.AudioPlayer.Pause();
+                if (PlayingSound.AudioPlayer != null && await PauseAudioPlayer())
                     PlayingSound.AudioPlayer.Position = TimeSpan.Zero;
-                }
 
                 fadeOutTimer.Stop();
             }
@@ -730,16 +761,16 @@ namespace UniversalSoundboard.Components
         /**
          * Toggles the MediaPlayer from Playing -> Paused or from Paused -> Playing
          */
-        public void TogglePlayPause()
+        public async Task TogglePlayPause()
         {
             if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
-            SetPlayPause(!PlayingSound.AudioPlayer.IsPlaying);
+            await SetPlayPause(!PlayingSound.AudioPlayer.IsPlaying);
         }
 
         /**
          * Plays or pauses the MediaPlayer
          */
-        public void SetPlayPause(bool play, bool updateSmtc = true)
+        public async Task SetPlayPause(bool play, bool updateSmtc = true)
         {
             if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
 
@@ -747,30 +778,26 @@ namespace UniversalSoundboard.Components
                 FileManager.itemViewHolder.ActivePlayingSound = PlayingSound.Uuid;
 
             // Check if the file is currently downloading
-            if (currentSoundIsDownloading)
+            if (currentSoundIsDownloading && await PauseAudioPlayer())
             {
-                PlayingSound.AudioPlayer.Pause();
                 PlayingSound.StartPlaying = play;
                 PlaybackStateChanged?.Invoke(
                     this,
                     new PlaybackStateChangedEventArgs(PlayingSound.StartPlaying)
                 );
                 if (updateSmtc) FileManager.UpdateSystemMediaTransportControls(PlayingSound.StartPlaying);
-                return;
             }
-            else if (play)
+            else if (!currentSoundIsDownloading && play && await StartAudioPlayer())
             {
-                PlayingSound.AudioPlayer.Play();
                 PlaybackStateChanged?.Invoke(
-                    this,
-                    new PlaybackStateChangedEventArgs(true)
-                );
-                StopAllOtherPlayingSounds();
+                        this,
+                        new PlaybackStateChangedEventArgs(true)
+                    );
+                await StopAllOtherPlayingSounds();
                 if (updateSmtc) FileManager.UpdateSystemMediaTransportControls(true);
             }
-            else
+            else if (!currentSoundIsDownloading && !play && await PauseAudioPlayer())
             {
-                PlayingSound.AudioPlayer.Pause();
                 PlaybackStateChanged?.Invoke(
                     this,
                     new PlaybackStateChangedEventArgs(false)
@@ -988,10 +1015,10 @@ namespace UniversalSoundboard.Components
             OutputDeviceButtonVisibilityChanged?.Invoke(this, new OutputDeviceButtonVisibilityEventArgs(Visibility.Collapsed));
         }
 
-        public void TriggerRemove()
+        public async Task TriggerRemove()
         {
             // Stop and reset the MediaPlayer
-            StartFadeOut();
+            await StartFadeOut();
 
             // Start the remove animation
             RemovePlayingSound?.Invoke(this, new EventArgs());
@@ -1011,11 +1038,8 @@ namespace UniversalSoundboard.Components
             // Remove this PlayingSoundItem from the PlayingSoundItems list
             FileManager.itemViewHolder.PlayingSoundItems.Remove(this);
 
-            if (PlayingSound.AudioPlayer != null)
-            {
-                PlayingSound.AudioPlayer.Pause();
+            if (PlayingSound.AudioPlayer != null && await PauseAudioPlayer())
                 PlayingSound.AudioPlayer.Position = TimeSpan.Zero;
-            }
 
             // Remove this PlayingSound from the SMTC, if it was active
             if (PlayingSound.Uuid.Equals(FileManager.itemViewHolder.ActivePlayingSound))

@@ -529,7 +529,7 @@ namespace UniversalSoundboard.Pages
                 nextSinglePlayingSoundToOpen = playingSound;
 
                 foreach (PlayingSoundItem playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
-                    playingSoundItem.TriggerRemove();
+                    await playingSoundItem.TriggerRemove();
             }
         }
 
@@ -566,7 +566,7 @@ namespace UniversalSoundboard.Pages
                 nextSinglePlayingSoundToOpen = playingSound;
 
                 foreach (PlayingSoundItem playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
-                    playingSoundItem.TriggerRemove();
+                    await playingSoundItem.TriggerRemove();
             }
         }
 
@@ -593,7 +593,7 @@ namespace UniversalSoundboard.Pages
                 nextSinglePlayingSoundToOpen = playingSound;
 
                 foreach (PlayingSoundItem playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
-                    playingSoundItem.TriggerRemove();
+                    await playingSoundItem.TriggerRemove();
             }
         }
 

@@ -344,9 +344,9 @@ namespace UniversalSoundboard.Components
         #endregion
 
         #region Event handlers
-        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
+        private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayingSoundItem.TogglePlayPause();
+            await PlayingSoundItem.TogglePlayPause();
         }
 
         private async void PreviousButton_Click(object sender, RoutedEventArgs e)
@@ -466,9 +466,9 @@ namespace UniversalSoundboard.Components
             await PlayingSoundItem.SetMuted(muted);
         }
 
-        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        private async void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
-            PlayingSoundItem.TriggerRemove();
+            await PlayingSoundItem.TriggerRemove();
         }
 
         private void ProgressSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -699,7 +699,7 @@ namespace UniversalSoundboard.Components
             );
 
             // Pause this PlayingSound
-            PlayingSoundItem.SetPlayPause(false);
+            await PlayingSoundItem.SetPlayPause(false);
         }
 
         private async void MoreButton_FavouriteItem_Click(object sender, RoutedEventArgs e)
@@ -708,12 +708,12 @@ namespace UniversalSoundboard.Components
             await PlayingSoundItem.ToggleFavourite();
         }
 
-        private void SoundsListViewRemoveSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
+        private async void SoundsListViewRemoveSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
         {
             if (PlayingSound.Sounds.Count > 1)
                 PlayingSoundItem.RemoveSound((Guid)args.SwipeControl.Tag);
             else
-                PlayingSoundItem.TriggerRemove();
+                await PlayingSoundItem.TriggerRemove();
         }
 
         private async void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
