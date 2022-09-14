@@ -52,7 +52,7 @@
   <PropertyGroup>
     <ProjectGuid>c86f0684-38bf-4d79-9711-515ebde3baf1</ProjectGuid>
     <TargetPlatformVersion>10.0.19041.0</TargetPlatformVersion>
-    <TargetPlatformMinVersion>10.0.18362.0</TargetPlatformMinVersion>
+    <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
     <DefaultLanguage>de-DE</DefaultLanguage>
     <AppxPackageSigningEnabled>false</AppxPackageSigningEnabled>
     <EntryPointProjectUniqueName>..\UniversalSoundBoard\UniversalSoundBoard.csproj</EntryPointProjectUniqueName>
