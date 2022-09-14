@@ -340,12 +340,23 @@
                             <MenuFlyout Placement="Bottom">
                                 <MenuFlyoutItem
                                     Name="StartMessageNewSoundFlyoutItem"
-                                    x:Uid="AddButton-Sound"
-                                    Click="StartMessageNewSoundFlyoutItem_Click" />
+                                    x:Uid="AddButton-SoundFiles"
+                                    Click="StartMessageNewSoundFlyoutItem_Click">
+
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE160;" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+
                                 <MenuFlyoutItem
                                     Name="StartMessageDownloadSoundsFlyoutItem"
                                     x:Uid="AddButton-Download"
-                                    Click="StartMessageDownloadSoundsFlyoutItem_Click" />
+                                    Click="StartMessageDownloadSoundsFlyoutItem_Click">
+
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE118;" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
@@ -462,12 +473,23 @@
                             <MenuFlyout Placement="Bottom">
                                 <MenuFlyoutItem
                                     Name="EmptyCategoryMessageNewSoundFlyoutItem"
-                                    x:Uid="AddButton-Sound"
-                                    Click="StartMessageNewSoundFlyoutItem_Click" />
+                                    x:Uid="AddButton-SoundFiles"
+                                    Click="StartMessageNewSoundFlyoutItem_Click">
+
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE160;" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
+
                                 <MenuFlyoutItem
                                     Name="EmptyCategoryMessageDownloadSoundsFlyoutItem"
                                     x:Uid="AddButton-Download"
-                                    Click="StartMessageDownloadSoundsFlyoutItem_Click" />
+                                    Click="StartMessageDownloadSoundsFlyoutItem_Click">
+
+                                    <MenuFlyoutItem.Icon>
+                                        <FontIcon Glyph="&#xE118;" />
+                                    </MenuFlyoutItem.Icon>
+                                </MenuFlyoutItem>
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
