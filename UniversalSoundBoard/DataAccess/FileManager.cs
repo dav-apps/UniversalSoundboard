@@ -1818,10 +1818,9 @@ namespace UniversalSoundboard.DataAccess
                     audioPlayer.AudioFile = newSounds[current].AudioFile;
                     await audioPlayer.Init();
                 }
-                catch (AudioPlayerInitException e)
+                catch (AudioIOException e)
                 {
-                    // TODO: Error handling
-                    Debug.WriteLine($"An error occured while initializing the AudioPlayer: {e.Error}");
+                    Crashes.TrackError(e);
                 }
             }
 
@@ -1848,7 +1847,15 @@ namespace UniversalSoundboard.DataAccess
             if (sound == null) return null;
 
             AudioPlayer player = new AudioPlayer(sound.AudioFile);
-            await player.Init();
+
+            try
+            {
+                await player.Init();
+            }
+            catch (AudioIOException e)
+            {
+                Crashes.TrackError(e);
+            }
 
             player.Volume = ((double)itemViewHolder.Volume) / 100;
             player.IsMuted = itemViewHolder.Muted;

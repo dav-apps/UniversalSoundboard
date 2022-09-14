@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Crashes;
+using System;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using Windows.Devices.Enumeration;
@@ -215,8 +216,19 @@ namespace UniversalSoundboard.Models
         {
             if (isDisposed) return;
 
-            AudioGraph.Stop();
-            AudioGraph.Dispose();
+            if (AudioGraph != null)
+            {
+                try
+                {
+                    AudioGraph.Stop();
+                    AudioGraph.Dispose();
+                }
+                catch(AudioIOException e)
+                {
+                    Crashes.TrackError(e);
+                }
+            }
+
             isInitialized = false;
             isRecording = false;
             isDisposed = true;

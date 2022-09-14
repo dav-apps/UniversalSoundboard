@@ -63,16 +63,25 @@ namespace UniversalSoundboard.Components
 
         private async void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            if (RecordedSoundItem.IsPlaying)
+            // Check if there are any output devices connected
+            if (
+                !RecordedSoundItem.IsPlaying
+                && FileManager.deviceWatcherHelper.Devices.Count == 0
+            )
             {
-                RecordedSoundItem.Pause();
-                PlayPauseButton.Content = "\uF5B0";
+                var noAudioDeviceDialog = new NoAudioDeviceDialog();
+                await noAudioDeviceDialog.ShowAsync(AppWindowType.SoundRecorder);
+                return;
             }
-            else
-            {
-                await RecordedSoundItem.Play();
-                PlayPauseButton.Content = "\uE62E";
-            }
+
+            if (
+                RecordedSoundItem.IsPlaying
+                && RecordedSoundItem.Pause()
+            ) PlayPauseButton.Content = "\uF5B0";
+            else if (
+                !RecordedSoundItem.IsPlaying
+                && await RecordedSoundItem.Play()
+            ) PlayPauseButton.Content = "\uE62E";
         }
 
         private async void AddToSoundboardButton_Click(object sender, RoutedEventArgs e)

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Crashes;
+using System;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using Windows.Devices.Enumeration;
@@ -143,9 +144,19 @@ namespace UniversalSoundboard.Models
             }
 
             if (AudioGraph != null)
-                AudioGraph.Stop();
+            {
+                try
+                {
+                    AudioGraph.Stop();
+                }
+                catch (Exception e)
+                {
+                    Crashes.TrackError(e);
+                }
+            }
 
             AudioGraph = createAudioGraphResult.Graph;
+            AudioGraph.UnrecoverableErrorOccurred += AudioGraph_UnrecoverableErrorOccurred;
         }
 
         private async Task InitFileInputNode()
@@ -166,14 +177,25 @@ namespace UniversalSoundboard.Models
             FileInputNode.OutgoingGain = volume;
             FileInputNode.PlaybackSpeedFactor = playbackRate;
 
-            FileInputNode.AddOutgoingConnection(DeviceOutputNode);
+            if (DeviceOutputNode != null)
+                FileInputNode.AddOutgoingConnection(DeviceOutputNode);
+
             FileInputNode.FileCompleted += FileInputNode_FileCompleted;
         }
 
         private async Task InitDeviceOutputNode()
         {
             if (DeviceOutputNode != null)
-                DeviceOutputNode.Stop();
+            {
+                try
+                {
+                    DeviceOutputNode.Stop();
+                }
+                catch(Exception e)
+                {
+                    Crashes.TrackError(e);
+                }
+            }
 
             var outputNodeResult = await AudioGraph.CreateDeviceOutputNodeAsync();
 
@@ -200,7 +222,16 @@ namespace UniversalSoundboard.Models
 
             if (isPlaying) return;
 
-            AudioGraph.Start();
+            try
+            {
+                AudioGraph.Start();
+            }
+            catch(Exception e)
+            {
+                Crashes.TrackError(e);
+                throw new AudioIOException();
+            }
+
             isPlaying = true;
             positionChangeTimer.Start();
         }
@@ -212,7 +243,16 @@ namespace UniversalSoundboard.Models
 
             if (!isPlaying) return;
 
-            AudioGraph.Stop();
+            try
+            {
+                AudioGraph.Stop();
+            }
+            catch(Exception e)
+            {
+                Crashes.TrackError(e);
+                throw new AudioIOException();
+            }
+
             isPlaying = false;
             positionChangeTimer.Stop();
         }
@@ -276,6 +316,19 @@ namespace UniversalSoundboard.Models
         #endregion
 
         #region Event Handlers
+        private void AudioGraph_UnrecoverableErrorOccurred(AudioGraph sender, AudioGraphUnrecoverableErrorOccurredEventArgs args)
+        {
+            // Stop the playback
+            try
+            {
+                sender.Stop();
+            }
+            catch(Exception e)
+            {
+                Crashes.TrackError(e);
+            }
+        }
+
         private void PositionChangeTimer_Tick(object sender, object e)
         {
             position = FileInputNode.Position;

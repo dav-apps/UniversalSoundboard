@@ -1,7 +1,10 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Crashes;
+using System;
 using System.Threading.Tasks;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Pages;
 using Windows.Storage;
+using Windows.UI.Core;
 
 namespace UniversalSoundboard.Models
 {
@@ -31,26 +34,65 @@ namespace UniversalSoundboard.Models
         public async Task<TimeSpan> GetDuration()
         {
             if (!audioPlayer.IsInitialized)
-                await audioPlayer.Init();
+            {
+                try
+                {
+                    await audioPlayer.Init();
+                }
+                catch (AudioIOException e)
+                {
+                    Crashes.TrackError(e);
+                }
+            }
 
             return audioPlayer.Duration;
         }
 
-        public async Task Play()
+        public async Task<bool> Play()
         {
             if (!audioPlayer.IsInitialized)
-                await audioPlayer.Init();
+            {
+                try
+                {
+                    await audioPlayer.Init();
+                }
+                catch (AudioIOException e)
+                {
+                    Crashes.TrackError(e);
+                    return false;
+                }
+            }
 
-            audioPlayer.Play();
+            try
+            {
+                audioPlayer.Play();
+            }
+            catch(AudioIOException e)
+            {
+                Crashes.TrackError(e);
+                return false;
+            }
+
             AudioPlayerStarted?.Invoke(this, EventArgs.Empty);
+            return true;
         }
 
-        public void Pause()
+        public bool Pause()
         {
-            if (!audioPlayer.IsInitialized) return;
+            if (!audioPlayer.IsInitialized) return false;
 
-            audioPlayer.Pause();
+            try
+            {
+                audioPlayer.Pause();
+            }
+            catch (AudioIOException e)
+            {
+                Crashes.TrackError(e);
+                return false;
+            }
+            
             AudioPlayerPaused?.Invoke(this, EventArgs.Empty);
+            return true;
         }
 
         public async Task Remove()
@@ -66,11 +108,10 @@ namespace UniversalSoundboard.Models
 
         private async void AudioPlayer_MediaEnded(object sender, EventArgs e)
         {
-            await MainPage.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                audioPlayer.Pause();
-                audioPlayer.Position = TimeSpan.Zero;
-                AudioPlayerPaused?.Invoke(this, EventArgs.Empty);
+                if (Pause())
+                    audioPlayer.Position = TimeSpan.Zero;
             });
         }
     }
