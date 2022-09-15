@@ -2,6 +2,7 @@
 using System;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
+using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Pages;
 using Windows.Storage;
 using Windows.UI.Core;
@@ -29,6 +30,39 @@ namespace UniversalSoundboard.Models
 
             audioPlayer = new AudioPlayer(file);
             audioPlayer.MediaEnded += AudioPlayer_MediaEnded;
+
+            FileManager.deviceWatcherHelper.DevicesChanged += DeviceWatcherHelper_DevicesChanged;
+        }
+
+        private async void AudioPlayer_MediaEnded(object sender, EventArgs e)
+        {
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                if (Pause())
+                    audioPlayer.Position = TimeSpan.Zero;
+            });
+        }
+
+        private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs args)
+        {
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                if (
+                    !audioPlayer.IsInitialized
+                    && FileManager.deviceWatcherHelper.Devices.Count > 0
+                )
+                {
+                    try
+                    {
+                        // Init the audio player
+                        await audioPlayer.Init();
+                    }
+                    catch (AudioIOException e)
+                    {
+                        Crashes.TrackError(e);
+                    }
+                }
+            });
         }
 
         public async Task<TimeSpan> GetDuration()
@@ -104,15 +138,6 @@ namespace UniversalSoundboard.Models
 
             if (System.IO.File.Exists(File.Path))
                 await File.DeleteAsync();
-        }
-
-        private async void AudioPlayer_MediaEnded(object sender, EventArgs e)
-        {
-            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-            {
-                if (Pause())
-                    audioPlayer.Position = TimeSpan.Zero;
-            });
         }
     }
 }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Crashes;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -27,7 +28,7 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class SoundRecorderPage : Page
     {
-        DeviceWatcherHelper deviceWatcherHelper = new DeviceWatcherHelper(DeviceClass.AudioCapture);
+        DeviceWatcherHelper inputDeviceWatcherHelper = new DeviceWatcherHelper(DeviceClass.AudioCapture);
         DeviceInfo inputDevice;
         StorageFile outputFile;
         AudioRecorder audioRecorder;
@@ -46,7 +47,7 @@ namespace UniversalSoundboard.Pages
             ContentRoot.DataContext = FileManager.itemViewHolder;
 
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
-            deviceWatcherHelper.DevicesChanged += DeviceWatcherHelper_DevicesChanged;
+            inputDeviceWatcherHelper.DevicesChanged += InputDeviceWatcherHelper_DevicesChanged;
             MainPage.soundRecorderAppWindow.CloseRequested += SoundRecorderAppWindow_CloseRequested;
 
             timer = new DispatcherTimer();
@@ -64,17 +65,22 @@ namespace UniversalSoundboard.Pages
             // Set up the default input device
             var defaultDeviceId = MediaDevice.GetDefaultAudioCaptureId(AudioDeviceRole.Default);
 
-            int i = deviceWatcherHelper.Devices.FindIndex(d => d.Id == defaultDeviceId);
+            int i = inputDeviceWatcherHelper.Devices.FindIndex(d => d.Id == defaultDeviceId);
             skipInputDeviceComboBoxChanged = true;
 
-            if (i == -1)
+            if (inputDeviceWatcherHelper.Devices.Count == 0)
             {
-                inputDevice = deviceWatcherHelper.Devices.First();
+                inputDevice = null;
+                InputDeviceComboBox.SelectedIndex = -1;
+            }
+            else if (i == -1)
+            {
+                inputDevice = inputDeviceWatcherHelper.Devices.First();
                 InputDeviceComboBox.SelectedIndex = 0;
             }
             else
             {
-                inputDevice = deviceWatcherHelper.Devices.ElementAt(i);
+                inputDevice = inputDeviceWatcherHelper.Devices.ElementAt(i);
                 InputDeviceComboBox.SelectedIndex = i;
             }
 
@@ -97,9 +103,28 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
+        private async void InputDeviceWatcherHelper_DevicesChanged(object sender, EventArgs args)
         {
-            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => UpdateInputDeviceComboBox());
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                UpdateInputDeviceComboBox();
+
+                if (
+                    !audioRecorder.IsInitialized
+                    && inputDeviceWatcherHelper.Devices.Count > 0
+                )
+                {
+                    try
+                    {
+                        // Init the audio recorder
+                        await audioRecorder.Init(true, true);
+                    }
+                    catch(AudioIOException e)
+                    {
+                        Crashes.TrackError(e);
+                    }
+                }
+            });
         }
 
         private async void SoundRecorderAppWindow_CloseRequested(AppWindow sender, AppWindowCloseRequestedEventArgs args)
@@ -127,18 +152,23 @@ namespace UniversalSoundboard.Pages
 
         private async void InputDeviceComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (skipInputDeviceComboBoxChanged) return;
+            if (
+                skipInputDeviceComboBoxChanged
+                || InputDeviceComboBox.SelectedItem == null
+            ) return;
 
             var inputDeviceId = (InputDeviceComboBox.SelectedItem as ComboBoxItem).Tag;
-            int i = deviceWatcherHelper.Devices.FindIndex(d => d.Id.Equals(inputDeviceId));
+            int i = inputDeviceWatcherHelper.Devices.FindIndex(d => d.Id.Equals(inputDeviceId));
             if (i == -1) return;
 
-            inputDevice = deviceWatcherHelper.Devices[i];
+            inputDevice = inputDeviceWatcherHelper.Devices[i];
             await UpdateInputDevice();
         }
 
         private async void RecordButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!audioRecorder.IsInitialized) return;
+
             if (audioRecorder.IsRecording)
             {
                 RecordButton.Content = "\uE7C8";
@@ -229,11 +259,22 @@ namespace UniversalSoundboard.Pages
         private async Task InitAudioRecorder()
         {
             // Create an output file in the cache
-            outputFile = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync(string.Format("{0}.wav", Guid.NewGuid()), CreationCollisionOption.ReplaceExisting);
+            outputFile = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync(
+                string.Format("{0}.wav", Guid.NewGuid()),
+                CreationCollisionOption.ReplaceExisting
+            );
             audioRecorder = new AudioRecorder(outputFile);
             audioRecorder.QuantumStarted += AudioRecorder_QuantumStarted;
 
-            await audioRecorder.Init(true, true);
+            try
+            {
+                await audioRecorder.Init(true, true);
+            }
+            catch(AudioIOException e)
+            {
+                Crashes.TrackError(e);
+                return;
+            }
 
             channelValues.Clear();
             channelCount = audioRecorder.ChannelCount;
@@ -342,18 +383,27 @@ namespace UniversalSoundboard.Pages
 
         private async Task UpdateInputDevice()
         {
-            audioRecorder.InputDevice = inputDevice.DeviceInformation;
-            await audioRecorder.Init(true, true);
+            if (inputDevice == null) return;
+
+            try
+            {
+                audioRecorder.InputDevice = inputDevice.DeviceInformation;
+                await audioRecorder.Init(true, true);
+            }
+            catch(AudioIOException e)
+            {
+                Crashes.TrackError(e);
+            }
         }
 
         private void UpdateInputDeviceComboBox()
         {
             InputDeviceComboBox.Items.Clear();
-            int selectedItemIndex = -1;
+            int selectedItemIndex = inputDeviceWatcherHelper.Devices.Count == 0 ? -1 : 0;
 
-            for (int i = 0; i < deviceWatcherHelper.Devices.Count; i++)
+            for (int i = 0; i < inputDeviceWatcherHelper.Devices.Count; i++)
             {
-                var device = deviceWatcherHelper.Devices[i];
+                var device = inputDeviceWatcherHelper.Devices[i];
                 if (inputDevice != null && inputDevice.Id == device.Id) selectedItemIndex = i;
 
                 InputDeviceComboBox.Items.Add(new ComboBoxItem
@@ -363,7 +413,10 @@ namespace UniversalSoundboard.Pages
                 });
             }
 
+            skipInputDeviceComboBoxChanged = true;
             InputDeviceComboBox.SelectedIndex = selectedItemIndex;
+            RecordButton.IsEnabled = inputDeviceWatcherHelper.Devices.Count > 0;
+            skipInputDeviceComboBoxChanged = false;
         }
 
         [ComImport]
