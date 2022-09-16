@@ -30,6 +30,7 @@ namespace UniversalSoundboard.Models
 
             audioPlayer = new AudioPlayer(file);
             audioPlayer.MediaEnded += AudioPlayer_MediaEnded;
+            audioPlayer.UnrecoverableErrorOccurred += AudioPlayer_UnrecoverableErrorOccurred;
 
             FileManager.deviceWatcherHelper.DevicesChanged += DeviceWatcherHelper_DevicesChanged;
         }
@@ -40,6 +41,14 @@ namespace UniversalSoundboard.Models
             {
                 if (Pause())
                     audioPlayer.Position = TimeSpan.Zero;
+            });
+        }
+
+        private async void AudioPlayer_UnrecoverableErrorOccurred(object sender, Windows.Media.Audio.AudioGraphUnrecoverableErrorOccurredEventArgs e)
+        {
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                Pause();
             });
         }
 

@@ -153,6 +153,7 @@ namespace UniversalSoundboard.Pages
                         audioRecorder.Dispose();
                         audioRecorder = new AudioRecorder(outputFile);
                         audioRecorder.QuantumStarted += AudioRecorder_QuantumStarted;
+                        audioRecorder.UnrecoverableErrorOccurred += AudioRecorder_UnrecoverableErrorOccurred;
                         await UpdateInputDevice();
                     }
                 }
@@ -281,6 +282,14 @@ namespace UniversalSoundboard.Pages
             ProcessFrameOutput(e.AudioFrame);
         }
 
+        private async void AudioRecorder_UnrecoverableErrorOccurred(object sender, Windows.Media.Audio.AudioGraphUnrecoverableErrorOccurredEventArgs e)
+        {
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                await StopRecording();
+            });
+        }
+
         private void Timer_Tick(object sender, object e)
         {
             WaveformCanvas.Children.Clear();
@@ -307,6 +316,7 @@ namespace UniversalSoundboard.Pages
             );
             audioRecorder = new AudioRecorder(outputFile);
             audioRecorder.QuantumStarted += AudioRecorder_QuantumStarted;
+            audioRecorder.UnrecoverableErrorOccurred += AudioRecorder_UnrecoverableErrorOccurred;
 
             try
             {

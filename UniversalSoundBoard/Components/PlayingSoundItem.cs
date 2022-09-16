@@ -11,6 +11,7 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.Devices.Enumeration;
+using Windows.Media.Audio;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
@@ -123,9 +124,11 @@ namespace UniversalSoundboard.Components
             // Subscribe to MediaPlayer events
             PlayingSound.AudioPlayer.MediaEnded += AudioPlayer_MediaEnded;
             PlayingSound.AudioPlayer.PositionChanged += AudioPlayer_PositionChanged;
+            PlayingSound.AudioPlayer.UnrecoverableErrorOccurred += AudioPlayer_UnrecoverableErrorOccurred;
 
             // Subscribe to other events
             PlayingSound.Sounds.CollectionChanged += Sounds_CollectionChanged;
+            FileManager.deviceWatcherHelper.DevicesChanged += DeviceWatcherHelper_DevicesChanged;
 
             // Set the initial UI element states
             UpdateUI();
@@ -188,6 +191,14 @@ namespace UniversalSoundboard.Components
             {
                 await SetPlayPause(true);
             }
+        }
+
+        private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
+        {
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                await UpdateOutputDevice();
+            });
         }
 
         #region ItemViewHolder event handlers
@@ -315,9 +326,17 @@ namespace UniversalSoundboard.Components
 
         private async void AudioPlayer_PositionChanged(object sender, PositionChangedEventArgs e)
         {
-            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Low, () =>
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 PositionChanged?.Invoke(this, new PositionChangedEventArgs((sender as AudioPlayer).Position));
+            });
+        }
+
+        private async void AudioPlayer_UnrecoverableErrorOccurred(object sender, AudioGraphUnrecoverableErrorOccurredEventArgs e)
+        {
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                await UpdateOutputDevice();
             });
         }
         #endregion
