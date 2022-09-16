@@ -13,7 +13,7 @@ namespace UniversalSoundboard.Common
 
     enum AudioPlayerInitError
     {
-        AudioFileNotSpecified = 0
+        AudioFileNotSpecified
     }
 
     class AudioPlayerInitException : AudioIOException
@@ -28,10 +28,10 @@ namespace UniversalSoundboard.Common
 
     enum AudioRecorderInitError
     {
-        AudioFileNotSpecified = 0,
-        NotInitialized = 1,
-        NotAllowedWhileRecording = 2,
-        NoOutputSpecified = 3
+        AudioFileNotSpecified,
+        NotInitialized,
+        NotAllowedWhileRecording,
+        NoOutputSpecified
     }
 
     class AudioRecorderInitException : AudioIOException
@@ -46,9 +46,9 @@ namespace UniversalSoundboard.Common
 
     enum AudioGraphInitError
     {
-        DeviceNotAvailable = 1,
-        FormatNotSupported = 2,
-        UnknownFailure = 3
+        DeviceNotAvailable,
+        FormatNotSupported,
+        UnknownFailure
     }
 
     class AudioGraphInitException : AudioIOException
@@ -74,10 +74,10 @@ namespace UniversalSoundboard.Common
 
     enum FileInputNodeInitError
     {
-        FileNotFound = 1,
-        InvalidFileType = 2,
-        FormatNotSupported = 3,
-        UnknownFailure = 4
+        FileNotFound,
+        InvalidFileType,
+        FormatNotSupported,
+        UnknownFailure
     }
 
     class FileInputNodeInitException : AudioIOException
@@ -106,10 +106,10 @@ namespace UniversalSoundboard.Common
 
     enum DeviceInputNodeInitError
     {
-        DeviceNotAvailable = 1,
-        FormatNotSupported = 2,
-        UnknownFailure = 3,
-        AccessDenied = 4
+        DeviceNotAvailable,
+        FormatNotSupported,
+        UnknownFailure,
+        AccessDenied
     }
 
     class DeviceInputNodeInitException : AudioIOException
@@ -138,10 +138,10 @@ namespace UniversalSoundboard.Common
 
     enum FileOutputNodeInitError
     {
-        FileNotFound = 1,
-        InvalidFileType = 2,
-        FormatNotSupported = 3,
-        UnknownFailure = 4
+        FileNotFound,
+        InvalidFileType,
+        FormatNotSupported,
+        UnknownFailure
     }
 
     class FileOutputNodeInitException : AudioIOException
@@ -170,10 +170,10 @@ namespace UniversalSoundboard.Common
 
     enum DeviceOutputNodeInitError
     {
-        DeviceNotAvailable = 1,
-        FormatNotSupported = 2,
-        UnknownFailure = 3,
-        AccessDenied = 4
+        DeviceNotAvailable,
+        FormatNotSupported,
+        UnknownFailure,
+        AccessDenied
     }
 
     class DeviceOutputNodeInitException : AudioIOException

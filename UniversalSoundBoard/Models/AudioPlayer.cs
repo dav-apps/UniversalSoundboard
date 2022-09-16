@@ -70,6 +70,7 @@ namespace UniversalSoundboard.Models
 
         public event EventHandler<PositionChangedEventArgs> PositionChanged;
         public event EventHandler<EventArgs> MediaEnded;
+        public event EventHandler<AudioGraphUnrecoverableErrorOccurredEventArgs> UnrecoverableErrorOccured;
 
         public AudioPlayer()
         {
@@ -317,8 +318,7 @@ namespace UniversalSoundboard.Models
         #region Event Handlers
         private void AudioGraph_UnrecoverableErrorOccurred(AudioGraph sender, AudioGraphUnrecoverableErrorOccurredEventArgs args)
         {
-            // Stop the playback
-            Pause();
+            UnrecoverableErrorOccured?.Invoke(this, args);
         }
 
         private void PositionChangeTimer_Tick(object sender, object e)

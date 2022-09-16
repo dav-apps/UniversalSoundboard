@@ -36,6 +36,7 @@ namespace UniversalSoundboard.Models
         }
 
         public event EventHandler<AudioRecorderQuantumStartedEventArgs> QuantumStarted;
+        public event EventHandler<AudioGraphUnrecoverableErrorOccurredEventArgs> UnrecoverableErrorOccured;
 
         public StorageFile AudioFile
         {
@@ -267,10 +268,9 @@ namespace UniversalSoundboard.Models
         }
 
         #region Event Handlers
-        private async void AudioGraph_UnrecoverableErrorOccurred(AudioGraph sender, AudioGraphUnrecoverableErrorOccurredEventArgs args)
+        private void AudioGraph_UnrecoverableErrorOccurred(AudioGraph sender, AudioGraphUnrecoverableErrorOccurredEventArgs args)
         {
-            // Stop the recording
-            await Stop();
+            UnrecoverableErrorOccured?.Invoke(this, args);
         }
         #endregion
     }
