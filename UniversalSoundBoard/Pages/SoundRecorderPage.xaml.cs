@@ -107,6 +107,11 @@ namespace UniversalSoundboard.Pages
         {
             await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
             {
+                if (
+                    audioRecorder == null
+                    || audioRecorder.IsDisposed
+                ) return;
+
                 UpdateInputDeviceComboBox();
 
                 if (
@@ -122,6 +127,33 @@ namespace UniversalSoundboard.Pages
                     catch(AudioIOException e)
                     {
                         Crashes.TrackError(e);
+                    }
+                }
+                
+                if (audioRecorder.IsInitialized)
+                {
+                    if (audioRecorder.IsRecording)
+                    {
+                        // Stop the recording
+                        await StopRecording();
+                    }
+
+                    DeviceInfo newInputDevice;
+
+                    if (inputDeviceWatcherHelper.Devices.Count == 0)
+                        newInputDevice = null;
+                    else
+                        newInputDevice = inputDeviceWatcherHelper.Devices[InputDeviceComboBox.SelectedIndex];
+
+                    if (newInputDevice != inputDevice)
+                    {
+                        inputDevice = newInputDevice;
+
+                        // Create a new AudioRecorder with the newly selected input device
+                        audioRecorder.Dispose();
+                        audioRecorder = new AudioRecorder(outputFile);
+                        audioRecorder.QuantumStarted += AudioRecorder_QuantumStarted;
+                        await UpdateInputDevice();
                     }
                 }
             });
@@ -171,44 +203,54 @@ namespace UniversalSoundboard.Pages
 
             if (audioRecorder.IsRecording)
             {
-                RecordButton.Content = "\uE7C8";
-                RecordButtonToolTip.Text = FileManager.loader.GetString("StartRecording");
-
-                timer.Stop();
-                await audioRecorder.Stop();
-
-                InputDeviceComboBox.IsEnabled = true;
-                WaveformCanvas.Children.Clear();
-
-                // Add the new recorded sounds to the list
-                var recordedSoundItem = new RecordedSoundItem(string.Format(FileManager.loader.GetString("Recording"), soundItemsCounter), outputFile);
-                recordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
-                recordedSoundItem.Removed += RecordedSoundItem_Removed;
-                recordedSoundItems.Insert(0, recordedSoundItem);
-
-                await InitAudioRecorder();
-
-                // Show the list of recorded sounds
-                RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, false);
-                ShrinkRecorderStoryboardAnimation.From = RecordingRelativePanel.ActualHeight;
-                ShrinkRecorderStoryboardAnimation.To = RecordingRelativePanel.ActualHeight / 1.5;
-                ShrinkRecorderStoryboard.Begin();
+                await StopRecording();
             }
             else
             {
-                RecordButton.Content = "\uEE95";
-                RecordButtonToolTip.Text = FileManager.loader.GetString("StopRecording");
-
-                timer.Start();
-                audioRecorder.Start();
-
-                InputDeviceComboBox.IsEnabled = false;
-
-                if (recordedSoundItems.Count > 0)
-                    ExpandRecorder();
-
-                soundItemsCounter++;
+                StartRecording();
             }
+        }
+
+        private void StartRecording()
+        {
+            RecordButton.Content = "\uEE95";
+            RecordButtonToolTip.Text = FileManager.loader.GetString("StopRecording");
+
+            timer.Start();
+            audioRecorder.Start();
+
+            InputDeviceComboBox.IsEnabled = false;
+
+            if (recordedSoundItems.Count > 0)
+                ExpandRecorder();
+
+            soundItemsCounter++;
+        }
+
+        private async Task StopRecording()
+        {
+            RecordButton.Content = "\uE7C8";
+            RecordButtonToolTip.Text = FileManager.loader.GetString("StartRecording");
+
+            timer.Stop();
+            await audioRecorder.Stop();
+
+            InputDeviceComboBox.IsEnabled = true;
+            WaveformCanvas.Children.Clear();
+
+            // Add the new recorded sounds to the list
+            var recordedSoundItem = new RecordedSoundItem(string.Format(FileManager.loader.GetString("Recording"), soundItemsCounter), outputFile);
+            recordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
+            recordedSoundItem.Removed += RecordedSoundItem_Removed;
+            recordedSoundItems.Insert(0, recordedSoundItem);
+
+            await InitAudioRecorder();
+
+            // Show the list of recorded sounds
+            RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, false);
+            ShrinkRecorderStoryboardAnimation.From = RecordingRelativePanel.ActualHeight;
+            ShrinkRecorderStoryboardAnimation.To = RecordingRelativePanel.ActualHeight / 1.5;
+            ShrinkRecorderStoryboard.Begin();
         }
 
         private void RecordedSoundItem_AudioPlayerStarted(object sender, EventArgs e)
@@ -322,6 +364,8 @@ namespace UniversalSoundboard.Pages
 
         private void DrawWaveform()
         {
+            if (channelValues.Count < 2) return;
+
             // Draw the waveform for the first 500 processed sample values
             double canvasWidth = WaveformCanvas.ActualWidth;
             double canvasHeight = WaveformCanvas.ActualHeight;
@@ -383,11 +427,11 @@ namespace UniversalSoundboard.Pages
 
         private async Task UpdateInputDevice()
         {
-            if (inputDevice == null) return;
+            if (audioRecorder == null) return;
 
             try
             {
-                audioRecorder.InputDevice = inputDevice.DeviceInformation;
+                audioRecorder.InputDevice = inputDevice?.DeviceInformation;
                 await audioRecorder.Init(true, true);
             }
             catch(AudioIOException e)
@@ -429,7 +473,10 @@ namespace UniversalSoundboard.Pages
 
         unsafe private void ProcessFrameOutput(AudioFrame frame)
         {
-            if (audioRecorder.SamplesPerQuantum == 0) return;
+            if (
+                audioRecorder.SamplesPerQuantum == 0
+                || channelValues.Count < 2
+            ) return;
 
             using (AudioBuffer buffer = frame.LockBuffer(AudioBufferAccessMode.Read))
             using (IMemoryBufferReference reference = buffer.CreateReference())

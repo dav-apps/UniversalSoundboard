@@ -51,6 +51,10 @@ namespace UniversalSoundboard.Models
         {
             get => isInitialized;
         }
+        public bool IsDisposed
+        {
+            get => isDisposed;
+        }
         public bool IsRecording
         {
             get => isRecording;
@@ -141,6 +145,7 @@ namespace UniversalSoundboard.Models
             }
 
             AudioGraph = createAudioGraphResult.Graph;
+            AudioGraph.UnrecoverableErrorOccurred += AudioGraph_UnrecoverableErrorOccurred;
         }
 
         private async Task InitDeviceInputNode()
@@ -191,7 +196,16 @@ namespace UniversalSoundboard.Models
 
             if (isRecording) return;
 
-            AudioGraph.Start();
+            try
+            {
+                AudioGraph.Start();
+            }
+            catch(Exception e)
+            {
+                Crashes.TrackError(e);
+                return;
+            }
+            
             isRecording = true;
         }
 
@@ -205,9 +219,17 @@ namespace UniversalSoundboard.Models
 
             if (!isRecording) return;
 
-            AudioGraph.Stop();
-            await FileOutputNode.FinalizeAsync();
-            AudioGraph.ResetAllNodes();
+            try
+            {
+                AudioGraph.Stop();
+                await FileOutputNode.FinalizeAsync();
+                AudioGraph.ResetAllNodes();
+            }
+            catch(Exception e)
+            {
+                Crashes.TrackError(e);
+            }
+
             isInitialized = false;
             isRecording = false;
         }
@@ -243,5 +265,13 @@ namespace UniversalSoundboard.Models
 
             this.inputDevice = inputDevice;
         }
+
+        #region Event Handlers
+        private async void AudioGraph_UnrecoverableErrorOccurred(AudioGraph sender, AudioGraphUnrecoverableErrorOccurredEventArgs args)
+        {
+            // Stop the recording
+            await Stop();
+        }
+        #endregion
     }
 }

@@ -250,7 +250,6 @@ namespace UniversalSoundboard.Models
             catch(Exception e)
             {
                 Crashes.TrackError(e);
-                throw new AudioIOException();
             }
 
             isPlaying = false;
@@ -319,14 +318,7 @@ namespace UniversalSoundboard.Models
         private void AudioGraph_UnrecoverableErrorOccurred(AudioGraph sender, AudioGraphUnrecoverableErrorOccurredEventArgs args)
         {
             // Stop the playback
-            try
-            {
-                sender.Stop();
-            }
-            catch(Exception e)
-            {
-                Crashes.TrackError(e);
-            }
+            Pause();
         }
 
         private void PositionChangeTimer_Tick(object sender, object e)
