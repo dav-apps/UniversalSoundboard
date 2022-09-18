@@ -1,9 +1,12 @@
-﻿using Microsoft.AppCenter.Crashes;
+﻿using AudioEffectComponent;
+using Microsoft.AppCenter.Crashes;
 using System;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using Windows.Devices.Enumeration;
+using Windows.Foundation.Collections;
 using Windows.Media.Audio;
+using Windows.Media.Effects;
 using Windows.Media.Render;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -181,6 +184,15 @@ namespace UniversalSoundboard.Models
             if (DeviceOutputNode != null)
                 FileInputNode.AddOutgoingConnection(DeviceOutputNode);
 
+            if (playbackRate != 1f)
+            {
+                // Set the pitch for the current playback rate
+                FileInputNode.EffectDefinitions.Add(new AudioEffectDefinition(
+                    typeof(PitchShiftAudioEffect).FullName,
+                    new PropertySet { { "Pitch", 1 / (float)playbackRate } }
+                ));
+            }
+
             FileInputNode.FileCompleted += FileInputNode_FileCompleted;
         }
 
@@ -305,13 +317,15 @@ namespace UniversalSoundboard.Models
             isMuted = muted;
         }
 
-        private void setPlaybackRate(double playbackRate)
+        private async void setPlaybackRate(double playbackRate)
         {
             // Don't change the value if it didn't change
             if (this.playbackRate == playbackRate) return;
 
             FileInputNode.PlaybackSpeedFactor = playbackRate;
             this.playbackRate = playbackRate;
+
+            await Init();
         }
         #endregion
 
