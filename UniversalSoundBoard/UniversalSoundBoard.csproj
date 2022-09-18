@@ -502,6 +502,10 @@
       <Project>{10769b56-07ae-453a-baeb-1c0c7c492838}</Project>
       <Name>davClassLibrary</Name>
     </ProjectReference>
+    <ProjectReference Include="..\AudioEffectComponent\AudioEffectComponent.csproj">
+      <Project>{5dd3ac9b-a3e6-4c75-9b10-a3f7e0dabbfc}</Project>
+      <Name>AudioEffectComponent</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <SDKReference Include="WindowsDesktop, Version=10.0.19041.0">

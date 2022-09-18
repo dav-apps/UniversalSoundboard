@@ -13,6 +13,8 @@ Project("{C7167F0D-BC9F-4E6E-AFE1-012C56B48DB5}") = "UniversalSoundboard.Packagi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UniversalSoundboard.Hotkey", "UniversalSoundboard.Hotkey\UniversalSoundboard.Hotkey.csproj", "{2D2020D6-9921-443C-B461-E883C55EA000}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AudioEffectComponent", "AudioEffectComponent\AudioEffectComponent.csproj", "{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -147,6 +149,26 @@ Global
 		{2D2020D6-9921-443C-B461-E883C55EA000}.Release|x64.Build.0 = Release|Any CPU
 		{2D2020D6-9921-443C-B461-E883C55EA000}.Release|x86.ActiveCfg = Release|Any CPU
 		{2D2020D6-9921-443C-B461-E883C55EA000}.Release|x86.Build.0 = Release|Any CPU
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Debug|ARM.ActiveCfg = Debug|ARM
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Debug|ARM.Build.0 = Debug|ARM
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Debug|ARM64.ActiveCfg = Debug|ARM64
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Debug|ARM64.Build.0 = Debug|ARM64
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Debug|x64.ActiveCfg = Debug|x64
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Debug|x64.Build.0 = Debug|x64
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Debug|x86.ActiveCfg = Debug|x86
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Debug|x86.Build.0 = Debug|x86
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Release|ARM.ActiveCfg = Release|ARM
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Release|ARM.Build.0 = Release|ARM
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Release|ARM64.ActiveCfg = Release|ARM64
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Release|ARM64.Build.0 = Release|ARM64
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Release|x64.ActiveCfg = Release|x64
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Release|x64.Build.0 = Release|x64
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Release|x86.ActiveCfg = Release|x86
+		{5DD3AC9B-A3E6-4C75-9B10-A3F7E0DABBFC}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
