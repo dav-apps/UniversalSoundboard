@@ -133,11 +133,6 @@ namespace UniversalSoundboard.Components
             // Set the initial UI element states
             UpdateUI();
 
-            // Set initial values
-            PlayingSound.AudioPlayer.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
-            PlayingSound.AudioPlayer.Volume = (double)PlayingSound.Volume / 100;
-            PlayingSound.AudioPlayer.IsMuted = PlayingSound.Muted;
-
             // Play the animation for showing the sound
             ShowPlayingSound?.Invoke(this, new EventArgs());
 

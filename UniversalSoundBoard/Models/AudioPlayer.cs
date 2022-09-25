@@ -295,8 +295,8 @@ namespace UniversalSoundboard.Models
             else if (volume < 0)
                 volume = 0;
 
-            if (DeviceOutputNode != null)
-                DeviceOutputNode.OutgoingGain = volume;
+            if (FileInputNode != null)
+                FileInputNode.OutgoingGain = volume;
 
             this.volume = volume;
         }
