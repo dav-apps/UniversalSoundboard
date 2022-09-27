@@ -10,9 +10,8 @@
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
-    Height="0"
     x:Name="PlayingSoundItemTemplateUserControl"
-    Loaded="PlayingSoundTemplate_Loaded"
+    Loaded="PlayingSoundItemTemplate_Loaded"
     SizeChanged="UserControl_SizeChanged">
 
     <UserControl.Resources>
@@ -385,36 +384,6 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
-
-        <Storyboard x:Name="ShowPlayingSoundItemStoryboard" Completed="ShowPlayingSoundItemStoryboard_Completed">
-            <DoubleAnimation
-                x:Name="ShowPlayingSoundItemStoryboardAnimation"
-                Storyboard.TargetName="PlayingSoundItemTemplateUserControl"
-                Storyboard.TargetProperty="Height"
-                EnableDependentAnimation="True"
-                Duration="0:0:0.2"
-                From="0">
-
-                <DoubleAnimation.EasingFunction>
-                    <CubicEase EasingMode="EaseOut" />
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
-
-        <Storyboard x:Name="HidePlayingSoundItemStoryboard" Completed="HidePlayingSoundItemStoryboard_Completed">
-            <DoubleAnimation
-                x:Name="HidePlayingSoundItemStoryboardAnimation"
-                Storyboard.TargetName="PlayingSoundItemTemplateUserControl"
-                Storyboard.TargetProperty="Height"
-                EnableDependentAnimation="True"
-                Duration="0:0:0.2"
-                To="0">
-
-                <DoubleAnimation.EasingFunction>
-                    <CubicEase EasingMode="EaseOut" />
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
     </UserControl.Resources>
 
     <Grid Name="ContentRoot" Background="Transparent" Margin="0,6">
@@ -586,7 +555,7 @@
             Grid.Row="0"
             Margin="0,0,0,4"
             MinHeight="32">
-            
+
             <TextBlock
                 Name="PlayingSoundNameTextBlock"
                 RelativePanel.AlignVerticalCenterWithPanel="True"
@@ -865,7 +834,7 @@
                     LostFocus="VolumeControl_LostFocus"
                     MuteChanged="VolumeControl_MuteChanged" />
             </StackPanel>
-            
+
             <StackPanel
                 Name="RightMediaControlStackPanel"
                 RelativePanel.AlignRightWithPanel="True"

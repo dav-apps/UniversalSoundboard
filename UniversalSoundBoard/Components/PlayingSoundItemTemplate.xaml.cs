@@ -1,6 +1,7 @@
 ﻿using davClassLibrary;
 using System;
 using System.Linq;
+using System.Numerics;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
@@ -8,6 +9,7 @@ using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.Devices.Enumeration;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -68,9 +70,6 @@ namespace UniversalSoundboard.Components
             int j = FileManager.itemViewHolder.PlayingSounds.ToList().FindIndex(ps => ps.Uuid.Equals(playingSound.Uuid));
             if (j == -1) return;
 
-            if (!inBottomPlayingSoundsBar)
-                PlayingSoundItemTemplateUserControl.Height = double.NaN;
-
             PlayingSoundItem = PlayingSoundItem.Subscribe(playingSound);
 
             PlayingSoundItem.PlaybackStateChanged -= PlayingSoundItem_PlaybackStateChanged;
@@ -117,7 +116,7 @@ namespace UniversalSoundboard.Components
         }
 
         #region UserControl event handlers
-        private void PlayingSoundTemplate_Loaded(object sender, RoutedEventArgs eventArgs)
+        private void PlayingSoundItemTemplate_Loaded(object sender, RoutedEventArgs eventArgs)
         {
             AdjustLayout();
         }
@@ -130,7 +129,15 @@ namespace UniversalSoundboard.Components
 
         private void PlayingSoundTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
-            if (DataContext == null) return;
+            if (DataContext == null)
+            {
+                double contentHeight = ActualHeight > 0 ? ActualHeight + Margin.Top + Margin.Bottom : 88;
+
+                Translation = new Vector3(0, -(float)contentHeight, 0);
+                Opacity = 0;
+
+                return;
+            }
 
             var playingSound = DataContext as PlayingSound;
 
@@ -299,15 +306,53 @@ namespace UniversalSoundboard.Components
                 );
             }
 
-            ShowPlayingSoundItemStoryboardAnimation.To = contentHeight;
-            ShowPlayingSoundItemStoryboard.Begin();
+            var compositor = Window.Current.Compositor;
+
+            var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
+            translationAnimation.Duration = TimeSpan.FromMilliseconds(200);
+            translationAnimation.Target = "Translation";
+
+            var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+            opacityAnimation.InsertKeyFrame(0.3f, 0);
+            opacityAnimation.InsertKeyFrame(1.0f, 1);
+            opacityAnimation.Duration = TimeSpan.FromMilliseconds(200);
+            opacityAnimation.Target = "Opacity";
+
+            var animationGroup = compositor.CreateAnimationGroup();
+            animationGroup.Add(translationAnimation);
+            animationGroup.Add(opacityAnimation);
+
+            StartAnimation(animationGroup);
         }
 
-        private void PlayingSoundItem_RemovePlayingSound(object sender, EventArgs e)
+        private async void PlayingSoundItem_RemovePlayingSound(object sender, EventArgs e)
         {
             // Start the animation for hiding the PlayingSoundItem
-            HidePlayingSoundItemStoryboardAnimation.From = PlayingSoundItemTemplateUserControl.ActualHeight;
-            HidePlayingSoundItemStoryboard.Begin();
+            var compositor = Window.Current.Compositor;
+            float contentHeight = (float)ActualHeight;
+
+            var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -contentHeight, 0));
+            translationAnimation.Duration = TimeSpan.FromMilliseconds(200);
+            translationAnimation.Target = "Translation";
+
+            var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+            opacityAnimation.InsertKeyFrame(0.5f, 0);
+            opacityAnimation.Duration = TimeSpan.FromMilliseconds(200);
+            opacityAnimation.Target = "Opacity";
+
+            var animationGroup = compositor.CreateAnimationGroup();
+            animationGroup.Add(translationAnimation);
+            animationGroup.Add(opacityAnimation);
+
+            StartAnimation(animationGroup);
+
+            await Task.Delay(200);
+
+            playingSoundItemVisible = false;
+
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.High, async () => await PlayingSoundItem.Remove());
         }
 
         private void PlayingSoundItem_DownloadStatusChanged(object sender, DownloadStatusChangedEventArgs e)
@@ -1028,18 +1073,6 @@ namespace UniversalSoundboard.Components
         private void HideSoundsListViewStoryboard_Completed(object sender, object e)
         {
             FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
-        }
-
-        private void ShowPlayingSoundItemStoryboard_Completed(object sender, object e)
-        {
-            PlayingSoundItemTemplateUserControl.Height = double.NaN;
-            FileManager.itemViewHolder.TriggerShowPlayingSoundItemEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
-        }
-
-        private async void HidePlayingSoundItemStoryboard_Completed(object sender, object e)
-        {
-            playingSoundItemVisible = false;
-            await PlayingSoundItem.Remove();
         }
         #endregion
     }
