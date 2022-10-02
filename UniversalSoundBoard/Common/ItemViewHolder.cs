@@ -158,6 +158,8 @@ namespace UniversalSoundboard.Common
         public event EventHandler<PlayingSoundItemEventArgs> ShowPlayingSoundItemEnded;                         // Is triggered when the PlayingSound appearing animation has ended
         public event EventHandler<PlayingSoundItemEventArgs> RemovePlayingSoundItemStarted;                     // Is triggered before a PlayingSound is removed
         public event EventHandler<PlayingSoundItemEventArgs> RemovePlayingSoundItemEnded;                       // Is triggered after a PlayingSound was removed
+        public event EventHandler<UpdatePlayingSoundItemPositionEventArgs> UpdatePlayingSoundItemPosition;      // Is triggered when a PlayingSound was removed and the items below or above it in the list should animate the position change
+        public event EventHandler<EventArgs> ResetPlayingSoundItemPosition;                                     // Is triggered when a PlayingSound was removed the the items below or above it in the list should return to the previous position
         public event EventHandler<TableObjectFileDownloadProgressChangedEventArgs> TableObjectFileDownloadProgressChanged;  // Is triggered when the file of a TableObject is being downloaded and the progress changed
         public event EventHandler<TableObjectFileDownloadCompletedEventArgs> TableObjectFileDownloadCompleted;  // Is triggered from TriggerAction when the file of a TableObject was finished
         public event EventHandler<ShowInAppNotificationEventArgs> ShowInAppNotification;                        // Trigger this event to show the InAppNotification on the SoundPage
@@ -1268,6 +1270,16 @@ namespace UniversalSoundboard.Common
         public void TriggerRemovePlayingSoundItemEndedEvent(object sender, PlayingSoundItemEventArgs args)
         {
             RemovePlayingSoundItemEnded?.Invoke(sender, args);
+        }
+
+        public void TriggerUpdatePlayingSoundItemPositionEvent(object sender, UpdatePlayingSoundItemPositionEventArgs args)
+        {
+            UpdatePlayingSoundItemPosition?.Invoke(sender, args);
+        }
+
+        public void TriggerResetPlayingSoundItemPositionEvent(object sender, EventArgs args)
+        {
+            ResetPlayingSoundItemPosition?.Invoke(sender, args);
         }
 
         public void TriggerTableObjectFileDownloadProgressChangedEvent(object sender, TableObjectFileDownloadProgressChangedEventArgs args)

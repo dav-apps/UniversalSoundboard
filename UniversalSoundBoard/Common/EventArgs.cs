@@ -45,6 +45,18 @@ namespace UniversalSoundboard.Common
         }
     }
 
+    public class UpdatePlayingSoundItemPositionEventArgs : EventArgs
+    {
+        public int Index { get; set; }
+        public float ContentHeight { get; set; }
+
+        public UpdatePlayingSoundItemPositionEventArgs(int index, float contentHeight)
+        {
+            Index = index;
+            ContentHeight = contentHeight;
+        }
+    }
+
     public class TableObjectFileDownloadProgressChangedEventArgs : EventArgs
     {
         public Guid Uuid { get; set; }
