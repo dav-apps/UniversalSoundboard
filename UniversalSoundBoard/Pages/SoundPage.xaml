@@ -665,8 +665,9 @@
 
                 <ListView
                     Name="PlayingSoundsListView"
-                    ItemsSource="{Binding PlayingSounds}"
+                    ItemsSource="{x:Bind playingSoundItemContainers}"
                     SelectionMode="None"
+                    ItemContainerTransitions="{x:Null}"
                     Margin="0,85,0,0">
 
                     <ListView.ItemContainerStyle>
@@ -676,7 +677,7 @@
                     </ListView.ItemContainerStyle>
 
                     <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:PlayingSound">
+                        <DataTemplate x:DataType="models:PlayingSoundItemContainer">
                             <components:PlayingSoundItemTemplate />
                         </DataTemplate>
                     </ListView.ItemTemplate>

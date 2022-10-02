@@ -199,6 +199,7 @@
     <Compile Include="Models\DeviceWatcherHelper.cs" />
     <Compile Include="Dialogs\Dialog.cs" />
     <Compile Include="Models\DialogSoundListItem.cs" />
+    <Compile Include="Models\PlayingSoundItemContainer.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadItem.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadPlugin.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadPluginResult.cs" />

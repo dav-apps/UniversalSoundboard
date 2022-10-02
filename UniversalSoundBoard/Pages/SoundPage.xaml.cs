@@ -4,6 +4,7 @@ using Microsoft.Toolkit.Uwp.UI;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
@@ -39,6 +40,7 @@ namespace UniversalSoundboard.Pages
         private bool snapBottomPlayingSoundsBarAnimationRunning = false;
         private static PlayingSound nextSinglePlayingSoundToOpen;
         private int getContainerHeightCount = 0;
+        ObservableCollection<PlayingSoundItemContainer> playingSoundItemContainers = new ObservableCollection<PlayingSoundItemContainer>();
         AdvancedCollectionView reversedPlayingSounds;
         bool startMessageButtonsEnabled = true;
         bool canReorderItems = false;
@@ -78,6 +80,7 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
+            FileManager.itemViewHolder.PlayingSounds.CollectionChanged += ItemViewHolder_PlayingSounds_CollectionChanged;
 
             reversedPlayingSounds.VectorChanged += ReversedPlayingSounds_VectorChanged;
 
@@ -344,6 +347,16 @@ namespace UniversalSoundboard.Pages
         private async void ItemViewHolder_FavouriteSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             await HandleSoundsCollectionChanged(e, true);
+        }
+
+        private void ItemViewHolder_PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                var playingSound = e.NewItems[0] as PlayingSound;
+
+                playingSoundItemContainers.Add(new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound));
+            }
         }
 
         private async void ReversedPlayingSounds_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs args)
