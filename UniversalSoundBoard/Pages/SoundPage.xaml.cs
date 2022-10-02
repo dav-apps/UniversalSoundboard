@@ -14,7 +14,6 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.ApplicationModel.Resources;
 using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Xaml;
@@ -28,7 +27,6 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class SoundPage : Page
     {
-        ResourceLoader loader = new ResourceLoader();
         public static bool soundsPivotSelected = true;
         private bool skipSoundListSelectionChangedEvent = false;
         Guid reorderedItem = Guid.Empty;
@@ -394,12 +392,12 @@ namespace UniversalSoundboard.Pages
 
             if (itemsCount == FileManager.itemViewHolder.SelectedSounds.Count && itemsCount != 0)
             {
-                FileManager.itemViewHolder.SelectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-DeselectAll");
+                FileManager.itemViewHolder.SelectAllFlyoutText = FileManager.loader.GetString("MoreButton_SelectAllFlyout-DeselectAll");
                 FileManager.itemViewHolder.SelectAllFlyoutIcon = new SymbolIcon(Symbol.ClearSelection);
             }
             else
             {
-                FileManager.itemViewHolder.SelectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
+                FileManager.itemViewHolder.SelectAllFlyoutText = FileManager.loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
                 FileManager.itemViewHolder.SelectAllFlyoutIcon = new SymbolIcon(Symbol.SelectAll);
             }
         }
@@ -976,11 +974,11 @@ namespace UniversalSoundboard.Pages
             }
 
             if (FileManager.itemViewHolder.AddingSounds)
-                e.DragUIOverride.Caption = loader.GetString("Drop-AlreadyAddingSounds");
+                e.DragUIOverride.Caption = FileManager.loader.GetString("Drop-AlreadyAddingSounds");
             else if (fileTypesSupported)
-                e.DragUIOverride.Caption = loader.GetString("Drop");
+                e.DragUIOverride.Caption = FileManager.loader.GetString("Drop");
             else
-                e.DragUIOverride.Caption = loader.GetString("Drop-FileTypeNotSupported");
+                e.DragUIOverride.Caption = FileManager.loader.GetString("Drop-FileTypeNotSupported");
 
             deferral.Complete();
         }
