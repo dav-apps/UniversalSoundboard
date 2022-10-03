@@ -41,6 +41,7 @@ namespace UniversalSoundboard.Components
             get => Tag != null;
         }
         private bool playingSoundItemVisible = false;
+        private double ContentHeight { get => PlayingSoundItemContainer?.ContentHeight ?? 0; }
 
         private const string MoreButtonOutputDeviceFlyoutSubItemName = "MoreButtonOutputDeviceFlyoutSubItem";
         private const string MoreButtonPlaybackSpeedFlyoutSubItemName = "MoreButtonPlaybackSpeedFlyoutSubItemName";
@@ -123,12 +124,12 @@ namespace UniversalSoundboard.Components
         }
 
         #region UserControl event handlers
-        private void PlayingSoundItemTemplate_Loaded(object sender, RoutedEventArgs eventArgs)
+        private void PlayingSoundItemTemplateUserControl_Loaded(object sender, RoutedEventArgs eventArgs)
         {
             AdjustLayout();
         }
 
-        private void UserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void PlayingSoundItemTemplateUserControl_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             AdjustLayout();
             UpdateUI();
@@ -284,10 +285,9 @@ namespace UniversalSoundboard.Components
         {
             // Start the animation for hiding the PlayingSoundItem
             var compositor = Window.Current.Compositor;
-            float contentHeight = (float)ActualHeight;
 
             var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
-            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, Translation.Y + (IsInBottomPlayingSoundsBar ? contentHeight : -contentHeight), 0));
+            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, Translation.Y + (float)(IsInBottomPlayingSoundsBar ? ContentHeight : -ContentHeight), 0));
             translationAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
             translationAnimation.Target = "Translation";
 
@@ -302,9 +302,11 @@ namespace UniversalSoundboard.Components
 
             // Start the animation & notify other items to move up or down
             StartAnimation(animationGroup);
-            FileManager.itemViewHolder.TriggerUpdatePlayingSoundItemPositionEvent(this, new UpdatePlayingSoundItemPositionEventArgs(PlayingSoundItemContainer.Index, contentHeight));
+            FileManager.itemViewHolder.TriggerUpdatePlayingSoundItemPositionEvent(this, new UpdatePlayingSoundItemPositionEventArgs(PlayingSoundItemContainer.Index, (float)ContentHeight));
 
             playingSoundItemVisible = false;
+            PlayingSoundItemContainer.IsVisible = false;
+
             await Task.Delay(showHideItemAnimationDuration);
             await PlayingSoundItem.Remove();
 
@@ -815,13 +817,10 @@ namespace UniversalSoundboard.Components
 
             await Task.Delay(5);
 
-            // (88 = standard height of PlayingSoundItem with one row of text)
-            double contentHeight = ContentRoot.ActualHeight > 0 ? ContentRoot.ActualHeight + ContentRoot.Margin.Top + ContentRoot.Margin.Bottom : 88;
-
             if (IsInBottomPlayingSoundsBar)
-                Translation = new Vector3(0, (float)contentHeight, 0);
+                Translation = new Vector3(0, (float)ContentHeight, 0);
             else
-                Translation = new Vector3(0, -(float)contentHeight, 0);
+                Translation = new Vector3(0, -(float)ContentHeight, 0);
 
             if (addPlayingSoundOnTopOfBottomPlayingSoundsBar && FileManager.itemViewHolder.PlayingSounds.Count != 2)
             {
@@ -830,7 +829,7 @@ namespace UniversalSoundboard.Components
                     this,
                     new PlayingSoundItemEventArgs(
                         PlayingSound.Uuid,
-                        contentHeight
+                        ContentHeight
                     )
                 );
             }
@@ -910,10 +909,16 @@ namespace UniversalSoundboard.Components
             );
 
             // Remove the bottom margin in Single sound mode
-            if(layoutType == PlayingSoundItemLayoutType.SingleSoundSmall || layoutType == PlayingSoundItemLayoutType.SingleSoundLarge)
+            if (layoutType == PlayingSoundItemLayoutType.SingleSoundSmall || layoutType == PlayingSoundItemLayoutType.SingleSoundLarge)
                 ContentRoot.Margin = new Thickness(0, 6, 0, 0);
             else
                 ContentRoot.Margin = new Thickness(0, 6, 0, 6);
+
+            // Update the ContentHeight property in PlayingSoundItemContainer
+            if (PlayingSoundItemContainer.IsVisible)
+                PlayingSoundItemContainer.ContentHeight = ActualHeight;
+            else
+                PlayingSoundItemContainer.ContentHeight = 0;
         }
 
         private void UpdateUI()

@@ -1,8 +1,6 @@
 ﻿using davClassLibrary;
 using Microsoft.AppCenter.Analytics;
-using Microsoft.Toolkit.Uwp.UI;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -14,7 +12,6 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.Foundation.Collections;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -37,30 +34,18 @@ namespace UniversalSoundboard.Pages
         private bool isManipulatingBottomPlayingSoundsBar = false;
         private bool snapBottomPlayingSoundsBarAnimationRunning = false;
         private static PlayingSound nextSinglePlayingSoundToOpen;
-        private int getContainerHeightCount = 0;
         ObservableCollection<PlayingSoundItemContainer> playingSoundItemContainers = new ObservableCollection<PlayingSoundItemContainer>();
-        AdvancedCollectionView reversedPlayingSounds;
+        ObservableCollection<PlayingSoundItemContainer> reversedPlayingSoundItemContainers = new ObservableCollection<PlayingSoundItemContainer>();
         bool startMessageButtonsEnabled = true;
         bool canReorderItems = false;
         Visibility startMessageVisibility = Visibility.Collapsed;
         Visibility emptyCategoryMessageVisibility = Visibility.Collapsed;
         public static DataTemplate hotkeyItemTemplate;
-        
+
         public SoundPage()
         {
             InitializeComponent();
             ContentRoot.DataContext = FileManager.itemViewHolder;
-
-            // Initialize the reversedPlayingSounds list
-            reversedPlayingSounds = new AdvancedCollectionView(FileManager.itemViewHolder.PlayingSounds);
-            reversedPlayingSounds.SortDescriptions.Add(new SortDescription(SortDirection.Ascending, new ReverserClass()));
-
-            reversedPlayingSounds.Filter = item =>
-            {
-                if (!playingSoundsLoaded || item == null) return false;
-                if (FileManager.itemViewHolder.PlayingSounds.Count == 0) return true;
-                return FileManager.itemViewHolder.OpenMultipleSounds || ((PlayingSound)item).Uuid.Equals(FileManager.itemViewHolder.PlayingSounds.Last().Uuid);
-            };
 
             // Subscribe to events
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
@@ -80,8 +65,6 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
             FileManager.itemViewHolder.PlayingSounds.CollectionChanged += ItemViewHolder_PlayingSounds_CollectionChanged;
 
-            reversedPlayingSounds.VectorChanged += ReversedPlayingSounds_VectorChanged;
-
             // Show all currently active InAppNotifications
             ShowAllInAppNotifications();
 
@@ -91,24 +74,24 @@ namespace UniversalSoundboard.Pages
         }
 
         #region Page event handlers
-        async void SoundPage_Loaded(object sender, RoutedEventArgs e)
+        private void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
             hotkeyItemTemplate = (DataTemplate)Resources["HotkeyItemTemplate"];
             soundsPivotSelected = true;
 
             // Set the height of the BottomPlayingSoundsBar if the user is navigating from another page
-            if(playingSoundsLoaded)
-                await InitBottomPlayingSoundsBarHeight();
+            if (playingSoundsLoaded)
+                InitBottomPlayingSoundsBarHeight();
 
-            await UpdatePlayingSoundsListAsync();
-            await UpdateGridSplitterRange();
+            UpdatePlayingSoundsListAsync();
+            UpdateGridSplitterRange();
             UpdateCanReorderItems();
         }
 
-        private async void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             maxBottomPlayingSoundsBarHeight = Window.Current.Bounds.Height * 0.6;
-            await UpdatePlayingSoundsListAsync();
+            UpdatePlayingSoundsListAsync();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -128,11 +111,10 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.Sounds.CollectionChanged -= ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged -= ItemViewHolder_FavouriteSounds_CollectionChanged;
-
-            reversedPlayingSounds.VectorChanged -= ReversedPlayingSounds_VectorChanged;
+            FileManager.itemViewHolder.PlayingSounds.CollectionChanged -= ItemViewHolder_PlayingSounds_CollectionChanged;
 
             // Remove all InAppNotifications from the ContentGrid
-            foreach(var ianItem in FileManager.InAppNotificationItems)
+            foreach (var ianItem in FileManager.InAppNotificationItems)
                 if (ianItem.Sent && ContentGrid.Children.Contains(ianItem.InAppNotification))
                     ContentGrid.Children.Remove(ianItem.InAppNotification);
 
@@ -149,14 +131,11 @@ namespace UniversalSoundboard.Pages
                 UpdateCanReorderItems();
         }
 
-        private async void ItemViewHolder_PlayingSoundsLoaded(object sender, EventArgs e)
+        private void ItemViewHolder_PlayingSoundsLoaded(object sender, EventArgs e)
         {
             playingSoundsLoaded = true;
 
-            // Load the reversed playing sounds list
-            reversedPlayingSounds.RefreshFilter();
-
-            await InitBottomPlayingSoundsBarHeight();
+            InitBottomPlayingSoundsBarHeight();
             playingSoundsRendered = true;
         }
 
@@ -225,7 +204,7 @@ namespace UniversalSoundboard.Pages
                 double newHeight = BottomPlayingSoundsBarListView.ActualHeight + args.HeightDifference;
                 if (newHeight >= maxBottomPlayingSoundsBarHeight) newHeight = maxBottomPlayingSoundsBarHeight;
 
-                BottomPlayingSoundsBar.Height = newHeight;
+                GridSplitterGridBottomRowDef.Height = new GridLength(newHeight, GridUnitType.Pixel);
             }
             else
             {
@@ -242,10 +221,10 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerPlayingSoundItemStartSoundsListAnimationEvent(this);
         }
 
-        private async void ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEnded(object sender, PlayingSoundItemEventArgs args)
+        private void ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEnded(object sender, PlayingSoundItemEventArgs args)
         {
             // Update the min and max height of the bottom row def
-            await UpdateGridSplitterRange();
+            UpdateGridSplitterRange();
         }
 
         private void ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStarted(object sender, PlayingSoundItemEventArgs args)
@@ -265,10 +244,10 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.TriggerPlayingSoundItemStartSoundsListAnimationEvent(this);
         }
 
-        private async void ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEnded(object sender, PlayingSoundItemEventArgs args)
+        private void ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEnded(object sender, PlayingSoundItemEventArgs args)
         {
             // Update the min and max height of the bottom row def
-            await UpdateGridSplitterRange();
+            UpdateGridSplitterRange();
         }
 
         private void ItemViewHolder_ShowPlayingSoundItemStarted(object sender, PlayingSoundItemEventArgs args)
@@ -277,9 +256,9 @@ namespace UniversalSoundboard.Pages
             AnimateIncreasingBottomPlayingSoundBar(args.HeightDifference);
         }
 
-        private async void ItemViewHolder_ShowPlayingSoundItemEnded(object sender, PlayingSoundItemEventArgs e)
+        private void ItemViewHolder_ShowPlayingSoundItemEnded(object sender, PlayingSoundItemEventArgs e)
         {
-            await UpdateGridSplitterRange();
+            UpdateGridSplitterRange();
             SnapBottomPlayingSoundsBar();
         }
 
@@ -293,17 +272,17 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        private async void ItemViewHolder_RemovePlayingSoundItemEnded(object sender, PlayingSoundItemEventArgs e)
+        private void ItemViewHolder_RemovePlayingSoundItemEnded(object sender, PlayingSoundItemEventArgs e)
         {
             if (nextSinglePlayingSoundToOpen != null)
             {
                 FileManager.itemViewHolder.PlayingSounds.Add(nextSinglePlayingSoundToOpen);
                 nextSinglePlayingSoundToOpen = null;
             }
-            else if(FileManager.itemViewHolder.OpenMultipleSounds)
+            else if (FileManager.itemViewHolder.OpenMultipleSounds)
             {
                 // Snap the BottomPlayingSoundsBar; for the case that the height of the removed PlayingSound was different
-                await UpdateGridSplitterRange();
+                UpdateGridSplitterRange();
                 SnapBottomPlayingSoundsBar();
             }
         }
@@ -347,21 +326,19 @@ namespace UniversalSoundboard.Pages
             await HandleSoundsCollectionChanged(e, true);
         }
 
-        private void ItemViewHolder_PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private async void ItemViewHolder_PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
                 var playingSound = e.NewItems[0] as PlayingSound;
 
                 playingSoundItemContainers.Add(new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound));
+                reversedPlayingSoundItemContainers.Insert(0, new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound));
             }
-        }
 
-        private async void ReversedPlayingSounds_VectorChanged(IObservableVector<object> sender, IVectorChangedEventArgs args)
-        {
             await Task.Delay(5);
-            await UpdatePlayingSoundsListAsync();
-            await UpdateGridSplitterRange();
+            UpdatePlayingSoundsListAsync();
+            UpdateGridSplitterRange();
         }
         #endregion
 
@@ -402,7 +379,7 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        private async Task UpdatePlayingSoundsListAsync()
+        private void UpdatePlayingSoundsListAsync()
         {
             if (FileManager.itemViewHolder.PlayingSoundsListVisible)
             {
@@ -416,24 +393,23 @@ namespace UniversalSoundboard.Pages
                     PlayingSoundsBarColDef.MinWidth = 0;
                     GridSplitterColDef.Width = new GridLength(0);
 
+                    int playingSoundItemsCount = GetNumberOfVisibleItemsInReversedPlayingSoundItemContainers();
+
                     // Update the visibility of the BottomPlayingSoundsBar
-                    if (reversedPlayingSounds.Count == 0)
+                    if (playingSoundItemsCount == 0)
                     {
-                        BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                         GridSplitterGrid.Visibility = Visibility.Collapsed;
                     }
-                    else if (reversedPlayingSounds.Count == 1)
+                    else if (playingSoundItemsCount == 1)
                     {
-                        BottomPlayingSoundsBar.Visibility = Visibility.Visible;
                         GridSplitterGrid.Visibility = Visibility.Visible;
-
+                        
                         // Set the height of the bottom row def, but hide the GridSplitter
                         BottomPlayingSoundsBarGridSplitter.Visibility = Visibility.Collapsed;
-                        GridSplitterGridBottomRowDef.Height = new GridLength(await GetPlayingSoundItemContainerHeight(0));
+                        GridSplitterGridBottomRowDef.Height = new GridLength(GetFirstBottomPlayingSoundItemContentHeight());
                     }
                     else
                     {
-                        BottomPlayingSoundsBar.Visibility = Visibility.Visible;
                         GridSplitterGrid.Visibility = Visibility.Visible;
                         BottomPlayingSoundsBarGridSplitter.Visibility = FileManager.itemViewHolder.OpenMultipleSounds ? Visibility.Visible : Visibility.Collapsed;
                     }
@@ -446,7 +422,6 @@ namespace UniversalSoundboard.Pages
                     GridSplitterColDef.Width = new GridLength(12);
 
                     // Hide the BottomPlayingSoundsBar
-                    BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                     GridSplitterGrid.Visibility = Visibility.Collapsed;
                 }
 
@@ -460,7 +435,6 @@ namespace UniversalSoundboard.Pages
                 GridSplitterColDef.Width = new GridLength(0);
 
                 // Hide the BottomPlayingSoundsBar
-                BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                 GridSplitterGrid.Visibility = Visibility.Collapsed;
                 AdaptSoundListScrollViewerForBottomPlayingSoundsBar();
             }
@@ -635,6 +609,7 @@ namespace UniversalSoundboard.Pages
         public void ShowAllInAppNotifications()
         {
             double marginBottom = 10;
+
             if (!FileManager.itemViewHolder.OpenMultipleSounds && FileManager.itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 70;
             else if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth && FileManager.itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 57;
 
@@ -689,16 +664,16 @@ namespace UniversalSoundboard.Pages
         #endregion
 
         #region UI
-        private async Task InitBottomPlayingSoundsBarHeight()
+        private void InitBottomPlayingSoundsBarHeight()
         {
             // Update the min and max height of the bottom row def
-            await UpdateGridSplitterRange();
+            UpdateGridSplitterRange();
 
             if (BottomPlayingSoundsBarListView.Items.Count > 0)
             {
                 // Get the height of the first PlayingSound item and set the height of the BottomPlayingSoundsBar
-                double firstItemHeight = await GetPlayingSoundItemContainerHeight(0);
-                BottomPlayingSoundsBar.Height = firstItemHeight;
+                double firstItemHeight = GetFirstBottomPlayingSoundItemContentHeight();
+                BottomPseudoContentGrid.Height = firstItemHeight;
                 GridSplitterGridBottomRowDef.MinHeight = firstItemHeight;
                 GridSplitterGridBottomRowDef.Height = new GridLength(firstItemHeight);
             }
@@ -706,17 +681,17 @@ namespace UniversalSoundboard.Pages
 
         private void SnapBottomPlayingSoundsBar()
         {
-            double currentPosition = BottomPlayingSoundsBar.ActualHeight - GridSplitterGridBottomRowDef.MinHeight;
+            double currentPosition = BottomPseudoContentGrid.ActualHeight - GridSplitterGridBottomRowDef.MinHeight;
             double maxPosition = GridSplitterGridBottomRowDef.MaxHeight - GridSplitterGridBottomRowDef.MinHeight;
 
             if (currentPosition < maxPosition / 2)
             {
-                StartSnapBottomPlayingSoundsBarAnimation(BottomPlayingSoundsBar.ActualHeight, GridSplitterGridBottomRowDef.MinHeight);
+                StartSnapBottomPlayingSoundsBarAnimation(BottomPseudoContentGrid.ActualHeight, GridSplitterGridBottomRowDef.MinHeight);
                 bottomPlayingSoundsBarPosition = VerticalPosition.Bottom;
             }
             else
             {
-                StartSnapBottomPlayingSoundsBarAnimation(BottomPlayingSoundsBar.ActualHeight, GridSplitterGridBottomRowDef.MaxHeight);
+                StartSnapBottomPlayingSoundsBarAnimation(BottomPseudoContentGrid.ActualHeight, GridSplitterGridBottomRowDef.MaxHeight);
                 bottomPlayingSoundsBarPosition = VerticalPosition.Top;
             }
         }
@@ -740,15 +715,15 @@ namespace UniversalSoundboard.Pages
 
         private void AnimateIncreasingBottomPlayingSoundBar(double addedHeight)
         {
-            GridSplitterGridBottomRowDef.MaxHeight = BottomPlayingSoundsBar.ActualHeight + addedHeight;
-            StartSnapBottomPlayingSoundsBarAnimation(BottomPlayingSoundsBar.ActualHeight, BottomPlayingSoundsBar.ActualHeight + addedHeight);
+            GridSplitterGridBottomRowDef.MaxHeight = BottomPseudoContentGrid.ActualHeight + addedHeight;
+            StartSnapBottomPlayingSoundsBarAnimation(BottomPseudoContentGrid.ActualHeight, GridSplitterGridBottomRowDef.MaxHeight);
         }
 
         private void AdaptSoundListScrollViewerForBottomPlayingSoundsBar()
         {
             double bottomPlayingSoundsBarHeight = 0;
 
-            if(BottomPlayingSoundsBar.Visibility == Visibility.Visible)
+            if (GridSplitterGrid.Visibility == Visibility.Visible)
                 bottomPlayingSoundsBarHeight = GridSplitterGridBottomRowDef.ActualHeight + (FileManager.itemViewHolder.PlayingSounds.Count == 1 ? 0 : 16);
 
             // Set the padding of the sound GridViews and ListViews, so that the ScrollViewer ends at the bottom bar and the list continues behind the bottom bar
@@ -790,58 +765,51 @@ namespace UniversalSoundboard.Pages
             );
         }
 
-        private async Task UpdateGridSplitterRange()
+        private void UpdateGridSplitterRange()
         {
             if (BottomPlayingSoundsBarListView.Items.Count == 0) return;
 
             // Set the max height of the bottom row def
-            double totalHeight = await GetTotalPlayingSoundListContentHeight();
+            double totalHeight = GetTotalBottomPlayingSoundListContentHeight();
             if (totalHeight >= maxBottomPlayingSoundsBarHeight) totalHeight = maxBottomPlayingSoundsBarHeight;
 
             GridSplitterGridBottomRowDef.MaxHeight = totalHeight;
 
             // Set the min height of the bottom row def
-            double firstItemHeight = await GetPlayingSoundItemContainerHeight(0);
+            double firstItemHeight = GetFirstBottomPlayingSoundItemContentHeight();
             if (firstItemHeight >= maxBottomPlayingSoundsBarHeight) firstItemHeight = GridSplitterGridBottomRowDef.ActualHeight;
 
             GridSplitterGridBottomRowDef.MinHeight = firstItemHeight;
         }
 
-        private async Task<double> GetTotalPlayingSoundListContentHeight()
+        private double GetTotalBottomPlayingSoundListContentHeight()
         {
             double totalHeight = 0;
 
-            for (int i = 0; i < BottomPlayingSoundsBarListView.Items.Count; i++)
-                totalHeight += await GetPlayingSoundItemContainerHeight(i);
+            foreach (var item in reversedPlayingSoundItemContainers)
+                totalHeight += item.ContentHeight;
 
             return totalHeight;
         }
 
-        private async Task<double> GetPlayingSoundItemContainerHeight(int index)
+        private double GetFirstBottomPlayingSoundItemContentHeight()
         {
-            ListViewItem item = BottomPlayingSoundsBarListView.ContainerFromIndex(index) as ListViewItem;
+            foreach (var item in reversedPlayingSoundItemContainers)
+                if (item.IsVisible)
+                    return item.ContentHeight;
 
-            if(item == null || !item.IsLoaded || item.ActualHeight == 0)
-            {
-                if (getContainerHeightCount > 20)
-                {
-                    getContainerHeightCount = 0;
+            return 0;
+        }
 
-                    // Return the default item height
-                    return 88;
-                }
-                else
-                {
-                    getContainerHeightCount++;
+        private int GetNumberOfVisibleItemsInReversedPlayingSoundItemContainers()
+        {
+            int visibleItems = 0;
 
-                    // Call this methods again after some time
-                    await Task.Delay(20);
-                    return await GetPlayingSoundItemContainerHeight(index);
-                }
-            }
+            foreach (var item in reversedPlayingSoundItemContainers)
+                if (item.IsVisible)
+                    visibleItems++;
 
-            getContainerHeightCount = 0;
-            return item.ActualHeight;
+            return visibleItems;
         }
 
         private void UpdateMessagesVisibilities()
@@ -1019,13 +987,13 @@ namespace UniversalSoundboard.Pages
             if (skipSoundListSelectionChangedEvent) return;
 
             // Add new items to selectedSounds list
-            if(e.AddedItems.Count > 0)
+            if (e.AddedItems.Count > 0)
             {
                 // Add each item to SelectedSounds
-                foreach(var item in e.AddedItems)
+                foreach (var item in e.AddedItems)
                     FileManager.itemViewHolder.SelectedSounds.Add(item as Sound);
             }
-            else if(e.RemovedItems.Count > 0)
+            else if (e.RemovedItems.Count > 0)
             {
                 // Remove each item from SelectedSounds
                 foreach (var item in e.RemovedItems)
@@ -1083,7 +1051,7 @@ namespace UniversalSoundboard.Pages
 
         private void BottomPlayingSoundsBarGridSplitter_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            BottomPlayingSoundsBar.Height = GridSplitterGridBottomRowDef.ActualHeight;
+            BottomPseudoContentGrid.Height = GridSplitterGridBottomRowDef.ActualHeight;
         }
 
         private void BottomPlayingSoundsBarGridSplitter_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
@@ -1104,10 +1072,10 @@ namespace UniversalSoundboard.Pages
             GridSplitterGridBottomRowDef.Height = new GridLength(BottomPlayingSoundsBarListView.ActualHeight);
         }
 
-        private async void SnapBottomPlayingSoundsBarStoryboard_Completed(object sender, object e)
+        private void SnapBottomPlayingSoundsBarStoryboard_Completed(object sender, object e)
         {
             snapBottomPlayingSoundsBarAnimationRunning = false;
-            await UpdateGridSplitterRange();
+            UpdateGridSplitterRange();
         }
         #endregion
     }
@@ -1116,14 +1084,5 @@ namespace UniversalSoundboard.Pages
     {
         Top,
         Bottom
-    }
-
-    public class ReverserClass : IComparer
-    {
-        // Reverses the order without comparison
-        int IComparer.Compare(object x, object y)
-        {
-            return 1;
-        }
     }
 }
