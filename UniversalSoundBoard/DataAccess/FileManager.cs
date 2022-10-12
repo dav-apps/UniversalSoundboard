@@ -1756,7 +1756,7 @@ namespace UniversalSoundboard.DataAccess
                     itemViewHolder.PlayingSounds.Remove(ps);
             }
 
-            itemViewHolder.TriggerPlayingSoundsLoadedEvent(null);
+            itemViewHolder.TriggerPlayingSoundsLoadedEvent(EventArgs.Empty);
         }
 
         public static async Task ReloadPlayingSoundAsync(Guid uuid)

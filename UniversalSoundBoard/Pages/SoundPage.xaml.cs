@@ -50,20 +50,15 @@ namespace UniversalSoundboard.Pages
             // Subscribe to events
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.PlayingSoundsLoaded += ItemViewHolder_PlayingSoundsLoaded;
+            FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
+            FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
+            FileManager.itemViewHolder.PlayingSounds.CollectionChanged += ItemViewHolder_PlayingSounds_CollectionChanged;
             FileManager.itemViewHolder.SelectAllSounds += ItemViewHolder_SelectAllSounds;
             FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationStarted += ItemViewHolder_PlayingSoundItemShowSoundsListAnimationStarted;
             FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationEnded += ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEnded;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStarted += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStarted;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEnded += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEnded;
-            FileManager.itemViewHolder.ShowPlayingSoundItemStarted += ItemViewHolder_ShowPlayingSoundItemStarted;
-            FileManager.itemViewHolder.ShowPlayingSoundItemEnded += ItemViewHolder_ShowPlayingSoundItemEnded;
-            FileManager.itemViewHolder.RemovePlayingSoundItemStarted += ItemViewHolder_RemovePlayingSoundItemStarted;
-            FileManager.itemViewHolder.RemovePlayingSoundItemEnded += ItemViewHolder_RemovePlayingSoundItemEnded;
             FileManager.itemViewHolder.ShowInAppNotification += ItemViewHolder_ShowInAppNotification;
-
-            FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
-            FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
-            FileManager.itemViewHolder.PlayingSounds.CollectionChanged += ItemViewHolder_PlayingSounds_CollectionChanged;
 
             // Show all currently active InAppNotifications
             ShowAllInAppNotifications();
@@ -91,27 +86,22 @@ namespace UniversalSoundboard.Pages
         private void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
             maxBottomPlayingSoundsBarHeight = Window.Current.Bounds.Height * 0.6;
-            UpdatePlayingSoundsListAsync();
+            UpdatePlayingSoundsList();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
         {
             FileManager.itemViewHolder.PropertyChanged -= ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.PlayingSoundsLoaded -= ItemViewHolder_PlayingSoundsLoaded;
+            FileManager.itemViewHolder.Sounds.CollectionChanged -= ItemViewHolder_Sounds_CollectionChanged;
+            FileManager.itemViewHolder.FavouriteSounds.CollectionChanged -= ItemViewHolder_FavouriteSounds_CollectionChanged;
+            FileManager.itemViewHolder.PlayingSounds.CollectionChanged -= ItemViewHolder_PlayingSounds_CollectionChanged;
             FileManager.itemViewHolder.SelectAllSounds -= ItemViewHolder_SelectAllSounds;
             FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationStarted -= ItemViewHolder_PlayingSoundItemShowSoundsListAnimationStarted;
             FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationEnded -= ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEnded;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStarted -= ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStarted;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEnded -= ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEnded;
-            FileManager.itemViewHolder.ShowPlayingSoundItemStarted -= ItemViewHolder_ShowPlayingSoundItemStarted;
-            FileManager.itemViewHolder.ShowPlayingSoundItemEnded -= ItemViewHolder_ShowPlayingSoundItemEnded;
-            FileManager.itemViewHolder.RemovePlayingSoundItemStarted -= ItemViewHolder_RemovePlayingSoundItemStarted;
-            FileManager.itemViewHolder.RemovePlayingSoundItemEnded -= ItemViewHolder_RemovePlayingSoundItemEnded;
             FileManager.itemViewHolder.ShowInAppNotification -= ItemViewHolder_ShowInAppNotification;
-
-            FileManager.itemViewHolder.Sounds.CollectionChanged -= ItemViewHolder_Sounds_CollectionChanged;
-            FileManager.itemViewHolder.FavouriteSounds.CollectionChanged -= ItemViewHolder_FavouriteSounds_CollectionChanged;
-            FileManager.itemViewHolder.PlayingSounds.CollectionChanged -= ItemViewHolder_PlayingSounds_CollectionChanged;
 
             // Remove all InAppNotifications from the ContentGrid
             foreach (var ianItem in FileManager.InAppNotificationItems)
@@ -379,7 +369,7 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        private void UpdatePlayingSoundsListAsync()
+        private void UpdatePlayingSoundsList()
         {
             if (FileManager.itemViewHolder.PlayingSoundsListVisible)
             {

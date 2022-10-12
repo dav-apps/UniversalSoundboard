@@ -154,10 +154,6 @@ namespace UniversalSoundboard.Common
         public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemShowSoundsListAnimationEnded;      // Is triggered when the animation of a PlayingSound item to show the sounds list ended
         public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemHideSoundsListAnimationStarted;    // Is triggered when the animation of a PlayingSound item to hide the sounds list started
         public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemHideSoundsListAnimationEnded;      // Is triggered when the animation of a PlayingSound item to hide the sounds list ended
-        public event EventHandler<PlayingSoundItemEventArgs> ShowPlayingSoundItemStarted;                       // Is triggered when the PlayingSound appearing animation has started
-        public event EventHandler<PlayingSoundItemEventArgs> ShowPlayingSoundItemEnded;                         // Is triggered when the PlayingSound appearing animation has ended
-        public event EventHandler<PlayingSoundItemEventArgs> RemovePlayingSoundItemStarted;                     // Is triggered before a PlayingSound is removed
-        public event EventHandler<PlayingSoundItemEventArgs> RemovePlayingSoundItemEnded;                       // Is triggered after a PlayingSound was removed
         public event EventHandler<UpdatePlayingSoundItemPositionEventArgs> UpdatePlayingSoundItemPosition;      // Is triggered when a PlayingSound was removed and the items below or above it in the list should animate the position change
         public event EventHandler<EventArgs> ResetPlayingSoundItemPosition;                                     // Is triggered when a PlayingSound was removed the the items below or above it in the list should return to the previous position
         public event EventHandler<TableObjectFileDownloadProgressChangedEventArgs> TableObjectFileDownloadProgressChanged;  // Is triggered when the file of a TableObject is being downloaded and the progress changed
@@ -1250,26 +1246,6 @@ namespace UniversalSoundboard.Common
         public void TriggerPlayingSoundItemHideSoundsListAnimationEndedEvent(object sender, PlayingSoundItemEventArgs args)
         {
             PlayingSoundItemHideSoundsListAnimationEnded?.Invoke(sender, args);
-        }
-
-        public void TriggerShowPlayingSoundItemStartedEvent(object sender, PlayingSoundItemEventArgs args)
-        {
-            ShowPlayingSoundItemStarted?.Invoke(sender, args);
-        }
-
-        public void TriggerShowPlayingSoundItemEndedEvent(object sender, PlayingSoundItemEventArgs args)
-        {
-            ShowPlayingSoundItemEnded?.Invoke(sender, args);
-        }
-
-        public void TriggerRemovePlayingSoundItemStartedEvent(object sender, PlayingSoundItemEventArgs args)
-        {
-            RemovePlayingSoundItemStarted?.Invoke(sender, args);
-        }
-
-        public void TriggerRemovePlayingSoundItemEndedEvent(object sender, PlayingSoundItemEventArgs args)
-        {
-            RemovePlayingSoundItemEnded?.Invoke(sender, args);
         }
 
         public void TriggerUpdatePlayingSoundItemPositionEvent(object sender, UpdatePlayingSoundItemPositionEventArgs args)

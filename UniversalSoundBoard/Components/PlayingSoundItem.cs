@@ -1036,9 +1036,6 @@ namespace UniversalSoundboard.Components
 
             // Start the remove animation
             RemovePlayingSound?.Invoke(this, new EventArgs());
-
-            // Trigger the animation in SoundPage for the BottomPlayingSoundsBar
-            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemStartedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
         }
 
         public async Task Remove()
@@ -1061,9 +1058,6 @@ namespace UniversalSoundboard.Components
                 FileManager.itemViewHolder.ActivePlayingSound = Guid.Empty;
                 FileManager.UpdateSystemMediaTransportControls();
             }
-
-            // Update the BottomPlayingSoundsBar in SoundPage
-            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
 
             // Delete the PlayingSound
             await FileManager.DeletePlayingSoundAsync(PlayingSound.Uuid);
