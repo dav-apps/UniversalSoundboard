@@ -221,7 +221,7 @@
         <Storyboard x:Name="ShowSoundsListViewStoryboard">
             <DoubleAnimation
                 x:Name="ShowSoundsListViewStoryboardAnimation"
-                Storyboard.TargetName="BottomPseudoContentGrid"
+                Storyboard.TargetName="BottomPlayingSoundsBar"
                 Storyboard.TargetProperty="Height"
                 EnableDependentAnimation="True"
                 Duration="0:0:0.2">
@@ -235,7 +235,7 @@
         <Storyboard x:Name="HideSoundsListViewStoryboard">
             <DoubleAnimation
                 x:Name="HideSoundsListViewStoryboardAnimation"
-                Storyboard.TargetName="BottomPseudoContentGrid"
+                Storyboard.TargetName="BottomPlayingSoundsBar"
                 Storyboard.TargetProperty="Height"
                 EnableDependentAnimation="True"
                 Duration="0:0:0.2">
@@ -249,7 +249,7 @@
         <Storyboard x:Name="SnapBottomPlayingSoundsBarStoryboard" Completed="SnapBottomPlayingSoundsBarStoryboard_Completed">
             <DoubleAnimation
                 x:Name="SnapBottomPlayingSoundsBarStoryboardAnimation"
-                Storyboard.TargetName="BottomPseudoContentGrid"
+                Storyboard.TargetName="BottomPlayingSoundsBar"
                 Storyboard.TargetProperty="Height"
                 EnableDependentAnimation="True"
                 Duration="0:0:0.2">
@@ -691,7 +691,8 @@
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True">
+            RelativePanel.AlignRightWithPanel="True"
+            Opacity="0">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -722,34 +723,41 @@
                 </controls:GridSplitter.Element>
             </controls:GridSplitter>
 
-            <RelativePanel
+            <Grid
                 Name="BottomPseudoContentGrid"
                 Grid.Row="2"
-                Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
-                SizeChanged="BottomPseudoContentGrid_SizeChanged">
-
-                <ListView
-                    Name="BottomPlayingSoundsBarListView"
-                    RelativePanel.AlignTopWithPanel="True"
-                    RelativePanel.AlignBottomWithPanel="True"
-                    ItemsSource="{x:Bind reversedPlayingSoundItemContainers}"
-                    ItemContainerTransitions="{x:Null}"
-                    SelectionMode="None"
-                    SizeChanged="BottomPlayingSoundsBarListView_SizeChanged">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="MinHeight" Value="0" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
-
-                    <ListView.ItemTemplate>
-                        <DataTemplate x:DataType="models:PlayingSound">
-                            <components:PlayingSoundItemTemplate Tag="true" />
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>
-            </RelativePanel>
+                Background="Transparent"
+                SizeChanged="BottomPseudoContentGrid_SizeChanged" />
         </Grid>
+
+        <RelativePanel
+            Name="BottomPlayingSoundsBar"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
+            Translation="-10000,0,0">
+
+            <ListView
+                Name="BottomPlayingSoundsBarListView"
+                RelativePanel.AlignBottomWithPanel="True"
+                ItemsSource="{x:Bind reversedPlayingSoundItemContainers}"
+                ItemContainerTransitions="{x:Null}"
+                SelectionMode="None"
+                SizeChanged="BottomPlayingSoundsBarListView_SizeChanged">
+
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="MinHeight" Value="0" />
+                    </Style>
+                </ListView.ItemContainerStyle>
+
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:PlayingSound">
+                        <components:PlayingSoundItemTemplate Tag="true" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </RelativePanel>
     </RelativePanel>
 </Page>

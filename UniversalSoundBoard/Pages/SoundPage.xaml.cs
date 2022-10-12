@@ -139,7 +139,7 @@ namespace UniversalSoundboard.Pages
                 ListView listView = GetVisibleListView();
                 FileManager.itemViewHolder.SelectedSounds.Clear();
 
-                if(listView.SelectedItems.Count == listView.Items.Count)
+                if (listView.SelectedItems.Count == listView.Items.Count)
                 {
                     // All items are selected, deselect all items
                     listView.DeselectRange(new ItemIndexRange(0, (uint)listView.Items.Count));
@@ -194,7 +194,7 @@ namespace UniversalSoundboard.Pages
                 double newHeight = BottomPlayingSoundsBarListView.ActualHeight + args.HeightDifference;
                 if (newHeight >= maxBottomPlayingSoundsBarHeight) newHeight = maxBottomPlayingSoundsBarHeight;
 
-                GridSplitterGridBottomRowDef.Height = new GridLength(newHeight, GridUnitType.Pixel);
+                BottomPlayingSoundsBar.Height = newHeight;
             }
             else
             {
@@ -379,8 +379,8 @@ namespace UniversalSoundboard.Pages
                 if (!FileManager.itemViewHolder.OpenMultipleSounds || Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
                 {
                     // Hide the PlayingSoundsBar and the GridSplitter
-                    PlayingSoundsBarColDef.Width = new GridLength(0);
                     PlayingSoundsBarColDef.MinWidth = 0;
+                    PlayingSoundsBarColDef.Width = new GridLength(0);
                     GridSplitterColDef.Width = new GridLength(0);
 
                     int playingSoundItemsCount = GetNumberOfVisibleItemsInReversedPlayingSoundItemContainers();
@@ -388,10 +388,12 @@ namespace UniversalSoundboard.Pages
                     // Update the visibility of the BottomPlayingSoundsBar
                     if (playingSoundItemsCount == 0)
                     {
+                        BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                         GridSplitterGrid.Visibility = Visibility.Collapsed;
                     }
                     else if (playingSoundItemsCount == 1)
                     {
+                        BottomPlayingSoundsBar.Visibility = Visibility.Visible;
                         GridSplitterGrid.Visibility = Visibility.Visible;
                         
                         // Set the height of the bottom row def, but hide the GridSplitter
@@ -400,6 +402,7 @@ namespace UniversalSoundboard.Pages
                     }
                     else
                     {
+                        BottomPlayingSoundsBar.Visibility = Visibility.Visible;
                         GridSplitterGrid.Visibility = Visibility.Visible;
                         BottomPlayingSoundsBarGridSplitter.Visibility = FileManager.itemViewHolder.OpenMultipleSounds ? Visibility.Visible : Visibility.Collapsed;
                     }
@@ -407,28 +410,29 @@ namespace UniversalSoundboard.Pages
                 else
                 {
                     // Show the PlayingSoundsBar and the GridSplitter
-                    PlayingSoundsBarColDef.Width = new GridLength(ContentRoot.ActualWidth * FileManager.itemViewHolder.PlayingSoundsBarWidth);
                     PlayingSoundsBarColDef.MinWidth = ContentRoot.ActualWidth / 3.8;
+                    PlayingSoundsBarColDef.Width = new GridLength(ContentRoot.ActualWidth * FileManager.itemViewHolder.PlayingSoundsBarWidth);
                     GridSplitterColDef.Width = new GridLength(12);
 
                     // Hide the BottomPlayingSoundsBar
+                    BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                     GridSplitterGrid.Visibility = Visibility.Collapsed;
                 }
-
-                AdaptSoundListScrollViewerForBottomPlayingSoundsBar();
             }
             else
             {
                 // Hide the PlayingSoundsBar and the GridSplitter
-                PlayingSoundsBarColDef.Width = new GridLength(0);
                 PlayingSoundsBarColDef.MinWidth = 0;
+                PlayingSoundsBarColDef.Width = new GridLength(0);
                 GridSplitterColDef.Width = new GridLength(0);
 
                 // Hide the BottomPlayingSoundsBar
+                BottomPlayingSoundsBar.Visibility = Visibility.Collapsed;
                 GridSplitterGrid.Visibility = Visibility.Collapsed;
+            }
+
                 AdaptSoundListScrollViewerForBottomPlayingSoundsBar();
             }
-        }
         #endregion
 
         #region Functionality
@@ -663,7 +667,7 @@ namespace UniversalSoundboard.Pages
             {
                 // Get the height of the first PlayingSound item and set the height of the BottomPlayingSoundsBar
                 double firstItemHeight = GetFirstBottomPlayingSoundItemContentHeight();
-                BottomPseudoContentGrid.Height = firstItemHeight;
+                BottomPlayingSoundsBar.Height = firstItemHeight;
                 GridSplitterGridBottomRowDef.MinHeight = firstItemHeight;
                 GridSplitterGridBottomRowDef.Height = new GridLength(firstItemHeight);
             }
@@ -671,17 +675,17 @@ namespace UniversalSoundboard.Pages
 
         private void SnapBottomPlayingSoundsBar()
         {
-            double currentPosition = BottomPseudoContentGrid.ActualHeight - GridSplitterGridBottomRowDef.MinHeight;
+            double currentPosition = BottomPlayingSoundsBar.ActualHeight - GridSplitterGridBottomRowDef.MinHeight;
             double maxPosition = GridSplitterGridBottomRowDef.MaxHeight - GridSplitterGridBottomRowDef.MinHeight;
 
             if (currentPosition < maxPosition / 2)
             {
-                StartSnapBottomPlayingSoundsBarAnimation(BottomPseudoContentGrid.ActualHeight, GridSplitterGridBottomRowDef.MinHeight);
+                StartSnapBottomPlayingSoundsBarAnimation(BottomPlayingSoundsBar.ActualHeight, GridSplitterGridBottomRowDef.MinHeight);
                 bottomPlayingSoundsBarPosition = VerticalPosition.Bottom;
             }
             else
             {
-                StartSnapBottomPlayingSoundsBarAnimation(BottomPseudoContentGrid.ActualHeight, GridSplitterGridBottomRowDef.MaxHeight);
+                StartSnapBottomPlayingSoundsBarAnimation(BottomPlayingSoundsBar.ActualHeight, GridSplitterGridBottomRowDef.MaxHeight);
                 bottomPlayingSoundsBarPosition = VerticalPosition.Top;
             }
         }
@@ -705,15 +709,18 @@ namespace UniversalSoundboard.Pages
 
         private void AnimateIncreasingBottomPlayingSoundBar(double addedHeight)
         {
-            GridSplitterGridBottomRowDef.MaxHeight = BottomPseudoContentGrid.ActualHeight + addedHeight;
-            StartSnapBottomPlayingSoundsBarAnimation(BottomPseudoContentGrid.ActualHeight, GridSplitterGridBottomRowDef.MaxHeight);
+            double newMaxHeight = BottomPlayingSoundsBar.ActualHeight + addedHeight;
+            if (newMaxHeight < 0) newMaxHeight = 0;
+
+            GridSplitterGridBottomRowDef.MaxHeight = newMaxHeight;
+            StartSnapBottomPlayingSoundsBarAnimation(BottomPlayingSoundsBar.ActualHeight, GridSplitterGridBottomRowDef.MaxHeight);
         }
 
         private void AdaptSoundListScrollViewerForBottomPlayingSoundsBar()
         {
             double bottomPlayingSoundsBarHeight = 0;
 
-            if (GridSplitterGrid.Visibility == Visibility.Visible)
+            if (BottomPlayingSoundsBar.Visibility == Visibility.Visible)
                 bottomPlayingSoundsBarHeight = GridSplitterGridBottomRowDef.ActualHeight + (FileManager.itemViewHolder.PlayingSounds.Count == 1 ? 0 : 16);
 
             // Set the padding of the sound GridViews and ListViews, so that the ScrollViewer ends at the bottom bar and the list continues behind the bottom bar
@@ -1041,7 +1048,7 @@ namespace UniversalSoundboard.Pages
 
         private void BottomPlayingSoundsBarGridSplitter_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
         {
-            BottomPseudoContentGrid.Height = GridSplitterGridBottomRowDef.ActualHeight;
+            BottomPlayingSoundsBar.Height = GridSplitterGridBottomRowDef.ActualHeight;
         }
 
         private void BottomPlayingSoundsBarGridSplitter_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
