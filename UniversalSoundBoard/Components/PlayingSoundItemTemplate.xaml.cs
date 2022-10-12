@@ -127,6 +127,7 @@ namespace UniversalSoundboard.Components
         private void PlayingSoundItemTemplateUserControl_Loaded(object sender, RoutedEventArgs eventArgs)
         {
             AdjustLayout();
+            PlayingSoundItemContainer?.TriggerLoadedEvent(EventArgs.Empty);
         }
 
         private void PlayingSoundItemTemplateUserControl_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -306,6 +307,7 @@ namespace UniversalSoundboard.Components
 
             playingSoundItemVisible = false;
             PlayingSoundItemContainer.IsVisible = false;
+            PlayingSoundItemContainer.TriggerHideEvent(EventArgs.Empty);
 
             await Task.Delay(showHideItemAnimationDuration);
             await PlayingSoundItem.Remove();
@@ -822,18 +824,6 @@ namespace UniversalSoundboard.Components
             else
                 Translation = new Vector3(0, -(float)ContentHeight, 0);
 
-            if (addPlayingSoundOnTopOfBottomPlayingSoundsBar && FileManager.itemViewHolder.PlayingSounds.Count != 2)
-            {
-                // Start playing the animation for appearing PlayingSoundItem
-                FileManager.itemViewHolder.TriggerShowPlayingSoundItemStartedEvent(
-                    this,
-                    new PlayingSoundItemEventArgs(
-                        PlayingSound.Uuid,
-                        ContentHeight
-                    )
-                );
-            }
-
             var compositor = Window.Current.Compositor;
 
             var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
@@ -852,6 +842,7 @@ namespace UniversalSoundboard.Components
             animationGroup.Add(opacityAnimation);
 
             StartAnimation(animationGroup);
+            PlayingSoundItemContainer.TriggerShowEvent(EventArgs.Empty);
         }
         #endregion
 
