@@ -155,6 +155,15 @@ namespace UniversalSoundboard.Pages
                     BottomPlayingSoundsBar.Height = double.NaN;
                     BottomPlayingSoundsBar.Visibility = Visibility.Visible;
                 }
+                else if (FileManager.itemViewHolder.PlayingSounds.Count == 2)
+                {
+                    // Show the GridSplitter
+                    GridSplitterGrid.Opacity = 0;
+                    BottomPlayingSoundsBarGridSplitter.Visibility = Visibility.Visible;
+
+                    UpdateGridSplitterRange();
+                    ShowGridSplitter();
+                }
 
                 var playingSound = e.NewItems[0] as PlayingSound;
 
@@ -387,9 +396,7 @@ namespace UniversalSoundboard.Pages
             BottomPlayingSoundsBar.Opacity = 1;
 
             // Animate showing the BottomPlayingSoundsBar
-            var compositor = Window.Current.Compositor;
-
-            var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+            var translationAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
             translationAnimation.Duration = TimeSpan.FromMilliseconds(300);
             translationAnimation.Target = "Translation";
@@ -399,17 +406,22 @@ namespace UniversalSoundboard.Pages
             await Task.Delay(300);
 
             // Animate showing the grid splitter
-            var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
-            opacityAnimation.InsertKeyFrame(1.0f, 1);
-            opacityAnimation.Duration = TimeSpan.FromMilliseconds(300);
-            opacityAnimation.Target = "Opacity";
-
-            GridSplitterGrid.StartAnimation(opacityAnimation);
+            ShowGridSplitter();
 
             await Task.Delay(300);
 
             BottomPlayingSoundsBar.Background = new SolidColorBrush(Colors.Transparent);
             BottomPseudoContentGrid.Background = Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush;
+        }
+
+        private void ShowGridSplitter()
+        {
+            var opacityAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacityAnimation.InsertKeyFrame(1.0f, 1);
+            opacityAnimation.Duration = TimeSpan.FromMilliseconds(300);
+            opacityAnimation.Target = "Opacity";
+
+            GridSplitterGrid.StartAnimation(opacityAnimation);
         }
 
         private void ItemViewHolder_ShowInAppNotification(object sender, ShowInAppNotificationEventArgs args)
