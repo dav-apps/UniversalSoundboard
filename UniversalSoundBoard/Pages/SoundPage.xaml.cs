@@ -492,7 +492,7 @@ namespace UniversalSoundboard.Pages
         private void UpdateSelectAllFlyoutText()
         {
             int itemsCount = FileManager.itemViewHolder.ShowListView ? GetVisibleListView().Items.Count : GetVisibleGridView().Items.Count;
-
+            
             if (itemsCount == FileManager.itemViewHolder.SelectedSounds.Count && itemsCount != 0)
             {
                 FileManager.itemViewHolder.SelectAllFlyoutText = FileManager.loader.GetString("MoreButton_SelectAllFlyout-DeselectAll");
@@ -863,7 +863,7 @@ namespace UniversalSoundboard.Pages
         {
             double bottomPlayingSoundsBarHeight = 0;
 
-            if (BottomPlayingSoundsBar.Visibility == Visibility.Visible)
+            if (BottomPlayingSoundsBar.Visibility == Visibility.Visible && playingSoundsLoaded)
                 bottomPlayingSoundsBarHeight = GridSplitterGridBottomRowDef.ActualHeight + (FileManager.itemViewHolder.PlayingSounds.Count == 1 ? 0 : 16);
 
             // Set the padding of the sound GridViews and ListViews, so that the ScrollViewer ends at the bottom bar and the list continues behind the bottom bar
