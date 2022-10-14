@@ -808,40 +808,40 @@ namespace UniversalSoundboard.Components
             if (playingSoundItemVisible) return;
             playingSoundItemVisible = true;
 
-            // Show the playing sound on the top of the extended list only if the PlayingSoundsBarPosition is top and the playing sounds are already loaded and visible / this is not a saved plaiyng sound
-            bool addPlayingSoundOnTopOfBottomPlayingSoundsBar = (
-                IsInBottomPlayingSoundsBar
-                && (
-                    SoundPage.bottomPlayingSoundsBarPosition == VerticalPosition.Top
-                    || !SoundPage.playingSoundsRendered
-                )
-            );
+            if (PlayingSoundItemContainer.ShowAnimations)
+            {
+                await Task.Delay(5);
 
-            await Task.Delay(5);
+                if (IsInBottomPlayingSoundsBar)
+                    Translation = new Vector3(0, (float)ContentHeight, 0);
+                else
+                    Translation = new Vector3(0, -(float)ContentHeight, 0);
 
-            if (IsInBottomPlayingSoundsBar)
-                Translation = new Vector3(0, (float)ContentHeight, 0);
+                var compositor = Window.Current.Compositor;
+
+                var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
+                translationAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
+                translationAnimation.Target = "Translation";
+
+                var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+                opacityAnimation.InsertKeyFrame(0.3f, 0);
+                opacityAnimation.InsertKeyFrame(1.0f, 1);
+                opacityAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
+                opacityAnimation.Target = "Opacity";
+
+                var animationGroup = compositor.CreateAnimationGroup();
+                animationGroup.Add(translationAnimation);
+                animationGroup.Add(opacityAnimation);
+
+                StartAnimation(animationGroup);
+            }
             else
-                Translation = new Vector3(0, -(float)ContentHeight, 0);
+            {
+                Opacity = 1;
+                Translation = new Vector3(0);
+            }
 
-            var compositor = Window.Current.Compositor;
-
-            var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
-            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
-            translationAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
-            translationAnimation.Target = "Translation";
-
-            var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
-            opacityAnimation.InsertKeyFrame(0.3f, 0);
-            opacityAnimation.InsertKeyFrame(1.0f, 1);
-            opacityAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
-            opacityAnimation.Target = "Opacity";
-
-            var animationGroup = compositor.CreateAnimationGroup();
-            animationGroup.Add(translationAnimation);
-            animationGroup.Add(opacityAnimation);
-
-            StartAnimation(animationGroup);
             PlayingSoundItemContainer.TriggerShowEvent(EventArgs.Empty);
         }
         #endregion

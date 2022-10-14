@@ -146,7 +146,9 @@ namespace UniversalSoundboard.Pages
 
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                if (FileManager.itemViewHolder.PlayingSounds.Count == 1)
+                bool onlyPlayingSound = FileManager.itemViewHolder.PlayingSounds.Count == 1;
+
+                if (onlyPlayingSound)
                 {
                     // Reset the BottomPlayingSoundsBar to enable loading PlayingSoundItems
                     BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
@@ -160,7 +162,7 @@ namespace UniversalSoundboard.Pages
                 item1.Show += PlayingSoundItemContainer_Show;
                 item1.Hide += PlayingSoundItemContainer_Hide;
 
-                var item2 = new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound);
+                var item2 = new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound, !onlyPlayingSound);
                 item2.Show += PlayingSoundItemContainer_Show;
                 item2.Hide += PlayingSoundItemContainer_Hide;
                 item2.Loaded += PlayingSoundItemContainer2_Loaded;
@@ -376,6 +378,9 @@ namespace UniversalSoundboard.Pages
 
         private async Task ShowBottomPlayingSoundsBar()
         {
+            BottomPlayingSoundsBar.Background = Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush;
+            BottomPseudoContentGrid.Background = new SolidColorBrush(Colors.Transparent);
+
             double firstItemHeight = GetFirstBottomPlayingSoundItemContentHeight();
 
             BottomPlayingSoundsBar.Translation = new Vector3(0, (float)firstItemHeight, 0);

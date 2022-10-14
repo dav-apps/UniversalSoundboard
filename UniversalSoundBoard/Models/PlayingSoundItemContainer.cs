@@ -8,17 +8,19 @@ namespace UniversalSoundboard.Models
         public PlayingSound PlayingSound { get; }
         public bool IsVisible { get; set; }
         public double ContentHeight { get; set; }
+        public bool ShowAnimations { get; set; }
 
         public event EventHandler<EventArgs> Show;
         public event EventHandler<EventArgs> Hide;
         public event EventHandler<EventArgs> Loaded;
 
-        public PlayingSoundItemContainer(int index, PlayingSound playingSound)
+        public PlayingSoundItemContainer(int index, PlayingSound playingSound, bool showAnimations = true)
         {
             Index = index;
             PlayingSound = playingSound;
             IsVisible = true;
             ContentHeight = 0;
+            ShowAnimations = showAnimations;
         }
 
         public void TriggerShowEvent(EventArgs args)
