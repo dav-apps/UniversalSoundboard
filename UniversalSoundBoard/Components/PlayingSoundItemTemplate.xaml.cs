@@ -36,16 +36,14 @@ namespace UniversalSoundboard.Components
         Thickness singlePlayingSoundTitleMargin = new Thickness(0);
         private bool skipSoundsListViewSelectionChanged;
         private bool skipProgressSliderValueChanged = false;
-        private bool IsInBottomPlayingSoundsBar
-        {
-            get => Tag != null;
-        }
         private bool playingSoundItemVisible = false;
         private double ContentHeight { get => PlayingSoundItemContainer?.ContentHeight ?? 0; }
 
         private const string MoreButtonOutputDeviceFlyoutSubItemName = "MoreButtonOutputDeviceFlyoutSubItem";
         private const string MoreButtonPlaybackSpeedFlyoutSubItemName = "MoreButtonPlaybackSpeedFlyoutSubItemName";
         private const int showHideItemAnimationDuration = 200;
+        private float bottomPlayingSoundsBarMarginTop = 0;
+        public static PlayingSoundItemTemplate removedTemplate;
 
         public PlayingSoundItemTemplate()
         {
@@ -66,6 +64,13 @@ namespace UniversalSoundboard.Components
                 || PlayingSound.AudioPlayer == null
                 || initialized
             ) return;
+
+            // Hide this item if it was removed before initialization
+            if (!PlayingSoundItemContainer.IsVisible)
+            {
+                Content = null;
+                return;
+            }
 
             initialized = true;
 
@@ -114,6 +119,7 @@ namespace UniversalSoundboard.Components
 
             FileManager.itemViewHolder.UpdatePlayingSoundItemPosition += ItemViewHolder_UpdatePlayingSoundItemPosition;
             FileManager.itemViewHolder.ResetPlayingSoundItemPosition += ItemViewHolder_ResetPlayingSoundItemPosition;
+            FileManager.itemViewHolder.RemovePlayingSoundItem += ItemViewHolder_RemovePlayingSoundItem;
 
             PlayingSoundItem.Init();
 
@@ -286,19 +292,21 @@ namespace UniversalSoundboard.Components
         {
             // Start the animation for hiding the PlayingSoundItem
             var compositor = Window.Current.Compositor;
+            var animationGroup = compositor.CreateAnimationGroup();
 
-            var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
-            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, Translation.Y + (float)(IsInBottomPlayingSoundsBar ? ContentHeight : -ContentHeight), 0));
-            translationAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
-            translationAnimation.Target = "Translation";
+            if (!PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
+            {
+                var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)-ContentHeight, 0));
+                translationAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
+                translationAnimation.Target = "Translation";
+                animationGroup.Add(translationAnimation);
+            }
 
             var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
             opacityAnimation.InsertKeyFrame(0.5f, 0);
             opacityAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
             opacityAnimation.Target = "Opacity";
-
-            var animationGroup = compositor.CreateAnimationGroup();
-            animationGroup.Add(translationAnimation);
             animationGroup.Add(opacityAnimation);
 
             // Start the animation & notify other items to move up or down
@@ -312,9 +320,21 @@ namespace UniversalSoundboard.Components
             await Task.Delay(showHideItemAnimationDuration);
             await PlayingSoundItem.Remove();
 
-            // Remove the XAML content of the item & notify all items to reset the translation
-            Content = null;
+            if (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
+            {
+                // Hide this item after the positions of the other items were resetted
+                removedTemplate = this;
+            }
+            else
+            {
+                // Remove the XAML content of the item & notify all items to reset the translation
+                Content = null;
+            }
+
             FileManager.itemViewHolder.TriggerResetPlayingSoundItemPositionEvent(this, EventArgs.Empty);
+
+            // If BottomPlayingSoundsBar is not visible, remove the content of the equivalent item in BottomPlayingSoundsBar
+            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, new RemovePlayingSoundItemEventArgs(PlayingSoundItem.Uuid));
         }
 
         private void PlayingSoundItem_DownloadStatusChanged(object sender, DownloadStatusChangedEventArgs e)
@@ -353,7 +373,11 @@ namespace UniversalSoundboard.Components
         #region ItemViewHolder event handlers
         private void ItemViewHolder_UpdatePlayingSoundItemPosition(object sender, UpdatePlayingSoundItemPositionEventArgs e)
         {
-            if (PlayingSoundItemContainer.Index <= e.Index) return;
+            if (
+                !PlayingSoundItemContainer.IsVisible
+                || (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar && PlayingSoundItemContainer.Index >= e.Index)
+                || (!PlayingSoundItemContainer.IsInBottomPlayingSoundsBar && PlayingSoundItemContainer.Index <= e.Index)
+            ) return;
 
             var compositor = Window.Current.Compositor;
 
@@ -363,11 +387,52 @@ namespace UniversalSoundboard.Components
             translationAnimation.Target = "Translation";
 
             StartAnimation(translationAnimation);
+            bottomPlayingSoundsBarMarginTop = -e.ContentHeight;
         }
 
-        private void ItemViewHolder_ResetPlayingSoundItemPosition(object sender, EventArgs e)
+        private async void ItemViewHolder_ResetPlayingSoundItemPosition(object sender, EventArgs e)
         {
-            Translation = new Vector3(0);
+            if (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar && PlayingSoundItemContainer.IsVisible)
+            {
+                if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
+                {
+                    Margin = new Thickness(0, Margin.Top + bottomPlayingSoundsBarMarginTop, 0, 0);
+                    Translation = new Vector3(0);
+                    bottomPlayingSoundsBarMarginTop = 0;
+
+                    await Task.Delay(50);
+                    Margin = new Thickness(0);
+
+                    if (removedTemplate != null)
+                    {
+                        removedTemplate.Content = null;
+                        removedTemplate = null;
+                    }
+                }
+                else if (removedTemplate != null)
+                {
+                    // BottomPlayingSoundsBar is not visible
+                    removedTemplate.Content = null;
+                }
+                else
+                {
+                    // If this item is in BottomPlayingSoundsBar, but the BottomPlayingSoundsBar is not visible
+                    Translation = new Vector3(0);
+                }
+            }
+            else if (PlayingSoundItemContainer.IsVisible)
+            {
+                Translation = new Vector3(0);
+            }
+        }
+
+        private void ItemViewHolder_RemovePlayingSoundItem(object sender, RemovePlayingSoundItemEventArgs args)
+        {
+            if (
+                PlayingSoundItemContainer.IsInBottomPlayingSoundsBar
+                && args.Uuid.Equals(PlayingSoundItem.Uuid)
+                && Window.Current.Bounds.Width >= FileManager.mobileMaxWidth
+            ) Content = null;
         }
         #endregion
 
@@ -780,6 +845,8 @@ namespace UniversalSoundboard.Components
         #region Functionality
         private void SetTotalDuration()
         {
+            if (PlayingSoundItem == null) return;
+
             var totalDuration = PlayingSoundItem.CurrentSoundTotalDuration;
 
             // Set the total duration text
@@ -811,11 +878,7 @@ namespace UniversalSoundboard.Components
             if (PlayingSoundItemContainer.ShowAnimations)
             {
                 await Task.Delay(5);
-
-                if (IsInBottomPlayingSoundsBar)
-                    Translation = new Vector3(0, (float)ContentHeight, 0);
-                else
-                    Translation = new Vector3(0, -(float)ContentHeight, 0);
+                Translation = new Vector3(0, (float)-ContentHeight, 0);
 
                 var compositor = Window.Current.Compositor;
 
@@ -849,7 +912,11 @@ namespace UniversalSoundboard.Components
         #region UI methods
         private void AdjustLayout()
         {
-            if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
+            if (
+                PlayingSound == null
+                || PlayingSound.AudioPlayer == null
+                || ContentRoot == null
+            ) return;
 
             // Set the appropriate layout for the PlayingSoundItem
             double windowWidth = Window.Current.Bounds.Width;

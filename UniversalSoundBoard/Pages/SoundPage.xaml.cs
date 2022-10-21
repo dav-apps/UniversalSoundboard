@@ -64,6 +64,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationEnded += ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEnded;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStarted += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStarted;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEnded += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEnded;
+            FileManager.itemViewHolder.RemovePlayingSoundItem += ItemViewHolder_RemovePlayingSoundItem;
             FileManager.itemViewHolder.ShowInAppNotification += ItemViewHolder_ShowInAppNotification;
 
             // Show all currently active InAppNotifications
@@ -103,6 +104,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.PlayingSoundItemShowSoundsListAnimationEnded -= ItemViewHolder_PlayingSoundItemShowSoundsListAnimationEnded;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStarted -= ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStarted;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEnded -= ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEnded;
+            FileManager.itemViewHolder.RemovePlayingSoundItem -= ItemViewHolder_RemovePlayingSoundItem;
             FileManager.itemViewHolder.ShowInAppNotification -= ItemViewHolder_ShowInAppNotification;
 
             // Remove all InAppNotifications from the ContentGrid
@@ -167,11 +169,11 @@ namespace UniversalSoundboard.Pages
 
                 var playingSound = e.NewItems[0] as PlayingSound;
 
-                var item1 = new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound);
+                var item1 = new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound, false);
                 item1.Show += PlayingSoundItemContainer_Show;
                 item1.Hide += PlayingSoundItemContainer_Hide;
 
-                var item2 = new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound, !onlyPlayingSound);
+                var item2 = new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound, true, !onlyPlayingSound);
                 item2.Show += PlayingSoundItemContainer_Show;
                 item2.Hide += PlayingSoundItemContainer_Hide;
                 item2.Loaded += PlayingSoundItemContainer2_Loaded;
@@ -292,6 +294,40 @@ namespace UniversalSoundboard.Pages
             UpdateGridSplitterRange();
         }
 
+        private void ItemViewHolder_RemovePlayingSoundItem(object sender, RemovePlayingSoundItemEventArgs args)
+        {
+            // Find the item container with the uuid and set IsVisible to false
+            // so that the item is not rendered when the BottomPlayingSoundsBar is made visible 
+            var itemContainer = reversedPlayingSoundItemContainers.ToList().Find(item => item.PlayingSound.Uuid.Equals(args.Uuid));
+            if (itemContainer != null) itemContainer.IsVisible = false;
+        }
+
+        private void ItemViewHolder_ShowInAppNotification(object sender, ShowInAppNotificationEventArgs args)
+        {
+            foreach (var ianItem in FileManager.InAppNotificationItems)
+            {
+                if (ianItem.Sent) continue;
+
+                // Calculate the bottom margin
+                double marginBottom = 10;
+                if (!FileManager.itemViewHolder.OpenMultipleSounds && FileManager.itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 70;
+                else if (isBottomPlayingSoundsBarVisible && FileManager.itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 57;
+
+                foreach (var item in FileManager.InAppNotificationItems)
+                {
+                    if (!item.Sent) continue;
+                    marginBottom = marginBottom + 10 + item.MessageTextBlock.ActualHeight;
+                }
+
+                ianItem.InAppNotification.Margin = new Thickness(20, 0, 20, marginBottom);
+
+                ContentGrid.Children.Add(ianItem.InAppNotification);
+
+                ianItem.InAppNotification.Show(ianItem.Duration);
+                ianItem.Sent = true;
+            }
+        }
+
         private void PlayingSoundItemContainer_Show(object sender, EventArgs e)
         {
             // Update the animation with the actual PlayingSoundItem height
@@ -304,8 +340,9 @@ namespace UniversalSoundboard.Pages
             //SnapBottomPlayingSoundsBar();
         }
 
-        private async void PlayingSoundItemContainer_Hide(object sender, EventArgs e)
+        private void PlayingSoundItemContainer_Hide(object sender, EventArgs e)
         {
+            /*
             if (isBottomPlayingSoundsBarVisible)
             {
                 if (!FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSounds.Count == 1)
@@ -334,6 +371,7 @@ namespace UniversalSoundboard.Pages
                 UpdateGridSplitterRange();
                 SnapBottomPlayingSoundsBar();
             }
+            */
         }
 
         private async void PlayingSoundItemContainer_Loaded(object sender, EventArgs e)
@@ -384,71 +422,6 @@ namespace UniversalSoundboard.Pages
                 await ShowBottomPlayingSoundsBar();
             }
         }
-
-        private async Task ShowBottomPlayingSoundsBar()
-        {
-            BottomPlayingSoundsBar.Background = Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush;
-            BottomPseudoContentGrid.Background = new SolidColorBrush(Colors.Transparent);
-
-            double firstItemHeight = GetFirstBottomPlayingSoundItemContentHeight();
-
-            BottomPlayingSoundsBar.Translation = new Vector3(0, (float)firstItemHeight, 0);
-            BottomPlayingSoundsBar.Opacity = 1;
-
-            // Animate showing the BottomPlayingSoundsBar
-            var translationAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
-            translationAnimation.Duration = TimeSpan.FromMilliseconds(300);
-            translationAnimation.Target = "Translation";
-
-            BottomPlayingSoundsBar.StartAnimation(translationAnimation);
-
-            await Task.Delay(300);
-
-            // Animate showing the grid splitter
-            ShowGridSplitter();
-
-            await Task.Delay(300);
-
-            BottomPlayingSoundsBar.Background = new SolidColorBrush(Colors.Transparent);
-            BottomPseudoContentGrid.Background = Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush;
-        }
-
-        private void ShowGridSplitter()
-        {
-            var opacityAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
-            opacityAnimation.InsertKeyFrame(1.0f, 1);
-            opacityAnimation.Duration = TimeSpan.FromMilliseconds(300);
-            opacityAnimation.Target = "Opacity";
-
-            GridSplitterGrid.StartAnimation(opacityAnimation);
-        }
-
-        private void ItemViewHolder_ShowInAppNotification(object sender, ShowInAppNotificationEventArgs args)
-        {
-            foreach(var ianItem in FileManager.InAppNotificationItems)
-            {
-                if (ianItem.Sent) continue;
-
-                // Calculate the bottom margin
-                double marginBottom = 10;
-                if (!FileManager.itemViewHolder.OpenMultipleSounds && FileManager.itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 70;
-                else if (isBottomPlayingSoundsBarVisible && FileManager.itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 57;
-
-                foreach (var item in FileManager.InAppNotificationItems)
-                {
-                    if (!item.Sent) continue;
-                    marginBottom = marginBottom + 10 + item.MessageTextBlock.ActualHeight;
-                }
-
-                ianItem.InAppNotification.Margin = new Thickness(20, 0, 20, marginBottom);
-                
-                ContentGrid.Children.Add(ianItem.InAppNotification);
-
-                ianItem.InAppNotification.Show(ianItem.Duration);
-                ianItem.Sent = true;
-            }
-        }
         #endregion
 
         #region Helper methods
@@ -467,11 +440,11 @@ namespace UniversalSoundboard.Pages
 
             foreach (var playingSound in FileManager.itemViewHolder.PlayingSounds)
             {
-                var item1 = new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound);
+                var item1 = new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound, false);
                 item1.Show += PlayingSoundItemContainer_Show;
                 item1.Hide += PlayingSoundItemContainer_Hide;
 
-                var item2 = new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound);
+                var item2 = new PlayingSoundItemContainer(PlayingSoundsListView.Items.Count, playingSound, true, false);
                 item2.Show += PlayingSoundItemContainer_Show;
                 item2.Hide += PlayingSoundItemContainer_Hide;
                 item2.Loaded += PlayingSoundItemContainer_Loaded;
@@ -991,6 +964,45 @@ namespace UniversalSoundboard.Pages
             ) ? Visibility.Visible : Visibility.Collapsed;
 
             Bindings.Update();
+        }
+
+        private async Task ShowBottomPlayingSoundsBar()
+        {
+            BottomPlayingSoundsBar.Background = Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush;
+            BottomPseudoContentGrid.Background = new SolidColorBrush(Colors.Transparent);
+
+            double firstItemHeight = GetFirstBottomPlayingSoundItemContentHeight();
+
+            BottomPlayingSoundsBar.Translation = new Vector3(0, (float)firstItemHeight, 0);
+            BottomPlayingSoundsBar.Opacity = 1;
+
+            // Animate showing the BottomPlayingSoundsBar
+            var translationAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
+            translationAnimation.Duration = TimeSpan.FromMilliseconds(300);
+            translationAnimation.Target = "Translation";
+
+            BottomPlayingSoundsBar.StartAnimation(translationAnimation);
+
+            await Task.Delay(300);
+
+            // Animate showing the grid splitter
+            ShowGridSplitter();
+
+            await Task.Delay(300);
+
+            BottomPlayingSoundsBar.Background = new SolidColorBrush(Colors.Transparent);
+            BottomPseudoContentGrid.Background = Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush;
+        }
+
+        private void ShowGridSplitter()
+        {
+            var opacityAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacityAnimation.InsertKeyFrame(1.0f, 1);
+            opacityAnimation.Duration = TimeSpan.FromMilliseconds(300);
+            opacityAnimation.Target = "Opacity";
+
+            GridSplitterGrid.StartAnimation(opacityAnimation);
         }
         #endregion
 

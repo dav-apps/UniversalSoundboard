@@ -155,7 +155,8 @@ namespace UniversalSoundboard.Common
         public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemHideSoundsListAnimationStarted;    // Is triggered when the animation of a PlayingSound item to hide the sounds list started
         public event EventHandler<PlayingSoundItemEventArgs> PlayingSoundItemHideSoundsListAnimationEnded;      // Is triggered when the animation of a PlayingSound item to hide the sounds list ended
         public event EventHandler<UpdatePlayingSoundItemPositionEventArgs> UpdatePlayingSoundItemPosition;      // Is triggered when a PlayingSound was removed and the items below or above it in the list should animate the position change
-        public event EventHandler<EventArgs> ResetPlayingSoundItemPosition;                                     // Is triggered when a PlayingSound was removed the the items below or above it in the list should return to the previous position
+        public event EventHandler<EventArgs> ResetPlayingSoundItemPosition;                                     // Is triggered when a PlayingSound was removed and the items below or above it in the list should return to the previous position
+        public event EventHandler<RemovePlayingSoundItemEventArgs> RemovePlayingSoundItem;                      // Is triggered when a PlayingSoundItem was removed and should be hidden on the BottomPlayingSoundsBar, if the BottomPlayingSoundsBar is not visible
         public event EventHandler<TableObjectFileDownloadProgressChangedEventArgs> TableObjectFileDownloadProgressChanged;  // Is triggered when the file of a TableObject is being downloaded and the progress changed
         public event EventHandler<TableObjectFileDownloadCompletedEventArgs> TableObjectFileDownloadCompleted;  // Is triggered from TriggerAction when the file of a TableObject was finished
         public event EventHandler<ShowInAppNotificationEventArgs> ShowInAppNotification;                        // Trigger this event to show the InAppNotification on the SoundPage
@@ -1256,6 +1257,11 @@ namespace UniversalSoundboard.Common
         public void TriggerResetPlayingSoundItemPositionEvent(object sender, EventArgs args)
         {
             ResetPlayingSoundItemPosition?.Invoke(sender, args);
+        }
+
+        public void TriggerRemovePlayingSoundItemEvent(object sender, RemovePlayingSoundItemEventArgs args)
+        {
+            RemovePlayingSoundItem?.Invoke(sender, args);
         }
 
         public void TriggerTableObjectFileDownloadProgressChangedEvent(object sender, TableObjectFileDownloadProgressChangedEventArgs args)

@@ -57,6 +57,16 @@ namespace UniversalSoundboard.Common
         }
     }
 
+    public class RemovePlayingSoundItemEventArgs : EventArgs
+    {
+        public Guid Uuid { get; set; }
+
+        public RemovePlayingSoundItemEventArgs(Guid uuid)
+        {
+            Uuid = uuid;
+        }
+    }
+
     public class TableObjectFileDownloadProgressChangedEventArgs : EventArgs
     {
         public Guid Uuid { get; set; }

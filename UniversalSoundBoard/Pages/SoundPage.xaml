@@ -754,7 +754,7 @@
 
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:PlayingSound">
-                        <components:PlayingSoundItemTemplate Tag="true" />
+                        <components:PlayingSoundItemTemplate />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
