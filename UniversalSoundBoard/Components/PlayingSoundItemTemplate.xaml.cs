@@ -290,51 +290,71 @@ namespace UniversalSoundboard.Components
 
         private async void PlayingSoundItem_RemovePlayingSound(object sender, EventArgs e)
         {
-            // Start the animation for hiding the PlayingSoundItem
-            var compositor = Window.Current.Compositor;
-            var animationGroup = compositor.CreateAnimationGroup();
-
-            if (!PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
+            if (
+                PlayingSoundItemContainer.IsInBottomPlayingSoundsBar
+                && FileManager.itemViewHolder.PlayingSounds.Count == 1
+            )
             {
-                var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
-                translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)-ContentHeight, 0));
-                translationAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
-                translationAnimation.Target = "Translation";
-                animationGroup.Add(translationAnimation);
-            }
+                // The last item was removed on BottomPlayingSoundsBar
+                // Hide the BottomPlayingSoundsBar first
+                FileManager.itemViewHolder.TriggerHideBottomPlayingSoundsBarEvent(this, EventArgs.Empty);
 
-            var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
-            opacityAnimation.InsertKeyFrame(0.5f, 0);
-            opacityAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
-            opacityAnimation.Target = "Opacity";
-            animationGroup.Add(opacityAnimation);
+                await Task.Delay(300);
 
-            // Start the animation & notify other items to move up or down
-            StartAnimation(animationGroup);
-            FileManager.itemViewHolder.TriggerUpdatePlayingSoundItemPositionEvent(this, new UpdatePlayingSoundItemPositionEventArgs(PlayingSoundItemContainer.Index, (float)ContentHeight));
-
-            playingSoundItemVisible = false;
-            PlayingSoundItemContainer.IsVisible = false;
-            PlayingSoundItemContainer.TriggerHideEvent(EventArgs.Empty);
-
-            await Task.Delay(showHideItemAnimationDuration);
-            await PlayingSoundItem.Remove();
-
-            if (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
-            {
-                // Hide this item after the positions of the other items were resetted
-                removedTemplate = this;
+                Opacity = 0;
+                playingSoundItemVisible = false;
+                PlayingSoundItemContainer.IsVisible = false;
+                await PlayingSoundItem.Remove();
+                Content = null;
             }
             else
             {
-                // Remove the XAML content of the item & notify all items to reset the translation
-                Content = null;
+                // Start the animation for hiding the PlayingSoundItem
+                var compositor = Window.Current.Compositor;
+                var animationGroup = compositor.CreateAnimationGroup();
+
+                if (!PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
+                {
+                    var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                    translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)-ContentHeight, 0));
+                    translationAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
+                    translationAnimation.Target = "Translation";
+                    animationGroup.Add(translationAnimation);
+                }
+
+                var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+                opacityAnimation.InsertKeyFrame(0.5f, 0);
+                opacityAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
+                opacityAnimation.Target = "Opacity";
+                animationGroup.Add(opacityAnimation);
+
+                // Start the animation & notify other items to move up or down
+                StartAnimation(animationGroup);
+                FileManager.itemViewHolder.TriggerUpdatePlayingSoundItemPositionEvent(this, new UpdatePlayingSoundItemPositionEventArgs(PlayingSoundItemContainer.Index, (float)ContentHeight));
+
+                playingSoundItemVisible = false;
+                PlayingSoundItemContainer.IsVisible = false;
+                PlayingSoundItemContainer.TriggerHideEvent(EventArgs.Empty);
+
+                await Task.Delay(showHideItemAnimationDuration);
+                await PlayingSoundItem.Remove();
+
+                if (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
+                {
+                    // Hide this item after the positions of the other items were resetted
+                    removedTemplate = this;
+                }
+                else
+                {
+                    // Remove the XAML content of the item & notify all items to reset the translation
+                    Content = null;
+                }
+
+                FileManager.itemViewHolder.TriggerResetPlayingSoundItemPositionEvent(this, EventArgs.Empty);
+
+                // If BottomPlayingSoundsBar is not visible, remove the content of the equivalent item in BottomPlayingSoundsBar
+                FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, new RemovePlayingSoundItemEventArgs(PlayingSoundItem.Uuid));
             }
-
-            FileManager.itemViewHolder.TriggerResetPlayingSoundItemPositionEvent(this, EventArgs.Empty);
-
-            // If BottomPlayingSoundsBar is not visible, remove the content of the equivalent item in BottomPlayingSoundsBar
-            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, new RemovePlayingSoundItemEventArgs(PlayingSoundItem.Uuid));
         }
 
         private void PlayingSoundItem_DownloadStatusChanged(object sender, DownloadStatusChangedEventArgs e)

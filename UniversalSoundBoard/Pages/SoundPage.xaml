@@ -692,7 +692,8 @@
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
-            Opacity="0">
+            Opacity="0"
+            Visibility="Collapsed">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />

@@ -65,6 +65,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStarted += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStarted;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEnded += ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEnded;
             FileManager.itemViewHolder.RemovePlayingSoundItem += ItemViewHolder_RemovePlayingSoundItem;
+            FileManager.itemViewHolder.HideBottomPlayingSoundsBar += ItemViewHolder_HideBottomPlayingSoundsBar;
             FileManager.itemViewHolder.ShowInAppNotification += ItemViewHolder_ShowInAppNotification;
 
             // Show all currently active InAppNotifications
@@ -105,6 +106,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationStarted -= ItemViewHolder_PlayingSoundItemHideSoundsListAnimationStarted;
             FileManager.itemViewHolder.PlayingSoundItemHideSoundsListAnimationEnded -= ItemViewHolder_PlayingSoundItemHideSoundsListAnimationEnded;
             FileManager.itemViewHolder.RemovePlayingSoundItem -= ItemViewHolder_RemovePlayingSoundItem;
+            FileManager.itemViewHolder.HideBottomPlayingSoundsBar -= ItemViewHolder_HideBottomPlayingSoundsBar;
             FileManager.itemViewHolder.ShowInAppNotification -= ItemViewHolder_ShowInAppNotification;
 
             // Remove all InAppNotifications from the ContentGrid
@@ -300,6 +302,12 @@ namespace UniversalSoundboard.Pages
             // so that the item is not rendered when the BottomPlayingSoundsBar is made visible 
             var itemContainer = reversedPlayingSoundItemContainers.ToList().Find(item => item.PlayingSound.Uuid.Equals(args.Uuid));
             if (itemContainer != null) itemContainer.IsVisible = false;
+        }
+
+        private async void ItemViewHolder_HideBottomPlayingSoundsBar(object sender, EventArgs e)
+        {
+            await HideBottomPlayingSoundsBar();
+            AdaptSoundListScrollViewerForBottomPlayingSoundsBar(0);
         }
 
         private void ItemViewHolder_ShowInAppNotification(object sender, ShowInAppNotificationEventArgs args)
@@ -849,44 +857,49 @@ namespace UniversalSoundboard.Pages
             double bottomPlayingSoundsBarHeight = 0;
 
             if (BottomPlayingSoundsBar.Visibility == Visibility.Visible && playingSoundsLoaded)
-                bottomPlayingSoundsBarHeight = GridSplitterGridBottomRowDef.ActualHeight + (FileManager.itemViewHolder.PlayingSounds.Count == 1 ? 0 : 16);
+                bottomPlayingSoundsBarHeight = GridSplitterGridBottomRowDef.ActualHeight + (FileManager.itemViewHolder.PlayingSounds.Count <= 1 ? 0 : 16);
 
+            AdaptSoundListScrollViewerForBottomPlayingSoundsBar(bottomPlayingSoundsBarHeight);
+        }
+
+        private void AdaptSoundListScrollViewerForBottomPlayingSoundsBar(double height)
+        {
             // Set the padding of the sound GridViews and ListViews, so that the ScrollViewer ends at the bottom bar and the list continues behind the bottom bar
             SoundGridView.Padding = new Thickness(
                 SoundGridView.Padding.Left,
                 SoundGridView.Padding.Top,
                 SoundGridView.Padding.Right,
-                bottomPlayingSoundsBarHeight
+                height
             );
             FavouriteSoundGridView.Padding = new Thickness(
                 FavouriteSoundGridView.Padding.Left,
                 FavouriteSoundGridView.Padding.Top,
                 FavouriteSoundGridView.Padding.Right,
-                bottomPlayingSoundsBarHeight
+                height
             );
             SoundListView.Padding = new Thickness(
                 SoundListView.Padding.Left,
                 SoundListView.Padding.Top,
                 SoundListView.Padding.Right,
-                bottomPlayingSoundsBarHeight
+                height
             );
             FavouriteSoundListView.Padding = new Thickness(
                 FavouriteSoundListView.Padding.Left,
                 FavouriteSoundListView.Padding.Top,
                 FavouriteSoundListView.Padding.Right,
-                bottomPlayingSoundsBarHeight
+                height
             );
             SoundGridView2.Padding = new Thickness(
                 SoundGridView2.Padding.Left,
                 SoundGridView2.Padding.Top,
                 SoundGridView2.Padding.Right,
-                bottomPlayingSoundsBarHeight
+                height
             );
             SoundListView2.Padding = new Thickness(
                 SoundListView2.Padding.Left,
                 SoundListView2.Padding.Top,
                 SoundListView2.Padding.Right,
-                bottomPlayingSoundsBarHeight
+                height
             );
         }
 
@@ -993,6 +1006,30 @@ namespace UniversalSoundboard.Pages
 
             BottomPlayingSoundsBar.Background = new SolidColorBrush(Colors.Transparent);
             BottomPseudoContentGrid.Background = Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush;
+        }
+
+        private async Task HideBottomPlayingSoundsBar()
+        {
+            BottomPlayingSoundsBar.Background = Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush;
+            BottomPseudoContentGrid.Background = new SolidColorBrush(Colors.Transparent);
+
+            double firstItemHeight = GetFirstBottomPlayingSoundItemContentHeight();
+
+            // Animate showing the BottomPlayingSoundsBar
+            var translationAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)firstItemHeight, 0));
+            translationAnimation.Duration = TimeSpan.FromMilliseconds(300);
+            translationAnimation.Target = "Translation";
+
+            BottomPlayingSoundsBar.StartAnimation(translationAnimation);
+
+            await Task.Delay(300);
+
+            GridSplitterGrid.Visibility = Visibility.Collapsed;
+            BottomPlayingSoundsBar.Background = new SolidColorBrush(Colors.Transparent);
+            BottomPseudoContentGrid.Background = Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush;
+            BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
+            BottomPlayingSoundsBar.Height = double.NaN;
         }
 
         private void ShowGridSplitter()
