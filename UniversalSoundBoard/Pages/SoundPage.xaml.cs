@@ -32,6 +32,7 @@ namespace UniversalSoundboard.Pages
         Guid reorderedItem = Guid.Empty;
         public static VerticalPosition bottomPlayingSoundsBarPosition = VerticalPosition.Bottom;
         private static bool playingSoundsLoaded = false;
+        private bool playingSoundItemsLoaded = false;
         private double maxBottomPlayingSoundsBarHeight = 500;
         private bool isManipulatingBottomPlayingSoundsBar = false;
         private bool snapBottomPlayingSoundsBarAnimationRunning = false;
@@ -81,9 +82,14 @@ namespace UniversalSoundboard.Pages
             hotkeyItemTemplate = (DataTemplate)Resources["HotkeyItemTemplate"];
             soundsPivotSelected = true;
 
-            AdjustLayout();
             UpdateCanReorderItems();
-            LoadPlayingSoundItems();
+            AdjustLayout();
+
+            if (!playingSoundItemsLoaded || !isBottomPlayingSoundsBarVisible)
+                UpdatePlayingSoundsList();
+
+            if (!playingSoundItemsLoaded)
+                LoadPlayingSoundItems();
         }
 
         private async void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -92,7 +98,10 @@ namespace UniversalSoundboard.Pages
 
             AdjustLayout();
 
-            if (isBottomPlayingSoundsBarVisible != oldIsBottomPlayingSoundsBarVisible)
+            if (
+                playingSoundItemsLoaded
+                && isBottomPlayingSoundsBarVisible != oldIsBottomPlayingSoundsBarVisible
+            )
             {
                 if (isBottomPlayingSoundsBarVisible)
                 {
@@ -113,7 +122,7 @@ namespace UniversalSoundboard.Pages
                 }
             }
 
-            if (!isBottomPlayingSoundsBarVisible)
+            if (!playingSoundItemsLoaded || !isBottomPlayingSoundsBarVisible)
                 UpdatePlayingSoundsList();
         }
 
@@ -470,6 +479,7 @@ namespace UniversalSoundboard.Pages
 
         private void LoadPlayingSoundItems()
         {
+            playingSoundItemsLoaded = true;
             initialBottomPlayingSoundsCount = FileManager.itemViewHolder.PlayingSounds.Count;
 
             foreach (var playingSound in FileManager.itemViewHolder.PlayingSounds)
@@ -543,6 +553,7 @@ namespace UniversalSoundboard.Pages
                     // Update the visibility of the BottomPlayingSoundsBar
                     if (playingSoundItemsCount == 0)
                     {
+                        BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
                         GridSplitterGrid.Visibility = Visibility.Collapsed;
                     }
                     else if (playingSoundItemsCount == 1)
@@ -569,7 +580,7 @@ namespace UniversalSoundboard.Pages
                     GridSplitterColDef.Width = new GridLength(12);
 
                     // Hide the BottomPlayingSoundsBar
-                    BottomPlayingSoundsBar.Translation = new Vector3(0, -10000, 0);
+                    BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
                     GridSplitterGrid.Visibility = Visibility.Collapsed;
                 }
             }
@@ -581,7 +592,7 @@ namespace UniversalSoundboard.Pages
                 GridSplitterColDef.Width = new GridLength(0);
 
                 // Hide the BottomPlayingSoundsBar
-                BottomPlayingSoundsBar.Translation = new Vector3(0, -10000, 0);
+                BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
                 GridSplitterGrid.Visibility = Visibility.Collapsed;
             }
 
@@ -878,7 +889,7 @@ namespace UniversalSoundboard.Pages
         {
             double bottomPlayingSoundsBarHeight = 0;
 
-            if (isBottomPlayingSoundsBarVisible && playingSoundsLoaded)
+            if (isBottomPlayingSoundsBarVisible && FileManager.itemViewHolder.PlayingSounds.Count > 0)
                 bottomPlayingSoundsBarHeight = GridSplitterGridBottomRowDef.ActualHeight + (FileManager.itemViewHolder.PlayingSounds.Count <= 1 ? 0 : 16);
 
             AdaptSoundListScrollViewerForBottomPlayingSoundsBar(bottomPlayingSoundsBarHeight);
@@ -1003,10 +1014,11 @@ namespace UniversalSoundboard.Pages
 
         private async Task ShowBottomPlayingSoundsBar()
         {
+            double firstItemHeight = GetFirstBottomPlayingSoundItemContentHeight();
+            if (firstItemHeight == 0) return;
+
             BottomPlayingSoundsBar.Background = Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush;
             BottomPseudoContentGrid.Background = new SolidColorBrush(Colors.Transparent);
-
-            double firstItemHeight = GetFirstBottomPlayingSoundItemContentHeight();
 
             BottomPlayingSoundsBar.Translation = new Vector3(0, (float)firstItemHeight, 0);
             BottomPlayingSoundsBar.Opacity = 1;
