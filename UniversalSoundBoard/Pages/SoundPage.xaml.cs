@@ -168,7 +168,7 @@ namespace UniversalSoundboard.Pages
             await HandleSoundsCollectionChanged(e, true);
         }
 
-        private void ItemViewHolder_PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private async void ItemViewHolder_PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (!playingSoundsLoaded) return;
 
@@ -206,6 +206,10 @@ namespace UniversalSoundboard.Pages
                 playingSoundItemContainers.Add(item1);
                 reversedPlayingSoundItemContainers.Insert(0, item2);
             }
+            else if (
+                e.Action == NotifyCollectionChangedAction.Remove
+                && FileManager.itemViewHolder.PlayingSounds.Count == 1
+            ) await HideGridSplitter();
         }
 
         private void ItemViewHolder_SelectAllSounds(object sender, RoutedEventArgs e)
@@ -1058,6 +1062,21 @@ namespace UniversalSoundboard.Pages
             opacityAnimation.Target = "Opacity";
 
             GridSplitterGrid.StartAnimation(opacityAnimation);
+        }
+
+        private async Task HideGridSplitter()
+        {
+            var opacityAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
+            opacityAnimation.InsertKeyFrame(1.0f, 0);
+            opacityAnimation.Duration = TimeSpan.FromMilliseconds(300);
+            opacityAnimation.Target = "Opacity";
+
+            BottomPlayingSoundsBarGridSplitter.StartAnimation(opacityAnimation);
+
+            await Task.Delay(300);
+
+            BottomPlayingSoundsBarGridSplitter.Visibility = Visibility.Collapsed;
+            BottomPlayingSoundsBarGridSplitter.Opacity = 1;
         }
         #endregion
 
