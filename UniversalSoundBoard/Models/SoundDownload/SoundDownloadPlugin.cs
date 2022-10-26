@@ -65,7 +65,7 @@ namespace UniversalSoundboard.Models
 
             // Try to get the file name
             Regex fileNameRegex = new Regex("^.+\\.\\w{3}$");
-            string audioFileName = null;
+            string audioFileName = FileManager.loader.GetString("UntitledSound");
             string lastPart = HttpUtility.UrlDecode(Url.Split('/').Last());
 
             if (fileNameRegex.IsMatch(lastPart))
