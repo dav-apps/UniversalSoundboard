@@ -1056,4 +1056,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PlaySoundsSuccessivelyDialog-Repetitions" xml:space="preserve">
     <value>Repetitions:</value>
   </data>
+  <data name="UntitledSound" xml:space="preserve">
+    <value>Untitled sound</value>
+  </data>
 </root>

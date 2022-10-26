@@ -716,7 +716,7 @@ namespace UniversalSoundboard.DataAccess
         {
             if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return null;
 
-            Sound sound = new Sound(soundTableObject.Uuid, soundTableObject.GetPropertyValue(SoundTableNamePropertyName));
+            Sound sound = new Sound(soundTableObject.Uuid, soundTableObject.GetPropertyValue(SoundTableNamePropertyName) ?? loader.GetString("UntitledSound"));
 
             // Get the audio file
             Guid? audioFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName));
