@@ -94,4 +94,10 @@
         Small,
         Large
     }
+
+    public enum BottomPlayingSoundsBarVerticalPosition
+    {
+        Top,
+        Bottom
+    }
 }

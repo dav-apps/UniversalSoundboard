@@ -144,6 +144,7 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controllers\PlayingSoundsAnimationController.cs" />
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\Exceptions.cs" />
     <Compile Include="Common\LocalDataSettings.cs" />

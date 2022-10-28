@@ -246,7 +246,7 @@
             </DoubleAnimation>
         </Storyboard>
 
-        <Storyboard x:Name="SnapBottomPlayingSoundsBarStoryboard" Completed="SnapBottomPlayingSoundsBarStoryboard_Completed">
+        <Storyboard x:Name="SnapBottomPlayingSoundsBarStoryboard">
             <DoubleAnimation
                 x:Name="SnapBottomPlayingSoundsBarStoryboardAnimation"
                 Storyboard.TargetName="BottomPlayingSoundsBar"
@@ -664,8 +664,8 @@
                 Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
 
                 <ListView
-                    Name="PlayingSoundsListView"
-                    ItemsSource="{x:Bind playingSoundItemContainers}"
+                    Name="PlayingSoundsBarListView"
+                    ItemsSource="{x:Bind PlayingSoundsAnimationController.PlayingSoundItemContainers}"
                     ItemContainerTransitions="{x:Null}"
                     SelectionMode="None"
                     Margin="0,85,0,0">
@@ -706,10 +706,7 @@
                 x:Name="BottomPlayingSoundsBarGridSplitter"
                 Grid.Row="1"
                 Height="16"
-                Background="Transparent"
-                ManipulationStarted="BottomPlayingSoundsBarGridSplitter_ManipulationStarted"
-                ManipulationDelta="BottomPlayingSoundsBarGridSplitter_ManipulationDelta"
-                ManipulationCompleted="BottomPlayingSoundsBarGridSplitter_ManipulationCompleted">
+                Background="Transparent">
 
                 <controls:GridSplitter.Element>
                     <Grid Height="16" Background="{StaticResource NavigationViewHeaderBackgroundBrush}">
@@ -726,8 +723,7 @@
             <Grid
                 Name="BottomPseudoContentGrid"
                 Grid.Row="2"
-                Background="Transparent"
-                SizeChanged="BottomPseudoContentGrid_SizeChanged" />
+                Background="Transparent" />
         </Grid>
 
         <RelativePanel
@@ -741,10 +737,9 @@
             <ListView
                 Name="BottomPlayingSoundsBarListView"
                 RelativePanel.AlignBottomWithPanel="True"
-                ItemsSource="{x:Bind reversedPlayingSoundItemContainers}"
+                ItemsSource="{x:Bind PlayingSoundsAnimationController.ReversedPlayingSoundItemContainers}"
                 ItemContainerTransitions="{x:Null}"
-                SelectionMode="None"
-                SizeChanged="BottomPlayingSoundsBarListView_SizeChanged">
+                SelectionMode="None">
 
                 <ListView.ItemContainerStyle>
                     <Style TargetType="ListViewItem">
