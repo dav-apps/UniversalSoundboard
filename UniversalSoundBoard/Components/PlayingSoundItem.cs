@@ -71,7 +71,6 @@ namespace UniversalSoundboard.Components
         public event EventHandler<VolumeChangedEventArgs> VolumeChanged;
         public event EventHandler<MutedChangedEventArgs> MutedChanged;
         public event EventHandler<PlaybackSpeedChangedEventArgs> PlaybackSpeedChanged;
-        public event EventHandler<EventArgs> ShowPlayingSound;
         public event EventHandler<EventArgs> RemovePlayingSound;
         public event EventHandler<DownloadStatusChangedEventArgs> DownloadStatusChanged;
         #endregion
@@ -132,9 +131,6 @@ namespace UniversalSoundboard.Components
 
             // Set the initial UI element states
             UpdateUI();
-
-            // Play the animation for showing the sound
-            ShowPlayingSound?.Invoke(this, new EventArgs());
 
             // Set the appropriate output device
             await UpdateOutputDevice();

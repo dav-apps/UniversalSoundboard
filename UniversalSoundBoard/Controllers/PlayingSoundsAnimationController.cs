@@ -1,5 +1,6 @@
 ﻿using Microsoft.Toolkit.Uwp.UI.Controls;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
@@ -55,6 +56,7 @@ namespace UniversalSoundboard.Controllers
 
         public ObservableCollection<PlayingSoundItemContainer> PlayingSoundItemContainers { get; private set; }
         public ObservableCollection<PlayingSoundItemContainer> ReversedPlayingSoundItemContainers { get; private set; }
+        private List<PlayingSoundItemContainer> PlayingSoundsToShowList;
 
         public PlayingSoundsAnimationController(
             RelativePanel contentRoot,
@@ -108,6 +110,7 @@ namespace UniversalSoundboard.Controllers
 
             PlayingSoundItemContainers = new ObservableCollection<PlayingSoundItemContainer>();
             ReversedPlayingSoundItemContainers = new ObservableCollection<PlayingSoundItemContainer>();
+            PlayingSoundsToShowList = new List<PlayingSoundItemContainer>();
 
             ContentRoot.SizeChanged += ContentRoot_SizeChanged;
             BottomPseudoContentGrid.SizeChanged += BottomPseudoContentGrid_SizeChanged;
@@ -215,7 +218,7 @@ namespace UniversalSoundboard.Controllers
             }
         }
 
-        private void ItemViewHolder_PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private async void ItemViewHolder_PlayingSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (!playingSoundsLoaded) return;
 
@@ -244,11 +247,17 @@ namespace UniversalSoundboard.Controllers
                 var item1 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, false);
                 item1.Show += PlayingSoundItemContainer_Show;
                 item1.Hide += PlayingSoundItemContainer_Hide;
+                item1.Loaded += PlayingSoundItemContainer_Loaded;
 
                 var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, !onlyPlayingSound);
                 item2.Show += PlayingSoundItemContainer_Show;
                 item2.Hide += PlayingSoundItemContainer_Hide;
-                item2.Loaded += PlayingSoundItemContainer2_Loaded;
+                item2.Loaded += PlayingSoundItemContainer_Loaded;
+
+                if (IsMobile)
+                    PlayingSoundsToShowList.Add(item2);
+                else
+                    PlayingSoundsToShowList.Add(item1);
 
                 PlayingSoundItemContainers.Add(item1);
                 ReversedPlayingSoundItemContainers.Insert(0, item2);
@@ -258,7 +267,7 @@ namespace UniversalSoundboard.Controllers
                 && FileManager.itemViewHolder.PlayingSounds.Count == 1
             )
             {
-                //await HideGridSplitter();
+                await HideGridSplitter();
             }
             else if (e.Action == NotifyCollectionChangedAction.Remove && IsMobile)
             {
@@ -314,52 +323,28 @@ namespace UniversalSoundboard.Controllers
             */
         }
 
-        private async void PlayingSoundItemContainer_Loaded(object sender, EventArgs e)
+        private void PlayingSoundItemContainer_Loaded(object sender, EventArgs e)
         {
-            loadedBottomPlayingSoundItemCount++;
+            // Check if all PlayingSoundItemContainers in the list were loaded
+            int itemCount = PlayingSoundsToShowList.Count;
+            int loadedItemCount = 0;
+            
+            foreach (var item in PlayingSoundsToShowList)
+                if (item.IsLoaded) loadedItemCount++;
 
-            // Wait for all initial items to be loaded
-            if (loadedBottomPlayingSoundItemCount == initialBottomPlayingSoundsCount)
-            {
-                if (
-                    FileManager.itemViewHolder.PlayingSoundsListVisible
-                    && (
-                        !FileManager.itemViewHolder.OpenMultipleSounds
-                        || IsMobile
-                    )
-                )
-                {
-                    // Show the bottom playing sounds bar
-                    // Wait for all animations to have ended
-                    await Task.Delay(200);
-
-                    UpdatePlayingSoundsList();
-                    InitBottomPlayingSoundsBarHeight();
-
-                    await ShowBottomPlayingSoundsBar();
-                }
-            }
-        }
-
-        private async void PlayingSoundItemContainer2_Loaded(object sender, EventArgs e)
-        {
             if (
-                FileManager.itemViewHolder.PlayingSounds.Count == 1
-                && FileManager.itemViewHolder.PlayingSoundsListVisible
-                && (
-                    !FileManager.itemViewHolder.OpenMultipleSounds
-                    || IsMobile
-                )
-            )
+                itemCount == 0
+                || itemCount != loadedItemCount
+            ) return;
+
+            // Show all PlayingSounds in the list
+            foreach (var item in PlayingSoundsToShowList)
             {
-                await Task.Delay(200);
-
-                // Show the bottom playing sounds bar
-                UpdatePlayingSoundsList();
-                InitBottomPlayingSoundsBarHeight();
-
-                await ShowBottomPlayingSoundsBar();
+                item.PlayingSoundItemTemplate.Translation = new Vector3(0);
+                item.PlayingSoundItemTemplate.Opacity = 1;
             }
+
+            PlayingSoundsToShowList.Clear();
         }
         #endregion
 
@@ -373,11 +358,17 @@ namespace UniversalSoundboard.Controllers
                 var item1 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, false);
                 item1.Show += PlayingSoundItemContainer_Show;
                 item1.Hide += PlayingSoundItemContainer_Hide;
+                item1.Loaded += PlayingSoundItemContainer_Loaded;
 
                 var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, false);
                 item2.Show += PlayingSoundItemContainer_Show;
                 item2.Hide += PlayingSoundItemContainer_Hide;
                 item2.Loaded += PlayingSoundItemContainer_Loaded;
+
+                if (IsMobile)
+                    PlayingSoundsToShowList.Add(item2);
+                else
+                    PlayingSoundsToShowList.Add(item1);
 
                 PlayingSoundItemContainers.Add(item1);
                 ReversedPlayingSoundItemContainers.Insert(0, item2);

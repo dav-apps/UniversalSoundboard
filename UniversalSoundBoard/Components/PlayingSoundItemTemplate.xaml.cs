@@ -110,8 +110,6 @@ namespace UniversalSoundboard.Components
             PlayingSoundItem.MutedChanged += PlayingSoundItem_MutedChanged;
             PlayingSoundItem.PlaybackSpeedChanged -= PlayingSoundItem_PlaybackSpeedChanged;
             PlayingSoundItem.PlaybackSpeedChanged += PlayingSoundItem_PlaybackSpeedChanged;
-            PlayingSoundItem.ShowPlayingSound -= PlayingSoundItem_ShowPlayingSound;
-            PlayingSoundItem.ShowPlayingSound += PlayingSoundItem_ShowPlayingSound;
             PlayingSoundItem.RemovePlayingSound -= PlayingSoundItem_RemovePlayingSound;
             PlayingSoundItem.RemovePlayingSound += PlayingSoundItem_RemovePlayingSound;
             PlayingSoundItem.DownloadStatusChanged -= PlayingSoundItem_DownloadStatusChanged;
@@ -125,8 +123,6 @@ namespace UniversalSoundboard.Components
 
             SoundsListView.ItemsSource = PlayingSound.Sounds;
             UpdateUI();
-
-            await ShowPlayingSound();
         }
 
         #region UserControl event handlers
@@ -151,6 +147,7 @@ namespace UniversalSoundboard.Components
             if (playingSoundItemContainer == null || initialized) return;
 
             PlayingSoundItemContainer = playingSoundItemContainer;
+            PlayingSoundItemContainer.PlayingSoundItemTemplate = this;
 
             Init();
         }
@@ -281,11 +278,6 @@ namespace UniversalSoundboard.Components
             PlaybackSpeedButtonToolTip.Text = playbackSpeedText;
             PlaybackSpeedFlyoutText.Text = playbackSpeedText;
             PlaybackSpeedButton.Visibility = Visibility.Visible;
-        }
-
-        private async void PlayingSoundItem_ShowPlayingSound(object sender, EventArgs e)
-        {
-            await ShowPlayingSound();
         }
 
         private async void PlayingSoundItem_RemovePlayingSound(object sender, EventArgs e)
