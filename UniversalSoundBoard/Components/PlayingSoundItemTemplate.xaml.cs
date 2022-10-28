@@ -56,7 +56,7 @@ namespace UniversalSoundboard.Components
             Translation = new Vector3(0, -300, 0);
         }
         
-        private async void Init()
+        private void Init()
         {
             if (
                 PlayingSoundItemContainer == null
@@ -880,44 +880,6 @@ namespace UniversalSoundboard.Components
 
             // Save the selected device
             await FileManager.SetOutputDeviceOfPlayingSoundAsync(PlayingSoundItem.PlayingSound.Uuid, outputDevice == null ? "" : outputDevice);
-        }
-
-        private async Task ShowPlayingSound()
-        {
-            if (playingSoundItemVisible) return;
-            playingSoundItemVisible = true;
-
-            if (PlayingSoundItemContainer.ShowAnimations)
-            {
-                await Task.Delay(5);
-                Translation = new Vector3(0, (float)-ContentHeight, 0);
-
-                var compositor = Window.Current.Compositor;
-
-                var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
-                translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
-                translationAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
-                translationAnimation.Target = "Translation";
-
-                var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
-                opacityAnimation.InsertKeyFrame(0.3f, 0);
-                opacityAnimation.InsertKeyFrame(1.0f, 1);
-                opacityAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
-                opacityAnimation.Target = "Opacity";
-
-                var animationGroup = compositor.CreateAnimationGroup();
-                animationGroup.Add(translationAnimation);
-                animationGroup.Add(opacityAnimation);
-
-                StartAnimation(animationGroup);
-            }
-            else
-            {
-                Opacity = 1;
-                Translation = new Vector3(0);
-            }
-
-            PlayingSoundItemContainer.TriggerShowEvent(EventArgs.Empty);
         }
         #endregion
 

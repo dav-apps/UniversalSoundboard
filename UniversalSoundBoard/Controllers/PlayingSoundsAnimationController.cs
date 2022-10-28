@@ -20,10 +20,14 @@ namespace UniversalSoundboard.Controllers
 {
     public class PlayingSoundsAnimationController
     {
+        private const int showHideItemAnimationDuration = 200;
+        private const int bottomPlayingSoundsBarAnimationDuration = 300;
+
         private bool playingSoundsLoaded = false;
         private bool playingSoundItemsLoaded = false;
         private bool snapBottomPlayingSoundsBarAnimationRunning = false;
         private bool isManipulatingBottomPlayingSoundsBar = false;
+        private bool showBottomPlayingSoundsBar = false;
         private double maxBottomPlayingSoundsBarHeight = 500;
         private int initialBottomPlayingSoundsCount = 0;
         private int loadedBottomPlayingSoundItemCount = 0;
@@ -128,26 +132,26 @@ namespace UniversalSoundboard.Controllers
         #region Event handlers
         private async void ContentRoot_SizeChanged(object sender, SizeChangedEventArgs e)
         {
-            bool oldIsBottomPlayingSoundsBarVisible = IsMobile;
+            bool oldIsMobile = IsMobile;
 
             maxBottomPlayingSoundsBarHeight = Window.Current.Bounds.Height * 0.6;
             IsMobile = Window.Current.Bounds.Width < FileManager.mobileMaxWidth;
 
             if (
                 playingSoundItemsLoaded
-                && IsMobile != oldIsBottomPlayingSoundsBarVisible
+                && IsMobile != oldIsMobile
             )
             {
                 if (IsMobile)
                 {
                     GridSplitterGrid.Opacity = 0;
-                    await Task.Delay(800);
+                    showBottomPlayingSoundsBar = true;
 
-                    // Show the bottom playing sounds bar
-                    UpdatePlayingSoundsList();
-                    InitBottomPlayingSoundsBarHeight();
+                    foreach (var item in ReversedPlayingSoundItemContainers)
+                        PlayingSoundsToShowList.Add(item);
 
-                    await ShowBottomPlayingSoundsBar();
+                    await Task.Delay(100);
+                    await ShowAllPlayingSoundItems();
                 }
                 else
                 {
@@ -245,12 +249,10 @@ namespace UniversalSoundboard.Controllers
                 var playingSound = e.NewItems[0] as PlayingSound;
 
                 var item1 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, false);
-                item1.Show += PlayingSoundItemContainer_Show;
                 item1.Hide += PlayingSoundItemContainer_Hide;
                 item1.Loaded += PlayingSoundItemContainer_Loaded;
 
                 var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, !onlyPlayingSound);
-                item2.Show += PlayingSoundItemContainer_Show;
                 item2.Hide += PlayingSoundItemContainer_Hide;
                 item2.Loaded += PlayingSoundItemContainer_Loaded;
 
@@ -274,18 +276,6 @@ namespace UniversalSoundboard.Controllers
                 //SnapBottomPlayingSoundsBar();
                 //UpdateGridSplitterRange();
             }
-        }
-
-        private void PlayingSoundItemContainer_Show(object sender, EventArgs e)
-        {
-            // Update the animation with the actual PlayingSoundItem height
-            //PlayingSoundItemContainer itemContainer = sender as PlayingSoundItemContainer;
-            //AnimateIncreasingBottomPlayingSoundBar(itemContainer.ContentHeight);
-
-            //await Task.Delay(200);
-
-            //UpdateGridSplitterRange();
-            //SnapBottomPlayingSoundsBar();
         }
 
         private void PlayingSoundItemContainer_Hide(object sender, EventArgs e)
@@ -323,28 +313,9 @@ namespace UniversalSoundboard.Controllers
             */
         }
 
-        private void PlayingSoundItemContainer_Loaded(object sender, EventArgs e)
+        private async void PlayingSoundItemContainer_Loaded(object sender, EventArgs e)
         {
-            // Check if all PlayingSoundItemContainers in the list were loaded
-            int itemCount = PlayingSoundsToShowList.Count;
-            int loadedItemCount = 0;
-            
-            foreach (var item in PlayingSoundsToShowList)
-                if (item.IsLoaded) loadedItemCount++;
-
-            if (
-                itemCount == 0
-                || itemCount != loadedItemCount
-            ) return;
-
-            // Show all PlayingSounds in the list
-            foreach (var item in PlayingSoundsToShowList)
-            {
-                item.PlayingSoundItemTemplate.Translation = new Vector3(0);
-                item.PlayingSoundItemTemplate.Opacity = 1;
-            }
-
-            PlayingSoundsToShowList.Clear();
+            await ShowAllPlayingSoundItems();
         }
         #endregion
 
@@ -356,12 +327,10 @@ namespace UniversalSoundboard.Controllers
             foreach (var playingSound in FileManager.itemViewHolder.PlayingSounds)
             {
                 var item1 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, false);
-                item1.Show += PlayingSoundItemContainer_Show;
                 item1.Hide += PlayingSoundItemContainer_Hide;
                 item1.Loaded += PlayingSoundItemContainer_Loaded;
 
                 var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, false);
-                item2.Show += PlayingSoundItemContainer_Show;
                 item2.Hide += PlayingSoundItemContainer_Hide;
                 item2.Loaded += PlayingSoundItemContainer_Loaded;
 
@@ -372,6 +341,67 @@ namespace UniversalSoundboard.Controllers
 
                 PlayingSoundItemContainers.Add(item1);
                 ReversedPlayingSoundItemContainers.Insert(0, item2);
+            }
+        }
+
+        private async Task ShowAllPlayingSoundItems()
+        {
+            // Check if all PlayingSoundItemContainers in the list were loaded
+            int itemCount = PlayingSoundsToShowList.Count;
+            int loadedItemCount = 0;
+
+            foreach (var item in PlayingSoundsToShowList)
+                if (item.IsLoaded) loadedItemCount++;
+
+            if (
+                itemCount == 0
+                || itemCount != loadedItemCount
+            ) return;
+
+            if (showBottomPlayingSoundsBar)
+            {
+                showBottomPlayingSoundsBar = false;
+
+                foreach (var item in PlayingSoundsToShowList)
+                {
+                    item.PlayingSoundItemTemplate.Translation = new Vector3(0);
+                    item.PlayingSoundItemTemplate.Opacity = 1;
+                }
+
+                PlayingSoundsToShowList.Clear();
+
+                // Show the bottom playing sounds bar
+                UpdatePlayingSoundsList();
+                InitBottomPlayingSoundsBarHeight();
+
+                await ShowBottomPlayingSoundsBar();
+            }
+            else
+            {
+                // Show all PlayingSounds in the list
+                foreach (var item in PlayingSoundsToShowList)
+                {
+                    var compositor = Window.Current.Compositor;
+
+                    var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                    translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
+                    translationAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
+                    translationAnimation.Target = "Translation";
+
+                    var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+                    opacityAnimation.InsertKeyFrame(0.3f, 0);
+                    opacityAnimation.InsertKeyFrame(1.0f, 1);
+                    opacityAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
+                    opacityAnimation.Target = "Opacity";
+
+                    var animationGroup = compositor.CreateAnimationGroup();
+                    animationGroup.Add(translationAnimation);
+                    animationGroup.Add(opacityAnimation);
+
+                    item.PlayingSoundItemTemplate.StartAnimation(animationGroup);
+                }
+
+                PlayingSoundsToShowList.Clear();
             }
         }
 
@@ -570,17 +600,17 @@ namespace UniversalSoundboard.Controllers
             // Animate showing the BottomPlayingSoundsBar
             var translationAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
-            translationAnimation.Duration = TimeSpan.FromMilliseconds(300);
+            translationAnimation.Duration = TimeSpan.FromMilliseconds(bottomPlayingSoundsBarAnimationDuration);
             translationAnimation.Target = "Translation";
 
             BottomPlayingSoundsBar.StartAnimation(translationAnimation);
 
-            await Task.Delay(300);
+            await Task.Delay(bottomPlayingSoundsBarAnimationDuration);
 
             // Animate showing the grid splitter
             ShowGridSplitter();
 
-            await Task.Delay(300);
+            await Task.Delay(bottomPlayingSoundsBarAnimationDuration);
 
             BottomPlayingSoundsBar.Background = new SolidColorBrush(Colors.Transparent);
             BottomPseudoContentGrid.Background = Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush;
@@ -596,12 +626,12 @@ namespace UniversalSoundboard.Controllers
             // Animate showing the BottomPlayingSoundsBar
             var translationAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)firstItemHeight, 0));
-            translationAnimation.Duration = TimeSpan.FromMilliseconds(300);
+            translationAnimation.Duration = TimeSpan.FromMilliseconds(bottomPlayingSoundsBarAnimationDuration);
             translationAnimation.Target = "Translation";
 
             BottomPlayingSoundsBar.StartAnimation(translationAnimation);
 
-            await Task.Delay(300);
+            await Task.Delay(bottomPlayingSoundsBarAnimationDuration);
 
             GridSplitterGrid.Visibility = Visibility.Collapsed;
             BottomPlayingSoundsBar.Background = new SolidColorBrush(Colors.Transparent);
@@ -614,7 +644,7 @@ namespace UniversalSoundboard.Controllers
         {
             var opacityAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacityAnimation.InsertKeyFrame(1.0f, 1);
-            opacityAnimation.Duration = TimeSpan.FromMilliseconds(300);
+            opacityAnimation.Duration = TimeSpan.FromMilliseconds(bottomPlayingSoundsBarAnimationDuration);
             opacityAnimation.Target = "Opacity";
 
             GridSplitterGrid.StartAnimation(opacityAnimation);
@@ -626,12 +656,12 @@ namespace UniversalSoundboard.Controllers
         {
             var opacityAnimation = Window.Current.Compositor.CreateScalarKeyFrameAnimation();
             opacityAnimation.InsertKeyFrame(1.0f, 0);
-            opacityAnimation.Duration = TimeSpan.FromMilliseconds(300);
+            opacityAnimation.Duration = TimeSpan.FromMilliseconds(bottomPlayingSoundsBarAnimationDuration);
             opacityAnimation.Target = "Opacity";
 
             BottomPlayingSoundsBarGridSplitter.StartAnimation(opacityAnimation);
 
-            await Task.Delay(300);
+            await Task.Delay(bottomPlayingSoundsBarAnimationDuration);
 
             BottomPlayingSoundsBarGridSplitter.Visibility = Visibility.Collapsed;
             BottomPlayingSoundsBarGridSplitter.Opacity = 1;

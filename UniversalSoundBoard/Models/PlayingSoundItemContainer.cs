@@ -14,7 +14,6 @@ namespace UniversalSoundboard.Models
         public bool IsInBottomPlayingSoundsBar { get; set; }
         public bool ShowAnimations { get; set; }
 
-        public event EventHandler<EventArgs> Show;
         public event EventHandler<EventArgs> Hide;
         public event EventHandler<EventArgs> Loaded;
 
@@ -32,11 +31,6 @@ namespace UniversalSoundboard.Models
             IsLoaded = false;
             IsInBottomPlayingSoundsBar = isInBottomPlayingSoundsBar;
             ShowAnimations = showAnimations;
-        }
-
-        public void TriggerShowEvent(EventArgs args)
-        {
-            Show?.Invoke(this, args);
         }
         
         public void TriggerHideEvent(EventArgs args)
