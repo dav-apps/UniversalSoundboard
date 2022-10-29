@@ -213,6 +213,7 @@ namespace UniversalSoundboard.Controllers
 
         private void ItemViewHolder_PlayingSoundsLoaded(object sender, EventArgs e)
         {
+            showBottomPlayingSoundsBar = IsMobile;
             LoadPlayingSoundItems();
             playingSoundsLoaded = true;
         }
