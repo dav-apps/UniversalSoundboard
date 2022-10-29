@@ -691,8 +691,7 @@
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            Opacity="0">
+            RelativePanel.AlignRightWithPanel="True">
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="*" />
@@ -706,7 +705,8 @@
                 x:Name="BottomPlayingSoundsBarGridSplitter"
                 Grid.Row="1"
                 Height="16"
-                Background="Transparent">
+                Background="Transparent"
+                Opacity="0">
 
                 <controls:GridSplitter.Element>
                     <Grid Height="16" Background="{StaticResource NavigationViewHeaderBackgroundBrush}">
