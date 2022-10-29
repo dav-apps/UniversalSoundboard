@@ -358,6 +358,8 @@ namespace UniversalSoundboard.Controllers
             // Find the corresponding PlayingSoundItem and remove it
             var playingSoundItem = FileManager.itemViewHolder.PlayingSoundItems.Find(item => item.Uuid.Equals(itemContainer.PlayingSound.Uuid));
             if (playingSoundItem != null) await playingSoundItem.Remove();
+
+            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, new RemovePlayingSoundItemEventArgs(itemContainer.PlayingSound.Uuid));
         }
 
         private async void PlayingSoundItemContainer_Loaded(object sender, EventArgs e)
