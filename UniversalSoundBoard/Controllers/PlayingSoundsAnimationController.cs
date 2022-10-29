@@ -231,9 +231,9 @@ namespace UniversalSoundboard.Controllers
 
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                bool onlyPlayingSound = FileManager.itemViewHolder.PlayingSounds.Count == 1;
+                showBottomPlayingSoundsBar = FileManager.itemViewHolder.PlayingSounds.Count == 1;
 
-                if (onlyPlayingSound)
+                if (showBottomPlayingSoundsBar)
                 {
                     // Reset the BottomPlayingSoundsBar to enable loading PlayingSoundItems
                     BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
@@ -255,7 +255,7 @@ namespace UniversalSoundboard.Controllers
                 item1.Hide += PlayingSoundItemContainer_Hide;
                 item1.Loaded += PlayingSoundItemContainer_Loaded;
 
-                var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, !onlyPlayingSound);
+                var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, !showBottomPlayingSoundsBar);
                 item2.Hide += PlayingSoundItemContainer_Hide;
                 item2.Loaded += PlayingSoundItemContainer_Loaded;
 
