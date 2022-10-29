@@ -147,6 +147,7 @@ namespace UniversalSoundboard.Controllers
                     GridSplitterGrid.Opacity = 0;
                     showBottomPlayingSoundsBar = true;
 
+                    // Show the PlayingSounds in the BottomPlayingSoundsBar
                     foreach (var item in ReversedPlayingSoundItemContainers)
                         PlayingSoundsToShowList.Add(item);
 
@@ -158,6 +159,17 @@ namespace UniversalSoundboard.Controllers
                     GridSplitterGrid.Visibility = Visibility.Collapsed;
                     BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
                     BottomPlayingSoundsBar.Height = double.NaN;
+
+                    // Show the PlayingSounds in the normal PlayingSoundsBar
+                    foreach (var item in PlayingSoundItemContainers)
+                    {
+                        item.PlayingSoundItemTemplate.Opacity = 0;
+                        item.PlayingSoundItemTemplate.Translation = new Vector3(0, -300, 0);
+                        PlayingSoundsToShowList.Add(item);
+                    }
+
+                    await Task.Delay(100);
+                    await ShowAllPlayingSoundItems();
                 }
             }
 
