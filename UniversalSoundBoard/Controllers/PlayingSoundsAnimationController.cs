@@ -291,19 +291,52 @@ namespace UniversalSoundboard.Controllers
                 AdaptSoundListScrollViewerForBottomPlayingSoundsBar(0);
                 itemContainer.PlayingSoundItemTemplate.Content = null;
             }
-            else if (
-                itemContainer.IsInBottomPlayingSoundsBar
-                && FileManager.itemViewHolder.PlayingSounds.Count == 2
-            )
-            {
-                itemContainer.PlayingSoundItemTemplate.Content = null;
-            }
             else if (itemContainer.IsInBottomPlayingSoundsBar)
             {
+                if (bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Bottom)
+                {
+                    // Hide the removed item
+                    var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+                    opacityAnimation.InsertKeyFrame(0.5f, 0);
+                    opacityAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
+                    opacityAnimation.Target = "Opacity";
 
+                    itemContainer.PlayingSoundItemTemplate.StartAnimation(opacityAnimation);
+
+                    // Move all items below the removed item up
+                    List<PlayingSoundItemContainer> movedItems = new List<PlayingSoundItemContainer>();
+
+                    foreach (var item in ReversedPlayingSoundItemContainers)
+                    {
+                        if (!item.IsVisible || item.Index >= itemContainer.Index)
+                            continue;
+
+                        var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                        translationAnimation.InsertKeyFrame(
+                            1.0f,
+                            new Vector3(
+                                0,
+                                item.PlayingSoundItemTemplate.Translation.Y - (float)itemContainer.ContentHeight,
+                                0
+                            )
+                        );
+                        translationAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
+                        translationAnimation.Target = "Translation";
+
+                        item.PlayingSoundItemTemplate.StartAnimation(translationAnimation);
+                        movedItems.Add(item);
+                    }
+
+                    await Task.Delay(showHideItemAnimationDuration);
+                    itemContainer.PlayingSoundItemTemplate.Content = null;
+
+                    foreach (var item in movedItems)
+                        item.PlayingSoundItemTemplate.Translation = new Vector3(0);
+                }
             }
             else
             {
+                // Item is in normal PlayingSoundsBar
                 // Start the animation for hiding the PlayingSoundItem
                 var animationGroup = compositor.CreateAnimationGroup();
 
@@ -322,9 +355,9 @@ namespace UniversalSoundboard.Controllers
 
                 itemContainer.PlayingSoundItemTemplate.StartAnimation(animationGroup);
 
+                // Move all items below the removed item up
                 List<PlayingSoundItemContainer> movedItems = new List<PlayingSoundItemContainer>();
 
-                // Move all items below the removed item up
                 foreach (var item in PlayingSoundItemContainers)
                 {
                     if (!item.IsVisible || item.Index <= itemContainer.Index)
