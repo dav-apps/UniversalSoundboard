@@ -259,6 +259,15 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
+
+        <Storyboard x:Name="SnapBottomPlayingSoundsBarLinearStoryboard">
+            <DoubleAnimation
+                x:Name="SnapBottomPlayingSoundsBarLinearStoryboardAnimation"
+                Storyboard.TargetName="BottomPlayingSoundsBar"
+                Storyboard.TargetProperty="Height"
+                EnableDependentAnimation="True"
+                Duration="0:0:0.2" />
+        </Storyboard>
     </Page.Resources>
 
     <RelativePanel Name="ContentRoot">

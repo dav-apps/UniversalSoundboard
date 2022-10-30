@@ -72,7 +72,9 @@ namespace UniversalSoundboard.Pages
                 BottomPlayingSoundsBarGridSplitter,
                 BottomPseudoContentGrid,
                 SnapBottomPlayingSoundsBarStoryboard,
-                SnapBottomPlayingSoundsBarStoryboardAnimation
+                SnapBottomPlayingSoundsBarStoryboardAnimation,
+                SnapBottomPlayingSoundsBarLinearStoryboard,
+                SnapBottomPlayingSoundsBarLinearStoryboardAnimation
             );
 
             // Show all currently active InAppNotifications
