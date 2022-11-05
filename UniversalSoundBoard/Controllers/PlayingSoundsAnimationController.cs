@@ -415,6 +415,8 @@ namespace UniversalSoundboard.Controllers
             if (playingSoundItem != null) await playingSoundItem.Remove();
 
             FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, new RemovePlayingSoundItemEventArgs(itemContainer.PlayingSound.Uuid));
+
+            UpdateGridSplitterRange();
         }
 
         private async void PlayingSoundItemContainer_Loaded(object sender, EventArgs e)
@@ -520,6 +522,57 @@ namespace UniversalSoundboard.Controllers
                     }
 
                     await Task.Delay(animationDuration);
+                }
+
+                PlayingSoundsToShowList.Clear();
+            }
+            else if (
+                IsMobile
+                && bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Top
+            )
+            {
+                foreach (var itemToShow in PlayingSoundsToShowList)
+                {
+                    double newHeight = BottomPlayingSoundsBar.ActualHeight + itemToShow.ContentHeight;
+
+                    if (newHeight >= maxBottomPlayingSoundsBarHeight)
+                        newHeight = maxBottomPlayingSoundsBarHeight;
+
+                    itemToShow.PlayingSoundItemTemplate.Translation = new Vector3(0);
+                    BottomPlayingSoundsBar.Height = newHeight;
+
+                    // Move the GridSplitter up
+                    var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                    translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)itemToShow.ContentHeight, 0));
+                    translationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                    translationAnimation.Target = "Translation";
+
+                    GridSplitterGrid.StartAnimation(translationAnimation);
+
+                    // Move the BottomPlayingSoundsBar background up
+                    var translationAnimation2 = compositor.CreateVector3KeyFrameAnimation();
+                    translationAnimation2.InsertKeyFrame(1.0f, new Vector3(0, -(float)newHeight, 0));
+                    translationAnimation2.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                    translationAnimation2.Target = "Translation";
+
+                    BottomPlayingSoundsBarBackgroundGrid.StartAnimation(translationAnimation2);
+
+                    // Show the new PlayingSound
+                    var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+                    opacityAnimation.InsertKeyFrame(0.5f, 0);
+                    opacityAnimation.InsertKeyFrame(1, 1);
+                    opacityAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                    opacityAnimation.Target = "Opacity";
+
+                    itemToShow.PlayingSoundItemTemplate.StartAnimation(opacityAnimation);
+
+                    await Task.Delay(animationDuration);
+
+                    // Adapt the elements to the new position
+                    GridSplitterGridBottomRowDef.Height = new GridLength(newHeight);
+                    BottomPlayingSoundsBar.Height = newHeight;
+                    BottomPlayingSoundsBar.Translation = new Vector3(0);
+                    GridSplitterGrid.Translation = new Vector3(0);
                 }
 
                 PlayingSoundsToShowList.Clear();
