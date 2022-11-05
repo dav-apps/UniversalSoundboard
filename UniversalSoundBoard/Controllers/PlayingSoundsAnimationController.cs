@@ -129,6 +129,8 @@ namespace UniversalSoundboard.Controllers
             {
                 if (IsMobile)
                 {
+                    BottomPlayingSoundsBarBackgroundGrid.Translation = new Vector3(0);
+                    BottomPlayingSoundsBarBackgroundGrid.Visibility = Visibility.Visible;
                     BottomPlayingSoundsBarGridSplitter.Opacity = 0;
                     showBottomPlayingSoundsBar = true;
 
@@ -142,6 +144,7 @@ namespace UniversalSoundboard.Controllers
                 else
                 {
                     GridSplitterGrid.Visibility = Visibility.Collapsed;
+                    BottomPlayingSoundsBarBackgroundGrid.Visibility = Visibility.Collapsed;
                     BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
                     BottomPlayingSoundsBar.Height = double.NaN;
 
@@ -909,6 +912,9 @@ namespace UniversalSoundboard.Controllers
             if (end >= maxBottomPlayingSoundsBarHeight)
                 end = maxBottomPlayingSoundsBarHeight;
 
+            // Move the GridSplitter exactly above the BottomPlayingSoundsBar
+            GridSplitterGrid.Translation = new Vector3(0, (float)(GridSplitterGridBottomRowDef.ActualHeight - BottomPlayingSoundsBar.ActualHeight), 0);
+
             // Animate the BottomPlayingSoundsBar
             var translationAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
             translationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
@@ -939,26 +945,12 @@ namespace UniversalSoundboard.Controllers
             BottomPlayingSoundsBarBackgroundGrid.StartAnimation(translationAnimation2);
 
             // Animate the GridSplitter
-            if (start < end)
-            {
-                // BottomPlayingSoundsBar snaps to top
-                var translationAnimation3 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                translationAnimation3.InsertKeyFrame(1.0f, new Vector3(0, -(float)(end - start), 0));
-                translationAnimation3.Duration = TimeSpan.FromMilliseconds(animationDuration);
-                translationAnimation3.Target = "Translation";
+            var translationAnimation3 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            translationAnimation3.InsertKeyFrame(1.0f, new Vector3(0, -(float)(end - start - GridSplitterGrid.Translation.Y), 0));
+            translationAnimation3.Duration = TimeSpan.FromMilliseconds(animationDuration);
+            translationAnimation3.Target = "Translation";
 
-                GridSplitterGrid.StartAnimation(translationAnimation3);
-            }
-            else
-            {
-                // BottomPlayingSoundsBar snaps to bottom
-                var translationAnimation3 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-                translationAnimation3.InsertKeyFrame(1.0f, new Vector3(0, -(float)(end - start), 0));
-                translationAnimation3.Duration = TimeSpan.FromMilliseconds(animationDuration);
-                translationAnimation3.Target = "Translation";
-
-                GridSplitterGrid.StartAnimation(translationAnimation3);
-            }
+            GridSplitterGrid.StartAnimation(translationAnimation3);
 
             await Task.Delay(animationDuration);
 
