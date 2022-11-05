@@ -304,6 +304,24 @@ namespace UniversalSoundboard.Controllers
                 }
                 else
                 {
+                    double newHeight = BottomPlayingSoundsBar.ActualHeight - itemContainer.ContentHeight;
+
+                    // Move the GridSplitter down
+                    var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                    translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)itemContainer.ContentHeight, 0));
+                    translationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                    translationAnimation.Target = "Translation";
+
+                    GridSplitterGrid.StartAnimation(translationAnimation);
+
+                    // Move the BottomPlayingSoundsBar background down
+                    var translationAnimation2 = compositor.CreateVector3KeyFrameAnimation();
+                    translationAnimation2.InsertKeyFrame(1.0f, new Vector3(0, -(float)newHeight, 0));
+                    translationAnimation2.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                    translationAnimation2.Target = "Translation";
+
+                    BottomPlayingSoundsBarBackgroundGrid.StartAnimation(translationAnimation2);
+
                     // Hide the removed item
                     var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
                     opacityAnimation.InsertKeyFrame(0.5f, 0);
@@ -312,37 +330,22 @@ namespace UniversalSoundboard.Controllers
 
                     itemContainer.PlayingSoundItemTemplate.StartAnimation(opacityAnimation);
 
-                    // Move all items below the removed item up
+                    // Move all items below the removed item down
                     List<PlayingSoundItemContainer> movedItems = new List<PlayingSoundItemContainer>();
 
                     foreach (var item in ReversedPlayingSoundItemContainers)
                     {
-                        if (!item.IsVisible || item.Index >= itemContainer.Index)
+                        if (!item.IsVisible || item.Index <= itemContainer.Index)
                             continue;
 
-                        var linearEasingFunction = compositor.CreateLinearEasingFunction();
-                        var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
-                        translationAnimation.InsertKeyFrame(
-                            1.0f,
-                            new Vector3(
-                                0,
-                                item.PlayingSoundItemTemplate.Translation.Y - (float)itemContainer.ContentHeight,
-                                0
-                            ),
-                            linearEasingFunction
-                        );
-                        translationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
-                        translationAnimation.Target = "Translation";
+                        var translationAnimation3 = compositor.CreateVector3KeyFrameAnimation();
+                        translationAnimation3.InsertKeyFrame(1.0f, new Vector3(0, (float)itemContainer.ContentHeight, 0));
+                        translationAnimation3.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                        translationAnimation3.Target = "Translation";
 
-                        item.PlayingSoundItemTemplate.StartAnimation(translationAnimation);
+                        item.PlayingSoundItemTemplate.StartAnimation(translationAnimation3);
                         movedItems.Add(item);
                     }
-
-                    // Animate the BottomPlayingSoundsBar
-                    StartSnapBottomPlayingSoundsBarAnimation(
-                        BottomPlayingSoundsBar.ActualHeight,
-                        BottomPlayingSoundsBar.ActualHeight - itemContainer.ContentHeight
-                    );
 
                     await Task.Delay(animationDuration);
 
@@ -350,6 +353,12 @@ namespace UniversalSoundboard.Controllers
 
                     foreach (var item in movedItems)
                         item.PlayingSoundItemTemplate.Translation = new Vector3(0);
+
+                    // Adapt the elements to the new position
+                    GridSplitterGridBottomRowDef.Height = new GridLength(newHeight);
+                    BottomPlayingSoundsBar.Height = newHeight;
+                    BottomPlayingSoundsBar.Translation = new Vector3(0);
+                    GridSplitterGrid.Translation = new Vector3(0);
 
                     // Update the position if only one PlayingSound is remaining
                     if (FileManager.itemViewHolder.PlayingSounds.Count == 2)
@@ -543,7 +552,7 @@ namespace UniversalSoundboard.Controllers
 
                     // Move the GridSplitter up
                     var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
-                    translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)itemToShow.ContentHeight, 0));
+                    translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)(newHeight - BottomPlayingSoundsBar.ActualHeight), 0));
                     translationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
                     translationAnimation.Target = "Translation";
 
