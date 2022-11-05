@@ -245,29 +245,6 @@
                 </DoubleAnimation.EasingFunction>
             </DoubleAnimation>
         </Storyboard>
-
-        <Storyboard x:Name="SnapBottomPlayingSoundsBarStoryboard">
-            <DoubleAnimation
-                x:Name="SnapBottomPlayingSoundsBarStoryboardAnimation"
-                Storyboard.TargetName="BottomPlayingSoundsBar"
-                Storyboard.TargetProperty="Height"
-                EnableDependentAnimation="True"
-                Duration="0:0:0.2">
-
-                <DoubleAnimation.EasingFunction>
-                    <CubicEase EasingMode="EaseOut" />
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
-
-        <Storyboard x:Name="SnapBottomPlayingSoundsBarLinearStoryboard">
-            <DoubleAnimation
-                x:Name="SnapBottomPlayingSoundsBarLinearStoryboardAnimation"
-                Storyboard.TargetName="BottomPlayingSoundsBar"
-                Storyboard.TargetProperty="Height"
-                EnableDependentAnimation="True"
-                Duration="0:0:0.2" />
-        </Storyboard>
     </Page.Resources>
 
     <RelativePanel Name="ContentRoot">
@@ -732,15 +709,23 @@
             <Grid
                 Name="BottomPseudoContentGrid"
                 Grid.Row="2"
-                Background="Transparent" />
+                Width="0" />
         </Grid>
+
+        <Grid
+            Name="BottomPlayingSoundsBarBackgroundGrid"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            Height="10000"
+            Margin="0,0,0,-10000"
+            Background="{StaticResource NavigationViewHeaderBackgroundBrush}" />
 
         <RelativePanel
             Name="BottomPlayingSoundsBar"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
-            Background="{StaticResource NavigationViewHeaderBackgroundBrush}"
             Translation="-10000,0,0">
 
             <ListView

@@ -67,14 +67,11 @@ namespace UniversalSoundboard.Pages
                 GridSplitterColDef,
                 PlayingSoundsBarColDef,
                 BottomPlayingSoundsBar,
+                BottomPlayingSoundsBarBackgroundGrid,
                 GridSplitterGrid,
                 GridSplitterGridBottomRowDef,
                 BottomPlayingSoundsBarGridSplitter,
-                BottomPseudoContentGrid,
-                SnapBottomPlayingSoundsBarStoryboard,
-                SnapBottomPlayingSoundsBarStoryboardAnimation,
-                SnapBottomPlayingSoundsBarLinearStoryboard,
-                SnapBottomPlayingSoundsBarLinearStoryboardAnimation
+                BottomPseudoContentGrid
             );
 
             // Show all currently active InAppNotifications
