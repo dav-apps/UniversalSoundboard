@@ -3,6 +3,7 @@ using System.IO;
 using UniversalSoundboard.Models;
 using Windows.Media;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace UniversalSoundboard.Common
 {
@@ -251,6 +252,18 @@ namespace UniversalSoundboard.Common
         {
             IsDownloading = isDownloading;
             DownloadProgress = downloadProgress;
+        }
+    }
+    #endregion
+
+    #region PlayingSoundItemContainer
+    public class PlayingSoundSoundsListEventArgs : EventArgs
+    {
+        public StackPanel SoundsListViewStackPanel { get; set; }
+
+        public PlayingSoundSoundsListEventArgs(StackPanel soundsListViewStackPanel)
+        {
+            SoundsListViewStackPanel = soundsListViewStackPanel;
         }
     }
     #endregion

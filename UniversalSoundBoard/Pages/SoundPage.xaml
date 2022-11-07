@@ -60,8 +60,13 @@
             <Setter Property="Height" Value="40" />
             <Setter Property="Background" Value="Transparent" />
         </Style>
-        
-        <Style TargetType="ListViewItem" x:Key="ListViewItemStyle">
+
+        <Style x:Key="ListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        </Style>
+
+        <Style x:Key="PlayingSoundListViewItemStyle" TargetType="ListViewItem">
+            <Setter Property="MinHeight" Value="0" />
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
 
@@ -653,14 +658,9 @@
                     Name="PlayingSoundsBarListView"
                     ItemsSource="{x:Bind PlayingSoundsAnimationController.PlayingSoundItemContainers}"
                     ItemContainerTransitions="{x:Null}"
+                    ItemContainerStyle="{StaticResource PlayingSoundListViewItemStyle}"
                     SelectionMode="None"
                     Margin="0,85,0,0">
-
-                    <ListView.ItemContainerStyle>
-                        <Style TargetType="ListViewItem">
-                            <Setter Property="MinHeight" Value="0" />
-                        </Style>
-                    </ListView.ItemContainerStyle>
 
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:PlayingSoundItemContainer">
@@ -731,15 +731,12 @@
             <ListView
                 Name="BottomPlayingSoundsBarListView"
                 RelativePanel.AlignBottomWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
                 ItemsSource="{x:Bind PlayingSoundsAnimationController.ReversedPlayingSoundItemContainers}"
                 ItemContainerTransitions="{x:Null}"
+                ItemContainerStyle="{StaticResource PlayingSoundListViewItemStyle}"
                 SelectionMode="None">
-
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="MinHeight" Value="0" />
-                    </Style>
-                </ListView.ItemContainerStyle>
 
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:PlayingSound">

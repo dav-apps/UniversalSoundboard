@@ -1,4 +1,5 @@
 ﻿using System;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 
 namespace UniversalSoundboard.Models
@@ -16,6 +17,8 @@ namespace UniversalSoundboard.Models
 
         public event EventHandler<EventArgs> Hide;
         public event EventHandler<EventArgs> Loaded;
+        public event EventHandler<PlayingSoundSoundsListEventArgs> ExpandSoundsList;
+        public event EventHandler<PlayingSoundSoundsListEventArgs> CollapseSoundsList;
 
         public PlayingSoundItemContainer(
             int index,
@@ -42,6 +45,16 @@ namespace UniversalSoundboard.Models
         {
             IsLoaded = true;
             Loaded?.Invoke(this, args);
+        }
+
+        public void TriggerExpandSoundsListEvent(PlayingSoundSoundsListEventArgs args)
+        {
+            ExpandSoundsList?.Invoke(this, args);
+        }
+
+        public void TriggerCollapseSoundsListEvent(PlayingSoundSoundsListEventArgs args)
+        {
+            CollapseSoundsList?.Invoke(this, args);
         }
     }
 }

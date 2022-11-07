@@ -225,10 +225,14 @@ namespace UniversalSoundboard.Controllers
                 var item1 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, false);
                 item1.Hide += PlayingSoundItemContainer_Hide;
                 item1.Loaded += PlayingSoundItemContainer_Loaded;
+                item1.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
+                item1.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
 
                 var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, !showBottomPlayingSoundsBar);
                 item2.Hide += PlayingSoundItemContainer_Hide;
                 item2.Loaded += PlayingSoundItemContainer_Loaded;
+                item2.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
+                item2.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
 
                 if (IsMobile)
                     PlayingSoundsToShowList.Add(item2);
@@ -434,6 +438,117 @@ namespace UniversalSoundboard.Controllers
         {
             await ShowAllPlayingSoundItems();
         }
+
+        private void PlayingSoundItemContainer_ExpandSoundsList(object sender, PlayingSoundSoundsListEventArgs args)
+        {
+            PlayingSoundItemContainer itemContainer = sender as PlayingSoundItemContainer;
+
+            if (IsMobile)
+            {
+                
+            }
+            else
+            {
+                args.SoundsListViewStackPanel.Height = double.NaN;
+
+                // Move all items below the current item down
+                List<PlayingSoundItemContainer> movedItems = new List<PlayingSoundItemContainer>();
+
+                foreach (var item in PlayingSoundItemContainers)
+                {
+                    if (!item.IsVisible || item.Index <= itemContainer.Index)
+                        continue;
+
+                    item.PlayingSoundItemTemplate.Translation = new Vector3(0, -(float)args.SoundsListViewStackPanel.ActualHeight, 0);
+                    movedItems.Add(item);
+                }
+
+                foreach (var item in movedItems)
+                {
+                    var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                    translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
+                    translationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                    translationAnimation.Target = "Translation";
+
+                    item.PlayingSoundItemTemplate.StartAnimation(translationAnimation);
+                }
+
+                // Make the list visible
+                args.SoundsListViewStackPanel.Translation = new Vector3(0, -40, 0);
+
+                var listAnimationGroup = compositor.CreateAnimationGroup();
+
+                var listTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                listTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
+                listTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                listTranslationAnimation.Target = "Translation";
+
+                var listOpacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+                listOpacityAnimation.InsertKeyFrame(0.5f, 1);
+                listOpacityAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                listOpacityAnimation.Target = "Opacity";
+
+                listAnimationGroup.Add(listTranslationAnimation);
+                listAnimationGroup.Add(listOpacityAnimation);
+
+                args.SoundsListViewStackPanel.StartAnimation(listAnimationGroup);
+            }
+        }
+
+        private async void PlayingSoundItemContainer_CollapseSoundsList(object sender, PlayingSoundSoundsListEventArgs args)
+        {
+            PlayingSoundItemContainer itemContainer = sender as PlayingSoundItemContainer;
+
+            if (IsMobile)
+            {
+
+            }
+            else
+            {
+                // Move all items below the current item up
+                List<PlayingSoundItemContainer> movedItems = new List<PlayingSoundItemContainer>();
+
+                foreach (var item in PlayingSoundItemContainers)
+                {
+                    if (!item.IsVisible || item.Index <= itemContainer.Index)
+                        continue;
+
+                    var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                    translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)args.SoundsListViewStackPanel.ActualHeight, 0));
+                    translationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                    translationAnimation.Target = "Translation";
+
+                    item.PlayingSoundItemTemplate.StartAnimation(translationAnimation);
+
+                    movedItems.Add(item);
+                }
+
+                // Hide the list
+                var listAnimationGroup = compositor.CreateAnimationGroup();
+
+                var listTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                listTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -40, 0));
+                listTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                listTranslationAnimation.Target = "Translation";
+
+                var listOpacityAnimation = compositor.CreateScalarKeyFrameAnimation();
+                listOpacityAnimation.InsertKeyFrame(0.5f, 0);
+                listOpacityAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                listOpacityAnimation.Target = "Opacity";
+
+                listAnimationGroup.Add(listTranslationAnimation);
+                listAnimationGroup.Add(listOpacityAnimation);
+
+                args.SoundsListViewStackPanel.StartAnimation(listAnimationGroup);
+
+                await Task.Delay(animationDuration);
+
+                args.SoundsListViewStackPanel.Height = 0;
+
+                foreach (var item in movedItems)
+                    item.PlayingSoundItemTemplate.Translation = new Vector3(0);
+            }
+        }
         #endregion
 
         private void LoadPlayingSoundItems()
@@ -445,10 +560,14 @@ namespace UniversalSoundboard.Controllers
                 var item1 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, false);
                 item1.Hide += PlayingSoundItemContainer_Hide;
                 item1.Loaded += PlayingSoundItemContainer_Loaded;
+                item1.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
+                item1.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
 
                 var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, false);
                 item2.Hide += PlayingSoundItemContainer_Hide;
                 item2.Loaded += PlayingSoundItemContainer_Loaded;
+                item2.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
+                item2.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
 
                 if (IsMobile)
                     PlayingSoundsToShowList.Add(item2);

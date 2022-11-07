@@ -373,18 +373,22 @@ namespace UniversalSoundboard.Components
         {
             if (isSoundsListVisible)
             {
-                SoundsListViewStackPanel.Height = 0;
                 isSoundsListVisible = false;
-                PlayingSoundItemContainer.TriggerCollapseSoundsListEvent(EventArgs.Empty);
+                PlayingSoundItemContainer.TriggerCollapseSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
+
+                // Set the icon for the expand button
+                ExpandButton.Content = "\uE099";
+                ExpandButtonToolTip.Text = FileManager.loader.GetString("ExpandButtonTooltip");
             }
             else
             {
-                SoundsListViewStackPanel.Height = double.NaN;
                 isSoundsListVisible = true;
-                PlayingSoundItemContainer.TriggerExpandSoundsListEvent(EventArgs.Empty);
-            }
+                PlayingSoundItemContainer.TriggerExpandSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
 
-            UpdateExpandButtonUI();
+                // Set the icon for the expand button
+                ExpandButton.Content = "\uE098";
+                ExpandButtonToolTip.Text = FileManager.loader.GetString("CollapseButtonTooltip");
+            }
         }
 
         private void VolumeButton_Click(object sender, RoutedEventArgs e)
@@ -945,28 +949,6 @@ namespace UniversalSoundboard.Components
             {
                 PlayPauseButton.Content = "\uE102";
                 PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PlayButtonToolTip");
-            }
-        }
-
-        private void UpdateExpandButtonUI()
-        {
-            if (isSoundsListVisible)
-            {
-                // Set the icon for the expand button
-                ExpandButton.Content = "\uE098";
-                ExpandButtonToolTip.Text = FileManager.loader.GetString("CollapseButtonTooltip");
-
-                // Show the sound list
-                SoundsListViewStackPanel.Height = SoundsListView.ActualHeight;
-            }
-            else
-            {
-                // Set the icon for the expand button
-                ExpandButton.Content = "\uE099";
-                ExpandButtonToolTip.Text = FileManager.loader.GetString("ExpandButtonTooltip");
-
-                // Hide the sound list
-                SoundsListViewStackPanel.Height = 0;
             }
         }
 
