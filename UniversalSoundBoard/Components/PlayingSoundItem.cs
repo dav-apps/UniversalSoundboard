@@ -33,17 +33,13 @@ namespace UniversalSoundboard.Components
     {
         public PlayingSound PlayingSound { get; private set; }
         public Guid Uuid { get => PlayingSound == null ? Guid.Empty : PlayingSound.Uuid; }
-        public bool SoundsListVisible { get => soundsListVisible; }
         public bool CurrentSoundIsDownloading { get => currentSoundIsDownloading; }
         public TimeSpan CurrentSoundTotalDuration { get => currentSoundTotalDuration; }
 
         #region Local variables
         private bool initialized = false;
         private bool skipSoundsCollectionChanged = false;
-        private bool soundsListVisible = false;
         private TimeSpan currentSoundTotalDuration = TimeSpan.Zero;
-        private bool showSoundsListAnimationTriggered = false;
-        private bool hideSoundsListAnimationTriggered = false;
         private bool currentSoundIsDownloading = false;
         readonly List<(Guid, int)> DownloadProgressList = new List<(Guid, int)>();
         private bool removed = false;
@@ -63,9 +59,6 @@ namespace UniversalSoundboard.Components
         public event EventHandler<ButtonVisibilityChangedEventArgs> ButtonVisibilityChanged;
         public event EventHandler<LocalFileButtonVisibilityEventArgs> LocalFileButtonVisibilityChanged;
         public event EventHandler<OutputDeviceButtonVisibilityEventArgs> OutputDeviceButtonVisibilityChanged;
-        public event EventHandler<ExpandButtonContentChangedEventArgs> ExpandButtonContentChanged;
-        public event EventHandler<EventArgs> ShowSoundsList;
-        public event EventHandler<EventArgs> HideSoundsList;
         public event EventHandler<RepetitionsChangedEventArgs> RepetitionsChanged;
         public event EventHandler<FavouriteChangedEventArgs> FavouriteChanged;
         public event EventHandler<VolumeChangedEventArgs> VolumeChanged;
@@ -118,7 +111,6 @@ namespace UniversalSoundboard.Components
             // Subscribe to ItemViewHolder events
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.SoundDeleted += ItemViewHolder_SoundDeleted;
-            FileManager.itemViewHolder.PlayingSoundItemStartSoundsListAnimation += ItemViewHolder_PlayingSoundItemStartSoundsListAnimation;
 
             // Subscribe to MediaPlayer events
             PlayingSound.AudioPlayer.MediaEnded += AudioPlayer_MediaEnded;
@@ -213,20 +205,6 @@ namespace UniversalSoundboard.Components
 
             // Remove the sound from the list
             PlayingSound.Sounds.RemoveAt(i);
-        }
-
-        private void ItemViewHolder_PlayingSoundItemStartSoundsListAnimation(object sender, EventArgs e)
-        {
-            if (showSoundsListAnimationTriggered)
-            {
-                showSoundsListAnimationTriggered = false;
-                ShowSoundsList?.Invoke(this, new EventArgs());
-            }
-            else if (hideSoundsListAnimationTriggered)
-            {
-                hideSoundsListAnimationTriggered = false;
-                HideSoundsList?.Invoke(this, new EventArgs());
-            }
         }
         #endregion
         
@@ -514,8 +492,6 @@ namespace UniversalSoundboard.Components
 
             if (CurrentSoundIsDownloading)
                 DownloadStatusChanged?.Invoke(this, new DownloadStatusChangedEventArgs(true, -1));
-
-            soundsListVisible = false;
         }
 
         private void UpdateButtonVisibility()
@@ -869,44 +845,6 @@ namespace UniversalSoundboard.Components
                 PlayingSound.Volume,
                 PlayingSound.Muted
             );
-        }
-
-        public void ExpandSoundsList(double heightDifference)
-        {
-            if (soundsListVisible) return;
-            soundsListVisible = true;
-            showSoundsListAnimationTriggered = true;
-
-            // Trigger the event to start the animation and wait for SoundPage to start the animation
-            FileManager.itemViewHolder.TriggerPlayingSoundItemShowSoundsListAnimationStartedEvent(
-                this,
-                new PlayingSoundItemEventArgs(
-                    PlayingSound.Uuid,
-                    heightDifference
-                )
-            );
-
-            // Update the ExpandButton content
-            ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(true));
-        }
-
-        public void CollapseSoundsList(double heightDifference)
-        {
-            if (!soundsListVisible) return;
-            soundsListVisible = false;
-            hideSoundsListAnimationTriggered = true;
-
-            // Trigger the event to start the animation and wait for SoundPage to start the animation
-            FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationStartedEvent(
-                this,
-                new PlayingSoundItemEventArgs(
-                    PlayingSound.Uuid,
-                    heightDifference
-                )
-            );
-
-            // Update the ExpandButton content
-            ExpandButtonContentChanged?.Invoke(this, new ExpandButtonContentChangedEventArgs(false));
         }
 
         public void SetPosition(int position)

@@ -354,36 +354,6 @@
             <Setter Property="CornerRadius" Value="18" />
             <Setter Property="Background" Value="Transparent" />
         </Style>
-        
-        <!-- Storyboards -->
-        <Storyboard x:Name="ShowSoundsListViewStoryboard" Completed="ShowSoundsListViewStoryboard_Completed">
-            <DoubleAnimation
-                x:Name="ShowSoundsListViewStoryboardAnimation"
-                Storyboard.TargetName="SoundsListViewStackPanel"
-                Storyboard.TargetProperty="Height"
-                EnableDependentAnimation="True"
-                Duration="0:0:0.2">
-
-                <DoubleAnimation.EasingFunction>
-                    <CubicEase EasingMode="EaseOut" />
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
-
-        <Storyboard x:Name="HideSoundsListViewStoryboard" Completed="HideSoundsListViewStoryboard_Completed">
-            <DoubleAnimation
-                x:Name="HideSoundsListViewStoryboardAnimation"
-                Storyboard.TargetName="SoundsListViewStackPanel"
-                Storyboard.TargetProperty="Height"
-                EnableDependentAnimation="True"
-                Duration="0:0:0.2"
-                To="0">
-
-                <DoubleAnimation.EasingFunction>
-                    <CubicEase EasingMode="EaseOut" />
-                </DoubleAnimation.EasingFunction>
-            </DoubleAnimation>
-        </Storyboard>
     </UserControl.Resources>
 
     <Grid Name="ContentRoot" Background="Transparent" Margin="0,6">

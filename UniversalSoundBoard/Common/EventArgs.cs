@@ -27,36 +27,6 @@ namespace UniversalSoundboard.Common
         }
     }
 
-    public class PlayingSoundItemEventArgs : EventArgs
-    {
-        public Guid Uuid { get; set; }
-        public double HeightDifference { get; set; }
-
-        public PlayingSoundItemEventArgs(Guid uuid)
-        {
-            Uuid = uuid;
-            HeightDifference = 0;
-        }
-
-        public PlayingSoundItemEventArgs(Guid uuid, double heightDifference)
-        {
-            Uuid = uuid;
-            HeightDifference = heightDifference;
-        }
-    }
-
-    public class UpdatePlayingSoundItemPositionEventArgs : EventArgs
-    {
-        public int Index { get; set; }
-        public float ContentHeight { get; set; }
-
-        public UpdatePlayingSoundItemPositionEventArgs(int index, float contentHeight)
-        {
-            Index = index;
-            ContentHeight = contentHeight;
-        }
-    }
-
     public class RemovePlayingSoundItemEventArgs : EventArgs
     {
         public Guid Uuid { get; set; }

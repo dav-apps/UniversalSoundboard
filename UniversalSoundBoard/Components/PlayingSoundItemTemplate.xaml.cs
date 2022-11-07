@@ -36,12 +36,10 @@ namespace UniversalSoundboard.Components
         Thickness singlePlayingSoundTitleMargin = new Thickness(0);
         private bool skipSoundsListViewSelectionChanged;
         private bool skipProgressSliderValueChanged = false;
+        private bool isSoundsListVisible = false;
 
         private const string MoreButtonOutputDeviceFlyoutSubItemName = "MoreButtonOutputDeviceFlyoutSubItem";
         private const string MoreButtonPlaybackSpeedFlyoutSubItemName = "MoreButtonPlaybackSpeedFlyoutSubItemName";
-        private const int showHideItemAnimationDuration = 200;
-        private float bottomPlayingSoundsBarMarginTop = 0;
-        public static PlayingSoundItemTemplate removedTemplate;
 
         public PlayingSoundItemTemplate()
         {
@@ -92,12 +90,6 @@ namespace UniversalSoundboard.Components
             PlayingSoundItem.LocalFileButtonVisibilityChanged += PlayingSoundItem_LocalFileButtonVisibilityChanged;
             PlayingSoundItem.OutputDeviceButtonVisibilityChanged -= PlayingSoundItem_OutputDeviceButtonVisibilityChanged;
             PlayingSoundItem.OutputDeviceButtonVisibilityChanged += PlayingSoundItem_OutputDeviceButtonVisibilityChanged;
-            PlayingSoundItem.ExpandButtonContentChanged -= PlayingSoundItem_ExpandButtonContentChanged;
-            PlayingSoundItem.ExpandButtonContentChanged += PlayingSoundItem_ExpandButtonContentChanged;
-            PlayingSoundItem.ShowSoundsList -= PlayingSoundItem_ShowSoundsList;
-            PlayingSoundItem.ShowSoundsList += PlayingSoundItem_ShowSoundsList;
-            PlayingSoundItem.HideSoundsList -= PlayingSoundItem_HideSoundsList;
-            PlayingSoundItem.HideSoundsList += PlayingSoundItem_HideSoundsList;
             PlayingSoundItem.RepetitionsChanged -= PlayingSoundItem_RepetitionsChanged;
             PlayingSoundItem.RepetitionsChanged += PlayingSoundItem_RepetitionsChanged;
             PlayingSoundItem.FavouriteChanged -= PlayingSoundItem_FavouriteChanged;
@@ -113,8 +105,7 @@ namespace UniversalSoundboard.Components
             PlayingSoundItem.DownloadStatusChanged -= PlayingSoundItem_DownloadStatusChanged;
             PlayingSoundItem.DownloadStatusChanged += PlayingSoundItem_DownloadStatusChanged;
 
-            FileManager.itemViewHolder.UpdatePlayingSoundItemPosition += ItemViewHolder_UpdatePlayingSoundItemPosition;
-            FileManager.itemViewHolder.ResetPlayingSoundItemPosition += ItemViewHolder_ResetPlayingSoundItemPosition;
+            FileManager.itemViewHolder.RemovePlayingSoundItem -= ItemViewHolder_RemovePlayingSoundItem;
             FileManager.itemViewHolder.RemovePlayingSoundItem += ItemViewHolder_RemovePlayingSoundItem;
 
             PlayingSoundItem.Init();
@@ -195,24 +186,6 @@ namespace UniversalSoundboard.Components
         private void PlayingSoundItem_OutputDeviceButtonVisibilityChanged(object sender, OutputDeviceButtonVisibilityEventArgs e)
         {
             OutputDeviceButton.Visibility = e.OutputDeviceButtonVisibility;
-        }
-
-        private void PlayingSoundItem_ExpandButtonContentChanged(object sender, ExpandButtonContentChangedEventArgs e)
-        {
-            UpdateExpandButtonUI();
-        }
-
-        private void PlayingSoundItem_ShowSoundsList(object sender, EventArgs e)
-        {
-            // Start the animation
-            ShowSoundsListViewStoryboardAnimation.To = SoundsListView.ActualHeight;
-            ShowSoundsListViewStoryboard.Begin();
-        }
-
-        private void PlayingSoundItem_HideSoundsList(object sender, EventArgs e)
-        {
-            // Start the animation
-            HideSoundsListViewStoryboard.Begin();
         }
 
         private void PlayingSoundItem_RepetitionsChanged(object sender, RepetitionsChangedEventArgs e)
@@ -317,61 +290,6 @@ namespace UniversalSoundboard.Components
         #endregion
 
         #region ItemViewHolder event handlers
-        private void ItemViewHolder_UpdatePlayingSoundItemPosition(object sender, UpdatePlayingSoundItemPositionEventArgs e)
-        {
-            if (
-                !PlayingSoundItemContainer.IsVisible
-                || (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar && PlayingSoundItemContainer.Index >= e.Index)
-                || (!PlayingSoundItemContainer.IsInBottomPlayingSoundsBar && PlayingSoundItemContainer.Index <= e.Index)
-            ) return;
-
-            var compositor = Window.Current.Compositor;
-
-            var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
-            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, Translation.Y - e.ContentHeight, 0));
-            translationAnimation.Duration = TimeSpan.FromMilliseconds(showHideItemAnimationDuration);
-            translationAnimation.Target = "Translation";
-
-            StartAnimation(translationAnimation);
-            bottomPlayingSoundsBarMarginTop = -e.ContentHeight;
-        }
-
-        private async void ItemViewHolder_ResetPlayingSoundItemPosition(object sender, EventArgs e)
-        {
-            if (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar && PlayingSoundItemContainer.IsVisible)
-            {
-                if (Window.Current.Bounds.Width < FileManager.mobileMaxWidth)
-                {
-                    Margin = new Thickness(0, Margin.Top + bottomPlayingSoundsBarMarginTop, 0, 0);
-                    Translation = new Vector3(0);
-                    bottomPlayingSoundsBarMarginTop = 0;
-
-                    await Task.Delay(50);
-                    Margin = new Thickness(0);
-
-                    if (removedTemplate != null)
-                    {
-                        removedTemplate.Content = null;
-                        removedTemplate = null;
-                    }
-                }
-                else if (removedTemplate != null)
-                {
-                    // BottomPlayingSoundsBar is not visible
-                    removedTemplate.Content = null;
-                }
-                else
-                {
-                    // If this item is in BottomPlayingSoundsBar, but the BottomPlayingSoundsBar is not visible
-                    Translation = new Vector3(0);
-                }
-            }
-            else if (PlayingSoundItemContainer.IsVisible)
-            {
-                Translation = new Vector3(0);
-            }
-        }
-
         private void ItemViewHolder_RemovePlayingSoundItem(object sender, RemovePlayingSoundItemEventArgs args)
         {
             if (
@@ -453,10 +371,20 @@ namespace UniversalSoundboard.Components
 
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
-            if (PlayingSoundItem.SoundsListVisible)
-                PlayingSoundItem.CollapseSoundsList(ContentRoot.ActualHeight + ContentRoot.Margin.Top + ContentRoot.Margin.Bottom - SoundsListView.ActualHeight);
+            if (isSoundsListVisible)
+            {
+                SoundsListViewStackPanel.Height = 0;
+                isSoundsListVisible = false;
+                PlayingSoundItemContainer.TriggerCollapseSoundsListEvent(EventArgs.Empty);
+            }
             else
-                PlayingSoundItem.ExpandSoundsList(SoundsListView.ActualHeight);
+            {
+                SoundsListViewStackPanel.Height = double.NaN;
+                isSoundsListVisible = true;
+                PlayingSoundItemContainer.TriggerExpandSoundsListEvent(EventArgs.Empty);
+            }
+
+            UpdateExpandButtonUI();
         }
 
         private void VolumeButton_Click(object sender, RoutedEventArgs e)
@@ -1022,7 +950,7 @@ namespace UniversalSoundboard.Components
 
         private void UpdateExpandButtonUI()
         {
-            if (PlayingSoundItem.SoundsListVisible)
+            if (isSoundsListVisible)
             {
                 // Set the icon for the expand button
                 ExpandButton.Content = "\uE098";
@@ -1067,18 +995,6 @@ namespace UniversalSoundboard.Components
             ProgressSlider.Visibility = Visibility.Collapsed;
             DownloadProgressBar.Visibility = Visibility.Visible;
             DownloadProgressBar.IsIndeterminate = true;
-        }
-        #endregion
-
-        #region Storyboard event handlers
-        private void ShowSoundsListViewStoryboard_Completed(object sender, object e)
-        {
-            FileManager.itemViewHolder.TriggerPlayingSoundItemShowSoundsListAnimationEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
-        }
-
-        private void HideSoundsListViewStoryboard_Completed(object sender, object e)
-        {
-            FileManager.itemViewHolder.TriggerPlayingSoundItemHideSoundsListAnimationEndedEvent(this, new PlayingSoundItemEventArgs(PlayingSound.Uuid));
         }
         #endregion
     }
