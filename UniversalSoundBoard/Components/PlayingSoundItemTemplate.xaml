@@ -892,6 +892,10 @@
                             </SwipeControl.RightItems>
 
                             <TextBlock Text="{x:Bind Name}" HorizontalAlignment="Stretch" VerticalAlignment="Center" />
+
+                            <ToolTipService.ToolTip>
+                                <TextBlock Text="{x:Bind Name}" />
+                            </ToolTipService.ToolTip>
                         </SwipeControl>
                     </DataTemplate>
                 </ListView.ItemTemplate>
