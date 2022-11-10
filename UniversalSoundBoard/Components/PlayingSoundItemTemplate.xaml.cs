@@ -679,38 +679,23 @@ namespace UniversalSoundboard.Components
             await PlayingSoundItem.ToggleFavourite();
         }
 
-        private async void SoundsListViewRemoveSwipeItem_Invoked(SwipeItem sender, SwipeItemInvokedEventArgs args)
+        private async void PlayingSoundItemSoundItemTemplate_Remove(object sender, EventArgs args)
         {
-            if (PlayingSound.Sounds.Count > 1)
-                PlayingSoundItem.RemoveSound((Guid)args.SwipeControl.Tag);
-            else
+            PlayingSoundItemSoundItemTemplate itemTemplate = sender as PlayingSoundItemSoundItemTemplate;
+
+            PlayingSoundItem.RemoveSound(itemTemplate.Sound.Uuid);
+
+            if (PlayingSound.Sounds.Count == 0)
+            {
+                await Task.Delay(200);
                 await PlayingSoundItem.TriggerRemove();
+            }
         }
 
         private async void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (skipSoundsListViewSelectionChanged) return;
             await PlayingSoundItem.MoveToSound(SoundsListView.SelectedIndex);
-        }
-
-        private void SwipeControl_RightTapped(object sender, RightTappedRoutedEventArgs e)
-        {
-            MenuFlyout flyout = new MenuFlyout();
-            selectedSoundUuid = (Guid)(sender as SwipeControl).Tag;
-
-            if (PlayingSound.Sounds.Count > 1)
-            {
-                MenuFlyoutItem removeFlyoutItem = new MenuFlyoutItem
-                {
-                    Text = FileManager.loader.GetString("Remove"),
-                    Icon = new FontIcon { Glyph = "\uE106" }
-                };
-                removeFlyoutItem.Click += RemoveFlyoutItem_Click;
-                flyout.Items.Add(removeFlyoutItem);
-            }
-
-            if (flyout.Items.Count > 0)
-                flyout.ShowAt(sender as UIElement, e.GetPosition(sender as UIElement));
         }
 
         private void RemoveFlyoutItem_Click(object sender, RoutedEventArgs e)

@@ -144,6 +144,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\PlayingSoundItemSoundItemTemplate.xaml.cs">
+      <DependentUpon>PlayingSoundItemSoundItemTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\PlayingSoundsAnimationController.cs" />
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\Exceptions.cs" />
@@ -377,6 +380,10 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Page Include="Components\HotkeyItemTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\PlayingSoundItemSoundItemTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

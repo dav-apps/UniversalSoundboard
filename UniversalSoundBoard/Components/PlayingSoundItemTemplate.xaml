@@ -874,33 +874,8 @@
 
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Sound">
-                        <SwipeControl RightTapped="SwipeControl_RightTapped" Tag="{x:Bind Uuid}">
-                            <SwipeControl.RightItems>
-                                <SwipeItems Mode="Execute">
-                                    <SwipeItem
-                                        x:Name="SoundsListViewRemoveSwipeItem"
-                                        x:Uid="RemoveButton"
-                                        Text="Remove"
-                                        Foreground="White"
-                                        Background="Red"
-                                        Invoked="SoundsListViewRemoveSwipeItem_Invoked">
-
-                                        <SwipeItem.IconSource>
-                                            <FontIconSource Glyph="&#xE106;"/>
-                                        </SwipeItem.IconSource>
-                                    </SwipeItem>
-                                </SwipeItems>
-                            </SwipeControl.RightItems>
-
-                            <TextBlock
-                                Text="{x:Bind Name}"
-                                HorizontalAlignment="Stretch"
-                                VerticalAlignment="Center" />
-
-                            <ToolTipService.ToolTip>
-                                <TextBlock Text="{x:Bind Name}" />
-                            </ToolTipService.ToolTip>
-                        </SwipeControl>
+                        <components:PlayingSoundItemSoundItemTemplate
+                            Remove="PlayingSoundItemSoundItemTemplate_Remove" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>
