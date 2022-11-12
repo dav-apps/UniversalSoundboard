@@ -714,9 +714,9 @@ namespace UniversalSoundboard.Pages
             await PlayingSoundsAnimationController.ShowBottomSoundsBar(itemTemplate.Sounds);
         }
 
-        private void PlayingSoundItemTemplate_Collapse(object sender, EventArgs e)
+        private async void PlayingSoundItemTemplate_Collapse(object sender, EventArgs e)
         {
-
+            await PlayingSoundsAnimationController.HideBottomSoundsBar();
         }
         #endregion
     }
