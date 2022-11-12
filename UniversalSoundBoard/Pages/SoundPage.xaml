@@ -7,9 +7,9 @@
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    xmlns:davClassLibrary="using:davClassLibrary"
     xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
-    xmlns:davClassLibrary="using:davClassLibrary"
     xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     Loaded="SoundPage_Loaded"
@@ -76,7 +76,7 @@
             <Setter Property="IsItemClickEnabled" Value="True" />
             <Setter Property="AllowDrop" Value="True" />
             <Setter Property="ItemTemplate" Value="{StaticResource SoundGridViewItemTemplate}" />
-            
+
             <Setter Property="Padding" Value="0,0,0,10" />
             <Setter Property="IsTabStop" Value="False" />
             <Setter Property="TabNavigation" Value="Once" />
@@ -730,6 +730,7 @@
 
             <ListView
                 Name="BottomPlayingSoundsBarListView"
+                RelativePanel.AlignTopWithPanel="True"
                 RelativePanel.AlignBottomWithPanel="True"
                 RelativePanel.AlignLeftWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True"
@@ -740,7 +741,32 @@
 
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:PlayingSound">
-                        <components:PlayingSoundItemTemplate />
+                        <components:PlayingSoundItemTemplate
+                            Expand="PlayingSoundItemTemplate_Expand"
+                            Collapse="PlayingSoundItemTemplate_Collapse" />
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+        </RelativePanel>
+
+        <RelativePanel
+            Name="BottomSoundsBar"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            Translation="-10000,0,0">
+
+            <ListView
+                Name="BottomSoundsBarListView"
+                RelativePanel.AlignTopWithPanel="True"
+                RelativePanel.AlignBottomWithPanel="True"
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                ItemsSource="{x:Bind PlayingSoundsAnimationController.BottomSoundsBarSounds}">
+
+                <ListView.ItemTemplate>
+                    <DataTemplate x:DataType="models:Sound">
+                        <components:PlayingSoundItemSoundItemTemplate />
                     </DataTemplate>
                 </ListView.ItemTemplate>
             </ListView>

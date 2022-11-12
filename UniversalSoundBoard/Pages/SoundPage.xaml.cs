@@ -60,9 +60,11 @@ namespace UniversalSoundboard.Pages
                 SoundListView2,
                 PlayingSoundsBarListView,
                 BottomPlayingSoundsBarListView,
+                BottomSoundsBarListView,
                 GridSplitterColDef,
                 PlayingSoundsBarColDef,
                 BottomPlayingSoundsBar,
+                BottomSoundsBar,
                 BottomPlayingSoundsBarBackgroundGrid,
                 GridSplitterGrid,
                 GridSplitterGridBottomRowDef,
@@ -704,6 +706,17 @@ namespace UniversalSoundboard.Pages
         {
             // Calculate the width of the PlayingSoundsBar in percent
             FileManager.itemViewHolder.PlayingSoundsBarWidth = PlayingSoundsBar.ActualWidth / ContentRoot.ActualWidth;
+        }
+
+        private async void PlayingSoundItemTemplate_Expand(object sender, EventArgs e)
+        {
+            PlayingSoundItemTemplate itemTemplate = sender as PlayingSoundItemTemplate;
+            await PlayingSoundsAnimationController.ShowBottomSoundsBar(itemTemplate.Sounds);
+        }
+
+        private void PlayingSoundItemTemplate_Collapse(object sender, EventArgs e)
+        {
+
         }
         #endregion
     }

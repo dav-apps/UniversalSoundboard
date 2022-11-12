@@ -1,5 +1,6 @@
 ﻿using davClassLibrary;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -12,7 +13,6 @@ using Windows.Devices.Enumeration;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
-using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 
 namespace UniversalSoundboard.Components
@@ -29,6 +29,10 @@ namespace UniversalSoundboard.Components
                 return PlayingSoundItemContainer.PlayingSound;
             }
         }
+        public List<Sound> Sounds
+        {
+            get => PlayingSound?.Sounds.ToList();
+        }
 
         private bool initialized = false;
         PlayingSoundItemLayoutType layoutType = PlayingSoundItemLayoutType.Small;
@@ -40,6 +44,9 @@ namespace UniversalSoundboard.Components
 
         private const string MoreButtonOutputDeviceFlyoutSubItemName = "MoreButtonOutputDeviceFlyoutSubItem";
         private const string MoreButtonPlaybackSpeedFlyoutSubItemName = "MoreButtonPlaybackSpeedFlyoutSubItemName";
+
+        public event EventHandler<EventArgs> Expand;
+        public event EventHandler<EventArgs> Collapse;
 
         public PlayingSoundItemTemplate()
         {
@@ -374,7 +381,11 @@ namespace UniversalSoundboard.Components
             if (isSoundsListVisible)
             {
                 isSoundsListVisible = false;
-                PlayingSoundItemContainer.TriggerCollapseSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
+
+                if (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
+                    Collapse?.Invoke(this, EventArgs.Empty);
+                else
+                    PlayingSoundItemContainer.TriggerCollapseSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
 
                 // Set the icon for the expand button
                 ExpandButton.Content = "\uE099";
@@ -383,7 +394,11 @@ namespace UniversalSoundboard.Components
             else
             {
                 isSoundsListVisible = true;
-                PlayingSoundItemContainer.TriggerExpandSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
+
+                if (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
+                    Expand?.Invoke(this, EventArgs.Empty);
+                else
+                    PlayingSoundItemContainer.TriggerExpandSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
 
                 // Set the icon for the expand button
                 ExpandButton.Content = "\uE098";
