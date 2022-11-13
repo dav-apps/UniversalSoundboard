@@ -35,6 +35,13 @@
                 TintOpacity="0.75"
                 TintColor="White" />
 
+            <AcrylicBrush
+                x:Name="BottomSoundsBarBackgroundBrush"
+                BackgroundSource="Backdrop"
+                FallbackColor="White"
+                TintOpacity="0.5"
+                TintColor="White" />
+
             <!-- Converters -->
             <converters:TopOfThicknessToGridLengthConverter x:Name="TopOfThicknessToGridLengthConverter" />
             <converters:BottomOfThicknessToGridLengthConverter x:Name="BottomOfThicknessToGridLengthConverter" />

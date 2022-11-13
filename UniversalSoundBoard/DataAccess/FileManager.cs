@@ -3239,6 +3239,11 @@ namespace UniversalSoundboard.DataAccess
             (Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush).TintColor = appThemeColor;
             (Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush).FallbackColor = appThemeColor;
             (Application.Current.Resources["NavigationViewHeaderBackgroundBrush"] as AcrylicBrush).TintOpacity = itemViewHolder.ShowAcrylicBackground ? 0.75 : 1;
+
+            // Set the color for the BottomSoundsBar background
+            (Application.Current.Resources["BottomSoundsBarBackgroundBrush"] as AcrylicBrush).TintColor = appThemeColor;
+            (Application.Current.Resources["BottomSoundsBarBackgroundBrush"] as AcrylicBrush).FallbackColor = appThemeColor;
+            (Application.Current.Resources["BottomSoundsBarBackgroundBrush"] as AcrylicBrush).TintOpacity = itemViewHolder.ShowAcrylicBackground ? 0.5 : 1;
         }
 
         public static void NavigateToAccountPage()

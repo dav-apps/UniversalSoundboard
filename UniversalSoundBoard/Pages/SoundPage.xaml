@@ -754,7 +754,8 @@
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
-            Translation="-10000,0,0">
+            Translation="-10000,0,0"
+            Background="{StaticResource BottomSoundsBarBackgroundBrush}">
 
             <ListView
                 Name="BottomSoundsBarListView"
