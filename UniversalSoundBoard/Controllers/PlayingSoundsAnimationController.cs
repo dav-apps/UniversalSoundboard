@@ -25,7 +25,6 @@ namespace UniversalSoundboard.Controllers
         private bool playingSoundsLoaded = false;
         private bool playingSoundItemsLoaded = false;
         private bool showBottomPlayingSoundsBar = false;
-        private bool bottomPlayingSoundsBarReachedTop = false;
         private double maxBottomPlayingSoundsBarHeight = 500;
         private double bottomSoundsBarHeight = 0;
         private BottomPlayingSoundsBarVerticalPosition bottomPlayingSoundsBarPosition = BottomPlayingSoundsBarVerticalPosition.Bottom;
@@ -52,6 +51,11 @@ namespace UniversalSoundboard.Controllers
         RowDefinition GridSplitterGridBottomRowDef;
         GridSplitter BottomPlayingSoundsBarGridSplitter;
         Grid BottomPseudoContentGrid;
+
+        private bool BottomPlayingSoundsBarReachedTop
+        {
+            get => GetTotalBottomPlayingSoundListContentHeight() >= maxBottomPlayingSoundsBarHeight;
+        }
 
         public bool IsMobile { get; set; }
 
@@ -283,7 +287,7 @@ namespace UniversalSoundboard.Controllers
             {
                 if (
                     bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Bottom
-                    || bottomPlayingSoundsBarReachedTop
+                    || BottomPlayingSoundsBarReachedTop
                 )
                 {
                     // Hide the removed item
@@ -323,8 +327,6 @@ namespace UniversalSoundboard.Controllers
 
                     foreach (var item in movedItems)
                         item.PlayingSoundItemTemplate.Translation = new Vector3(0);
-
-                    bottomPlayingSoundsBarReachedTop = (BottomPlayingSoundsBar.ActualHeight + bottomSoundsBarHeight) - itemContainer.ContentHeight > maxBottomPlayingSoundsBarHeight;
                 }
                 else
                 {
@@ -387,8 +389,6 @@ namespace UniversalSoundboard.Controllers
                     // Update the position if only one PlayingSound is remaining
                     if (FileManager.itemViewHolder.PlayingSounds.Count == 2)
                         bottomPlayingSoundsBarPosition = BottomPlayingSoundsBarVerticalPosition.Bottom;
-
-                    bottomPlayingSoundsBarReachedTop = newHeight > maxBottomPlayingSoundsBarHeight;
                 }
             }
             else
@@ -724,13 +724,12 @@ namespace UniversalSoundboard.Controllers
             else if (
                 IsMobile
                 && bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Top
-                && !bottomPlayingSoundsBarReachedTop
+                && !BottomPlayingSoundsBarReachedTop
             )
             {
                 foreach (var itemToShow in PlayingSoundsToShowList)
                 {
                     double newHeight = BottomPlayingSoundsBar.ActualHeight + itemToShow.ContentHeight + bottomSoundsBarHeight;
-                    bottomPlayingSoundsBarReachedTop = newHeight > maxBottomPlayingSoundsBarHeight;
 
                     itemToShow.PlayingSoundItemTemplate.Translation = new Vector3(0);
                     BottomPlayingSoundsBar.Height = newHeight - bottomSoundsBarHeight;
@@ -865,6 +864,9 @@ namespace UniversalSoundboard.Controllers
 
             if (totalHeight == 0)
                 return;
+            
+            if (totalHeight > maxBottomPlayingSoundsBarHeight)
+                totalHeight = maxBottomPlayingSoundsBarHeight;
 
             GridSplitterGridBottomRowDef.MaxHeight = totalHeight;
 
@@ -1182,8 +1184,6 @@ namespace UniversalSoundboard.Controllers
             BottomPlayingSoundsBar.Height = end - bottomSoundsBarHeight;
             BottomPlayingSoundsBar.Translation = new Vector3(0, -(float)bottomSoundsBarHeight, 0);
             GridSplitterGrid.Translation = new Vector3(0);
-
-            bottomPlayingSoundsBarReachedTop = end > maxBottomPlayingSoundsBarHeight;
         }
     }
 }
