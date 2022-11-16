@@ -290,6 +290,19 @@ namespace UniversalSoundboard.Controllers
                     || BottomPlayingSoundsBarReachedTop
                 )
                 {
+                    bool thresholdReached = false;
+                    double thresholdDiff = 0;
+                    double diffUp = itemContainer.ContentHeight;
+
+                    if (BottomPlayingSoundsBarReachedTop)
+                    {
+                        // Check if the BottomPlayingSoundsBar will have blank space at the bottom after removing the item
+                        double totalHeight = GetTotalBottomPlayingSoundListContentHeight();
+                        thresholdDiff = BottomPlayingSoundsBar.ActualHeight - (totalHeight - bottomSoundsBarHeight - itemContainer.ContentHeight);
+                        thresholdReached = thresholdDiff > 0;
+                        diffUp = itemContainer.ContentHeight - thresholdDiff;
+                    }
+
                     // Hide the removed item
                     var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
                     opacityAnimation.InsertKeyFrame(0.5f, 0);
@@ -303,27 +316,59 @@ namespace UniversalSoundboard.Controllers
 
                     foreach (var item in ReversedPlayingSoundItemContainers)
                     {
-                        if (!item.IsVisible || item.Index >= itemContainer.Index)
-                            continue;
+                        if (
+                            !item.IsVisible
+                            || item.Index == itemContainer.Index
+                            || item.Index > itemContainer.Index && !thresholdReached
+                        ) continue;
 
                         var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
-                        translationAnimation.InsertKeyFrame(
-                            1.0f,
-                            new Vector3(
-                                0,
-                                item.PlayingSoundItemTemplate.Translation.Y - (float)itemContainer.ContentHeight,
-                                0
-                            )
-                        );
                         translationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
                         translationAnimation.Target = "Translation";
+
+                        if (item.Index > itemContainer.Index)
+                        {
+                            // Move the item down
+                            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, item.PlayingSoundItemTemplate.Translation.Y + (float)thresholdDiff, 0));
+                        }
+                        else
+                        {
+                            // Move the item up
+                            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, item.PlayingSoundItemTemplate.Translation.Y - (float)diffUp, 0));
+                        }
 
                         item.PlayingSoundItemTemplate.StartAnimation(translationAnimation);
                         movedItems.Add(item);
                     }
 
+                    if (thresholdReached)
+                    {
+                        // Move the GridSplitter down
+                        var gridSplitterTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                        gridSplitterTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)thresholdDiff, 0));
+                        gridSplitterTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                        gridSplitterTranslationAnimation.Target = "Translation";
+
+                        GridSplitterGrid.StartAnimation(gridSplitterTranslationAnimation);
+
+                        // Move the background down
+                        var backgroundTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                        backgroundTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, BottomPlayingSoundsBarBackgroundGrid.Translation.Y + (float)thresholdDiff, 0));
+                        backgroundTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                        backgroundTranslationAnimation.Target = "Translation";
+
+                        BottomPlayingSoundsBarBackgroundGrid.StartAnimation(backgroundTranslationAnimation);
+                    }
+
                     await Task.Delay(animationDuration);
+
+                    // Adapt the elements to the new position
+                    double newHeight = BottomPlayingSoundsBar.ActualHeight - diffUp + bottomSoundsBarHeight;
+
                     itemContainer.PlayingSoundItemTemplate.Content = null;
+                    GridSplitterGridBottomRowDef.Height = new GridLength(newHeight);
+                    BottomPlayingSoundsBar.Height = BottomPlayingSoundsBar.ActualHeight - thresholdDiff;
+                    GridSplitterGrid.Translation = new Vector3(0);
 
                     foreach (var item in movedItems)
                         item.PlayingSoundItemTemplate.Translation = new Vector3(0);
