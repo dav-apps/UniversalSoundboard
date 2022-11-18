@@ -294,7 +294,10 @@ namespace UniversalSoundboard.Controllers
                     double thresholdDiff = 0;
                     double diffUp = itemContainer.ContentHeight;
 
-                    if (BottomPlayingSoundsBarReachedTop)
+                    if (
+                        bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Top
+                        && BottomPlayingSoundsBarReachedTop
+                    )
                     {
                         // Check if the BottomPlayingSoundsBar will have blank space at the bottom after removing the item
                         double totalHeight = GetTotalBottomPlayingSoundListContentHeight();
@@ -363,12 +366,14 @@ namespace UniversalSoundboard.Controllers
                     await Task.Delay(animationDuration);
 
                     // Adapt the elements to the new position
-                    double newHeight = BottomPlayingSoundsBar.ActualHeight - diffUp + bottomSoundsBarHeight;
-
                     itemContainer.PlayingSoundItemTemplate.Content = null;
-                    GridSplitterGridBottomRowDef.Height = new GridLength(newHeight);
-                    BottomPlayingSoundsBar.Height = BottomPlayingSoundsBar.ActualHeight - thresholdDiff;
-                    GridSplitterGrid.Translation = new Vector3(0);
+
+                    if (thresholdReached)
+                    {
+                        GridSplitterGridBottomRowDef.Height = new GridLength(BottomPlayingSoundsBar.ActualHeight - diffUp + bottomSoundsBarHeight);
+                        BottomPlayingSoundsBar.Height = BottomPlayingSoundsBar.ActualHeight - thresholdDiff;
+                        GridSplitterGrid.Translation = new Vector3(0);
+                    }
 
                     foreach (var item in movedItems)
                         item.PlayingSoundItemTemplate.Translation = new Vector3(0);
@@ -1207,12 +1212,12 @@ namespace UniversalSoundboard.Controllers
             BottomPlayingSoundsBar.StartAnimation(translationAnimation);
 
             // Animate the BottomPlayingSoundsBar background
-            var translationAnimation2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            translationAnimation2.InsertKeyFrame(1.0f, new Vector3(0, -(float)end, 0));
-            translationAnimation2.Duration = TimeSpan.FromMilliseconds(animationDuration);
-            translationAnimation2.Target = "Translation";
+            var backgroundTranslationAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            backgroundTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)end - 2, 0));
+            backgroundTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+            backgroundTranslationAnimation.Target = "Translation";
 
-            BottomPlayingSoundsBarBackgroundGrid.StartAnimation(translationAnimation2);
+            BottomPlayingSoundsBarBackgroundGrid.StartAnimation(backgroundTranslationAnimation);
 
             // Animate the GridSplitter
             var translationAnimation3 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();

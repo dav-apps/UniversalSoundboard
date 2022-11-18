@@ -671,6 +671,15 @@
             </Grid>
         </Grid>
 
+        <Grid
+            Name="BottomPlayingSoundsBarBackgroundGrid"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            Height="10000"
+            Margin="0,0,0,-10000"
+            Background="{StaticResource NavigationViewHeaderBackgroundBrush}" />
+
         <!-- GridSplitter + BottomPlayingSoundsBar -->
         <Grid
             Name="GridSplitterGrid"
@@ -711,15 +720,6 @@
                 Grid.Row="2"
                 Width="0" />
         </Grid>
-
-        <Grid
-            Name="BottomPlayingSoundsBarBackgroundGrid"
-            RelativePanel.AlignBottomWithPanel="True"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            Height="10000"
-            Margin="0,0,0,-10000"
-            Background="{StaticResource NavigationViewHeaderBackgroundBrush}" />
 
         <RelativePanel
             Name="BottomPlayingSoundsBar"
