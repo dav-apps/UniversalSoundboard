@@ -826,8 +826,7 @@ namespace UniversalSoundboard.Controllers
                 foreach (var itemToShow in PlayingSoundsToShowList)
                 {
                     bool thresholdReached = false;
-                    double thresholdDiff = 0;
-                    double diffUp = itemToShow.ContentHeight;
+                    double thresholdDiff = itemToShow.ContentHeight;
 
                     if (bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Top)
                     {
@@ -837,9 +836,7 @@ namespace UniversalSoundboard.Controllers
 
                         if (thresholdReached)
                         {
-                            diffUp = itemToShow.ContentHeight - thresholdDiff;
-
-                            double newHeight = BottomPlayingSoundsBar.ActualHeight + diffUp + bottomSoundsBarHeight;
+                            double newHeight = BottomPlayingSoundsBar.ActualHeight + thresholdDiff + bottomSoundsBarHeight;
                             BottomPlayingSoundsBar.Height = newHeight - bottomSoundsBarHeight;
                         }
                     }
@@ -855,7 +852,7 @@ namespace UniversalSoundboard.Controllers
                         if (item.Index >= itemToShow.Index) continue;
 
                         if (thresholdReached)
-                            item.PlayingSoundItemTemplate.Translation = new Vector3(0, -(float)(item.ContentHeight - diffUp), 0);
+                            item.PlayingSoundItemTemplate.Translation = new Vector3(0, -(float)(item.ContentHeight - thresholdDiff), 0);
                         else
                             item.PlayingSoundItemTemplate.Translation = new Vector3(0, -(float)item.ContentHeight, 0);
 
@@ -864,9 +861,18 @@ namespace UniversalSoundboard.Controllers
 
                     // Show the new item
                     var opacityAnimation = compositor.CreateScalarKeyFrameAnimation();
-                    opacityAnimation.InsertKeyFrame(0.7f, 1);
                     opacityAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
                     opacityAnimation.Target = "Opacity";
+
+                    if (thresholdReached)
+                    {
+                        opacityAnimation.InsertKeyFrame(0.6f, 0);
+                        opacityAnimation.InsertKeyFrame(1, 1);
+                    }
+                    else
+                    {
+                        opacityAnimation.InsertKeyFrame(0.7f, 1);
+                    }
 
                     itemToShow.PlayingSoundItemTemplate.StartAnimation(opacityAnimation);
 
@@ -885,7 +891,7 @@ namespace UniversalSoundboard.Controllers
                     {
                         // Move the GridSplitter up
                         var gridSplitterTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
-                        gridSplitterTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)diffUp, 0));
+                        gridSplitterTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)thresholdDiff, 0));
                         gridSplitterTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
                         gridSplitterTranslationAnimation.Target = "Translation";
 
@@ -893,7 +899,7 @@ namespace UniversalSoundboard.Controllers
 
                         // Move the BottomPlayingSoundsBar background up
                         var backgroundTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
-                        backgroundTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, BottomPlayingSoundsBarBackgroundGrid.Translation.Y - (float)diffUp, 0));
+                        backgroundTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, BottomPlayingSoundsBarBackgroundGrid.Translation.Y - (float)thresholdDiff, 0));
                         backgroundTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
                         backgroundTranslationAnimation.Target = "Translation";
 
