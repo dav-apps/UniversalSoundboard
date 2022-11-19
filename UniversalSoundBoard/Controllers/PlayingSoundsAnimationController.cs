@@ -372,7 +372,7 @@ namespace UniversalSoundboard.Controllers
 
                     if (thresholdReached)
                     {
-                        GridSplitterGridBottomRowDef.Height = new GridLength(BottomPlayingSoundsBar.ActualHeight - diffUp + bottomSoundsBarHeight);
+                        GridSplitterGridBottomRowDef.Height = new GridLength(BottomPlayingSoundsBar.ActualHeight - thresholdDiff + bottomSoundsBarHeight);
                         BottomPlayingSoundsBar.Height = BottomPlayingSoundsBar.ActualHeight - thresholdDiff;
                         GridSplitterGrid.Translation = new Vector3(0);
                     }
@@ -434,8 +434,7 @@ namespace UniversalSoundboard.Controllers
 
                     // Adapt the elements to the new position
                     GridSplitterGridBottomRowDef.Height = new GridLength(newHeight);
-                    BottomPlayingSoundsBar.Height = newHeight;
-                    BottomPlayingSoundsBar.Translation = new Vector3(0);
+                    BottomPlayingSoundsBar.Height = newHeight - bottomSoundsBarHeight;
                     GridSplitterGrid.Translation = new Vector3(0);
 
                     // Update the position if only one PlayingSound is remaining
