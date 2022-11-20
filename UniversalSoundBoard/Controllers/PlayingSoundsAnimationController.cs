@@ -904,6 +904,28 @@ namespace UniversalSoundboard.Controllers
 
                         BottomPlayingSoundsBarBackgroundGrid.StartAnimation(backgroundTranslationAnimation);
                     }
+                    else if (bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Bottom)
+                    {
+                        // Adapt the BottomPlayingSoundsBar to the new height of the first item
+                        double firstItemDiff = GridSplitterGridBottomRowDef.ActualHeight - itemToShow.ContentHeight;
+                        BottomPlayingSoundsBar.Height = itemToShow.ContentHeight;
+
+                        // Move the GridSplitter
+                        var gridSplitterTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                        gridSplitterTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)firstItemDiff, 0));
+                        gridSplitterTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                        gridSplitterTranslationAnimation.Target = "Translation";
+
+                        GridSplitterGrid.StartAnimation(gridSplitterTranslationAnimation);
+
+                        // Move the BottomPlayingSoundsBar background
+                        var backgroundTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                        backgroundTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)itemToShow.ContentHeight, 0));
+                        backgroundTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                        backgroundTranslationAnimation.Target = "Translation";
+
+                        BottomPlayingSoundsBarBackgroundGrid.StartAnimation(backgroundTranslationAnimation);
+                    }
 
                     await Task.Delay(animationDuration);
 
