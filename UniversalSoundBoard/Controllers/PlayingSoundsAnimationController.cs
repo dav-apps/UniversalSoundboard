@@ -1267,27 +1267,39 @@ namespace UniversalSoundboard.Controllers
         {
             double firstItemHeight = GetBottomPlayingSoundItemContentHeight();
 
-            // Animate showing the BottomPlayingSoundsBar
-            var translationAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            translationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)firstItemHeight, 0));
-            translationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
-            translationAnimation.Target = "Translation";
+            // Move the BottomPlayingSoundsBar down
+            var bottomPlayingSoundsBarTranslationAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            bottomPlayingSoundsBarTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)firstItemHeight, 0));
+            bottomPlayingSoundsBarTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+            bottomPlayingSoundsBarTranslationAnimation.Target = "Translation";
 
-            BottomPlayingSoundsBar.StartAnimation(translationAnimation);
+            BottomPlayingSoundsBar.StartAnimation(bottomPlayingSoundsBarTranslationAnimation);
 
-            // Animate showing the BottomPlayingSoundsBar background
-            var translationAnimation2 = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
-            translationAnimation2.InsertKeyFrame(1.0f, new Vector3(0));
-            translationAnimation2.Duration = TimeSpan.FromMilliseconds(animationDuration);
-            translationAnimation2.Target = "Translation";
+            // Move the BottomPlayingSoundsBar background down
+            var backgroundTranslationAnimation = Window.Current.Compositor.CreateVector3KeyFrameAnimation();
+            backgroundTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
+            backgroundTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+            backgroundTranslationAnimation.Target = "Translation";
 
-            BottomPlayingSoundsBarBackgroundGrid.StartAnimation(translationAnimation2);
+            BottomPlayingSoundsBarBackgroundGrid.StartAnimation(backgroundTranslationAnimation);
+
+            if (bottomSoundsBarHeight > 0)
+            {
+                // Move the BottomSoundsBar down
+                var bottomSoundsBarTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
+                bottomSoundsBarTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)(bottomSoundsBarHeight + firstItemHeight), 0));
+                bottomSoundsBarTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+                bottomSoundsBarTranslationAnimation.Target = "Translation";
+
+                BottomSoundsBar.StartAnimation(bottomSoundsBarTranslationAnimation);
+            }
 
             await Task.Delay(animationDuration);
 
             GridSplitterGrid.Visibility = Visibility.Collapsed;
             BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
             BottomPlayingSoundsBar.Height = double.NaN;
+            bottomSoundsBarHeight = 0;
         }
 
         private void ShowGridSplitter()
