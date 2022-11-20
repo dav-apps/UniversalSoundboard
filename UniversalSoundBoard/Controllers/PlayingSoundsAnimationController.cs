@@ -155,7 +155,7 @@ namespace UniversalSoundboard.Controllers
                     await Task.Delay(100);
                     await ShowAllPlayingSoundItems();
                 }
-                else
+                else if (FileManager.itemViewHolder.OpenMultipleSounds)
                 {
                     GridSplitterGrid.Visibility = Visibility.Collapsed;
                     BottomPlayingSoundsBarBackgroundGrid.Visibility = Visibility.Collapsed;
@@ -200,9 +200,7 @@ namespace UniversalSoundboard.Controllers
 
         private void ItemViewHolder_PlayingSoundsLoaded(object sender, EventArgs e)
         {
-            showBottomPlayingSoundsBar = IsMobile;
-            LoadPlayingSoundItems();
-            playingSoundsLoaded = true;
+            Init();
         }
 
         private void ItemViewHolder_RemovePlayingSoundItem(object sender, RemovePlayingSoundItemEventArgs args)
@@ -641,6 +639,13 @@ namespace UniversalSoundboard.Controllers
                 item.PlayingSoundItemTemplate.Translation = new Vector3(0);
         }
         #endregion
+
+        public void Init()
+        {
+            showBottomPlayingSoundsBar = IsMobile;
+            LoadPlayingSoundItems();
+            playingSoundsLoaded = true;
+        }
 
         public async Task ShowBottomSoundsBar(List<Sound> sounds)
         {

@@ -47,6 +47,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
             FileManager.itemViewHolder.Sounds.CollectionChanged += ItemViewHolder_Sounds_CollectionChanged;
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged += ItemViewHolder_FavouriteSounds_CollectionChanged;
+            FileManager.itemViewHolder.PlayingSoundsLoaded += ItemViewHolder_PlayingSoundsLoaded;
             FileManager.itemViewHolder.SelectAllSounds += ItemViewHolder_SelectAllSounds;
             FileManager.itemViewHolder.ShowInAppNotification += ItemViewHolder_ShowInAppNotification;
 
@@ -88,6 +89,9 @@ namespace UniversalSoundboard.Pages
 
             UpdateCanReorderItems();
             AdjustLayout();
+
+            if (playingSoundsLoaded)
+                PlayingSoundsAnimationController.Init();
         }
 
         private void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -130,6 +134,11 @@ namespace UniversalSoundboard.Pages
         private async void ItemViewHolder_FavouriteSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             await HandleSoundsCollectionChanged(e, true);
+        }
+
+        private void ItemViewHolder_PlayingSoundsLoaded(object sender, EventArgs e)
+        {
+            playingSoundsLoaded = true;
         }
 
         private void ItemViewHolder_SelectAllSounds(object sender, RoutedEventArgs e)
