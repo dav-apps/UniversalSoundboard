@@ -658,9 +658,20 @@ namespace UniversalSoundboard.Controllers
             BottomSoundsBar.Height = bottomSoundsBarHeight;
             BottomSoundsBar.Translation = new Vector3(0, (float)bottomSoundsBarHeight, 0);
 
+            double newTotalHeightDiff = 0;
+
+            if (bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Top)
+            {
+                // Check if the BottomPlayingSoundsBar reaches the max height
+                double newTotalHeight = BottomPlayingSoundsBar.ActualHeight + bottomSoundsBarHeight;
+
+                if (newTotalHeight > maxBottomPlayingSoundsBarHeight)
+                    newTotalHeightDiff = newTotalHeight - maxBottomPlayingSoundsBarHeight;
+            }
+
             // Animate moving the BottomPlayingSoundsBar background up
             var backgroundTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
-            backgroundTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)(BottomPlayingSoundsBarBackgroundGrid.Translation.Y - bottomSoundsBarHeight), 0));
+            backgroundTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, (float)(BottomPlayingSoundsBarBackgroundGrid.Translation.Y - bottomSoundsBarHeight + newTotalHeightDiff), 0));
             backgroundTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
             backgroundTranslationAnimation.Target = "Translation";
 
@@ -668,7 +679,7 @@ namespace UniversalSoundboard.Controllers
 
             // Animate moving the GridSplitter up
             var gridSplitterTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
-            gridSplitterTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)bottomSoundsBarHeight, 0));
+            gridSplitterTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)bottomSoundsBarHeight + (float)newTotalHeightDiff, 0));
             gridSplitterTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
             gridSplitterTranslationAnimation.Target = "Translation";
 
@@ -676,7 +687,7 @@ namespace UniversalSoundboard.Controllers
 
             // Animate moving the BottomPlayingSoundsBar up
             var bottomPlayingSoundsBarTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
-            bottomPlayingSoundsBarTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)bottomSoundsBarHeight, 0));
+            bottomPlayingSoundsBarTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, -(float)bottomSoundsBarHeight + (float)newTotalHeightDiff, 0));
             bottomPlayingSoundsBarTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
             bottomPlayingSoundsBarTranslationAnimation.Target = "Translation";
 
@@ -695,6 +706,12 @@ namespace UniversalSoundboard.Controllers
             // Adapt the elements to the new position
             GridSplitterGridBottomRowDef.Height = new GridLength(GridSplitterGridBottomRowDef.ActualHeight + bottomSoundsBarHeight);
             GridSplitterGrid.Translation = new Vector3(0);
+
+            if (newTotalHeightDiff > 0)
+            {
+                BottomPlayingSoundsBar.Height = maxBottomPlayingSoundsBarHeight - bottomSoundsBarHeight;
+                BottomPlayingSoundsBar.Translation = new Vector3(0, -(float)bottomSoundsBarHeight, 0);
+            }
 
             UpdateGridSplitterRange();
         }
