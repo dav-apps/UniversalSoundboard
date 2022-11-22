@@ -139,6 +139,7 @@ namespace UniversalSoundboard.Controllers
             if (
                 playingSoundItemsLoaded
                 && IsMobile != oldIsMobile
+                && FileManager.itemViewHolder.OpenMultipleSounds
             )
             {
                 if (IsMobile)
@@ -249,7 +250,7 @@ namespace UniversalSoundboard.Controllers
                 item2.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
                 item2.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
 
-                if (IsMobile)
+                if (IsMobile || !FileManager.itemViewHolder.OpenMultipleSounds)
                     PlayingSoundsToShowList.Add(item2);
                 else
                     PlayingSoundsToShowList.Add(item1);
@@ -642,7 +643,7 @@ namespace UniversalSoundboard.Controllers
 
         public void Init()
         {
-            showBottomPlayingSoundsBar = IsMobile;
+            showBottomPlayingSoundsBar = IsMobile || !FileManager.itemViewHolder.OpenMultipleSounds;
             LoadPlayingSoundItems();
             playingSoundsLoaded = true;
         }
@@ -805,7 +806,7 @@ namespace UniversalSoundboard.Controllers
                 item2.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
                 item2.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
 
-                if (IsMobile)
+                if (IsMobile || !FileManager.itemViewHolder.OpenMultipleSounds)
                     PlayingSoundsToShowList.Add(item2);
                 else
                     PlayingSoundsToShowList.Add(item1);
