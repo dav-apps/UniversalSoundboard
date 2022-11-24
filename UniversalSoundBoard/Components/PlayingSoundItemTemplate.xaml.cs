@@ -8,7 +8,6 @@ using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
-using UniversalSoundboard.Pages;
 using Windows.Devices.Enumeration;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -675,13 +674,16 @@ namespace UniversalSoundboard.Components
             Sound sound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
 
             // Open the sound
-            await SoundPage.PlaySoundAsync(
-                sound,
-                PlayingSound.AudioPlayer.IsPlaying,
-                PlayingSound.Volume,
-                PlayingSound.Muted,
-                PlayingSound.PlaybackSpeed,
-                PlayingSound.AudioPlayer.IsPlaying ? PlayingSound.AudioPlayer.Position : TimeSpan.Zero
+            FileManager.itemViewHolder.TriggerPlaySoundEvent(
+                this,
+                new PlaySoundEventArgs(
+                    sound,
+                    PlayingSound.AudioPlayer.IsPlaying,
+                    PlayingSound.Volume,
+                    PlayingSound.Muted,
+                    PlayingSound.PlaybackSpeed,
+                    PlayingSound.AudioPlayer.IsPlaying ? PlayingSound.AudioPlayer.Position : TimeSpan.Zero
+                )
             );
 
             // Pause this PlayingSound

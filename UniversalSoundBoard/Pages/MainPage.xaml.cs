@@ -1107,7 +1107,7 @@ namespace UniversalSoundboard.Pages
             await ShowPlaySelectedSoundsSuccessivelyDialog();
         }
 
-        private async void PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        private void PlaySoundsSuccessivelyContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             bool randomly = playSoundsSuccessivelyDialog.Random;
             int rounds = int.MaxValue;
@@ -1115,16 +1115,23 @@ namespace UniversalSoundboard.Pages
             if (playSoundsSuccessivelyDialog.RepetitionsComboBox.SelectedItem != playSoundsSuccessivelyDialog.RepetitionsComboBox.Items.Last())
                 int.TryParse(playSoundsSuccessivelyDialog.RepetitionsComboBox.SelectedValue.ToString(), out rounds);
 
-            await SoundPage.PlaySoundsAsync(playSoundsSuccessivelyDialog.Sounds, rounds, randomly);
+            FileManager.itemViewHolder.TriggerPlaySoundsEvent(
+                this,
+                new PlaySoundsEventArgs(
+                    playSoundsSuccessivelyDialog.Sounds,
+                    rounds,
+                    randomly
+                )
+            );
 
             // Disable multi-selection mode
             FileManager.itemViewHolder.MultiSelectionEnabled = false;
         }
 
-        private async void PlaySoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private void PlaySoundsSimultaneouslyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
             foreach (Sound sound in FileManager.itemViewHolder.SelectedSounds)
-                await SoundPage.PlaySoundAsync(sound);
+                FileManager.itemViewHolder.TriggerPlaySoundEvent(this, new PlaySoundEventArgs(sound));
 
             // Disable multi-selection mode
             FileManager.itemViewHolder.MultiSelectionEnabled = false;

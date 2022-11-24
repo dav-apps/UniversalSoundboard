@@ -37,6 +37,9 @@ namespace UniversalSoundboard.Pages
         Visibility emptyCategoryMessageVisibility = Visibility.Collapsed;
         public static DataTemplate hotkeyItemTemplate;
         private PlayingSoundsAnimationController PlayingSoundsAnimationController;
+        public static List<StorageFile> LocalSoundsToPlayAfterPlayingSoundsLoaded = new List<StorageFile>();
+
+        public static bool PlayingSoundsLoaded { get => playingSoundsLoaded; }
 
         public SoundPage()
         {
@@ -50,6 +53,10 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.PlayingSoundsLoaded += ItemViewHolder_PlayingSoundsLoaded;
             FileManager.itemViewHolder.SelectAllSounds += ItemViewHolder_SelectAllSounds;
             FileManager.itemViewHolder.ShowInAppNotification += ItemViewHolder_ShowInAppNotification;
+            FileManager.itemViewHolder.PlaySound += ItemViewHolder_PlaySound;
+            FileManager.itemViewHolder.PlaySounds += ItemViewHolder_PlaySounds;
+            FileManager.itemViewHolder.PlaySoundAfterPlayingSoundsLoaded += ItemViewHolder_PlaySoundAfterPlayingSoundsLoaded;
+            FileManager.itemViewHolder.PlayLocalSoundAfterPlayingSoundsLoaded += ItemViewHolder_PlayLocalSoundAfterPlayingSoundsLoaded;
 
             PlayingSoundsAnimationController = new PlayingSoundsAnimationController(
                 ContentRoot,
@@ -82,7 +89,7 @@ namespace UniversalSoundboard.Pages
         }
 
         #region Page event handlers
-        private void SoundPage_Loaded(object sender, RoutedEventArgs e)
+        private async void SoundPage_Loaded(object sender, RoutedEventArgs e)
         {
             hotkeyItemTemplate = (DataTemplate)Resources["HotkeyItemTemplate"];
             soundsPivotSelected = true;
@@ -92,6 +99,13 @@ namespace UniversalSoundboard.Pages
 
             if (playingSoundsLoaded)
                 PlayingSoundsAnimationController.Init();
+            else
+            {
+                foreach (var item in LocalSoundsToPlayAfterPlayingSoundsLoaded)
+                    await PlayLocalSoundAfterPlayingSoundsLoadedAsync(item);
+
+                LocalSoundsToPlayAfterPlayingSoundsLoaded.Clear();
+        }
         }
 
         private void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -217,6 +231,33 @@ namespace UniversalSoundboard.Pages
                 ianItem.Sent = true;
             }
         }
+
+        private async void ItemViewHolder_PlaySound(object sender, PlaySoundEventArgs args)
+        {
+            await PlaySoundAsync(
+                args.Sound,
+                args.StartPlaying,
+                args.Volume,
+                args.Muted,
+                args.PlaybackSpeed,
+                args.Position
+            );
+        }
+
+        private async void ItemViewHolder_PlaySounds(object sender, PlaySoundsEventArgs args)
+        {
+            await PlaySoundsAsync(args.Sounds, args.Repetitions, args.Randomly);
+        }
+
+        private async void ItemViewHolder_PlaySoundAfterPlayingSoundsLoaded(object sender, PlaySoundAfterPlayingSoundsLoadedEventArgs args)
+        {
+            await PlaySoundAfterPlayingSoundsLoadedAsync(args.Sound);
+        }
+
+        private async void ItemViewHolder_PlayLocalSoundAfterPlayingSoundsLoaded(object sender, PlayLocalSoundAfterPlayingSoundsLoadedEventArgs args)
+        {
+            await PlayLocalSoundAfterPlayingSoundsLoadedAsync(args.File);
+        }
         #endregion
 
         #region Helper methods
@@ -295,7 +336,14 @@ namespace UniversalSoundboard.Pages
             FileManager.UpdateCustomSoundOrder(currentCategoryUuid, showFavourites, uuids);
         }
 
-        public static async Task PlaySoundAsync(Sound sound, bool startPlaying = true, int? volume = null, bool? muted = null, int? playbackSpeed = null, TimeSpan? position = null)
+        public async Task PlaySoundAsync(
+            Sound sound,
+            bool startPlaying = true,
+            int? volume = null,
+            bool? muted = null,
+            int? playbackSpeed = null,
+            TimeSpan? position = null
+        )
         {
             List<Sound> soundList = new List<Sound> { sound };
 
@@ -339,7 +387,7 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        public static async Task PlaySoundsAsync(List<Sound> sounds, int repetitions, bool randomly)
+        public async Task PlaySoundsAsync(List<Sound> sounds, int repetitions, bool randomly)
         {
             // If randomly is true, shuffle sounds
             if (randomly)
@@ -376,7 +424,7 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        public static async Task PlayLocalSound(StorageFile file)
+        public async Task PlayLocalSound(StorageFile file)
         {
             Sound sound = new Sound(Guid.NewGuid(), file.DisplayName)
             {
@@ -403,7 +451,7 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        public static async Task PlaySoundAfterPlayingSoundsLoadedAsync(Sound sound)
+        public async Task PlaySoundAfterPlayingSoundsLoadedAsync(Sound sound)
         {
             if (!playingSoundsLoaded)
             {
@@ -415,7 +463,7 @@ namespace UniversalSoundboard.Pages
             await PlaySoundAsync(sound);
         }
 
-        public static async Task PlayLocalSoundAfterPlayingSoundsLoadedAsync(StorageFile file)
+        public async Task PlayLocalSoundAfterPlayingSoundsLoadedAsync(StorageFile file)
         {
             if (!playingSoundsLoaded)
             {

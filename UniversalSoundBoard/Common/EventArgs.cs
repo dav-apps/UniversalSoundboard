@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using UniversalSoundboard.Models;
 using Windows.Media;
+using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
@@ -288,6 +290,69 @@ namespace UniversalSoundboard.Common
         public AudioRecorderQuantumStartedEventArgs(AudioFrame audioFrame)
         {
             AudioFrame = audioFrame;
+        }
+    }
+    #endregion
+
+    #region SoundPage
+    public class PlaySoundEventArgs : EventArgs
+    {
+        public Sound Sound { get; set; }
+        public bool StartPlaying { get; set; }
+        public int? Volume { get; set; }
+        public bool? Muted { get; set; }
+        public int? PlaybackSpeed { get; set; }
+        public TimeSpan? Position { get; set; }
+
+        public PlaySoundEventArgs(
+            Sound sound,
+            bool startPlaying = true,
+            int? volume = null,
+            bool? muted = null,
+            int? playbackSpeed = null,
+            TimeSpan? position = null
+        )
+        {
+            Sound = sound;
+            StartPlaying = startPlaying;
+            Volume = volume;
+            Muted = muted;
+            PlaybackSpeed = playbackSpeed;
+            Position = position;
+        }
+    }
+
+    public class PlaySoundsEventArgs : EventArgs
+    {
+        public List<Sound> Sounds { get; set; }
+        public int Repetitions { get; set; }
+        public bool Randomly { get; set; }
+
+        public PlaySoundsEventArgs(List<Sound> sounds, int repetitions, bool randomly)
+        {
+            Sounds = sounds;
+            Repetitions = repetitions;
+            Randomly = randomly;
+        }
+    }
+
+    public class PlaySoundAfterPlayingSoundsLoadedEventArgs : EventArgs
+    {
+        public Sound Sound { get; set; }
+
+        public PlaySoundAfterPlayingSoundsLoadedEventArgs(Sound sound)
+        {
+            Sound = sound;
+        }
+    }
+
+    public class PlayLocalSoundAfterPlayingSoundsLoadedEventArgs : EventArgs
+    {
+        public StorageFile File { get; set; }
+
+        public PlayLocalSoundAfterPlayingSoundsLoadedEventArgs(StorageFile file)
+        {
+            File = file;
         }
     }
     #endregion

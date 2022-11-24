@@ -3350,7 +3350,7 @@ namespace UniversalSoundboard.DataAccess
 
             if (Dav.IsLoggedIn && Dav.User.Plan > 0)
             {
-                await SoundPage.PlaySoundAsync(sound);
+                itemViewHolder.TriggerPlaySoundEvent(null, new PlaySoundEventArgs(sound));
             }
             else
             {

@@ -150,8 +150,15 @@ namespace UniversalSoundboard
             if (!string.IsNullOrEmpty(e.Arguments))
             {
                 Guid? soundUuid = FileManager.ConvertStringToGuid(e.Arguments);
-                if(soundUuid.HasValue)
-                    await SoundPage.PlaySoundAfterPlayingSoundsLoadedAsync(await FileManager.GetSoundAsync(soundUuid.Value));
+                if (soundUuid.HasValue)
+                {
+                    FileManager.itemViewHolder.TriggerPlaySoundAfterPlayingSoundsLoadedEvent(
+                        this,
+                        new PlaySoundAfterPlayingSoundsLoadedEventArgs(
+                            await FileManager.GetSoundAsync(soundUuid.Value)
+                        )
+                    );
+                }
             }
 
             Window.Current.Activate();
@@ -198,7 +205,7 @@ namespace UniversalSoundboard
             }
         }
 
-        protected override async void OnFileActivated(FileActivatedEventArgs args)
+        protected override void OnFileActivated(FileActivatedEventArgs args)
         {
             if (args.Files.Count == 0) return;
 
@@ -219,8 +226,20 @@ namespace UniversalSoundboard
 
             Window.Current.Activate();
 
-            var item = (StorageFile)args.Files[0];
-            await SoundPage.PlayLocalSoundAfterPlayingSoundsLoadedAsync(item);
+            // Start playing the local sound file
+            var item = args.Files[0] as StorageFile;
+
+            if (SoundPage.PlayingSoundsLoaded)
+            {
+                FileManager.itemViewHolder.TriggerPlayLocalSoundAfterPlayingSoundsLoadedEvent(
+                    this,
+                    new PlayLocalSoundAfterPlayingSoundsLoadedEventArgs(item)
+                );
+            }
+            else
+            {
+                SoundPage.LocalSoundsToPlayAfterPlayingSoundsLoaded.Add(item);
+            }
         }
 
         private void RootFrame_ActualThemeChanged(FrameworkElement sender, object args)

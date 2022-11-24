@@ -138,22 +138,26 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Events
-        public event EventHandler<EventArgs> SoundsLoaded;                                                      // Is triggered when the sounds at startup were loaded
-        public event EventHandler<EventArgs> PlayingSoundsLoaded;                                               // Is triggered when the playing sounds at startup were loaded
-        public event EventHandler<EventArgs> CategoriesLoaded;                                                  // Is triggered when all categories were loaded into the Categories List
-        public event EventHandler<EventArgs> UserSyncFinished;                                                  // Is triggered when the user infos and the profile image were downloaded from the server
-        public event EventHandler<EventArgs> UserPlanChanged;                                                   // Is triggered when the plan of the user was changed from within the app
-        public event EventHandler<CategoryEventArgs> CategoryAdded;                                             // Is triggered when a category was added
-        public event EventHandler<CategoryEventArgs> CategoryUpdated;                                           // Is triggered when a category was updated
-        public event EventHandler<CategoryEventArgs> CategoryDeleted;                                           // Is triggered when a category was deleted
-        public event EventHandler<SoundEventArgs> SoundDeleted;                                                 // Is triggered when a sound was deleted
-        public event EventHandler<RoutedEventArgs> SelectAllSounds;                                             // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
-        public event EventHandler<SizeChangedEventArgs> SoundTileSizeChanged;                                   // Is triggered when the size of the sound tiles in the GridViews has changed
-        public event EventHandler<RemovePlayingSoundItemEventArgs> RemovePlayingSoundItem;                      // Is triggered when a PlayingSoundItem was removed and should be hidden on the BottomPlayingSoundsBar, if the BottomPlayingSoundsBar is not visible
+        public event EventHandler<EventArgs> SoundsLoaded;                                                          // Is triggered when the sounds at startup were loaded
+        public event EventHandler<EventArgs> PlayingSoundsLoaded;                                                   // Is triggered when the playing sounds at startup were loaded
+        public event EventHandler<EventArgs> CategoriesLoaded;                                                      // Is triggered when all categories were loaded into the Categories List
+        public event EventHandler<EventArgs> UserSyncFinished;                                                      // Is triggered when the user infos and the profile image were downloaded from the server
+        public event EventHandler<EventArgs> UserPlanChanged;                                                       // Is triggered when the plan of the user was changed from within the app
+        public event EventHandler<CategoryEventArgs> CategoryAdded;                                                 // Is triggered when a category was added
+        public event EventHandler<CategoryEventArgs> CategoryUpdated;                                               // Is triggered when a category was updated
+        public event EventHandler<CategoryEventArgs> CategoryDeleted;                                               // Is triggered when a category was deleted
+        public event EventHandler<SoundEventArgs> SoundDeleted;                                                     // Is triggered when a sound was deleted
+        public event EventHandler<RoutedEventArgs> SelectAllSounds;                                                 // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
+        public event EventHandler<SizeChangedEventArgs> SoundTileSizeChanged;                                       // Is triggered when the size of the sound tiles in the GridViews has changed
+        public event EventHandler<RemovePlayingSoundItemEventArgs> RemovePlayingSoundItem;                          // Is triggered when a PlayingSoundItem was removed and should be hidden on the BottomPlayingSoundsBar, if the BottomPlayingSoundsBar is not visible
         public event EventHandler<TableObjectFileDownloadProgressChangedEventArgs> TableObjectFileDownloadProgressChanged;  // Is triggered when the file of a TableObject is being downloaded and the progress changed
-        public event EventHandler<TableObjectFileDownloadCompletedEventArgs> TableObjectFileDownloadCompleted;  // Is triggered from TriggerAction when the file of a TableObject was finished
-        public event EventHandler<ShowInAppNotificationEventArgs> ShowInAppNotification;                        // Trigger this event to show the InAppNotification on the SoundPage
-        public event EventHandler<EventArgs> SoundDownload;                                                     // Is triggered on SoundPage in the SoundDownloadDialog primary button click event handler
+        public event EventHandler<TableObjectFileDownloadCompletedEventArgs> TableObjectFileDownloadCompleted;      // Is triggered from TriggerAction when the file of a TableObject was finished
+        public event EventHandler<ShowInAppNotificationEventArgs> ShowInAppNotification;                            // Trigger this event to show the InAppNotification on the SoundPage
+        public event EventHandler<EventArgs> SoundDownload;                                                         // Is triggered on SoundPage in the SoundDownloadDialog primary button click event handler
+        public event EventHandler<PlaySoundEventArgs> PlaySound;                                                    // Is triggered to start playing a sound in SoundPage
+        public event EventHandler<PlaySoundsEventArgs> PlaySounds;                                                  // Is triggered to start playing multiple sounds in SoundPage
+        public event EventHandler<PlaySoundAfterPlayingSoundsLoadedEventArgs> PlaySoundAfterPlayingSoundsLoaded;    // Is triggered to start playing a sound on startup, when starting a sound from the Start Menu
+        public event EventHandler<PlayLocalSoundAfterPlayingSoundsLoadedEventArgs> PlayLocalSoundAfterPlayingSoundsLoaded;  // Is triggered to start playing a local sound file
         #endregion
 
         #region Local variables
@@ -1250,6 +1254,26 @@ namespace UniversalSoundboard.Common
         public void TriggerSoundDownloadEvent(object sender, EventArgs args)
         {
             SoundDownload?.Invoke(sender, args);
+        }
+
+        public void TriggerPlaySoundEvent(object sender, PlaySoundEventArgs args)
+        {
+            PlaySound?.Invoke(sender, args);
+        }
+
+        public void TriggerPlaySoundsEvent(object sender, PlaySoundsEventArgs args)
+        {
+            PlaySounds?.Invoke(sender, args);
+        }
+
+        public void TriggerPlaySoundAfterPlayingSoundsLoadedEvent(object sender, PlaySoundAfterPlayingSoundsLoadedEventArgs args)
+        {
+            PlaySoundAfterPlayingSoundsLoaded?.Invoke(sender, args);
+        }
+
+        public void TriggerPlayLocalSoundAfterPlayingSoundsLoadedEvent(object sender, PlayLocalSoundAfterPlayingSoundsLoadedEventArgs args)
+        {
+            PlayLocalSoundAfterPlayingSoundsLoaded?.Invoke(sender, args);
         }
         #endregion
 
