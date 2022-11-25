@@ -68,7 +68,6 @@ namespace UniversalSoundboard.Pages
                 SoundListView2,
                 PlayingSoundsBarListView,
                 BottomPlayingSoundsBarListView,
-                BottomSoundsBarListView,
                 GridSplitterColDef,
                 PlayingSoundsBarColDef,
                 BottomPlayingSoundsBar,
@@ -105,7 +104,7 @@ namespace UniversalSoundboard.Pages
                     await PlayLocalSoundAfterPlayingSoundsLoadedAsync(item);
 
                 LocalSoundsToPlayAfterPlayingSoundsLoaded.Clear();
-        }
+            }
         }
 
         private void SoundPage_SizeChanged(object sender, SizeChangedEventArgs e)
@@ -120,6 +119,10 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.FavouriteSounds.CollectionChanged -= ItemViewHolder_FavouriteSounds_CollectionChanged;
             FileManager.itemViewHolder.SelectAllSounds -= ItemViewHolder_SelectAllSounds;
             FileManager.itemViewHolder.ShowInAppNotification -= ItemViewHolder_ShowInAppNotification;
+            FileManager.itemViewHolder.PlaySound -= ItemViewHolder_PlaySound;
+            FileManager.itemViewHolder.PlaySounds -= ItemViewHolder_PlaySounds;
+            FileManager.itemViewHolder.PlaySoundAfterPlayingSoundsLoaded -= ItemViewHolder_PlaySoundAfterPlayingSoundsLoaded;
+            FileManager.itemViewHolder.PlayLocalSoundAfterPlayingSoundsLoaded -= ItemViewHolder_PlayLocalSoundAfterPlayingSoundsLoaded;
 
             // Remove all InAppNotifications from the ContentGrid
             foreach (var ianItem in FileManager.InAppNotificationItems)
@@ -374,17 +377,7 @@ namespace UniversalSoundboard.Pages
                 OutputDevice = Dav.IsLoggedIn && Dav.User.Plan > 0 ? sound.DefaultOutputDevice : null
             };
 
-            if (FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSoundItems.Count == 0)
-            {
-                FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
-            }
-            else
-            {
-                nextSinglePlayingSoundToOpen = playingSound;
-
-                foreach (PlayingSoundItem playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
-                    await playingSoundItem.TriggerRemove();
-            }
+            await ShowNextPlayingSound(playingSound);
         }
 
         public async Task PlaySoundsAsync(List<Sound> sounds, int repetitions, bool randomly)
@@ -411,17 +404,7 @@ namespace UniversalSoundboard.Pages
             );
             playingSound.StartPlaying = true;
 
-            if (FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSoundItems.Count == 0)
-            {
-                FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
-            }
-            else
-            {
-                nextSinglePlayingSoundToOpen = playingSound;
-
-                foreach (PlayingSoundItem playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
-                    await playingSoundItem.TriggerRemove();
-            }
+            await ShowNextPlayingSound(playingSound);
         }
 
         public async Task PlayLocalSound(StorageFile file)
@@ -438,17 +421,7 @@ namespace UniversalSoundboard.Pages
             playingSound.LocalFile = true;
             playingSound.StartPlaying = true;
 
-            if (FileManager.itemViewHolder.OpenMultipleSounds || FileManager.itemViewHolder.PlayingSoundItems.Count == 0)
-            {
-                FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
-            }
-            else
-            {
-                nextSinglePlayingSoundToOpen = playingSound;
-
-                foreach (PlayingSoundItem playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
-                    await playingSoundItem.TriggerRemove();
-            }
+            await ShowNextPlayingSound(playingSound);
         }
 
         public async Task PlaySoundAfterPlayingSoundsLoadedAsync(Sound sound)
@@ -473,6 +446,23 @@ namespace UniversalSoundboard.Pages
             }
 
             await PlayLocalSound(file);
+        }
+
+        private async Task ShowNextPlayingSound(PlayingSound playingSound)
+        {
+            if (!FileManager.itemViewHolder.OpenMultipleSounds)
+            {
+                for (int i = 0; i < FileManager.itemViewHolder.PlayingSoundItems.Count; i++)
+                {
+                    var playingSoundItem = FileManager.itemViewHolder.PlayingSoundItems[i];
+                    await playingSoundItem.TriggerRemove();
+                }
+
+                await Task.Delay(400);
+            }
+
+            // Show the next PlayingSound
+            FileManager.itemViewHolder.PlayingSounds.Add(playingSound);
         }
 
         public void ShowAllInAppNotifications()

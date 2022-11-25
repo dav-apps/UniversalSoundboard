@@ -1948,7 +1948,7 @@ namespace UniversalSoundboard.DataAccess
                         await playingSoundItem.MoveToNext();
                         break;
                     default:
-                        playingSoundItem.SetPlayPause(args.Button == SystemMediaTransportControlsButton.Play);
+                        await playingSoundItem.SetPlayPause(args.Button == SystemMediaTransportControlsButton.Play);
                         break;
                 }
             });

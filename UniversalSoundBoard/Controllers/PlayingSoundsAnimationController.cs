@@ -39,7 +39,6 @@ namespace UniversalSoundboard.Controllers
 
         ListView PlayingSoundsBarListView;
         ListView BottomPlayingSoundsBarListView;
-        ListView BottomSoundsBarListView;
 
         ColumnDefinition GridSplitterColDef;
         ColumnDefinition PlayingSoundsBarColDef;
@@ -75,7 +74,6 @@ namespace UniversalSoundboard.Controllers
 
             ListView playingSoundsBarListView,
             ListView bottomPlayingSoundsBarListView,
-            ListView bottomSoundsBarListView,
 
             ColumnDefinition gridSplitterColDef,
             ColumnDefinition playingSoundsBarColDef,
@@ -99,7 +97,6 @@ namespace UniversalSoundboard.Controllers
 
             PlayingSoundsBarListView = playingSoundsBarListView;
             BottomPlayingSoundsBarListView = bottomPlayingSoundsBarListView;
-            BottomSoundsBarListView = bottomSoundsBarListView;
 
             GridSplitterColDef = gridSplitterColDef;
             PlayingSoundsBarColDef = playingSoundsBarColDef;
@@ -218,45 +215,31 @@ namespace UniversalSoundboard.Controllers
 
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                showBottomPlayingSoundsBar = FileManager.itemViewHolder.PlayingSounds.Count == 1;
-
-                if (showBottomPlayingSoundsBar)
-                {
-                    // Reset the BottomPlayingSoundsBar to enable loading PlayingSoundItems
-                    BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
-                    BottomPlayingSoundsBar.Height = double.NaN;
-                }
-                else if (FileManager.itemViewHolder.PlayingSounds.Count == 2)
-                {
-                    // Show the GridSplitter
-                    BottomPlayingSoundsBarGridSplitter.Opacity = 0;
-                    BottomPlayingSoundsBarGridSplitter.Visibility = Visibility.Visible;
-
-                    UpdateGridSplitterRange();
-                    ShowGridSplitter();
-                }
-
-                var playingSound = e.NewItems[0] as PlayingSound;
-
-                var item1 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, false);
-                item1.Hide += PlayingSoundItemContainer_Hide;
-                item1.Loaded += PlayingSoundItemContainer_Loaded;
-                item1.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
-                item1.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
-
-                var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, !showBottomPlayingSoundsBar);
-                item2.Hide += PlayingSoundItemContainer_Hide;
-                item2.Loaded += PlayingSoundItemContainer_Loaded;
-                item2.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
-                item2.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
-
                 if (IsMobile || !FileManager.itemViewHolder.OpenMultipleSounds)
-                    PlayingSoundsToShowList.Add(item2);
-                else
-                    PlayingSoundsToShowList.Add(item1);
+                {
+                    showBottomPlayingSoundsBar = (
+                        FileManager.itemViewHolder.PlayingSounds.Count == 1
+                        || !FileManager.itemViewHolder.OpenMultipleSounds
+                    );
 
-                PlayingSoundItemContainers.Add(item1);
-                ReversedPlayingSoundItemContainers.Insert(0, item2);
+                    if (showBottomPlayingSoundsBar)
+                    {
+                        // Reset the BottomPlayingSoundsBar to enable loading PlayingSoundItems
+                        BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
+                        BottomPlayingSoundsBar.Height = double.NaN;
+                    }
+                    else if (FileManager.itemViewHolder.PlayingSounds.Count == 2)
+                    {
+                        // Show the GridSplitter
+                        BottomPlayingSoundsBarGridSplitter.Opacity = 0;
+                        BottomPlayingSoundsBarGridSplitter.Visibility = Visibility.Visible;
+
+                        UpdateGridSplitterRange();
+                        ShowGridSplitter();
+                    }
+                }
+
+                AddPlayingSound(e.NewItems[0] as PlayingSound);
             }
             else if (
                 e.Action == NotifyCollectionChangedAction.Remove
@@ -273,7 +256,10 @@ namespace UniversalSoundboard.Controllers
 
             if (
                 itemContainer.IsInBottomPlayingSoundsBar
-                && FileManager.itemViewHolder.PlayingSounds.Count == 1
+                && (
+                    FileManager.itemViewHolder.PlayingSounds.Count == 1
+                    || !FileManager.itemViewHolder.OpenMultipleSounds
+                )
             )
             {
                 // The last item was removed on BottomPlayingSoundsBar
@@ -282,7 +268,7 @@ namespace UniversalSoundboard.Controllers
                 AdaptSoundListScrollViewerForBottomPlayingSoundsBar(0);
                 itemContainer.PlayingSoundItemTemplate.Content = null;
             }
-            else if (itemContainer.IsInBottomPlayingSoundsBar)
+            else if (itemContainer.IsInBottomPlayingSoundsBar && IsMobile)
             {
                 if (
                     bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Bottom
@@ -472,7 +458,7 @@ namespace UniversalSoundboard.Controllers
                         bottomPlayingSoundsBarPosition = BottomPlayingSoundsBarVerticalPosition.Bottom;
                 }
             }
-            else
+            else if (!itemContainer.IsInBottomPlayingSoundsBar)
             {
                 // Item is in normal PlayingSoundsBar
                 // Start the animation for hiding the PlayingSoundItem
@@ -498,8 +484,11 @@ namespace UniversalSoundboard.Controllers
 
                 foreach (var item in PlayingSoundItemContainers)
                 {
-                    if (!item.IsVisible || item.Index <= itemContainer.Index)
-                        continue;
+                    if (
+                        !item.IsVisible
+                        || item.Index <= itemContainer.Index
+                        || item.PlayingSoundItemTemplate == null
+                    ) continue;
 
                     translationAnimation = compositor.CreateVector3KeyFrameAnimation();
                     translationAnimation.InsertKeyFrame(
@@ -648,6 +637,29 @@ namespace UniversalSoundboard.Controllers
             playingSoundsLoaded = true;
         }
 
+        private void AddPlayingSound(PlayingSound playingSound)
+        {
+            var item1 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, false);
+            item1.Hide += PlayingSoundItemContainer_Hide;
+            item1.Loaded += PlayingSoundItemContainer_Loaded;
+            item1.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
+            item1.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
+
+            var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, !showBottomPlayingSoundsBar);
+            item2.Hide += PlayingSoundItemContainer_Hide;
+            item2.Loaded += PlayingSoundItemContainer_Loaded;
+            item2.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
+            item2.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
+
+            if (IsMobile || !FileManager.itemViewHolder.OpenMultipleSounds)
+                PlayingSoundsToShowList.Add(item2);
+            else
+                PlayingSoundsToShowList.Add(item1);
+
+            PlayingSoundItemContainers.Add(item1);
+            ReversedPlayingSoundItemContainers.Insert(0, item2);
+        }
+
         public async Task ShowBottomSoundsBar(List<Sound> sounds)
         {
             BottomSoundsBarSounds.Clear();
@@ -794,25 +806,11 @@ namespace UniversalSoundboard.Controllers
 
             foreach (var playingSound in FileManager.itemViewHolder.PlayingSounds)
             {
-                var item1 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, false);
-                item1.Hide += PlayingSoundItemContainer_Hide;
-                item1.Loaded += PlayingSoundItemContainer_Loaded;
-                item1.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
-                item1.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
+                AddPlayingSound(playingSound);
 
-                var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, false);
-                item2.Hide += PlayingSoundItemContainer_Hide;
-                item2.Loaded += PlayingSoundItemContainer_Loaded;
-                item2.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
-                item2.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
-
-                if (IsMobile || !FileManager.itemViewHolder.OpenMultipleSounds)
-                    PlayingSoundsToShowList.Add(item2);
-                else
-                    PlayingSoundsToShowList.Add(item1);
-
-                PlayingSoundItemContainers.Add(item1);
-                ReversedPlayingSoundItemContainers.Insert(0, item2);
+                // Show only the first PlayingSound in Single Sound Mode
+                if (!FileManager.itemViewHolder.OpenMultipleSounds)
+                    break;
             }
         }
 
@@ -1040,6 +1038,7 @@ namespace UniversalSoundboard.Controllers
             }
 
             UpdateGridSplitterRange();
+            AdaptSoundListScrollViewerForBottomPlayingSoundsBar();
         }
 
         private void InitBottomPlayingSoundsBarHeight()
@@ -1185,8 +1184,16 @@ namespace UniversalSoundboard.Controllers
         {
             double bottomPlayingSoundsBarHeight = 0;
 
-            if (IsMobile && FileManager.itemViewHolder.PlayingSounds.Count > 0)
-                bottomPlayingSoundsBarHeight = GridSplitterGridBottomRowDef.ActualHeight + (FileManager.itemViewHolder.PlayingSounds.Count <= 1 ? 0 : 16);
+            if (
+                (IsMobile || !FileManager.itemViewHolder.OpenMultipleSounds)
+                && FileManager.itemViewHolder.PlayingSounds.Count > 0
+            )
+            {
+                bottomPlayingSoundsBarHeight = GridSplitterGridBottomRowDef.ActualHeight;
+
+                if (BottomPlayingSoundsBarGridSplitter.Visibility == Visibility.Visible)
+                    bottomPlayingSoundsBarHeight += 16;
+            }
 
             AdaptSoundListScrollViewerForBottomPlayingSoundsBar(bottomPlayingSoundsBarHeight);
         }
