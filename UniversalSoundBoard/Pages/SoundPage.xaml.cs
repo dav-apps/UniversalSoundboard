@@ -29,7 +29,6 @@ namespace UniversalSoundboard.Pages
         private bool skipSoundListSelectionChangedEvent = false;
         Guid reorderedItem = Guid.Empty;
         private static bool playingSoundsLoaded = false;
-        private static PlayingSound nextSinglePlayingSoundToOpen;
         bool startMessageButtonsEnabled = true;
         bool canReorderItems = false;
         bool isMobile = false;
@@ -68,6 +67,7 @@ namespace UniversalSoundboard.Pages
                 SoundListView2,
                 PlayingSoundsBarListView,
                 BottomPlayingSoundsBarListView,
+                BottomSoundsBarListView,
                 GridSplitterColDef,
                 PlayingSoundsBarColDef,
                 BottomPlayingSoundsBar,
@@ -758,7 +758,12 @@ namespace UniversalSoundboard.Pages
         private async void PlayingSoundItemTemplate_Expand(object sender, EventArgs e)
         {
             PlayingSoundItemTemplate itemTemplate = sender as PlayingSoundItemTemplate;
-            await PlayingSoundsAnimationController.ShowBottomSoundsBar(itemTemplate.Sounds);
+            PlayingSoundItem playingSoundItem = itemTemplate.PlayingSoundItem;
+            
+            if (playingSoundItem == null)
+                return;
+
+            await PlayingSoundsAnimationController.ShowBottomSoundsBar(playingSoundItem);
         }
 
         private async void PlayingSoundItemTemplate_Collapse(object sender, EventArgs e)

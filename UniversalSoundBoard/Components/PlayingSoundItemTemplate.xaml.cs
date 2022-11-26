@@ -1,6 +1,5 @@
 ﻿using davClassLibrary;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -19,7 +18,7 @@ namespace UniversalSoundboard.Components
     public sealed partial class PlayingSoundItemTemplate : UserControl
     {
         PlayingSoundItemContainer PlayingSoundItemContainer;
-        PlayingSoundItem PlayingSoundItem;
+        public PlayingSoundItem PlayingSoundItem;
         PlayingSound PlayingSound
         {
             get
@@ -27,10 +26,6 @@ namespace UniversalSoundboard.Components
                 if (PlayingSoundItemContainer == null) return null;
                 return PlayingSoundItemContainer.PlayingSound;
             }
-        }
-        public List<Sound> Sounds
-        {
-            get => PlayingSound?.Sounds.ToList();
         }
 
         private bool initialized = false;

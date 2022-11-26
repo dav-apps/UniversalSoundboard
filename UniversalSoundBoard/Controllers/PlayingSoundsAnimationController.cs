@@ -28,6 +28,7 @@ namespace UniversalSoundboard.Controllers
         private double maxBottomPlayingSoundsBarHeight = 500;
         private double bottomSoundsBarHeight = 0;
         private BottomPlayingSoundsBarVerticalPosition bottomPlayingSoundsBarPosition = BottomPlayingSoundsBarVerticalPosition.Bottom;
+        private PlayingSoundItem playingSoundItemOfBottomSoundsBar = null;
 
         RelativePanel ContentRoot;
         GridView SoundGridView;
@@ -39,6 +40,7 @@ namespace UniversalSoundboard.Controllers
 
         ListView PlayingSoundsBarListView;
         ListView BottomPlayingSoundsBarListView;
+        ListView BottomSoundsBarListView;
 
         ColumnDefinition GridSplitterColDef;
         ColumnDefinition PlayingSoundsBarColDef;
@@ -74,6 +76,7 @@ namespace UniversalSoundboard.Controllers
 
             ListView playingSoundsBarListView,
             ListView bottomPlayingSoundsBarListView,
+            ListView bottomSoundsBarListView,
 
             ColumnDefinition gridSplitterColDef,
             ColumnDefinition playingSoundsBarColDef,
@@ -97,6 +100,7 @@ namespace UniversalSoundboard.Controllers
 
             PlayingSoundsBarListView = playingSoundsBarListView;
             BottomPlayingSoundsBarListView = bottomPlayingSoundsBarListView;
+            BottomSoundsBarListView = bottomSoundsBarListView;
 
             GridSplitterColDef = gridSplitterColDef;
             PlayingSoundsBarColDef = playingSoundsBarColDef;
@@ -117,9 +121,10 @@ namespace UniversalSoundboard.Controllers
             PlayingSoundsToShowList = new List<PlayingSoundItemContainer>();
 
             ContentRoot.SizeChanged += ContentRoot_SizeChanged;
-            BottomPseudoContentGrid.SizeChanged += BottomPseudoContentGrid_SizeChanged;
+            BottomSoundsBarListView.SelectionChanged += BottomSoundsBarListView_SelectionChanged;
             BottomPlayingSoundsBarGridSplitter.ManipulationDelta += BottomPlayingSoundsBarGridSplitter_ManipulationDelta;
             BottomPlayingSoundsBarGridSplitter.ManipulationCompleted += BottomPlayingSoundsBarGridSplitter_ManipulationCompleted;
+            BottomPseudoContentGrid.SizeChanged += BottomPseudoContentGrid_SizeChanged;
             FileManager.itemViewHolder.PlayingSoundsLoaded += ItemViewHolder_PlayingSoundsLoaded;
             FileManager.itemViewHolder.RemovePlayingSoundItem += ItemViewHolder_RemovePlayingSoundItem;
             FileManager.itemViewHolder.PlayingSounds.CollectionChanged += ItemViewHolder_PlayingSounds_CollectionChanged;
@@ -178,10 +183,9 @@ namespace UniversalSoundboard.Controllers
                 UpdatePlayingSoundsList();
         }
 
-        private void BottomPseudoContentGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        private async void BottomSoundsBarListView_SelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            // Update the Paddings of the GridViews and ListViews
-            AdaptSoundListScrollViewerForBottomPlayingSoundsBar();
+            await playingSoundItemOfBottomSoundsBar.MoveToSound(BottomSoundsBarListView.SelectedIndex);
         }
 
         private void BottomPlayingSoundsBarGridSplitter_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
@@ -194,6 +198,12 @@ namespace UniversalSoundboard.Controllers
         private void BottomPlayingSoundsBarGridSplitter_ManipulationCompleted(object sender, ManipulationCompletedRoutedEventArgs e)
         {
             SnapBottomPlayingSoundsBar();
+        }
+
+        private void BottomPseudoContentGrid_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            // Update the Paddings of the GridViews and ListViews
+            AdaptSoundListScrollViewerForBottomPlayingSoundsBar();
         }
 
         private void ItemViewHolder_PlayingSoundsLoaded(object sender, EventArgs e)
@@ -628,6 +638,11 @@ namespace UniversalSoundboard.Controllers
             foreach (var item in movedItems)
                 item.PlayingSoundItemTemplate.Translation = new Vector3(0);
         }
+
+        private void PlayingSoundItem_CurrentSoundChanged(object sender, CurrentSoundChangedEventArgs args)
+        {
+            BottomSoundsBarListView.SelectedIndex = args.CurrentSound;
+        }
         #endregion
 
         public void Init()
@@ -660,14 +675,22 @@ namespace UniversalSoundboard.Controllers
             ReversedPlayingSoundItemContainers.Insert(0, item2);
         }
 
-        public async Task ShowBottomSoundsBar(List<Sound> sounds)
+        public async Task ShowBottomSoundsBar(PlayingSoundItem playingSoundItem)
         {
+            playingSoundItemOfBottomSoundsBar = playingSoundItem;
+            playingSoundItemOfBottomSoundsBar.CurrentSoundChanged += PlayingSoundItem_CurrentSoundChanged;
+
+            List<Sound> sounds = playingSoundItem.PlayingSound.Sounds.ToList();
+            int selectedSoundIndex = playingSoundItem.PlayingSound.Current;
+
             BottomSoundsBarSounds.Clear();
 
             foreach (var sound in sounds)
                 BottomSoundsBarSounds.Add(sound);
 
             await Task.Delay(10);
+
+            BottomSoundsBarListView.SelectedIndex = selectedSoundIndex;
             bottomSoundsBarHeight = BottomSoundsBar.ActualHeight;
 
             if (bottomSoundsBarHeight > maxBottomSoundsBarHeight)
@@ -736,6 +759,8 @@ namespace UniversalSoundboard.Controllers
 
         public async Task HideBottomSoundsBar()
         {
+            playingSoundItemOfBottomSoundsBar.CurrentSoundChanged -= PlayingSoundItem_CurrentSoundChanged;
+            playingSoundItemOfBottomSoundsBar = null;
             double bottomPlayingSoundsBarHeightDiff = bottomSoundsBarHeight;
 
             if (bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Top)
