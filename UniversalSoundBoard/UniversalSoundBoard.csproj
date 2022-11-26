@@ -155,7 +155,7 @@
     <Compile Include="Common\Types.cs" />
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
-    <Compile Include="Components\HotkeyItem.cs" />
+    <Compile Include="Models\HotkeyItem.cs" />
     <Compile Include="Components\HotkeyItemTemplate.xaml.cs">
       <DependentUpon>HotkeyItemTemplate.xaml</DependentUpon>
     </Compile>

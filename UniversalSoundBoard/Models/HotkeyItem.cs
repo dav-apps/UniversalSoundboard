@@ -1,8 +1,7 @@
 ﻿using System;
 using UniversalSoundboard.Common;
-using UniversalSoundboard.Models;
 
-namespace UniversalSoundboard.Components
+namespace UniversalSoundboard.Models
 {
     public class HotkeyItem
     {

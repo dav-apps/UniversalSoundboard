@@ -37,7 +37,7 @@
             <components:SoundFileItemTemplate />
         </DataTemplate>
 
-        <DataTemplate x:Key="HotkeyItemTemplate" x:DataType="components:HotkeyItem">
+        <DataTemplate x:Key="HotkeyItemTemplate" x:DataType="models:HotkeyItem">
             <components:HotkeyItemTemplate />
         </DataTemplate>
 
