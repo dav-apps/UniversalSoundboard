@@ -215,7 +215,7 @@
     <Compile Include="Models\SoundDownload\SoundDownloadYoutubePluginResult.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadZopharPlugin.cs" />
     <Compile Include="Models\InAppNotificationItem.cs" />
-    <Compile Include="Components\PlayingSoundItem.cs" />
+    <Compile Include="Models\PlayingSoundItem.cs" />
     <Compile Include="Components\SoundFileDownloadProgressTemplate.xaml.cs">
       <DependentUpon>SoundFileDownloadProgressTemplate.xaml</DependentUpon>
     </Compile>

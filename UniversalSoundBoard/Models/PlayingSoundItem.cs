@@ -15,7 +15,7 @@ using Windows.Media.Audio;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 
-namespace UniversalSoundboard.Components
+namespace UniversalSoundboard.Models
 {
     /**
      * Base class for PlayingSoundItems that are displayed in the PlayingSoundsBar and BottomPlayingSoundsBar
