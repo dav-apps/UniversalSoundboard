@@ -1,8 +1,6 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Common;
-using Microsoft.AppCenter;
 using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -40,31 +38,6 @@ namespace UniversalSoundboard
         {
             InitializeComponent();
             Suspending += OnSuspending;
-
-            // Init AppCenter
-            AppCenter.Start(Env.AppCenterSecretKey, typeof(Analytics), typeof(Crashes));
-
-            Crashes.GetErrorAttachments = (ErrorReport report) =>
-            {
-                // Collect settings
-                string settings = "";
-                settings += $"playingSoundsListVisible: {FileManager.itemViewHolder.PlayingSoundsListVisible}\n";
-                settings += $"savePlayingSounds: {FileManager.itemViewHolder.SavePlayingSounds}\n";
-                settings += $"openMultipleSounds: {FileManager.itemViewHolder.OpenMultipleSounds}\n";
-                settings += $"multiSoundPlayback: {FileManager.itemViewHolder.MultiSoundPlayback}\n";
-                settings += $"showSoundsPivot: {FileManager.itemViewHolder.ShowSoundsPivot}\n";
-                settings += $"soundOrder: {FileManager.itemViewHolder.SoundOrder}\n";
-                settings += $"showListView: {FileManager.itemViewHolder.ShowListView}\n";
-                settings += $"showCategoriesIcons: {FileManager.itemViewHolder.ShowCategoriesIcons}\n";
-                settings += $"showAcrylicBackground: {FileManager.itemViewHolder.ShowAcrylicBackground}\n";
-                settings += $"isLoggedIn: {Dav.IsLoggedIn}";
-                settings += $"{MainPage.screenWidth}x{MainPage.screenHeight}";
-
-                return new ErrorAttachmentLog[]
-                {
-                    ErrorAttachmentLog.AttachmentWithText(settings, "settings.txt")
-                };
-            };
 
             // Init Websocket
             Websockets.Net.WebsocketConnection.Link();

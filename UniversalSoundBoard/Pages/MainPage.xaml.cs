@@ -1,35 +1,37 @@
-﻿using System;
-using System.Linq;
-using Windows.Storage;
-using Windows.UI.Core;
-using Windows.UI.Xaml;
-using Windows.UI.Xaml.Controls;
-using Windows.UI;
-using Windows.ApplicationModel.Core;
-using Windows.UI.ViewManagement;
-using Windows.UI.Xaml.Media;
+﻿using davClassLibrary;
+using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
+using Microsoft.AppCenter;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
+using System;
+using UniversalSoundboard.Common;
+using UniversalSoundboard.Components;
+using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
+using UniversalSoundboard.Models;
+using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using WinUI = Microsoft.UI.Xaml.Controls;
 using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
-using UniversalSoundboard.Components;
-using Windows.UI.Xaml.Controls.Primitives;
-using System.ComponentModel;
-using System.Collections.Specialized;
-using UniversalSoundboard.Common;
-using UniversalSoundboard.DataAccess;
-using UniversalSoundboard.Models;
-using davClassLibrary;
-using System.Collections.ObjectModel;
-using Microsoft.AppCenter.Analytics;
-using Windows.System;
 using Windows.Graphics.Display;
-using Windows.UI.Xaml.Hosting;
+using Windows.Storage;
+using Windows.System;
+using Windows.UI.Core;
+using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
-using UniversalSoundboard.Dialogs;
-using System.Threading;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Hosting;
+using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml;
+using Windows.UI;
+using WinUI = Microsoft.UI.Xaml.Controls;
 
 namespace UniversalSoundboard.Pages
 {
@@ -61,6 +63,7 @@ namespace UniversalSoundboard.Pages
         {
             InitializeComponent();
             SetThemeColors();
+            InitAppCenter();
 
             RootGrid.DataContext = FileManager.itemViewHolder;
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
@@ -79,11 +82,6 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
             FileManager.itemViewHolder.SoundDownload += ItemViewHolder_SoundDownload;
             FileManager.deviceWatcherHelper.DevicesChanged += DeviceWatcherHelper_DevicesChanged;
-
-            // Get the screen resolution
-            var displayInfo = DisplayInformation.GetForCurrentView();
-            screenWidth = displayInfo.ScreenWidthInRawPixels;
-            screenHeight = displayInfo.ScreenHeightInRawPixels;
         }
 
         #region Page event handlers
@@ -316,6 +314,38 @@ namespace UniversalSoundboard.Pages
         #endregion
 
         #region General methods
+        private void InitAppCenter()
+        {
+            // Get the screen resolution
+            var displayInfo = DisplayInformation.GetForCurrentView();
+            screenWidth = displayInfo.ScreenWidthInRawPixels;
+            screenHeight = displayInfo.ScreenHeightInRawPixels;
+
+            AppCenter.Start(Env.AppCenterSecretKey, typeof(Analytics), typeof(Crashes));
+
+            Crashes.GetErrorAttachments = (ErrorReport report) =>
+            {
+                // Collect settings
+                string settings = "";
+                settings += $"playingSoundsListVisible: {FileManager.itemViewHolder.PlayingSoundsListVisible}\n";
+                settings += $"savePlayingSounds: {FileManager.itemViewHolder.SavePlayingSounds}\n";
+                settings += $"openMultipleSounds: {FileManager.itemViewHolder.OpenMultipleSounds}\n";
+                settings += $"multiSoundPlayback: {FileManager.itemViewHolder.MultiSoundPlayback}\n";
+                settings += $"showSoundsPivot: {FileManager.itemViewHolder.ShowSoundsPivot}\n";
+                settings += $"soundOrder: {FileManager.itemViewHolder.SoundOrder}\n";
+                settings += $"showListView: {FileManager.itemViewHolder.ShowListView}\n";
+                settings += $"showCategoriesIcons: {FileManager.itemViewHolder.ShowCategoriesIcons}\n";
+                settings += $"showAcrylicBackground: {FileManager.itemViewHolder.ShowAcrylicBackground}\n";
+                settings += $"isLoggedIn: {Dav.IsLoggedIn}\n";
+                settings += $"{screenWidth}x{screenHeight}";
+
+                return new ErrorAttachmentLog[]
+                {
+                    ErrorAttachmentLog.AttachmentWithText(settings, "settings.txt")
+                };
+            };
+        }
+
         private void CustomiseTitleBar()
         {
             ApplicationViewTitleBar titleBar = ApplicationView.GetForCurrentView().TitleBar;
