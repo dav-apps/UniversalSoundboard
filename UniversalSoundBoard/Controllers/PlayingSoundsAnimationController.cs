@@ -825,6 +825,18 @@ namespace UniversalSoundboard.Controllers
             UpdateGridSplitterRange();
         }
 
+        public async void RemoveSoundInBottomSoundsBar(Sound sound)
+        {
+            playingSoundItemOfBottomSoundsBar.RemoveSound(sound.Uuid);
+            BottomSoundsBarSounds.Remove(sound);
+
+            if (BottomSoundsBarSounds.Count == 0)
+            {
+                await Task.Delay(200);
+                await playingSoundItemOfBottomSoundsBar.TriggerRemove();
+            }
+        }
+
         private void LoadPlayingSoundItems()
         {
             playingSoundItemsLoaded = true;

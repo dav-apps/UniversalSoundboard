@@ -770,6 +770,12 @@ namespace UniversalSoundboard.Pages
         {
             await PlayingSoundsAnimationController.HideBottomSoundsBar();
         }
+
+        private void PlayingSoundItemSoundItemTemplate_Remove(object sender, EventArgs args)
+        {
+            PlayingSoundItemSoundItemTemplate itemTemplate = sender as PlayingSoundItemSoundItemTemplate;
+            PlayingSoundsAnimationController.RemoveSoundInBottomSoundsBar(itemTemplate.Sound);
+        }
         #endregion
     }
 }
