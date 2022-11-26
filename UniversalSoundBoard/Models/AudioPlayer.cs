@@ -9,7 +9,6 @@ using Windows.Media.Audio;
 using Windows.Media.Effects;
 using Windows.Media.Render;
 using Windows.Storage;
-using Windows.UI.Xaml;
 
 namespace UniversalSoundboard.Models
 {
@@ -25,7 +24,6 @@ namespace UniversalSoundboard.Models
         private double volume = 1;
         private bool isMuted = false;
         private double playbackRate = 1.0;
-        private DispatcherTimer positionChangeTimer;
 
         private AudioGraph AudioGraph;
         private AudioFileInputNode FileInputNode;
@@ -71,35 +69,25 @@ namespace UniversalSoundboard.Models
             set => setPlaybackRate(value);
         }
 
-        public event EventHandler<PositionChangedEventArgs> PositionChanged;
         public event EventHandler<EventArgs> MediaEnded;
         public event EventHandler<AudioGraphUnrecoverableErrorOccurredEventArgs> UnrecoverableErrorOccurred;
 
-        public AudioPlayer()
-        {
-            InitPositionChangeTimer();
-        }
+        public AudioPlayer() { }
 
         public AudioPlayer(StorageFile audioFile)
         {
             this.audioFile = audioFile;
-
-            InitPositionChangeTimer();
         }
 
         public AudioPlayer(DeviceInformation outputDevice)
         {
             this.outputDevice = outputDevice;
-
-            InitPositionChangeTimer();
         }
 
         public AudioPlayer(StorageFile audioFile, DeviceInformation outputDevice)
         {
             this.audioFile = audioFile;
             this.outputDevice = outputDevice;
-
-            InitPositionChangeTimer();
         }
 
         public async Task Init()
@@ -109,8 +97,6 @@ namespace UniversalSoundboard.Models
 
             if (isInitializing) return;
             isInitializing = true;
-
-            positionChangeTimer.Stop();
 
             if (!isInitialized || outputDeviceChanged)
             {
@@ -127,10 +113,7 @@ namespace UniversalSoundboard.Models
             await InitFileInputNode();
 
             if (IsPlaying)
-            {
                 AudioGraph.Start();
-                positionChangeTimer.Start();
-            }
 
             isInitializing = false;
         }
@@ -165,8 +148,7 @@ namespace UniversalSoundboard.Models
 
         private async Task InitFileInputNode()
         {
-            if (FileInputNode != null)
-                FileInputNode.Stop();
+            FileInputNode?.Stop();
 
             var inputNodeResult = await AudioGraph.CreateFileInputNodeAsync(audioFile);
 
@@ -221,13 +203,6 @@ namespace UniversalSoundboard.Models
             DeviceOutputNode = outputNodeResult.DeviceOutputNode;
         }
 
-        private void InitPositionChangeTimer()
-        {
-            positionChangeTimer = new DispatcherTimer();
-            positionChangeTimer.Interval = TimeSpan.FromMilliseconds(200);
-            positionChangeTimer.Tick += PositionChangeTimer_Tick;
-        }
-
         public void Play()
         {
             if (!isInitialized)
@@ -246,7 +221,6 @@ namespace UniversalSoundboard.Models
             }
 
             isPlaying = true;
-            positionChangeTimer.Start();
         }
 
         public void Pause()
@@ -266,7 +240,6 @@ namespace UniversalSoundboard.Models
             }
 
             isPlaying = false;
-            positionChangeTimer.Stop();
         }
 
         #region Setter methods
@@ -282,7 +255,6 @@ namespace UniversalSoundboard.Models
         {
             FileInputNode?.Seek(position);
             this.position = position;
-            PositionChanged?.Invoke(this, new PositionChangedEventArgs(position));
         }
 
         private void setVolume(double volume)
@@ -333,12 +305,6 @@ namespace UniversalSoundboard.Models
         private void AudioGraph_UnrecoverableErrorOccurred(AudioGraph sender, AudioGraphUnrecoverableErrorOccurredEventArgs args)
         {
             UnrecoverableErrorOccurred?.Invoke(this, args);
-        }
-
-        private void PositionChangeTimer_Tick(object sender, object e)
-        {
-            position = FileInputNode.Position;
-            PositionChanged?.Invoke(this, new PositionChangedEventArgs(position));
         }
 
         private void FileInputNode_FileCompleted(AudioFileInputNode sender, object args)

@@ -8,7 +8,6 @@ using System.Threading.Tasks;
 using System.Timers;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
-using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.Devices.Enumeration;
 using Windows.Media.Audio;
@@ -41,16 +40,19 @@ namespace UniversalSoundboard.Models
         private bool skipSoundsCollectionChanged = false;
         private TimeSpan currentSoundTotalDuration = TimeSpan.Zero;
         private bool currentSoundIsDownloading = false;
-        readonly List<(Guid, int)> DownloadProgressList = new List<(Guid, int)>();
+        private readonly List<(Guid, int)> DownloadProgressList = new List<(Guid, int)>();
         private bool removed = false;
 
-        Timer fadeOutTimer;
-        const int fadeOutTime = 300;
-        const int fadeOutFrames = 10;
-        int currentFadeOutFrame = 0;
-        double fadeOutVolumeDiff;
+        private Timer fadeOutTimer;
+        private const int fadeOutTime = 300;
+        private const int fadeOutFrames = 10;
+        private int currentFadeOutFrame = 0;
+        private double fadeOutVolumeDiff;
+
+        private DispatcherTimer positionChangeTimer;
+        private TimeSpan position;
         #endregion
-        
+
         #region Events
         public event EventHandler<PlaybackStateChangedEventArgs> PlaybackStateChanged;
         public event EventHandler<PositionChangedEventArgs> PositionChanged;
@@ -114,7 +116,6 @@ namespace UniversalSoundboard.Models
 
             // Subscribe to MediaPlayer events
             PlayingSound.AudioPlayer.MediaEnded += AudioPlayer_MediaEnded;
-            PlayingSound.AudioPlayer.PositionChanged += AudioPlayer_PositionChanged;
             PlayingSound.AudioPlayer.UnrecoverableErrorOccurred += AudioPlayer_UnrecoverableErrorOccurred;
 
             // Subscribe to other events
@@ -127,6 +128,7 @@ namespace UniversalSoundboard.Models
             // Set the appropriate output device
             await UpdateOutputDevice();
             await InitAudioPlayer();
+            InitPositionChangeTimer();
 
             if (Dav.IsLoggedIn && !PlayingSound.LocalFile)
             {
@@ -176,14 +178,6 @@ namespace UniversalSoundboard.Models
             }
         }
 
-        private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
-        {
-            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
-            {
-                await UpdateOutputDevice();
-            });
-        }
-
         #region ItemViewHolder event handlers
         private async void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
         {
@@ -208,7 +202,7 @@ namespace UniversalSoundboard.Models
         }
         #endregion
         
-        #region MediaPlayer event handlers
+        #region AudioPlayer event handlers
         private async void AudioPlayer_MediaEnded(object sender, EventArgs e)
         {
             await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
@@ -311,6 +305,14 @@ namespace UniversalSoundboard.Models
         #endregion
 
         #region Other event handlers
+        private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
+        {
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, async () =>
+            {
+                await UpdateOutputDevice();
+            });
+        }
+
         private async void Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (PlayingSound == null || PlayingSound.AudioPlayer == null || skipSoundsCollectionChanged) return;
@@ -353,6 +355,15 @@ namespace UniversalSoundboard.Models
                 await FileManager.SetSoundsListOfPlayingSoundAsync(PlayingSound.Uuid, PlayingSound.Sounds.ToList());
             }
         }
+
+        private void PositionChangeTimer_Tick(object sender, object e)
+        {
+            if (PlayingSound.AudioPlayer.Position != position)
+            {
+                position = PlayingSound.AudioPlayer.Position;
+                PositionChanged?.Invoke(this, new PositionChangedEventArgs(position));
+            }
+        }
         #endregion
 
         #region Functionality
@@ -377,6 +388,13 @@ namespace UniversalSoundboard.Models
             });
         }
 
+        private void InitPositionChangeTimer()
+        {
+            positionChangeTimer = new DispatcherTimer();
+            positionChangeTimer.Interval = TimeSpan.FromMilliseconds(200);
+            positionChangeTimer.Tick += PositionChangeTimer_Tick;
+        }
+
         private async Task<bool> StartAudioPlayer()
         {
             try
@@ -385,6 +403,7 @@ namespace UniversalSoundboard.Models
                     await InitAudioPlayer();
 
                 PlayingSound.AudioPlayer.Play();
+                positionChangeTimer.Start();
             }
             catch (AudioIOException)
             {
@@ -402,6 +421,7 @@ namespace UniversalSoundboard.Models
                     await InitAudioPlayer();
 
                 PlayingSound.AudioPlayer.Pause();
+                positionChangeTimer.Stop();
             }
             catch (AudioIOException)
             {
