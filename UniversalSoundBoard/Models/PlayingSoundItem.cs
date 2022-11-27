@@ -421,7 +421,11 @@ namespace UniversalSoundboard.Models
                     await InitAudioPlayer();
 
                 PlayingSound.AudioPlayer.Pause();
-                positionChangeTimer.Stop();
+
+                await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                {
+                    positionChangeTimer.Stop();
+                });
             }
             catch (AudioIOException)
             {
