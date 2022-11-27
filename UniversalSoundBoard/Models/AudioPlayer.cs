@@ -158,6 +158,8 @@ namespace UniversalSoundboard.Models
                 throw new FileInputNodeInitException(inputNodeResult.Status);
             }
 
+            FileInputNode?.Dispose();
+
             FileInputNode = inputNodeResult.FileInputNode;
             FileInputNode.Seek(position);
             FileInputNode.OutgoingGain = volume;
@@ -253,6 +255,9 @@ namespace UniversalSoundboard.Models
 
         private void setPosition(TimeSpan position)
         {
+            if (FileInputNode != null && position > FileInputNode.Duration)
+                return;
+            
             FileInputNode?.Seek(position);
             this.position = position;
         }

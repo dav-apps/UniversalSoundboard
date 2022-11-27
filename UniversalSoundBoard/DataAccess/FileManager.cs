@@ -1795,7 +1795,7 @@ namespace UniversalSoundboard.DataAccess
             itemViewHolder.PlayingSounds.Remove(playingSound);
         }
         
-        public static async Task<(AudioPlayer, List<Sound>)> CreateAudioPlayer(List<Sound> sounds, int current)
+        public static (AudioPlayer, List<Sound>) CreateAudioPlayer(List<Sound> sounds, int current)
         {
             if (sounds.Count == 0) return (null, null);
 
@@ -1812,17 +1812,7 @@ namespace UniversalSoundboard.DataAccess
                     newSounds.Add(sound);
 
             if (current < newSounds.Count && newSounds[current].AudioFile != null)
-            {
-                try
-                {
-                    audioPlayer.AudioFile = newSounds[current].AudioFile;
-                    await audioPlayer.Init();
-                }
-                catch (AudioIOException e)
-                {
-                    Crashes.TrackError(e);
-                }
-            }
+                audioPlayer.AudioFile = newSounds[current].AudioFile;
 
             // Set the volume
             double appVolume = ((double)itemViewHolder.Volume) / 100;
@@ -2443,7 +2433,7 @@ namespace UniversalSoundboard.DataAccess
                 int.TryParse(playbackSpeedString, out playbackSpeed);
 
             // Create the audio player
-            var createAudioPlayerResult = await CreateAudioPlayer(sounds, current);
+            var createAudioPlayerResult = CreateAudioPlayer(sounds, current);
             AudioPlayer player = createAudioPlayerResult.Item1;
             List<Sound> newSounds = createAudioPlayerResult.Item2;
 

@@ -350,7 +350,7 @@ namespace UniversalSoundboard.Pages
         {
             List<Sound> soundList = new List<Sound> { sound };
 
-            var createAudioPlayerResult = await FileManager.CreateAudioPlayer(soundList, 0);
+            var createAudioPlayerResult = FileManager.CreateAudioPlayer(soundList, 0);
             AudioPlayer player = createAudioPlayerResult.Item1;
             List<Sound> newSounds = createAudioPlayerResult.Item2;
             if (player == null || newSounds == null) return;
@@ -389,7 +389,7 @@ namespace UniversalSoundboard.Pages
                 sounds = sounds.OrderBy(a => random.Next()).ToList();
             }
 
-            var createAudioPlayerResult = await FileManager.CreateAudioPlayer(sounds, 0);
+            var createAudioPlayerResult = FileManager.CreateAudioPlayer(sounds, 0);
             AudioPlayer player = createAudioPlayerResult.Item1;
             List<Sound> newSounds = createAudioPlayerResult.Item2;
             if (player == null || newSounds == null) return;

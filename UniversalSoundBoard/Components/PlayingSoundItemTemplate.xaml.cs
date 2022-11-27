@@ -726,7 +726,9 @@ namespace UniversalSoundboard.Components
                 TotalTimeElement.Text = $"{totalDuration.Hours:D2}:{totalDuration.Minutes:D2}:{totalDuration.Seconds:D2}";
 
             // Set the maximum of the slider
+            skipProgressSliderValueChanged = true;
             ProgressSlider.Maximum = totalDuration.TotalSeconds;
+            skipProgressSliderValueChanged = false;
         }
 
         private async Task SetOutputDevice(string outputDevice)
