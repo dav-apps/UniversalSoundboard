@@ -373,8 +373,6 @@ namespace UniversalSoundboard.Components
 
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
-            UpdateExpandButton();
-
             if (isSoundsListVisible)
             {
                 isSoundsListVisible = false;
@@ -393,6 +391,8 @@ namespace UniversalSoundboard.Components
                 else
                     PlayingSoundItemContainer.TriggerExpandSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
             }
+
+            UpdateExpandButton();
         }
 
         private void VolumeButton_Click(object sender, RoutedEventArgs e)
@@ -949,14 +949,14 @@ namespace UniversalSoundboard.Components
             if (isSoundsListVisible)
             {
                 // Set the icon for the expand button
-                ExpandButton.Content = "\uE099";
-                ExpandButtonToolTip.Text = FileManager.loader.GetString("ExpandButtonTooltip");
+                ExpandButton.Content = "\uE098";
+                ExpandButtonToolTip.Text = FileManager.loader.GetString("CollapseButtonTooltip");
             }
             else
             {
                 // Set the icon for the expand button
-                ExpandButton.Content = "\uE098";
-                ExpandButtonToolTip.Text = FileManager.loader.GetString("CollapseButtonTooltip");
+                ExpandButton.Content = "\uE099";
+                ExpandButtonToolTip.Text = FileManager.loader.GetString("ExpandButtonTooltip");
             }
         }
 
