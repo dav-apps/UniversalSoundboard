@@ -68,6 +68,7 @@ namespace UniversalSoundboard.Models
         public event EventHandler<PlaybackSpeedChangedEventArgs> PlaybackSpeedChanged;
         public event EventHandler<EventArgs> RemovePlayingSound;
         public event EventHandler<DownloadStatusChangedEventArgs> DownloadStatusChanged;
+        public event EventHandler<EventArgs> CollapseSoundsList;
         #endregion
 
         public PlayingSoundItem(PlayingSound playingSound)
@@ -1027,6 +1028,11 @@ namespace UniversalSoundboard.Models
             if (index == -1) return;
 
             PlayingSound.Sounds.RemoveAt(index);
+        }
+
+        public void TriggerCollapseSoundsListEvent(object sender, EventArgs args)
+        {
+            CollapseSoundsList?.Invoke(sender, args);
         }
         #endregion
     }

@@ -681,12 +681,19 @@ namespace UniversalSoundboard.Controllers
             List<Sound> sounds = playingSoundItem.PlayingSound.Sounds.ToList();
             int selectedSoundIndex = playingSoundItem.PlayingSound.Current;
 
+            if (playingSoundItemOfBottomSoundsBar != null)
+            {
+                // Hide the BottomSoundsBar first
+                playingSoundItemOfBottomSoundsBar.TriggerCollapseSoundsListEvent(this, EventArgs.Empty);
+                await HideBottomSoundsBar();
+            }
+
             BottomSoundsBarSounds.Clear();
 
             foreach (var sound in sounds)
                 BottomSoundsBarSounds.Add(sound);
 
-            await Task.Delay(10);
+            await Task.Delay(50);
 
             BottomSoundsBarListView.SelectedIndex = selectedSoundIndex;
             playingSoundItemOfBottomSoundsBar = playingSoundItem;
@@ -760,6 +767,9 @@ namespace UniversalSoundboard.Controllers
 
         public async Task HideBottomSoundsBar()
         {
+            if (playingSoundItemOfBottomSoundsBar == null)
+                return;
+
             playingSoundItemOfBottomSoundsBar.CurrentSoundChanged -= PlayingSoundItem_CurrentSoundChanged;
             playingSoundItemOfBottomSoundsBar = null;
             double bottomPlayingSoundsBarHeightDiff = bottomSoundsBarHeight;
@@ -822,6 +832,8 @@ namespace UniversalSoundboard.Controllers
             GridSplitterGridBottomRowDef.Height = new GridLength(GridSplitterGridBottomRowDef.ActualHeight - bottomPlayingSoundsBarHeightDiff);
             GridSplitterGrid.Translation = new Vector3(0);
             bottomSoundsBarHeight = 0;
+            BottomSoundsBar.Translation = new Vector3(-10000, 0, 0);
+            BottomSoundsBar.Height = double.NaN;
 
             UpdateGridSplitterRange();
         }

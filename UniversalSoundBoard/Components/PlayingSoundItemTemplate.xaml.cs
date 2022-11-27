@@ -105,6 +105,8 @@ namespace UniversalSoundboard.Components
             PlayingSoundItem.RemovePlayingSound += PlayingSoundItem_RemovePlayingSound;
             PlayingSoundItem.DownloadStatusChanged -= PlayingSoundItem_DownloadStatusChanged;
             PlayingSoundItem.DownloadStatusChanged += PlayingSoundItem_DownloadStatusChanged;
+            PlayingSoundItem.CollapseSoundsList -= PlayingSoundItem_CollapseSoundsList;
+            PlayingSoundItem.CollapseSoundsList += PlayingSoundItem_CollapseSoundsList;
 
             FileManager.itemViewHolder.RemovePlayingSoundItem -= ItemViewHolder_RemovePlayingSoundItem;
             FileManager.itemViewHolder.RemovePlayingSoundItem += ItemViewHolder_RemovePlayingSoundItem;
@@ -288,6 +290,12 @@ namespace UniversalSoundboard.Components
                 ProgressSlider.Visibility = Visibility.Visible;
                 DownloadProgressBar.Visibility = Visibility.Collapsed;
             }
+        }
+
+        private void PlayingSoundItem_CollapseSoundsList(object sender, EventArgs e)
+        {
+            isSoundsListVisible = false;
+            UpdateExpandButton();
         }
         #endregion
 
