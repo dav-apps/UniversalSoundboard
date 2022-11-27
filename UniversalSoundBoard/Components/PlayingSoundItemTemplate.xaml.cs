@@ -113,6 +113,7 @@ namespace UniversalSoundboard.Components
 
             SoundsListView.ItemsSource = PlayingSound.Sounds;
             UpdateUI();
+            UpdateExpandButton();
         }
 
         #region UserControl event handlers
@@ -372,6 +373,8 @@ namespace UniversalSoundboard.Components
 
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
+            UpdateExpandButton();
+
             if (isSoundsListVisible)
             {
                 isSoundsListVisible = false;
@@ -380,10 +383,6 @@ namespace UniversalSoundboard.Components
                     Collapse?.Invoke(this, EventArgs.Empty);
                 else
                     PlayingSoundItemContainer.TriggerCollapseSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
-
-                // Set the icon for the expand button
-                ExpandButton.Content = "\uE099";
-                ExpandButtonToolTip.Text = FileManager.loader.GetString("ExpandButtonTooltip");
             }
             else
             {
@@ -393,10 +392,6 @@ namespace UniversalSoundboard.Components
                     Expand?.Invoke(this, EventArgs.Empty);
                 else
                     PlayingSoundItemContainer.TriggerExpandSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
-
-                // Set the icon for the expand button
-                ExpandButton.Content = "\uE098";
-                ExpandButtonToolTip.Text = FileManager.loader.GetString("CollapseButtonTooltip");
             }
         }
 
@@ -946,6 +941,22 @@ namespace UniversalSoundboard.Components
             {
                 PlayPauseButton.Content = "\uE102";
                 PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PlayButtonToolTip");
+            }
+        }
+
+        private void UpdateExpandButton()
+        {
+            if (isSoundsListVisible)
+            {
+                // Set the icon for the expand button
+                ExpandButton.Content = "\uE099";
+                ExpandButtonToolTip.Text = FileManager.loader.GetString("ExpandButtonTooltip");
+            }
+            else
+            {
+                // Set the icon for the expand button
+                ExpandButton.Content = "\uE098";
+                ExpandButtonToolTip.Text = FileManager.loader.GetString("CollapseButtonTooltip");
             }
         }
 
