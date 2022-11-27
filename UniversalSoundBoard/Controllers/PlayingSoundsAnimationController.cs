@@ -185,7 +185,8 @@ namespace UniversalSoundboard.Controllers
 
         private async void BottomSoundsBarListView_SelectionChanged(object sender, SelectionChangedEventArgs args)
         {
-            await playingSoundItemOfBottomSoundsBar.MoveToSound(BottomSoundsBarListView.SelectedIndex);
+            if (playingSoundItemOfBottomSoundsBar != null)
+                await playingSoundItemOfBottomSoundsBar.MoveToSound(BottomSoundsBarListView.SelectedIndex);
         }
 
         private void BottomPlayingSoundsBarGridSplitter_ManipulationDelta(object sender, ManipulationDeltaRoutedEventArgs e)
@@ -677,9 +678,6 @@ namespace UniversalSoundboard.Controllers
 
         public async Task ShowBottomSoundsBar(PlayingSoundItem playingSoundItem)
         {
-            playingSoundItemOfBottomSoundsBar = playingSoundItem;
-            playingSoundItemOfBottomSoundsBar.CurrentSoundChanged += PlayingSoundItem_CurrentSoundChanged;
-
             List<Sound> sounds = playingSoundItem.PlayingSound.Sounds.ToList();
             int selectedSoundIndex = playingSoundItem.PlayingSound.Current;
 
@@ -691,6 +689,9 @@ namespace UniversalSoundboard.Controllers
             await Task.Delay(10);
 
             BottomSoundsBarListView.SelectedIndex = selectedSoundIndex;
+            playingSoundItemOfBottomSoundsBar = playingSoundItem;
+            playingSoundItemOfBottomSoundsBar.CurrentSoundChanged += PlayingSoundItem_CurrentSoundChanged;
+
             bottomSoundsBarHeight = BottomSoundsBar.ActualHeight;
 
             if (bottomSoundsBarHeight > maxBottomSoundsBarHeight)
