@@ -546,7 +546,7 @@ namespace UniversalSoundboard.Tests.DataAccess
             Assert.AreEqual(current, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
             Assert.AreEqual(repetitions, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
             Assert.AreEqual(randomly, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(volume, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(volume, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
             Assert.AreEqual(muted, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
 
             string[] playingSoundTableObjectSoundUuids = playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(',');
@@ -626,7 +626,7 @@ namespace UniversalSoundboard.Tests.DataAccess
             Assert.AreEqual(firstPlayingSoundCurrent, int.Parse(playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
             Assert.AreEqual(firstPlayingSoundRepetitions, int.Parse(playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
             Assert.AreEqual(firstPlayingSoundRandomly, bool.Parse(playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(firstPlayingSoundVolume, int.Parse(playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(firstPlayingSoundVolume, int.Parse(playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
             Assert.AreEqual(firstPlayingSoundMuted, bool.Parse(playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
 
             string[] firstPlayingSoundTableObjectSoundUuids = playingSoundsFromDatabase[0].GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(',');
@@ -637,7 +637,7 @@ namespace UniversalSoundboard.Tests.DataAccess
             Assert.AreEqual(secondPlayingSoundCurrent, int.Parse(playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
             Assert.AreEqual(secondPlayingSoundRepetitions, int.Parse(playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
             Assert.AreEqual(secondPlayingSoundRandomly, bool.Parse(playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(secondPlayingSoundVolume, int.Parse(playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(secondPlayingSoundVolume, int.Parse(playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
             Assert.AreEqual(secondPlayingSoundMuted, bool.Parse(playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
 
             string[] secondPlayingSoundTableObjectSoundUuids = playingSoundsFromDatabase[1].GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(',');
@@ -648,7 +648,7 @@ namespace UniversalSoundboard.Tests.DataAccess
             Assert.AreEqual(thirdPlayingSoundCurrent, int.Parse(playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
             Assert.AreEqual(thirdPlayingSoundRepetitions, int.Parse(playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
             Assert.AreEqual(thirdPlayingSoundRandomly, bool.Parse(playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(thirdPlayingSoundVolume, int.Parse(playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(thirdPlayingSoundVolume, int.Parse(playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
             Assert.AreEqual(thirdPlayingSoundMuted, bool.Parse(playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
 
             string[] thirdPlayingSoundTableObjectSoundUuids = playingSoundsFromDatabase[2].GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(',');
@@ -681,7 +681,7 @@ namespace UniversalSoundboard.Tests.DataAccess
             Assert.AreEqual(current, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableCurrentPropertyName)));
             Assert.AreEqual(repetitions, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRepetitionsPropertyName)));
             Assert.AreEqual(randomly, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableRandomlyPropertyName)));
-            Assert.AreEqual(volume, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolume2PropertyName)));
+            Assert.AreEqual(volume, int.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableVolumePropertyName)));
             Assert.AreEqual(muted, bool.Parse(playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableMutedPropertyName)));
 
             string[] playingSoundTableObjectSoundUuids = playingSoundFromDatabase.GetPropertyValue(FileManager.PlayingSoundTableSoundIdsPropertyName).Split(',');
