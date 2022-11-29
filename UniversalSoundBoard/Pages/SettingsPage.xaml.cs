@@ -2,9 +2,11 @@
 using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
+using UniversalSoundboard.Models;
 using Windows.ApplicationModel.Resources;
 using Windows.System;
 using Windows.UI.Notifications;
@@ -22,6 +24,7 @@ namespace UniversalSoundboard.Pages
         string soundboardSize = "";
         Visibility soundboardSizeVisibility = Visibility.Collapsed;
         Visibility liveTileSettingVisibility = Visibility.Visible;
+        ObservableCollection<Sound> SoundsWithHotkeysList = new ObservableCollection<Sound>();
 
         public SettingsPage()
         {
@@ -65,6 +68,7 @@ namespace UniversalSoundboard.Pages
             SetMultiSoundPlaybackToggle();
             SetShowSoundsPivotToggle();
             SetSoundOrderComboBox();
+            LoadHotkeys();
             SetShowListViewToggle();
             SetShowCategoriesIconsToggle();
             SetShowAcrylicBackgroundToggle();
@@ -182,6 +186,15 @@ namespace UniversalSoundboard.Pages
 
             if (FileManager.itemViewHolder.SoundOrder == NewSoundOrder.Custom)
                 FileManager.itemViewHolder.AllSoundsChanged = true;
+        }
+        #endregion
+
+        #region Hotkeys
+        private void LoadHotkeys()
+        {
+            foreach (var sound in FileManager.itemViewHolder.AllSounds)
+                if (sound.Hotkeys.Count > 0)
+                    SoundsWithHotkeysList.Add(sound);
         }
         #endregion
 

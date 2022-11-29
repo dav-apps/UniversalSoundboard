@@ -7,6 +7,7 @@
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     Loaded="SettingsPage_Loaded">
 
@@ -614,6 +615,40 @@
                             </ComboBox>
                         </components:Setting.ActionContent>
                     </components:Setting>
+                </StackPanel>
+
+                <StackPanel Style="{StaticResource SettingsEntryStyle}">
+                    <winui:Expander
+                        HorizontalAlignment="Stretch"
+                        x:Uid="SettingsEntry-Hotkeys">
+
+                        <StackPanel Orientation="Vertical">
+                            <winui:InfoBar
+                                IsOpen="True"
+                                IsClosable="False"
+                                Severity="Warning"
+                                Title="dav Plus benötigt"
+                                Message="Du benötigst dav Plus, um diese Funktion zu nutzen. Ändere dein Abo, um Tastenkombinationen zu nutzen."
+                                Margin="0,0,0,10" />
+
+                            <TextBlock
+                                Text="Du hast keine Tastenkombinationen registriert."
+                                HorizontalAlignment="Center"
+                                Margin="0,0,0,10" />
+
+                            <ListView
+                                Name="SoundHotkeysListView"
+                                SelectionMode="None"
+                                ItemsSource="{x:Bind SoundsWithHotkeysList}">
+
+                                <ListView.ItemTemplate>
+                                    <DataTemplate x:DataType="models:Sound">
+                                        <components:SettingsHotkeysSoundItem />
+                                    </DataTemplate>
+                                </ListView.ItemTemplate>
+                            </ListView>
+                        </StackPanel>
+                    </winui:Expander>
                 </StackPanel>
 
                 <TextBlock

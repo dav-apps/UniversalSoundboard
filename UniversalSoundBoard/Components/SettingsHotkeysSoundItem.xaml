@@ -1,0 +1,55 @@
+﻿<UserControl
+    x:Class="UniversalSoundboard.Components.SettingsHotkeysSoundItem"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:models="using:UniversalSoundboard.Models"
+    mc:Ignorable="d"
+    d:DesignHeight="300"
+    d:DesignWidth="400">
+
+    <StackPanel
+        Background="#222734"
+        MinHeight="36"
+        Margin="0,4"
+        Padding="13"
+        CornerRadius="2">
+
+        <TextBlock
+            Text="{x:Bind name}"
+            VerticalAlignment="Center"
+            Margin="0,0,0,13" />
+
+        <ListView
+            Name="HotkeyListView"
+            SelectionMode="None"
+            ItemsSource="{x:Bind HotkeyItems}">
+
+            <ListView.ItemContainerStyle>
+                <Style TargetType="ListViewItem">
+                    <Setter Property="Margin" Value="0" />
+                    <Setter Property="Padding" Value="0" />
+                    <Setter Property="MinWidth" Value="0" />
+                    <Setter Property="MinHeight" Value="0" />
+                </Style>
+            </ListView.ItemContainerStyle>
+
+            <ItemsControl.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <controls:WrapPanel
+                        VerticalSpacing="6"
+                        HorizontalSpacing="6" />
+                </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+
+            <ListView.ItemTemplate>
+                <DataTemplate x:DataType="models:HotkeyItem">
+                    <components:HotkeyItemTemplate />
+                </DataTemplate>
+            </ListView.ItemTemplate>
+        </ListView>
+    </StackPanel>
+</UserControl>

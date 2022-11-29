@@ -693,7 +693,7 @@ namespace UniversalSoundboard.Controllers
             foreach (var sound in sounds)
                 BottomSoundsBarSounds.Add(sound);
 
-            await Task.Delay(50);
+            await Task.Delay(100);
 
             BottomSoundsBarListView.SelectedIndex = selectedSoundIndex;
             playingSoundItemOfBottomSoundsBar = playingSoundItem;

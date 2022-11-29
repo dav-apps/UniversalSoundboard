@@ -1059,4 +1059,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="UntitledSound" xml:space="preserve">
     <value>Untitled sound</value>
   </data>
+  <data name="SettingsEntry-Hotkeys.Header" xml:space="preserve">
+    <value>Hotkeys</value>
+  </data>
 </root>
