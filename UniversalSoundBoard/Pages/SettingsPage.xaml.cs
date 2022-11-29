@@ -3,6 +3,7 @@ using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
@@ -287,7 +288,7 @@ namespace UniversalSoundboard.Pages
         #endregion
 
         #region Event handlers
-        private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
                 SetThemeColors();

@@ -9,10 +9,11 @@
     xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     d:DesignHeight="300"
-    d:DesignWidth="400">
+    d:DesignWidth="400"
+    Loaded="UserControl_Loaded">
 
     <StackPanel
-        Background="#222734"
+        Background="{x:Bind background}"
         MinHeight="36"
         Margin="0,4"
         Padding="13"

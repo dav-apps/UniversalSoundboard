@@ -1,4 +1,5 @@
-﻿using UniversalSoundboard.Common;
+﻿using System.ComponentModel;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.UI;
@@ -23,6 +24,12 @@ namespace UniversalSoundboard.Components
         {
             InitializeComponent();
             DataContextChanged += HotkeyItemTemplate_DataContextChanged;
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
+        }
+
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            SetThemeColors();
         }
 
         private void HotkeyItemTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -33,7 +40,18 @@ namespace UniversalSoundboard.Components
             Bindings.Update();
         }
 
-        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        private void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
+                SetThemeColors();
+        }
+
+        private void RemoveButton_Click(object sender, RoutedEventArgs e)
+        {
+            HotkeyItem.Remove();
+        }
+
+        private void SetThemeColors()
         {
             if (FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark)
             {
@@ -47,11 +65,6 @@ namespace UniversalSoundboard.Components
             }
 
             Bindings.Update();
-        }
-
-        private void RemoveButton_Click(object sender, RoutedEventArgs e)
-        {
-            HotkeyItem.Remove();
         }
     }
 }
