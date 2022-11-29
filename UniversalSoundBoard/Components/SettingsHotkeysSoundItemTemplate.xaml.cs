@@ -10,14 +10,14 @@ using Windows.UI.Xaml.Media;
 
 namespace UniversalSoundboard.Components
 {
-    public sealed partial class SettingsHotkeysSoundItem : UserControl
+    public sealed partial class SettingsHotkeysSoundItemTemplate : UserControl
     {
         public Sound Sound;
         public string name = "";
         private SolidColorBrush background = new SolidColorBrush();
         ObservableCollection<HotkeyItem> HotkeyItems = new ObservableCollection<HotkeyItem>();
 
-        public SettingsHotkeysSoundItem()
+        public SettingsHotkeysSoundItemTemplate()
         {
             InitializeComponent();
             DataContextChanged += SettingsHotkeysSoundItem_DataContextChanged;
