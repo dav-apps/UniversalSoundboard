@@ -1061,4 +1061,13 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="SettingsEntry-Hotkeys.Header" xml:space="preserve">
     <value>Raccourcis clavier</value>
   </data>
+  <data name="SettingsEntry-Hotkeys-InfoBar.Message" xml:space="preserve">
+    <value>Les raccourcis ne sont disponibles que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
+  </data>
+  <data name="SettingsEntry-Hotkeys-InfoBar.Title" xml:space="preserve">
+    <value>dav Plus requis</value>
+  </data>
+  <data name="SettingsEntry-Hotkeys-NoHotkeysTextBlock.Text" xml:space="preserve">
+    <value>Vous n'avez enregistré aucun raccourci clavier.</value>
+  </data>
 </root>
