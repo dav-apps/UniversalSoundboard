@@ -646,7 +646,8 @@
 
                                 <ListView.ItemTemplate>
                                     <DataTemplate x:DataType="models:Sound">
-                                        <components:SettingsHotkeysSoundItemTemplate />
+                                        <components:SettingsHotkeysSoundItemTemplate
+                                            Remove="SettingsHotkeysSoundItemTemplate_Remove" />
                                     </DataTemplate>
                                 </ListView.ItemTemplate>
                             </ListView>

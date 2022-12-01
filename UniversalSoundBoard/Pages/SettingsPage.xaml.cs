@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.Linq;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
@@ -301,6 +302,16 @@ namespace UniversalSoundboard.Pages
                 SetThemeColors();
             else if (e.PropertyName.Equals(ItemViewHolder.SoundboardSizeKey))
                 UpdateSoundboardSizeText();
+        }
+
+        private void SettingsHotkeysSoundItemTemplate_Remove(object sender, SoundEventArgs args)
+        {
+            // Remove the sound from the hotkeys sound list
+            int i = SoundsWithHotkeysList.ToList().FindIndex(sound => sound.Uuid.Equals(args.Uuid));
+            if (i != -1) SoundsWithHotkeysList.RemoveAt(i);
+
+            if (SoundsWithHotkeysList.Count == 0)
+                NoHotkeysTextBlock.Visibility = Visibility.Visible;
         }
 
         private async void ExportDataButton_Click(object sender, RoutedEventArgs e)

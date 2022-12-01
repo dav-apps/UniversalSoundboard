@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
@@ -16,6 +17,8 @@ namespace UniversalSoundboard.Components
         public string name = "";
         private SolidColorBrush background = new SolidColorBrush();
         ObservableCollection<HotkeyItem> HotkeyItems = new ObservableCollection<HotkeyItem>();
+
+        public event EventHandler<SoundEventArgs> Remove;
 
         public SettingsHotkeysSoundItemTemplate()
         {
@@ -58,9 +61,24 @@ namespace UniversalSoundboard.Components
                 SetThemeColors();
         }
 
-        private void HotkeyItem_RemoveHotkey(object sender, HotkeyEventArgs e)
+        private async void HotkeyItem_RemoveHotkey(object sender, HotkeyEventArgs e)
         {
-            
+            // Remove the hotkey item from the list
+            HotkeyItems.Remove(sender as HotkeyItem);
+
+            // Remove the hotkey from the list of hotkeys
+            int i = Sound.Hotkeys.FindIndex(h => h.Modifiers == e.Hotkey.Modifiers && h.Key == e.Hotkey.Key);
+            if (i != -1) Sound.Hotkeys.RemoveAt(i);
+
+            // Save the hotkeys of the sound
+            await FileManager.SetHotkeysOfSoundAsync(Sound.Uuid, Sound.Hotkeys);
+
+            // Update the Hotkey process with the new hotkeys
+            await FileManager.StartHotkeyProcess();
+
+            // Remove the sound, if the last hotkey was removed
+            if (HotkeyItems.Count == 0)
+                Remove?.Invoke(this, new SoundEventArgs(Sound.Uuid));
         }
 
         private void SetThemeColors()
