@@ -1,4 +1,5 @@
-﻿using Microsoft.AppCenter.Analytics;
+﻿using davClassLibrary;
+using Microsoft.AppCenter.Analytics;
 using Microsoft.Toolkit.Uwp.Helpers;
 using System;
 using System.Collections.Generic;
@@ -193,9 +194,15 @@ namespace UniversalSoundboard.Pages
         #region Hotkeys
         private void LoadHotkeys()
         {
+            if (!Dav.IsLoggedIn || Dav.User.Plan == 0)
+                HotkeysInfoBar.Visibility = Visibility.Visible;
+
             foreach (var sound in FileManager.itemViewHolder.AllSounds)
                 if (sound.Hotkeys.Count > 0)
                     SoundsWithHotkeysList.Add(sound);
+
+            if (SoundsWithHotkeysList.Count == 0)
+                NoHotkeysTextBlock.Visibility = Visibility.Visible;
         }
         #endregion
 

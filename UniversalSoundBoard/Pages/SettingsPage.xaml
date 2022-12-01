@@ -626,6 +626,7 @@
                             <winui:InfoBar
                                 x:Name="HotkeysInfoBar"
                                 x:Uid="SettingsEntry-Hotkeys-InfoBar"
+                                Visibility="Collapsed"
                                 IsOpen="True"
                                 IsClosable="False"
                                 Severity="Warning"
@@ -634,6 +635,7 @@
                             <TextBlock
                                 Name="NoHotkeysTextBlock"
                                 x:Uid="SettingsEntry-Hotkeys-NoHotkeysTextBlock"
+                                Visibility="Collapsed"
                                 HorizontalAlignment="Center"
                                 Margin="0,0,0,10" />
 
