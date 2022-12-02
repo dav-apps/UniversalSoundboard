@@ -1,4 +1,5 @@
-﻿using System;
+﻿using davClassLibrary;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -301,10 +302,17 @@ namespace UniversalSoundboard.Common
             #endregion
 
             #region useStandardOutputDevice
-            if (localSettings.Values[useStandardOutputDeviceKey] == null)
-                _useStandardOutputDevice = useStandardOutputDeviceDefault;
+            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
+            {
+                if (localSettings.Values[useStandardOutputDeviceKey] == null)
+                    _useStandardOutputDevice = useStandardOutputDeviceDefault;
+                else
+                    _useStandardOutputDevice = (bool)localSettings.Values[useStandardOutputDeviceKey];
+            }
             else
-                _useStandardOutputDevice = (bool)localSettings.Values[useStandardOutputDeviceKey];
+            {
+                _useStandardOutputDevice = useStandardOutputDeviceDefault;
+            }
             #endregion
 
             #region outputDevice

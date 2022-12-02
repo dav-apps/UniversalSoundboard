@@ -285,6 +285,17 @@ namespace UniversalSoundboard.Pages
 
         private async void OutputDeviceItem_Click(object sender, RoutedEventArgs e)
         {
+            // Check if the user is on dav Plus
+            if (!Dav.IsLoggedIn || Dav.User.Plan == 0)
+            {
+                var davPlusOutputDeviceDialog = new DavPlusOutputDeviceDialog();
+                davPlusOutputDeviceDialog.PrimaryButtonClick += DavPlusOutputDeviceContentDialog_PrimaryButtonClick;
+                await davPlusOutputDeviceDialog.ShowAsync();
+
+                UpdateOutputDeviceFlyout();
+                return;
+            }
+
             string outputDevice = (string)(sender as ToggleMenuFlyoutItem).Tag;
 
             if (outputDevice == null)
@@ -299,6 +310,12 @@ namespace UniversalSoundboard.Pages
 
             await Task.Delay(100);
             UpdateOutputDeviceFlyout();
+        }
+
+        private void DavPlusOutputDeviceContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Navigate to the Account page
+            FileManager.NavigateToAccountPage();
         }
 
         private async void WriteReviewInAppNotificationEventArgs_PrimaryButtonClick(object sender, RoutedEventArgs e)

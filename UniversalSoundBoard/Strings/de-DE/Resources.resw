@@ -740,7 +740,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>dav Plus benötigt</value>
   </data>
   <data name="DavPlusOutputDeviceDialog-Content" xml:space="preserve">
-    <value>Das Ändern des Ausgabegeräts für bestimmte geöffnete Sounds ist nur für Nutzer von dav Plus verfügbar. Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
+    <value>Das Ändern des Ausgabegeräts ist nur für Nutzer von dav Plus verfügbar. Melde dich an und ändere dein Abo, um diese Funktion zu nutzen.</value>
   </data>
   <data name="Export-Image" xml:space="preserve">
     <value>Bild exportieren</value>

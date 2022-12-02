@@ -736,13 +736,13 @@ This may take some time, depending on how large the import file is.</value>
     <value>Learn more</value>
   </data>
   <data name="DavPlusHotkeysDialog-Content" xml:space="preserve">
-    <value>Hotkeys are only available for dav Plus users. Log in and upgrade your plan to use this feature.</value>
+    <value>Hotkeys are only available for users of dav Plus. Log in and upgrade your plan to use this feature.</value>
   </data>
   <data name="DavPlusDialog-Title" xml:space="preserve">
     <value>dav Plus required</value>
   </data>
   <data name="DavPlusOutputDeviceDialog-Content" xml:space="preserve">
-    <value>Changing the output device for particular opened sounds is only available for dav Plus users. Log in and upgrade your plan to use this feature.</value>
+    <value>Changing the output device is only available for users of dav Plus. Log in and upgrade your plan to use this feature.</value>
   </data>
   <data name="Export-Image" xml:space="preserve">
     <value>Export image</value>
@@ -1045,7 +1045,7 @@ This may take some time, depending on how large the import file is.</value>
     <value>Get access to the sound recorder</value>
   </data>
   <data name="DavPlusSoundRecorderDialog-Content" xml:space="preserve">
-    <value>Sound recording is only available for dav Plus users. Log in and upgrade your plan to use this feature.</value>
+    <value>Sound recording is only available for users of dav Plus. Log in and upgrade your plan to use this feature.</value>
   </data>
   <data name="SoundRecorderPage-MinimizeWarningInfoBar.Message" xml:space="preserve">
     <value>The app can' t record audio when minimized.</value>
@@ -1063,7 +1063,7 @@ This may take some time, depending on how large the import file is.</value>
     <value>Hotkeys</value>
   </data>
   <data name="SettingsEntry-Hotkeys-InfoBar.Message" xml:space="preserve">
-    <value>Hotkeys are only available for dav Plus users. Log in and upgrade your plan to use this feature.</value>
+    <value>Hotkeys are only available for users of dav Plus. Log in and upgrade your plan to use this feature.</value>
   </data>
   <data name="SettingsEntry-Hotkeys-InfoBar.Title" xml:space="preserve">
     <value>dav Plus required</value>

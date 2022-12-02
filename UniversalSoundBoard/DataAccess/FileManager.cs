@@ -1703,6 +1703,7 @@ namespace UniversalSoundboard.DataAccess
         public static async Task LoadPlayingSoundsAsync()
         {
             var allPlayingSounds = await GetAllPlayingSoundsAsync();
+
             foreach (PlayingSound playingSound in allPlayingSounds)
             {
                 // Delete each PlayingSound if the PlayingSoundBar is hidden or if the user doesn't want to save PlayingSounds
@@ -2425,7 +2426,10 @@ namespace UniversalSoundboard.DataAccess
             if (!string.IsNullOrEmpty(mutedString))
                 bool.TryParse(mutedString, out muted);
 
-            string outputDevice = tableObject.GetPropertyValue(PlayingSoundTableOutputDevicePropertyName);
+            string outputDevice = null;
+
+            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
+                outputDevice = tableObject.GetPropertyValue(PlayingSoundTableOutputDevicePropertyName);
 
             int playbackSpeed = 100;
             string playbackSpeedString = tableObject.GetPropertyValue(PlayingSoundTablePlaybackSpeedPropertyName);
