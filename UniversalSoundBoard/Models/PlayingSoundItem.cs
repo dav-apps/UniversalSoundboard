@@ -42,6 +42,8 @@ namespace UniversalSoundboard.Models
         private bool currentSoundIsDownloading = false;
         private readonly List<(Guid, int)> DownloadProgressList = new List<(Guid, int)>();
         private bool removed = false;
+        private bool updateOutputDeviceRunning = false;
+        private bool runUpdateOutputDeviceAgain = false;
 
         private Timer fadeOutTimer;
         private const int fadeOutTime = 300;
@@ -950,6 +952,14 @@ namespace UniversalSoundboard.Models
         public async Task UpdateOutputDevice()
         {
             if (PlayingSound.AudioPlayer == null) return;
+
+            if (updateOutputDeviceRunning)
+            {
+                runUpdateOutputDeviceAgain = true;
+                return;
+            }
+
+            updateOutputDeviceRunning = true;
             string deviceId = null;
 
             // Get the output device of the PlayingSound or from the settings
@@ -961,6 +971,7 @@ namespace UniversalSoundboard.Models
             if (!string.IsNullOrEmpty(deviceId))
             {
                 DeviceInformation deviceInfo = await FileManager.GetDeviceInformationById(deviceId);
+
                 if (deviceInfo != null && deviceInfo.IsEnabled)
                 {
                     if (PlayingSound.AudioPlayer.OutputDevice == null || PlayingSound.AudioPlayer.OutputDevice.Id != deviceInfo.Id)
@@ -977,11 +988,17 @@ namespace UniversalSoundboard.Models
                         this,
                         new OutputDeviceButtonVisibilityEventArgs(string.IsNullOrEmpty(PlayingSound.OutputDevice) ? Visibility.Collapsed : Visibility.Visible)
                     );
+
+                    await UpdateOutputDeviceEnd();
                     return;
                 }
             }
 
-            if (PlayingSound.AudioPlayer.OutputDevice == null) return;
+            if (PlayingSound.AudioPlayer.OutputDevice == null)
+            {
+                await UpdateOutputDeviceEnd();
+                return;
+            }
 
             try
             {
@@ -990,6 +1007,19 @@ namespace UniversalSoundboard.Models
             }
             catch (Exception) { }
             OutputDeviceButtonVisibilityChanged?.Invoke(this, new OutputDeviceButtonVisibilityEventArgs(Visibility.Collapsed));
+
+            await UpdateOutputDeviceEnd();
+        }
+
+        private async Task UpdateOutputDeviceEnd()
+        {
+            updateOutputDeviceRunning = false;
+
+            if (runUpdateOutputDeviceAgain)
+            {
+                runUpdateOutputDeviceAgain = false;
+                await UpdateOutputDevice();
+            }
         }
 
         public async Task TriggerRemove()

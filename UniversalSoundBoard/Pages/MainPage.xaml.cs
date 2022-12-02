@@ -293,8 +293,8 @@ namespace UniversalSoundboard.Pages
             }
             else
             {
-                FileManager.itemViewHolder.UseStandardOutputDevice = false;
                 FileManager.itemViewHolder.OutputDevice = outputDevice;
+                FileManager.itemViewHolder.UseStandardOutputDevice = false;
             }
 
             await Task.Delay(100);
