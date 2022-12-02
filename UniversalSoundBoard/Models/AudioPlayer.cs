@@ -18,7 +18,8 @@ namespace UniversalSoundboard.Models
         private bool isInitializing = false;
         private StorageFile audioFile;
         private DeviceInformation outputDevice;
-        private bool outputDeviceChanged = false;
+        private bool audioFileChanged = true;
+        private bool outputDeviceChanged = true;
         private bool isPlaying = false;
         private TimeSpan position = TimeSpan.Zero;
         private double volume = 1;
@@ -36,7 +37,7 @@ namespace UniversalSoundboard.Models
         public StorageFile AudioFile
         {
             get => audioFile;
-            set => audioFile = value;
+            set => setAudioFile(value);
         }
         public DeviceInformation OutputDevice
         {
@@ -105,12 +106,21 @@ namespace UniversalSoundboard.Models
 
                 // Create the output node
                 await InitDeviceOutputNode();
-
-                isInitialized = true;
             }
 
-            // Create the input node
-            await InitFileInputNode();
+            if (audioFileChanged || outputDeviceChanged)
+            {
+                // Create the input node
+                await InitFileInputNode();
+
+                if (DeviceOutputNode != null)
+                    FileInputNode.AddOutgoingConnection(DeviceOutputNode);
+
+                outputDeviceChanged = false;
+                audioFileChanged = false;
+            }
+
+            isInitialized = true;
 
             if (IsPlaying)
                 AudioGraph.Start();
@@ -150,6 +160,7 @@ namespace UniversalSoundboard.Models
         {
             FileInputNode?.Stop();
 
+            var oldPosition = FileInputNode?.Position;
             var inputNodeResult = await AudioGraph.CreateFileInputNodeAsync(audioFile);
 
             if (inputNodeResult.Status != AudioFileNodeCreationStatus.Success)
@@ -161,12 +172,12 @@ namespace UniversalSoundboard.Models
             FileInputNode?.Dispose();
 
             FileInputNode = inputNodeResult.FileInputNode;
-            FileInputNode.Seek(position);
+
+            if (oldPosition.HasValue)
+                FileInputNode.Seek(oldPosition.Value);
+
             FileInputNode.OutgoingGain = volume;
             FileInputNode.PlaybackSpeedFactor = playbackRate;
-
-            if (DeviceOutputNode != null)
-                FileInputNode.AddOutgoingConnection(DeviceOutputNode);
 
             if (playbackRate != 1f)
             {
@@ -245,6 +256,14 @@ namespace UniversalSoundboard.Models
         }
 
         #region Setter methods
+        private void setAudioFile(StorageFile audioFile)
+        {
+            if (this.audioFile == audioFile) return;
+
+            this.audioFile = audioFile;
+            audioFileChanged = true;
+        }
+
         private void setOutputDevice(DeviceInformation outputDevice)
         {
             if (this.outputDevice == outputDevice) return;

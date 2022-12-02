@@ -472,13 +472,17 @@ namespace UniversalSoundboard.Models
             }
 
             bool wasPlaying = PlayingSound.AudioPlayer.IsPlaying;
-            PlayingSound.AudioPlayer.AudioFile = audioFile;
+            PlayingSound.AudioPlayer.Pause();
             PlayingSound.AudioPlayer.Position = TimeSpan.Zero;
+            PlayingSound.AudioPlayer.AudioFile = audioFile;
             PlayingSound.AudioPlayer.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
             await InitAudioPlayer();
 
             if (wasPlaying || startPlaying)
+            {
                 await SetPlayPause(true);
+                PlayingSound.AudioPlayer.Play();
+            }
 
             // Save the new Current
             await FileManager.SetCurrentOfPlayingSoundAsync(PlayingSound.Uuid, index);
