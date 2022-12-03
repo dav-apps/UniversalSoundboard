@@ -724,13 +724,13 @@ This may take some time, depending on how large the import file is.</value>
     <value>Assign hotkeys to sounds</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock1.Text" xml:space="preserve">
-    <value>With this feature you can set the output device for each opened sound separately.</value>
+    <value>Use this feature to set the output device for the entire app and for each opened sound separately.</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock2.Text" xml:space="preserve">
     <value>This also makes it possible to play different sounds on different devices at the same time.</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceTextBlock.Text" xml:space="preserve">
-    <value>Set the output device for each playing sound individually</value>
+    <value>Change the output device</value>
   </data>
   <data name="Actions-LearnMore" xml:space="preserve">
     <value>Learn more</value>

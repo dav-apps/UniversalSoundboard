@@ -222,34 +222,6 @@
                                 Style="{StaticResource PlusCardBorder}"
                                 Visibility="{x:Bind davPlusHotkeyFeatureVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                            <Grid
-                                Padding="20,12"
-                                Visibility="{x:Bind davPlusHotkeyFeatureVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
-                                
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-                                
-                                <TextBlock
-                                    x:Uid="Account-PlusCardFeature-HotkeysTextBlock"
-                                    Style="{StaticResource PlusCardFeatureTextStyle}" />
-
-                                <Button Style="{StaticResource InfoButtonStyle}">
-                                    <Button.Flyout>
-                                        <Flyout>
-                                            <StackPanel MaxWidth="300">
-                                                <TextBlock
-                                                    x:Uid="Account-PlusCardFeature-HotkeysFlyoutTextBlock"
-                                                    TextWrapping="WrapWholeWords" />
-                                            </StackPanel>
-                                        </Flyout>
-                                    </Button.Flyout>
-                                </Button>
-                            </Grid>
-
-                            <StackPanel Name="PlusCardBorder4" Style="{StaticResource PlusCardBorder}" />
-
                             <Grid Padding="20,12">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
@@ -266,6 +238,34 @@
                                             <StackPanel MaxWidth="300">
                                                 <TextBlock
                                                     x:Uid="Account-PlusCardFeature-SoundRecorderFlyoutTextBlock"
+                                                    TextWrapping="WrapWholeWords" />
+                                            </StackPanel>
+                                        </Flyout>
+                                    </Button.Flyout>
+                                </Button>
+                            </Grid>
+
+                            <StackPanel Name="PlusCardBorder4" Style="{StaticResource PlusCardBorder}" />
+
+                            <Grid
+                                Padding="20,12"
+                                Visibility="{x:Bind davPlusHotkeyFeatureVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock
+                                    x:Uid="Account-PlusCardFeature-HotkeysTextBlock"
+                                    Style="{StaticResource PlusCardFeatureTextStyle}" />
+
+                                <Button Style="{StaticResource InfoButtonStyle}">
+                                    <Button.Flyout>
+                                        <Flyout>
+                                            <StackPanel MaxWidth="300">
+                                                <TextBlock
+                                                    x:Uid="Account-PlusCardFeature-HotkeysFlyoutTextBlock"
                                                     TextWrapping="WrapWholeWords" />
                                             </StackPanel>
                                         </Flyout>

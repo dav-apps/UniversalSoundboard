@@ -723,13 +723,13 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
     <value>Attribuer des raccourcis clavier aux sons</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock1.Text" xml:space="preserve">
-    <value>Cette fonction vous permet de définir le périphérique de sortie séparément pour chaque son ouvert.</value>
+    <value>Cette fonction vous permet de régler le périphérique de sortie pour toute l'application et séparément pour chaque son ouvert.</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock2.Text" xml:space="preserve">
     <value>Cela permet aussi de jouer différents sons sur différents appareils en même temps.</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceTextBlock.Text" xml:space="preserve">
-    <value>Réglez le périphérique de sortie pour chaque son individuellement</value>
+    <value>Modifier le périphérique de sortie</value>
   </data>
   <data name="Actions-LearnMore" xml:space="preserve">
     <value>Plus d’informations</value>

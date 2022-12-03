@@ -722,13 +722,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>Ordne Tastenkombinationen zu Sounds zu</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock1.Text" xml:space="preserve">
-    <value>Mit dieser Funktion kannst du das Ausgabegerät für jeden geöffneten Sound separat einstellen.</value>
+    <value>Mit dieser Funktion kannst du das Ausgabegerät für die gesamte App und separat für einzelne geöffnete Sounds einstellen.</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock2.Text" xml:space="preserve">
     <value>Damit ist es auch möglich, unterschiedliche Sounds auf unterschiedlichen Geräten gleichzeitig abzuspielen.</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceTextBlock.Text" xml:space="preserve">
-    <value>Lege das Ausgabegerät für jeden Sound individuell fest</value>
+    <value>Ändere das Ausgabegerät</value>
   </data>
   <data name="Actions-LearnMore" xml:space="preserve">
     <value>Mehr erfahren</value>
