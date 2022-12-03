@@ -219,7 +219,7 @@ namespace UniversalSoundboard.Pages
                         var dialog = Dialog.CurrentlyVisibleDialog as DownloadFilesDialog;
 
                         // Check if this value belongs to a sound in the Download dialog
-                        int i = dialog.Sounds.FindIndex(sound => sound.AudioFileTableObject.Uuid.Equals(e.Uuid));
+                        int i = dialog.Sounds.ToList().FindIndex(sound => sound.AudioFileTableObject.Uuid.Equals(e.Uuid));
 
                         if (i != -1)
                         {
@@ -240,25 +240,22 @@ namespace UniversalSoundboard.Pages
             {
                 await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    // Check if the DownloadFilesDialog is visible
                     if (Dialog.CurrentlyVisibleDialog != null && Dialog.CurrentlyVisibleDialog is DownloadFilesDialog)
                     {
                         var dialog = Dialog.CurrentlyVisibleDialog as DownloadFilesDialog;
 
-                        foreach (var sound in dialog.Sounds)
-                        {
-                            var downloadStatus = sound.GetAudioFileDownloadStatus();
+                        // Remove all downloaded sounds from the dialog
+                        List<Sound> downloadedSounds = new List<Sound>();
 
-                            if (
-                                downloadStatus == TableObjectFileDownloadStatus.Downloading
-                                || downloadStatus == TableObjectFileDownloadStatus.NotDownloaded
-                            )
-                            {
-                                // Close the dialog
-                                dialog.Hide();
-                                break;
-                            }
-                        }
+                        foreach (var sound in dialog.Sounds)
+                            if (sound.GetAudioFileDownloadStatus() == TableObjectFileDownloadStatus.Downloaded)
+                                downloadedSounds.Add(sound);
+
+                        foreach (var sound in downloadedSounds)
+                            dialog.Sounds.Remove(sound);
+
+                        if (dialog.Sounds.Count == 0)
+                            dialog.Hide();
                     }
                 });
             }

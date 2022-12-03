@@ -19,11 +19,13 @@ namespace UniversalSoundboard.Components
         private void SoundFileDownloadProgressTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             if (DataContext == null) return;
+
             Sound = DataContext as Sound;
             Bindings.Update();
 
             // Schedule the file download
             var downloadStatus = Sound.GetAudioFileDownloadStatus();
+
             if (
                 downloadStatus == TableObjectFileDownloadStatus.Downloading
                 || downloadStatus == TableObjectFileDownloadStatus.NotDownloaded
@@ -42,7 +44,7 @@ namespace UniversalSoundboard.Components
 
         private void DownloadProgress((Guid, int) value)
         {
-            if(value.Item2 < 0)
+            if (value.Item2 < 0)
             {
                 // There was an error
                 DownloadProgressBar.Visibility = Visibility.Collapsed;

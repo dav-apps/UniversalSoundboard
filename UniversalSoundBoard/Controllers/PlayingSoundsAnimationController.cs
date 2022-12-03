@@ -648,6 +648,8 @@ namespace UniversalSoundboard.Controllers
 
         public void Init()
         {
+            if (playingSoundsLoaded) return;
+
             showBottomPlayingSoundsBar = IsMobile || !FileManager.itemViewHolder.OpenMultipleSounds;
             LoadPlayingSoundItems();
             playingSoundsLoaded = true;

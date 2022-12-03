@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
     xmlns:models="using:UniversalSoundboard.Models"
@@ -696,7 +697,7 @@
                     ThumbToolTipValueConverter="{StaticResource MediaElementSliderTooltipConverter}"
                     ValueChanged="ProgressSlider_ValueChanged" />
 
-                <ProgressBar
+                <winui:ProgressBar
                     x:Name="DownloadProgressBar"
                     RelativePanel.AlignVerticalCenterWith="RemainingTimeElement"
                     Height="4"

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.UI.Xaml;
@@ -8,7 +9,7 @@ namespace UniversalSoundboard.Dialogs
 {
     public class DownloadFilesDialog : Dialog
     {
-        public List<Sound> Sounds { get; private set; }
+        public ObservableCollection<Sound> Sounds { get; private set; }
 
         public DownloadFilesDialog(
             List<Sound> sounds,
@@ -19,7 +20,7 @@ namespace UniversalSoundboard.Dialogs
                   FileManager.loader.GetString("Actions-Cancel")
             )
         {
-            Sounds = sounds;
+            Sounds = new ObservableCollection<Sound>(sounds);
             Content = GetContent(itemTemplate, itemStyle);
         }
 
