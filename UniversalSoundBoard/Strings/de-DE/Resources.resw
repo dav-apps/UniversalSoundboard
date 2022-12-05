@@ -388,9 +388,6 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SignupButton.Content" xml:space="preserve">
     <value>Registrieren</value>
   </data>
-  <data name="DownloadFileDialog-Title" xml:space="preserve">
-    <value>{0} wird heruntergeladen...</value>
-  </data>
   <data name="DownloadFileErrorDialog-Message" xml:space="preserve">
     <value>Bitte überprüfe deine Internetverbindung und versuche es erneut.</value>
   </data>

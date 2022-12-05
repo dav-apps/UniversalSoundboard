@@ -390,9 +390,6 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SignupButton.Content" xml:space="preserve">
     <value>Sign up</value>
   </data>
-  <data name="DownloadFileDialog-Title" xml:space="preserve">
-    <value>Downloading file {0}...</value>
-  </data>
   <data name="DownloadFileErrorDialog-Message" xml:space="preserve">
     <value>Please check your internet connection and try it again.</value>
   </data>
