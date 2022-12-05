@@ -29,11 +29,7 @@ namespace UniversalSoundboard.Components
 
         public event EventHandler<EventArgs> ImageUpdated;
 
-        private readonly ResourceLoader loader = new ResourceLoader();
-        private DownloadFileDialog downloadFileDialog;
-        private bool downloadFileWasCanceled = false;
-        private bool downloadFileThrewError = false;
-        private bool downloadFileIsExecuting = false;
+        private bool downloadFilesCanceled = false;
         private List<StorageFile> soundFiles = new List<StorageFile>();
         private string exportedFilePath = "";
 
@@ -148,7 +144,7 @@ namespace UniversalSoundboard.Components
 
             DataRequest request = args.Request;
             request.Data.SetStorageItems(soundFiles);
-            request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
+            request.Data.Properties.Title = FileManager.loader.GetString("ShareDialog-Title");
             request.Data.Properties.Description = soundFiles.First().Name;
         }
         #endregion
@@ -185,11 +181,11 @@ namespace UniversalSoundboard.Components
                 // Show InAppNotification
                 ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
                     InAppNotificationType.SoundExport,
-                    loader.GetString("InAppNotification-SoundExportSuccessful"),
+                    FileManager.loader.GetString("InAppNotification-SoundExportSuccessful"),
                     8000,
                     false,
                     true,
-                    loader.GetString("Actions-OpenFolder")
+                    FileManager.loader.GetString("Actions-OpenFolder")
                 );
 
                 args.PrimaryButtonClick += Export_InAppNotification_PrimaryButtonClick;
@@ -244,11 +240,11 @@ namespace UniversalSoundboard.Components
                 // Show InAppNotification
                 ShowInAppNotificationEventArgs args = new ShowInAppNotificationEventArgs(
                     InAppNotificationType.ImageExport,
-                    loader.GetString("InAppNotification-ImageExportSuccessful"),
+                    FileManager.loader.GetString("InAppNotification-ImageExportSuccessful"),
                     8000,
                     false,
                     true,
-                    loader.GetString("Actions-OpenFolder")
+                    FileManager.loader.GetString("Actions-OpenFolder")
                 );
 
                 args.PrimaryButtonClick += Export_InAppNotification_PrimaryButtonClick;
@@ -413,65 +409,28 @@ namespace UniversalSoundboard.Components
         private async Task<bool> DownloadFile()
         {
             var downloadStatus = sound.GetAudioFileDownloadStatus();
-            if (downloadStatus == TableObjectFileDownloadStatus.NoFileOrNotLoggedIn) return false;
 
-            if (downloadStatus != TableObjectFileDownloadStatus.Downloaded)
+            if (
+                downloadStatus == TableObjectFileDownloadStatus.NoFileOrNotLoggedIn
+                || downloadStatus == TableObjectFileDownloadStatus.Downloaded
+            ) return true;
+
+            var downloadFilesDialog = new DownloadFilesDialog(new List<Sound> { sound }, MainPage.soundFileDownloadProgressTemplate, MainPage.listViewItemStyle);
+            downloadFilesDialog.CloseButtonClick += DownloadFilesContentDialog_CloseButtonClick;
+            await downloadFilesDialog.ShowAsync();
+
+            if (downloadFilesCanceled)
             {
-                // Download the file and show the download dialog
-                downloadFileIsExecuting = true;
-                Progress<(Guid, int)> progress = new Progress<(Guid, int)>(FileDownloadProgress);
-                sound.ScheduleAudioFileDownload(progress);
-
-                downloadFileDialog = new DownloadFileDialog($"{sound.Name}.{sound.GetAudioFileExtension()}");
-                downloadFileDialog.CloseButtonClick += DownloadFileContentDialog_CloseButtonClick;
-                await downloadFileDialog.ShowAsync();
-            }
-
-            if (downloadFileWasCanceled)
-            {
-                downloadFileWasCanceled = false;
-                return false;
-            }
-
-            if (downloadFileThrewError)
-            {
-                await new DownloadFileErrorDialog().ShowAsync();
-                downloadFileThrewError = false;
+                downloadFilesCanceled = false;
                 return false;
             }
 
             return true;
         }
 
-        private void FileDownloadProgress((Guid, int) value)
+        private void DownloadFilesContentDialog_CloseButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (!downloadFileIsExecuting) return;
-
-            if (value.Item2 < 0)
-            {
-                // There was an error
-                downloadFileThrewError = true;
-                downloadFileIsExecuting = false;
-                downloadFileDialog.Hide();
-            }
-            else if (value.Item2 > 100)
-            {
-                // Download was successful
-                downloadFileThrewError = false;
-                downloadFileIsExecuting = false;
-                downloadFileDialog.Hide();
-            }
-            else
-            {
-                downloadFileDialog.ProgressBar.IsIndeterminate = false;
-                downloadFileDialog.ProgressBar.Value = value.Item2;
-            }
-        }
-
-        private void DownloadFileContentDialog_CloseButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            downloadFileWasCanceled = true;
-            downloadFileIsExecuting = false;
+            downloadFilesCanceled = true;
         }
         #endregion
     }

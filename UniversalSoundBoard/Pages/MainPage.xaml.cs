@@ -53,6 +53,8 @@ namespace UniversalSoundboard.Pages
         bool mobileSearchVisible = false;                                   // If true, the app window is small, the search box is visible and the other top buttons are hidden
         bool playingSoundsLoaded = false;
         public static Style infoButtonStyle;
+        public static Style listViewItemStyle;
+        public static DataTemplate soundFileDownloadProgressTemplate;
         public static double windowWidth = 500;
         public static uint screenWidth = 0;
         public static uint screenHeight = 0;
@@ -344,6 +346,8 @@ namespace UniversalSoundboard.Pages
         {
             // Init the static styles
             infoButtonStyle = Resources["InfoButtonStyle"] as Style;
+            listViewItemStyle = Resources["ListViewItemStyle"] as Style;
+            soundFileDownloadProgressTemplate = Resources["SoundFileDownloadProgressTemplate"] as DataTemplate;
 
             SideBar.ExpandedModeThresholdWidth = FileManager.sideBarCollapsedMaxWidth;
 
@@ -1906,6 +1910,7 @@ namespace UniversalSoundboard.Pages
             if (sharedFiles.Count == 0) return;
 
             string description = loader.GetString("ShareDialog-MultipleSounds");
+
             if (sharedFiles.Count == 1)
                 description = sharedFiles.First().Name;
 
@@ -1925,12 +1930,10 @@ namespace UniversalSoundboard.Pages
         #region File download
         private async Task<bool> DownloadSelectedFiles()
         {
-            List<Sound> soundsToDownload;
+            List<Sound> soundsToDownload = new List<Sound>();
 
             if (Dav.IsLoggedIn)
             {
-                soundsToDownload = new List<Sound>();
-
                 // Get all sounds that need to be downloaded
                 foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
                 {
@@ -1942,21 +1945,13 @@ namespace UniversalSoundboard.Pages
                     ) soundsToDownload.Add(sound);
                 }
             }
-            else
-            {
-                soundsToDownload = FileManager.itemViewHolder.SelectedSounds.ToList();
-            }
 
             if (soundsToDownload.Count > 0)
             {
                 downloadFilesCanceled = false;
 
-                var itemTemplate = (DataTemplate)Resources["SoundFileDownloadProgressTemplate"];
-                var itemStyle = Resources["ListViewItemStyle"] as Style;
-
-                var downloadFilesDialog = new DownloadFilesDialog(soundsToDownload, itemTemplate, itemStyle);
+                var downloadFilesDialog = new DownloadFilesDialog(soundsToDownload, soundFileDownloadProgressTemplate, listViewItemStyle);
                 downloadFilesDialog.CloseButtonClick += DownloadFilesContentDialog_CloseButtonClick;
-
                 await downloadFilesDialog.ShowAsync();
 
                 if (downloadFilesCanceled)
