@@ -31,7 +31,6 @@ namespace UniversalSoundboard.Components
                 || downloadStatus == TableObjectFileDownloadStatus.NotDownloaded
             )
             {
-                DownloadProgressBar.Visibility = Visibility.Visible;
                 DownloadProgressBar.IsIndeterminate = true;
 
                 Sound.AudioFileTableObject.ScheduleFileDownload(new Progress<(Guid, int)>(DownloadProgress));
@@ -42,21 +41,29 @@ namespace UniversalSoundboard.Components
             }
         }
 
+        private void RetryDownloadButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Reset the progress bar
+            DownloadProgressBar.ShowError = false;
+            DownloadProgressBar.IsIndeterminate = true;
+            RetryDownloadButton.Visibility = Visibility.Collapsed;
+
+            // Try to download the file again
+            Sound.AudioFileTableObject.ScheduleFileDownload(new Progress<(Guid, int)>(DownloadProgress));
+        }
+
         private void DownloadProgress((Guid, int) value)
         {
             if (value.Item2 < 0)
             {
                 // There was an error
-                DownloadProgressBar.Visibility = Visibility.Collapsed;
+                DownloadProgressBar.ShowError = true;
+
+                // Show the button for retrying the download
+                RetryDownloadButton.Visibility = Visibility.Visible;
             }
-            else if (value.Item2 > 100)
+            else if (value.Item2 >= 0 && value.Item2 <= 100)
             {
-                // Download was successful
-                DownloadProgressBar.Visibility = Visibility.Collapsed;
-            }
-            else
-            {
-                DownloadProgressBar.Visibility = Visibility.Visible;
                 DownloadProgressBar.IsIndeterminate = false;
                 DownloadProgressBar.Value = value.Item2;
             }

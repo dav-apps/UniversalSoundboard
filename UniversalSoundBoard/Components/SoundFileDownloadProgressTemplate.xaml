@@ -9,11 +9,16 @@
     d:DesignHeight="300"
     d:DesignWidth="400">
 
-    <RelativePanel>
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="2*" />
+            <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        
         <TextBlock
             Name="NameTextBlock"
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignVerticalCenterWithPanel="True"
+            VerticalAlignment="Center"
             Text="{x:Bind Sound.Name}"
             Width="180"
             Margin="0,0,10,0">
@@ -25,10 +30,22 @@
 
         <winui:ProgressBar
             Name="DownloadProgressBar"
-            RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.RightOf="NameTextBlock"
-            RelativePanel.AlignVerticalCenterWithPanel="True"
+            Grid.Column="1"
             Margin="10,0"
             IsIndeterminate="True" />
-    </RelativePanel>
+
+        <Button
+            Name="RetryDownloadButton"
+            Grid.Column="2"
+            Style="{StaticResource ButtonRevealStyle}"
+            Visibility="Collapsed"
+            Background="Transparent"
+            Padding="0"
+            FontFamily="{StaticResource FluentIconsFontFamily}"
+            FontSize="14"
+            Content="&#xE149;"
+            Height="35"
+            Width="35"
+            Click="RetryDownloadButton_Click" />
+    </Grid>
 </UserControl>

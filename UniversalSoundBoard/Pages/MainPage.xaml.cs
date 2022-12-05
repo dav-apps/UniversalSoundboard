@@ -49,9 +49,7 @@ namespace UniversalSoundboard.Pages
         private List<string> Suggestions = new List<string>();              // The suggestions for the SearchAutoSuggestBox
         private List<StorageFile> sharedFiles = new List<StorageFile>();    // The files that get shared
         bool selectionButtonsEnabled = false;                               // If true, the buttons for multi selection are enabled
-        bool downloadFilesDialogIsVisible = false;
         bool downloadFilesCanceled = false;
-        bool downloadFilesFailed = false;
         bool mobileSearchVisible = false;                                   // If true, the app window is small, the search box is visible and the other top buttons are hidden
         bool playingSoundsLoaded = false;
         public static Style infoButtonStyle;
@@ -77,7 +75,6 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.UserPlanChanged += ItemViewHolder_UserPlanChanged;
             FileManager.itemViewHolder.CategoryUpdated += ItemViewHolder_CategoryUpdated;
             FileManager.itemViewHolder.CategoryDeleted += ItemViewHolder_CategoryDeleted;
-            FileManager.itemViewHolder.TableObjectFileDownloadProgressChanged += ItemViewHolder_TableObjectFileDownloadProgressChanged;
             FileManager.itemViewHolder.TableObjectFileDownloadCompleted += ItemViewHolder_TableObjectFileDownloadCompleted;
             FileManager.itemViewHolder.SelectedSounds.CollectionChanged += SelectedSounds_CollectionChanged;
             FileManager.itemViewHolder.SoundDownload += ItemViewHolder_SoundDownload;
@@ -207,58 +204,28 @@ namespace UniversalSoundboard.Pages
             RemoveCategoryMenuItem(menuItems, args.Uuid);
         }
 
-        private async void ItemViewHolder_TableObjectFileDownloadProgressChanged(object sender, TableObjectFileDownloadProgressChangedEventArgs e)
-        {
-            if (e.Value == -1)
-            {
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
-                {
-                    // Check if the DownloadFilesDialog is visible
-                    if (Dialog.CurrentlyVisibleDialog != null && Dialog.CurrentlyVisibleDialog is DownloadFilesDialog)
-                    {
-                        var dialog = Dialog.CurrentlyVisibleDialog as DownloadFilesDialog;
-
-                        // Check if this value belongs to a sound in the Download dialog
-                        int i = dialog.Sounds.ToList().FindIndex(sound => sound.AudioFileTableObject.Uuid.Equals(e.Uuid));
-
-                        if (i != -1)
-                        {
-                            // Show download error dialog
-                            downloadFilesFailed = true;
-
-                            // Close the download files dialog
-                            dialog.Hide();
-                        }
-                    }
-                });
-            }
-        }
-
         private async void ItemViewHolder_TableObjectFileDownloadCompleted(object sender, TableObjectFileDownloadCompletedEventArgs e)
         {
-            if (downloadFilesDialogIsVisible && !downloadFilesFailed)
+            await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
-                await Dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+                if (Dialog.CurrentlyVisibleDialog != null && Dialog.CurrentlyVisibleDialog is DownloadFilesDialog)
                 {
-                    if (Dialog.CurrentlyVisibleDialog != null && Dialog.CurrentlyVisibleDialog is DownloadFilesDialog)
-                    {
-                        var dialog = Dialog.CurrentlyVisibleDialog as DownloadFilesDialog;
+                    var dialog = Dialog.CurrentlyVisibleDialog as DownloadFilesDialog;
 
-                        // Remove all downloaded sounds from the dialog
-                        List<Sound> downloadedSounds = new List<Sound>();
+                    // Remove all downloaded sounds from the dialog
+                    List<Sound> downloadedSounds = new List<Sound>();
 
-                        foreach (var sound in dialog.Sounds)
-                            if (sound.GetAudioFileDownloadStatus() == TableObjectFileDownloadStatus.Downloaded)
-                                downloadedSounds.Add(sound);
+                    foreach (var sound in dialog.Sounds)
+                        if (sound.GetAudioFileDownloadStatus() == TableObjectFileDownloadStatus.Downloaded)
+                            downloadedSounds.Add(sound);
 
-                        foreach (var sound in downloadedSounds)
-                            dialog.Sounds.Remove(sound);
+                    foreach (var sound in downloadedSounds)
+                        dialog.Sounds.Remove(sound);
 
-                        if (dialog.Sounds.Count == 0)
-                            dialog.Hide();
-                    }
-                });
-            }
+                    if (dialog.Sounds.Count == 0)
+                        dialog.Hide();
+                }
+            });
         }
 
         private void SelectedSounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -1958,50 +1925,43 @@ namespace UniversalSoundboard.Pages
         #region File download
         private async Task<bool> DownloadSelectedFiles()
         {
-            var selectedSounds = FileManager.itemViewHolder.SelectedSounds;
-            bool showDownloadFilesDialog = false;
+            List<Sound> soundsToDownload;
 
             if (Dav.IsLoggedIn)
             {
-                // Check if any of the sounds needs to be downloaded
-                foreach(var sound in selectedSounds)
+                soundsToDownload = new List<Sound>();
+
+                // Get all sounds that need to be downloaded
+                foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
                 {
                     var downloadStatus = sound.GetAudioFileDownloadStatus();
 
                     if (
                         downloadStatus == TableObjectFileDownloadStatus.Downloading
                         || downloadStatus == TableObjectFileDownloadStatus.NotDownloaded
-                    )
-                    {
-                        showDownloadFilesDialog = true;
-                        break;
-                    }
+                    ) soundsToDownload.Add(sound);
                 }
             }
-
-            if (showDownloadFilesDialog)
+            else
             {
+                soundsToDownload = FileManager.itemViewHolder.SelectedSounds.ToList();
+            }
+
+            if (soundsToDownload.Count > 0)
+            {
+                downloadFilesCanceled = false;
+
                 var itemTemplate = (DataTemplate)Resources["SoundFileDownloadProgressTemplate"];
                 var itemStyle = Resources["ListViewItemStyle"] as Style;
 
-                var downloadFilesDialog = new DownloadFilesDialog(selectedSounds.ToList(), itemTemplate, itemStyle);
+                var downloadFilesDialog = new DownloadFilesDialog(soundsToDownload, itemTemplate, itemStyle);
                 downloadFilesDialog.CloseButtonClick += DownloadFilesContentDialog_CloseButtonClick;
 
-                downloadFilesDialogIsVisible = true;
                 await downloadFilesDialog.ShowAsync();
-                downloadFilesDialogIsVisible = false;
 
                 if (downloadFilesCanceled)
                 {
                     downloadFilesCanceled = false;
-                    return false;
-                }
-                else if (downloadFilesFailed)
-                {
-                    downloadFilesFailed = false;
-
-                    // Show the error dialog
-                    await new DownloadFileErrorDialog().ShowAsync();
                     return false;
                 }
             }
@@ -2251,6 +2211,7 @@ namespace UniversalSoundboard.Pages
             if (!await DownloadSelectedFiles()) return;
 
             List<Sound> sounds = new List<Sound>();
+
             foreach (var sound in FileManager.itemViewHolder.SelectedSounds)
                 sounds.Add(sound);
 
