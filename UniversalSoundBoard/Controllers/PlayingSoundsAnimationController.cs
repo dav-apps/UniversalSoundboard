@@ -166,6 +166,16 @@ namespace UniversalSoundboard.Controllers
                     BottomPlayingSoundsBar.Height = double.NaN;
                     bottomSoundsBarHeight = 0;
 
+                    if (playingSoundItemOfBottomSoundsBar != null)
+                    {
+                        // Hide the BottomSoundsBar
+                        playingSoundItemOfBottomSoundsBar.TriggerCollapseSoundsListEvent(this, EventArgs.Empty);
+                        playingSoundItemOfBottomSoundsBar = null;
+
+                        BottomSoundsBar.Translation = new Vector3(-10000, 0, 0);
+                        BottomSoundsBar.Height = double.NaN;
+                    }
+
                     // Show the PlayingSounds in the normal PlayingSoundsBar
                     foreach (var item in PlayingSoundItemContainers)
                     {
