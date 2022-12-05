@@ -17,7 +17,6 @@ using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using Windows.ApplicationModel.Core;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Graphics.Display;
 using Windows.Storage;
@@ -37,7 +36,6 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class MainPage : Page
     {
-        readonly ResourceLoader loader = new ResourceLoader();
         public static CoreDispatcher dispatcher;                            // Dispatcher for ShareTargetPage
         string appTitle = "UniversalSoundboard";                            // The app name displayed in the title bar
         public static AppWindow soundRecorderAppWindow;
@@ -481,11 +479,11 @@ namespace UniversalSoundboard.Pages
                 // Show InAppNotification for writing a review
                 var args = new ShowInAppNotificationEventArgs(
                     InAppNotificationType.WriteReview,
-                    loader.GetString("InAppNotification-WriteReview"),
+                    FileManager.loader.GetString("InAppNotification-WriteReview"),
                     0,
                     false,
                     true,
-                    loader.GetString("Actions-WriteReview")
+                    FileManager.loader.GetString("Actions-WriteReview")
                 );
                 args.PrimaryButtonClick += WriteReviewInAppNotificationEventArgs_PrimaryButtonClick;
 
@@ -505,7 +503,7 @@ namespace UniversalSoundboard.Pages
 
             ToggleMenuFlyoutItem standardItem = new ToggleMenuFlyoutItem
             {
-                Text = loader.GetString("StandardOutputDevice"),
+                Text = FileManager.loader.GetString("StandardOutputDevice"),
                 IsChecked = true
             };
 
@@ -548,7 +546,7 @@ namespace UniversalSoundboard.Pages
             // Show IAN for continuing playlist download
             var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
                 InAppNotificationType.ContinuePlaylistDownload,
-                string.Format(loader.GetString("InAppNotification-ContinuePlaylistDownload"), 1, soundDownloadStateItems.SoundItems.Count),
+                string.Format(FileManager.loader.GetString("InAppNotification-ContinuePlaylistDownload"), 1, soundDownloadStateItems.SoundItems.Count),
                 0,
                 false,
                 true,
@@ -1082,14 +1080,14 @@ namespace UniversalSoundboard.Pages
 
                 MenuFlyoutItem playSoundsSuccessivelyFlyoutItem = new MenuFlyoutItem
                 {
-                    Text = loader.GetString("PlaySoundsSuccessively")
+                    Text = FileManager.loader.GetString("PlaySoundsSuccessively")
                 };
                 playSoundsSuccessivelyFlyoutItem.Click += PlaySoundsSuccessivelyFlyoutItem_Click;
                 flyout.Items.Add(playSoundsSuccessivelyFlyoutItem);
 
                 MenuFlyoutItem playSoundsSimultaneouslyFlyouItem = new MenuFlyoutItem
                 {
-                    Text = loader.GetString("PlaySoundsSimultaneously"),
+                    Text = FileManager.loader.GetString("PlaySoundsSimultaneously"),
                     IsEnabled = FileManager.itemViewHolder.SelectedSounds.Count <=5
                 };
                 playSoundsSimultaneouslyFlyouItem.Click += PlaySoundsSimultaneouslyFlyoutItem_Click;
@@ -1402,7 +1400,7 @@ namespace UniversalSoundboard.Pages
 
                 var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
                     InAppNotificationType.DownloadSound,
-                    loader.GetString("InAppNotification-DownloadSound"),
+                    FileManager.loader.GetString("InAppNotification-DownloadSound"),
                     0,
                     true,
                     false,
@@ -1462,7 +1460,7 @@ namespace UniversalSoundboard.Pages
                     this,
                     new ShowInAppNotificationEventArgs(
                         InAppNotificationType.DownloadSound,
-                        loader.GetString("InAppNotification-DownloadSoundSuccessful"),
+                        FileManager.loader.GetString("InAppNotification-DownloadSoundSuccessful"),
                         8000,
                         false,
                         true
@@ -1474,7 +1472,7 @@ namespace UniversalSoundboard.Pages
                 // Playlist download
                 var showInAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
                     InAppNotificationType.DownloadSounds,
-                    string.Format(loader.GetString("InAppNotification-DownloadSounds"), 1, selectedSoundItems.Count),
+                    string.Format(FileManager.loader.GetString("InAppNotification-DownloadSounds"), 1, selectedSoundItems.Count),
                     0,
                     true,
                     false,
@@ -1539,7 +1537,7 @@ namespace UniversalSoundboard.Pages
 
                     FileManager.SetInAppNotificationMessage(
                         InAppNotificationType.DownloadSounds,
-                        string.Format(loader.GetString("InAppNotification-DownloadSounds"), i + 1, selectedSoundItems.Count)
+                        string.Format(FileManager.loader.GetString("InAppNotification-DownloadSounds"), i + 1, selectedSoundItems.Count)
                     );
 
                     StorageFile imageFile = null;
@@ -1620,8 +1618,8 @@ namespace UniversalSoundboard.Pages
                 if (notDownloadedSounds.Count > 0)
                 {
                     string message = notDownloadedSounds.Count == 1 ?
-                        loader.GetString("InAppNotification-DownloadSoundsErrorOneSound")
-                        : string.Format(loader.GetString("InAppNotification-DownloadSoundsErrorMultipleSounds"), notDownloadedSounds.Count);
+                        FileManager.loader.GetString("InAppNotification-DownloadSoundsErrorOneSound")
+                        : string.Format(FileManager.loader.GetString("InAppNotification-DownloadSoundsErrorMultipleSounds"), notDownloadedSounds.Count);
 
                     var inAppNotificationArgs = new ShowInAppNotificationEventArgs(
                         InAppNotificationType.DownloadSounds,
@@ -1629,7 +1627,7 @@ namespace UniversalSoundboard.Pages
                         0,
                         false,
                         true,
-                        loader.GetString("Actions-ShowDetails")
+                        FileManager.loader.GetString("Actions-ShowDetails")
                     );
 
                     // Get the not downloaded sound items
@@ -1663,7 +1661,7 @@ namespace UniversalSoundboard.Pages
                         this,
                         new ShowInAppNotificationEventArgs(
                             InAppNotificationType.DownloadSounds,
-                            string.Format(loader.GetString("InAppNotification-DownloadSoundsSuccessful"), selectedSoundItems.Count),
+                            string.Format(FileManager.loader.GetString("InAppNotification-DownloadSoundsSuccessful"), selectedSoundItems.Count),
                             8000,
                             false,
                             true
@@ -1681,11 +1679,11 @@ namespace UniversalSoundboard.Pages
 
             var inAppNotificationEventArgs = new ShowInAppNotificationEventArgs(
                 InAppNotificationType.DownloadSound,
-                loader.GetString("InAppNotification-DownloadSoundError"),
+                FileManager.loader.GetString("InAppNotification-DownloadSoundError"),
                 0,
                 false,
                 true,
-                loader.GetString("Actions-ShowDetails")
+                FileManager.loader.GetString("Actions-ShowDetails")
             );
             inAppNotificationEventArgs.PrimaryButtonClick += async (sender, args) => await ShowDownloadErrorDialog();
 
@@ -1726,7 +1724,7 @@ namespace UniversalSoundboard.Pages
                 {
                     soundRecorderAppWindow = await AppWindow.TryCreateAsync();
                     soundRecorderAppWindow.RequestSize(new Size(500, 500));
-                    soundRecorderAppWindow.Title = loader.GetString("SoundRecorder-Title");
+                    soundRecorderAppWindow.Title = FileManager.loader.GetString("SoundRecorder-Title");
                     soundRecorderAppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
                     soundRecorderAppWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark ? Colors.White : Colors.Black;
                     soundRecorderAppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
@@ -1831,7 +1829,7 @@ namespace UniversalSoundboard.Pages
 
             if (string.IsNullOrEmpty(text))
             {
-                FileManager.itemViewHolder.Title = new ResourceLoader().GetString("AllSounds");
+                FileManager.itemViewHolder.Title = FileManager.loader.GetString("AllSounds");
             }
             else
             {
@@ -1909,14 +1907,14 @@ namespace UniversalSoundboard.Pages
         {
             if (sharedFiles.Count == 0) return;
 
-            string description = loader.GetString("ShareDialog-MultipleSounds");
+            string description = FileManager.loader.GetString("ShareDialog-MultipleSounds");
 
             if (sharedFiles.Count == 1)
                 description = sharedFiles.First().Name;
 
             DataRequest request = args.Request;
             request.Data.SetStorageItems(sharedFiles);
-            request.Data.Properties.Title = loader.GetString("ShareDialog-Title");
+            request.Data.Properties.Title = FileManager.loader.GetString("ShareDialog-Title");
             request.Data.Properties.Description = description;
         }
 
@@ -1986,7 +1984,7 @@ namespace UniversalSoundboard.Pages
         private async void SetCategoriesContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             var dialog = sender as SetCategoriesDialog;
-            FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("UpdateSoundsMessage");
+            FileManager.itemViewHolder.LoadingScreenMessage = FileManager.loader.GetString("UpdateSoundsMessage");
             FileManager.itemViewHolder.LoadingScreenVisible = true;
 
             // Get the selected categories
@@ -2030,12 +2028,12 @@ namespace UniversalSoundboard.Pages
             MenuFlyout flyout = new MenuFlyout();
 
             // Create subcategory
-            MenuFlyoutItem createSubCategoryFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-AddSubCategory") };
+            MenuFlyoutItem createSubCategoryFlyoutItem = new MenuFlyoutItem { Text = FileManager.loader.GetString("CategoryOptionsFlyout-AddSubCategory") };
             createSubCategoryFlyoutItem.Click += CreateSubCategoryFlyoutItem_Click;
             flyout.Items.Add(createSubCategoryFlyoutItem);
 
             // Position
-            MenuFlyoutSubItem positionSubFlyoutItem = new MenuFlyoutSubItem { Text = loader.GetString("CategoryOptionsFlyout-Position") };
+            MenuFlyoutSubItem positionSubFlyoutItem = new MenuFlyoutSubItem { Text = FileManager.loader.GetString("CategoryOptionsFlyout-Position") };
 
             FontIcon arrowTop = new FontIcon { Glyph = "\uE74A" };
             FontIcon arrowBottom = new FontIcon { Glyph = "\uE74B" };
@@ -2045,23 +2043,23 @@ namespace UniversalSoundboard.Pages
             FontIcon arrowBottomRight = new FontIcon { Glyph = "\uE741" };
 
             // Move up
-            MenuFlyoutItem moveUpFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-Position-MoveUp") };
+            MenuFlyoutItem moveUpFlyoutItem = new MenuFlyoutItem { Text = FileManager.loader.GetString("CategoryOptionsFlyout-Position-MoveUp") };
             moveUpFlyoutItem.Click += MoveUpFlyoutItem_Click;
 
             // Move down
-            MenuFlyoutItem moveDownFlyoutItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-Position-MoveDown") };
+            MenuFlyoutItem moveDownFlyoutItem = new MenuFlyoutItem { Text = FileManager.loader.GetString("CategoryOptionsFlyout-Position-MoveDown") };
             moveDownFlyoutItem.Click += MoveDownFlyoutItem_Click;
 
             // Move to category above
-            MenuFlyoutItem moveToCategoryAboveItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-Position-MoveToCategoryAbove") };
+            MenuFlyoutItem moveToCategoryAboveItem = new MenuFlyoutItem { Text = FileManager.loader.GetString("CategoryOptionsFlyout-Position-MoveToCategoryAbove") };
             moveToCategoryAboveItem.Click += MoveToCategoryAboveItem_Click;
 
             // Move to category below
-            MenuFlyoutItem moveToCategoryBelowItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-Position-MoveToCategoryBelow") };
+            MenuFlyoutItem moveToCategoryBelowItem = new MenuFlyoutItem { Text = FileManager.loader.GetString("CategoryOptionsFlyout-Position-MoveToCategoryBelow") };
             moveToCategoryBelowItem.Click += MoveToCategoryBelowItem_Click;
 
             // Move to parent category
-            MenuFlyoutItem moveToParentCategoryItem = new MenuFlyoutItem { Text = loader.GetString("CategoryOptionsFlyout-Position-MoveToParentCategory") };
+            MenuFlyoutItem moveToParentCategoryItem = new MenuFlyoutItem { Text = FileManager.loader.GetString("CategoryOptionsFlyout-Position-MoveToParentCategory") };
 
             if (!isFirstItem)
             {
@@ -2239,7 +2237,7 @@ namespace UniversalSoundboard.Pages
 
         private async void DeleteSoundsContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            FileManager.itemViewHolder.LoadingScreenMessage = loader.GetString("DeleteSoundsMessage");
+            FileManager.itemViewHolder.LoadingScreenMessage = FileManager.loader.GetString("DeleteSoundsMessage");
             FileManager.itemViewHolder.LoadingScreenVisible = true;
 
             // Delete Sounds

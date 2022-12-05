@@ -7,7 +7,6 @@ using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
-using Windows.ApplicationModel.Resources;
 using Windows.Foundation.Metadata;
 using Windows.Security.Authentication.Web;
 using Windows.System;
@@ -24,7 +23,6 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class AccountPage : Page
     {
-        ResourceLoader loader = new ResourceLoader();
         bool davPlusHotkeyFeatureVisible = false;
 
         public AccountPage()
@@ -147,7 +145,7 @@ namespace UniversalSoundboard.Pages
                     null,
                     new ShowInAppNotificationEventArgs(
                         InAppNotificationType.Sync,
-                        new ResourceLoader().GetString("InAppNotification-Sync"),
+                        FileManager.loader.GetString("InAppNotification-Sync"),
                         0,
                         true
                     )
@@ -167,7 +165,7 @@ namespace UniversalSoundboard.Pages
         {
             if(Dav.User.TotalStorage > 0)
             {
-                string message = loader.GetString("Account-UsedStorage");
+                string message = FileManager.loader.GetString("Account-UsedStorage");
 
                 string usedStorage = FileManager.GetFormattedSize(Convert.ToUInt64(Dav.User.UsedStorage));
                 string totalStorage = FileManager.GetFormattedSize(Convert.ToUInt64(Dav.User.TotalStorage), true);

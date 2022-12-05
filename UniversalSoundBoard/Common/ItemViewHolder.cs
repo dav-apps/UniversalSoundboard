@@ -3,11 +3,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
-using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
-using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -167,11 +165,9 @@ namespace UniversalSoundboard.Common
 
         public ItemViewHolder()
         {
-            ResourceLoader loader = new ResourceLoader();
-
             // Set the default values
             #region State
-            _title = loader.GetString("AllSounds");
+            _title = FileManager.loader.GetString("AllSounds");
             _page = typeof(SoundPage);
             _searchQuery = "";
             _allSoundsChanged = true;
@@ -207,7 +203,7 @@ namespace UniversalSoundboard.Common
             _topButtonsCollapsed = false;
             _searchAutoSuggestBoxVisible = true;
             _searchButtonVisible = false;
-            _selectAllFlyoutText = loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
+            _selectAllFlyoutText = FileManager.loader.GetString("MoreButton_SelectAllFlyout-SelectAll");
             _soundTileWidth = 200;
             _exportAndImportButtonsEnabled = true;
 

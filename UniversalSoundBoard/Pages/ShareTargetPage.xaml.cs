@@ -6,7 +6,6 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using Windows.ApplicationModel.DataTransfer.ShareTarget;
-using Windows.ApplicationModel.Resources;
 using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
@@ -100,7 +99,7 @@ namespace UniversalSoundboard.Pages
         {
             AddButton.IsEnabled = false;
             LoadingControl.IsLoading = true;
-            LoadingControlMessageTextBlock.Text = new ResourceLoader().GetString("AddSoundsMessage");
+            LoadingControlMessageTextBlock.Text = FileManager.loader.GetString("AddSoundsMessage");
 
             List<string> notAddedSounds = new List<string>();
             List<Guid> categoryUuids = new List<Guid>();

@@ -10,7 +10,6 @@ using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
-using Windows.ApplicationModel.Resources;
 using Windows.System;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
@@ -22,7 +21,6 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class SettingsPage : Page
     {
-        readonly ResourceLoader loader = new ResourceLoader();
         bool initialized = false;
         string soundboardSize = "";
         Visibility soundboardSizeVisibility = Visibility.Collapsed;
@@ -89,7 +87,7 @@ namespace UniversalSoundboard.Pages
             }
             else
             {
-                soundboardSize = string.Format(loader.GetString("SettingsSoundBoardSize"), FileManager.GetFormattedSize(FileManager.itemViewHolder.SoundboardSize));
+                soundboardSize = string.Format(FileManager.loader.GetString("SettingsSoundBoardSize"), FileManager.GetFormattedSize(FileManager.itemViewHolder.SoundboardSize));
                 soundboardSizeVisibility = Visibility.Visible;
             }
 

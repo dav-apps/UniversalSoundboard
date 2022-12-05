@@ -11,7 +11,6 @@ using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using UniversalSoundboard.Pages;
 using Windows.ApplicationModel.DataTransfer;
-using Windows.ApplicationModel.Resources;
 using Windows.Foundation;
 using Windows.Foundation.Metadata;
 using Windows.Storage;
@@ -437,8 +436,6 @@ namespace UniversalSoundboard.Components
 
     public class SoundItemOptionsFlyout
     {
-        private readonly ResourceLoader loader;
-
         private MenuFlyout optionsFlyout;
         private MenuFlyoutItem setFavouriteFlyoutItem;
         private MenuFlyoutItem pinFlyoutItem;
@@ -459,8 +456,6 @@ namespace UniversalSoundboard.Components
 
         public SoundItemOptionsFlyout(Guid soundUuid, bool favourite, bool hasImage)
         {
-            loader = new ResourceLoader();
-
             // Create the flyout
             optionsFlyout = new MenuFlyout();
             optionsFlyout.Opened += (object sender, object e) => FlyoutOpened?.Invoke(sender, e);
@@ -468,7 +463,7 @@ namespace UniversalSoundboard.Components
             // Categories
             MenuFlyoutItem categoriesFlyoutItem = new MenuFlyoutItem
             {
-                Text = loader.GetString("SoundItemOptionsFlyout-Categories"),
+                Text = FileManager.loader.GetString("SoundItemOptionsFlyout-Categories"),
                 Icon = new FontIcon { Glyph = "\uE179" }
             };
             categoriesFlyoutItem.Click += (object sender, RoutedEventArgs e) => CategoriesFlyoutItemClick?.Invoke(sender, e);
@@ -479,7 +474,7 @@ namespace UniversalSoundboard.Components
                 // Hotkeys
                 MenuFlyoutItem hotkeysFlyoutItem = new MenuFlyoutItem
                 {
-                    Text = loader.GetString("SoundItemOptionsFlyout-Hotkeys"),
+                    Text = FileManager.loader.GetString("SoundItemOptionsFlyout-Hotkeys"),
                     Icon = new FontIcon { Glyph = "\uE765" }
                 };
                 hotkeysFlyoutItem.Click += (object sender, RoutedEventArgs e) => HotkeysFlyoutItemClick?.Invoke(sender, e);
@@ -489,7 +484,7 @@ namespace UniversalSoundboard.Components
             // Default settings
             MenuFlyoutItem defaultSoundSettingsFlyoutItem = new MenuFlyoutItem
             {
-                Text = loader.GetString("SoundItemOptionsFlyout-DefaultSettings"),
+                Text = FileManager.loader.GetString("SoundItemOptionsFlyout-DefaultSettings"),
                 Icon = new FontIcon { Glyph = "\uE713" }
             };
             defaultSoundSettingsFlyoutItem.Click += (object sender, RoutedEventArgs e) => DefaultSoundSettingsFlyoutItemClick?.Invoke(sender, e);
@@ -501,7 +496,7 @@ namespace UniversalSoundboard.Components
             // Set favourite
             setFavouriteFlyoutItem = new MenuFlyoutItem
             {
-                Text = loader.GetString(favourite ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite"),
+                Text = FileManager.loader.GetString(favourite ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite"),
                 Icon = new FontIcon { Glyph = favourite ? "\uE195" : "\uE113" }
             };
             setFavouriteFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetFavouriteFlyoutItemClick?.Invoke(sender, e);
@@ -510,7 +505,7 @@ namespace UniversalSoundboard.Components
             // Share
             MenuFlyoutItem shareFlyoutItem = new MenuFlyoutItem
             {
-                Text = loader.GetString("Share"),
+                Text = FileManager.loader.GetString("Share"),
                 Icon = new FontIcon { Glyph = "\uE72D" }
             };
             shareFlyoutItem.Click += (object sender, RoutedEventArgs e) => ShareFlyoutItemClick?.Invoke(sender, e);
@@ -521,20 +516,20 @@ namespace UniversalSoundboard.Components
             {
                 MenuFlyoutSubItem exportFlyoutItem = new MenuFlyoutSubItem
                 {
-                    Text = loader.GetString("Export"),
+                    Text = FileManager.loader.GetString("Export"),
                     Icon = new FontIcon { Glyph = "\uEDE1" }
                 };
 
                 MenuFlyoutItem exportSoundFileFlyoutItem = new MenuFlyoutItem
                 {
-                    Text = loader.GetString("Export-Sound"),
+                    Text = FileManager.loader.GetString("Export-Sound"),
                     Icon = new FontIcon { Glyph = "\uE189" }
                 };
                 exportSoundFileFlyoutItem.Click += (object sender, RoutedEventArgs e) => ExportSoundFlyoutItemClick?.Invoke(sender, e);
 
                 MenuFlyoutItem exportImageFileFlyoutItem = new MenuFlyoutItem
                 {
-                    Text = loader.GetString("Export-Image"),
+                    Text = FileManager.loader.GetString("Export-Image"),
                     Icon = new FontIcon { Glyph = "\uEB9F" }
                 };
                 exportImageFileFlyoutItem.Click += (object sender, RoutedEventArgs e) => ExportImageFlyoutItemClick?.Invoke(sender, e);
@@ -548,7 +543,7 @@ namespace UniversalSoundboard.Components
             {
                 MenuFlyoutItem exportFlyoutItem = new MenuFlyoutItem
                 {
-                    Text = loader.GetString("Export"),
+                    Text = FileManager.loader.GetString("Export"),
                     Icon = new FontIcon { Glyph = "\uEDE1" }
                 };
                 exportFlyoutItem.Click += (object sender, RoutedEventArgs e) => ExportSoundFlyoutItemClick?.Invoke(sender, e);
@@ -558,7 +553,7 @@ namespace UniversalSoundboard.Components
             // Pin
             bool pinned = SecondaryTile.Exists(soundUuid.ToString());
             pinFlyoutItem = new MenuFlyoutItem {
-                Text = loader.GetString(pinned ? "Unpin" : "Pin"),
+                Text = FileManager.loader.GetString(pinned ? "Unpin" : "Pin"),
                 Icon = new FontIcon { Glyph = pinned ? "\uE196" : "\uE141" }
             };
             pinFlyoutItem.Click += (object sender, RoutedEventArgs e) => PinFlyoutItemClick?.Invoke(sender, e);
@@ -569,7 +564,7 @@ namespace UniversalSoundboard.Components
 
             // Set image
             MenuFlyoutItem setImageFlyoutItem = new MenuFlyoutItem {
-                Text = loader.GetString("SoundItemOptionsFlyout-SetImage"),
+                Text = FileManager.loader.GetString("SoundItemOptionsFlyout-SetImage"),
                 Icon = new FontIcon { Glyph = "\uEB9F" }
             };
             setImageFlyoutItem.Click += (object sender, RoutedEventArgs e) => SetImageFlyoutItemClick?.Invoke(sender, e);
@@ -577,7 +572,7 @@ namespace UniversalSoundboard.Components
 
             // Rename
             MenuFlyoutItem renameFlyoutItem = new MenuFlyoutItem {
-                Text = loader.GetString("SoundItemOptionsFlyout-Rename"),
+                Text = FileManager.loader.GetString("SoundItemOptionsFlyout-Rename"),
                 Icon = new FontIcon { Glyph = "\uE13E" }
             };
             renameFlyoutItem.Click += (object sender, RoutedEventArgs e) => RenameFlyoutItemClick?.Invoke(sender, e);
@@ -585,7 +580,7 @@ namespace UniversalSoundboard.Components
 
             // Delete
             MenuFlyoutItem deleteFlyoutItem = new MenuFlyoutItem {
-                Text = loader.GetString("SoundItemOptionsFlyout-Delete"),
+                Text = FileManager.loader.GetString("SoundItemOptionsFlyout-Delete"),
                 Icon = new FontIcon { Glyph = "\uE107" }
             };
             deleteFlyoutItem.Click += (object sender, RoutedEventArgs e) => DeleteFlyoutItemClick?.Invoke(sender, e);
@@ -597,7 +592,7 @@ namespace UniversalSoundboard.Components
             // Properties
             MenuFlyoutItem propertiesFlyoutItem = new MenuFlyoutItem
             {
-                Text = loader.GetString("SoundItemOptionsFlyout-Properties"),
+                Text = FileManager.loader.GetString("SoundItemOptionsFlyout-Properties"),
                 Icon = new FontIcon { Glyph = "\uE946" }
             };
             propertiesFlyoutItem.Click += (object sender, RoutedEventArgs e) => PropertiesFlyoutItemClick?.Invoke(sender, e);
