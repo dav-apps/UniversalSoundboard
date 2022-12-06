@@ -865,7 +865,7 @@ This may take some time, depending on how large the import file is.</value>
     <value>Add to soundboard</value>
   </data>
   <data name="LocalFileFlyoutText.Text" xml:space="preserve">
-    <value>This sound is a local file that does not belong to your soundboard.</value>
+    <value>This sound is a local file that is not part of your soundboard.</value>
   </data>
   <data name="SettingsEntry-CreateIssueButton.Content" xml:space="preserve">
     <value>Create an issue on GitHub</value>

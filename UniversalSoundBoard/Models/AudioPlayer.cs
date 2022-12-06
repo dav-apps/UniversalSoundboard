@@ -20,6 +20,7 @@ namespace UniversalSoundboard.Models
         private DeviceInformation outputDevice;
         private bool audioFileChanged = true;
         private bool outputDeviceChanged = true;
+        private bool playbackRateChanged = true;
         private bool isPlaying = false;
         private TimeSpan position = TimeSpan.Zero;
         private double volume = 1;
@@ -108,7 +109,7 @@ namespace UniversalSoundboard.Models
                 await InitDeviceOutputNode();
             }
 
-            if (audioFileChanged || outputDeviceChanged)
+            if (audioFileChanged || outputDeviceChanged || playbackRateChanged)
             {
                 // Create the input node
                 await InitFileInputNode();
@@ -118,6 +119,7 @@ namespace UniversalSoundboard.Models
 
                 outputDeviceChanged = false;
                 audioFileChanged = false;
+                playbackRateChanged = false;
             }
 
             isInitialized = true;
@@ -318,10 +320,16 @@ namespace UniversalSoundboard.Models
         private async void setPlaybackRate(double playbackRate)
         {
             // Don't change the value if it didn't change
-            if (this.playbackRate == playbackRate) return;
+            if (this.playbackRate == playbackRate)
+                return;
+
+            this.playbackRate = playbackRate;
+
+            if (FileInputNode == null)
+                return;
 
             FileInputNode.PlaybackSpeedFactor = playbackRate;
-            this.playbackRate = playbackRate;
+            playbackRateChanged = true;
 
             await Init();
         }
