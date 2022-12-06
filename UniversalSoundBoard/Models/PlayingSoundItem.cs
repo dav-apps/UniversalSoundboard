@@ -34,6 +34,20 @@ namespace UniversalSoundboard.Models
         public Guid Uuid { get => PlayingSound == null ? Guid.Empty : PlayingSound.Uuid; }
         public bool CurrentSoundIsDownloading { get => currentSoundIsDownloading; }
         public TimeSpan CurrentSoundTotalDuration { get => currentSoundTotalDuration; }
+        private Sound CurrentSound
+        {
+            get
+            {
+                int current = PlayingSound.Current;
+
+                if (current < 0)
+                    current = 0;
+                else if (current >= PlayingSound.Sounds.Count)
+                    current = PlayingSound.Sounds.Count - 1;
+
+                return PlayingSound.Sounds.ElementAt(current);
+            }
+        }
 
         #region Local variables
         private bool initialized = false;
@@ -466,7 +480,8 @@ namespace UniversalSoundboard.Models
             if (CheckFileDownload()) return;
 
             // Set the new source of the MediaPlayer
-            var audioFile = PlayingSound.Sounds[PlayingSound.Current].AudioFile;
+            var audioFile = CurrentSound.AudioFile;
+
             if (audioFile == null)
             {
                 await MoveToNext();
@@ -545,8 +560,10 @@ namespace UniversalSoundboard.Models
         {
             if (PlayingSound == null) return;
 
-            Sound currentSound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
-            FavouriteChanged?.Invoke(this, new FavouriteChangedEventArgs(currentSound.Favourite));
+            FavouriteChanged?.Invoke(
+                this,
+                new FavouriteChangedEventArgs(CurrentSound.Favourite)
+            );
         }
 
         private void UpdateVolumeControl()
@@ -577,10 +594,11 @@ namespace UniversalSoundboard.Models
          */
         private bool CheckFileDownload()
         {
-            Guid currentSoundUuid = PlayingSound.Sounds[PlayingSound.Current].AudioFileTableObject.Uuid;
+            Guid currentSoundUuid = CurrentSound.AudioFileTableObject.Uuid;
 
             // Get the current sound file download progress
             int i = DownloadProgressList.FindIndex(progress => progress.Item1.Equals(currentSoundUuid));
+
             if (i == -1)
             {
                 DownloadStatusChanged?.Invoke(
@@ -625,7 +643,7 @@ namespace UniversalSoundboard.Models
             DownloadProgressList[i] = value;
 
             // Check if the download progress belongs to the current sound
-            if (PlayingSound.Sounds[PlayingSound.Current].AudioFileTableObject.Uuid.Equals(value.Item1))
+            if (CurrentSound.AudioFileTableObject.Uuid.Equals(value.Item1))
             {
                 // Show the download progress bar as the file is still downloading
                 DownloadStatusChanged?.Invoke(
@@ -639,7 +657,7 @@ namespace UniversalSoundboard.Models
                     await Task.Delay(5);
 
                     // Set the source of the current sound
-                    var audioFile = PlayingSound.Sounds[PlayingSound.Current].AudioFile;
+                    var audioFile = CurrentSound.AudioFile;
 
                     if (audioFile != null)
                     {

@@ -175,6 +175,8 @@ namespace UniversalSoundboard.Models
 
             if (oldPosition.HasValue)
                 FileInputNode.Seek(oldPosition.Value);
+            else
+                FileInputNode.Seek(position);
 
             FileInputNode.OutgoingGain = volume;
             FileInputNode.PlaybackSpeedFactor = playbackRate;
