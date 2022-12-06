@@ -46,6 +46,11 @@
             Content="&#xE149;"
             Height="35"
             Width="35"
-            Click="RetryDownloadButton_Click" />
+            Click="RetryDownloadButton_Click">
+
+            <ToolTipService.ToolTip>
+                <TextBlock x:Uid="RetryDownloadButton" />
+            </ToolTipService.ToolTip>
+        </Button>
     </Grid>
 </UserControl>

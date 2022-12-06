@@ -1066,4 +1066,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SettingsEntry-Hotkeys-NoHotkeysTextBlock.Text" xml:space="preserve">
     <value>Du hast keine Tastenkombinationen registriert.</value>
   </data>
+  <data name="RetryDownloadButton.Text" xml:space="preserve">
+    <value>Download wiederholen</value>
+  </data>
 </root>

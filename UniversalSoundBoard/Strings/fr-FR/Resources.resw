@@ -1067,4 +1067,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="SettingsEntry-Hotkeys-NoHotkeysTextBlock.Text" xml:space="preserve">
     <value>Vous n'avez enregistré aucun raccourci clavier.</value>
   </data>
+  <data name="RetryDownloadButton.Text" xml:space="preserve">
+    <value>Réessayer le téléchargement</value>
+  </data>
 </root>
