@@ -464,16 +464,16 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Google.Apis.YouTube.v3">
-      <Version>1.57.0.2827</Version>
+      <Version>1.58.0.2874</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.11.46</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
-      <Version>5.0.0</Version>
+      <Version>5.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Crashes">
-      <Version>5.0.0</Version>
+      <Version>5.0.1</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.NETCore.UniversalWindowsPlatform">
       <Version>6.2.14</Version>
@@ -500,7 +500,7 @@
       <Version>2.1.0</Version>
     </PackageReference>
     <PackageReference Include="SharpGrabber.YouTube">
-      <Version>1.4.0</Version>
+      <Version>1.5.0</Version>
     </PackageReference>
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.8.116</Version>

@@ -178,7 +178,7 @@
     <value>Rename</value>
   </data>
   <data name="Search.PlaceholderText" xml:space="preserve">
-    <value>Search for Sounds</value>
+    <value>Search for sounds</value>
   </data>
   <data name="Settings-Title" xml:space="preserve">
     <value>Settings</value>
@@ -298,7 +298,7 @@ This may take some time, depending on how large the import file is.</value>
     <value>Add</value>
   </data>
   <data name="SearchButton.Text" xml:space="preserve">
-    <value>Search for Sounds</value>
+    <value>Search for sounds</value>
   </data>
   <data name="SelectButton.Text" xml:space="preserve">
     <value>Select</value>
