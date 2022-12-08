@@ -196,16 +196,13 @@
     <value>Rename</value>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>2.2.10</value>
+    <value>2.3</value>
   </data>
   <data name="MoreButton-Cast.Text" xml:space="preserve">
     <value>Cast to Device</value>
   </data>
   <data name="MoreButton-Repeat" xml:space="preserve">
     <value>Repeat</value>
-  </data>
-  <data name="SettingsEntry-ShowPlayingSoundsList.Header" xml:space="preserve">
-    <value>Show opened sounds</value>
   </data>
   <data name="SoundItemOptionsFlyout-SetFavourite" xml:space="preserve">
     <value>Add to favorites</value>

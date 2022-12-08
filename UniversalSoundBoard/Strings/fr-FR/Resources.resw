@@ -204,9 +204,6 @@
   <data name="MoreButton-Repeat" xml:space="preserve">
     <value>Répéter</value>
   </data>
-  <data name="SettingsEntry-ShowPlayingSoundsList.Header" xml:space="preserve">
-    <value>Afficher les sons ouverts</value>
-  </data>
   <data name="SoundItemOptionsFlyout-SetFavourite" xml:space="preserve">
     <value>Ajouter aux favoris</value>
   </data>

@@ -1179,60 +1179,46 @@ namespace UniversalSoundboard.Controllers
 
         private void UpdatePlayingSoundsList()
         {
-            if (FileManager.itemViewHolder.PlayingSoundsListVisible)
-            {
-                // Set the max width of the sounds list and playing sounds list columns
-                PlayingSoundsBarColDef.MaxWidth = ContentRoot.ActualWidth / 2;
+            // Set the max width of the sounds list and playing sounds list columns
+            PlayingSoundsBarColDef.MaxWidth = ContentRoot.ActualWidth / 2;
 
-                if (!FileManager.itemViewHolder.OpenMultipleSounds || IsMobile)
-                {
-                    // Hide the PlayingSoundsBar and the GridSplitter
-                    PlayingSoundsBarColDef.MinWidth = 0;
-                    PlayingSoundsBarColDef.Width = new GridLength(0);
-                    GridSplitterColDef.Width = new GridLength(0);
-
-                    int playingSoundItemsCount = GetNumberOfVisibleItemsInReversedPlayingSoundItemContainers();
-
-                    // Update the visibility of the BottomPlayingSoundsBar
-                    if (playingSoundItemsCount == 0)
-                    {
-                        BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
-                        GridSplitterGrid.Visibility = Visibility.Collapsed;
-                    }
-                    else if (playingSoundItemsCount == 1)
-                    {
-                        BottomPlayingSoundsBar.Translation = new Vector3(0);
-                        GridSplitterGrid.Visibility = Visibility.Visible;
-
-                        // Set the height of the bottom row def, but hide the GridSplitter
-                        BottomPlayingSoundsBarGridSplitter.Visibility = Visibility.Collapsed;
-                        GridSplitterGridBottomRowDef.Height = new GridLength(GetBottomPlayingSoundItemContentHeight());
-                    }
-                    else
-                    {
-                        BottomPlayingSoundsBar.Translation = new Vector3(0);
-                        GridSplitterGrid.Visibility = Visibility.Visible;
-                        BottomPlayingSoundsBarGridSplitter.Visibility = FileManager.itemViewHolder.OpenMultipleSounds ? Visibility.Visible : Visibility.Collapsed;
-                    }
-                }
-                else
-                {
-                    // Show the PlayingSoundsBar and the GridSplitter
-                    PlayingSoundsBarColDef.MinWidth = ContentRoot.ActualWidth / 3.8;
-                    PlayingSoundsBarColDef.Width = new GridLength(ContentRoot.ActualWidth * FileManager.itemViewHolder.PlayingSoundsBarWidth);
-                    GridSplitterColDef.Width = new GridLength(12);
-
-                    // Hide the BottomPlayingSoundsBar
-                    BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
-                    GridSplitterGrid.Visibility = Visibility.Collapsed;
-                }
-            }
-            else
+            if (!FileManager.itemViewHolder.OpenMultipleSounds || IsMobile)
             {
                 // Hide the PlayingSoundsBar and the GridSplitter
                 PlayingSoundsBarColDef.MinWidth = 0;
                 PlayingSoundsBarColDef.Width = new GridLength(0);
                 GridSplitterColDef.Width = new GridLength(0);
+
+                int playingSoundItemsCount = GetNumberOfVisibleItemsInReversedPlayingSoundItemContainers();
+
+                // Update the visibility of the BottomPlayingSoundsBar
+                if (playingSoundItemsCount == 0)
+                {
+                    BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);
+                    GridSplitterGrid.Visibility = Visibility.Collapsed;
+                }
+                else if (playingSoundItemsCount == 1)
+                {
+                    BottomPlayingSoundsBar.Translation = new Vector3(0);
+                    GridSplitterGrid.Visibility = Visibility.Visible;
+
+                    // Set the height of the bottom row def, but hide the GridSplitter
+                    BottomPlayingSoundsBarGridSplitter.Visibility = Visibility.Collapsed;
+                    GridSplitterGridBottomRowDef.Height = new GridLength(GetBottomPlayingSoundItemContentHeight());
+                }
+                else
+                {
+                    BottomPlayingSoundsBar.Translation = new Vector3(0);
+                    GridSplitterGrid.Visibility = Visibility.Visible;
+                    BottomPlayingSoundsBarGridSplitter.Visibility = FileManager.itemViewHolder.OpenMultipleSounds ? Visibility.Visible : Visibility.Collapsed;
+                }
+            }
+            else
+            {
+                // Show the PlayingSoundsBar and the GridSplitter
+                PlayingSoundsBarColDef.MinWidth = ContentRoot.ActualWidth / 3.8;
+                PlayingSoundsBarColDef.Width = new GridLength(ContentRoot.ActualWidth * FileManager.itemViewHolder.PlayingSoundsBarWidth);
+                GridSplitterColDef.Width = new GridLength(12);
 
                 // Hide the BottomPlayingSoundsBar
                 BottomPlayingSoundsBar.Translation = new Vector3(-10000, 0, 0);

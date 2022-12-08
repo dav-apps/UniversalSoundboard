@@ -63,7 +63,6 @@ namespace UniversalSoundboard.Pages
         private void InitSettings()
         {
             // Init the settings UI elements
-            SetShowPlayingSoundsListToggle();
             SetSavePlayingSoundsToggle();
             SetOpenMultipleSoundsToggle();
             SetMultiSoundPlaybackToggle();
@@ -95,28 +94,10 @@ namespace UniversalSoundboard.Pages
         }
         #endregion
 
-        #region ShowPlayingSoundsList
-        private void SetShowPlayingSoundsListToggle()
-        {
-            ShowPlayingSoundsListToggle.IsOn = FileManager.itemViewHolder.PlayingSoundsListVisible;
-        }
-
-        private void ShowPlayingSoundsListToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (!initialized) return;
-            FileManager.itemViewHolder.PlayingSoundsListVisible = ShowPlayingSoundsListToggle.IsOn;
-
-            SavePlayingSoundsStackPanel.Visibility = ShowPlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
-            OpenMultipleSoundsStackPanel.Visibility = ShowPlayingSoundsListToggle.IsOn ? Visibility.Visible : Visibility.Collapsed;
-            UpdateMultiSoundPlaybackVisibility();
-        }
-        #endregion
-
         #region SavePlayingSounds
         private void SetSavePlayingSoundsToggle()
         {
             SavePlayingSoundsToggle.IsOn = FileManager.itemViewHolder.SavePlayingSounds;
-            SavePlayingSoundsStackPanel.Visibility = FileManager.itemViewHolder.PlayingSoundsListVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void SavePlayingSoundsToggle_Toggled(object sender, RoutedEventArgs e)
@@ -130,7 +111,6 @@ namespace UniversalSoundboard.Pages
         private void SetOpenMultipleSoundsToggle()
         {
             OpenMultipleSoundsToggle.IsOn = FileManager.itemViewHolder.OpenMultipleSounds;
-            OpenMultipleSoundsStackPanel.Visibility = FileManager.itemViewHolder.PlayingSoundsListVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
         private void OpenMultipleSoundsToggle_Toggled(object sender, RoutedEventArgs e)
@@ -157,7 +137,7 @@ namespace UniversalSoundboard.Pages
 
         private void UpdateMultiSoundPlaybackVisibility()
         {
-            MultiSoundPlaybackStackPanel.Visibility = !FileManager.itemViewHolder.PlayingSoundsListVisible || (FileManager.itemViewHolder.PlayingSoundsListVisible && FileManager.itemViewHolder.OpenMultipleSounds) ? Visibility.Visible : Visibility.Collapsed;
+            MultiSoundPlaybackStackPanel.Visibility = FileManager.itemViewHolder.OpenMultipleSounds ? Visibility.Visible : Visibility.Collapsed;
         }
         #endregion
 

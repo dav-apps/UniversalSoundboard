@@ -764,7 +764,7 @@ namespace UniversalSoundboard.Components
             double windowWidth = Window.Current.Bounds.Width;
             double itemWidth = ContentRoot.ActualWidth;
 
-            if (FileManager.itemViewHolder.PlayingSoundsListVisible && !FileManager.itemViewHolder.OpenMultipleSounds)
+            if (!FileManager.itemViewHolder.OpenMultipleSounds)
             {
                 if (windowWidth <= 900)
                     layoutType = PlayingSoundItemLayoutType.SingleSoundSmall;

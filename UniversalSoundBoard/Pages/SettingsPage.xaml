@@ -532,17 +532,6 @@
                     Style="{StaticResource SettingsHeaderStyle}"
                     Margin="0,0,0,10" />
 
-                <StackPanel Style="{StaticResource SettingsEntryStyle}">
-                    <components:Setting x:Uid="SettingsEntry-ShowPlayingSoundsList">
-                        <components:Setting.ActionContent>
-                            <ToggleSwitch
-                                Name="ShowPlayingSoundsListToggle"
-                                Style="{StaticResource SettingToggleSwitchStyle}"
-                                Toggled="ShowPlayingSoundsListToggle_Toggled" />
-                        </components:Setting.ActionContent>
-                    </components:Setting>
-                </StackPanel>
-
                 <StackPanel
                     Name="SavePlayingSoundsStackPanel"
                     Style="{StaticResource SettingsEntryStyle}">
@@ -622,7 +611,7 @@
                         HorizontalAlignment="Stretch"
                         x:Uid="SettingsEntry-Hotkeys">
 
-                        <StackPanel Orientation="Vertical">
+                        <StackPanel Orientation="Vertical" MinWidth="400">
                             <winui:InfoBar
                                 x:Name="HotkeysInfoBar"
                                 x:Uid="SettingsEntry-Hotkeys-InfoBar"

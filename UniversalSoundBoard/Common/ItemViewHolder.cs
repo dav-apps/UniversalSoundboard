@@ -16,7 +16,6 @@ namespace UniversalSoundboard.Common
     public class ItemViewHolder : INotifyPropertyChanged
     {
         #region Constants for the localSettings keys
-        private const string playingSoundsListVisibleKey = "playingSoundsListVisible";
         private const string savePlayingSoundsKey = "savePlayingSounds";
         private const string openMultipleSoundsKey = "openMultipleSounds";
         private const string multiSoundPlaybackKey = "multiSoundPlayback";
@@ -41,7 +40,6 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Constants for localSettings defaults
-        private const bool playingSoundsListVisibleDefault = true;
         private const bool savePlayingSoundsDefault = true;
         private const bool openMultipleSoundsDefault = true;
         private const bool multiSoundPlaybackDefault = false;
@@ -114,7 +112,6 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Settings
-        private bool _playingSoundsListVisible;             // If true shows the Playing Sounds list at the right
         private bool _savePlayingSounds;                    // If true saves the PlayingSounds and loads them when starting the app
         private bool _openMultipleSounds;                   // If false, removes all PlayingSounds whenever the user opens a new one; if true, adds new opened sounds to existing PlayingSounds
         private bool _multiSoundPlayback;                   // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
@@ -217,13 +214,6 @@ namespace UniversalSoundboard.Common
             #endregion
 
             #region Settings
-            #region playingSoundsListVisible
-            if (localSettings.Values[playingSoundsListVisibleKey] == null)
-                _playingSoundsListVisible = playingSoundsListVisibleDefault;
-            else
-                _playingSoundsListVisible = (bool)localSettings.Values[playingSoundsListVisibleKey];
-            #endregion
-
             #region savePlayingSounds
             if (localSettings.Values[savePlayingSoundsKey] == null)
                 _savePlayingSounds = savePlayingSoundsDefault;
@@ -857,21 +847,6 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Settings
-        #region PlayingSoundsListVisible
-        public const string PlayingSoundsListVisibleKey = "PlayingSoundsListVisible";
-        public bool PlayingSoundsListVisible
-        {
-            get => _playingSoundsListVisible;
-            set
-            {
-                if (_playingSoundsListVisible.Equals(value)) return;
-                localSettings.Values[playingSoundsListVisibleKey] = value;
-                _playingSoundsListVisible = value;
-                NotifyPropertyChanged(PlayingSoundsListVisibleKey);
-            }
-        }
-        #endregion
-
         #region SavePlayingSounds
         public const string SavePlayingSoundsKey = "SavePlayingSounds";
         public bool SavePlayingSounds

@@ -308,7 +308,6 @@ namespace UniversalSoundboard.Pages
             {
                 // Collect settings
                 string settings = "";
-                settings += $"playingSoundsListVisible: {FileManager.itemViewHolder.PlayingSoundsListVisible}\n";
                 settings += $"savePlayingSounds: {FileManager.itemViewHolder.SavePlayingSounds}\n";
                 settings += $"openMultipleSounds: {FileManager.itemViewHolder.OpenMultipleSounds}\n";
                 settings += $"multiSoundPlayback: {FileManager.itemViewHolder.MultiSoundPlayback}\n";
@@ -318,7 +317,7 @@ namespace UniversalSoundboard.Pages
                 settings += $"showCategoriesIcons: {FileManager.itemViewHolder.ShowCategoriesIcons}\n";
                 settings += $"showAcrylicBackground: {FileManager.itemViewHolder.ShowAcrylicBackground}\n";
                 settings += $"isLoggedIn: {Dav.IsLoggedIn}\n";
-                settings += $"{screenWidth}x{screenHeight}";
+                settings += $"Screen resolution: {screenWidth}x{screenHeight}";
 
                 return new ErrorAttachmentLog[]
                 {
@@ -1070,10 +1069,7 @@ namespace UniversalSoundboard.Pages
         private async void PlaySoundsButton_Click(object sender, RoutedEventArgs e)
         {
             // Check if Flyout with option to play sounds simultaneously should be shown
-            if(
-                (FileManager.itemViewHolder.PlayingSoundsListVisible && FileManager.itemViewHolder.OpenMultipleSounds && FileManager.itemViewHolder.MultiSoundPlayback)
-                || (!FileManager.itemViewHolder.PlayingSoundsListVisible && FileManager.itemViewHolder.MultiSoundPlayback)
-            )
+            if (FileManager.itemViewHolder.OpenMultipleSounds && FileManager.itemViewHolder.MultiSoundPlayback)
             {
                 // Show flyout
                 MenuFlyout flyout = new MenuFlyout();

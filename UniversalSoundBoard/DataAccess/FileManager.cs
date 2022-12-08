@@ -1706,11 +1706,8 @@ namespace UniversalSoundboard.DataAccess
 
             foreach (PlayingSound playingSound in allPlayingSounds)
             {
-                // Delete each PlayingSound if the PlayingSoundBar is hidden or if the user doesn't want to save PlayingSounds
-                if(
-                    !itemViewHolder.PlayingSoundsListVisible
-                    || !itemViewHolder.SavePlayingSounds
-                )
+                // Delete each PlayingSoundif the user doesn't want to save PlayingSounds
+                if (!itemViewHolder.SavePlayingSounds)
                 {
                     await DeletePlayingSoundAsync(playingSound.Uuid);
                 }
