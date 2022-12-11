@@ -412,7 +412,7 @@ namespace UniversalSoundboard.Pages
                     X1 = xPos,
                     X2 = xPos,
                     Y1 = canvasHeight / 2,
-                    Y2 = (canvasHeight / 2) - (firstChannelValues[i] * 3 * (canvasHeight / 2))
+                    Y2 = (canvasHeight / 2) - (firstChannelValues[i] * 8 * (canvasHeight / 2))
                 };
 
                 WaveformCanvas.Children.Add(line);
@@ -428,7 +428,7 @@ namespace UniversalSoundboard.Pages
                     X1 = xPos,
                     X2 = xPos,
                     Y1 = canvasHeight / 2,
-                    Y2 = (canvasHeight / 2) + (secondChannelValues[i] * 3 * (canvasHeight / 2))
+                    Y2 = (canvasHeight / 2) + (secondChannelValues[i] * 8 * (canvasHeight / 2))
                 };
 
                 WaveformCanvas.Children.Add(line);
