@@ -375,13 +375,13 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
     <value>Se déconnecter</value>
   </data>
   <data name="Account-LandingText1.Text" xml:space="preserve">
-    <value>Accéder au même Soundboard sur différents appareils</value>
+    <value>Accéder au même soundboard sur différents appareils</value>
   </data>
   <data name="Account-LandingText2.Text" xml:space="preserve">
     <value>S’assurer de ne rien perdre de ses sons et de la personnalisation</value>
   </data>
   <data name="Account-LandingText-Header.Text" xml:space="preserve">
-    <value>Synchronisez votre Soundboard et accédez-y de n’importe où.</value>
+    <value>Synchronisez votre soundboard et accédez-y de n’importe où.</value>
   </data>
   <data name="SignupButton.Content" xml:space="preserve">
     <value>Créer un compte</value>
