@@ -23,7 +23,7 @@ namespace UniversalSoundboard.Dialogs
         private Hotkey PressedHotkey = new Hotkey();
         ObservableCollection<HotkeyItem> HotkeyItems = new ObservableCollection<HotkeyItem>();
 
-        public HotkeysDialog(Sound sound, DataTemplate hotkeyItemTemplate)
+        public HotkeysDialog(Sound sound, DataTemplate hotkeyItemTemplate, Style accentButtonStyle)
             : base(
                   string.Format(FileManager.loader.GetString("HotkeysDialog-Title"), sound.Name),
                   FileManager.loader.GetString("Actions-Close")
@@ -42,10 +42,10 @@ namespace UniversalSoundboard.Dialogs
                 HotkeyItems.Add(hotkeyItem);
             }
 
-            Content = GetContent(hotkeyItemTemplate);
+            Content = GetContent(hotkeyItemTemplate, accentButtonStyle);
         }
 
-        private StackPanel GetContent(DataTemplate hotkeyItemTemplate)
+        private StackPanel GetContent(DataTemplate hotkeyItemTemplate, Style accentButtonStyle)
         {
             StackPanel contentStackPanel = new StackPanel
             {
@@ -79,10 +79,34 @@ namespace UniversalSoundboard.Dialogs
             contentStackPanel.Children.Add(descriptionTextBlock);
 
             // Add the add button
+            StackPanel addButtonContentStackPanel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal
+            };
+
+            TextBlock addButtonIconTextBlock = new TextBlock
+            {
+                Text = "\uE109",
+                FontFamily = new Windows.UI.Xaml.Media.FontFamily("Segoe Fluent Icons"),
+                FontSize = 16,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            TextBlock addButtonContentTextBlock = new TextBlock
+            {
+                Text = FileManager.loader.GetString("Actions-Add"),
+                Margin = new Thickness(12, 0, 0, 0),
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            addButtonContentStackPanel.Children.Add(addButtonIconTextBlock);
+            addButtonContentStackPanel.Children.Add(addButtonContentTextBlock);
+
             Button addButton = new Button
             {
-                Content = FileManager.loader.GetString("Actions-Add"),
-                Margin = new Thickness(0, 4, 0, 6)
+                Content = addButtonContentStackPanel,
+                Margin = new Thickness(0, 4, 0, 6),
+                Style = accentButtonStyle
             };
 
             AddButtonFlyout = new Flyout();
@@ -106,22 +130,22 @@ namespace UniversalSoundboard.Dialogs
                 Margin = new Thickness(0, 15, 0, 0)
             };
 
-            Button addHotkeyButtonFlyoutCancelButton = new Button
-            {
-                Content = FileManager.loader.GetString("Actions-Cancel"),
-                Margin = new Thickness(0, 0, 10, 0)
-            };
-            addHotkeyButtonFlyoutCancelButton.Click += (object sender, RoutedEventArgs e) => AddButtonFlyout.Hide();
-
             AddHotkeyButtonFlyoutAddButton = new Button
             {
                 Content = FileManager.loader.GetString("Actions-Add"),
-                IsEnabled = false
+                IsEnabled = false,
+                Margin = new Thickness(0, 0, 10, 0)
             };
             AddHotkeyButtonFlyoutAddButton.Click += AddHotkeyButtonFlyoutAddButton_Click;
 
-            addHotkeyButtonFlyoutButtonStackPanel.Children.Add(addHotkeyButtonFlyoutCancelButton);
+            Button addHotkeyButtonFlyoutCancelButton = new Button
+            {
+                Content = FileManager.loader.GetString("Actions-Cancel")
+            };
+            addHotkeyButtonFlyoutCancelButton.Click += (object sender, RoutedEventArgs e) => AddButtonFlyout.Hide();
+
             addHotkeyButtonFlyoutButtonStackPanel.Children.Add(AddHotkeyButtonFlyoutAddButton);
+            addHotkeyButtonFlyoutButtonStackPanel.Children.Add(addHotkeyButtonFlyoutCancelButton);
 
             addButtonFlyoutStackPanel.Children.Add(AddHotkeyButtonFlyoutTextBlock);
             addButtonFlyoutStackPanel.Children.Add(addHotkeyButtonFlyoutButtonStackPanel);
