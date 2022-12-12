@@ -75,11 +75,14 @@ namespace UniversalSoundboard.Pages
             ContentRoot.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
 
             // Set the dav logo
-            DavLogoImage.Source = new BitmapImage(new Uri(
+            var davLogoSource = new BitmapImage(new Uri(
                 RequestedTheme == ElementTheme.Dark ? "ms-appx:///Assets/Images/dav-logo-text-white.png" : "ms-appx:///Assets/Images/dav-logo-text.png"
             ));
 
-            // Set the colors for the dav Plus card
+            DavLogoImage.Source = davLogoSource;
+            DavLogoImage2.Source = davLogoSource;
+
+            // Set the colors for the dav Plus card and logo background
             if (RequestedTheme == ElementTheme.Dark)
             {
                 var backgroundColorBrush = new SolidColorBrush((Color)Application.Current.Resources["DarkThemeSecondaryBackgroundColor"]);
