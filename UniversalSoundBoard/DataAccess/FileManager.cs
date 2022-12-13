@@ -1288,6 +1288,8 @@ namespace UniversalSoundboard.DataAccess
         public static async Task RemoveNotLocallySavedSoundsAsync()
         {
             // Get each sound and check if the file exists
+            List<Guid> removedSoundUuids = new List<Guid>();
+
             foreach (var sound in itemViewHolder.AllSounds)
             {
                 var soundFileTableObject = sound.AudioFileTableObject;
@@ -1306,8 +1308,11 @@ namespace UniversalSoundboard.DataAccess
                 if (soundTableObject != null)
                     await soundTableObject.DeleteImmediatelyAsync();
 
-                RemoveSound(sound.Uuid);
+                removedSoundUuids.Add(sound.Uuid);
             }
+
+            foreach (var uuid in removedSoundUuids)
+                RemoveSound(uuid);
         }
         #endregion
 
