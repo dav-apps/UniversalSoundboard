@@ -2,6 +2,7 @@
 using davClassLibrary.Models;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
+using Microsoft.AppCenter.Analytics;
 using Microsoft.AppCenter.Crashes;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.Notifications;
@@ -3237,13 +3238,21 @@ namespace UniversalSoundboard.DataAccess
             (Application.Current.Resources["BottomSoundsBarBackgroundBrush"] as AcrylicBrush).TintOpacity = itemViewHolder.ShowAcrylicBackground ? 0.5 : 1;
         }
 
-        public static void NavigateToAccountPage()
+        public static void NavigateToAccountPage(string context = null)
         {
             itemViewHolder.Page = typeof(AccountPage);
             itemViewHolder.Title = loader.GetString("Account-Title");
             itemViewHolder.EditButtonVisible = false;
             itemViewHolder.PlayAllButtonVisible = false;
             itemViewHolder.BackButtonEnabled = true;
+
+            if (context != null)
+            {
+                Analytics.TrackEvent("NavigateToAccountPage", new Dictionary<string, string>
+                {
+                    { "Context", context }
+                });
+            }
         }
 
         public static void NavigateToSettingsPage()
@@ -3355,7 +3364,7 @@ namespace UniversalSoundboard.DataAccess
         private static void DavPlusHotkeysContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Navigate to the Account page
-            NavigateToAccountPage();
+            NavigateToAccountPage("DavPlusHotkeysDialog");
         }
         #endregion
 

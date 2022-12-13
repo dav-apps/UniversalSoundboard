@@ -1,5 +1,7 @@
 ﻿using davClassLibrary;
+using Microsoft.AppCenter.Analytics;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -574,7 +576,14 @@ namespace UniversalSoundboard.Components
 
         private async void MoreButton_OutputDevice_Click(object sender, RoutedEventArgs e)
         {
-            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
+            bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
+
+            Analytics.TrackEvent("PlayingSound-OutputDeviceButton-ItemClick", new Dictionary<string, string>
+            {
+                { "usingPlus", usingPlus.ToString() }
+            });
+
+            if (usingPlus)
             {
                 await SetOutputDevice((string)(sender as ToggleMenuFlyoutItem).Tag);
             }
@@ -590,7 +599,7 @@ namespace UniversalSoundboard.Components
         private void DavPlusOutputDeviceContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Navigate to the Account page
-            FileManager.NavigateToAccountPage();
+            FileManager.NavigateToAccountPage("DavPlusOutputDeviceDialog (PlayingSoundItemTemplate)");
         }
 
         private async void MoreButton_Repeat_0x_Click(object sender, RoutedEventArgs e)

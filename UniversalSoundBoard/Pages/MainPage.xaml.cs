@@ -251,7 +251,14 @@ namespace UniversalSoundboard.Pages
         private async void OutputDeviceItem_Click(object sender, RoutedEventArgs e)
         {
             // Check if the user is on dav Plus
-            if (!Dav.IsLoggedIn || Dav.User.Plan == 0)
+            bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
+
+            Analytics.TrackEvent("OutputDeviceButton-ItemClick", new Dictionary<string, string>
+            {
+                { "usingPlus", usingPlus.ToString() }
+            });
+
+            if (!usingPlus)
             {
                 var davPlusOutputDeviceDialog = new DavPlusOutputDeviceDialog();
                 davPlusOutputDeviceDialog.PrimaryButtonClick += DavPlusOutputDeviceContentDialog_PrimaryButtonClick;
@@ -280,7 +287,7 @@ namespace UniversalSoundboard.Pages
         private void DavPlusOutputDeviceContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Navigate to the Account page
-            FileManager.NavigateToAccountPage();
+            FileManager.NavigateToAccountPage("DavPlusOutputDeviceDialog (MainPage)");
         }
 
         private async void WriteReviewInAppNotificationEventArgs_PrimaryButtonClick(object sender, RoutedEventArgs e)
@@ -310,6 +317,7 @@ namespace UniversalSoundboard.Pages
             {
                 // Collect settings
                 string settings = "";
+                settings += $"Screen resolution: {screenWidth}x{screenHeight}\n";
                 settings += $"savePlayingSounds: {FileManager.itemViewHolder.SavePlayingSounds}\n";
                 settings += $"openMultipleSounds: {FileManager.itemViewHolder.OpenMultipleSounds}\n";
                 settings += $"multiSoundPlayback: {FileManager.itemViewHolder.MultiSoundPlayback}\n";
@@ -319,7 +327,7 @@ namespace UniversalSoundboard.Pages
                 settings += $"showCategoriesIcons: {FileManager.itemViewHolder.ShowCategoriesIcons}\n";
                 settings += $"showAcrylicBackground: {FileManager.itemViewHolder.ShowAcrylicBackground}\n";
                 settings += $"isLoggedIn: {Dav.IsLoggedIn}\n";
-                settings += $"Screen resolution: {screenWidth}x{screenHeight}";
+                if (Dav.IsLoggedIn) settings += $"plan: {Dav.User.Plan}";
 
                 return new ErrorAttachmentLog[]
                 {
@@ -327,8 +335,9 @@ namespace UniversalSoundboard.Pages
                 };
             };
 
-            Analytics.TrackEvent("AppStart", new Dictionary<string, string>
+            var appStartDict = new Dictionary<string, string>
             {
+                { "Screen resolution", $"{screenWidth}x{screenHeight}" },
                 { "savePlayingSounds", FileManager.itemViewHolder.SavePlayingSounds.ToString() },
                 { "openMultipleSounds", FileManager.itemViewHolder.OpenMultipleSounds.ToString() },
                 { "multiSoundPlayback", FileManager.itemViewHolder.MultiSoundPlayback.ToString() },
@@ -337,9 +346,13 @@ namespace UniversalSoundboard.Pages
                 { "showListView", FileManager.itemViewHolder.ShowListView.ToString() },
                 { "showCategoriesIcons", FileManager.itemViewHolder.ShowCategoriesIcons.ToString() },
                 { "showAcrylicBackground", FileManager.itemViewHolder.ShowAcrylicBackground.ToString() },
-                { "isLoggedIn", Dav.IsLoggedIn.ToString() },
-                { "Screen resolution", $"{screenWidth}x{screenHeight}" }
-            });
+                { "isLoggedIn", Dav.IsLoggedIn.ToString() }
+            };
+
+            if (Dav.IsLoggedIn)
+                appStartDict.Add("plan", Dav.User.Plan.ToString());
+
+            Analytics.TrackEvent("AppStart", appStartDict);
         }
 
         private void CustomiseTitleBar()
@@ -957,7 +970,7 @@ namespace UniversalSoundboard.Pages
             )
             {
                 // Show the Account page
-                FileManager.NavigateToAccountPage();
+                FileManager.NavigateToAccountPage("SideBar");
 
                 // Close the SideBar if it was open on mobile
                 if (
@@ -1764,7 +1777,7 @@ namespace UniversalSoundboard.Pages
         private void DavPlusSoundRecorderDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Navigate to the Account page
-            FileManager.NavigateToAccountPage();
+            FileManager.NavigateToAccountPage("DavPlusSoundRecorderDialog");
         }
         #endregion
 
