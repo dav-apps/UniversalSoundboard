@@ -16,6 +16,7 @@ namespace UniversalSoundboard.Common
     public class ItemViewHolder : INotifyPropertyChanged
     {
         #region Constants for the localSettings keys
+        private const string userIdKey = "userId";
         private const string savePlayingSoundsKey = "savePlayingSounds";
         private const string openMultipleSoundsKey = "openMultipleSounds";
         private const string multiSoundPlaybackKey = "multiSoundPlayback";
@@ -112,6 +113,7 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Settings
+        private Guid _userId;                               // A unique id for the current installation
         private bool _savePlayingSounds;                    // If true saves the PlayingSounds and loads them when starting the app
         private bool _openMultipleSounds;                   // If false, removes all PlayingSounds whenever the user opens a new one; if true, adds new opened sounds to existing PlayingSounds
         private bool _multiSoundPlayback;                   // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
@@ -214,6 +216,16 @@ namespace UniversalSoundboard.Common
             #endregion
 
             #region Settings
+            #region userId
+            if (localSettings.Values[userIdKey] == null)
+            {
+                _userId = Guid.NewGuid();
+                localSettings.Values[userIdKey] = _userId;
+            }
+            else
+                _userId = (Guid)localSettings.Values[userIdKey];
+            #endregion
+
             #region savePlayingSounds
             if (localSettings.Values[savePlayingSoundsKey] == null)
                 _savePlayingSounds = savePlayingSoundsDefault;
@@ -847,6 +859,14 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Settings
+        #region UserId
+        public const string UserIdKey = "UserId";
+        public Guid UserId
+        {
+            get => _userId;
+        }
+        #endregion
+
         #region SavePlayingSounds
         public const string SavePlayingSoundsKey = "SavePlayingSounds";
         public bool SavePlayingSounds

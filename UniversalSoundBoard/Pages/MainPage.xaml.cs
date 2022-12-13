@@ -304,6 +304,7 @@ namespace UniversalSoundboard.Pages
             screenHeight = displayInfo.ScreenHeightInRawPixels;
 
             AppCenter.Start(Env.AppCenterSecretKey, typeof(Analytics), typeof(Crashes));
+            AppCenter.SetUserId(FileManager.itemViewHolder.UserId.ToString());
 
             Crashes.GetErrorAttachments = (ErrorReport report) =>
             {
@@ -325,6 +326,20 @@ namespace UniversalSoundboard.Pages
                     ErrorAttachmentLog.AttachmentWithText(settings, "settings.txt")
                 };
             };
+
+            Analytics.TrackEvent("AppStart", new Dictionary<string, string>
+            {
+                { "savePlayingSounds", FileManager.itemViewHolder.SavePlayingSounds.ToString() },
+                { "openMultipleSounds", FileManager.itemViewHolder.OpenMultipleSounds.ToString() },
+                { "multiSoundPlayback", FileManager.itemViewHolder.MultiSoundPlayback.ToString() },
+                { "showSoundsPivot", FileManager.itemViewHolder.ShowSoundsPivot.ToString() },
+                { "soundOrder", FileManager.itemViewHolder.SoundOrder.ToString() },
+                { "showListView", FileManager.itemViewHolder.ShowListView.ToString() },
+                { "showCategoriesIcons", FileManager.itemViewHolder.ShowCategoriesIcons.ToString() },
+                { "showAcrylicBackground", FileManager.itemViewHolder.ShowAcrylicBackground.ToString() },
+                { "isLoggedIn", Dav.IsLoggedIn.ToString() },
+                { "Screen resolution", $"{screenWidth}x{screenHeight}" }
+            });
         }
 
         private void CustomiseTitleBar()
