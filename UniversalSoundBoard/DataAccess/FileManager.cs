@@ -3348,7 +3348,14 @@ namespace UniversalSoundboard.DataAccess
             Sound sound = await GetSoundAsync(itemViewHolder.HotkeySoundMapping.ElementAt(id));
             if (sound == null) return;
 
-            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
+            bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
+
+            Analytics.TrackEvent("HotkeyPressed", new Dictionary<string, string>
+            {
+                { "usingPlus", usingPlus.ToString() }
+            });
+
+            if (usingPlus)
             {
                 itemViewHolder.TriggerPlaySoundEvent(null, new PlaySoundEventArgs(sound));
             }

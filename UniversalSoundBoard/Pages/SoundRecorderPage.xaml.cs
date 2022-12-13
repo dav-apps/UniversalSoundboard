@@ -1,4 +1,5 @@
-﻿using Microsoft.AppCenter.Crashes;
+﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -252,6 +253,11 @@ namespace UniversalSoundboard.Pages
             ShrinkRecorderStoryboardAnimation.From = RecordingRelativePanel.ActualHeight;
             ShrinkRecorderStoryboardAnimation.To = RecordingRelativePanel.ActualHeight / 1.5;
             ShrinkRecorderStoryboard.Begin();
+
+            Analytics.TrackEvent("SoundRecorder-StopRecording", new Dictionary<string, string>
+            {
+                { "Duration", (await recordedSoundItem.GetDuration()).ToString("mm\\:ss") }
+            });
         }
 
         private void RecordedSoundItem_AudioPlayerStarted(object sender, EventArgs e)

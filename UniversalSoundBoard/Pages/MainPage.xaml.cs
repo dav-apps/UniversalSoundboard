@@ -1338,6 +1338,8 @@ namespace UniversalSoundboard.Pages
         #region SoundDownload
         private async void DownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("AddButton-DownloadSounds", new Dictionary<string, string>());
+
             var soundDownloadListItemTemplate = Resources["SoundDownloadListItemTemplate"] as DataTemplate;
 
             var soundDownloadDialog = new SoundDownloadDialog(soundDownloadListItemTemplate);
@@ -1744,7 +1746,14 @@ namespace UniversalSoundboard.Pages
         #region RecordSounds
         private async void AddButtonRecordFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
+            bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
+
+            Analytics.TrackEvent("AddButton-RecordSounds", new Dictionary<string, string>
+            {
+                { "usingPlus", usingPlus.ToString() }
+            });
+
+            if (usingPlus)
             {
                 if (soundRecorderAppWindow == null)
                 {
