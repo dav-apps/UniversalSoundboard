@@ -281,9 +281,9 @@
                                     </Grid.RowDefinitions>
 
                                     <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="{ThemeResource SliderPreContentMargin}" />
+                                        <ColumnDefinition Width="15" />
                                         <ColumnDefinition Width="Auto" />
-                                        <ColumnDefinition Width="{ThemeResource SliderPostContentMargin}" />
+                                        <ColumnDefinition Width="15" />
                                     </Grid.ColumnDefinitions>
 
                                     <Rectangle x:Name="VerticalTrackRect"
