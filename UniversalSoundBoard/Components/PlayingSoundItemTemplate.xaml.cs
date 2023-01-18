@@ -456,13 +456,13 @@ namespace UniversalSoundboard.Components
             await PlayingSoundItem.TriggerRemove();
         }
 
-        private void ProgressSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        private async void ProgressSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             if (skipProgressSliderValueChanged) return;
 
             double diff = e.NewValue - e.OldValue;
             if (diff > 0.6 || diff < -0.6)
-                PlayingSoundItem.SetPosition(Convert.ToInt32(e.NewValue));
+                await PlayingSoundItem.SetPosition(Convert.ToInt32(e.NewValue));
         }
 
         private async void MenuFlyout_Opening(object sender, object e)
