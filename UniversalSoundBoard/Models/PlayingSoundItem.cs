@@ -288,7 +288,7 @@ namespace UniversalSoundboard.Models
                     }
                     else
                     {
-                        PlayingSound.AudioPlayer.Position = TimeSpan.Zero;
+                        SetAudioPlayerPosition(TimeSpan.Zero);
                         PlayingSound.AudioPlayer.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
 
                         await SetPlayPause(true);
@@ -388,7 +388,7 @@ namespace UniversalSoundboard.Models
         {
             if (PlayingSound.StartPosition.HasValue)
             {
-                PlayingSound.AudioPlayer.Position = PlayingSound.StartPosition.Value;
+                SetAudioPlayerPosition(PlayingSound.StartPosition.Value);
                 PlayingSound.StartPosition = null;
             }
 
@@ -490,7 +490,7 @@ namespace UniversalSoundboard.Models
 
             bool wasPlaying = PlayingSound.AudioPlayer.IsPlaying;
             PlayingSound.AudioPlayer.Pause();
-            PlayingSound.AudioPlayer.Position = TimeSpan.Zero;
+            SetAudioPlayerPosition(TimeSpan.Zero);
             PlayingSound.AudioPlayer.AudioFile = audioFile;
             PlayingSound.AudioPlayer.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
             await InitAudioPlayer();
@@ -693,6 +693,17 @@ namespace UniversalSoundboard.Models
             DownloadProgressList.RemoveAt(i);
         }
 
+        private void SetAudioPlayerPosition(TimeSpan position)
+        {
+            if (
+                PlayingSound == null
+                || PlayingSound.AudioPlayer == null
+            ) return;
+
+            PlayingSound.AudioPlayer.Position = position;
+            PositionChanged?.Invoke(this, new PositionChangedEventArgs(position));
+        }
+
         private async Task StartFadeOut()
         {
             if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
@@ -716,7 +727,7 @@ namespace UniversalSoundboard.Models
             if (currentFadeOutFrame >= fadeOutFrames || PlayingSound.AudioPlayer == null)
             {
                 if (PlayingSound.AudioPlayer != null && await PauseAudioPlayer())
-                    PlayingSound.AudioPlayer.Position = TimeSpan.Zero;
+                    SetAudioPlayerPosition(TimeSpan.Zero);
 
                 fadeOutTimer.Stop();
             }
@@ -848,7 +859,7 @@ namespace UniversalSoundboard.Models
             if (PlayingSound.AudioPlayer.Position.Seconds >= 5)
             {
                 // Move to the start of the sound
-                PlayingSound.AudioPlayer.Position = TimeSpan.Zero;
+                SetAudioPlayerPosition(TimeSpan.Zero);
             }
             else
             {
@@ -901,7 +912,7 @@ namespace UniversalSoundboard.Models
             if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
             if (position >= currentSoundTotalDuration.TotalSeconds) return;
 
-            PlayingSound.AudioPlayer.Position = new TimeSpan(0, 0, position);
+            SetAudioPlayerPosition(new TimeSpan(0, 0, position));
         }
 
         public async Task SetVolume(int volume)
@@ -1061,7 +1072,7 @@ namespace UniversalSoundboard.Models
             FileManager.itemViewHolder.PlayingSoundItems.Remove(this);
 
             if (PlayingSound.AudioPlayer != null && await PauseAudioPlayer())
-                PlayingSound.AudioPlayer.Position = TimeSpan.Zero;
+                SetAudioPlayerPosition(TimeSpan.Zero);
 
             // Remove this PlayingSound from the SMTC, if it was active
             if (PlayingSound.Uuid.Equals(FileManager.itemViewHolder.ActivePlayingSound))
