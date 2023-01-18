@@ -138,8 +138,11 @@ namespace UniversalSoundboard.Pages
                 RequestedTheme = FileManager.GetRequestedTheme();
             else if (e.PropertyName.Equals(ItemViewHolder.AppStateKey) || e.PropertyName.Equals(ItemViewHolder.SelectedCategoryKey))
                 UpdateMessagesVisibilities();
-            else if (e.PropertyName.Equals(ItemViewHolder.SoundOrderKey) || e.PropertyName.Equals(ItemViewHolder.MultiSelectionEnabledKey))
-                UpdateCanReorderItems();
+            else if (
+                e.PropertyName.Equals(ItemViewHolder.SoundOrderKey)
+                || e.PropertyName.Equals(ItemViewHolder.MultiSelectionEnabledKey)
+                || e.PropertyName.Equals(ItemViewHolder.SearchQueryKey)
+            ) UpdateCanReorderItems();
         }
 
         private async void ItemViewHolder_Sounds_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -503,6 +506,8 @@ namespace UniversalSoundboard.Pages
         private void UpdateCanReorderItems()
         {
             if (FileManager.itemViewHolder.MultiSelectionEnabled)
+                canReorderItems = false;
+            else if (FileManager.itemViewHolder.SearchQuery.Length > 0)
                 canReorderItems = false;
             else if (FileManager.itemViewHolder.SoundOrder == NewSoundOrder.Custom)
                 canReorderItems = true;
