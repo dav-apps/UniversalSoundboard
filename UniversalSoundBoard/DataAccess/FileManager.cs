@@ -1205,6 +1205,10 @@ namespace UniversalSoundboard.DataAccess
             if (i != -1)
                 itemViewHolder.FavouriteSounds.RemoveAt(i);
 
+            // Remove in all PlayingSoundItems
+            foreach (var playingSoundItem in itemViewHolder.PlayingSoundItems.ToList())
+                playingSoundItem.RemoveSound(uuid);
+
             itemViewHolder.TriggerSoundDeletedEvent(null, new SoundEventArgs(uuid));
 
             if (itemViewHolder.AllSounds.Count == 0 && itemViewHolder.AppState == AppState.Normal)

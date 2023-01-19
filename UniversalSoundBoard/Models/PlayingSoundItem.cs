@@ -524,8 +524,18 @@ namespace UniversalSoundboard.Models
             }
         }
 
-        private void UpdateUI()
+        private async void UpdateUI()
         {
+            if (PlayingSound.Sounds.Count == 0)
+            {
+                await Hide();
+                return;
+            }
+            else if (PlayingSound.Sounds.Count == 1)
+            {
+                CollapseSoundsList?.Invoke(this, EventArgs.Empty);
+            }
+
             UpdateButtonVisibility();
             UpdateFavouriteFlyoutItem();
             UpdateVolumeControl();
@@ -1057,7 +1067,7 @@ namespace UniversalSoundboard.Models
             await StartFadeOut();
 
             // Start the remove animation
-            RemovePlayingSound?.Invoke(this, new EventArgs());
+            HidePlayingSound?.Invoke(this, new EventArgs());
         }
 
         public async Task Remove()
@@ -1083,9 +1093,6 @@ namespace UniversalSoundboard.Models
 
             // Delete the PlayingSound
             await FileManager.DeletePlayingSoundAsync(PlayingSound.Uuid);
-
-            // Start the remove animation
-            RemovePlayingSound?.Invoke(this, new EventArgs());
         }
 
         public void RemoveSound(Guid uuid)
@@ -1094,6 +1101,7 @@ namespace UniversalSoundboard.Models
             if (index == -1) return;
 
             PlayingSound.Sounds.RemoveAt(index);
+            UpdateUI();
         }
 
         public void TriggerCollapseSoundsListEvent(object sender, EventArgs args)

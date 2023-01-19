@@ -295,7 +295,7 @@ namespace UniversalSoundboard.Components
 
         private void PlayingSoundItem_CollapseSoundsList(object sender, EventArgs e)
         {
-            isSoundsListVisible = false;
+            CollapseSoundList();
             UpdateExpandButton();
         }
         #endregion
@@ -383,23 +383,9 @@ namespace UniversalSoundboard.Components
         private void ExpandButton_Click(object sender, RoutedEventArgs e)
         {
             if (isSoundsListVisible)
-            {
-                isSoundsListVisible = false;
-
-                if (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
-                    Collapse?.Invoke(this, EventArgs.Empty);
-                else
-                    PlayingSoundItemContainer.TriggerCollapseSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
-            }
+                CollapseSoundList();
             else
-            {
-                isSoundsListVisible = true;
-
-                if (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
-                    Expand?.Invoke(this, EventArgs.Empty);
-                else
-                    PlayingSoundItemContainer.TriggerExpandSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
-            }
+                ExpandSoundList();
 
             UpdateExpandButton();
         }
@@ -702,17 +688,11 @@ namespace UniversalSoundboard.Components
             await PlayingSoundItem.ToggleFavourite();
         }
 
-        private async void PlayingSoundItemSoundItemTemplate_Remove(object sender, EventArgs args)
+        private void PlayingSoundItemSoundItemTemplate_Remove(object sender, EventArgs args)
         {
             PlayingSoundItemSoundItemTemplate itemTemplate = sender as PlayingSoundItemSoundItemTemplate;
 
             PlayingSoundItem.RemoveSound(itemTemplate.Sound.Uuid);
-
-            if (PlayingSound.Sounds.Count == 0)
-            {
-                await Task.Delay(200);
-                await PlayingSoundItem.Hide();
-            }
         }
 
         private async void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
@@ -970,6 +950,26 @@ namespace UniversalSoundboard.Components
                 ExpandButton.Content = "\uE099";
                 ExpandButtonToolTip.Text = FileManager.loader.GetString("ExpandButtonTooltip");
             }
+        }
+
+        private void ExpandSoundList()
+        {
+            isSoundsListVisible = true;
+
+            if (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
+                Expand?.Invoke(this, EventArgs.Empty);
+            else
+                PlayingSoundItemContainer.TriggerExpandSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
+        }
+
+        private void CollapseSoundList()
+        {
+            isSoundsListVisible = false;
+
+            if (PlayingSoundItemContainer.IsInBottomPlayingSoundsBar)
+                Collapse?.Invoke(this, EventArgs.Empty);
+            else
+                PlayingSoundItemContainer.TriggerCollapseSoundsListEvent(new PlayingSoundSoundsListEventArgs(SoundsListViewStackPanel));
         }
 
         private void SetRepeatFlyoutItemText(int repetitions)

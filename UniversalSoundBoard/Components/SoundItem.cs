@@ -383,9 +383,9 @@ namespace UniversalSoundboard.Components
 
         private async void DeleteSoundContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            await FileManager.DeleteSoundAsync(sound.Uuid);
             FileManager.RemoveSound(sound.Uuid);
             FileManager.UpdatePlayAllButtonVisibility();
+            await FileManager.DeleteSoundAsync(sound.Uuid);
         }
         #endregion
 
