@@ -524,18 +524,8 @@ namespace UniversalSoundboard.Models
             }
         }
 
-        private async void UpdateUI()
+        private void UpdateUI()
         {
-            if (PlayingSound.Sounds.Count == 0)
-            {
-                await Hide();
-                return;
-            }
-            else if (PlayingSound.Sounds.Count == 1)
-            {
-                CollapseSoundsList?.Invoke(this, EventArgs.Empty);
-            }
-
             UpdateButtonVisibility();
             UpdateFavouriteFlyoutItem();
             UpdateVolumeControl();
@@ -1095,12 +1085,23 @@ namespace UniversalSoundboard.Models
             await FileManager.DeletePlayingSoundAsync(PlayingSound.Uuid);
         }
 
-        public void RemoveSound(Guid uuid)
+        public async void RemoveSound(Guid uuid)
         {
             int index = PlayingSound.Sounds.ToList().FindIndex(s => s.Uuid.Equals(uuid));
             if (index == -1) return;
 
             PlayingSound.Sounds.RemoveAt(index);
+
+            if (PlayingSound.Sounds.Count == 0)
+            {
+                await Hide();
+                return;
+            }
+            else if (PlayingSound.Sounds.Count == 1)
+            {
+                CollapseSoundsList?.Invoke(this, EventArgs.Empty);
+            }
+
             UpdateUI();
         }
 
