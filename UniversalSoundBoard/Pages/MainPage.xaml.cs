@@ -957,6 +957,8 @@ namespace UniversalSoundboard.Pages
         private async void SideBar_ItemInvoked(WinUI.NavigationView sender, WinUI.NavigationViewItemInvokedEventArgs args)
         {
             FileManager.itemViewHolder.SelectedSounds.Clear();
+
+            bool searchVisible = FileManager.itemViewHolder.SearchQuery.Length > 0;
             FileManager.ResetSearchArea();
 
             if (args.IsSettingsInvoked)
@@ -983,7 +985,14 @@ namespace UniversalSoundboard.Pages
                 // Show the selected category
                 if (args.InvokedItemContainer == null) return;
                 Guid categoryUuid = (Guid)args.InvokedItemContainer.Tag;
-                if (categoryUuid.Equals(FileManager.itemViewHolder.SelectedCategory) && FileManager.itemViewHolder.Page == typeof(SoundPage)) return;
+
+                if (
+                    FileManager.itemViewHolder.Page == typeof(SoundPage)
+                    && (
+                        categoryUuid.Equals(FileManager.itemViewHolder.SelectedCategory)
+                        && !searchVisible
+                    )
+                ) return;
 
                 // Set initialCategory if the playing sounds weren't still loaded
                 if (FileManager.itemViewHolder.AppState == AppState.Loading && !playingSoundsLoaded)
@@ -2160,7 +2169,7 @@ namespace UniversalSoundboard.Pages
 
             Guid categoryUuid = await FileManager.CreateCategoryAsync(null, selectedCategory, dialog.Name, dialog.Icon);
             Category newCategory = await FileManager.GetCategoryAsync(categoryUuid, false);
-
+            
             // Add the category to the categories list
             FileManager.AddCategory(newCategory, selectedCategory);
 
@@ -2168,7 +2177,7 @@ namespace UniversalSoundboard.Pages
             AddCategoryMenuItem(menuItems, newCategory, selectedCategory);
 
             // Navigate to the new category
-            await FileManager.ShowCategoryAsync(selectedCategory);
+            await FileManager.ShowCategoryAsync(newCategory.Uuid);
 
             // Select the new category in the SideBar
             await Task.Delay(2);
