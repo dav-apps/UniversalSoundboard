@@ -458,7 +458,7 @@ namespace UniversalSoundboard.Pages
                 for (int i = 0; i < FileManager.itemViewHolder.PlayingSoundItems.Count; i++)
                 {
                     var playingSoundItem = FileManager.itemViewHolder.PlayingSoundItems[i];
-                    await playingSoundItem.TriggerRemove();
+                    await playingSoundItem.Hide();
                 }
 
                 await Task.Delay(400);

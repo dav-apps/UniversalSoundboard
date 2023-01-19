@@ -82,7 +82,7 @@ namespace UniversalSoundboard.Models
         public event EventHandler<VolumeChangedEventArgs> VolumeChanged;
         public event EventHandler<MutedChangedEventArgs> MutedChanged;
         public event EventHandler<PlaybackSpeedChangedEventArgs> PlaybackSpeedChanged;
-        public event EventHandler<EventArgs> RemovePlayingSound;
+        public event EventHandler<EventArgs> HidePlayingSound;
         public event EventHandler<DownloadStatusChangedEventArgs> DownloadStatusChanged;
         public event EventHandler<EventArgs> CollapseSoundsList;
         #endregion
@@ -239,7 +239,7 @@ namespace UniversalSoundboard.Models
                     if (PlayingSound.Repetitions < 0)
                     {
                         // Remove the PlayingSound
-                        await TriggerRemove();
+                        await Hide();
                         return;
                     }
 
@@ -1051,7 +1051,7 @@ namespace UniversalSoundboard.Models
             }
         }
 
-        public async Task TriggerRemove()
+        public async Task Hide()
         {
             // Stop and reset the MediaPlayer
             await StartFadeOut();

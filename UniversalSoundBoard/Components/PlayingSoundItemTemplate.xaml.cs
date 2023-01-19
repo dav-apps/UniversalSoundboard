@@ -32,7 +32,6 @@ namespace UniversalSoundboard.Components
 
         private bool initialized = false;
         PlayingSoundItemLayoutType layoutType = PlayingSoundItemLayoutType.Small;
-        Guid selectedSoundUuid;
         Thickness singlePlayingSoundTitleMargin = new Thickness(0);
         private bool skipSoundsListViewSelectionChanged;
         private bool skipProgressSliderValueChanged = false;
@@ -103,15 +102,15 @@ namespace UniversalSoundboard.Components
             PlayingSoundItem.MutedChanged += PlayingSoundItem_MutedChanged;
             PlayingSoundItem.PlaybackSpeedChanged -= PlayingSoundItem_PlaybackSpeedChanged;
             PlayingSoundItem.PlaybackSpeedChanged += PlayingSoundItem_PlaybackSpeedChanged;
-            PlayingSoundItem.RemovePlayingSound -= PlayingSoundItem_RemovePlayingSound;
-            PlayingSoundItem.RemovePlayingSound += PlayingSoundItem_RemovePlayingSound;
+            PlayingSoundItem.HidePlayingSound -= PlayingSoundItem_HidePlayingSound;
+            PlayingSoundItem.HidePlayingSound += PlayingSoundItem_HidePlayingSound;
             PlayingSoundItem.DownloadStatusChanged -= PlayingSoundItem_DownloadStatusChanged;
             PlayingSoundItem.DownloadStatusChanged += PlayingSoundItem_DownloadStatusChanged;
             PlayingSoundItem.CollapseSoundsList -= PlayingSoundItem_CollapseSoundsList;
             PlayingSoundItem.CollapseSoundsList += PlayingSoundItem_CollapseSoundsList;
 
-            FileManager.itemViewHolder.RemovePlayingSoundItem -= ItemViewHolder_RemovePlayingSoundItem;
-            FileManager.itemViewHolder.RemovePlayingSoundItem += ItemViewHolder_RemovePlayingSoundItem;
+            FileManager.itemViewHolder.HidePlayingSoundItem -= ItemViewHolder_HidePlayingSoundItem;
+            FileManager.itemViewHolder.HidePlayingSoundItem += ItemViewHolder_HidePlayingSoundItem;
 
             PlayingSoundItem.Init();
 
@@ -257,7 +256,7 @@ namespace UniversalSoundboard.Components
             PlaybackSpeedButton.Visibility = Visibility.Visible;
         }
 
-        private void PlayingSoundItem_RemovePlayingSound(object sender, EventArgs e)
+        private void PlayingSoundItem_HidePlayingSound(object sender, EventArgs e)
         {
             PlayingSoundItemContainer.TriggerHideEvent(EventArgs.Empty);
         }
@@ -302,7 +301,7 @@ namespace UniversalSoundboard.Components
         #endregion
 
         #region ItemViewHolder event handlers
-        private void ItemViewHolder_RemovePlayingSoundItem(object sender, RemovePlayingSoundItemEventArgs args)
+        private void ItemViewHolder_HidePlayingSoundItem(object sender, HidePlayingSoundItemEventArgs args)
         {
             if (
                 PlayingSoundItemContainer.IsInBottomPlayingSoundsBar
@@ -453,7 +452,7 @@ namespace UniversalSoundboard.Components
 
         private async void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
-            await PlayingSoundItem.TriggerRemove();
+            await PlayingSoundItem.Hide();
         }
 
         private async void ProgressSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -712,7 +711,7 @@ namespace UniversalSoundboard.Components
             if (PlayingSound.Sounds.Count == 0)
             {
                 await Task.Delay(200);
-                await PlayingSoundItem.TriggerRemove();
+                await PlayingSoundItem.Hide();
             }
         }
 
@@ -720,12 +719,6 @@ namespace UniversalSoundboard.Components
         {
             if (skipSoundsListViewSelectionChanged) return;
             await PlayingSoundItem.MoveToSound(SoundsListView.SelectedIndex);
-        }
-
-        private void RemoveFlyoutItem_Click(object sender, RoutedEventArgs e)
-        {
-            // Remove the selected sound
-            PlayingSoundItem.RemoveSound(selectedSoundUuid);
         }
         #endregion
 

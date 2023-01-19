@@ -30,11 +30,11 @@ namespace UniversalSoundboard.Common
         }
     }
 
-    public class RemovePlayingSoundItemEventArgs : EventArgs
+    public class HidePlayingSoundItemEventArgs : EventArgs
     {
         public Guid Uuid { get; set; }
 
-        public RemovePlayingSoundItemEventArgs(Guid uuid)
+        public HidePlayingSoundItemEventArgs(Guid uuid)
         {
             Uuid = uuid;
         }

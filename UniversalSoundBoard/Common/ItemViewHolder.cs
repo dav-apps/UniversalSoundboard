@@ -147,7 +147,7 @@ namespace UniversalSoundboard.Common
         public event EventHandler<SoundEventArgs> SoundDeleted;                                                     // Is triggered when a sound was deleted
         public event EventHandler<RoutedEventArgs> SelectAllSounds;                                                 // Trigger this event to select all sounds or deselect all sounds when all sounds are selected
         public event EventHandler<SizeChangedEventArgs> SoundTileSizeChanged;                                       // Is triggered when the size of the sound tiles in the GridViews has changed
-        public event EventHandler<RemovePlayingSoundItemEventArgs> RemovePlayingSoundItem;                          // Is triggered when a PlayingSoundItem was removed and should be hidden on the BottomPlayingSoundsBar, if the BottomPlayingSoundsBar is not visible
+        public event EventHandler<HidePlayingSoundItemEventArgs> HidePlayingSoundItem;                            // Is triggered when a PlayingSoundItem was removed and should be hidden on the BottomPlayingSoundsBar, if the BottomPlayingSoundsBar is not visible
         public event EventHandler<TableObjectFileDownloadProgressChangedEventArgs> TableObjectFileDownloadProgressChanged;  // Is triggered when the file of a TableObject is being downloaded and the progress changed
         public event EventHandler<TableObjectFileDownloadCompletedEventArgs> TableObjectFileDownloadCompleted;      // Is triggered from TriggerAction when the file of a TableObject was finished
         public event EventHandler<ShowInAppNotificationEventArgs> ShowInAppNotification;                            // Trigger this event to show the InAppNotification on the SoundPage
@@ -1220,9 +1220,9 @@ namespace UniversalSoundboard.Common
             SoundTileSizeChanged?.Invoke(sender, e);
         }
 
-        public void TriggerRemovePlayingSoundItemEvent(object sender, RemovePlayingSoundItemEventArgs args)
+        public void TriggerHidePlayingSoundItemEvent(object sender, HidePlayingSoundItemEventArgs args)
         {
-            RemovePlayingSoundItem?.Invoke(sender, args);
+            HidePlayingSoundItem?.Invoke(sender, args);
         }
 
         public void TriggerTableObjectFileDownloadProgressChangedEvent(object sender, TableObjectFileDownloadProgressChangedEventArgs args)

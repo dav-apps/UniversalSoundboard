@@ -126,7 +126,7 @@ namespace UniversalSoundboard.Controllers
             BottomPlayingSoundsBarGridSplitter.ManipulationCompleted += BottomPlayingSoundsBarGridSplitter_ManipulationCompleted;
             BottomPseudoContentGrid.SizeChanged += BottomPseudoContentGrid_SizeChanged;
             FileManager.itemViewHolder.PlayingSoundsLoaded += ItemViewHolder_PlayingSoundsLoaded;
-            FileManager.itemViewHolder.RemovePlayingSoundItem += ItemViewHolder_RemovePlayingSoundItem;
+            FileManager.itemViewHolder.HidePlayingSoundItem += ItemViewHolder_HidePlayingSoundItem;
             FileManager.itemViewHolder.PlayingSounds.CollectionChanged += ItemViewHolder_PlayingSounds_CollectionChanged;
         }
 
@@ -222,7 +222,7 @@ namespace UniversalSoundboard.Controllers
             Init();
         }
 
-        private void ItemViewHolder_RemovePlayingSoundItem(object sender, RemovePlayingSoundItemEventArgs args)
+        private void ItemViewHolder_HidePlayingSoundItem(object sender, HidePlayingSoundItemEventArgs args)
         {
             // Find the item container with the uuid and set IsVisible to false
             // so that the item is not rendered when the BottomPlayingSoundsBar is made visible 
@@ -540,7 +540,7 @@ namespace UniversalSoundboard.Controllers
             var playingSoundItem = FileManager.itemViewHolder.PlayingSoundItems.Find(item => item.Uuid.Equals(itemContainer.PlayingSound.Uuid));
             if (playingSoundItem != null) await playingSoundItem.Remove();
 
-            FileManager.itemViewHolder.TriggerRemovePlayingSoundItemEvent(this, new RemovePlayingSoundItemEventArgs(itemContainer.PlayingSound.Uuid));
+            FileManager.itemViewHolder.TriggerHidePlayingSoundItemEvent(this, new HidePlayingSoundItemEventArgs(itemContainer.PlayingSound.Uuid));
 
             UpdateGridSplitterRange();
         }
@@ -858,7 +858,7 @@ namespace UniversalSoundboard.Controllers
             if (BottomSoundsBarSounds.Count == 0)
             {
                 await Task.Delay(200);
-                await playingSoundItemOfBottomSoundsBar.TriggerRemove();
+                await playingSoundItemOfBottomSoundsBar.Hide();
             }
         }
 
