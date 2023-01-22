@@ -126,10 +126,12 @@ namespace UniversalSoundboard.Components
             PlayingSoundItemContainer?.TriggerLoadedEvent(EventArgs.Empty);
         }
 
-        private void PlayingSoundItemTemplateUserControl_SizeChanged(object sender, SizeChangedEventArgs e)
+        private void PlayingSoundItemTemplateUserControl_SizeChanged(object sender, SizeChangedEventArgs eventArgs)
         {
             AdjustLayout();
             UpdateUI();
+
+            PlayingSoundItemContainer.TriggerSizeChangedEvent(eventArgs);
         }
 
         private void PlayingSoundTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)

@@ -1,6 +1,7 @@
 ﻿using System;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
+using Windows.UI.Xaml;
 
 namespace UniversalSoundboard.Models
 {
@@ -17,6 +18,7 @@ namespace UniversalSoundboard.Models
 
         public event EventHandler<EventArgs> Hide;
         public event EventHandler<EventArgs> Loaded;
+        public event EventHandler<SizeChangedEventArgs> SizeChanged;
         public event EventHandler<PlayingSoundSoundsListEventArgs> ExpandSoundsList;
         public event EventHandler<PlayingSoundSoundsListEventArgs> CollapseSoundsList;
 
@@ -45,6 +47,11 @@ namespace UniversalSoundboard.Models
         {
             IsLoaded = true;
             Loaded?.Invoke(this, args);
+        }
+
+        public void TriggerSizeChangedEvent(SizeChangedEventArgs args)
+        {
+            SizeChanged?.Invoke(this, args);
         }
 
         public void TriggerExpandSoundsListEvent(PlayingSoundSoundsListEventArgs args)

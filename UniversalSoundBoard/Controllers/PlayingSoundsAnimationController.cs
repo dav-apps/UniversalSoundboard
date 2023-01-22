@@ -29,6 +29,8 @@ namespace UniversalSoundboard.Controllers
         private double bottomSoundsBarHeight = 0;
         private BottomPlayingSoundsBarVerticalPosition bottomPlayingSoundsBarPosition = BottomPlayingSoundsBarVerticalPosition.Bottom;
         private PlayingSoundItem playingSoundItemOfBottomSoundsBar = null;
+        private double playingSoundItemContainerSizeChangedHeightDiffSum = 0;
+        private int playingSoundItemContainerSizeChangedRunCount = 0;
 
         RelativePanel ContentRoot;
         GridView SoundGridView;
@@ -550,6 +552,56 @@ namespace UniversalSoundboard.Controllers
             await ShowAllPlayingSoundItems();
         }
 
+        private async void PlayingSoundItemContainer_SizeChanged(object sender, SizeChangedEventArgs args)
+        {
+            PlayingSoundItemContainer container = sender as PlayingSoundItemContainer;
+
+            if (
+                args.NewSize.Height == args.PreviousSize.Height
+                || !(sender as PlayingSoundItemContainer).IsInBottomPlayingSoundsBar
+                || !container.IsLoaded
+                || (bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Bottom && container.Index != PlayingSoundItemContainers.Count - 1)
+            ) return;
+
+            // Calculate the diff
+            double heightDiff = args.NewSize.Height - args.PreviousSize.Height;
+
+            BottomPlayingSoundsBar.Height += heightDiff;
+            playingSoundItemContainerSizeChangedHeightDiffSum += heightDiff;
+
+            // Move the GridSplitter
+            var gridSplitterTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
+            gridSplitterTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, GridSplitterGrid.Translation.Y - (float)playingSoundItemContainerSizeChangedHeightDiffSum, 0));
+            gridSplitterTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+            gridSplitterTranslationAnimation.Target = "Translation";
+
+            GridSplitterGrid.StartAnimation(gridSplitterTranslationAnimation);
+
+            // Move the BottomPlayingSoundsBar background
+            var backgroundTranslationAnimation = compositor.CreateVector3KeyFrameAnimation();
+            backgroundTranslationAnimation.InsertKeyFrame(1.0f, new Vector3(0, BottomPlayingSoundsBarBackgroundGrid.Translation.Y - (float)playingSoundItemContainerSizeChangedHeightDiffSum, 0));
+            backgroundTranslationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
+            backgroundTranslationAnimation.Target = "Translation";
+
+            BottomPlayingSoundsBarBackgroundGrid.StartAnimation(backgroundTranslationAnimation);
+
+            playingSoundItemContainerSizeChangedRunCount++;
+            await Task.Delay(animationDuration);
+            playingSoundItemContainerSizeChangedRunCount--;
+
+            // If this is called while the animations are already running, reset the values for the elements after all animations are completed
+            if (playingSoundItemContainerSizeChangedRunCount == 0)
+            {
+                double newHeight = GridSplitterGridBottomRowDef.ActualHeight + playingSoundItemContainerSizeChangedHeightDiffSum;
+                if (newHeight > 0) GridSplitterGridBottomRowDef.Height = new GridLength(newHeight);
+
+                GridSplitterGrid.Translation = new Vector3(0);
+                playingSoundItemContainerSizeChangedHeightDiffSum = 0;
+
+                UpdateGridSplitterRange();
+            }
+        }
+
         private void PlayingSoundItemContainer_ExpandSoundsList(object sender, PlayingSoundSoundsListEventArgs args)
         {
             if (IsMobile) return;
@@ -676,6 +728,7 @@ namespace UniversalSoundboard.Controllers
             var item2 = new PlayingSoundItemContainer(PlayingSoundsBarListView.Items.Count, playingSound, true, !showBottomPlayingSoundsBar);
             item2.Hide += PlayingSoundItemContainer_Hide;
             item2.Loaded += PlayingSoundItemContainer_Loaded;
+            item2.SizeChanged += PlayingSoundItemContainer_SizeChanged;
             item2.ExpandSoundsList += PlayingSoundItemContainer_ExpandSoundsList;
             item2.CollapseSoundsList += PlayingSoundItemContainer_CollapseSoundsList;
 
