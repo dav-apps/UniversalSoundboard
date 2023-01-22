@@ -489,7 +489,10 @@ namespace UniversalSoundboard.Models
             }
 
             bool wasPlaying = PlayingSound.AudioPlayer.IsPlaying;
-            PlayingSound.AudioPlayer.Pause();
+
+            if (!await PauseAudioPlayer())
+                return;
+
             await SetAudioPlayerPosition(TimeSpan.Zero);
             PlayingSound.AudioPlayer.AudioFile = audioFile;
             PlayingSound.AudioPlayer.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
@@ -498,7 +501,9 @@ namespace UniversalSoundboard.Models
             if (wasPlaying || startPlaying)
             {
                 await SetPlayPause(true);
-                PlayingSound.AudioPlayer.Play();
+
+                if (!await StartAudioPlayer())
+                    return;
             }
 
             // Save the new Current
@@ -835,10 +840,12 @@ namespace UniversalSoundboard.Models
             }
             else if (!currentSoundIsDownloading && play && await StartAudioPlayer())
             {
+                PlayingSound.StartPlaying = false;
+
                 PlaybackStateChanged?.Invoke(
-                        this,
-                        new PlaybackStateChangedEventArgs(true)
-                    );
+                    this,
+                    new PlaybackStateChangedEventArgs(true)
+                );
                 await StopAllOtherPlayingSounds();
                 if (updateSmtc) FileManager.UpdateSystemMediaTransportControls(true);
             }
