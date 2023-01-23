@@ -848,7 +848,7 @@
                             IsTextSelectionEnabled="True" />
                     </StackPanel>
 
-                    <TextBlock Text="Copyright © 2022 by dav" />
+                    <TextBlock Text="Copyright © 2023 by dav" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
