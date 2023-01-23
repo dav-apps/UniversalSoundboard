@@ -131,7 +131,7 @@ namespace UniversalSoundboard.Components
             AdjustLayout();
             UpdateUI();
 
-            PlayingSoundItemContainer.TriggerSizeChangedEvent(eventArgs);
+            PlayingSoundItemContainer?.TriggerSizeChangedEvent(eventArgs);
         }
 
         private void PlayingSoundTemplate_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
@@ -989,6 +989,8 @@ namespace UniversalSoundboard.Components
 
         private void SetFavouriteFlyoutItemText(bool fav)
         {
+            if (PlayingSound == null) return;
+
             MoreButtonFavouriteFlyoutItem.Text = FileManager.loader.GetString(fav ? "SoundItemOptionsFlyout-UnsetFavourite" : "SoundItemOptionsFlyout-SetFavourite");
             MoreButtonFavouriteFlyoutItem.Icon = new FontIcon { Glyph = fav ? "\uE195" : "\uE113" };
             MoreButtonFavouriteFlyoutItem.Visibility = PlayingSound.LocalFile ? Visibility.Collapsed : Visibility.Visible;
