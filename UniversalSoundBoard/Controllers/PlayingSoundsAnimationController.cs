@@ -181,6 +181,11 @@ namespace UniversalSoundboard.Controllers
                     // Show the PlayingSounds in the normal PlayingSoundsBar
                     foreach (var item in PlayingSoundItemContainers)
                     {
+                        if (
+                            item == null
+                            || item.PlayingSoundItemTemplate == null
+                        ) continue;
+
                         item.PlayingSoundItemTemplate.Opacity = 0;
                         item.PlayingSoundItemTemplate.Translation = new Vector3(0, -300, 0);
                         PlayingSoundsToShowList.Add(item);
@@ -335,7 +340,9 @@ namespace UniversalSoundboard.Controllers
                     foreach (var item in ReversedPlayingSoundItemContainers)
                     {
                         if (
-                            !item.IsVisible
+                            item == null
+                            || item.PlayingSoundItemTemplate == null
+                            || !item.IsVisible
                             || item.Index == itemContainer.Index
                             || item.Index > itemContainer.Index && !thresholdReached
                         ) continue;
@@ -452,8 +459,12 @@ namespace UniversalSoundboard.Controllers
 
                     foreach (var item in ReversedPlayingSoundItemContainers)
                     {
-                        if (!item.IsVisible || item.Index <= itemContainer.Index)
-                            continue;
+                        if (
+                            item == null
+                            || item.PlayingSoundItemTemplate == null
+                            || !item.IsVisible
+                            || item.Index <= itemContainer.Index
+                        ) continue;
 
                         var translationAnimation3 = compositor.CreateVector3KeyFrameAnimation();
                         translationAnimation3.InsertKeyFrame(1.0f, new Vector3(0, (float)itemContainer.ContentHeight, 0));
@@ -508,9 +519,10 @@ namespace UniversalSoundboard.Controllers
                 foreach (var item in PlayingSoundItemContainers)
                 {
                     if (
-                        !item.IsVisible
-                        || item.Index <= itemContainer.Index
+                        item == null
                         || item.PlayingSoundItemTemplate == null
+                        || !item.IsVisible
+                        || item.Index <= itemContainer.Index
                     ) continue;
 
                     translationAnimation = compositor.CreateVector3KeyFrameAnimation();
@@ -949,6 +961,11 @@ namespace UniversalSoundboard.Controllers
 
                 foreach (var item in PlayingSoundsToShowList)
                 {
+                    if (
+                        item == null
+                        || item.PlayingSoundItemTemplate == null
+                    ) continue;
+
                     item.PlayingSoundItemTemplate.Translation = new Vector3(0);
                     item.PlayingSoundItemTemplate.Opacity = 1;
                 }
@@ -969,6 +986,11 @@ namespace UniversalSoundboard.Controllers
             {
                 foreach (var itemToShow in PlayingSoundsToShowList)
                 {
+                    if (
+                        itemToShow == null
+                        || itemToShow.PlayingSoundItemTemplate == null
+                    ) continue;
+
                     double newHeight = BottomPlayingSoundsBar.ActualHeight + itemToShow.ContentHeight + bottomSoundsBarHeight;
 
                     itemToShow.PlayingSoundItemTemplate.Translation = new Vector3(0);
@@ -1013,6 +1035,11 @@ namespace UniversalSoundboard.Controllers
             {
                 foreach (var itemToShow in PlayingSoundsToShowList)
                 {
+                    if (
+                        itemToShow == null
+                        || itemToShow.PlayingSoundItemTemplate == null
+                    ) continue;
+
                     bool thresholdReached = false;
                     double thresholdDiff = itemToShow.ContentHeight;
 
@@ -1037,7 +1064,11 @@ namespace UniversalSoundboard.Controllers
 
                     foreach (var item in ReversedPlayingSoundItemContainers)
                     {
-                        if (item.Index >= itemToShow.Index) continue;
+                        if (
+                            item == null
+                            || item.PlayingSoundItemTemplate == null
+                            || item.Index >= itemToShow.Index
+                        ) continue;
 
                         if (thresholdReached)
                             item.PlayingSoundItemTemplate.Translation = new Vector3(0, -(float)(item.ContentHeight - thresholdDiff), 0);
@@ -1067,6 +1098,11 @@ namespace UniversalSoundboard.Controllers
                     // Move all other items back to the original position
                     foreach (var item in movedItems)
                     {
+                        if (
+                            item == null
+                            || item.PlayingSoundItemTemplate == null
+                        ) continue;
+
                         var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
                         translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
                         translationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
@@ -1131,6 +1167,11 @@ namespace UniversalSoundboard.Controllers
                 // Show all PlayingSounds in the list
                 foreach (var item in PlayingSoundsToShowList)
                 {
+                    if (
+                        item == null
+                        || item.PlayingSoundItemTemplate == null
+                    ) continue;
+
                     var translationAnimation = compositor.CreateVector3KeyFrameAnimation();
                     translationAnimation.InsertKeyFrame(1.0f, new Vector3(0));
                     translationAnimation.Duration = TimeSpan.FromMilliseconds(animationDuration);
