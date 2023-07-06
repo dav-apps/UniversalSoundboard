@@ -180,7 +180,11 @@ namespace UniversalSoundboard.Models
             else
                 FileInputNode.Seek(position);
 
-            FileInputNode.OutgoingGain = volume;
+            if (isMuted)
+                FileInputNode.OutgoingGain = 0;
+            else
+                FileInputNode.OutgoingGain = volume;
+
             FileInputNode.PlaybackSpeedFactor = playbackRate;
 
             if (playbackRate != 1f)
@@ -309,9 +313,9 @@ namespace UniversalSoundboard.Models
             if (DeviceOutputNode != null)
             {
                 if (muted)
-                    DeviceOutputNode.OutgoingGain = 0;
+                    FileInputNode.OutgoingGain = 0;
                 else
-                    DeviceOutputNode.OutgoingGain = volume;
+                    FileInputNode.OutgoingGain = volume;
             }
 
             isMuted = muted;
