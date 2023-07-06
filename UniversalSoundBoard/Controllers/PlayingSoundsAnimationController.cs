@@ -365,7 +365,7 @@ namespace UniversalSoundboard.Controllers
                         item.PlayingSoundItemTemplate.StartAnimation(translationAnimation);
                         movedItems.Add(item);
                     }
-
+                    
                     if (thresholdReached)
                     {
                         // Move the GridSplitter down
@@ -570,6 +570,7 @@ namespace UniversalSoundboard.Controllers
 
             if (
                 args.NewSize.Height == args.PreviousSize.Height
+                || args.NewSize.Height == 0
                 || !(sender as PlayingSoundItemContainer).IsInBottomPlayingSoundsBar
                 || !container.IsLoaded
                 || (bottomPlayingSoundsBarPosition == BottomPlayingSoundsBarVerticalPosition.Bottom && container.Index != PlayingSoundItemContainers.Count - 1)
