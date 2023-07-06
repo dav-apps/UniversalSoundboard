@@ -1757,7 +1757,7 @@ namespace UniversalSoundboard.DataAccess
             }
 
             // Remove old playing sounds
-            foreach (var ps in itemViewHolder.PlayingSounds)
+            foreach (var ps in itemViewHolder.PlayingSounds.ToList())
             {
                 // Remove the playing sound from ItemViewHolder if it does not exist in the new playing sounds list
                 if (allPlayingSounds.Where(p => p.Uuid == ps.Uuid).Count() == 0)
