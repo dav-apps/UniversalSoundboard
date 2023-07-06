@@ -464,10 +464,10 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Google.Apis.YouTube.v3">
-      <Version>1.60.0.3064</Version>
+      <Version>1.61.0.3106</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.11.46</Version>
+      <Version>1.11.49</Version>
     </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
       <Version>5.0.2</Version>
