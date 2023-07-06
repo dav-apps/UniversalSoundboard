@@ -515,10 +515,11 @@ namespace UniversalSoundboard.Models
          */
         private async Task StopAllOtherPlayingSounds()
         {
-            if (FileManager.itemViewHolder.MultiSoundPlayback || !FileManager.itemViewHolder.OpenMultipleSounds) return;
+            if (FileManager.itemViewHolder.MultiSoundPlayback || !FileManager.itemViewHolder.OpenMultipleSounds)
+                return;
 
             // Cause all other PlayingSounds to stop playback
-            foreach (var playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems)
+            foreach (var playingSoundItem in FileManager.itemViewHolder.PlayingSoundItems.ToList())
             {
                 if (
                     playingSoundItem.PlayingSound.AudioPlayer == null
