@@ -577,8 +577,12 @@ namespace UniversalSoundboard.Controllers
 
             // Calculate the diff
             double heightDiff = args.NewSize.Height - args.PreviousSize.Height;
+            double newBottomPlayingSoundsBarHeight = BottomPlayingSoundsBar.Height + heightDiff;
 
-            BottomPlayingSoundsBar.Height += heightDiff;
+            if (newBottomPlayingSoundsBarHeight <= 0)
+                return;
+
+            BottomPlayingSoundsBar.Height = newBottomPlayingSoundsBarHeight;
             playingSoundItemContainerSizeChangedHeightDiffSum += heightDiff;
 
             // Move the GridSplitter
