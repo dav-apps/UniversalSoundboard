@@ -10,10 +10,13 @@ using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.System;
 using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Controls.Primitives;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
 
@@ -23,6 +26,7 @@ namespace UniversalSoundboard.Pages
     {
         bool initialized = false;
         string soundboardSize = "";
+        string userId = "";
         Visibility soundboardSizeVisibility = Visibility.Collapsed;
         Visibility liveTileSettingVisibility = Visibility.Visible;
         ObservableCollection<Sound> SoundsWithHotkeysList = new ObservableCollection<Sound>();
@@ -344,5 +348,24 @@ namespace UniversalSoundboard.Pages
             Analytics.TrackEvent("SettingsPage-CreateIssueButtonClick");
         }
         #endregion
+
+        private void VersionStackPanel_DoubleTapped(object sender, DoubleTappedRoutedEventArgs e)
+        {
+            userId = FileManager.itemViewHolder.UserId.ToString();
+            Bindings.Update();
+
+            FlyoutBase.ShowAttachedFlyout(VersionTextBlock);
+        }
+
+        private void CopyUserIdButton_Tapped(object sender, TappedRoutedEventArgs e)
+        {
+            DataPackage dataPackage = new DataPackage
+            {
+                RequestedOperation = DataPackageOperation.Copy
+            };
+
+            dataPackage.SetText(userId);
+            Clipboard.SetContent(dataPackage);
+        }
     }
 }
