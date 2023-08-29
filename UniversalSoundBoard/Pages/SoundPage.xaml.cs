@@ -100,10 +100,13 @@ namespace UniversalSoundboard.Pages
                 PlayingSoundsAnimationController.Init();
             else
             {
-                foreach (var item in LocalSoundsToPlayAfterPlayingSoundsLoaded)
-                    await PlayLocalSoundAfterPlayingSoundsLoadedAsync(item);
+                while (LocalSoundsToPlayAfterPlayingSoundsLoaded.Count > 0)
+                {
+                    var item = LocalSoundsToPlayAfterPlayingSoundsLoaded.ElementAt(0);
 
-                LocalSoundsToPlayAfterPlayingSoundsLoaded.Clear();
+                    await PlayLocalSoundAfterPlayingSoundsLoadedAsync(item);
+                    LocalSoundsToPlayAfterPlayingSoundsLoaded.Remove(item);
+                }
             }
         }
 
