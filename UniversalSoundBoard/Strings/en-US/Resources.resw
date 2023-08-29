@@ -196,7 +196,7 @@
     <value>Rename</value>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>2.3.5</value>
+    <value>2.3.6</value>
   </data>
   <data name="MoreButton-Cast.Text" xml:space="preserve">
     <value>Cast to Device</value>
