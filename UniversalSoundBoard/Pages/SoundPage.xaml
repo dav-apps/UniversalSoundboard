@@ -67,7 +67,6 @@
 
         <Style x:Key="PlayingSoundListViewItemStyle" TargetType="ListViewItem">
             <Setter Property="MinHeight" Value="0" />
-            <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
 
         <Style x:Name="SoundGridViewStyle" TargetType="GridView">
@@ -652,7 +651,8 @@
                 Name="PlayingSoundsBar" 
                 Grid.Row="0" 
                 Grid.Column="2" 
-                Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}">
+                Background="{Binding PlayingSoundsBarAcrylicBackgroundBrush}"
+                UseLayoutRounding="False">
 
                 <ListView
                     Name="PlayingSoundsBarListView"
@@ -660,11 +660,12 @@
                     ItemContainerTransitions="{x:Null}"
                     ItemContainerStyle="{StaticResource PlayingSoundListViewItemStyle}"
                     SelectionMode="None"
-                    Margin="0,85,0,0">
+                    Margin="0,85,0,0"
+                    UseLayoutRounding="False">
 
                     <ListView.ItemTemplate>
                         <DataTemplate x:DataType="models:PlayingSoundItemContainer">
-                            <components:PlayingSoundItemTemplate />
+                            <components:PlayingSoundItemTemplate UseLayoutRounding="False" />
                         </DataTemplate>
                     </ListView.ItemTemplate>
                 </ListView>

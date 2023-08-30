@@ -526,14 +526,16 @@
         <RelativePanel
             Grid.Row="0"
             Margin="0,0,0,4"
-            MinHeight="32">
+            MinHeight="32"
+            UseLayoutRounding="False">
 
             <TextBlock
                 Name="PlayingSoundNameTextBlock"
                 RelativePanel.AlignVerticalCenterWithPanel="True"
                 FontSize="15"
                 TextWrapping="WrapWholeWords"
-                Margin="{x:Bind singlePlayingSoundTitleMargin}" />
+                Margin="{x:Bind singlePlayingSoundTitleMargin}"
+                UseLayoutRounding="False" />
 
             <StackPanel
                 Name="TopButtonsStackPanel"
@@ -541,6 +543,7 @@
                 RelativePanel.AlignRightWithPanel="True"
                 RelativePanel.AlignVerticalCenterWithPanel="True"
                 Orientation="Horizontal"
+                UseLayoutRounding="False"
                 SizeChanged="TopButtonsStackPanel_SizeChanged">
 
                 <Button
@@ -550,24 +553,27 @@
                     Padding="0"
                     FontSize="15"
                     Content="&#xE160;"
-                    Visibility="Collapsed">
+                    Visibility="Collapsed"
+                    UseLayoutRounding="False">
 
                     <ToolTipService.ToolTip>
                         <TextBlock
                             Name="LocalFileButtonToolTip"
                             x:Uid="LocalFileButtonToolTip"
-                            TextWrapping="WrapWholeWords" />
+                            TextWrapping="WrapWholeWords"
+                            UseLayoutRounding="False" />
                     </ToolTipService.ToolTip>
 
                     <Button.Flyout>
                         <Flyout x:Name="LocalFileFlyout">
-                            <RelativePanel MaxWidth="220">
+                            <RelativePanel MaxWidth="220" UseLayoutRounding="False">
                                 <TextBlock
                                     Name="LocalFileFlyoutText"
                                     x:Uid="LocalFileFlyoutText"
                                     RelativePanel.AlignTopWithPanel="True"
                                     Margin="0,0,0,16"
-                                    TextWrapping="WrapWholeWords">
+                                    TextWrapping="WrapWholeWords"
+                                    UseLayoutRounding="False">
                                 </TextBlock>
 
                                 <Button
@@ -575,6 +581,7 @@
                                     x:Uid="LocalFileFlyoutAddButton"
                                     RelativePanel.Below="LocalFileFlyoutText"
                                     RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                    UseLayoutRounding="False"
                                     Click="LocalFileFlyoutAddButton_Click">
                                 </Button>
                             </RelativePanel>
@@ -589,22 +596,25 @@
                     Padding="-1,0,0,0"
                     FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                     FontSize="12"
-                    Visibility="Collapsed">
+                    Visibility="Collapsed"
+                    UseLayoutRounding="False">
 
                     <ToolTipService.ToolTip>
                         <TextBlock
                             Name="PlaybackSpeedButtonToolTip"
-                            TextWrapping="WrapWholeWords" />
+                            TextWrapping="WrapWholeWords"
+                            UseLayoutRounding="False" />
                     </ToolTipService.ToolTip>
 
                     <Button.Flyout>
                         <Flyout x:Name="PlaybackSpeedFlyout">
-                            <RelativePanel MaxWidth="200">
+                            <RelativePanel MaxWidth="200" UseLayoutRounding="False">
                                 <TextBlock
                                     Name="PlaybackSpeedFlyoutText"
                                     RelativePanel.AlignTopWithPanel="True"
                                     Margin="0,0,0,16"
-                                    TextWrapping="WrapWholeWords">
+                                    TextWrapping="WrapWholeWords"
+                                    UseLayoutRounding="False">
                                 </TextBlock>
 
                                 <Button
@@ -612,6 +622,7 @@
                                     x:Uid="ResetButton"
                                     RelativePanel.Below="PlaybackSpeedFlyoutText"
                                     RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                    UseLayoutRounding="False"
                                     Click="PlaybackSpeedFlyoutResetButton_Click">
                                 </Button>
                             </RelativePanel>
@@ -627,22 +638,25 @@
                     FontSize="16"
                     Content="&#xE7F5;"
                     Visibility="Collapsed"
+                    UseLayoutRounding="False"
                     Click="OutputDeviceButton_Click">
 
                     <ToolTipService.ToolTip>
                         <TextBlock
                             Name="OutputDeviceButtonToolTip"
-                            x:Uid="OutputDeviceButtonToolTip" />
+                            x:Uid="OutputDeviceButtonToolTip"
+                            UseLayoutRounding="False" />
                     </ToolTipService.ToolTip>
 
                     <Button.Flyout>
                         <Flyout x:Name="OutputDeviceFlyout">
-                            <RelativePanel MaxWidth="200">
+                            <RelativePanel MaxWidth="200" UseLayoutRounding="False">
                                 <TextBlock
                                     Name="OutputDeviceFlyoutText"
                                     x:Uid="OutputDeviceFlyoutText"
                                     RelativePanel.AlignTopWithPanel="True"
-                                    TextWrapping="WrapWholeWords">
+                                    TextWrapping="WrapWholeWords"
+                                    UseLayoutRounding="False">
                                 </TextBlock>
 
                                 <TextBlock
@@ -650,7 +664,8 @@
                                     RelativePanel.Below="OutputDeviceFlyoutText"
                                     RelativePanel.AlignHorizontalCenterWithPanel="True"
                                     Margin="0,12,0,16"
-                                    TextWrapping="WrapWholeWords">
+                                    TextWrapping="WrapWholeWords"
+                                    UseLayoutRounding="False">
                                 </TextBlock>
 
                                 <Button
@@ -658,6 +673,7 @@
                                     x:Uid="ResetButton"
                                     RelativePanel.Below="OutputDeviceFlyoutDeviceName"
                                     RelativePanel.AlignHorizontalCenterWithPanel="True"
+                                    UseLayoutRounding="False"
                                     Click="OutputDeviceFlyoutResetButton_Click">
                                 </Button>
                             </RelativePanel>
@@ -670,23 +686,26 @@
                     Style="{StaticResource TopCommandButtonStyle}"
                     Content="&#xE099;"
                     Padding="0"
+                    UseLayoutRounding="False"
                     Click="ExpandButton_Click">
 
                     <ToolTipService.ToolTip>
                         <TextBlock
                             Name="ExpandButtonToolTip"
-                            Text="Expand" />
+                            Text="Expand"
+                            UseLayoutRounding="False" />
                     </ToolTipService.ToolTip>
                 </Button>
             </StackPanel>
         </RelativePanel>
 
-        <RelativePanel Grid.Row="1">
+        <RelativePanel Grid.Row="1" UseLayoutRounding="False">
             <RelativePanel
                 Name="MediaPlayerElement"
                 RelativePanel.AlignLeftWithPanel="True"
                 RelativePanel.AlignRightWithPanel="True"
-                Margin="1,0,1,5">
+                Margin="1,0,1,5"
+                UseLayoutRounding="False">
 
                 <Slider
                     x:Name="ProgressSlider"
@@ -696,6 +715,7 @@
                     VerticalAlignment="Center"
                     IsThumbToolTipEnabled="True"
                     ThumbToolTipValueConverter="{StaticResource MediaElementSliderTooltipConverter}"
+                    UseLayoutRounding="False"
                     ValueChanged="ProgressSlider_ValueChanged" />
 
                 <winui:ProgressBar
@@ -705,29 +725,34 @@
                     Visibility="Collapsed"
                     IsIndeterminate="True"
                     Value="0"
-                    IsHitTestVisible="False" />
+                    IsHitTestVisible="False"
+                    UseLayoutRounding="False" />
 
                 <TextBlock
                     x:Name="RemainingTimeElement"
                     Style="{StaticResource MediaTextBlockStyle}"
-                    Text="00:00" />
+                    Text="00:00"
+                    UseLayoutRounding="False" />
 
                 <TextBlock
                     x:Name="TotalTimeElement"
                     Style="{StaticResource MediaTextBlockStyle}"
-                    Text="00:00" />
+                    Text="00:00"
+                    UseLayoutRounding="False" />
             </RelativePanel>
 
             <StackPanel
                 Name="LeftMediaControlStackPanel"
                 RelativePanel.Below="MediaPlayerElement"
                 RelativePanel.AlignLeftWithPanel="True"
-                Orientation="Horizontal">
+                Orientation="Horizontal"
+                UseLayoutRounding="False">
 
                 <Button
                     Name="VolumeButton"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Content="&#xE15D;"
+                    UseLayoutRounding="False"
                     Click="VolumeButton_Click">
 
                     <Button.Flyout>
@@ -737,12 +762,13 @@
                                 ValueChanged="VolumeControl_ValueChanged"
                                 IconChanged="VolumeControl_IconChanged"
                                 LostFocus="VolumeControl_LostFocus"
-                                MuteChanged="VolumeControl_MuteChanged" />
+                                MuteChanged="VolumeControl_MuteChanged"
+                                UseLayoutRounding="False" />
                         </Flyout>
                     </Button.Flyout>
 
                     <ToolTipService.ToolTip>
-                        <TextBlock Name="VolumeButtonToolTip" x:Uid="VolumeButton" Text="Volume" />
+                        <TextBlock Name="VolumeButtonToolTip" x:Uid="VolumeButton" Text="Volume" UseLayoutRounding="False" />
                     </ToolTipService.ToolTip>
                 </Button>
             </StackPanel>
@@ -750,20 +776,27 @@
             <StackPanel
                 Name="MiddleMediaControlStackPanel"
                 Orientation="Horizontal"
-                HorizontalAlignment="Center">
+                HorizontalAlignment="Center"
+                UseLayoutRounding="False">
 
                 <StackPanel
                     Name="PreviousButtonStackPanel"
-                    VerticalAlignment="Center">
+                    VerticalAlignment="Center"
+                    UseLayoutRounding="False">
 
                     <Button
                         Name="PreviousButton"
                         Style="{StaticResource MediaControlButtonStyle}"
                         Content="&#xE100;"
+                        UseLayoutRounding="False"
                         Click="PreviousButton_Click">
 
                         <ToolTipService.ToolTip>
-                            <TextBlock Name="PreviousButtonToolTip" x:Uid="PreviousButton" Text="Previous" />
+                            <TextBlock
+                                Name="PreviousButtonToolTip"
+                                x:Uid="PreviousButton"
+                                Text="Previous"
+                                UseLayoutRounding="False" />
                         </ToolTipService.ToolTip>
                     </Button>
                 </StackPanel>
@@ -773,10 +806,14 @@
                     Style="{StaticResource MediaControlButtonStyle}"
                     Content="&#xE102;"
                     HorizontalAlignment="Center"
+                    UseLayoutRounding="False"
                     Click="PlayPauseButton_Click">
 
                     <ToolTipService.ToolTip>
-                        <TextBlock Name="PlayPauseButtonToolTip" Text="Play" />
+                        <TextBlock
+                            Name="PlayPauseButtonToolTip"
+                            Text="Play"
+                            UseLayoutRounding="False" />
                     </ToolTipService.ToolTip>
                 </Button>
 
@@ -784,10 +821,15 @@
                     Name="NextButton"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Content="&#xE101;"
+                    UseLayoutRounding="False"
                     Click="NextButton_Click">
 
                     <ToolTipService.ToolTip>
-                        <TextBlock Name="NextButtonToolTip" x:Uid="NextButton" Text="Next" />
+                        <TextBlock
+                            Name="NextButtonToolTip"
+                            x:Uid="NextButton"
+                            Text="Next"
+                            UseLayoutRounding="False" />
                     </ToolTipService.ToolTip>
                 </Button>
             </StackPanel>
@@ -797,65 +839,100 @@
                 RelativePanel.AlignVerticalCenterWith="RightMediaControlStackPanel"
                 RelativePanel.AlignRightWith="RightMediaControlStackPanel"
                 Margin="0,-2,46,0"
-                Visibility="Collapsed">
+                Visibility="Collapsed"
+                UseLayoutRounding="False">
 
                 <components:VolumeControl
                     x:Name="VolumeControl2"
                     ValueChanged="VolumeControl_ValueChanged"
                     IconChanged="VolumeControl_IconChanged"
                     LostFocus="VolumeControl_LostFocus"
-                    MuteChanged="VolumeControl_MuteChanged" />
+                    MuteChanged="VolumeControl_MuteChanged"
+                    UseLayoutRounding="False" />
             </StackPanel>
 
             <StackPanel
                 Name="RightMediaControlStackPanel"
                 RelativePanel.AlignRightWithPanel="True"
-                Orientation="Horizontal">
+                Orientation="Horizontal"
+                UseLayoutRounding="False">
 
                 <Button
                     Name="RemoveButton"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Click="RemoveButton_Click"
-                    Content="&#xE106;">
+                    Content="&#xE106;"
+                    UseLayoutRounding="False">
 
                     <ToolTipService.ToolTip>
-                        <TextBlock Name="RemoveButtonToolTip" x:Uid="RemoveButton" Text="Remove" />
+                        <TextBlock Name="RemoveButtonToolTip" x:Uid="RemoveButton" Text="Remove" UseLayoutRounding="False" />
                     </ToolTipService.ToolTip>
                 </Button>
 
                 <Button
                     Name="MoreButton"
                     Style="{StaticResource MediaControlButtonStyle}"
-                    Content="&#xE10C;">
+                    Content="&#xE10C;"
+                    UseLayoutRounding="False">
 
                     <Button.Flyout>
-                        <MenuFlyout x:Name="MoreButtonMenuFlyout" Placement="Top" Opening="MenuFlyout_Opening" Opened="MenuFlyout_Opened">
+                        <MenuFlyout
+                            x:Name="MoreButtonMenuFlyout"
+                            Placement="Top"
+                            Opening="MenuFlyout_Opening"
+                            Opened="MenuFlyout_Opened">
+                            
                             <components:VolumeMenuFlyoutItem
                                 x:Name="MoreButtonVolumeFlyoutItem"
+                                UseLayoutRounding="False"
                                 VolumeControl_ValueChanged="VolumeControl_ValueChanged"
                                 VolumeControl_IconChanged="VolumeControl_IconChanged"
                                 VolumeControl_LostFocus="VolumeControl_LostFocus"
                                 VolumeControl_MuteChanged="VolumeControl_MuteChanged" />
-                            <MenuFlyoutSubItem Name="MoreButtonRepeatFlyoutSubItem" Text="Repeat" Icon="RepeatAll">
-                                <MenuFlyoutItem Name="MoreButton_Repeat_0x" Text="0×" Click="MoreButton_Repeat_0x_Click" />
-                                <MenuFlyoutItem Name="MoreButton_Repeat_1x" Text="1×" Click="MoreButton_Repeat_1x_Click" />
-                                <MenuFlyoutItem Name="MoreButton_Repeat_2x" Text="2×" Click="MoreButton_Repeat_2x_Click" />
-                                <MenuFlyoutItem Name="MoreButton_Repeat_5x" Text="5×" Click="MoreButton_Repeat_5x_Click" />
-                                <MenuFlyoutItem Name="MoreButton_Repeat_10x" Text="10×" Click="MoreButton_Repeat_10x_Click" />
-                                <MenuFlyoutItem Name="MoreButton_Repeat_endless" Text="∞" Click="MoreButton_Repeat_endless_Click" />
+                            
+                            <MenuFlyoutSubItem Name="MoreButtonRepeatFlyoutSubItem" Text="Repeat" Icon="RepeatAll" UseLayoutRounding="False">
+                                <MenuFlyoutItem Name="MoreButton_Repeat_0x" Text="0×" UseLayoutRounding="False" Click="MoreButton_Repeat_0x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_1x" Text="1×" UseLayoutRounding="False" Click="MoreButton_Repeat_1x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_2x" Text="2×" UseLayoutRounding="False" Click="MoreButton_Repeat_2x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_5x" Text="5×" UseLayoutRounding="False" Click="MoreButton_Repeat_5x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_10x" Text="10×" UseLayoutRounding="False" Click="MoreButton_Repeat_10x_Click" />
+                                <MenuFlyoutItem Name="MoreButton_Repeat_endless" Text="∞" UseLayoutRounding="False" Click="MoreButton_Repeat_endless_Click" />
                             </MenuFlyoutSubItem>
-                            <MenuFlyoutItem Name="MoreButtonOpenSoundSeparatelyFlyoutItem" x:Uid="MoreButton-OpenSoundSeparately" Click="MoreButton_OpenSoundSeparatelyFlyoutItem_Click">
+                            
+                            <MenuFlyoutItem
+                                Name="MoreButtonOpenSoundSeparatelyFlyoutItem"
+                                x:Uid="MoreButton-OpenSoundSeparately"
+                                UseLayoutRounding="False"
+                                Click="MoreButton_OpenSoundSeparatelyFlyoutItem_Click">
+                                
                                 <MenuFlyoutItem.Icon>
-                                    <FontIcon Glyph="&#xE8A7;" />
+                                    <FontIcon Glyph="&#xE8A7;" UseLayoutRounding="False" />
                                 </MenuFlyoutItem.Icon>
                             </MenuFlyoutItem>
-                            <MenuFlyoutItem Name="MoreButtonFavouriteFlyoutItem" Text="Add to favourites" Icon="Favorite" Click="MoreButton_FavouriteItem_Click" />
-                            <MenuFlyoutItem Name="MoreButtonRemoveFlyoutItem" x:Uid="RemoveButton" Text="Remove" Icon="Clear" Click="RemoveButton_Click" />
+                            
+                            <MenuFlyoutItem
+                                Name="MoreButtonFavouriteFlyoutItem"
+                                Text="Add to favourites"
+                                Icon="Favorite"
+                                UseLayoutRounding="False"
+                                Click="MoreButton_FavouriteItem_Click" />
+                            
+                            <MenuFlyoutItem
+                                Name="MoreButtonRemoveFlyoutItem"
+                                x:Uid="RemoveButton"
+                                Text="Remove"
+                                Icon="Clear"
+                                UseLayoutRounding="False"
+                                Click="RemoveButton_Click" />
                         </MenuFlyout>
                     </Button.Flyout>
 
                     <ToolTipService.ToolTip>
-                        <TextBlock Name="MoreButtonToolTip" x:Uid="MoreButton" Text="More options" />
+                        <TextBlock
+                            Name="MoreButtonToolTip"
+                            x:Uid="MoreButton"
+                            Text="More options"
+                            UseLayoutRounding="False" />
                     </ToolTipService.ToolTip>
                 </Button>
             </StackPanel>
@@ -865,18 +942,21 @@
             Name="SoundsListViewStackPanel"
             Grid.Row="2"
             Height="0"
-            Opacity="0">
+            Opacity="0"
+            UseLayoutRounding="False">
 
             <ListView
                 Name="SoundsListView"
                 Padding="0,10,0,10"
                 MaxHeight="210"
                 SelectionMode="Single"
+                UseLayoutRounding="False"
                 SelectionChanged="SoundsListView_SelectionChanged">
 
                 <ListView.ItemTemplate>
                     <DataTemplate x:DataType="models:Sound">
                         <components:PlayingSoundItemSoundItemTemplate
+                            UseLayoutRounding="False"
                             Remove="PlayingSoundItemSoundItemTemplate_Remove" />
                     </DataTemplate>
                 </ListView.ItemTemplate>
