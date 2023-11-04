@@ -1068,4 +1068,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="ToolsButton-SoundRecorder.Text" xml:space="preserve">
     <value>Sound Recorder</value>
   </data>
+  <data name="ToolsButton-EffectManager.Text" xml:space="preserve">
+    <value>Effect Manager</value>
+  </data>
 </root>

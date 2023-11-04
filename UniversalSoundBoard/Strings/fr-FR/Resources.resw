@@ -1067,4 +1067,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="ToolsButton-SoundRecorder.Text" xml:space="preserve">
     <value>Enregistreur de son</value>
   </data>
+  <data name="ToolsButton-EffectManager.Text" xml:space="preserve">
+    <value>Gestionnaire d'effets</value>
+  </data>
 </root>

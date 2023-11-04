@@ -1804,6 +1804,11 @@ namespace UniversalSoundboard.Pages
 
             await soundRecorderAppWindow.TryShowAsync();
         }
+
+        private void ToolsButtonEffectManagerFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
         #endregion
 
         #region Search

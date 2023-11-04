@@ -1066,4 +1066,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="ToolsButton-SoundRecorder.Text" xml:space="preserve">
     <value>Sound-Recorder</value>
   </data>
+  <data name="ToolsButton-EffectManager.Text" xml:space="preserve">
+    <value>Effekt-Manager</value>
+  </data>
 </root>
