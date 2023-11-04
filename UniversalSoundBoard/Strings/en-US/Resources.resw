@@ -927,9 +927,6 @@ This may take some time, depending on how large the import file is.</value>
   <data name="AddButton-SoundFiles.Text" xml:space="preserve">
     <value>Select files</value>
   </data>
-  <data name="AddButton-Record.Text" xml:space="preserve">
-    <value>Record sounds</value>
-  </data>
   <data name="SoundRecorderPage-WindowTitleTextBlock.Text" xml:space="preserve">
     <value>Sound Recorder - UniversalSoundboard</value>
   </data>
@@ -1037,9 +1034,6 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="Account-PlusCardFeature-SoundRecorderTextBlock.Text" xml:space="preserve">
     <value>Get access to the sound recorder</value>
-  </data>
-  <data name="DavPlusSoundRecorderDialog-Content" xml:space="preserve">
-    <value>Sound recording is only available for users of dav Plus. Log in and upgrade your plan to use this feature.</value>
   </data>
   <data name="SoundRecorderPage-MinimizeWarningInfoBar.Message" xml:space="preserve">
     <value>The app can' t record audio when minimized.</value>

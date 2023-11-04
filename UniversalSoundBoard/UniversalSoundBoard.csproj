@@ -176,7 +176,6 @@
     <Compile Include="Dialogs\CancelYouTubePlaylistDownloadDialog.cs" />
     <Compile Include="Dialogs\DavPlusHotkeysDialog.cs" />
     <Compile Include="Dialogs\DavPlusOutputDeviceDialog.cs" />
-    <Compile Include="Dialogs\DavPlusSoundRecorderDialog.cs" />
     <Compile Include="Dialogs\DefaultSoundSettingsDialog.cs" />
     <Compile Include="Dialogs\DeleteCategoryDialog.cs" />
     <Compile Include="Dialogs\DeleteSoundDialog.cs" />
