@@ -235,6 +235,9 @@
     <Compile Include="Models\DeviceInfo.cs" />
     <Compile Include="Models\RecordedSoundItem.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadZopharPluginResult.cs" />
+    <Compile Include="Pages\EffectManagerPage.xaml.cs">
+      <DependentUpon>EffectManagerPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\SoundRecorderPage.xaml.cs">
       <DependentUpon>SoundRecorderPage.xaml</DependentUpon>
     </Compile>
@@ -413,6 +416,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\AccountPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\EffectManagerPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

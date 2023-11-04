@@ -1070,4 +1070,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="ToolsButton-EffectManager.Text" xml:space="preserve">
     <value>Gestionnaire d'effets</value>
   </data>
+  <data name="EffectManager-Title" xml:space="preserve">
+    <value>Gestionnaire d'effets</value>
+  </data>
 </root>

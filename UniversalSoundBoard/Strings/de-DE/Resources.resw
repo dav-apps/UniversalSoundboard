@@ -1069,4 +1069,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="ToolsButton-EffectManager.Text" xml:space="preserve">
     <value>Effekt-Manager</value>
   </data>
+  <data name="EffectManager-Title" xml:space="preserve">
+    <value>Effekt-Manager</value>
+  </data>
 </root>

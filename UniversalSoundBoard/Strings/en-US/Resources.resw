@@ -1071,4 +1071,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="ToolsButton-EffectManager.Text" xml:space="preserve">
     <value>Effect Manager</value>
   </data>
+  <data name="EffectManager-Title" xml:space="preserve">
+    <value>Effect Manager</value>
+  </data>
 </root>

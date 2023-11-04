@@ -39,7 +39,9 @@ namespace UniversalSoundboard.Pages
         public static CoreDispatcher dispatcher;                            // Dispatcher for ShareTargetPage
         string appTitle = "UniversalSoundboard";                            // The app name displayed in the title bar
         public static AppWindow soundRecorderAppWindow;
+        public static AppWindow effectManagerAppWindow;
         public static Frame soundRecorderAppWindowContentFrame;
+        public static Frame effectManagerAppWindowContentFrame;
         private readonly ObservableCollection<object> menuItems = new ObservableCollection<object>();
         private PlaySoundsSuccessivelyDialog playSoundsSuccessivelyDialog;
         private Guid initialCategory = Guid.Empty;                          // The category that was selected before the sounds started loading
@@ -1805,9 +1807,26 @@ namespace UniversalSoundboard.Pages
             await soundRecorderAppWindow.TryShowAsync();
         }
 
-        private void ToolsButtonEffectManagerFlyoutItem_Click(object sender, RoutedEventArgs e)
+        private async void ToolsButtonEffectManagerFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
+            if (effectManagerAppWindow == null)
+            {
+                effectManagerAppWindow = await AppWindow.TryCreateAsync();
+                effectManagerAppWindow.RequestSize(new Size(500, 500));
+                effectManagerAppWindow.Title = FileManager.loader.GetString("SoundRecorder-Title");
+                effectManagerAppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
+                effectManagerAppWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark ? Colors.White : Colors.Black;
+                effectManagerAppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
+                effectManagerAppWindow.TitleBar.ButtonInactiveBackgroundColor = Colors.Transparent;
 
+                effectManagerAppWindow.Closed += (AppWindow window, AppWindowClosedEventArgs args) => effectManagerAppWindow = null;
+
+                effectManagerAppWindowContentFrame = new Frame();
+                effectManagerAppWindowContentFrame.Navigate(typeof(EffectManagerPage));
+                ElementCompositionPreview.SetAppWindowContent(effectManagerAppWindow, effectManagerAppWindowContentFrame);
+            }
+
+            await effectManagerAppWindow.TryShowAsync();
         }
         #endregion
 
