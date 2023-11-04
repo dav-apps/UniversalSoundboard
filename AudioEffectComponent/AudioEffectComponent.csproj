@@ -131,6 +131,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="EchoAudioEffect.cs" />
     <Compile Include="PitchShiftAudioEffect.cs" />
     <Compile Include="PitchShifter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
