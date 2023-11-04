@@ -365,11 +365,47 @@
                                             <TextBlock
                                                 x:Uid="OutputDeviceButton" 
                                                 Style="{StaticResource TopButtonInnerTextStyle}"
-                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource InvertBooleanConverter}}"/>
+                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource InvertBooleanConverter}}" />
                                         </StackPanel>
 
                                         <ToolTipService.ToolTip>
                                             <TextBlock x:Uid="OutputDeviceButton" />
+                                        </ToolTipService.ToolTip>
+                                    </Button>
+
+                                    <Button
+                                        Name="ToolsButton"
+                                        Style="{StaticResource TopButtonStyle}"
+                                        VerticalAlignment="Center"
+                                        Width="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonWidthConverter}}"
+                                        Padding="{Binding TopButtonsCollapsed, Converter={StaticResource TopButtonPaddingConverter}}">
+
+                                        <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
+                                            <TextBlock
+                                                Style="{StaticResource TopButtonInnerIconStyle}"
+                                                Text="&#xE15E;" />
+                                            <TextBlock
+                                                x:Uid="ToolsButton"
+                                                Style="{StaticResource TopButtonInnerTextStyle}"
+                                                Visibility="{Binding TopButtonsCollapsed, Converter={StaticResource InvertBooleanConverter}}" />
+                                        </StackPanel>
+
+                                        <Button.Flyout>
+                                            <MenuFlyout Placement="Bottom">
+                                                <MenuFlyoutItem
+                                                    Name="ToolsButtonSoundRecorderFlyoutItem"
+                                                    x:Uid="ToolsButton-SoundRecorder"
+                                                    Click="ToolsButtonSoundRecorderFlyoutItem_Click">
+
+                                                    <MenuFlyoutItem.Icon>
+                                                        <FontIcon Glyph="&#xE1D6;" />
+                                                    </MenuFlyoutItem.Icon>
+                                                </MenuFlyoutItem>
+                                            </MenuFlyout>
+                                        </Button.Flyout>
+
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock x:Uid="ToolsButton" />
                                         </ToolTipService.ToolTip>
                                     </Button>
 

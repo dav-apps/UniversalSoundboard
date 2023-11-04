@@ -1066,4 +1066,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="RetryDownloadButton.Text" xml:space="preserve">
     <value>Download wiederholen</value>
   </data>
+  <data name="ToolsButton.Text" xml:space="preserve">
+    <value>Werkzeuge</value>
+  </data>
+  <data name="ToolsButton-SoundRecorder.Text" xml:space="preserve">
+    <value>Sound-Recorder</value>
+  </data>
 </root>

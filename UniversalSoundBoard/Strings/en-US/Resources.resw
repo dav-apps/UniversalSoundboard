@@ -1068,4 +1068,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="RetryDownloadButton.Text" xml:space="preserve">
     <value>Retry download</value>
   </data>
+  <data name="ToolsButton.Text" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="ToolsButton-SoundRecorder.Text" xml:space="preserve">
+    <value>Sound Recorder</value>
+  </data>
 </root>

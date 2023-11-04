@@ -1829,6 +1829,13 @@ namespace UniversalSoundboard.Pages
         }
         #endregion
 
+        #region Tools button
+        private void ToolsButtonSoundRecorderFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+        #endregion
+
         #region Search
         private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
