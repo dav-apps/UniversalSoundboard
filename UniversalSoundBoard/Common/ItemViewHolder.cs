@@ -38,6 +38,9 @@ namespace UniversalSoundboard.Common
         private const string appReviewedKey = "appReviewed";
         private const string showContinuePlaylistDownloadIANKey = "showContinuePlaylistDownloadIAN";
         private const string soundRecorderMinimizeWarningClosedKey = "soundRecorderMinimizeWarningClosed";
+        private const string isEchoEffectEnabledKey = "isEchoEffectEnabled";
+        private const string echoEffectVolumeKey = "echoEffectVolume";
+        private const string echoEffectDelayKey = "echoEffectDelay";
         #endregion
 
         #region Constants for localSettings defaults
@@ -61,6 +64,9 @@ namespace UniversalSoundboard.Common
         private const bool appReviewedDefault = false;
         private const bool showContinuePlaylistDownloadIANDefault = false;
         private const bool soundRecorderMinimizeWarningClosedDefault = false;
+        private const bool isEchoEffectEnabledDefault = false;
+        private const double echoEffectVolumeDefault = 0.5;
+        private const int echoEffectDelayDefault = 1000;
         #endregion
 
         #region Variables
@@ -133,6 +139,9 @@ namespace UniversalSoundboard.Common
         private bool _appReviewed;                          // If true, the user has followed the link to the MS Store to write a review
         private bool _showContinuePlaylistDownloadIAN;      // Determines whether to show the IAN for continuing the playlist download
         private bool _soundRecorderMinimizeWarningClosed;   // If true, the warning for minimizing the window on the Sound Recorder was closed by the user and should not be shown again
+        private bool _isEchoEffectEnabled;                  // If true, the global echo effect is enabled for all sounds
+        private double _echoEffectVolume;                   // The volume of the global echo effect
+        private int _echoEffectDelay;                       // The delay of the global echo effect in ms
         #endregion
 
         #region Events
@@ -428,6 +437,27 @@ namespace UniversalSoundboard.Common
                 _soundRecorderMinimizeWarningClosed = soundRecorderMinimizeWarningClosedDefault;
             else
                 _soundRecorderMinimizeWarningClosed = (bool)localSettings.Values[soundRecorderMinimizeWarningClosedKey];
+            #endregion
+
+            #region isEchoEffectEnabled
+            if (localSettings.Values[isEchoEffectEnabledKey] == null)
+                _isEchoEffectEnabled = isEchoEffectEnabledDefault;
+            else
+                _isEchoEffectEnabled = (bool)localSettings.Values[isEchoEffectEnabledKey];
+            #endregion
+
+            #region echoEffectVolume
+            if (localSettings.Values[echoEffectVolumeKey] == null)
+                _echoEffectVolume = echoEffectVolumeDefault;
+            else
+                _echoEffectVolume = (double)localSettings.Values[echoEffectVolumeKey];
+            #endregion
+
+            #region echoEffectDelay
+            if (localSettings.Values[echoEffectDelayKey] == null)
+                _echoEffectDelay = echoEffectDelayDefault;
+            else
+                _echoEffectDelay = (int)localSettings.Values[echoEffectDelayKey];
             #endregion
             #endregion
         }
@@ -1159,6 +1189,51 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[soundRecorderMinimizeWarningClosedKey] = value;
                 _soundRecorderMinimizeWarningClosed = value;
                 NotifyPropertyChanged(SoundRecorderMinimizeWarningClosedKey);
+            }
+        }
+        #endregion
+
+        #region IsEchoEffectEnabled
+        public const string IsEchoEffectEnabledKey = "IsEchoEffectEnabled";
+        public bool IsEchoEffectEnabled
+        {
+            get => _isEchoEffectEnabled;
+            set
+            {
+                if (_isEchoEffectEnabled.Equals(value)) return;
+                localSettings.Values[isEchoEffectEnabledKey] = value;
+                _isEchoEffectEnabled = value;
+                NotifyPropertyChanged(IsEchoEffectEnabledKey);
+            }
+        }
+        #endregion
+
+        #region EchoEffectVolume
+        public const string EchoEffectVolumeKey = "EchoEffectVolume";
+        public double EchoEffectVolume
+        {
+            get => _echoEffectVolume;
+            set
+            {
+                if (_echoEffectVolume.Equals(value)) return;
+                localSettings.Values[echoEffectVolumeKey] = value;
+                _echoEffectVolume = value;
+                NotifyPropertyChanged(EchoEffectVolumeKey);
+            }
+        }
+        #endregion
+
+        #region EchoEffectDelay
+        public const string EchoEffectDelayKey = "EchoEffectDelay";
+        public int EchoEffectDelay
+        {
+            get => _echoEffectDelay;
+            set
+            {
+                if (_echoEffectDelay.Equals(value)) return;
+                localSettings.Values[echoEffectDelayKey] = value;
+                _echoEffectDelay = value;
+                NotifyPropertyChanged(EchoEffectDelayKey);
             }
         }
         #endregion
