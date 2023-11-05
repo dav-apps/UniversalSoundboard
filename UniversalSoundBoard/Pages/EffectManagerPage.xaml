@@ -4,9 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
+
+    <Page.Resources>
+        <Style x:Key="EffectContainerStyle" TargetType="StackPanel">
+            <Setter Property="Background" Value="{StaticResource ContentBackgroundBrush}" />
+            <Setter Property="BorderBrush" Value="{StaticResource ContentBorderBrush}" />
+            <Setter Property="CornerRadius" Value="6" />
+        </Style>
+    </Page.Resources>
 
     <RelativePanel Name="ContentRoot" Background="{Binding SecondaryWindowAcrylicBackgroundBrush}">
         <TextBlock
@@ -20,18 +27,26 @@
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignBottomWithPanel="True"
-            Margin="0,32,0,0">
-            
-            <TextBlock FontSize="24">Global effects</TextBlock>
+            Margin="0,32,0,0"
+            Padding="12">
 
-            <winui:Expander HorizontalAlignment="Stretch" HorizontalContentAlignment="Stretch" Header="Echo">
-                <StackPanel MinWidth="400">
+            <StackPanel Width="250" Padding="14,8" Style="{StaticResource EffectContainerStyle}" HorizontalAlignment="Left">
+                <RelativePanel>
+                    <TextBlock
+                        RelativePanel.AlignLeftWithPanel="True"
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        Text="Echo"
+                        FontSize="18" />
+
                     <ToggleSwitch
                         Name="EchoEffectEnableToggle"
-                        Header="Enabled"
-                        IsOn="False"
+                        Style="{StaticResource CompactToggleSwitchStyle}"
+                        RelativePanel.AlignRightWithPanel="True"
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
                         Toggled="EchoEffectEnableToggle_Toggled" />
+                </RelativePanel>
 
+                <StackPanel Margin="0,12,0,0">
                     <TextBlock>Volume</TextBlock>
                     <Slider
                         Name="EchoEffectVolumeSlider"
@@ -49,7 +64,7 @@
                         Value="1000"
                         ValueChanged="EchoEffectDelaySlider_ValueChanged" />
                 </StackPanel>
-            </winui:Expander>
+            </StackPanel>
         </StackPanel>
     </RelativePanel>
 </Page>

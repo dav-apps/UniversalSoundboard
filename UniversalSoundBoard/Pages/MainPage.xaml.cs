@@ -1813,7 +1813,7 @@ namespace UniversalSoundboard.Pages
             {
                 effectManagerAppWindow = await AppWindow.TryCreateAsync();
                 effectManagerAppWindow.RequestSize(new Size(500, 500));
-                effectManagerAppWindow.Title = FileManager.loader.GetString("SoundRecorder-Title");
+                effectManagerAppWindow.Title = FileManager.loader.GetString("EffectManager-Title");
                 effectManagerAppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
                 effectManagerAppWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark ? Colors.White : Colors.Black;
                 effectManagerAppWindow.TitleBar.ButtonBackgroundColor = Colors.Transparent;
