@@ -1072,4 +1072,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="EffectManager-Title" xml:space="preserve">
     <value>Effekt-Manager</value>
   </data>
+  <data name="EffectManagerPage-WindowTitleTextBlock.Text" xml:space="preserve">
+    <value>Effekt-Manager - UniversalSoundboard</value>
+  </data>
 </root>
