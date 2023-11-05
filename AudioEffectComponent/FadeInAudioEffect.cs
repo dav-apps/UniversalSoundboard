@@ -9,41 +9,27 @@ using Windows.Media.MediaProperties;
 
 namespace AudioEffectComponent
 {
-    public sealed class EchoAudioEffect : IBasicAudioEffect
+    public sealed class FadeInAudioEffect : IBasicAudioEffect
     {
-        private float[] echoBuffer;
-        private int currentActiveSampleIndex;
+        private int sampleIndex = 0;
+        private int effectSampleCount = 0;
         private AudioEncodingProperties currentEncodingProperties;
         IPropertySet configuration;
 
         public bool TimeIndependent { get { return true; } }
         public bool UseInputFrameForOutput { get { return false; } }
 
-        // Volume of the Echo, between 0 and 1
-        public float Volume
+        // Duration of the fade in in ms
+        public float Duration
         {
             get
             {
                 object val;
 
-                if (configuration != null && configuration.TryGetValue("Volume", out val))
+                if (configuration != null && configuration.TryGetValue("Duration", out val))
                     return (float)val;
 
-                return 1f;
-            }
-        }
-
-        // Delay in milliseconds
-        public int Delay
-        {
-            get
-            {
-                object val;
-
-                if (configuration != null && configuration.TryGetValue("Delay", out val))
-                    return (int)val;
-
-                return 1000;
+                return 1000f;
             }
         }
 
@@ -68,8 +54,8 @@ namespace AudioEffectComponent
         public void SetEncodingProperties(AudioEncodingProperties encodingProperties)
         {
             currentEncodingProperties = encodingProperties;
-            echoBuffer = new float[(int)(encodingProperties.SampleRate * ((double)Delay / 1000))];
-            currentActiveSampleIndex = 0;
+            effectSampleCount = (int)(encodingProperties.SampleRate * encodingProperties.ChannelCount * ((double)Duration / 1000));
+            sampleIndex = 0;
         }
 
         public void SetProperties(IPropertySet configuration)
@@ -110,40 +96,25 @@ namespace AudioEffectComponent
                 float* inputDataInFloat = (float*)inputDataInBytes;
                 float* outputDataInFloat = (float*)outputDataInBytes;
 
-                float inputData;
-                float echoData;
-
                 // Process audio data
                 int dataInFloatLength = (int)inputBuffer.Length / sizeof(float);
 
                 for (int i = 0; i < dataInFloatLength; i++)
                 {
-                    inputData = inputDataInFloat[i] * (1.0f - (Volume / 2));
-                    echoData = echoBuffer[currentActiveSampleIndex] * (Volume / 2);
-                    outputDataInFloat[i] = inputData + echoData;
-                    echoBuffer[currentActiveSampleIndex] = inputDataInFloat[i];
-                    currentActiveSampleIndex++;
+                    outputDataInFloat[i] = inputDataInFloat[i] * ((float)sampleIndex / effectSampleCount);
 
-                    if (currentActiveSampleIndex == echoBuffer.Length)
-                    {
-                        // Wrap around (after one second of samples)
-                        currentActiveSampleIndex = 0;
-                    }
+                    if (sampleIndex < effectSampleCount)
+                        sampleIndex++;
                 }
             }
         }
 
-        public void Close(MediaEffectClosedReason reason)
-        {
-            // Dispose of effect resources
-            echoBuffer = null;
-        }
+        public void Close(MediaEffectClosedReason reason) { }
 
         public void DiscardQueuedFrames()
         {
-            // Reset contents of the samples buffer
-            Array.Clear(echoBuffer, 0, echoBuffer.Length - 1);
-            currentActiveSampleIndex = 0;
+            effectSampleCount = 0;
+            sampleIndex = 0;
         }
     }
 }

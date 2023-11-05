@@ -132,6 +132,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="EchoAudioEffect.cs" />
+    <Compile Include="FadeInAudioEffect.cs" />
     <Compile Include="PitchShiftAudioEffect.cs" />
     <Compile Include="PitchShifter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
