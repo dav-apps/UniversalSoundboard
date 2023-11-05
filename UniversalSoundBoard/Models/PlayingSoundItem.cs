@@ -206,6 +206,12 @@ namespace UniversalSoundboard.Models
                 PlayingSound.AudioPlayer.IsMuted = PlayingSound.Muted || FileManager.itemViewHolder.Muted;
             else if (e.PropertyName == ItemViewHolder.UseStandardOutputDeviceKey || e.PropertyName == ItemViewHolder.OutputDeviceKey)
                 await UpdateOutputDevice();
+            else if (e.PropertyName == ItemViewHolder.IsEchoEffectEnabledKey)
+                PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
+            else if (e.PropertyName == ItemViewHolder.EchoEffectVolumeKey)
+                PlayingSound.AudioPlayer.EchoVolume = FileManager.itemViewHolder.EchoEffectVolume;
+            else if (e.PropertyName == ItemViewHolder.EchoEffectDelayKey)
+                PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
         }
 
         private void ItemViewHolder_SoundDeleted(object sender, SoundEventArgs e)
@@ -391,6 +397,11 @@ namespace UniversalSoundboard.Models
                 await SetAudioPlayerPosition(PlayingSound.StartPosition.Value);
                 PlayingSound.StartPosition = null;
             }
+
+            // Set the global effect values
+            PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
+            PlayingSound.AudioPlayer.EchoVolume = FileManager.itemViewHolder.EchoEffectVolume;
+            PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
 
             try
             {

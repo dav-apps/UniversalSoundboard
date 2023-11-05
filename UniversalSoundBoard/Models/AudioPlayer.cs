@@ -21,11 +21,15 @@ namespace UniversalSoundboard.Models
         private bool audioFileChanged = true;
         private bool outputDeviceChanged = true;
         private bool playbackRateChanged = true;
+        private bool effectsChanged = true;
         private bool isPlaying = false;
         private TimeSpan position = TimeSpan.Zero;
         private double volume = 1;
         private bool isMuted = false;
         private double playbackRate = 1.0;
+        private bool isEchoEnabled = false;
+        private double echoVolume = 0.5;
+        private int echoDelay = 1000;
 
         private AudioGraph AudioGraph;
         private AudioFileInputNode FileInputNode;
@@ -70,6 +74,21 @@ namespace UniversalSoundboard.Models
             get => playbackRate;
             set => setPlaybackRate(value);
         }
+        public bool IsEchoEnabled
+        {
+            get => isEchoEnabled;
+            set => setIsEchoEnabled(value);
+        }
+        public double EchoVolume
+        {
+            get => echoVolume;
+            set => setEchoVolume(value);
+        }
+        public int EchoDelay
+        {
+            get => echoDelay;
+            set => setEchoDelay(value);
+        }
 
         public event EventHandler<EventArgs> MediaEnded;
         public event EventHandler<AudioGraphUnrecoverableErrorOccurredEventArgs> UnrecoverableErrorOccurred;
@@ -109,7 +128,12 @@ namespace UniversalSoundboard.Models
                 await InitDeviceOutputNode();
             }
 
-            if (audioFileChanged || outputDeviceChanged || playbackRateChanged)
+            if (
+                audioFileChanged
+                || outputDeviceChanged
+                || playbackRateChanged
+                || effectsChanged
+            )
             {
                 // Create the input node
                 await InitFileInputNode();
@@ -120,6 +144,7 @@ namespace UniversalSoundboard.Models
                 outputDeviceChanged = false;
                 audioFileChanged = false;
                 playbackRateChanged = false;
+                effectsChanged = false;
             }
 
             isInitialized = true;
@@ -196,6 +221,17 @@ namespace UniversalSoundboard.Models
                 ));
             }
 
+            if (isEchoEnabled)
+            {
+                FileInputNode.EffectDefinitions.Add(new AudioEffectDefinition(
+                    typeof(EchoAudioEffect).FullName,
+                    new PropertySet {
+                        { "Volume", (float)echoVolume },
+                        { "Delay", EchoDelay }
+                    }
+                ));
+            }
+            
             FileInputNode.FileCompleted += FileInputNode_FileCompleted;
         }
 
@@ -334,6 +370,48 @@ namespace UniversalSoundboard.Models
 
             FileInputNode.PlaybackSpeedFactor = playbackRate;
             playbackRateChanged = true;
+
+            await Init();
+        }
+
+        private async void setIsEchoEnabled(bool isEchoEnabled)
+        {
+            if (this.isEchoEnabled == isEchoEnabled)
+                return;
+
+            this.isEchoEnabled = isEchoEnabled;
+            effectsChanged = true;
+
+            if (FileInputNode == null)
+                return;
+
+            await Init();
+        }
+
+        private async void setEchoVolume(double echoVolume)
+        {
+            if (this.echoVolume == echoVolume)
+                return;
+
+            this.echoVolume = echoVolume;
+            effectsChanged = true;
+
+            if (FileInputNode == null || !isEchoEnabled)
+                return;
+
+            await Init();
+        }
+
+        private async void setEchoDelay(int echoDelay)
+        {
+            if (this.echoDelay == echoDelay)
+                return;
+
+            this.echoDelay = echoDelay;
+            effectsChanged = true;
+
+            if (FileInputNode == null || !isEchoEnabled)
+                return;
 
             await Init();
         }
