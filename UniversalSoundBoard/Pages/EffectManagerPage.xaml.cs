@@ -45,6 +45,7 @@ namespace UniversalSoundboard.Pages
             }
         }
 
+        #region Echo effect
         private void EchoEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
@@ -65,5 +66,18 @@ namespace UniversalSoundboard.Pages
             if (!initialized) return;
             FileManager.itemViewHolder.EchoEffectDelay = (int)e.NewValue;
         }
+        #endregion
+
+        #region Fade in effect
+        private void FadeInEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void FadeInEffectDurationSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+
+        }
+        #endregion
     }
 }

@@ -12,6 +12,28 @@
             <Setter Property="Background" Value="{StaticResource ContentBackgroundBrush}" />
             <Setter Property="BorderBrush" Value="{StaticResource ContentBorderBrush}" />
             <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Width" Value="250" />
+            <Setter Property="Margin" Value="6" />
+            <Setter Property="Padding" Value="14,8" />
+        </Style>
+
+        <Style x:Key="EffectHeaderStyle" TargetType="TextBlock">
+            <Setter Property="RelativePanel.AlignLeftWithPanel" Value="True" />
+            <Setter Property="RelativePanel.AlignVerticalCenterWithPanel" Value="True" />
+            <Setter Property="FontSize" Value="18" />
+        </Style>
+
+        <Style
+            x:Key="EffectEnableToggleStyle"
+            TargetType="ToggleSwitch"
+            BasedOn="{StaticResource CompactToggleSwitchStyle}">
+
+            <Setter Property="RelativePanel.AlignRightWithPanel" Value="True" />
+            <Setter Property="RelativePanel.AlignVerticalCenterWithPanel" Value="True" />
+        </Style>
+
+        <Style x:Key="EffectContentContainerStyle" TargetType="StackPanel">
+            <Setter Property="Margin" Value="0,12,0,0" />
         </Style>
     </Page.Resources>
 
@@ -22,7 +44,7 @@
             Style="{StaticResource CaptionTextBlockStyle}"
             Margin="13,8,0,0" />
 
-        <StackPanel
+        <Grid
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True"
             RelativePanel.AlignTopWithPanel="True"
@@ -30,41 +52,66 @@
             Margin="0,32,0,0"
             Padding="12">
 
-            <StackPanel Width="250" Padding="14,8" Style="{StaticResource EffectContainerStyle}" HorizontalAlignment="Left">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Column="0">
                 <RelativePanel>
-                    <TextBlock
-                        RelativePanel.AlignLeftWithPanel="True"
-                        RelativePanel.AlignVerticalCenterWithPanel="True"
-                        Text="Echo"
-                        FontSize="18" />
+                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Echo" />
 
                     <ToggleSwitch
                         Name="EchoEffectEnableToggle"
-                        Style="{StaticResource CompactToggleSwitchStyle}"
-                        RelativePanel.AlignRightWithPanel="True"
-                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        Style="{StaticResource EffectEnableToggleStyle}"
                         Toggled="EchoEffectEnableToggle_Toggled" />
                 </RelativePanel>
 
-                <StackPanel Margin="0,12,0,0">
+                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
                     <TextBlock>Volume</TextBlock>
+                    
                     <Slider
                         Name="EchoEffectVolumeSlider"
                         Minimum="0"
                         Maximum="100"
-                        Value="50"
                         ValueChanged="EchoEffectVolumeSlider_ValueChanged" />
 
                     <TextBlock>Delay (ms)</TextBlock>
+                    
                     <Slider
                         Name="EchoEffectDelaySlider"
                         Minimum="0"
                         Maximum="20000"
                         StepFrequency="100"
-                        Value="1000"
                         ValueChanged="EchoEffectDelaySlider_ValueChanged" />
                 </StackPanel>
             </StackPanel>
-        </StackPanel>
+
+            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Column="1">
+                <RelativePanel>
+                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Fade in" />
+
+                    <ToggleSwitch
+                        Name="FadeInEffectEnableToggle"
+                        Style="{StaticResource EffectEnableToggleStyle}"
+                        Toggled="FadeInEffectEnableToggle_Toggled" />
+                </RelativePanel>
+
+                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                    <TextBlock>Duration (ms)</TextBlock>
+
+                    <Slider
+                        Name="FadeInEffectDurationSlider"
+                        Minimum="0"
+                        Maximum="10000"
+                        StepFrequency="100"
+                        ValueChanged="FadeInEffectDurationSlider_ValueChanged" />
+                </StackPanel>
+            </StackPanel>
+        </Grid>
     </RelativePanel>
 </Page>
