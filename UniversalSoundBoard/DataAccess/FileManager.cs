@@ -3245,6 +3245,19 @@ namespace UniversalSoundboard.DataAccess
             (Application.Current.Resources["BottomSoundsBarBackgroundBrush"] as AcrylicBrush).TintColor = appThemeColor;
             (Application.Current.Resources["BottomSoundsBarBackgroundBrush"] as AcrylicBrush).FallbackColor = appThemeColor;
             (Application.Current.Resources["BottomSoundsBarBackgroundBrush"] as AcrylicBrush).TintOpacity = itemViewHolder.ShowAcrylicBackground ? 0.5 : 1;
+
+            if (GetRequestedTheme() == ElementTheme.Dark)
+            {
+                // Set the colors for the content background variables
+                (Application.Current.Resources["ContentBackgroundBrush"] as SolidColorBrush).Color = ((Color)Application.Current.Resources["DarkThemeContentBackgroundColor"]);
+                (Application.Current.Resources["ContentBorderBrush"] as SolidColorBrush).Color = ((Color)Application.Current.Resources["DarkThemeContentBorderBrushColor"]);
+            }
+            else
+            {
+                // Set the colors for the content background variables
+                (Application.Current.Resources["ContentBackgroundBrush"] as SolidColorBrush).Color = ((Color)Application.Current.Resources["LightThemeContentBackgroundColor"]);
+                (Application.Current.Resources["ContentBorderBrush"] as SolidColorBrush).Color = ((Color)Application.Current.Resources["LightThemeContentBorderBrushColor"]);
+            }
         }
 
         public static void NavigateToAccountPage(string context = null)

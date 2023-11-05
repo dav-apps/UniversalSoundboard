@@ -23,6 +23,15 @@
             <Color x:Key="DarkThemeBackgroundColor">#0d1221</Color>
             <Color x:Key="DarkThemeSecondaryBackgroundColor">#161C2B</Color>
 
+            <Color x:Key="LightThemeContentBackgroundColor">#B3FFFFFF</Color>
+            <Color x:Key="DarkThemeContentBackgroundColor">#0DFFFFFF</Color>
+
+            <Color x:Key="LightThemeContentBorderBrushColor">#0F000000</Color>
+            <Color x:Key="DarkThemeContentBorderBrushColor">#19000000</Color>
+
+            <SolidColorBrush x:Key="ContentBackgroundBrush" Color="{StaticResource LightThemeContentBackgroundColor}" />
+            <SolidColorBrush x:Key="ContentBorderBrush" Color="{StaticResource LightThemeContentBorderBrushColor}" />
+
             <FontFamily x:Key="FluentIconsFontFamily">/Assets/Fonts/SegoeFluentIcons.ttf#Segoe Fluent Icons</FontFamily>
 
             <!-- Override the background of the MediaTransportControls -->
