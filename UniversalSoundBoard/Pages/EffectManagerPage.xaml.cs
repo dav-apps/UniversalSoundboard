@@ -25,12 +25,17 @@ namespace UniversalSoundboard.Pages
             RequestedTheme = FileManager.GetRequestedTheme();
 
             // Init the UI elements
+            // Echo effect
             EchoEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsEchoEffectEnabled;
+            EchoEffectVolumeSlider.IsEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
+            EchoEffectDelaySlider.IsEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
             EchoEffectVolumeSlider.Value = FileManager.itemViewHolder.EchoEffectVolume * 100;
             EchoEffectDelaySlider.Value = FileManager.itemViewHolder.EchoEffectDelay;
 
-            EchoEffectVolumeSlider.IsEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
-            EchoEffectDelaySlider.IsEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
+            // Fade in effect
+            FadeInEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsFadeInEffectEnabled;
+            FadeInEffectDurationSlider.IsEnabled = FileManager.itemViewHolder.IsFadeInEffectEnabled;
+            FadeInEffectDurationSlider.Value = FileManager.itemViewHolder.FadeInEffectDuration;
 
             initialized = true;
         }
@@ -49,8 +54,8 @@ namespace UniversalSoundboard.Pages
         private void EchoEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
-            FileManager.itemViewHolder.IsEchoEffectEnabled = EchoEffectEnableToggle.IsOn;
 
+            FileManager.itemViewHolder.IsEchoEffectEnabled = EchoEffectEnableToggle.IsOn;
             EchoEffectVolumeSlider.IsEnabled = EchoEffectEnableToggle.IsOn;
             EchoEffectDelaySlider.IsEnabled = EchoEffectEnableToggle.IsOn;
         }
@@ -71,12 +76,16 @@ namespace UniversalSoundboard.Pages
         #region Fade in effect
         private void FadeInEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!initialized) return;
 
+            FileManager.itemViewHolder.IsFadeInEffectEnabled = FadeInEffectEnableToggle.IsOn;
+            FadeInEffectDurationSlider.IsEnabled = FadeInEffectEnableToggle.IsOn;
         }
 
         private void FadeInEffectDurationSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-
+            if (!initialized) return;
+            FileManager.itemViewHolder.FadeInEffectDuration = (int)e.NewValue;
         }
         #endregion
     }

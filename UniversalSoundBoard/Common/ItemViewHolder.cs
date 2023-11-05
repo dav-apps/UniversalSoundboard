@@ -41,6 +41,8 @@ namespace UniversalSoundboard.Common
         private const string isEchoEffectEnabledKey = "isEchoEffectEnabled";
         private const string echoEffectVolumeKey = "echoEffectVolume";
         private const string echoEffectDelayKey = "echoEffectDelay";
+        private const string isFadeInEffectEnabledKey = "fadeInEffectEnabled";
+        private const string fadeInEffectDurationKey = "fadeInEffectDuration";
         #endregion
 
         #region Constants for localSettings defaults
@@ -67,6 +69,8 @@ namespace UniversalSoundboard.Common
         private const bool isEchoEffectEnabledDefault = false;
         private const double echoEffectVolumeDefault = 0.5;
         private const int echoEffectDelayDefault = 1000;
+        private const bool isFadeInEffectEnabledDefault = false;
+        private const int fadeInEffectDurationDefault = 1000;
         #endregion
 
         #region Variables
@@ -142,6 +146,8 @@ namespace UniversalSoundboard.Common
         private bool _isEchoEffectEnabled;                  // If true, the global echo effect is enabled for all sounds
         private double _echoEffectVolume;                   // The volume of the global echo effect
         private int _echoEffectDelay;                       // The delay of the global echo effect in ms
+        private bool _isFadeInEffectEnabled;                // If true, the global fade in effect is enabled for all sounds
+        private int _fadeInEffectDuration;                  // The duration of the global fade in effect
         #endregion
 
         #region Events
@@ -458,6 +464,20 @@ namespace UniversalSoundboard.Common
                 _echoEffectDelay = echoEffectDelayDefault;
             else
                 _echoEffectDelay = (int)localSettings.Values[echoEffectDelayKey];
+            #endregion
+
+            #region isFadeInEffectEnabled
+            if (localSettings.Values[isFadeInEffectEnabledKey] == null)
+                _isFadeInEffectEnabled = isFadeInEffectEnabledDefault;
+            else
+                _isFadeInEffectEnabled = (bool)localSettings.Values[isFadeInEffectEnabledKey];
+            #endregion
+
+            #region fadeInEffectDuration
+            if (localSettings.Values[fadeInEffectDurationKey] == null)
+                _fadeInEffectDuration = fadeInEffectDurationDefault;
+            else
+                _fadeInEffectDuration = (int)localSettings.Values[fadeInEffectDurationKey];
             #endregion
             #endregion
         }
@@ -1234,6 +1254,36 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[echoEffectDelayKey] = value;
                 _echoEffectDelay = value;
                 NotifyPropertyChanged(EchoEffectDelayKey);
+            }
+        }
+        #endregion
+
+        #region IsFadeInEffectEnabled
+        public const string IsFadeInEffectEnabledKey = "IsFadeInEffectEnabled";
+        public bool IsFadeInEffectEnabled
+        {
+            get => _isFadeInEffectEnabled;
+            set
+            {
+                if (_isFadeInEffectEnabled.Equals(value)) return;
+                localSettings.Values[isFadeInEffectEnabledKey] = value;
+                _isFadeInEffectEnabled = value;
+                NotifyPropertyChanged(IsFadeInEffectEnabledKey);
+            }
+        }
+        #endregion
+
+        #region FadeInEffectDuration
+        public const string FadeInEffectDurationKey = "FadeInEffectDuration";
+        public int FadeInEffectDuration
+        {
+            get => _fadeInEffectDuration;
+            set
+            {
+                if (_fadeInEffectDuration.Equals(value)) return;
+                localSettings.Values[fadeInEffectDurationKey] = value;
+                _fadeInEffectDuration = value;
+                NotifyPropertyChanged(FadeInEffectDurationKey);
             }
         }
         #endregion
