@@ -30,6 +30,8 @@ namespace UniversalSoundboard.Models
         private bool isEchoEnabled = false;
         private double echoVolume = 0.5;
         private int echoDelay = 1000;
+        private bool isFadeInEnabled = false;
+        private int fadeInDuration = 1000;
 
         private AudioGraph AudioGraph;
         private AudioFileInputNode FileInputNode;
@@ -88,6 +90,16 @@ namespace UniversalSoundboard.Models
         {
             get => echoDelay;
             set => setEchoDelay(value);
+        }
+        public bool IsFadeInEnabled
+        {
+            get => isFadeInEnabled;
+            set => setIsFadeInEnabled(value);
+        }
+        public int FadeInDuration
+        {
+            get => fadeInDuration;
+            set => setFadeInDuration(value);
         }
 
         public event EventHandler<EventArgs> MediaEnded;
@@ -228,6 +240,17 @@ namespace UniversalSoundboard.Models
                     new PropertySet {
                         { "Volume", (float)echoVolume },
                         { "Delay", EchoDelay }
+                    }
+                ));
+            }
+
+            if (IsFadeInEnabled)
+            {
+                FileInputNode.EffectDefinitions.Add(new AudioEffectDefinition(
+                    typeof(FadeInAudioEffect).FullName,
+                    new PropertySet
+                    {
+                        { "Duration", (float)FadeInDuration }
                     }
                 ));
             }
@@ -414,6 +437,22 @@ namespace UniversalSoundboard.Models
                 return;
 
             await Init();
+        }
+
+        private void setIsFadeInEnabled(bool isFadeInEnabled)
+        {
+            if (this.isFadeInEnabled == isFadeInEnabled)
+                return;
+
+            this.isFadeInEnabled = isFadeInEnabled;
+        }
+
+        private void setFadeInDuration(int fadeInDuration)
+        {
+            if (this.fadeInDuration == fadeInDuration)
+                return;
+
+            this.fadeInDuration = fadeInDuration;;
         }
         #endregion
 

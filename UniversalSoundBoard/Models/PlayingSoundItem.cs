@@ -200,18 +200,34 @@ namespace UniversalSoundboard.Models
         {
             if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
 
-            if (e.PropertyName == ItemViewHolder.VolumeKey)
-                PlayingSound.AudioPlayer.Volume = (double)PlayingSound.Volume / 100 * FileManager.itemViewHolder.Volume / 100;
-            else if (e.PropertyName == ItemViewHolder.MutedKey)
-                PlayingSound.AudioPlayer.IsMuted = PlayingSound.Muted || FileManager.itemViewHolder.Muted;
-            else if (e.PropertyName == ItemViewHolder.UseStandardOutputDeviceKey || e.PropertyName == ItemViewHolder.OutputDeviceKey)
-                await UpdateOutputDevice();
-            else if (e.PropertyName == ItemViewHolder.IsEchoEffectEnabledKey)
-                PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
-            else if (e.PropertyName == ItemViewHolder.EchoEffectVolumeKey)
-                PlayingSound.AudioPlayer.EchoVolume = FileManager.itemViewHolder.EchoEffectVolume;
-            else if (e.PropertyName == ItemViewHolder.EchoEffectDelayKey)
-                PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
+            switch(e.PropertyName)
+            {
+                case ItemViewHolder.VolumeKey:
+                    PlayingSound.AudioPlayer.Volume = (double)PlayingSound.Volume / 100 * FileManager.itemViewHolder.Volume / 100;
+                    break;
+                case ItemViewHolder.MutedKey:
+                    PlayingSound.AudioPlayer.IsMuted = PlayingSound.Muted || FileManager.itemViewHolder.Muted;
+                    break;
+                case ItemViewHolder.UseStandardOutputDeviceKey:
+                case ItemViewHolder.OutputDeviceKey:
+                    await UpdateOutputDevice();
+                    break;
+                case ItemViewHolder.IsEchoEffectEnabledKey:
+                    PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
+                    break;
+                case ItemViewHolder.EchoEffectVolumeKey:
+                    PlayingSound.AudioPlayer.EchoVolume = FileManager.itemViewHolder.EchoEffectVolume;
+                    break;
+                case ItemViewHolder.EchoEffectDelayKey:
+                    PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
+                    break;
+                case ItemViewHolder.IsFadeInEffectEnabledKey:
+                    PlayingSound.AudioPlayer.IsFadeInEnabled = FileManager.itemViewHolder.IsFadeInEffectEnabled;
+                    break;
+                case ItemViewHolder.FadeInEffectDurationKey:
+                    PlayingSound.AudioPlayer.FadeInDuration = FileManager.itemViewHolder.FadeInEffectDuration;
+                    break;
+            }
         }
 
         private void ItemViewHolder_SoundDeleted(object sender, SoundEventArgs e)
@@ -402,6 +418,8 @@ namespace UniversalSoundboard.Models
             PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
             PlayingSound.AudioPlayer.EchoVolume = FileManager.itemViewHolder.EchoEffectVolume;
             PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
+            PlayingSound.AudioPlayer.IsFadeInEnabled = FileManager.itemViewHolder.IsFadeInEffectEnabled;
+            PlayingSound.AudioPlayer.FadeInDuration = FileManager.itemViewHolder.FadeInEffectDuration;
 
             try
             {
