@@ -255,7 +255,7 @@ namespace UniversalSoundboard.Models
 
             // Fade in effect
             FileInputNode.EffectDefinitions.Add(fadeInEffectDefinition);
-            if (isFadeInEnabled) FileInputNode.EnableEffectsByDefinition(fadeInEffectDefinition);
+            if (!isFadeInEnabled) FileInputNode.DisableEffectsByDefinition(fadeInEffectDefinition);
 
             // Fade out effect
             FileInputNode.EffectDefinitions.Add(fadeOutEffectDefinition);
@@ -347,9 +347,10 @@ namespace UniversalSoundboard.Models
             isPlaying = false;
         }
 
-        public void StartFadeOut()
+        public async Task FadeOut(int milliseconds)
         {
             FileInputNode.EnableEffectsByDefinition(fadeOutEffectDefinition);
+            await Task.Delay(milliseconds);
         }
 
         #region Setter methods

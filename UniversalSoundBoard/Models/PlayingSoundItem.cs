@@ -5,7 +5,6 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Linq;
 using System.Threading.Tasks;
-using System.Timers;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Pages;
@@ -58,12 +57,6 @@ namespace UniversalSoundboard.Models
         private bool removed = false;
         private bool updateOutputDeviceRunning = false;
         private bool runUpdateOutputDeviceAgain = false;
-
-        private Timer fadeOutTimer;
-        private const int fadeOutTime = 300;
-        private const int fadeOutFrames = 10;
-        private int currentFadeOutFrame = 0;
-        private double fadeOutVolumeDiff;
 
         private DispatcherTimer positionChangeTimer;
         private TimeSpan position;
@@ -738,41 +731,6 @@ namespace UniversalSoundboard.Models
             PlayingSound.AudioPlayer.Position = position;
             await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => PositionChanged?.Invoke(this, new PositionChangedEventArgs(position)));
         }
-
-        private async Task StartFadeOut()
-        {
-            if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
-            if (!PlayingSound.AudioPlayer.IsPlaying) return;
-
-            currentFadeOutFrame = 0;
-            double interval = fadeOutTime / (double)fadeOutFrames;
-            fadeOutVolumeDiff = PlayingSound.AudioPlayer.Volume / fadeOutFrames;
-
-            fadeOutTimer = new Timer();
-            fadeOutTimer.Elapsed += async (object sender, ElapsedEventArgs e) => await FadeOut();
-
-            fadeOutTimer.Interval = interval;
-            fadeOutTimer.Start();
-
-            await FadeOut();
-        }
-
-        private async Task FadeOut()
-        {
-            if (currentFadeOutFrame >= fadeOutFrames || PlayingSound.AudioPlayer == null)
-            {
-                if (PlayingSound.AudioPlayer != null && await PauseAudioPlayer())
-                    await SetAudioPlayerPosition(TimeSpan.Zero);
-
-                fadeOutTimer.Stop();
-            }
-            else
-            {
-                // Decrease the volume
-                PlayingSound.AudioPlayer.Volume -= fadeOutVolumeDiff;
-                currentFadeOutFrame++;
-            }
-        }
         #endregion
 
         #region Public methods
@@ -1091,7 +1049,7 @@ namespace UniversalSoundboard.Models
         public async Task Hide()
         {
             // Stop and reset the MediaPlayer
-            await StartFadeOut();
+            await PlayingSound.AudioPlayer.FadeOut(5000);
 
             // Start the remove animation
             HidePlayingSound?.Invoke(this, new EventArgs());
