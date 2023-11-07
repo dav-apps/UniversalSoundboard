@@ -39,6 +39,7 @@ namespace UniversalSoundboard.Models
 
         private AudioEffectDefinition fadeInEffectDefinition;
         private AudioEffectDefinition fadeOutEffectDefinition;
+        private EchoEffectDefinition echoEffectDefinition;
 
         public bool IsInitialized
         {
@@ -108,28 +109,22 @@ namespace UniversalSoundboard.Models
         public event EventHandler<EventArgs> MediaEnded;
         public event EventHandler<AudioGraphUnrecoverableErrorOccurredEventArgs> UnrecoverableErrorOccurred;
 
-        public AudioPlayer()
-        {
-            InitEffectDefinitions();
-        }
+        public AudioPlayer() { }
 
         public AudioPlayer(StorageFile audioFile)
         {
             this.audioFile = audioFile;
-            InitEffectDefinitions();
         }
 
         public AudioPlayer(DeviceInformation outputDevice)
         {
             this.outputDevice = outputDevice;
-            InitEffectDefinitions();
         }
 
         public AudioPlayer(StorageFile audioFile, DeviceInformation outputDevice)
         {
             this.audioFile = audioFile;
             this.outputDevice = outputDevice;
-            InitEffectDefinitions();
         }
 
         public async Task Init()
@@ -147,6 +142,9 @@ namespace UniversalSoundboard.Models
 
                 // Create the output node
                 await InitDeviceOutputNode();
+
+                // Init the audio effects
+                InitEffectDefinitions();
             }
 
             if (
@@ -242,16 +240,8 @@ namespace UniversalSoundboard.Models
                 ));
             }
 
-            if (isEchoEnabled)
-            {
-                FileInputNode.EffectDefinitions.Add(new AudioEffectDefinition(
-                    typeof(EchoAudioEffect).FullName,
-                    new PropertySet {
-                        { "Volume", (float)echoVolume },
-                        { "Delay", EchoDelay }
-                    }
-                ));
-            }
+            FileInputNode.EffectDefinitions.Add(echoEffectDefinition);
+            if (!isEchoEnabled) FileInputNode.DisableEffectsByDefinition(echoEffectDefinition);
 
             // Fade in effect
             FileInputNode.EffectDefinitions.Add(fadeInEffectDefinition);
@@ -306,6 +296,11 @@ namespace UniversalSoundboard.Models
                     { "Duration", (float)FadeInDuration }
                 }
             );
+
+            echoEffectDefinition = new EchoEffectDefinition(AudioGraph)
+            {
+                Delay = echoDelay
+            };
         }
 
         public void Play()
@@ -400,7 +395,7 @@ namespace UniversalSoundboard.Models
             // Don't change the value if it didn't change
             if (muted == isMuted) return;
 
-            if (DeviceOutputNode != null)
+            if (FileInputNode != null && DeviceOutputNode != null)
             {
                 if (muted)
                     FileInputNode.OutgoingGain = 0;
@@ -428,18 +423,20 @@ namespace UniversalSoundboard.Models
             await Init();
         }
 
-        private async void setIsEchoEnabled(bool isEchoEnabled)
+        private void setIsEchoEnabled(bool isEchoEnabled)
         {
             if (this.isEchoEnabled == isEchoEnabled)
                 return;
 
             this.isEchoEnabled = isEchoEnabled;
-            effectsChanged = true;
 
-            if (FileInputNode == null)
-                return;
-
-            await Init();
+            if (FileInputNode != null)
+            {
+                if (isEchoEnabled)
+                    FileInputNode.EnableEffectsByDefinition(echoEffectDefinition);
+                else
+                    FileInputNode.DisableEffectsByDefinition(echoEffectDefinition);
+            }
         }
 
         private async void setEchoVolume(double echoVolume)
@@ -456,18 +453,15 @@ namespace UniversalSoundboard.Models
             await Init();
         }
 
-        private async void setEchoDelay(int echoDelay)
+        private void setEchoDelay(int echoDelay)
         {
             if (this.echoDelay == echoDelay)
                 return;
 
             this.echoDelay = echoDelay;
-            effectsChanged = true;
 
-            if (FileInputNode == null || !isEchoEnabled)
-                return;
-
-            await Init();
+            if (echoEffectDefinition != null)
+                echoEffectDefinition.Delay = echoDelay;
         }
 
         private void setIsFadeInEnabled(bool isFadeInEnabled)
@@ -483,7 +477,10 @@ namespace UniversalSoundboard.Models
             if (this.fadeInDuration == fadeInDuration)
                 return;
 
-            this.fadeInDuration = fadeInDuration;;
+            this.fadeInDuration = fadeInDuration;
+
+            if (fadeInEffectDefinition != null)
+                fadeInEffectDefinition.Properties["Duration"] = fadeInDuration;
         }
         #endregion
 

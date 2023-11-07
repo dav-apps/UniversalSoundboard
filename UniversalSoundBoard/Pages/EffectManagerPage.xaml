@@ -84,9 +84,9 @@
                     
                     <Slider
                         Name="EchoEffectDelaySlider"
-                        Minimum="0"
-                        Maximum="20000"
-                        StepFrequency="100"
+                        Minimum="50"
+                        Maximum="2000"
+                        StepFrequency="10"
                         ValueChanged="EchoEffectDelaySlider_ValueChanged" />
                 </StackPanel>
             </StackPanel>
