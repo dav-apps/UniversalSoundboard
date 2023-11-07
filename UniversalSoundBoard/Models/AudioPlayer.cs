@@ -37,6 +37,9 @@ namespace UniversalSoundboard.Models
         private AudioFileInputNode FileInputNode;
         private AudioDeviceOutputNode DeviceOutputNode;
 
+        private AudioEffectDefinition fadeInEffectDefinition;
+        private AudioEffectDefinition fadeOutEffectDefinition;
+
         public bool IsInitialized
         {
             get => isInitialized;
@@ -105,22 +108,28 @@ namespace UniversalSoundboard.Models
         public event EventHandler<EventArgs> MediaEnded;
         public event EventHandler<AudioGraphUnrecoverableErrorOccurredEventArgs> UnrecoverableErrorOccurred;
 
-        public AudioPlayer() { }
+        public AudioPlayer()
+        {
+            InitEffectDefinitions();
+        }
 
         public AudioPlayer(StorageFile audioFile)
         {
             this.audioFile = audioFile;
+            InitEffectDefinitions();
         }
 
         public AudioPlayer(DeviceInformation outputDevice)
         {
             this.outputDevice = outputDevice;
+            InitEffectDefinitions();
         }
 
         public AudioPlayer(StorageFile audioFile, DeviceInformation outputDevice)
         {
             this.audioFile = audioFile;
             this.outputDevice = outputDevice;
+            InitEffectDefinitions();
         }
 
         public async Task Init()
@@ -244,17 +253,14 @@ namespace UniversalSoundboard.Models
                 ));
             }
 
-            if (IsFadeInEnabled)
-            {
-                FileInputNode.EffectDefinitions.Add(new AudioEffectDefinition(
-                    typeof(FadeInAudioEffect).FullName,
-                    new PropertySet
-                    {
-                        { "Duration", (float)FadeInDuration }
-                    }
-                ));
-            }
-            
+            // Fade in effect
+            FileInputNode.EffectDefinitions.Add(fadeInEffectDefinition);
+            if (isFadeInEnabled) FileInputNode.EnableEffectsByDefinition(fadeInEffectDefinition);
+
+            // Fade out effect
+            FileInputNode.EffectDefinitions.Add(fadeOutEffectDefinition);
+            FileInputNode.DisableEffectsByDefinition(fadeOutEffectDefinition);
+
             FileInputNode.FileCompleted += FileInputNode_FileCompleted;
         }
 
@@ -281,6 +287,25 @@ namespace UniversalSoundboard.Models
             }
 
             DeviceOutputNode = outputNodeResult.DeviceOutputNode;
+        }
+
+        private void InitEffectDefinitions()
+        {
+            fadeOutEffectDefinition = new AudioEffectDefinition(
+                typeof(FadeOutAudioEffect).FullName,
+                new PropertySet
+                {
+                    { "Duration", 5000f }
+                }
+            );
+
+            fadeInEffectDefinition = new AudioEffectDefinition(
+                typeof(FadeInAudioEffect).FullName,
+                new PropertySet
+                {
+                    { "Duration", (float)FadeInDuration }
+                }
+            );
         }
 
         public void Play()
@@ -320,6 +345,11 @@ namespace UniversalSoundboard.Models
             }
 
             isPlaying = false;
+        }
+
+        public void StartFadeOut()
+        {
+            FileInputNode.EnableEffectsByDefinition(fadeOutEffectDefinition);
         }
 
         #region Setter methods
