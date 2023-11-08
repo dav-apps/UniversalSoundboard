@@ -335,6 +335,7 @@ namespace UniversalSoundboard.Models
                 Crashes.TrackError(e);
             }
 
+            FileInputNode.DisableEffectsByDefinition(fadeInEffectDefinition);
             isPlaying = false;
         }
 
@@ -342,6 +343,7 @@ namespace UniversalSoundboard.Models
         {
             FileInputNode.EnableEffectsByDefinition(fadeOutEffectDefinition);
             await Task.Delay(milliseconds);
+            FileInputNode.DisableEffectsByDefinition(fadeOutEffectDefinition);
         }
 
         #region Setter methods
@@ -368,6 +370,7 @@ namespace UniversalSoundboard.Models
             
             FileInputNode?.Seek(position);
             this.position = position;
+            FileInputNode.DisableEffectsByDefinition(fadeInEffectDefinition);
         }
 
         private void setVolume(double volume)
