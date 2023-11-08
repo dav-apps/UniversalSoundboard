@@ -39,7 +39,6 @@ namespace UniversalSoundboard.Common
         private const string showContinuePlaylistDownloadIANKey = "showContinuePlaylistDownloadIAN";
         private const string soundRecorderMinimizeWarningClosedKey = "soundRecorderMinimizeWarningClosed";
         private const string isEchoEffectEnabledKey = "isEchoEffectEnabled";
-        private const string echoEffectVolumeKey = "echoEffectVolume";
         private const string echoEffectDelayKey = "echoEffectDelay";
         private const string isFadeInEffectEnabledKey = "fadeInEffectEnabled";
         private const string fadeInEffectDurationKey = "fadeInEffectDuration";
@@ -67,8 +66,7 @@ namespace UniversalSoundboard.Common
         private const bool showContinuePlaylistDownloadIANDefault = false;
         private const bool soundRecorderMinimizeWarningClosedDefault = false;
         private const bool isEchoEffectEnabledDefault = false;
-        private const double echoEffectVolumeDefault = 0.5;
-        private const int echoEffectDelayDefault = 1000;
+        private const int echoEffectDelayDefault = 500;
         private const bool isFadeInEffectEnabledDefault = false;
         private const int fadeInEffectDurationDefault = 1000;
         #endregion
@@ -144,7 +142,6 @@ namespace UniversalSoundboard.Common
         private bool _showContinuePlaylistDownloadIAN;      // Determines whether to show the IAN for continuing the playlist download
         private bool _soundRecorderMinimizeWarningClosed;   // If true, the warning for minimizing the window on the Sound Recorder was closed by the user and should not be shown again
         private bool _isEchoEffectEnabled;                  // If true, the global echo effect is enabled for all sounds
-        private double _echoEffectVolume;                   // The volume of the global echo effect
         private int _echoEffectDelay;                       // The delay of the global echo effect in ms
         private bool _isFadeInEffectEnabled;                // If true, the global fade in effect is enabled for all sounds
         private int _fadeInEffectDuration;                  // The duration of the global fade in effect
@@ -450,13 +447,6 @@ namespace UniversalSoundboard.Common
                 _isEchoEffectEnabled = isEchoEffectEnabledDefault;
             else
                 _isEchoEffectEnabled = (bool)localSettings.Values[isEchoEffectEnabledKey];
-            #endregion
-
-            #region echoEffectVolume
-            if (localSettings.Values[echoEffectVolumeKey] == null)
-                _echoEffectVolume = echoEffectVolumeDefault;
-            else
-                _echoEffectVolume = (double)localSettings.Values[echoEffectVolumeKey];
             #endregion
 
             #region echoEffectDelay
@@ -1224,21 +1214,6 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[isEchoEffectEnabledKey] = value;
                 _isEchoEffectEnabled = value;
                 NotifyPropertyChanged(IsEchoEffectEnabledKey);
-            }
-        }
-        #endregion
-
-        #region EchoEffectVolume
-        public const string EchoEffectVolumeKey = "EchoEffectVolume";
-        public double EchoEffectVolume
-        {
-            get => _echoEffectVolume;
-            set
-            {
-                if (_echoEffectVolume.Equals(value)) return;
-                localSettings.Values[echoEffectVolumeKey] = value;
-                _echoEffectVolume = value;
-                NotifyPropertyChanged(EchoEffectVolumeKey);
             }
         }
         #endregion

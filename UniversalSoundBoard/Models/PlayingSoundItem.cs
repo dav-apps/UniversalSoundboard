@@ -208,9 +208,6 @@ namespace UniversalSoundboard.Models
                 case ItemViewHolder.IsEchoEffectEnabledKey:
                     PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
                     break;
-                case ItemViewHolder.EchoEffectVolumeKey:
-                    PlayingSound.AudioPlayer.EchoVolume = FileManager.itemViewHolder.EchoEffectVolume;
-                    break;
                 case ItemViewHolder.EchoEffectDelayKey:
                     PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
                     break;
@@ -409,7 +406,6 @@ namespace UniversalSoundboard.Models
 
             // Set the global effect values
             PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
-            PlayingSound.AudioPlayer.EchoVolume = FileManager.itemViewHolder.EchoEffectVolume;
             PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
             PlayingSound.AudioPlayer.IsFadeInEnabled = FileManager.itemViewHolder.IsFadeInEffectEnabled;
             PlayingSound.AudioPlayer.FadeInDuration = FileManager.itemViewHolder.FadeInEffectDuration;

@@ -72,16 +72,8 @@
                 </RelativePanel>
 
                 <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock>Volume</TextBlock>
-                    
-                    <Slider
-                        Name="EchoEffectVolumeSlider"
-                        Minimum="0"
-                        Maximum="100"
-                        ValueChanged="EchoEffectVolumeSlider_ValueChanged" />
-
                     <TextBlock>Delay (ms)</TextBlock>
-                    
+
                     <Slider
                         Name="EchoEffectDelaySlider"
                         Minimum="50"

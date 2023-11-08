@@ -27,9 +27,7 @@ namespace UniversalSoundboard.Pages
             // Init the UI elements
             // Echo effect
             EchoEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsEchoEffectEnabled;
-            EchoEffectVolumeSlider.IsEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
             EchoEffectDelaySlider.IsEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
-            EchoEffectVolumeSlider.Value = FileManager.itemViewHolder.EchoEffectVolume * 100;
             EchoEffectDelaySlider.Value = FileManager.itemViewHolder.EchoEffectDelay;
 
             // Fade in effect
@@ -56,14 +54,7 @@ namespace UniversalSoundboard.Pages
             if (!initialized) return;
 
             FileManager.itemViewHolder.IsEchoEffectEnabled = EchoEffectEnableToggle.IsOn;
-            EchoEffectVolumeSlider.IsEnabled = EchoEffectEnableToggle.IsOn;
             EchoEffectDelaySlider.IsEnabled = EchoEffectEnableToggle.IsOn;
-        }
-
-        private void EchoEffectVolumeSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
-        {
-            if (!initialized) return;
-            FileManager.itemViewHolder.EchoEffectVolume = e.NewValue / 100;
         }
 
         private void EchoEffectDelaySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)

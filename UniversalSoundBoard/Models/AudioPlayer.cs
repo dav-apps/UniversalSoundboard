@@ -28,7 +28,6 @@ namespace UniversalSoundboard.Models
         private bool isMuted = false;
         private double playbackRate = 1.0;
         private bool isEchoEnabled = false;
-        private double echoVolume = 0.5;
         private int echoDelay = 1000;
         private bool isFadeInEnabled = false;
         private int fadeInDuration = 1000;
@@ -84,11 +83,6 @@ namespace UniversalSoundboard.Models
         {
             get => isEchoEnabled;
             set => setIsEchoEnabled(value);
-        }
-        public double EchoVolume
-        {
-            get => echoVolume;
-            set => setEchoVolume(value);
         }
         public int EchoDelay
         {
@@ -299,7 +293,9 @@ namespace UniversalSoundboard.Models
 
             echoEffectDefinition = new EchoEffectDefinition(AudioGraph)
             {
-                Delay = echoDelay
+                Delay = echoDelay,
+                WetDryMix = 0.7f,
+                Feedback = 0.5f
             };
         }
 
@@ -437,20 +433,6 @@ namespace UniversalSoundboard.Models
                 else
                     FileInputNode.DisableEffectsByDefinition(echoEffectDefinition);
             }
-        }
-
-        private async void setEchoVolume(double echoVolume)
-        {
-            if (this.echoVolume == echoVolume)
-                return;
-
-            this.echoVolume = echoVolume;
-            effectsChanged = true;
-
-            if (FileInputNode == null || !isEchoEnabled)
-                return;
-
-            await Init();
         }
 
         private void setEchoDelay(int echoDelay)
