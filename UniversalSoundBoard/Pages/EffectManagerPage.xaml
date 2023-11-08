@@ -54,6 +54,7 @@
 
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -61,7 +62,51 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Column="0">
+            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="0" Grid.Column="0">
+                <RelativePanel>
+                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Fade in" />
+
+                    <ToggleSwitch
+                        Name="FadeInEffectEnableToggle"
+                        Style="{StaticResource EffectEnableToggleStyle}"
+                        Toggled="FadeInEffectEnableToggle_Toggled" />
+                </RelativePanel>
+
+                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                    <TextBlock>Duration (ms)</TextBlock>
+
+                    <Slider
+                        Name="FadeInEffectDurationSlider"
+                        Minimum="100"
+                        Maximum="10000"
+                        StepFrequency="100"
+                        ValueChanged="FadeInEffectDurationSlider_ValueChanged" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="0" Grid.Column="1">
+                <RelativePanel>
+                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Fade out" />
+
+                    <ToggleSwitch
+                        Name="FadeOutEffectEnableToggle"
+                        Style="{StaticResource EffectEnableToggleStyle}"
+                        Toggled="FadeOutEffectEnableToggle_Toggled" />
+                </RelativePanel>
+
+                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                    <TextBlock>Duration (ms)</TextBlock>
+
+                    <Slider
+                        Name="FadeOutEffectDurationSlider"
+                        Minimum="100"
+                        Maximum="10000"
+                        StepFrequency="100"
+                        ValueChanged="FadeOutEffectDurationSlider_ValueChanged" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="1"  Grid.Column="0">
                 <RelativePanel>
                     <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Echo" />
 
@@ -80,28 +125,6 @@
                         Maximum="2000"
                         StepFrequency="10"
                         ValueChanged="EchoEffectDelaySlider_ValueChanged" />
-                </StackPanel>
-            </StackPanel>
-
-            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Column="1">
-                <RelativePanel>
-                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Fade in" />
-
-                    <ToggleSwitch
-                        Name="FadeInEffectEnableToggle"
-                        Style="{StaticResource EffectEnableToggleStyle}"
-                        Toggled="FadeInEffectEnableToggle_Toggled" />
-                </RelativePanel>
-
-                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock>Duration (ms)</TextBlock>
-
-                    <Slider
-                        Name="FadeInEffectDurationSlider"
-                        Minimum="0"
-                        Maximum="10000"
-                        StepFrequency="100"
-                        ValueChanged="FadeInEffectDurationSlider_ValueChanged" />
                 </StackPanel>
             </StackPanel>
         </Grid>

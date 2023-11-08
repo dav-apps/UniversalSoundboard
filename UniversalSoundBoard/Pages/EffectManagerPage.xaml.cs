@@ -25,15 +25,17 @@ namespace UniversalSoundboard.Pages
             RequestedTheme = FileManager.GetRequestedTheme();
 
             // Init the UI elements
-            // Echo effect
-            EchoEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsEchoEffectEnabled;
-            EchoEffectDelaySlider.IsEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
-            EchoEffectDelaySlider.Value = FileManager.itemViewHolder.EchoEffectDelay;
-
             // Fade in effect
             FadeInEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsFadeInEffectEnabled;
             FadeInEffectDurationSlider.IsEnabled = FileManager.itemViewHolder.IsFadeInEffectEnabled;
             FadeInEffectDurationSlider.Value = FileManager.itemViewHolder.FadeInEffectDuration;
+
+            // Fade out effect
+
+            // Echo effect
+            EchoEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsEchoEffectEnabled;
+            EchoEffectDelaySlider.IsEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
+            EchoEffectDelaySlider.Value = FileManager.itemViewHolder.EchoEffectDelay;
 
             initialized = true;
         }
@@ -48,22 +50,6 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        #region Echo effect
-        private void EchoEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
-        {
-            if (!initialized) return;
-
-            FileManager.itemViewHolder.IsEchoEffectEnabled = EchoEffectEnableToggle.IsOn;
-            EchoEffectDelaySlider.IsEnabled = EchoEffectEnableToggle.IsOn;
-        }
-
-        private void EchoEffectDelaySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
-        {
-            if (!initialized) return;
-            FileManager.itemViewHolder.EchoEffectDelay = (int)e.NewValue;
-        }
-        #endregion
-
         #region Fade in effect
         private void FadeInEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
         {
@@ -77,6 +63,34 @@ namespace UniversalSoundboard.Pages
         {
             if (!initialized) return;
             FileManager.itemViewHolder.FadeInEffectDuration = (int)e.NewValue;
+        }
+        #endregion
+
+        #region Fade out effect
+        private void FadeOutEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!initialized) return;
+        }
+
+        private void FadeOutEffectDurationSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (!initialized) return;
+        }
+        #endregion
+
+        #region Echo effect
+        private void EchoEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!initialized) return;
+
+            FileManager.itemViewHolder.IsEchoEffectEnabled = EchoEffectEnableToggle.IsOn;
+            EchoEffectDelaySlider.IsEnabled = EchoEffectEnableToggle.IsOn;
+        }
+
+        private void EchoEffectDelaySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (!initialized) return;
+            FileManager.itemViewHolder.EchoEffectDelay = (int)e.NewValue;
         }
         #endregion
     }
