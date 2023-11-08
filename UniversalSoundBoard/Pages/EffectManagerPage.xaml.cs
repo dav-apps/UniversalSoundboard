@@ -31,6 +31,9 @@ namespace UniversalSoundboard.Pages
             FadeInEffectDurationSlider.Value = FileManager.itemViewHolder.FadeInEffectDuration;
 
             // Fade out effect
+            FadeOutEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsFadeOutEffectEnabled;
+            FadeOutEffectDurationSlider.IsEnabled = FileManager.itemViewHolder.IsFadeOutEffectEnabled;
+            FadeOutEffectDurationSlider.Value = FileManager.itemViewHolder.FadeOutEffectDuration;
 
             // Echo effect
             EchoEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsEchoEffectEnabled;
@@ -70,11 +73,15 @@ namespace UniversalSoundboard.Pages
         private void FadeOutEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
         {
             if (!initialized) return;
+
+            FileManager.itemViewHolder.IsFadeOutEffectEnabled = FadeOutEffectEnableToggle.IsOn;
+            FadeOutEffectDurationSlider.IsEnabled = FadeOutEffectEnableToggle.IsOn;
         }
 
         private void FadeOutEffectDurationSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             if (!initialized) return;
+            FileManager.itemViewHolder.FadeOutEffectDuration = (int)e.NewValue;
         }
         #endregion
 
