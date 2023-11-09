@@ -36,6 +36,7 @@ namespace UniversalSoundboard.Components
         private bool skipSoundsListViewSelectionChanged;
         private bool skipProgressSliderValueChanged = false;
         private bool isSoundsListVisible = false;
+        private bool isFadingOut = false;
 
         private const string MoreButtonOutputDeviceFlyoutSubItemName = "MoreButtonOutputDeviceFlyoutSubItem";
         private const string MoreButtonPlaybackSpeedFlyoutSubItemName = "MoreButtonPlaybackSpeedFlyoutSubItemName";
@@ -440,6 +441,9 @@ namespace UniversalSoundboard.Components
 
         private async void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
+            isFadingOut = true;
+            Bindings.Update();
+
             await PlayingSoundItem.Hide();
         }
 

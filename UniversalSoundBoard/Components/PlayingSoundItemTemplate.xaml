@@ -17,7 +17,9 @@
 
     <UserControl.Resources>
         <!-- Converters -->
+        <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
         <converters:MediaElementSliderTooltipConverter x:Name="MediaElementSliderTooltipConverter" />
+        <converters:PlayingSoundItemMediaTextBlockOpacityConverter x:Name="PlayingSoundItemMediaTextBlockOpacityConverter" />
 
         <!-- Styles -->
         <Style x:Key="MediaTextBlockStyle" TargetType="TextBlock">
@@ -533,6 +535,7 @@
                 Name="PlayingSoundNameTextBlock"
                 RelativePanel.AlignVerticalCenterWithPanel="True"
                 FontSize="15"
+                Opacity="{x:Bind isFadingOut, Converter={StaticResource PlayingSoundItemMediaTextBlockOpacityConverter}}"
                 TextWrapping="WrapWholeWords"
                 Margin="{x:Bind singlePlayingSoundTitleMargin}"
                 UseLayoutRounding="False" />
@@ -554,7 +557,8 @@
                     FontSize="15"
                     Content="&#xE160;"
                     Visibility="Collapsed"
-                    UseLayoutRounding="False">
+                    UseLayoutRounding="False"
+                    IsEnabled="{x:Bind isFadingOut, Converter={StaticResource InvertBooleanConverter}}">
 
                     <ToolTipService.ToolTip>
                         <TextBlock
@@ -597,6 +601,7 @@
                     FontFamily="{ThemeResource ContentControlThemeFontFamily}"
                     FontSize="12"
                     Visibility="Collapsed"
+                    IsEnabled="{x:Bind isFadingOut, Converter={StaticResource InvertBooleanConverter}}"
                     UseLayoutRounding="False">
 
                     <ToolTipService.ToolTip>
@@ -638,6 +643,7 @@
                     FontSize="16"
                     Content="&#xE7F5;"
                     Visibility="Collapsed"
+                    IsEnabled="{x:Bind isFadingOut, Converter={StaticResource InvertBooleanConverter}}"
                     UseLayoutRounding="False"
                     Click="OutputDeviceButton_Click">
 
@@ -715,6 +721,7 @@
                     VerticalAlignment="Center"
                     IsThumbToolTipEnabled="True"
                     ThumbToolTipValueConverter="{StaticResource MediaElementSliderTooltipConverter}"
+                    IsEnabled="{x:Bind isFadingOut, Converter={StaticResource InvertBooleanConverter}}"
                     UseLayoutRounding="False"
                     ValueChanged="ProgressSlider_ValueChanged" />
 
@@ -732,12 +739,14 @@
                     x:Name="RemainingTimeElement"
                     Style="{StaticResource MediaTextBlockStyle}"
                     Text="00:00"
+                    Opacity="{x:Bind isFadingOut, Converter={StaticResource PlayingSoundItemMediaTextBlockOpacityConverter}}"
                     UseLayoutRounding="False" />
 
                 <TextBlock
                     x:Name="TotalTimeElement"
                     Style="{StaticResource MediaTextBlockStyle}"
                     Text="00:00"
+                    Opacity="{x:Bind isFadingOut, Converter={StaticResource PlayingSoundItemMediaTextBlockOpacityConverter}}"
                     UseLayoutRounding="False" />
             </RelativePanel>
 
@@ -752,6 +761,7 @@
                     Name="VolumeButton"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Content="&#xE15D;"
+                    IsEnabled="{x:Bind isFadingOut, Converter={StaticResource InvertBooleanConverter}}"
                     UseLayoutRounding="False"
                     Click="VolumeButton_Click">
 
@@ -788,6 +798,7 @@
                         Name="PreviousButton"
                         Style="{StaticResource MediaControlButtonStyle}"
                         Content="&#xE100;"
+                        IsEnabled="{x:Bind isFadingOut, Converter={StaticResource InvertBooleanConverter}}"
                         UseLayoutRounding="False"
                         Click="PreviousButton_Click">
 
@@ -806,6 +817,7 @@
                     Style="{StaticResource MediaControlButtonStyle}"
                     Content="&#xE102;"
                     HorizontalAlignment="Center"
+                    IsEnabled="{x:Bind isFadingOut, Converter={StaticResource InvertBooleanConverter}}"
                     UseLayoutRounding="False"
                     Click="PlayPauseButton_Click">
 
@@ -821,6 +833,7 @@
                     Name="NextButton"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Content="&#xE101;"
+                    IsEnabled="{x:Bind isFadingOut, Converter={StaticResource InvertBooleanConverter}}"
                     UseLayoutRounding="False"
                     Click="NextButton_Click">
 
@@ -860,9 +873,10 @@
                 <Button
                     Name="RemoveButton"
                     Style="{StaticResource MediaControlButtonStyle}"
-                    Click="RemoveButton_Click"
                     Content="&#xE106;"
-                    UseLayoutRounding="False">
+                    IsEnabled="{x:Bind isFadingOut, Converter={StaticResource InvertBooleanConverter}}"
+                    UseLayoutRounding="False"
+                    Click="RemoveButton_Click">
 
                     <ToolTipService.ToolTip>
                         <TextBlock Name="RemoveButtonToolTip" x:Uid="RemoveButton" Text="Remove" UseLayoutRounding="False" />
@@ -873,6 +887,7 @@
                     Name="MoreButton"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Content="&#xE10C;"
+                    IsEnabled="{x:Bind isFadingOut, Converter={StaticResource InvertBooleanConverter}}"
                     UseLayoutRounding="False">
 
                     <Button.Flyout>
