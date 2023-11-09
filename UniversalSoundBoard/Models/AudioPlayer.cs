@@ -35,6 +35,8 @@ namespace UniversalSoundboard.Models
         private int echoDelay = 1000;
         private bool isLimiterEnabled = false;
         private int limiterLoudness = 1000;
+        private bool isReverbEnabled = false;
+        private double reverbDecay = 2;
 
         private AudioGraph AudioGraph;
         private AudioFileInputNode FileInputNode;
@@ -44,6 +46,7 @@ namespace UniversalSoundboard.Models
         private AudioEffectDefinition fadeOutEffectDefinition;
         private EchoEffectDefinition echoEffectDefinition;
         private LimiterEffectDefinition limiterEffectDefinition;
+        private ReverbEffectDefinition reverbEffectDefinition;
 
         public bool IsInitialized
         {
@@ -123,6 +126,16 @@ namespace UniversalSoundboard.Models
         {
             get => limiterLoudness;
             set => setLimiterLoudness(value);
+        }
+        public bool IsReverbEnabled
+        {
+            get => isReverbEnabled;
+            set => setIsReverbEnabled(value);
+        }
+        public double ReverbDecay
+        {
+            get => reverbDecay;
+            set => setReverbDecay(value);
         }
 
         public event EventHandler<EventArgs> MediaEnded;
@@ -273,6 +286,9 @@ namespace UniversalSoundboard.Models
             FileInputNode.EffectDefinitions.Add(limiterEffectDefinition);
             if (!isLimiterEnabled) FileInputNode.DisableEffectsByDefinition(limiterEffectDefinition);
 
+            FileInputNode.EffectDefinitions.Add(reverbEffectDefinition);
+            if (!isReverbEnabled) FileInputNode.DisableEffectsByDefinition(reverbEffectDefinition);
+
             FileInputNode.FileCompleted += FileInputNode_FileCompleted;
         }
 
@@ -330,6 +346,15 @@ namespace UniversalSoundboard.Models
             {
                 Loudness = (uint)limiterLoudness,
                 Release = 10
+            };
+
+            reverbEffectDefinition = new ReverbEffectDefinition(AudioGraph)
+            {
+                WetDryMix = 50,
+                ReflectionsDelay = 120,
+                ReverbDelay = 30,
+                RearDelay = 3,
+                DecayTime = reverbDecay
             };
         }
 
@@ -545,6 +570,33 @@ namespace UniversalSoundboard.Models
 
             if (limiterEffectDefinition != null)
                 limiterEffectDefinition.Loudness = (uint)limiterLoudness;
+        }
+
+        private void setIsReverbEnabled(bool isReverbEnabled)
+        {
+            if (this.isReverbEnabled == isReverbEnabled)
+                return;
+
+            this.isReverbEnabled = isReverbEnabled;
+
+            if (FileInputNode != null)
+            {
+                if (isReverbEnabled)
+                    FileInputNode.EnableEffectsByDefinition(reverbEffectDefinition);
+                else
+                    FileInputNode.DisableEffectsByDefinition(reverbEffectDefinition);
+            }
+        }
+
+        private void setReverbDecay(double reverbDecay)
+        {
+            if (this.reverbDecay == reverbDecay)
+                return;
+
+            this.reverbDecay = reverbDecay;
+
+            if (reverbEffectDefinition != null)
+                reverbEffectDefinition.DecayTime = reverbDecay;
         }
         #endregion
 

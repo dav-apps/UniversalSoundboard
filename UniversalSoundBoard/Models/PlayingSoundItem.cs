@@ -229,6 +229,12 @@ namespace UniversalSoundboard.Models
                 case ItemViewHolder.LimiterEffectLoudnessKey:
                     PlayingSound.AudioPlayer.LimiterLoudness = FileManager.itemViewHolder.LimiterEffectLoudness;
                     break;
+                case ItemViewHolder.IsReverbEffectEnabledKey:
+                    PlayingSound.AudioPlayer.IsReverbEnabled = FileManager.itemViewHolder.IsReverbEffectEnabled;
+                    break;
+                case ItemViewHolder.ReverbEffectDecayKey:
+                    PlayingSound.AudioPlayer.ReverbDecay = FileManager.itemViewHolder.ReverbEffectDecay;
+                    break;
             }
         }
 
@@ -425,6 +431,8 @@ namespace UniversalSoundboard.Models
             PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
             PlayingSound.AudioPlayer.IsLimiterEnabled = FileManager.itemViewHolder.IsLimiterEffectEnabled;
             PlayingSound.AudioPlayer.LimiterLoudness = FileManager.itemViewHolder.LimiterEffectLoudness;
+            PlayingSound.AudioPlayer.IsReverbEnabled = FileManager.itemViewHolder.IsReverbEffectEnabled;
+            PlayingSound.AudioPlayer.ReverbDecay = FileManager.itemViewHolder.ReverbEffectDecay;
 
             try
             {
