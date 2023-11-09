@@ -47,14 +47,22 @@ namespace AudioEffectComponent
                 supportedEncodingProperties.Add(encodingProps2);
 
                 return supportedEncodingProperties;
-
             }
         }
-
+        
         public void SetEncodingProperties(AudioEncodingProperties encodingProperties)
         {
             currentEncodingProperties = encodingProperties;
             effectSampleCount = (int)(encodingProperties.SampleRate * encodingProperties.ChannelCount * ((double)Duration / 1000));
+            sampleIndex = effectSampleCount;
+
+            configuration.MapChanged -= Configuration_MapChanged;
+            configuration.MapChanged += Configuration_MapChanged;
+        }
+
+        private void Configuration_MapChanged(IObservableMap<string, object> sender, IMapChangedEventArgs<string> @event)
+        {
+            effectSampleCount = (int)(currentEncodingProperties.SampleRate * currentEncodingProperties.ChannelCount * ((double)Duration / 1000));
             sampleIndex = effectSampleCount;
         }
 
