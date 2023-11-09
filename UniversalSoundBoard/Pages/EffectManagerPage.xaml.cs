@@ -100,5 +100,17 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.EchoEffectDelay = (int)e.NewValue;
         }
         #endregion
+
+        #region Limiter effect
+        private void LimiterEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void LimiterEffectLoudnessSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+
+        }
+        #endregion
     }
 }

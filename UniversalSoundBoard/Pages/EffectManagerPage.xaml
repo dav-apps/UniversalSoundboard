@@ -127,6 +127,27 @@
                         ValueChanged="EchoEffectDelaySlider_ValueChanged" />
                 </StackPanel>
             </StackPanel>
+
+            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="1" Grid.Column="1">
+                <RelativePanel>
+                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Limiter" />
+
+                    <ToggleSwitch
+                        Name="LimiterEffectEnableToggle"
+                        Style="{StaticResource EffectEnableToggleStyle}"
+                        Toggled="LimiterEffectEnableToggle_Toggled" />
+                </RelativePanel>
+
+                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                    <TextBlock>Loudness</TextBlock>
+
+                    <Slider
+                        Name="LimiterEffectLoudnessSlider"
+                        Minimum="1"
+                        Maximum="1800"
+                        ValueChanged="LimiterEffectLoudnessSlider_ValueChanged" />
+                </StackPanel>
+            </StackPanel>
         </Grid>
     </RelativePanel>
 </Page>
