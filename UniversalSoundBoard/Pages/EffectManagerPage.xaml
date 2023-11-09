@@ -55,6 +55,7 @@
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
             <Grid.ColumnDefinitions>
@@ -146,6 +147,28 @@
                         Minimum="100"
                         Maximum="1800"
                         ValueChanged="LimiterEffectLoudnessSlider_ValueChanged" />
+                </StackPanel>
+            </StackPanel>
+
+            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="2" Grid.Column="0">
+                <RelativePanel>
+                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Reverb" />
+
+                    <ToggleSwitch
+                        Name="ReverbEffectEnableToggle"
+                        Style="{StaticResource EffectEnableToggleStyle}"
+                        Toggled="ReverbEffectEnableToggle_Toggled" />
+                </RelativePanel>
+
+                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                    <TextBlock>Decay</TextBlock>
+
+                    <Slider
+                        Name="ReverbEffectDecaySlider"
+                        Minimum="0.5"
+                        Maximum="20"
+                        StepFrequency="0.5"
+                        ValueChanged="ReverbEffectDecaySlider_ValueChanged" />
                 </StackPanel>
             </StackPanel>
         </Grid>

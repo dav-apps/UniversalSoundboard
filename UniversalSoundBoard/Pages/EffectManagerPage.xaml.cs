@@ -45,6 +45,11 @@ namespace UniversalSoundboard.Pages
             LimiterEffectLoudnessSlider.IsEnabled = FileManager.itemViewHolder.IsLimiterEffectEnabled;
             LimiterEffectLoudnessSlider.Value = FileManager.itemViewHolder.LimiterEffectLoudness;
 
+            // Reverb effect
+            ReverbEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsReverbEffectEnabled;
+            ReverbEffectDecaySlider.IsEnabled = FileManager.itemViewHolder.IsReverbEffectEnabled;
+            ReverbEffectDecaySlider.Value = FileManager.itemViewHolder.ReverbEffectDecay;
+
             initialized = true;
         }
 
@@ -119,6 +124,22 @@ namespace UniversalSoundboard.Pages
         {
             if (!initialized) return;
             FileManager.itemViewHolder.LimiterEffectLoudness = (int)e.NewValue;
+        }
+        #endregion
+
+        #region Reverb effect
+        private void ReverbEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!initialized) return;
+
+            FileManager.itemViewHolder.IsReverbEffectEnabled = ReverbEffectEnableToggle.IsOn;
+            ReverbEffectDecaySlider.IsEnabled = ReverbEffectEnableToggle.IsOn;
+        }
+
+        private void ReverbEffectDecaySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (!initialized) return;
+            FileManager.itemViewHolder.ReverbEffectDecay = e.NewValue;
         }
         #endregion
     }
