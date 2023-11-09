@@ -223,6 +223,12 @@ namespace UniversalSoundboard.Models
                 case ItemViewHolder.EchoEffectDelayKey:
                     PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
                     break;
+                case ItemViewHolder.IsLimiterEffectEnabledKey:
+                    PlayingSound.AudioPlayer.IsLimiterEnabled = FileManager.itemViewHolder.IsLimiterEffectEnabled;
+                    break;
+                case ItemViewHolder.LimiterEffectLoudnessKey:
+                    PlayingSound.AudioPlayer.LimiterLoudness = FileManager.itemViewHolder.LimiterEffectLoudness;
+                    break;
             }
         }
 
@@ -417,6 +423,8 @@ namespace UniversalSoundboard.Models
             PlayingSound.AudioPlayer.FadeOutDuration = FileManager.itemViewHolder.FadeOutEffectDuration;
             PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
             PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
+            PlayingSound.AudioPlayer.IsLimiterEnabled = FileManager.itemViewHolder.IsLimiterEffectEnabled;
+            PlayingSound.AudioPlayer.LimiterLoudness = FileManager.itemViewHolder.LimiterEffectLoudness;
 
             try
             {

@@ -143,7 +143,7 @@
 
                     <Slider
                         Name="LimiterEffectLoudnessSlider"
-                        Minimum="1"
+                        Minimum="100"
                         Maximum="1800"
                         ValueChanged="LimiterEffectLoudnessSlider_ValueChanged" />
                 </StackPanel>

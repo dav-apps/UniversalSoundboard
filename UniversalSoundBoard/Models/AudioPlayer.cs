@@ -33,6 +33,8 @@ namespace UniversalSoundboard.Models
         private int fadeOutDuration = 1000;
         private bool isEchoEnabled = false;
         private int echoDelay = 1000;
+        private bool isLimiterEnabled = false;
+        private int limiterLoudness = 1000;
 
         private AudioGraph AudioGraph;
         private AudioFileInputNode FileInputNode;
@@ -41,6 +43,7 @@ namespace UniversalSoundboard.Models
         private AudioEffectDefinition fadeInEffectDefinition;
         private AudioEffectDefinition fadeOutEffectDefinition;
         private EchoEffectDefinition echoEffectDefinition;
+        private LimiterEffectDefinition limiterEffectDefinition;
 
         public bool IsInitialized
         {
@@ -110,6 +113,16 @@ namespace UniversalSoundboard.Models
         {
             get => echoDelay;
             set => setEchoDelay(value);
+        }
+        public bool IsLimiterEnabled
+        {
+            get => isLimiterEnabled;
+            set => setIsLimiterEnabled(value);
+        }
+        public int LimiterLoudness
+        {
+            get => limiterLoudness;
+            set => setLimiterLoudness(value);
         }
 
         public event EventHandler<EventArgs> MediaEnded;
@@ -257,6 +270,9 @@ namespace UniversalSoundboard.Models
             FileInputNode.EffectDefinitions.Add(echoEffectDefinition);
             if (!isEchoEnabled) FileInputNode.DisableEffectsByDefinition(echoEffectDefinition);
 
+            FileInputNode.EffectDefinitions.Add(limiterEffectDefinition);
+            if (!isLimiterEnabled) FileInputNode.DisableEffectsByDefinition(limiterEffectDefinition);
+
             FileInputNode.FileCompleted += FileInputNode_FileCompleted;
         }
 
@@ -308,6 +324,12 @@ namespace UniversalSoundboard.Models
                 Delay = echoDelay,
                 WetDryMix = 0.7f,
                 Feedback = 0.5f
+            };
+
+            limiterEffectDefinition = new LimiterEffectDefinition(AudioGraph)
+            {
+                Loudness = (uint)limiterLoudness,
+                Release = 10
             };
         }
 
@@ -496,6 +518,33 @@ namespace UniversalSoundboard.Models
 
             if (echoEffectDefinition != null)
                 echoEffectDefinition.Delay = echoDelay;
+        }
+
+        private void setIsLimiterEnabled(bool isLimiterEnabled)
+        {
+            if (this.isLimiterEnabled == isLimiterEnabled)
+                return;
+
+            this.isLimiterEnabled = isLimiterEnabled;
+
+            if (FileInputNode != null)
+            {
+                if (isLimiterEnabled)
+                    FileInputNode.EnableEffectsByDefinition(limiterEffectDefinition);
+                else
+                    FileInputNode.DisableEffectsByDefinition(limiterEffectDefinition);
+            }
+        }
+
+        private void setLimiterLoudness(int limiterLoudness)
+        {
+            if (this.limiterLoudness == limiterLoudness)
+                return;
+
+            this.limiterLoudness = limiterLoudness;
+
+            if (limiterEffectDefinition != null)
+                limiterEffectDefinition.Loudness = (uint)limiterLoudness;
         }
         #endregion
 
