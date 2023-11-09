@@ -27,10 +27,12 @@ namespace UniversalSoundboard.Models
         private double volume = 1;
         private bool isMuted = false;
         private double playbackRate = 1.0;
-        private bool isEchoEnabled = false;
-        private int echoDelay = 1000;
         private bool isFadeInEnabled = false;
         private int fadeInDuration = 1000;
+        private bool isFadeOutEnabled = false;
+        private int fadeOutDuration = 1000;
+        private bool isEchoEnabled = false;
+        private int echoDelay = 1000;
 
         private AudioGraph AudioGraph;
         private AudioFileInputNode FileInputNode;
@@ -79,16 +81,6 @@ namespace UniversalSoundboard.Models
             get => playbackRate;
             set => setPlaybackRate(value);
         }
-        public bool IsEchoEnabled
-        {
-            get => isEchoEnabled;
-            set => setIsEchoEnabled(value);
-        }
-        public int EchoDelay
-        {
-            get => echoDelay;
-            set => setEchoDelay(value);
-        }
         public bool IsFadeInEnabled
         {
             get => isFadeInEnabled;
@@ -98,6 +90,26 @@ namespace UniversalSoundboard.Models
         {
             get => fadeInDuration;
             set => setFadeInDuration(value);
+        }
+        public bool IsFadeOutEnabled
+        {
+            get => isFadeOutEnabled;
+            set => setIsFadeOutEnabled(value);
+        }
+        public int FadeOutDuration
+        {
+            get => fadeOutDuration;
+            set => setFadeOutDuration(value);
+        }
+        public bool IsEchoEnabled
+        {
+            get => isEchoEnabled;
+            set => setIsEchoEnabled(value);
+        }
+        public int EchoDelay
+        {
+            get => echoDelay;
+            set => setEchoDelay(value);
         }
 
         public event EventHandler<EventArgs> MediaEnded;
@@ -234,9 +246,6 @@ namespace UniversalSoundboard.Models
                 ));
             }
 
-            FileInputNode.EffectDefinitions.Add(echoEffectDefinition);
-            if (!isEchoEnabled) FileInputNode.DisableEffectsByDefinition(echoEffectDefinition);
-
             // Fade in effect
             FileInputNode.EffectDefinitions.Add(fadeInEffectDefinition);
             if (!isFadeInEnabled) FileInputNode.DisableEffectsByDefinition(fadeInEffectDefinition);
@@ -244,6 +253,9 @@ namespace UniversalSoundboard.Models
             // Fade out effect
             FileInputNode.EffectDefinitions.Add(fadeOutEffectDefinition);
             FileInputNode.DisableEffectsByDefinition(fadeOutEffectDefinition);
+
+            FileInputNode.EffectDefinitions.Add(echoEffectDefinition);
+            if (!isEchoEnabled) FileInputNode.DisableEffectsByDefinition(echoEffectDefinition);
 
             FileInputNode.FileCompleted += FileInputNode_FileCompleted;
         }
@@ -275,19 +287,19 @@ namespace UniversalSoundboard.Models
 
         private void InitEffectDefinitions()
         {
-            fadeOutEffectDefinition = new AudioEffectDefinition(
-                typeof(FadeOutAudioEffect).FullName,
-                new PropertySet
-                {
-                    { "Duration", 5000f }
-                }
-            );
-
             fadeInEffectDefinition = new AudioEffectDefinition(
                 typeof(FadeInAudioEffect).FullName,
                 new PropertySet
                 {
-                    { "Duration", (float)FadeInDuration }
+                    { "Duration", (float)fadeInDuration }
+                }
+            );
+
+            fadeOutEffectDefinition = new AudioEffectDefinition(
+                typeof(FadeOutAudioEffect).FullName,
+                new PropertySet
+                {
+                    { "Duration", (float)fadeOutDuration }
                 }
             );
 
@@ -343,7 +355,6 @@ namespace UniversalSoundboard.Models
         {
             FileInputNode.EnableEffectsByDefinition(fadeOutEffectDefinition);
             await Task.Delay(milliseconds);
-            FileInputNode.DisableEffectsByDefinition(fadeOutEffectDefinition);
         }
 
         #region Setter methods
@@ -422,6 +433,44 @@ namespace UniversalSoundboard.Models
             await Init();
         }
 
+        private void setIsFadeInEnabled(bool isFadeInEnabled)
+        {
+            if (this.isFadeInEnabled == isFadeInEnabled)
+                return;
+
+            this.isFadeInEnabled = isFadeInEnabled;
+        }
+
+        private void setFadeInDuration(int fadeInDuration)
+        {
+            if (this.fadeInDuration == fadeInDuration)
+                return;
+
+            this.fadeInDuration = fadeInDuration;
+
+            if (fadeInEffectDefinition != null)
+                fadeInEffectDefinition.Properties["Duration"] = fadeInDuration;
+        }
+
+        private void setIsFadeOutEnabled(bool isFadeOutEnabled)
+        {
+            if (this.isFadeOutEnabled = isFadeOutEnabled)
+                return;
+
+            this.isFadeOutEnabled = isFadeOutEnabled;
+        }
+
+        private void setFadeOutDuration(int fadeOutDuration)
+        {
+            if (this.fadeOutDuration.Equals(fadeOutDuration))
+                return;
+
+            this.fadeOutDuration = fadeOutDuration;
+
+            if (fadeOutEffectDefinition != null)
+                fadeOutEffectDefinition.Properties["Duration"] = (float)fadeOutDuration;
+        }
+
         private void setIsEchoEnabled(bool isEchoEnabled)
         {
             if (this.isEchoEnabled == isEchoEnabled)
@@ -447,25 +496,6 @@ namespace UniversalSoundboard.Models
 
             if (echoEffectDefinition != null)
                 echoEffectDefinition.Delay = echoDelay;
-        }
-
-        private void setIsFadeInEnabled(bool isFadeInEnabled)
-        {
-            if (this.isFadeInEnabled == isFadeInEnabled)
-                return;
-
-            this.isFadeInEnabled = isFadeInEnabled;
-        }
-
-        private void setFadeInDuration(int fadeInDuration)
-        {
-            if (this.fadeInDuration == fadeInDuration)
-                return;
-
-            this.fadeInDuration = fadeInDuration;
-
-            if (fadeInEffectDefinition != null)
-                fadeInEffectDefinition.Properties["Duration"] = fadeInDuration;
         }
         #endregion
 

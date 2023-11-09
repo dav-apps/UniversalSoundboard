@@ -205,17 +205,23 @@ namespace UniversalSoundboard.Models
                 case ItemViewHolder.OutputDeviceKey:
                     await UpdateOutputDevice();
                     break;
-                case ItemViewHolder.IsEchoEffectEnabledKey:
-                    PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
-                    break;
-                case ItemViewHolder.EchoEffectDelayKey:
-                    PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
-                    break;
                 case ItemViewHolder.IsFadeInEffectEnabledKey:
                     PlayingSound.AudioPlayer.IsFadeInEnabled = FileManager.itemViewHolder.IsFadeInEffectEnabled;
                     break;
                 case ItemViewHolder.FadeInEffectDurationKey:
                     PlayingSound.AudioPlayer.FadeInDuration = FileManager.itemViewHolder.FadeInEffectDuration;
+                    break;
+                case ItemViewHolder.IsFadeOutEffectEnabledKey:
+                    PlayingSound.AudioPlayer.IsFadeOutEnabled = FileManager.itemViewHolder.IsFadeOutEffectEnabled;
+                    break;
+                case ItemViewHolder.FadeOutEffectDurationKey:
+                    PlayingSound.AudioPlayer.FadeOutDuration = FileManager.itemViewHolder.FadeOutEffectDuration;
+                    break;
+                case ItemViewHolder.IsEchoEffectEnabledKey:
+                    PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
+                    break;
+                case ItemViewHolder.EchoEffectDelayKey:
+                    PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
                     break;
             }
         }
@@ -405,10 +411,12 @@ namespace UniversalSoundboard.Models
             }
 
             // Set the global effect values
-            PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
-            PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
             PlayingSound.AudioPlayer.IsFadeInEnabled = FileManager.itemViewHolder.IsFadeInEffectEnabled;
             PlayingSound.AudioPlayer.FadeInDuration = FileManager.itemViewHolder.FadeInEffectDuration;
+            PlayingSound.AudioPlayer.IsFadeOutEnabled = FileManager.itemViewHolder.IsFadeOutEffectEnabled;
+            PlayingSound.AudioPlayer.FadeOutDuration = FileManager.itemViewHolder.FadeOutEffectDuration;
+            PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
+            PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
 
             try
             {
@@ -1044,8 +1052,9 @@ namespace UniversalSoundboard.Models
 
         public async Task Hide()
         {
-            // Stop and reset the MediaPlayer
-            await PlayingSound.AudioPlayer.FadeOut(5000);
+            // Start fade out if enabled
+            if (FileManager.itemViewHolder.IsFadeOutEffectEnabled)
+                await PlayingSound.AudioPlayer.FadeOut(FileManager.itemViewHolder.FadeOutEffectDuration);
 
             // Start the remove animation
             HidePlayingSound?.Invoke(this, new EventArgs());
