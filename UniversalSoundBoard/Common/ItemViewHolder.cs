@@ -46,6 +46,8 @@ namespace UniversalSoundboard.Common
         private const string echoEffectDelayKey = "echoEffectDelay";
         private const string isLimiterEffectEnabledKey = "isLimiterEffectEnabled";
         private const string limiterEffectLoudnessKey = "limiterEffectLoudness";
+        private const string isReverbEffectEnabledKey = "isReverbEffectEnabled";
+        private const string reverbEffectDecayKey = "reverbEffectDecay";
         #endregion
 
         #region Constants for localSettings defaults
@@ -77,6 +79,8 @@ namespace UniversalSoundboard.Common
         private const int echoEffectDelayDefault = 500;
         private const bool isLimiterEffectEnabledDefault = false;
         private const int limiterEffectLoudnessDefault = 1000;
+        private const bool isReverbEffectEnabledDefault = false;
+        private const double reverbEffectDecayDefault = 2;
         #endregion
 
         #region Variables
@@ -157,6 +161,8 @@ namespace UniversalSoundboard.Common
         private int _echoEffectDelay;                       // The delay of the global echo effect in ms
         private bool _isLimiterEffectEnabled;               // If true, the global limiter effect is enabled for all sounds
         private int _limiterEffectLoudness;                 // The loudness of the global limiter effect
+        private bool _isReverbEffectEnabled;                // If true, the global reverb effect is enabled for all sounds
+        private double _reverbEffectDecay;                  // The decay of the global reverb effect
         #endregion
 
         #region Events
@@ -508,6 +514,20 @@ namespace UniversalSoundboard.Common
                 _limiterEffectLoudness = limiterEffectLoudnessDefault;
             else
                 _limiterEffectLoudness = (int)localSettings.Values[limiterEffectLoudnessKey];
+            #endregion
+
+            #region isReverbEffectEnabled
+            if (localSettings.Values[isReverbEffectEnabledKey] == null)
+                _isReverbEffectEnabled = isReverbEffectEnabledDefault;
+            else
+                _isReverbEffectEnabled = (bool)localSettings.Values[isReverbEffectEnabledKey];
+            #endregion
+
+            #region reverbEffectDecay
+            if (localSettings.Values[reverbEffectDecayKey] == null)
+                _reverbEffectDecay = reverbEffectDecayDefault;
+            else
+                _reverbEffectDecay = (double)localSettings.Values[reverbEffectDecayKey];
             #endregion
             #endregion
         }
@@ -1359,6 +1379,36 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[limiterEffectLoudnessKey] = value;
                 _limiterEffectLoudness = value;
                 NotifyPropertyChanged(LimiterEffectLoudnessKey);
+            }
+        }
+        #endregion
+
+        #region IsReverbEffectEnabled
+        public const string IsReverbEffectEnabledKey = "IsReverbEffectEnabled";
+        public bool IsReverbEffectEnabled
+        {
+            get => _isReverbEffectEnabled;
+            set
+            {
+                if (_isReverbEffectEnabled.Equals(value)) return;
+                localSettings.Values[isReverbEffectEnabledKey] = value;
+                _isReverbEffectEnabled = value;
+                NotifyPropertyChanged(IsReverbEffectEnabledKey);
+            }
+        }
+        #endregion
+
+        #region ReverbEffectDecay
+        public const string ReverbEffectDecayKey = "ReverbEffectDecay";
+        public double ReverbEffectDecay
+        {
+            get => _reverbEffectDecay;
+            set
+            {
+                if (_reverbEffectDecay.Equals(value)) return;
+                localSettings.Values[reverbEffectDecayKey] = value;
+                _reverbEffectDecay = value;
+                NotifyPropertyChanged(ReverbEffectDecayKey);
             }
         }
         #endregion
