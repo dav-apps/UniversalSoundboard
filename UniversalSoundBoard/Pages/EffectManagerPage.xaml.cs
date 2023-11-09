@@ -40,6 +40,11 @@ namespace UniversalSoundboard.Pages
             EchoEffectDelaySlider.IsEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
             EchoEffectDelaySlider.Value = FileManager.itemViewHolder.EchoEffectDelay;
 
+            // Limiter effect
+            LimiterEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsLimiterEffectEnabled;
+            LimiterEffectLoudnessSlider.IsEnabled = FileManager.itemViewHolder.IsLimiterEffectEnabled;
+            LimiterEffectLoudnessSlider.Value = FileManager.itemViewHolder.LimiterEffectLoudness;
+
             initialized = true;
         }
 
@@ -104,12 +109,16 @@ namespace UniversalSoundboard.Pages
         #region Limiter effect
         private void LimiterEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
         {
+            if (!initialized) return;
 
+            FileManager.itemViewHolder.IsLimiterEffectEnabled = LimiterEffectEnableToggle.IsOn;
+            LimiterEffectLoudnessSlider.IsEnabled = LimiterEffectEnableToggle.IsOn;
         }
 
         private void LimiterEffectLoudnessSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
-
+            if (!initialized) return;
+            FileManager.itemViewHolder.LimiterEffectLoudness = (int)e.NewValue;
         }
         #endregion
     }

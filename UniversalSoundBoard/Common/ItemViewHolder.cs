@@ -44,6 +44,8 @@ namespace UniversalSoundboard.Common
         private const string fadeOutEffectDurationKey = "fadeOutEffectDuration";
         private const string isEchoEffectEnabledKey = "isEchoEffectEnabled";
         private const string echoEffectDelayKey = "echoEffectDelay";
+        private const string isLimiterEffectEnabledKey = "isLimiterEffectEnabled";
+        private const string limiterEffectLoudnessKey = "limiterEffectLoudness";
         #endregion
 
         #region Constants for localSettings defaults
@@ -73,6 +75,8 @@ namespace UniversalSoundboard.Common
         private const int fadeOutEffectDurationDefault = 1000;
         private const bool isEchoEffectEnabledDefault = false;
         private const int echoEffectDelayDefault = 500;
+        private const bool isLimiterEffectEnabledDefault = false;
+        private const int limiterEffectLoudnessDefault = 1000;
         #endregion
 
         #region Variables
@@ -151,6 +155,8 @@ namespace UniversalSoundboard.Common
         private int _fadeOutEffectDuration;                 // The duration of the global fade out effect
         private bool _isEchoEffectEnabled;                  // If true, the global echo effect is enabled for all sounds
         private int _echoEffectDelay;                       // The delay of the global echo effect in ms
+        private bool _isLimiterEffectEnabled;               // If true, the global limiter effect is enabled for all sounds
+        private int _limiterEffectLoudness;                 // The loudness of the global limiter effect
         #endregion
 
         #region Events
@@ -488,6 +494,20 @@ namespace UniversalSoundboard.Common
                 _echoEffectDelay = echoEffectDelayDefault;
             else
                 _echoEffectDelay = (int)localSettings.Values[echoEffectDelayKey];
+            #endregion
+
+            #region isLimiterEffectEnabled
+            if (localSettings.Values[isLimiterEffectEnabledKey] == null)
+                _isLimiterEffectEnabled = isLimiterEffectEnabledDefault;
+            else
+                _isLimiterEffectEnabled = (bool)localSettings.Values[isLimiterEffectEnabledKey];
+            #endregion
+
+            #region limiterEffectLoudness
+            if (localSettings.Values[limiterEffectLoudnessKey] == null)
+                _limiterEffectLoudness = limiterEffectLoudnessDefault;
+            else
+                _limiterEffectLoudness = (int)localSettings.Values[limiterEffectLoudnessKey];
             #endregion
             #endregion
         }
@@ -1309,6 +1329,36 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[echoEffectDelayKey] = value;
                 _echoEffectDelay = value;
                 NotifyPropertyChanged(EchoEffectDelayKey);
+            }
+        }
+        #endregion
+
+        #region IsLimiterEffectEnabled
+        public const string IsLimiterEffectEnabledKey = "IsLimiterEffectEnabled";
+        public bool IsLimiterEffectEnabled
+        {
+            get => _isLimiterEffectEnabled;
+            set
+            {
+                if (_isLimiterEffectEnabled.Equals(value)) return;
+                localSettings.Values[isLimiterEffectEnabledKey] = value;
+                _isLimiterEffectEnabled = value;
+                NotifyPropertyChanged(IsLimiterEffectEnabledKey);
+            }
+        }
+        #endregion
+
+        #region LimiterEffectDelay
+        public const string LimiterEffectLoudnessKey = "LimiterEffectLoudness";
+        public int LimiterEffectLoudness
+        {
+            get => _limiterEffectLoudness;
+            set
+            {
+                if (_limiterEffectLoudness.Equals(value)) return;
+                localSettings.Values[limiterEffectLoudnessKey] = value;
+                _limiterEffectLoudness = value;
+                NotifyPropertyChanged(LimiterEffectLoudnessKey);
             }
         }
         #endregion
