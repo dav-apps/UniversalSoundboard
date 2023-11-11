@@ -206,6 +206,7 @@
     <Compile Include="Models\DialogSoundListItem.cs" />
     <Compile Include="Models\PlayingSoundItemContainer.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadItem.cs" />
+    <Compile Include="Models\SoundDownload\SoundDownloadMyInstantsPlugin.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadPlugin.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadPluginResult.cs" />
     <Compile Include="Models\SoundDownload\SoundDownloadResult.cs" />

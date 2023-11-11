@@ -259,6 +259,7 @@ namespace UniversalSoundboard.Dialogs
             var audioFilePlugin = new SoundDownloadPlugin(input);
             var youtubePlugin = new SoundDownloadYoutubePlugin(input);
             var zopharPlugin = new SoundDownloadZopharPlugin(input);
+            var myInstantsPlugin = new SoundDownloadMyInstantsPlugin(input);
             
             // Check if the input is a valid link
             if (!audioFilePlugin.IsUrlMatch())
@@ -344,6 +345,36 @@ namespace UniversalSoundboard.Dialogs
                     Result = new SoundDownloadResult(SoundItems, result.PlaylistTitle);
                 }
                 catch (SoundDownloadException)
+                {
+                    HideAllMessageElements();
+                    return;
+                }
+            }
+            else if (myInstantsPlugin.IsUrlMatch())
+            {
+                try
+                {
+                    var result = await myInstantsPlugin.GetResult();
+
+                    LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
+
+                    if (result.SoundItems.Count == 0)
+                        throw new SoundDownloadException();
+
+                    var soundItem = result.SoundItems.First();
+
+                    AudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", FileManager.loader.GetString("FileName"), soundItem.Name);
+                    AudioFileInfoTextBlock.Text += string.Format("{0}: {1}\n", FileManager.loader.GetString("FileType"), soundItem.AudioFileExt);
+
+                    if (soundItem.AudioFileSize > 0)
+                        AudioFileInfoTextBlock.Text += string.Format("{0}: {1}", FileManager.loader.GetString("FileSize"), FileManager.GetFormattedSize((ulong)soundItem.AudioFileSize));
+
+                    AudioFileInfoTextBlock.Visibility = Visibility.Visible;
+                    ContentDialog.IsPrimaryButtonEnabled = true;
+
+                    Result = new SoundDownloadResult(new ObservableCollection<SoundDownloadItem> { soundItem }, null);
+                }
+                catch(SoundDownloadException)
                 {
                     HideAllMessageElements();
                     return;
