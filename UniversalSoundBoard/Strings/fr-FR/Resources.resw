@@ -1076,4 +1076,16 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="EffectManagerPage-WindowTitleTextBlock.Text" xml:space="preserve">
     <value>Gestionnaire d'effets - UniversalSoundboard</value>
   </data>
+  <data name="EffectManagerPage-DecayTextBlock.Text" xml:space="preserve">
+    <value>Dégradation (s)</value>
+  </data>
+  <data name="EffectManagerPage-DelayTextBlock.Text" xml:space="preserve">
+    <value>Retard (ms)</value>
+  </data>
+  <data name="EffectManagerPage-DurationTextBlock.Text" xml:space="preserve">
+    <value>Durée (ms)</value>
+  </data>
+  <data name="EffectManagerPage-LoudnessTextBlock.Text" xml:space="preserve">
+    <value>Intensité sonore</value>
+  </data>
 </root>

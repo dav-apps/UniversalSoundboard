@@ -1077,4 +1077,16 @@ This may take some time, depending on how large the import file is.</value>
   <data name="EffectManagerPage-WindowTitleTextBlock.Text" xml:space="preserve">
     <value>Effect Manager - UniversalSoundboard</value>
   </data>
+  <data name="EffectManagerPage-DecayTextBlock.Text" xml:space="preserve">
+    <value>Decay (s)</value>
+  </data>
+  <data name="EffectManagerPage-DelayTextBlock.Text" xml:space="preserve">
+    <value>Delay (ms)</value>
+  </data>
+  <data name="EffectManagerPage-DurationTextBlock.Text" xml:space="preserve">
+    <value>Duration (ms)</value>
+  </data>
+  <data name="EffectManagerPage-LoudnessTextBlock.Text" xml:space="preserve">
+    <value>Loudness</value>
+  </data>
 </root>

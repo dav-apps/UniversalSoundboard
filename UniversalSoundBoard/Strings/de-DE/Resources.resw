@@ -1075,4 +1075,16 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="EffectManagerPage-WindowTitleTextBlock.Text" xml:space="preserve">
     <value>Effekt-Manager - UniversalSoundboard</value>
   </data>
+  <data name="EffectManagerPage-DecayTextBlock.Text" xml:space="preserve">
+    <value>Zerfall (s)</value>
+  </data>
+  <data name="EffectManagerPage-DelayTextBlock.Text" xml:space="preserve">
+    <value>Verzögerung (ms)</value>
+  </data>
+  <data name="EffectManagerPage-DurationTextBlock.Text" xml:space="preserve">
+    <value>Dauer (ms)</value>
+  </data>
+  <data name="EffectManagerPage-LoudnessTextBlock.Text" xml:space="preserve">
+    <value>Lautstärke</value>
+  </data>
 </root>

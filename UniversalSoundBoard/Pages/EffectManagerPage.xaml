@@ -74,7 +74,7 @@
                 </RelativePanel>
 
                 <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock>Duration (ms)</TextBlock>
+                    <TextBlock x:Uid="EffectManagerPage-DurationTextBlock" />
 
                     <Slider
                         Name="FadeInEffectDurationSlider"
@@ -96,7 +96,7 @@
                 </RelativePanel>
 
                 <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock>Duration (ms)</TextBlock>
+                    <TextBlock x:Uid="EffectManagerPage-DurationTextBlock" />
 
                     <Slider
                         Name="FadeOutEffectDurationSlider"
@@ -118,7 +118,7 @@
                 </RelativePanel>
 
                 <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock>Delay (ms)</TextBlock>
+                    <TextBlock x:Uid="EffectManagerPage-DelayTextBlock" />
 
                     <Slider
                         Name="EchoEffectDelaySlider"
@@ -140,7 +140,7 @@
                 </RelativePanel>
 
                 <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock>Loudness</TextBlock>
+                    <TextBlock x:Uid="EffectManagerPage-LoudnessTextBlock" />
 
                     <Slider
                         Name="LimiterEffectLoudnessSlider"
@@ -161,7 +161,7 @@
                 </RelativePanel>
 
                 <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock>Decay</TextBlock>
+                    <TextBlock x:Uid="EffectManagerPage-DecayTextBlock" />
 
                     <Slider
                         Name="ReverbEffectDecaySlider"
