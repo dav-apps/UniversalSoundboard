@@ -317,6 +317,7 @@ namespace UniversalSoundboard.Dialogs
 
                     ContentDialog.IsPrimaryButtonEnabled = true;
                     Result = new SoundDownloadResult(SoundItems, result.PlaylistTitle);
+                    Analytics.TrackEvent("SoundDownload-Source-YouTube");
                 }
                 catch (SoundDownloadException)
                 {
@@ -343,6 +344,7 @@ namespace UniversalSoundboard.Dialogs
                     SoundListStackPanel.Visibility = Visibility.Visible;
                     SoundListView.SelectAll();
                     Result = new SoundDownloadResult(SoundItems, result.PlaylistTitle);
+                    Analytics.TrackEvent("SoundDownload-Source-Zophar");
                 }
                 catch (SoundDownloadException)
                 {
@@ -373,6 +375,7 @@ namespace UniversalSoundboard.Dialogs
                     ContentDialog.IsPrimaryButtonEnabled = true;
 
                     Result = new SoundDownloadResult(new ObservableCollection<SoundDownloadItem> { soundItem }, null);
+                    Analytics.TrackEvent("SoundDownload-Source-MyInstants");
                 }
                 catch(SoundDownloadException)
                 {
@@ -412,6 +415,7 @@ namespace UniversalSoundboard.Dialogs
                     ContentDialog.IsPrimaryButtonEnabled = true;
 
                     Result = new SoundDownloadResult(new ObservableCollection<SoundDownloadItem> { soundItem }, null);
+                    Analytics.TrackEvent("SoundDownload-Source-AudioFile");
                 }
                 catch (SoundDownloadException)
                 {
