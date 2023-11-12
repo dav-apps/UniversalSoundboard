@@ -115,6 +115,7 @@ namespace UniversalSoundboard.DataAccess
         public const string SoundTableDefaultRepetitionsPropertyName = "default_repetitions";
         public const string SoundTableDefaultOutputDevicePropertyName = "default_output_device";
         public const string SoundTableHotkeysPropertyName = "hotkeys";
+        public const string SoundTableSourcePropertyName = "source";
 
         public const string CategoryTableParentPropertyName = "parent";
         public const string CategoryTableNamePropertyName = "name";
@@ -1954,15 +1955,29 @@ namespace UniversalSoundboard.DataAccess
         #endregion
 
         #region Sound CRUD methods
-        public static async Task<Guid> CreateSoundAsync(Guid? uuid, string name, Guid? categoryUuid, StorageFile audioFile, StorageFile imageFile = null)
+        public static async Task<Guid> CreateSoundAsync(
+            Guid? uuid,
+            string name,
+            Guid? categoryUuid,
+            StorageFile audioFile,
+            StorageFile imageFile = null,
+            string source = null
+        )
         {
             List<Guid> categoryUuidList = new List<Guid>();
             if (categoryUuid.HasValue) categoryUuidList.Add(categoryUuid.Value);
 
-            return await CreateSoundAsync(uuid, name, categoryUuidList, audioFile, imageFile);
+            return await CreateSoundAsync(uuid, name, categoryUuidList, audioFile, imageFile, source);
         }
 
-        public static async Task<Guid> CreateSoundAsync(Guid? uuid, string name, List<Guid> categoryUuids, StorageFile audioFile, StorageFile imageFile = null)
+        public static async Task<Guid> CreateSoundAsync(
+            Guid? uuid,
+            string name,
+            List<Guid> categoryUuids,
+            StorageFile audioFile,
+            StorageFile imageFile = null,
+            string source = null
+        )
         {
             // Copy the audio and image files into the local cache
             StorageFile newAudioFile = audioFile;
@@ -1995,7 +2010,8 @@ namespace UniversalSoundboard.DataAccess
                 name,
                 false,
                 soundFileTableObject.Uuid,
-                categoryUuids.Where(categoryUuid => categoryUuid != null && !categoryUuid.Equals(Guid.Empty)).ToList()
+                categoryUuids.Where(categoryUuid => categoryUuid != null && !categoryUuid.Equals(Guid.Empty)).ToList(),
+                source
             );
             await newAudioFile.DeleteAsync();
 

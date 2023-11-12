@@ -26,6 +26,7 @@ namespace UniversalSoundboard.Models
         public int DefaultRepetitions { get; set; }
         public string DefaultOutputDevice { get; set; }
         public List<Hotkey> Hotkeys { get; set; }
+        public string Source { get; set; }
         public BitmapImage Image { get; set; }
         public TableObject AudioFileTableObject { get; set; }
         public StorageFile AudioFile { get; set; }

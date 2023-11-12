@@ -152,7 +152,7 @@ namespace UniversalSoundboard.Models
                                 string videoTitle = playlistItem.Snippet.Title;
                                 string videoUrl = string.Format("https://youtube.com/watch?v={0}", playlistItemVideoId);
 
-                                soundItems.Add(new SoundDownloadYoutubeItem(videoTitle, videoUrl, videoUrl, "jpg", "m4a", 0, 0, videoId == playlistItemVideoId));
+                                soundItems.Add(new SoundDownloadYoutubeItem(videoTitle, youtubeLink, videoUrl, videoUrl, "jpg", "m4a", 0, 0, videoId == playlistItemVideoId));
                             }
                         }
                     }
@@ -162,6 +162,7 @@ namespace UniversalSoundboard.Models
                     soundItems.Add(
                         new SoundDownloadYoutubeItem(
                             grabResult.Title,
+                            youtubeLink,
                             youtubeLink,
                             youtubeLink,
                             "jpg",

@@ -40,7 +40,14 @@ namespace UniversalSoundboard.DataAccess
         #endregion
 
         #region Sound
-        public static async Task<TableObject> CreateSoundAsync(Guid uuid, string name, bool favourite, Guid soundUuid, List<Guid> categoryUuids)
+        public static async Task<TableObject> CreateSoundAsync(
+            Guid uuid,
+            string name,
+            bool favourite,
+            Guid soundUuid,
+            List<Guid> categoryUuids,
+            string source
+        )
         {
             // Create TableObject with sound informations and TableObject with the Soundfile
             var properties = new List<Property>
@@ -52,6 +59,9 @@ namespace UniversalSoundboard.DataAccess
 
             if (categoryUuids != null)
                 properties.Add(new Property { Name = FileManager.SoundTableCategoryUuidPropertyName, Value = string.Join(",", categoryUuids) });
+
+            if (source != null)
+                properties.Add(new Property { Name = FileManager.SoundTableSourcePropertyName, Value = source });
 
             return await TableObject.CreateAsync(uuid, FileManager.SoundTableId, properties);
         }

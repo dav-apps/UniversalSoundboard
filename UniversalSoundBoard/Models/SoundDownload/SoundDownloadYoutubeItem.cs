@@ -18,6 +18,7 @@ namespace UniversalSoundboard.Models
 
         public SoundDownloadYoutubeItem(
             string name,
+            string url,
             string imageFileUrl,
             string audioFileUrl,
             string imageFileExt,
@@ -27,6 +28,7 @@ namespace UniversalSoundboard.Models
             bool isSelected = true
         ) : base(
             name,
+            url,
             imageFileUrl,
             audioFileUrl,
             imageFileExt,

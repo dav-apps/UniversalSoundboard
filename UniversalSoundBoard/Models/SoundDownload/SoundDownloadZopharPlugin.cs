@@ -82,6 +82,7 @@ namespace UniversalSoundboard.Models
                 soundItems.Add(
                     new SoundDownloadItem(
                         name,
+                        Url,
                         imageFileUrl,
                         audioFileUrl,
                         imageFileExt,

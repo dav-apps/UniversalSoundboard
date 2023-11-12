@@ -79,7 +79,7 @@ namespace UniversalSoundboard.Models
 
             return new SoundDownloadPluginResult(new List<SoundDownloadItem>
             {
-                new SoundDownloadItem(name, null, downloadUrl, null, audioFileType, 0, fileSize)
+                new SoundDownloadItem(name, Url, null, downloadUrl, null, audioFileType, 0, fileSize)
             });
         }
     }

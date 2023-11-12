@@ -1386,6 +1386,7 @@ namespace UniversalSoundboard.Pages
                 {
                     soundItems.Add(new SoundDownloadYoutubeItem(
                         soundItem.Name,
+                        soundItem.Url,
                         soundItem.ImageFileUrl,
                         soundItem.AudioFileUrl,
                         soundItem.ImageFileExt,

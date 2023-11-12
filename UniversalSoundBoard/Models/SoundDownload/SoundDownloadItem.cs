@@ -9,6 +9,7 @@ namespace UniversalSoundboard.Models
     public class SoundDownloadItem
     {
         public string Name { get; set; }
+        public string Url { get; set; }
         public string ImageFileUrl { get; set; }
         public string AudioFileUrl { get; set; }
         public string ImageFileExt { get; set; }
@@ -20,6 +21,7 @@ namespace UniversalSoundboard.Models
         public SoundDownloadItem
         (
             string name,
+            string url,
             string imageFileUrl,
             string audioFileUrl,
             string imageFileExt,
@@ -30,6 +32,7 @@ namespace UniversalSoundboard.Models
         )
         {
             Name = name;
+            Url = url;
             ImageFileUrl = imageFileUrl;
             AudioFileUrl = audioFileUrl;
             ImageFileExt = imageFileExt;
