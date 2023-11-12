@@ -86,7 +86,8 @@ namespace UniversalSoundboard.Dialogs
                 HyperlinkButton hyperlinkButton = new HyperlinkButton {
                     Content = sourceUrl.Host,
                     NavigateUri = sourceUrl,
-                    Margin = new Thickness(0, 10, 0, 0)
+                    Margin = new Thickness(0, 10, 0, 0),
+                    Padding = new Thickness(0, 1, 0, 1)
                 };
                 sourceDataStackPanel.Children.Add(hyperlinkButton);
 
