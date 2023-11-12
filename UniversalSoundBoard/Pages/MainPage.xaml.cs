@@ -1483,7 +1483,8 @@ namespace UniversalSoundboard.Pages
                     soundItem.Name,
                     new List<Guid> { currentCategoryUuid },
                     audioFile,
-                    imageFile
+                    imageFile,
+                    soundItem.Url
                 );
 
                 if (uuid.Equals(Guid.Empty))
@@ -1637,7 +1638,8 @@ namespace UniversalSoundboard.Pages
                         currentSoundItem.Name,
                         newCategory != null ? newCategory.Uuid : currentCategoryUuid,
                         audioFile,
-                        imageFile
+                        imageFile,
+                        currentSoundItem.Url
                     );
 
                     if (uuid.Equals(Guid.Empty))

@@ -1088,4 +1088,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="EffectManagerPage-LoudnessTextBlock.Text" xml:space="preserve">
     <value>Intensité sonore</value>
   </data>
+  <data name="PropertiesDialog-Source" xml:space="preserve">
+    <value>Source</value>
+  </data>
 </root>

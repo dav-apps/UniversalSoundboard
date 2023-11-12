@@ -1089,4 +1089,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="EffectManagerPage-LoudnessTextBlock.Text" xml:space="preserve">
     <value>Loudness</value>
   </data>
+  <data name="PropertiesDialog-Source" xml:space="preserve">
+    <value>Source</value>
+  </data>
 </root>

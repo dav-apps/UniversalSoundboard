@@ -1,4 +1,5 @@
-﻿using UniversalSoundboard.DataAccess;
+﻿using System;
+using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -58,6 +59,41 @@ namespace UniversalSoundboard.Dialogs
             row++;
             contentGrid.Children.Add(nameHeaderStackPanel);
             contentGrid.Children.Add(nameDataStackPanel);
+            #endregion
+
+            #region Source
+            if (sound.Source != null)
+            {
+                // Add the row
+                var sourceRow = new RowDefinition { Height = new GridLength(1, GridUnitType.Auto) };
+                contentGrid.RowDefinitions.Add(sourceRow);
+
+                StackPanel sourceHeaderStackPanel = GenerateTableCell(
+                    row,
+                    0,
+                    FileManager.loader.GetString("PropertiesDialog-Source"),
+                    fontSize,
+                    false,
+                    null
+                );
+
+                StackPanel sourceDataStackPanel = new StackPanel();
+                Grid.SetRow(sourceDataStackPanel, row);
+                Grid.SetColumn(sourceDataStackPanel, 1);
+
+                Uri sourceUrl = new Uri(sound.Source);
+
+                HyperlinkButton hyperlinkButton = new HyperlinkButton {
+                    Content = sourceUrl.Host,
+                    NavigateUri = sourceUrl,
+                    Margin = new Thickness(0, 10, 0, 0)
+                };
+                sourceDataStackPanel.Children.Add(hyperlinkButton);
+
+                row++;
+                contentGrid.Children.Add(sourceHeaderStackPanel);
+                contentGrid.Children.Add(sourceDataStackPanel);
+            }
             #endregion
 
             #region File type
@@ -195,7 +231,14 @@ namespace UniversalSoundboard.Dialogs
             return contentGrid;
         }
 
-        private StackPanel GenerateTableCell(int row, int column, string text, int fontSize, bool isTextSelectionEnabled, Thickness? margin)
+        private StackPanel GenerateTableCell(
+            int row,
+            int column,
+            string text,
+            int fontSize,
+            bool isTextSelectionEnabled,
+            Thickness? margin
+        )
         {
             StackPanel contentStackPanel = new StackPanel();
             Grid.SetRow(contentStackPanel, row);

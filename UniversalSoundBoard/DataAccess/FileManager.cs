@@ -869,6 +869,9 @@ namespace UniversalSoundboard.DataAccess
                 }
             }
 
+            // Source
+            sound.Source = soundTableObject.GetPropertyValue(SoundTableSourcePropertyName);
+
             return sound;
         }
 

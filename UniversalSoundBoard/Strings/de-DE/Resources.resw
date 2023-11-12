@@ -1087,4 +1087,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="EffectManagerPage-LoudnessTextBlock.Text" xml:space="preserve">
     <value>Lautstärke</value>
   </data>
+  <data name="PropertiesDialog-Source" xml:space="preserve">
+    <value>Quelle</value>
+  </data>
 </root>
