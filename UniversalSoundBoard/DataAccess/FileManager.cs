@@ -3282,9 +3282,12 @@ namespace UniversalSoundboard.DataAccess
         public static void NavigateToStorePage()
         {
             itemViewHolder.Page = typeof(StorePage);
+            itemViewHolder.Title = "Store";
             itemViewHolder.EditButtonVisible = false;
             itemViewHolder.PlayAllButtonVisible = false;
             itemViewHolder.BackButtonEnabled = true;
+
+            Analytics.TrackEvent("NavigateToStorePage");
         }
 
         public static void NavigateToAccountPage(string context = null)
