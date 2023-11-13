@@ -3279,6 +3279,14 @@ namespace UniversalSoundboard.DataAccess
             }
         }
 
+        public static void NavigateToStorePage()
+        {
+            itemViewHolder.Page = typeof(StorePage);
+            itemViewHolder.EditButtonVisible = false;
+            itemViewHolder.PlayAllButtonVisible = false;
+            itemViewHolder.BackButtonEnabled = true;
+        }
+
         public static void NavigateToAccountPage(string context = null)
         {
             itemViewHolder.Page = typeof(AccountPage);

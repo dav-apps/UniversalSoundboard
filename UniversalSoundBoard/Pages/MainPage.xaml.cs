@@ -968,6 +968,11 @@ namespace UniversalSoundboard.Pages
                 // Show the Settings page
                 FileManager.NavigateToSettingsPage();
             }
+            else if (args.InvokedItemContainer == StoreMenuItem)
+            {
+                // Show the Store page
+                FileManager.NavigateToStorePage();
+            }
             else if (
                 args.InvokedItemContainer == LoginMenuItem
                 || args.InvokedItemContainer == AccountMenuItem
