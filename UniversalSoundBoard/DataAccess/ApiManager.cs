@@ -1,9 +1,8 @@
 ﻿using GraphQL;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading.Tasks;
+using UniversalSoundboard.Models;
 
 namespace UniversalSoundboard.DataAccess
 {
@@ -21,12 +20,12 @@ namespace UniversalSoundboard.DataAccess
             }
         }
 
-        public static async Task ListSounds()
+        public static async Task<ListResponse<SoundResponse>> ListSounds()
         {
             var listSoundsRequest = new GraphQLRequest
             {
                 Query = @"
-                    query ListSounds($query: String!) {
+                    query ListSounds($query: String) {
                         listSounds(query: $query) {
                             total
                             items {
@@ -36,32 +35,10 @@ namespace UniversalSoundboard.DataAccess
                         }
                     }
                 ",
-                OperationName = "ListSounds",
-                Variables = new {
-                    query = "cars"
-                }
+                OperationName = "ListSounds"
             };
 
-            var graphQLResponse = await GraphQLClient.SendQueryAsync<ListSoundsResponse>(listSoundsRequest);
-            Debug.WriteLine(graphQLResponse.Data.ListSounds.Total);
-            Debug.WriteLine(graphQLResponse.Data.ListSounds.Items[0].Name);
+            return (await GraphQLClient.SendQueryAsync<ListSoundsResponse>(listSoundsRequest)).Data.ListSounds;
         }
-    }
-
-    public class ListSoundsResponse
-    {
-        public ListResponse<SoundResponse> ListSounds { get; set; }
-    }
-
-    public class SoundResponse
-    {
-        public string Name { get; set; }
-        public string Description { get; set; }
-    }
-
-    public class ListResponse<T>
-    {
-        public int Total { get; set; }
-        public List<T> Items { get; set; }
     }
 }
