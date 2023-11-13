@@ -51,7 +51,7 @@
 
     <Grid
         Name="ContentRoot"
-        Margin="0,85,0,0"
+        Padding="0,85,0,0"
         Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
 
         <ScrollViewer>
