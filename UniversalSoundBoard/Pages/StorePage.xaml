@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
@@ -11,6 +13,10 @@
         <Style x:Key="StorePageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
             <Setter Property="Padding" Value="0,85,0,0" />
         </Style>
+
+        <DataTemplate x:Key="StoreSoundTileItemTemplate" x:DataType="models:SoundResponse">
+            <components:StoreSoundTileTemplate />
+        </DataTemplate>
     </Page.Resources>
 
     <RelativePanel>
@@ -23,7 +29,10 @@
             RelativePanel.AlignRightWithPanel="True">
 
             <StackPanel Orientation="Vertical" Padding="16,85,16,16">
-                <TextBlock Text="Hello World" />
+                <GridView
+                    ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
+                    ItemsSource="{x:Bind soundItems}"
+                    SelectionMode="None" />
             </StackPanel>
         </ScrollViewer>
 

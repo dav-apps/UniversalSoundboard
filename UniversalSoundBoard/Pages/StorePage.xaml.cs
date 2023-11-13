@@ -1,5 +1,7 @@
-﻿using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -8,6 +10,8 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class StorePage : Page
     {
+        List<SoundResponse> soundItems = new List<SoundResponse>();
+
         public StorePage()
         {
             InitializeComponent();
@@ -28,7 +32,11 @@ namespace UniversalSoundboard.Pages
 
         private async Task LoadSounds()
         {
-            await ApiManager.ListSounds();
+            var listSoundsResult = await ApiManager.ListSounds();
+            if (listSoundsResult.Items == null) return;
+
+            soundItems = listSoundsResult.Items;
+            Bindings.Update();
         }
     }
 }

@@ -150,6 +150,9 @@
     <Compile Include="Components\SettingsHotkeysSoundItemTemplate.xaml.cs">
       <DependentUpon>SettingsHotkeysSoundItemTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\StoreSoundTileTemplate.xaml.cs">
+      <DependentUpon>StoreSoundTileTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\PlayingSoundsAnimationController.cs" />
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\Exceptions.cs" />
@@ -418,6 +421,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\SoundListItemTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Components\StoreSoundTileTemplate.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
