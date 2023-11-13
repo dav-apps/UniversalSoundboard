@@ -158,6 +158,7 @@
     <Compile Include="Common\Types.cs" />
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
+    <Compile Include="DataAccess\ApiManager.cs" />
     <Compile Include="Models\HotkeyItem.cs" />
     <Compile Include="Components\HotkeyItemTemplate.xaml.cs">
       <DependentUpon>HotkeyItemTemplate.xaml</DependentUpon>
@@ -479,6 +480,12 @@
   <ItemGroup>
     <PackageReference Include="Google.Apis.YouTube.v3">
       <Version>1.63.0.3205</Version>
+    </PackageReference>
+    <PackageReference Include="GraphQL.Client">
+      <Version>6.0.1</Version>
+    </PackageReference>
+    <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft">
+      <Version>6.0.1</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.11.54</Version>
