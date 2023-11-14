@@ -1,4 +1,5 @@
 ﻿using System;
+using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -18,6 +19,11 @@ namespace UniversalSoundboard.Components
             InitializeComponent();
         }
 
+        private void UserControl_Loaded(object sender, RoutedEventArgs e)
+        {
+            UpdatePlayPauseButtonUI();
+        }
+
         private void UserControl_DataContextChanged(FrameworkElement sender, DataContextChangedEventArgs args)
         {
             if (DataContext == null) return;
@@ -29,15 +35,32 @@ namespace UniversalSoundboard.Components
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
             if (isPlaying)
-            {
-                isPlaying = false;
                 Pause?.Invoke(this, EventArgs.Empty);
+            else
+                Play?.Invoke(this, EventArgs.Empty);
+
+            isPlaying = !isPlaying;
+            UpdatePlayPauseButtonUI();
+        }
+
+        private void UpdatePlayPauseButtonUI()
+        {
+            if (isPlaying)
+            {
+                PlayPauseButton.Content = "\uE103";
+                PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PauseButtonToolTip");
             }
             else
             {
-                isPlaying = true;
-                Play?.Invoke(this, EventArgs.Empty);
+                PlayPauseButton.Content = "\uE102";
+                PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PlayButtonToolTip");
             }
+        }
+
+        public void PlaybackStopped()
+        {
+            isPlaying = false;
+            UpdatePlayPauseButtonUI();
         }
     }
 }

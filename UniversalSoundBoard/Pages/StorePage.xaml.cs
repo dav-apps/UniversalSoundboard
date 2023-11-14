@@ -6,6 +6,7 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -16,17 +17,27 @@ namespace UniversalSoundboard.Pages
     {
         List<SoundResponse> soundItems = new List<SoundResponse>();
         MediaPlayer mediaPlayer;
+        StoreSoundTileTemplate currentSoundItemTemplate;
 
         public StorePage()
         {
             InitializeComponent();
             mediaPlayer = new MediaPlayer();
+            mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
         {
             SetThemeColors();
             await LoadSounds();
+        }
+
+        private async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
+        {
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
+            {
+                currentSoundItemTemplate.PlaybackStopped();
+            });
         }
 
         private void SetThemeColors()
@@ -47,9 +58,12 @@ namespace UniversalSoundboard.Pages
 
         private void StoreSoundTileTemplate_Play(object sender, EventArgs e)
         {
-            SoundResponse soundItem = (sender as StoreSoundTileTemplate).SoundItem;
+            if (currentSoundItemTemplate != null)
+                currentSoundItemTemplate.PlaybackStopped();
+
+            currentSoundItemTemplate = (sender as StoreSoundTileTemplate);
             mediaPlayer.Pause();
-            mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(soundItem.AudioFileUrl));
+            mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(currentSoundItemTemplate.SoundItem.AudioFileUrl));
             mediaPlayer.Play();
         }
 
