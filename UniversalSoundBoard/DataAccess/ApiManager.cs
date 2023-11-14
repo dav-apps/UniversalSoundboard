@@ -14,7 +14,7 @@ namespace UniversalSoundboard.DataAccess
             get
             {
                 if (graphQLClient == null)
-                    graphQLClient = new GraphQLHttpClient("http://localhost:4002/", new NewtonsoftJsonSerializer());
+                    graphQLClient = new GraphQLHttpClient("http://localhost:4003/", new NewtonsoftJsonSerializer());
 
                 return graphQLClient;
             }
@@ -31,6 +31,7 @@ namespace UniversalSoundboard.DataAccess
                             items {
                                 name
                                 description
+                                audioFileUrl
                             }
                         }
                     }
