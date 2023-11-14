@@ -33,11 +33,13 @@
 
             <StackPanel Orientation="Vertical" Padding="16,85,16,16">
                 <GridView
+                    Name="SoundsGridView"
                     ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
                     ItemsSource="{x:Bind soundItems}"
                     SelectionMode="None"
                     animations:ItemsReorderAnimation.Duration="0:0:0.15"
-                    IsItemClickEnabled="True" />
+                    IsItemClickEnabled="True"
+                    ItemClick="SoundsGridView_ItemClick" />
             </StackPanel>
         </ScrollViewer>
 

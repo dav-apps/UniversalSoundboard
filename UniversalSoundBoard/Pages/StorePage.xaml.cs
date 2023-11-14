@@ -10,6 +10,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace UniversalSoundboard.Pages
 {
@@ -70,6 +71,12 @@ namespace UniversalSoundboard.Pages
         private void StoreSoundTileTemplate_Pause(object sender, EventArgs e)
         {
             mediaPlayer.Pause();
+        }
+
+        private void SoundsGridView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            var clickedItem = e.ClickedItem as SoundResponse;
+            MainPage.NavigateToPage(typeof(StoreSoundPage), clickedItem, new DrillInNavigationTransitionInfo());
         }
     }
 }
