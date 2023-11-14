@@ -9,7 +9,23 @@
     d:DesignWidth="400"
     DataContextChanged="UserControl_DataContextChanged">
 
-    <Grid>
-        <TextBlock Text="{x:Bind SoundItem.Name}" />
-    </Grid>
+    <StackPanel Orientation="Horizontal" Width="200" Padding="12">
+        <Button
+            x:Name="PlayPauseButton"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"
+            Content="&#xE102;"
+            FontFamily="{StaticResource FluentIconsFontFamily}"
+            FontSize="18"
+            Height="42"
+            Width="42"
+            CornerRadius="18"
+            Background="Transparent" />
+
+        <TextBlock
+            Text="{x:Bind SoundItem.Name}"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Left"
+            Margin="12,0,0,0" />
+    </StackPanel>
 </UserControl>
