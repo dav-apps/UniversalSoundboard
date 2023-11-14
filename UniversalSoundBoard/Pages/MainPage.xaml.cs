@@ -31,6 +31,7 @@ using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml;
 using Windows.UI;
 using WinUI = Microsoft.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
 
 namespace UniversalSoundboard.Pages
 {
@@ -38,6 +39,7 @@ namespace UniversalSoundboard.Pages
     {
         public static CoreDispatcher dispatcher;                            // Dispatcher for ShareTargetPage
         string appTitle = "UniversalSoundboard";                            // The app name displayed in the title bar
+        private static Frame contentFrame;
         public static AppWindow soundRecorderAppWindow;
         public static AppWindow effectManagerAppWindow;
         public static Frame soundRecorderAppWindowContentFrame;
@@ -87,6 +89,8 @@ namespace UniversalSoundboard.Pages
         #region Page event handlers
         async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
+            contentFrame = ContentFrame;
+            NavigateToPage(FileManager.itemViewHolder.Page);
             AdjustLayout();
 
             // Load the Categories
@@ -140,6 +144,9 @@ namespace UniversalSoundboard.Pages
 
         private void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
+            if (e.PropertyName == ItemViewHolder.PageKey)
+                NavigateToPage(FileManager.itemViewHolder.Page);
+
             switch (e.PropertyName)
             {
                 case ItemViewHolder.PageKey:
@@ -596,6 +603,24 @@ namespace UniversalSoundboard.Pages
                 this,
                 showInAppNotificationEventArgs
             );
+        }
+
+        public static void NavigateToPage(
+            Type pageType,
+            object parameter = null,
+            NavigationTransitionInfo navigationTransitionInfo = null
+        )
+        {
+            if (contentFrame.SourcePageType == pageType)
+                return;
+
+            if (navigationTransitionInfo == null)
+                navigationTransitionInfo = new EntranceNavigationTransitionInfo();
+
+            contentFrame.Navigate(pageType, parameter, navigationTransitionInfo);
+
+            if (FileManager.itemViewHolder.Page != pageType)
+                FileManager.itemViewHolder.Page = pageType;
         }
         #endregion
 

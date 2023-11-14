@@ -588,7 +588,6 @@
                     <Frame
                         Name="ContentFrame"
                         Canvas.ZIndex="0"
-                        SourcePageType="{Binding Page, Mode=TwoWay}"
                         Grid.Row="0"
                         Grid.RowSpan="2" />
                 </Grid>
