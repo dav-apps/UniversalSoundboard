@@ -3097,17 +3097,26 @@ namespace UniversalSoundboard.DataAccess
         public static async Task GoBackAsync()
         {
             // Sound page not visible?
-            if(itemViewHolder.Page != typeof(SoundPage))
+            if (itemViewHolder.Page != typeof(SoundPage))
             {
-                // Navigate to All Sounds
-                itemViewHolder.Page = typeof(SoundPage);
-                itemViewHolder.SelectedCategory = Guid.Empty;
-                itemViewHolder.Title = loader.GetString("AllSounds");
-                itemViewHolder.EditButtonVisible = false;
-                await LoadAllSoundsAsync();
-                UpdatePlayAllButtonVisibility();
-                UpdateBackButtonVisibility();
-                return;
+                if (itemViewHolder.Page == typeof(StoreSoundPage))
+                {
+                    // Navigate back to the Store page
+                    MainPage.NavigateBack();
+                    return;
+                }
+                else
+                {
+                    // Navigate to All Sounds
+                    itemViewHolder.Page = typeof(SoundPage);
+                    itemViewHolder.SelectedCategory = Guid.Empty;
+                    itemViewHolder.Title = loader.GetString("AllSounds");
+                    itemViewHolder.EditButtonVisible = false;
+                    await LoadAllSoundsAsync();
+                    UpdatePlayAllButtonVisibility();
+                    UpdateBackButtonVisibility();
+                    return;
+                }
             }
 
             // Is on mobile and search box visible?

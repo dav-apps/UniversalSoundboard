@@ -622,6 +622,11 @@ namespace UniversalSoundboard.Pages
             if (FileManager.itemViewHolder.Page != pageType)
                 FileManager.itemViewHolder.Page = pageType;
         }
+
+        public static void NavigateBack()
+        {
+            contentFrame.GoBack();
+        }
         #endregion
 
         #region MenuItem methods
