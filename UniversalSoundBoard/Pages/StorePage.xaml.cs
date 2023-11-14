@@ -1,7 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
+using Windows.Media.Core;
+using Windows.Media.Playback;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -11,10 +15,12 @@ namespace UniversalSoundboard.Pages
     public sealed partial class StorePage : Page
     {
         List<SoundResponse> soundItems = new List<SoundResponse>();
+        MediaPlayer mediaPlayer;
 
         public StorePage()
         {
             InitializeComponent();
+            mediaPlayer = new MediaPlayer();
         }
 
         private async void Page_Loaded(object sender, RoutedEventArgs e)
@@ -37,6 +43,19 @@ namespace UniversalSoundboard.Pages
 
             soundItems = listSoundsResult.Items;
             Bindings.Update();
+        }
+
+        private void StoreSoundTileTemplate_Play(object sender, EventArgs e)
+        {
+            SoundResponse soundItem = (sender as StoreSoundTileTemplate).SoundItem;
+            mediaPlayer.Pause();
+            mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(soundItem.AudioFileUrl));
+            mediaPlayer.Play();
+        }
+
+        private void StoreSoundTileTemplate_Pause(object sender, EventArgs e)
+        {
+            mediaPlayer.Pause();
         }
     }
 }

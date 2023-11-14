@@ -20,7 +20,8 @@
             Height="42"
             Width="42"
             CornerRadius="18"
-            Background="Transparent" />
+            Background="Transparent"
+            Click="PlayPauseButton_Click" />
 
         <TextBlock
             Text="{x:Bind SoundItem.Name}"

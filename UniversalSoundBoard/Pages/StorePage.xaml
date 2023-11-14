@@ -16,7 +16,9 @@
         </Style>
 
         <DataTemplate x:Key="StoreSoundTileItemTemplate" x:DataType="models:SoundResponse">
-            <components:StoreSoundTileTemplate />
+            <components:StoreSoundTileTemplate
+                Play="StoreSoundTileTemplate_Play"
+                Pause="StoreSoundTileTemplate_Pause" />
         </DataTemplate>
     </Page.Resources>
 
