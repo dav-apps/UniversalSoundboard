@@ -3,6 +3,7 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Navigation;
@@ -13,6 +14,7 @@ namespace UniversalSoundboard.Pages
     {
         private SoundResponse soundItem;
         private MediaPlayer mediaPlayer;
+        private bool isPlaying = false;
 
         public StoreSoundPage()
         {
@@ -24,6 +26,7 @@ namespace UniversalSoundboard.Pages
         private void Page_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             SetThemeColors();
+            UpdatePlayPauseButtonUI();
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -39,9 +42,14 @@ namespace UniversalSoundboard.Pages
             mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(soundItem.AudioFileUrl));
         }
 
-        private void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
+        private async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
         {
+            isPlaying = false;
 
+            await MainPage.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                UpdatePlayPauseButtonUI();
+            });
         }
 
         private void SetThemeColors()
@@ -51,9 +59,29 @@ namespace UniversalSoundboard.Pages
             ContentRoot.Background = appThemeColorBrush;
         }
 
-        private void PlayPauseButton_Click(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
-            mediaPlayer.Play();
+            if (isPlaying)
+                mediaPlayer.Pause();
+            else
+                mediaPlayer.Play();
+
+            isPlaying = !isPlaying;
+            UpdatePlayPauseButtonUI();
+        }
+
+        private void UpdatePlayPauseButtonUI()
+        {
+            if (isPlaying)
+            {
+                PlayPauseButton.Content = "\uE103";
+                PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PauseButtonToolTip");
+            }
+            else
+            {
+                PlayPauseButton.Content = "\uE102";
+                PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PlayButtonToolTip");
+            }
         }
     }
 }

@@ -24,23 +24,39 @@
 
             <StackPanel Padding="16,85,16,16">
                 <TextBlock
+                    Name="NameTextBlock"
                     Text="{x:Bind soundItem.Name}"
                     Style="{StaticResource TitleTextBlockStyle}"
                     HorizontalAlignment="Center"
-                    Margin="0,32,0,0"/>
+                    Margin="0,32,0,0" />
 
                 <Button
                     Name="PlayPauseButton"
                     Content="&#xE102;"
                     FontFamily="{StaticResource FluentIconsFontFamily}"
-                    FontSize="18"
-                    Height="42"
-                    Width="42"
-                    CornerRadius="18"
+                    FontSize="26"
+                    Height="66"
+                    Width="66"
+                    CornerRadius="33"
                     HorizontalAlignment="Center"
                     Background="Transparent"
                     Margin="0,18,0,0"
-                    Click="PlayPauseButton_Click" />
+                    Click="PlayPauseButton_Click">
+
+                    <ToolTipService.ToolTip>
+                        <TextBlock
+                            Name="PlayPauseButtonToolTip"
+                            Text="Play" />
+                    </ToolTipService.ToolTip>
+                </Button>
+
+                <TextBlock
+                    Name="DescriptionTextBlock"
+                    Text="{x:Bind soundItem.Description}"
+                    MaxWidth="300"
+                    TextWrapping="WrapWholeWords"
+                    TextAlignment="Justify"
+                    Margin="0,24,0,0" />
             </StackPanel>
         </ScrollViewer>
 
