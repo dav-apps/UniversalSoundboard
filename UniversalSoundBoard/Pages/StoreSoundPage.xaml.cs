@@ -23,6 +23,8 @@ namespace UniversalSoundboard.Pages
         private MediaPlayer mediaPlayer;
         private Uri sourceUri;
         private bool isPlaying = false;
+        private bool isDownloading = false;
+        private int downloadProgress = 0;
 
         public StoreSoundPage()
         {
@@ -103,6 +105,9 @@ namespace UniversalSoundboard.Pages
         private async void AddToSoundboardDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             // Start downloading the audio file
+            isDownloading = true;
+            downloadProgress = 0;
+
             var progress = new Progress<int>((int value) => DownloadProgress(value));
             var cancellationTokenSource = new CancellationTokenSource();
             bool downloadSuccess = false;
@@ -123,6 +128,9 @@ namespace UniversalSoundboard.Pages
                 ).Key;
             });
 
+            isDownloading = false;
+            Bindings.Update();
+
             // Save the sound in the database
             Guid uuid = await FileManager.CreateSoundAsync(
                 null,
@@ -139,7 +147,8 @@ namespace UniversalSoundboard.Pages
 
         private void DownloadProgress(int value)
         {
-            Debug.WriteLine(value);
+            downloadProgress = value;
+            Bindings.Update();
         }
     }
 }

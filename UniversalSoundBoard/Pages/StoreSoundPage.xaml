@@ -4,10 +4,17 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    xmlns:converters="using:UniversalSoundboard.Converters"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
     <Page.Resources>
+        <!-- Converters -->
+        <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
+        <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
+
+        <!-- Styles -->
         <Style x:Key="StorePageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
             <Setter Property="Padding" Value="0,85,0,0" />
         </Style>
@@ -56,7 +63,16 @@
                             <TextBlock
                                 Text="&#xE710;"
                                 FontFamily="{StaticResource FluentIconsFontFamily}"
-                                FontSize="16" />
+                                FontSize="16"
+                                Visibility="{x:Bind isDownloading, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"/>
+
+                            <winui:ProgressRing
+                                Value="{x:Bind downloadProgress}"
+                                IsIndeterminate="False"
+                                Width="16"
+                                Height="16"
+                                Margin="0,0,4,0"
+                                Visibility="{x:Bind isDownloading, Converter={StaticResource BooleanToVisibilityConverter}}"/>
 
                             <TextBlock
                                 Text="Add to soundboard"
