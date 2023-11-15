@@ -51,7 +51,7 @@
                 </Button>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
-                    <Button>
+                    <Button Name="AddToSoundboardButton" Click="AddToSoundboardButton_Click">
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock
                                 Text="&#xE710;"

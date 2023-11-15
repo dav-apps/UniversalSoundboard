@@ -1,8 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Threading;
+using System.Threading.Tasks;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.Storage;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -85,6 +91,55 @@ namespace UniversalSoundboard.Pages
                 PlayPauseButton.Content = "\uE102";
                 PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PlayButtonToolTip");
             }
+        }
+
+        private async void AddToSoundboardButton_Click(object sender, RoutedEventArgs e)
+        {
+            var addToSoundboardDialog = new StoreAddToSoundboardDialog();
+            addToSoundboardDialog.PrimaryButtonClick += AddToSoundboardDialog_PrimaryButtonClick;
+            await addToSoundboardDialog.ShowAsync();
+        }
+
+        private async void AddToSoundboardDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            // Start downloading the audio file
+            var progress = new Progress<int>((int value) => DownloadProgress(value));
+            var cancellationTokenSource = new CancellationTokenSource();
+            bool downloadSuccess = false;
+
+            // Create a file in the cache
+            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
+            StorageFile targetFile = await cacheFolder.CreateFileAsync(string.Format("storedownload.{0}", soundItem.Type), CreationCollisionOption.GenerateUniqueName);
+
+            await Task.Run(async () =>
+            {
+                downloadSuccess = (
+                    await FileManager.DownloadBinaryDataToFile(
+                        targetFile,
+                        new Uri(soundItem.AudioFileUrl),
+                        progress,
+                        cancellationTokenSource.Token
+                    )
+                ).Key;
+            });
+
+            // Save the sound in the database
+            Guid uuid = await FileManager.CreateSoundAsync(
+                null,
+                soundItem.Name,
+                new List<Guid>(),
+                targetFile,
+                null,
+                soundItem.Source
+            );
+
+            // Add the sound to the list
+            await FileManager.AddSound(uuid);
+        }
+
+        private void DownloadProgress(int value)
+        {
+            Debug.WriteLine(value);
         }
     }
 }

@@ -32,6 +32,7 @@ namespace UniversalSoundboard.DataAccess
                                 name
                                 description
                                 audioFileUrl
+                                type
                                 source
                             }
                         }
