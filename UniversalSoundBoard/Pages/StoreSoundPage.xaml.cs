@@ -3,6 +3,7 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -14,6 +15,7 @@ namespace UniversalSoundboard.Pages
     {
         private SoundResponse soundItem;
         private MediaPlayer mediaPlayer;
+        private Uri sourceUri;
         private bool isPlaying = false;
 
         public StoreSoundPage()
@@ -23,7 +25,7 @@ namespace UniversalSoundboard.Pages
             mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
         }
 
-        private void Page_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             SetThemeColors();
             UpdatePlayPauseButtonUI();
@@ -37,6 +39,7 @@ namespace UniversalSoundboard.Pages
                 return;
 
             soundItem = e.Parameter as SoundResponse;
+            sourceUri = new Uri(soundItem.Source);
             Bindings.Update();
 
             mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(soundItem.AudioFileUrl));
@@ -46,7 +49,7 @@ namespace UniversalSoundboard.Pages
         {
             isPlaying = false;
 
-            await MainPage.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
                 UpdatePlayPauseButtonUI();
             });
