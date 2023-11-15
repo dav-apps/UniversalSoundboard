@@ -31,7 +31,7 @@
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True">
 
-            <StackPanel Orientation="Vertical" Padding="16,85,16,16">
+            <StackPanel Padding="16,85,16,16">
                 <GridView
                     Name="SoundsGridView"
                     ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
