@@ -32,14 +32,51 @@
             RelativePanel.AlignRightWithPanel="True">
 
             <StackPanel Padding="16,85,16,16">
+                <TextBlock
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="Recently added sounds"
+                    Margin="0,0,0,12" />
+
                 <GridView
-                    Name="SoundsGridView"
+                    Name="RecentlyAddedSoundsGridView"
                     ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
-                    ItemsSource="{x:Bind soundItems}"
+                    ItemsSource="{x:Bind recentlyAddedSounds}"
                     SelectionMode="None"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollMode="Auto"
                     animations:ItemsReorderAnimation.Duration="0:0:0.15"
                     IsItemClickEnabled="True"
-                    ItemClick="SoundsGridView_ItemClick" />
+                    ItemClick="SoundsGridView_ItemClick">
+
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid Orientation="Vertical" MaximumRowsOrColumns="2" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </GridView>
+
+                <TextBlock
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Text="Sounds of the day"
+                    Margin="0,18,0,12" />
+
+                <GridView
+                    Name="SoundsOfTheDayGridView"
+                    ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
+                    ItemsSource="{x:Bind soundsOfTheDay}"
+                    SelectionMode="None"
+                    ScrollViewer.HorizontalScrollBarVisibility="Auto"
+                    ScrollViewer.HorizontalScrollMode="Auto"
+                    animations:ItemsReorderAnimation.Duration="0:0:0.15"
+                    IsItemClickEnabled="True"
+                    ItemClick="SoundsGridView_ItemClick">
+
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid Orientation="Vertical" MaximumRowsOrColumns="2" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </GridView>
             </StackPanel>
         </ScrollViewer>
 

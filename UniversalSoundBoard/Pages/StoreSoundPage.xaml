@@ -97,7 +97,7 @@
                 <TextBlock
                     Name="DescriptionTextBlock"
                     Text="{x:Bind soundItem.Description}"
-                    MaxWidth="350"
+                    MaxWidth="380"
                     TextWrapping="WrapWholeWords"
                     TextAlignment="Justify"
                     Margin="0,24,0,0" />

@@ -16,7 +16,8 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class StorePage : Page
     {
-        List<SoundResponse> soundItems = new List<SoundResponse>();
+        List<SoundResponse> recentlyAddedSounds = new List<SoundResponse>();
+        List<SoundResponse> soundsOfTheDay = new List<SoundResponse>();
         MediaPlayer mediaPlayer;
         StoreSoundTileTemplate currentSoundItemTemplate;
 
@@ -50,10 +51,16 @@ namespace UniversalSoundboard.Pages
 
         private async Task LoadSounds()
         {
-            var listSoundsResult = await ApiManager.ListSounds();
-            if (listSoundsResult.Items == null) return;
+            var recentlyAddedSoundsResult = await ApiManager.ListSounds();
+            if (recentlyAddedSoundsResult.Items == null) return;
 
-            soundItems = listSoundsResult.Items;
+            recentlyAddedSounds = recentlyAddedSoundsResult.Items;
+            Bindings.Update();
+
+            var soundsOfTheDayResult = await ApiManager.ListSounds(random: true);
+            if (soundsOfTheDayResult.Items == null) return;
+
+            soundsOfTheDay = soundsOfTheDayResult.Items;
             Bindings.Update();
         }
 
