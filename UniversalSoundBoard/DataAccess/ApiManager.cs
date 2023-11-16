@@ -20,13 +20,18 @@ namespace UniversalSoundboard.DataAccess
             }
         }
 
-        public static async Task<ListResponse<SoundResponse>> ListSounds()
+        public static async Task<ListResponse<SoundResponse>> ListSounds(
+            string query = null,
+            bool random = false,
+            int limit = 10
+        )
         {
             var listSoundsRequest = new GraphQLRequest
             {
+                OperationName = "ListSounds",
                 Query = @"
-                    query ListSounds($query: String) {
-                        listSounds(query: $query) {
+                    query ListSounds($query: String, $random: Boolean, $limit: Int) {
+                        listSounds(query: $query, random: $random, limit: $limit) {
                             total
                             items {
                                 name
@@ -38,7 +43,7 @@ namespace UniversalSoundboard.DataAccess
                         }
                     }
                 ",
-                OperationName = "ListSounds"
+                Variables = new { query, random, limit }
             };
 
             return (await GraphQLClient.SendQueryAsync<ListSoundsResponse>(listSoundsRequest)).Data.ListSounds;
