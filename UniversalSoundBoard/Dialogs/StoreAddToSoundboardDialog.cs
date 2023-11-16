@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using WinUI = Microsoft.UI.Xaml.Controls;
 
@@ -17,7 +18,12 @@ namespace UniversalSoundboard.Dialogs
         }
 
         public StoreAddToSoundboardDialog()
-            : base("Add to soundboard", "Add", "Cancel", ContentDialogButton.Primary)
+            : base(
+                  FileManager.loader.GetString("StoreAddToSoundboardDialog-Title"),
+                  FileManager.loader.GetString("Actions-Add"),
+                  FileManager.loader.GetString("Actions-Cancel"),
+                  ContentDialogButton.Primary
+            )
         {
             Content = GetContent();
         }
@@ -25,6 +31,12 @@ namespace UniversalSoundboard.Dialogs
         private StackPanel GetContent()
         {
             StackPanel contentPanel = new StackPanel();
+
+            TextBlock descriptionTextBlock = new TextBlock
+            {
+                Text = FileManager.loader.GetString("StoreAddToSoundboardDialog-Description"),
+                Margin = new Thickness(0, 0, 0, 12)
+            };
 
             CategoriesTreeView = new WinUI.TreeView
             {
@@ -51,6 +63,7 @@ namespace UniversalSoundboard.Dialogs
             foreach (var node in selectedNodes)
                 CategoriesTreeView.SelectedNodes.Add(node);
 
+            contentPanel.Children.Add(descriptionTextBlock);
             contentPanel.Children.Add(CategoriesTreeView);
 
             return contentPanel;

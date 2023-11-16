@@ -1090,4 +1090,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PropertiesDialog-Source" xml:space="preserve">
     <value>Quelle</value>
   </data>
+  <data name="StoreAddToSoundboardDialog-Description" xml:space="preserve">
+    <value>Wähle die Kategorien, zu denen der Sound hinzugefügt werden soll.</value>
+  </data>
+  <data name="StoreAddToSoundboardDialog-Title" xml:space="preserve">
+    <value>Zum Soundboard hinzufügen</value>
+  </data>
 </root>

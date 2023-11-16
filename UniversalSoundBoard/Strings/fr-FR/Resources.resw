@@ -1091,4 +1091,10 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="PropertiesDialog-Source" xml:space="preserve">
     <value>Source</value>
   </data>
+  <data name="StoreAddToSoundboardDialog-Description" xml:space="preserve">
+    <value>Sélectionnez les catégories auxquelles le son doit être ajouté.</value>
+  </data>
+  <data name="StoreAddToSoundboardDialog-Title" xml:space="preserve">
+    <value>Ajouter au Soundboard</value>
+  </data>
 </root>
