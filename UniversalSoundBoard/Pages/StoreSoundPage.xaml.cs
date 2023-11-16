@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
+using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
@@ -104,6 +104,14 @@ namespace UniversalSoundboard.Pages
 
         private async void AddToSoundboardDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
+            var dialog = sender as StoreAddToSoundboardDialog;
+
+            // Get the selected categories
+            List<Guid> categoryUuids = new List<Guid>();
+
+            foreach (var item in dialog.SelectedItems)
+                categoryUuids.Add((Guid)((CustomTreeViewNode)item).Tag);
+
             // Start downloading the audio file
             isDownloading = true;
             downloadProgress = 0;
@@ -135,7 +143,7 @@ namespace UniversalSoundboard.Pages
             Guid uuid = await FileManager.CreateSoundAsync(
                 null,
                 soundItem.Name,
-                new List<Guid>(),
+                categoryUuids,
                 targetFile,
                 null,
                 soundItem.Source

@@ -54,17 +54,20 @@ namespace UniversalSoundboard.Dialogs
 
             // Get all categories
             List<Category> categories = new List<Category>();
+
             for (int i = 1; i < FileManager.itemViewHolder.Categories.Count; i++)
                 categories.Add(FileManager.itemViewHolder.Categories[i]);
 
             // Find the intersection of the categories of all sounds
             List<Guid> soundCategories = new List<Guid>();
+
             foreach (var category in sounds.First().Categories)
                 if (sounds.TrueForAll(s => s.Categories.Exists(c => c.Uuid == category.Uuid)))
                     soundCategories.Add(category.Uuid);
 
             // Create the nodes and add them to the tree view
             List<CustomTreeViewNode> selectedNodes = new List<CustomTreeViewNode>();
+
             foreach (var node in FileManager.CreateTreeViewNodesFromCategories(categories, selectedNodes, soundCategories))
                 CategoriesTreeView.RootNodes.Add(node);
 

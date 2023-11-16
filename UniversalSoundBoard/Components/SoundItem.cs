@@ -80,6 +80,7 @@ namespace UniversalSoundboard.Components
 
             // Get the selected categories
             List<Guid> categoryUuids = new List<Guid>();
+
             foreach (var item in dialog.SelectedItems)
                 categoryUuids.Add((Guid)((CustomTreeViewNode)item).Tag);
 
