@@ -4,10 +4,16 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:davClassLibrary="using:davClassLibrary"
+    xmlns:converters="using:UniversalSoundboard.Converters"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
     <Page.Resources>
+        <!-- Converters -->
+        <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
+        
         <!-- Styles -->
         <Style x:Key="StorePageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
             <Setter Property="Padding" Value="0,85,0,0" />
@@ -23,7 +29,30 @@
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True">
 
-            <StackPanel Padding="16,85,16,16"></StackPanel>
+            <StackPanel Padding="16,85,16,16">
+                <Ellipse
+                    ui:Effects.Shadow="{StaticResource ProfileImageShadow}"
+                    Height="150"
+                    Width="150">
+
+                    <Ellipse.Fill>
+                        <ImageBrush ImageSource="{x:Bind davClassLibrary:Dav.User.ProfileImage, Converter={StaticResource FileToBitmapImageConverter}}" />
+                    </Ellipse.Fill>
+                </Ellipse>
+
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text="{x:Bind davClassLibrary:Dav.User.FirstName}"
+                    HorizontalAlignment="Center"
+                    Margin="0,18,0,0" />
+
+                <TextBlock
+                    Text="{x:Bind numberOfSoundsText}"
+                    HorizontalAlignment="Center"
+                    Margin="0,8,0,0"
+                    FontSize="16"
+                    FontWeight="Light" />
+            </StackPanel>
         </ScrollViewer>
 
         <Grid

@@ -6,6 +6,8 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class StoreProfilePage : Page
     {
+        private string numberOfSoundsText = "0 sounds";
+
         public StoreProfilePage()
         {
             InitializeComponent();
