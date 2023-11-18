@@ -2347,5 +2347,12 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.MultiSelectionEnabled = false;
         }
         #endregion
+
+        #region Publish sounds
+        private void PublishSoundsButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigateToPage(typeof(StoreProfilePage), new DrillInNavigationTransitionInfo());
+        }
+        #endregion
     }
 }

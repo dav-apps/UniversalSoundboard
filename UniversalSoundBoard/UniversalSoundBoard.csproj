@@ -251,6 +251,9 @@
     <Compile Include="Pages\StorePage.xaml.cs">
       <DependentUpon>StorePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\StoreProfilePage.xaml.cs">
+      <DependentUpon>StoreProfilePage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\StoreSoundPage.xaml.cs">
       <DependentUpon>StoreSoundPage.xaml</DependentUpon>
     </Compile>
@@ -477,6 +480,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\StorePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\StoreProfilePage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
