@@ -1098,4 +1098,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StoreAddToSoundboardDialog-Title" xml:space="preserve">
     <value>Add to soundboard</value>
   </data>
+  <data name="PublishSoundsButton.Text" xml:space="preserve">
+    <value>Publish sounds</value>
+  </data>
 </root>

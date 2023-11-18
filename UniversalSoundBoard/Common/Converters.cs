@@ -95,6 +95,20 @@ namespace UniversalSoundboard.Converters
         }
     }
 
+    public class StoreRightHeaderOnSoundPageVisibleConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, string language)
+        {
+            var type = value as Type;
+            return type == typeof(StorePage) || type == typeof(StoreSoundPage) ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, string language)
+        {
+            return null;
+        }
+    }
+
     public class BooleanToSelectionMode : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)

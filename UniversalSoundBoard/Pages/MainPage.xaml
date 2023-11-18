@@ -21,6 +21,7 @@
         <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
         <converters:OptionsOnSoundPageVisibleConverter x:Name="OptionsOnSoundPageVisibleConverter" />
+        <converters:StoreRightHeaderOnSoundPageVisibleConverter x:Name="StoreRightHeaderOnSoundPageVisibleConverter" />
         <converters:TopButtonWidthConverter x:Name="TopButtonWidthConverter" />
         <converters:TopButtonPaddingConverter x:Name="TopButtonPaddingConverter" />
 
@@ -580,6 +581,25 @@
                                             </MenuFlyoutItem>
                                         </MenuFlyout>
                                     </Button.Flyout>
+                                </Button>
+                            </RelativePanel>
+
+                            <RelativePanel
+                                Name="StoreRightHeaderRelativePanel"
+                                RelativePanel.AlignVerticalCenterWithPanel="True"
+                                RelativePanel.AlignRightWithPanel="True"
+                                Margin="0,0,10,0"
+                                Visibility="{Binding Page, Converter={StaticResource StoreRightHeaderOnSoundPageVisibleConverter}}">
+
+                                <Button Style="{StaticResource TopButtonStyle}">
+                                    <StackPanel Style="{StaticResource TopButtonInnerStackPanelStyle}">
+                                        <TextBlock
+                                            Style="{StaticResource TopButtonInnerIconStyle}"
+                                            Text="&#xEC4F;" />
+                                        <TextBlock
+                                            x:Uid="PublishSoundsButton"
+                                            Style="{StaticResource TopButtonInnerTextStyle}" />
+                                    </StackPanel>
                                 </Button>
                             </RelativePanel>
                         </RelativePanel>

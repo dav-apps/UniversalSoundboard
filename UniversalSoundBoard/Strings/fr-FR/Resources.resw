@@ -1097,4 +1097,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StoreAddToSoundboardDialog-Title" xml:space="preserve">
     <value>Ajouter au Soundboard</value>
   </data>
+  <data name="PublishSoundsButton.Text" xml:space="preserve">
+    <value>Publier des sons</value>
+  </data>
 </root>

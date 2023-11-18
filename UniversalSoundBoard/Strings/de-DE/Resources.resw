@@ -1096,4 +1096,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StoreAddToSoundboardDialog-Title" xml:space="preserve">
     <value>Zum Soundboard hinzufügen</value>
   </data>
+  <data name="PublishSoundsButton.Text" xml:space="preserve">
+    <value>Sounds veröffentlichen</value>
+  </data>
 </root>

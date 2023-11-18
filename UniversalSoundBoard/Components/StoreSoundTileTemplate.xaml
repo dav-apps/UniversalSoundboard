@@ -20,7 +20,7 @@
             FontSize="18"
             Height="42"
             Width="42"
-            CornerRadius="18"
+            CornerRadius="21"
             Background="Transparent"
             Click="PlayPauseButton_Click">
 
