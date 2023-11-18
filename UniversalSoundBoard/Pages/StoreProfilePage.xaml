@@ -4,9 +4,33 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    mc:Ignorable="d">
+    mc:Ignorable="d"
+    Loaded="Page_Loaded">
 
-    <Grid>
-        <TextBlock Text="Hello World" />
-    </Grid>
+    <Page.Resources>
+        <!-- Styles -->
+        <Style x:Key="StorePageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
+            <Setter Property="Padding" Value="0,85,0,0" />
+        </Style>
+    </Page.Resources>
+
+    <RelativePanel>
+        <ScrollViewer
+            Name="ContentRoot"
+            Style="{StaticResource StorePageScrollViewerStyle}"
+            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.AlignBottomWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True">
+
+            <StackPanel Padding="16,85,16,16"></StackPanel>
+        </ScrollViewer>
+
+        <Grid
+            RelativePanel.AlignTopWithPanel="True"
+            RelativePanel.AlignLeftWithPanel="True"
+            RelativePanel.AlignRightWithPanel="True"
+            Height="85"
+            Background="{StaticResource NavigationViewHeaderBackgroundBrush}" />
+    </RelativePanel>
 </Page>
