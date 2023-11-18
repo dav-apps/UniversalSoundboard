@@ -1101,4 +1101,13 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PublishSoundsButton.Text" xml:space="preserve">
     <value>Publish sounds</value>
   </data>
+  <data name="Actions-Login" xml:space="preserve">
+    <value>Log in</value>
+  </data>
+  <data name="PublishSoundsLoginDialog-Description" xml:space="preserve">
+    <value>Please log in to publish sounds in the Sound Catalog.</value>
+  </data>
+  <data name="PublishSoundsLoginDialog-Title" xml:space="preserve">
+    <value>Log in required</value>
+  </data>
 </root>

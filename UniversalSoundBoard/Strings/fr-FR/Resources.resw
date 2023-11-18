@@ -1100,4 +1100,13 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="PublishSoundsButton.Text" xml:space="preserve">
     <value>Publier des sons</value>
   </data>
+  <data name="Actions-Login" xml:space="preserve">
+    <value>Se connecter</value>
+  </data>
+  <data name="PublishSoundsLoginDialog-Description" xml:space="preserve">
+    <value>Merci de vous connecter pour pouvoir publier des sons dans le catalogue de sons.</value>
+  </data>
+  <data name="PublishSoundsLoginDialog-Title" xml:space="preserve">
+    <value>Connexion nécessaire</value>
+  </data>
 </root>

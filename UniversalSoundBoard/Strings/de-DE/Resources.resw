@@ -1099,4 +1099,13 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PublishSoundsButton.Text" xml:space="preserve">
     <value>Sounds veröffentlichen</value>
   </data>
+  <data name="Actions-Login" xml:space="preserve">
+    <value>Anmelden</value>
+  </data>
+  <data name="PublishSoundsLoginDialog-Description" xml:space="preserve">
+    <value>Melde dich bitte an, um Sounds im Sound-Katalog veröffentlichen zu können.</value>
+  </data>
+  <data name="PublishSoundsLoginDialog-Title" xml:space="preserve">
+    <value>Anmeldung erforderlich</value>
+  </data>
 </root>

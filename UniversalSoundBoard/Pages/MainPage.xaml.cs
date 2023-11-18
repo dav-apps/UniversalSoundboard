@@ -2349,9 +2349,22 @@ namespace UniversalSoundboard.Pages
         #endregion
 
         #region Publish sounds
-        private void PublishSoundsButton_Click(object sender, RoutedEventArgs e)
+        private async void PublishSoundsButton_Click(object sender, RoutedEventArgs e)
         {
-            NavigateToPage(typeof(StoreProfilePage), new DrillInNavigationTransitionInfo());
+            if (Dav.IsLoggedIn)
+                NavigateToPage(typeof(StoreProfilePage), new DrillInNavigationTransitionInfo());
+            else
+            {
+                var publishSoundsLoginDialog = new PublishSoundsLoginDialog();
+                publishSoundsLoginDialog.PrimaryButtonClick += PublishSoundsLoginDialog_PrimaryButtonClick;
+                await publishSoundsLoginDialog.ShowAsync();
+            }
+        }
+
+        private async void PublishSoundsLoginDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            if (await AccountPage.ShowLoginPage())
+                NavigateToPage(typeof(StoreProfilePage), new DrillInNavigationTransitionInfo());
         }
         #endregion
     }
