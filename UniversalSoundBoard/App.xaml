@@ -2,6 +2,7 @@
     x:Class="UniversalSoundboard.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:media="using:CommunityToolkit.WinUI.Media"
     xmlns:converters="using:UniversalSoundboard.Converters">
 
     <Application.Resources>
@@ -957,6 +958,13 @@
                     </Setter.Value>
                 </Setter>
             </Style>
+
+            <media:AttachedCardShadow
+                x:Key="ProfileImageShadow"
+                Offset="0,2"
+                BlurRadius="16"
+                Opacity="0.8"
+                CornerRadius="75" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

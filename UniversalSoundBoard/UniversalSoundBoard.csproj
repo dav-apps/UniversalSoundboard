@@ -502,8 +502,11 @@
     </Page>
   </ItemGroup>
   <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Uwp.Media">
+      <Version>8.0.230907</Version>
+    </PackageReference>
     <PackageReference Include="Google.Apis.YouTube.v3">
-      <Version>1.63.0.3205</Version>
+      <Version>1.64.0.3205</Version>
     </PackageReference>
     <PackageReference Include="GraphQL.Client">
       <Version>6.0.1</Version>

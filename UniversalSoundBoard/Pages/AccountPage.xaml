@@ -4,7 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="using:Microsoft.Toolkit.Uwp.UI.Controls"
+    xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:davClassLibrary="using:davClassLibrary"
     xmlns:converters="using:UniversalSoundboard.Converters"
@@ -80,18 +80,15 @@
                             Name="UserProfileContentStackPanel"
                             Orientation="Horizontal">
 
-                            <controls:DropShadowPanel
-                                OffsetX="0"
-                                OffsetY="2"
-                                BlurRadius="16"
-                                ShadowOpacity="0.8">
+                            <Ellipse
+                                ui:Effects.Shadow="{StaticResource ProfileImageShadow}"
+                                Height="150"
+                                Width="150">
                                 
-                                <Ellipse Name="Avatar" Height="150" Width="150">
-                                    <Ellipse.Fill>
-                                        <ImageBrush ImageSource="{x:Bind davClassLibrary:Dav.User.ProfileImage, Converter={StaticResource FileToBitmapImageConverter}}" />
-                                    </Ellipse.Fill>
-                                </Ellipse>
-                            </controls:DropShadowPanel>
+                                <Ellipse.Fill>
+                                    <ImageBrush ImageSource="{x:Bind davClassLibrary:Dav.User.ProfileImage, Converter={StaticResource FileToBitmapImageConverter}}" />
+                                </Ellipse.Fill>
+                            </Ellipse>
 
                             <StackPanel
                                 Name="UserInfoStackPanel"
