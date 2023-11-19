@@ -1,4 +1,5 @@
-﻿using UniversalSoundboard.DataAccess;
+﻿using System.Threading.Tasks;
+using UniversalSoundboard.DataAccess;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
@@ -13,9 +14,10 @@ namespace UniversalSoundboard.Pages
             InitializeComponent();
         }
 
-        private void Page_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
+        private async void Page_Loaded(object sender, Windows.UI.Xaml.RoutedEventArgs e)
         {
             SetThemeColors();
+            await LoadSounds();
         }
 
         private void SetThemeColors()
@@ -23,6 +25,15 @@ namespace UniversalSoundboard.Pages
             RequestedTheme = FileManager.GetRequestedTheme();
             SolidColorBrush appThemeColorBrush = new SolidColorBrush(FileManager.GetApplicationThemeColor());
             ContentRoot.Background = appThemeColorBrush;
+        }
+
+        private async Task LoadSounds()
+        {
+            var listSoundsResult = await ApiManager.ListSounds(mine: true);
+            if (listSoundsResult.Items == null) return;
+
+            numberOfSoundsText = listSoundsResult.Total.ToString() + " sounds";
+            Bindings.Update();
         }
     }
 }
