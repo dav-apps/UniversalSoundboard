@@ -521,6 +521,9 @@
     <PackageReference Include="HtmlAgilityPack">
       <Version>1.11.54</Version>
     </PackageReference>
+    <PackageReference Include="MediaTypeMap.Core">
+      <Version>2.3.3</Version>
+    </PackageReference>
     <PackageReference Include="Microsoft.AppCenter.Analytics">
       <Version>5.0.3</Version>
     </PackageReference>

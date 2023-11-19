@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MimeTypes;
+using System;
 using System.Linq;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
@@ -70,7 +71,24 @@ namespace UniversalSoundboard.Components
             var itemTemplate = Resources["DialogSoundListItemTemplate"] as DataTemplate;
 
             var soundSelectionDialog = new SoundSelectionDialog(FileManager.itemViewHolder.AllSounds.ToList(), itemTemplate);
+            soundSelectionDialog.PrimaryButtonClick += SoundSelectionDialog_PrimaryButtonClick;
             await soundSelectionDialog.ShowAsync();
+        }
+
+        private async void SoundSelectionDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            var soundSelectionDialog = sender as SoundSelectionDialog;
+            DialogSoundListItem selectedSoundItem = soundSelectionDialog.SelectedSoundItem;
+            
+            string mimeType = "audio/mpeg";
+
+            try
+            {
+                mimeType = MimeTypeMap.GetMimeType(selectedSoundItem.Sound.AudioFileTableObject.GetPropertyValue("ext"));
+            }
+            catch (Exception) { }
+
+            await ApiManager.UploadSoundFile(SoundItem.Uuid, selectedSoundItem.Sound.AudioFile, mimeType);
         }
     }
 }

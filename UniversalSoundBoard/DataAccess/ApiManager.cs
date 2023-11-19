@@ -2,13 +2,32 @@
 using GraphQL;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
+using System;
+using System.IO;
+using System.Net.Http;
+using System.Net.Http.Headers;
 using System.Threading.Tasks;
 using UniversalSoundboard.Models;
+using Windows.Storage;
 
 namespace UniversalSoundboard.DataAccess
 {
     public class ApiManager
     {
+        private static HttpClient httpClient;
+        public static HttpClient HttpClient
+        {
+            get
+            {
+                if (httpClient == null)
+                {
+                    httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(60) };
+                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Dav.AccessToken);
+                }
+
+                return httpClient;
+            }
+        }
         private static GraphQLHttpClient graphQLClient;
         public static GraphQLHttpClient GraphQLClient
         {
@@ -24,6 +43,32 @@ namespace UniversalSoundboard.DataAccess
 
                 return graphQLClient;
             }
+        }
+
+        public static async Task<bool> UploadSoundFile(string uuid, StorageFile file, string contentType)
+        {
+            HttpResponseMessage response;
+            byte[] data = null;
+
+            using (FileStream fs = File.OpenRead(file.Path))
+            {
+                var binaryReader = new BinaryReader(fs);
+                data = binaryReader.ReadBytes((int)fs.Length);
+            }
+
+            var content = new ByteArrayContent(data);
+            content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
+
+            try
+            {
+                response = await HttpClient.PutAsync($"http://localhost:4003/sounds/{uuid}", content);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public static async Task<ListResponse<SoundResponse>> ListSounds(
