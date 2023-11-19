@@ -69,7 +69,7 @@ namespace UniversalSoundboard.Pages
             if (currentSoundItemTemplate != null)
                 currentSoundItemTemplate.PlaybackStopped();
 
-            currentSoundItemTemplate = (sender as StoreSoundTileTemplate);
+            currentSoundItemTemplate = sender as StoreSoundTileTemplate;
             mediaPlayer.Pause();
             mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(currentSoundItemTemplate.SoundItem.AudioFileUrl));
             mediaPlayer.Play();
@@ -82,8 +82,11 @@ namespace UniversalSoundboard.Pages
 
         private void SoundsGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            var clickedItem = e.ClickedItem as SoundResponse;
-            MainPage.NavigateToPage(typeof(StoreSoundPage), clickedItem, new DrillInNavigationTransitionInfo());
+            MainPage.NavigateToPage(
+                typeof(StoreSoundPage),
+                e.ClickedItem as SoundResponse,
+                new DrillInNavigationTransitionInfo()
+            );
         }
     }
 }
