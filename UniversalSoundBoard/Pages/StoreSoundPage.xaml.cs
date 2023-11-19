@@ -47,10 +47,11 @@ namespace UniversalSoundboard.Pages
                 return;
 
             soundItem = e.Parameter as SoundResponse;
-            sourceUri = new Uri(soundItem.Source);
-            Bindings.Update();
+            if (soundItem.Source != null)
+                sourceUri = new Uri(soundItem.Source);
 
             mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(soundItem.AudioFileUrl));
+            Bindings.Update();
         }
 
         private async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
