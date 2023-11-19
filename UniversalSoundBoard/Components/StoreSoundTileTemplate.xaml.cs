@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -63,9 +65,12 @@ namespace UniversalSoundboard.Components
             UpdatePlayPauseButtonUI();
         }
 
-        private void SelectSoundButton_Click(object sender, RoutedEventArgs e)
+        private async void SelectSoundButton_Click(object sender, RoutedEventArgs e)
         {
+            var itemTemplate = Resources["DialogSoundListItemTemplate"] as DataTemplate;
 
+            var soundSelectionDialog = new SoundSelectionDialog(FileManager.itemViewHolder.AllSounds.ToList(), itemTemplate);
+            await soundSelectionDialog.ShowAsync();
         }
     }
 }

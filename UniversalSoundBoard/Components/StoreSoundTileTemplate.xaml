@@ -5,6 +5,8 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:converters="using:UniversalSoundboard.Converters"
+    xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
@@ -16,6 +18,11 @@
         <converters:NullToVisibilityConverter x:Name="NullToVisibilityConverter" />
         <converters:NullToInvertedVisibilityConverter x:Name="NullToInvertedVisibilityConverter" />
         
+        <!-- DataTemplates -->
+        <DataTemplate x:Key="DialogSoundListItemTemplate" x:DataType="models:DialogSoundListItem">
+            <components:DialogSoundListItemTemplate RemoveButtonVisible="False" />
+        </DataTemplate>
+
         <!-- Styles -->
         <Style x:Key="ActionButtonStyle" TargetType="Button">
             <Setter Property="VerticalAlignment" Value="Center" />
