@@ -1108,4 +1108,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PublishSoundsLoginDialog-Title" xml:space="preserve">
     <value>Anmeldung erforderlich</value>
   </data>
+  <data name="SelectSoundButton.Text" xml:space="preserve">
+    <value>Sound auswählen</value>
+  </data>
 </root>

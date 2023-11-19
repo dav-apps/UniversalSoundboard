@@ -1109,4 +1109,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="PublishSoundsLoginDialog-Title" xml:space="preserve">
     <value>Connexion nécessaire</value>
   </data>
+  <data name="SelectSoundButton.Text" xml:space="preserve">
+    <value>Choisir un son</value>
+  </data>
 </root>

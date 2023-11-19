@@ -4,30 +4,55 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:converters="using:UniversalSoundboard.Converters"
     mc:Ignorable="d"
     d:DesignHeight="300"
     d:DesignWidth="400"
     Loaded="UserControl_Loaded"
     DataContextChanged="UserControl_DataContextChanged">
 
+    <UserControl.Resources>
+        <!-- Converters -->
+        <converters:NullToVisibilityConverter x:Name="NullToVisibilityConverter" />
+        <converters:NullToInvertedVisibilityConverter x:Name="NullToInvertedVisibilityConverter" />
+        
+        <!-- Styles -->
+        <Style x:Key="ActionButtonStyle" TargetType="Button">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="HorizontalAlignment" Value="Left" />
+            <Setter Property="FontFamily" Value="{StaticResource FluentIconsFontFamily}" />
+            <Setter Property="FontSize" Value="18" />
+            <Setter Property="Height" Value="42" />
+            <Setter Property="Width" Value="42" />
+            <Setter Property="CornerRadius" Value="21" />
+            <Setter Property="Background" Value="Transparent" />
+        </Style>
+    </UserControl.Resources>
+
     <StackPanel Orientation="Horizontal" Width="200" Padding="12">
         <Button
             x:Name="PlayPauseButton"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Left"
+            Style="{StaticResource ActionButtonStyle}"
             Content="&#xE102;"
-            FontFamily="{StaticResource FluentIconsFontFamily}"
-            FontSize="18"
-            Height="42"
-            Width="42"
-            CornerRadius="21"
-            Background="Transparent"
+            Visibility="{x:Bind SoundItem.AudioFileUrl, Converter={StaticResource NullToVisibilityConverter}}"
             Click="PlayPauseButton_Click">
 
             <ToolTipService.ToolTip>
                 <TextBlock
                     Name="PlayPauseButtonToolTip"
                     Text="Play" />
+            </ToolTipService.ToolTip>
+        </Button>
+
+        <Button
+            x:Name="SelectSoundButton"
+            Style="{StaticResource ActionButtonStyle}"
+            Content="&#xE8A5;"
+            Visibility="{x:Bind SoundItem.AudioFileUrl, Converter={StaticResource NullToInvertedVisibilityConverter}}"
+            Click="SelectSoundButton_Click">
+
+            <ToolTipService.ToolTip>
+                <TextBlock x:Uid="SelectSoundButton" />
             </ToolTipService.ToolTip>
         </Button>
 

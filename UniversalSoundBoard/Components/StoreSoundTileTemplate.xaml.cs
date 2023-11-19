@@ -62,5 +62,10 @@ namespace UniversalSoundboard.Components
             isPlaying = false;
             UpdatePlayPauseButtonUI();
         }
+
+        private void SelectSoundButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }
