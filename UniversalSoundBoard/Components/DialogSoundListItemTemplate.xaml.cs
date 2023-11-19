@@ -8,6 +8,7 @@ namespace UniversalSoundboard.Components
     {
         public DialogSoundListItem DialogSoundListItem { get => DataContext as DialogSoundListItem; }
         public Sound Sound { get => DialogSoundListItem?.Sound; }
+        public bool RemoveButtonVisible { get; set; }
         
         public DialogSoundListItemTemplate()
         {

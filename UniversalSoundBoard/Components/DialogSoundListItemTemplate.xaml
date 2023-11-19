@@ -10,6 +10,7 @@
     d:DesignWidth="400">
 
     <UserControl.Resources>
+        <converters:BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
         <converters:CategoriesIconsConverter x:Key="CategoriesIconsConverter" />
         <converters:CategoriesMarginConverter x:Key="CategoriesMarginConverter" />
     </UserControl.Resources>
@@ -49,6 +50,7 @@
                 Style="{StaticResource ButtonRevealStyle}"
                 Background="Transparent"
                 FontFamily="{StaticResource FluentIconsFontFamily}"
+                Visibility="{x:Bind RemoveButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                 Content="&#xE108;"
                 Height="35"
                 Width="35"
