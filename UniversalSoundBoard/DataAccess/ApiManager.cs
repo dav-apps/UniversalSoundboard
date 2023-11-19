@@ -54,6 +54,7 @@ namespace UniversalSoundboard.DataAccess
                         ) {
                             total
                             items {
+                                uuid
                                 name
                                 description
                                 audioFileUrl
