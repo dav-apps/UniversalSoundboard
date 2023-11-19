@@ -5,15 +5,25 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:davClassLibrary="using:davClassLibrary"
     xmlns:converters="using:UniversalSoundboard.Converters"
+    xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
     <Page.Resources>
         <!-- Converters -->
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
-        
+
+        <!-- DataTemplates -->
+        <DataTemplate x:Key="StoreSoundTileItemTemplate" x:DataType="models:SoundResponse">
+            <components:StoreSoundTileTemplate
+                Play="StoreSoundTileTemplate_Play"
+                Pause="StoreSoundTileTemplate_Pause" />
+        </DataTemplate>
+
         <!-- Styles -->
         <Style x:Key="StorePageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
             <Setter Property="Padding" Value="0,85,0,0" />
@@ -52,6 +62,24 @@
                     Margin="0,8,0,0"
                     FontSize="16"
                     FontWeight="Light" />
+
+                <GridView
+                    Name="SoundsGridView"
+                    ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
+                    ItemsSource="{x:Bind sounds}"
+                    SelectionMode="None"
+                    animations:ItemsReorderAnimation.Duration="0:0:0.15"
+                    HorizontalAlignment="Center"
+                    Margin="0,18,0,0"
+                    IsItemClickEnabled="True"
+                    ItemClick="SoundsGridView_ItemClick">
+
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid Orientation="Horizontal" MaximumRowsOrColumns="1" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </GridView>
             </StackPanel>
         </ScrollViewer>
 
