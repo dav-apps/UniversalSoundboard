@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using CommunityToolkit.WinUI.Collections;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
@@ -10,7 +11,9 @@ namespace UniversalSoundboard.Dialogs
     public class SoundSelectionDialog : Dialog
     {
         private ListView SoundsListView;
+        private AdvancedCollectionView SoundsCollectionView;
         private ObservableCollection<DialogSoundListItem> SoundItems;
+        public DialogSoundListItem SelectedSoundItem = null;
 
         public SoundSelectionDialog(
             List<Sound> sounds,
@@ -22,6 +25,7 @@ namespace UniversalSoundboard.Dialogs
             )
         {
             SoundItems = new ObservableCollection<DialogSoundListItem>();
+            SoundsCollectionView = new AdvancedCollectionView(SoundItems, true);
 
             foreach (var sound in sounds)
                 SoundItems.Add(new DialogSoundListItem(sound));
@@ -34,19 +38,41 @@ namespace UniversalSoundboard.Dialogs
         {
             StackPanel contentStackPanel = new StackPanel();
 
+            AutoSuggestBox filterAutoSuggestBox = new AutoSuggestBox
+            {
+                PlaceholderText = FileManager.loader.GetString("SoundSelectionDialog-FilterAutoSuggestBox-Placeholder"),
+                QueryIcon = new SymbolIcon(Symbol.Find)
+            };
+
+            filterAutoSuggestBox.TextChanged += FilterAutoSuggestBox_TextChanged;
+
             SoundsListView = new ListView
             {
                 ItemTemplate = itemTemplate,
-                ItemsSource = SoundItems,
+                ItemsSource = SoundsCollectionView,
                 SelectionMode = ListViewSelectionMode.Single,
                 Height = 250,
-                CanReorderItems = true,
-                AllowDrop = true
+                Width = 400,
+                Margin = new Thickness(0, 12, 0, 0)
             };
 
+            SoundsListView.SelectionChanged += SoundsListView_SelectionChanged;
+
+            contentStackPanel.Children.Add(filterAutoSuggestBox);
             contentStackPanel.Children.Add(SoundsListView);
 
             return contentStackPanel;
+        }
+
+        private void FilterAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            SoundsCollectionView.Filter = item => ((DialogSoundListItem)item).Sound.Name.Contains(sender.Text);
+        }
+
+        private void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SelectedSoundItem = SoundsListView.SelectedItem as DialogSoundListItem;
+            ContentDialog.IsPrimaryButtonEnabled = true;
         }
     }
 }

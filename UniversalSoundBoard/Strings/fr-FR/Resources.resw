@@ -1118,4 +1118,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="SoundSelectionDialog-Title" xml:space="preserve">
     <value>Choisir un son</value>
   </data>
+  <data name="SoundSelectionDialog-FilterAutoSuggestBox-Placeholder" xml:space="preserve">
+    <value>Filtrer les sons</value>
+  </data>
 </root>
