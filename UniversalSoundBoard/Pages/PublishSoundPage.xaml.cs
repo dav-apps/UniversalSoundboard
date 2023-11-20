@@ -1,7 +1,10 @@
 ﻿using CommunityToolkit.WinUI.Collections;
+using MimeTypes;
+using System;
 using System.Collections.ObjectModel;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
+using Windows.UI.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
@@ -12,6 +15,7 @@ namespace UniversalSoundboard.Pages
     {
         private ObservableCollection<DialogSoundListItem> SoundItems;
         private AdvancedCollectionView SoundsCollectionView;
+        Sound selectedItem = null;
 
         public PublishSoundPage()
         {
@@ -32,6 +36,46 @@ namespace UniversalSoundboard.Pages
         private void FilterAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
             SoundsCollectionView.Filter = item => ((DialogSoundListItem)item).Sound.Name.ToLower().Contains(sender.Text.ToLower());
+        }
+
+        private void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            selectedItem = (SoundsListView.SelectedItem as DialogSoundListItem).Sound;
+
+            SoundNameTextBox.Text = selectedItem.Name;
+            SoundNameTextBox.IsEnabled = true;
+            DescriptionRichEditBox.IsEnabled = true;
+            PublishButton.IsEnabled = true;
+        }
+
+        private async void PublishButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Create the sound on the server
+            string description = null;
+            DescriptionRichEditBox.Document.GetText(TextGetOptions.None, out description);
+
+            var createSoundResult = await ApiManager.CreateSound(SoundNameTextBox.Text, description);
+
+            if (createSoundResult == null)
+            {
+                // Navigate back to the profile page
+                MainPage.NavigateBack();
+            }
+
+            // Find the mime type of the selected sound file
+            string mimeType = "audio/mpeg";
+
+            try
+            {
+                mimeType = MimeTypeMap.GetMimeType(selectedItem.AudioFileTableObject.GetPropertyValue("ext"));
+            }
+            catch (Exception) { }
+
+            // Upload the file
+            await ApiManager.UploadSoundFile(createSoundResult.Uuid, selectedItem.AudioFile, mimeType);
+
+            // Navigate back to the profile page
+            MainPage.NavigateBack();
         }
 
         private void SetThemeColors()

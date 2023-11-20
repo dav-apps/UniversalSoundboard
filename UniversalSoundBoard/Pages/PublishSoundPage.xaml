@@ -58,7 +58,8 @@
                     SelectionMode="Single"
                     Height="250"
                     Width="400"
-                    Margin="0,12,0,0" />
+                    Margin="0,12,0,0"
+                    SelectionChanged="SoundsListView_SelectionChanged" />
 
                 <TextBlock
                     Text="Wähle einen Namen für den Sound"
@@ -97,7 +98,8 @@
                     Content="Veröffentlichen"
                     HorizontalAlignment="Center"
                     Margin="0,16,0,0"
-                    IsEnabled="False" />
+                    IsEnabled="False"
+                    Click="PublishButton_Click" />
             </StackPanel>
         </ScrollViewer>
 
