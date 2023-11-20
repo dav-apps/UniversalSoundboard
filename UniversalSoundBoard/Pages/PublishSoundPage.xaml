@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
@@ -12,6 +14,11 @@
         <Style x:Key="PublishSoundPageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
             <Setter Property="Padding" Value="0,85,0,0" />
         </Style>
+
+        <!-- DataTemplates -->
+        <DataTemplate x:Key="DialogSoundListItemTemplate" x:DataType="models:DialogSoundListItem">
+            <components:DialogSoundListItemTemplate RemoveButtonVisible="False" />
+        </DataTemplate>
     </Page.Resources>
 
     <RelativePanel>
@@ -24,7 +31,73 @@
             RelativePanel.AlignRightWithPanel="True">
 
             <StackPanel Padding="16,85,16,16">
-                
+                <TextBlock
+                    Style="{StaticResource TitleTextBlockStyle}"
+                    Text="Sound veröffentlichen"
+                    HorizontalAlignment="Center" />
+
+                <TextBlock
+                    Text="Wähle einen Sound aus deinem Soundboard, den du veröffentlichen möchtest."
+                    HorizontalAlignment="Center"
+                    MaxWidth="400"
+                    TextWrapping="WrapWholeWords"
+                    Margin="0,16,0,0" />
+
+                <AutoSuggestBox
+                    Name="FilterAutoSuggestBox"
+                    PlaceholderText="Nach Sounds filtern"
+                    QueryIcon="Find"
+                    Margin="0,24,0,0"
+                    Width="400"
+                    TextChanged="FilterAutoSuggestBox_TextChanged" />
+
+                <ListView
+                    Name="SoundsListView"
+                    ItemTemplate="{StaticResource DialogSoundListItemTemplate}"
+                    ItemsSource="{x:Bind SoundsCollectionView}"
+                    SelectionMode="Single"
+                    Height="250"
+                    Width="400"
+                    Margin="0,12,0,0" />
+
+                <TextBlock
+                    Text="Wähle einen Namen für den Sound"
+                    HorizontalAlignment="Center"
+                    MaxWidth="400"
+                    TextWrapping="WrapWholeWords"
+                    Margin="0,32,0,0" />
+
+                <TextBox
+                    Name="SoundNameTextBox"
+                    HorizontalAlignment="Center"
+                    Width="400"
+                    PlaceholderText="Name of the sound"
+                    IsEnabled="False"
+                    Margin="0,16,0,0" />
+
+                <TextBlock
+                    Text="Füge eine kurze Beschreibung hinzu."
+                    HorizontalAlignment="Center"
+                    MaxWidth="400"
+                    TextWrapping="WrapWholeWords"
+                    Margin="0,32,0,0" />
+
+                <RichEditBox
+                    Name="DescriptionRichEditBox"
+                    HorizontalAlignment="Center"
+                    Width="400"
+                    Height="100"
+                    PlaceholderText="Enter a description for your sound."
+                    IsEnabled="False"
+                    Margin="0,16,0,0" />
+
+                <Button
+                    Name="PublishButton"
+                    Style="{StaticResource AccentButtonStyle}"
+                    Content="Veröffentlichen"
+                    HorizontalAlignment="Center"
+                    Margin="0,16,0,0"
+                    IsEnabled="False" />
             </StackPanel>
         </ScrollViewer>
 
