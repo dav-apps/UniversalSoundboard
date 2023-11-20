@@ -1122,4 +1122,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SoundSelectionDialog-FilterAutoSuggestBox-Placeholder" xml:space="preserve">
     <value>Filter for sounds</value>
   </data>
+  <data name="MyProfileButton.Text" xml:space="preserve">
+    <value>My profile</value>
+  </data>
 </root>

@@ -1121,4 +1121,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="SoundSelectionDialog-FilterAutoSuggestBox-Placeholder" xml:space="preserve">
     <value>Filtrer les sons</value>
   </data>
+  <data name="MyProfileButton.Text" xml:space="preserve">
+    <value>Mon profil</value>
+  </data>
 </root>

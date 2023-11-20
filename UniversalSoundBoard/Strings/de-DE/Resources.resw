@@ -1120,4 +1120,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SoundSelectionDialog-FilterAutoSuggestBox-Placeholder" xml:space="preserve">
     <value>Nach Sounds filtern</value>
   </data>
+  <data name="MyProfileButton.Text" xml:space="preserve">
+    <value>Mein Profil</value>
+  </data>
 </root>

@@ -602,7 +602,12 @@
                                             Text="&#xEC4F;" />
                                         <TextBlock
                                             x:Uid="PublishSoundsButton"
-                                            Style="{StaticResource TopButtonInnerTextStyle}" />
+                                            Style="{StaticResource TopButtonInnerTextStyle}"
+                                            Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToInvertedVisibilityConverter}}" />
+                                        <TextBlock
+                                            x:Uid="MyProfileButton"
+                                            Style="{StaticResource TopButtonInnerTextStyle}"
+                                            Visibility="{x:Bind davClassLibrary:Dav.IsLoggedIn, Converter={StaticResource BooleanToVisibilityConverter}}" />
                                     </StackPanel>
                                 </Button>
                             </RelativePanel>
