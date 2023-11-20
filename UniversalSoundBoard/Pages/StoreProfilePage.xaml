@@ -24,10 +24,6 @@
                 Pause="StoreSoundTileTemplate_Pause" />
         </DataTemplate>
 
-        <DataTemplate x:Key="DialogSoundListItemTemplate" x:DataType="models:DialogSoundListItem">
-            <components:DialogSoundListItemTemplate RemoveButtonVisible="False" />
-        </DataTemplate>
-
         <!-- Styles -->
         <Style x:Key="StorePageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
             <Setter Property="Padding" Value="0,85,0,0" />
