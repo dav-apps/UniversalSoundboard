@@ -162,7 +162,6 @@
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
     <Compile Include="DataAccess\ApiManager.cs" />
-    <Compile Include="Dialogs\PublishSoundDialog.cs" />
     <Compile Include="Dialogs\PublishSoundsLoginDialog.cs" />
     <Compile Include="Dialogs\SoundSelectionDialog.cs" />
     <Compile Include="Dialogs\StoreAddToSoundboardDialog.cs" />

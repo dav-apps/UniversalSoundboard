@@ -50,6 +50,9 @@ namespace UniversalSoundboard.Pages
 
         private async void PublishButton_Click(object sender, RoutedEventArgs e)
         {
+            FileManager.itemViewHolder.LoadingScreenMessage = "Sound wird hochgeladen...";
+            FileManager.itemViewHolder.LoadingScreenVisible = true;
+
             // Create the sound on the server
             string description = null;
             DescriptionRichEditBox.Document.GetText(TextGetOptions.None, out description);
@@ -60,6 +63,8 @@ namespace UniversalSoundboard.Pages
             {
                 // Navigate back to the profile page
                 MainPage.NavigateBack();
+                FileManager.itemViewHolder.LoadingScreenVisible = false;
+                FileManager.itemViewHolder.LoadingScreenMessage = "";
             }
 
             // Find the mime type of the selected sound file
@@ -76,6 +81,8 @@ namespace UniversalSoundboard.Pages
 
             // Navigate back to the profile page
             MainPage.NavigateBack();
+            FileManager.itemViewHolder.LoadingScreenVisible = false;
+            FileManager.itemViewHolder.LoadingScreenMessage = "";
         }
 
         private void SetThemeColors()
