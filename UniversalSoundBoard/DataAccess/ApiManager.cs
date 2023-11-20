@@ -114,5 +114,23 @@ namespace UniversalSoundboard.DataAccess
 
             return (await GraphQLClient.SendQueryAsync<ListSoundsResponse>(listSoundsRequest)).Data.ListSounds;
         }
+
+        public static async Task<SoundResponse> CreateSound(string name, string description = null)
+        {
+            var createSoundMutation = new GraphQLRequest
+            {
+                OperationName = "CreateSound",
+                Query = @"
+                    mutation CreateSound($name: String!, $description: String) {
+                        createSound(name: $name, description: $description) {
+                            uuid
+                        }
+                    }
+                ",
+                Variables = new { name, description }
+            };
+
+            return (await GraphQLClient.SendMutationAsync<CreateSoundResponse>(createSoundMutation)).Data.CreateSound;
+        }
     }
 }

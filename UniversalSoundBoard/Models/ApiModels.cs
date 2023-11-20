@@ -7,6 +7,11 @@ namespace UniversalSoundboard.Models
         public ListResponse<SoundResponse> ListSounds { get; set; }
     }
 
+    public class CreateSoundResponse
+    {
+        public SoundResponse CreateSound { get; set; }
+    }
+
     public class SoundResponse
     {
         public string Uuid { get; set; }
