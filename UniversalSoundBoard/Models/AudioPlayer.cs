@@ -274,20 +274,20 @@ namespace UniversalSoundboard.Models
 
             // Fade in effect
             FileInputNode.EffectDefinitions.Add(fadeInEffectDefinition);
-            if (!isFadeInEnabled) FileInputNode.DisableEffectsByDefinition(fadeInEffectDefinition);
+            if (!isFadeInEnabled) DisableEffect(fadeInEffectDefinition);
 
             // Fade out effect
             FileInputNode.EffectDefinitions.Add(fadeOutEffectDefinition);
-            FileInputNode.DisableEffectsByDefinition(fadeOutEffectDefinition);
+            DisableEffect(fadeOutEffectDefinition);
 
             FileInputNode.EffectDefinitions.Add(echoEffectDefinition);
-            if (!isEchoEnabled) FileInputNode.DisableEffectsByDefinition(echoEffectDefinition);
+            if (!isEchoEnabled) DisableEchoEffect();
 
             FileInputNode.EffectDefinitions.Add(limiterEffectDefinition);
-            if (!isLimiterEnabled) FileInputNode.DisableEffectsByDefinition(limiterEffectDefinition);
+            if (!isLimiterEnabled) DisableLimiterEffect();
 
             FileInputNode.EffectDefinitions.Add(reverbEffectDefinition);
-            if (!isReverbEnabled) FileInputNode.DisableEffectsByDefinition(reverbEffectDefinition);
+            if (!isReverbEnabled) DisableReverbEffect();
 
             FileInputNode.FileCompleted += FileInputNode_FileCompleted;
         }
@@ -317,6 +317,54 @@ namespace UniversalSoundboard.Models
             DeviceOutputNode = outputNodeResult.DeviceOutputNode;
         }
 
+        public void Play()
+        {
+            if (!isInitialized)
+                throw new AudioPlayerNotInitializedException();
+
+            if (isPlaying) return;
+
+            try
+            {
+                AudioGraph.Start();
+            }
+            catch(Exception e)
+            {
+                Crashes.TrackError(e);
+                throw new AudioIOException();
+            }
+
+            isPlaying = true;
+        }
+
+        public void Pause()
+        {
+            if (!isInitialized)
+                throw new AudioPlayerNotInitializedException();
+
+            if (!isPlaying) return;
+
+            try
+            {
+                AudioGraph.Stop();
+            }
+            catch(Exception e)
+            {
+                Crashes.TrackError(e);
+            }
+
+            DisableEffect(fadeInEffectDefinition);
+            isPlaying = false;
+        }
+
+        public async Task FadeOut(int milliseconds)
+        {
+            EnableEffect(fadeOutEffectDefinition);
+            await Task.Delay(milliseconds);
+        }
+
+        #region Effect methods
+        #region General effects
         private void InitEffectDefinitions()
         {
             fadeInEffectDefinition = new AudioEffectDefinition(
@@ -358,51 +406,109 @@ namespace UniversalSoundboard.Models
             };
         }
 
-        public void Play()
+        private void EnableEffect(AudioEffectDefinition effectDefinition)
         {
-            if (!isInitialized)
-                throw new AudioPlayerNotInitializedException();
-
-            if (isPlaying) return;
+            if (FileInputNode == null || effectDefinition == null)
+                return;
 
             try
             {
-                AudioGraph.Start();
+                FileInputNode.EnableEffectsByDefinition(effectDefinition);
             }
-            catch(Exception e)
-            {
-                Crashes.TrackError(e);
-                throw new AudioIOException();
-            }
-
-            isPlaying = true;
+            catch (Exception) { }
         }
 
-        public void Pause()
+        private void DisableEffect(AudioEffectDefinition effectDefinition)
         {
-            if (!isInitialized)
-                throw new AudioPlayerNotInitializedException();
-
-            if (!isPlaying) return;
+            if (FileInputNode == null || effectDefinition == null)
+                return;
 
             try
             {
-                AudioGraph.Stop();
+                FileInputNode.DisableEffectsByDefinition(effectDefinition);
             }
-            catch(Exception e)
-            {
-                Crashes.TrackError(e);
-            }
-
-            FileInputNode.DisableEffectsByDefinition(fadeInEffectDefinition);
-            isPlaying = false;
+            catch (Exception) { }
         }
+        #endregion
 
-        public async Task FadeOut(int milliseconds)
+        #region Echo effect
+        private void EnableEchoEffect()
         {
-            FileInputNode.EnableEffectsByDefinition(fadeOutEffectDefinition);
-            await Task.Delay(milliseconds);
+            if (FileInputNode == null || echoEffectDefinition == null)
+                return;
+
+            try
+            {
+                FileInputNode.EnableEffectsByDefinition(echoEffectDefinition);
+            }
+            catch (Exception) { }
         }
+
+        private void DisableEchoEffect()
+        {
+            if (FileInputNode == null || echoEffectDefinition == null)
+                return;
+
+            try
+            {
+                FileInputNode.DisableEffectsByDefinition(echoEffectDefinition);
+            }
+            catch (Exception) { }
+        }
+        #endregion
+
+        #region Limiter effect
+        private void EnableLimiterEffect()
+        {
+            if (FileInputNode == null || limiterEffectDefinition == null)
+                return;
+
+            try
+            {
+                FileInputNode.EnableEffectsByDefinition(limiterEffectDefinition);
+            }
+            catch (Exception) { }
+        }
+
+        private void DisableLimiterEffect()
+        {
+            if (FileInputNode == null || limiterEffectDefinition == null)
+                return;
+            
+            try
+            {
+                FileInputNode.DisableEffectsByDefinition(limiterEffectDefinition);
+            }
+            catch (Exception) { }
+        }
+        #endregion
+
+        #region Reverb effect
+        private void EnableReverbEffect()
+        {
+            if (FileInputNode == null || reverbEffectDefinition == null)
+                return;
+
+            try
+            {
+                FileInputNode.EnableEffectsByDefinition(reverbEffectDefinition);
+            }
+            catch (Exception) { }
+        }
+
+        private void DisableReverbEffect()
+        {
+            if (FileInputNode == null || reverbEffectDefinition == null)
+                return;
+
+            try
+            {
+                FileInputNode.DisableEffectsByDefinition(reverbEffectDefinition);
+            }
+            catch (Exception) { }
+        }
+        #endregion
+        #endregion
 
         #region Setter methods
         private void setAudioFile(StorageFile audioFile)
@@ -428,7 +534,7 @@ namespace UniversalSoundboard.Models
             
             FileInputNode?.Seek(position);
             this.position = position;
-            FileInputNode.DisableEffectsByDefinition(fadeInEffectDefinition);
+            DisableEffect(fadeInEffectDefinition);
         }
 
         private void setVolume(double volume)
@@ -528,9 +634,9 @@ namespace UniversalSoundboard.Models
             if (FileInputNode != null)
             {
                 if (isEchoEnabled)
-                    FileInputNode.EnableEffectsByDefinition(echoEffectDefinition);
+                    EnableEchoEffect();
                 else
-                    FileInputNode.DisableEffectsByDefinition(echoEffectDefinition);
+                    DisableEchoEffect();
             }
         }
 
@@ -555,9 +661,9 @@ namespace UniversalSoundboard.Models
             if (FileInputNode != null)
             {
                 if (isLimiterEnabled)
-                    FileInputNode.EnableEffectsByDefinition(limiterEffectDefinition);
+                    EnableLimiterEffect();
                 else
-                    FileInputNode.DisableEffectsByDefinition(limiterEffectDefinition);
+                    DisableLimiterEffect();
             }
         }
 
@@ -581,10 +687,14 @@ namespace UniversalSoundboard.Models
 
             if (FileInputNode != null)
             {
-                if (isReverbEnabled)
-                    FileInputNode.EnableEffectsByDefinition(reverbEffectDefinition);
-                else
-                    FileInputNode.DisableEffectsByDefinition(reverbEffectDefinition);
+                try
+                {
+                    if (isReverbEnabled)
+                        EnableReverbEffect();
+                    else
+                        DisableReverbEffect();
+                }
+                catch (Exception) { }
             }
         }
 
