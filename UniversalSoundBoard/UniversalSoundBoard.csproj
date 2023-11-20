@@ -162,6 +162,7 @@
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
     <Compile Include="DataAccess\ApiManager.cs" />
+    <Compile Include="Dialogs\PublishSoundDialog.cs" />
     <Compile Include="Dialogs\PublishSoundsLoginDialog.cs" />
     <Compile Include="Dialogs\SoundSelectionDialog.cs" />
     <Compile Include="Dialogs\StoreAddToSoundboardDialog.cs" />
@@ -246,6 +247,9 @@
     <Compile Include="Models\SoundDownload\SoundDownloadZopharPluginResult.cs" />
     <Compile Include="Pages\EffectManagerPage.xaml.cs">
       <DependentUpon>EffectManagerPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\PublishSoundPage.xaml.cs">
+      <DependentUpon>PublishSoundPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\SoundRecorderPage.xaml.cs">
       <DependentUpon>SoundRecorderPage.xaml</DependentUpon>
@@ -450,6 +454,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Components\PlayingSoundItemTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\PublishSoundPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

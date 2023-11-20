@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Threading.Tasks;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
 using Windows.Media.Core;
 using Windows.Media.Playback;
@@ -87,6 +88,11 @@ namespace UniversalSoundboard.Pages
         private void StoreSoundTileTemplate_Pause(object sender, System.EventArgs e)
         {
             mediaPlayer.Pause();
+        }
+
+        private void PublishSoundButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainPage.NavigateToPage(typeof(PublishSoundPage), new DrillInNavigationTransitionInfo());
         }
     }
 }

@@ -24,6 +24,10 @@
                 Pause="StoreSoundTileTemplate_Pause" />
         </DataTemplate>
 
+        <DataTemplate x:Key="DialogSoundListItemTemplate" x:DataType="models:DialogSoundListItem">
+            <components:DialogSoundListItemTemplate RemoveButtonVisible="False" />
+        </DataTemplate>
+
         <!-- Styles -->
         <Style x:Key="StorePageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
             <Setter Property="Padding" Value="0,85,0,0" />
@@ -62,6 +66,13 @@
                     Margin="0,8,0,0"
                     FontSize="16"
                     FontWeight="Light" />
+
+                <Button
+                    Name="PublishSoundButton"
+                    Content="Publish sound"
+                    HorizontalAlignment="Center"
+                    Margin="0,12,0,0"
+                    Click="PublishSoundButton_Click" />
 
                 <GridView
                     Name="SoundsGridView"
