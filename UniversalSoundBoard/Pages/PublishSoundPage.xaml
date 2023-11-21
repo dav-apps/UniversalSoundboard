@@ -32,12 +32,12 @@
 
             <StackPanel Padding="16,85,16,16">
                 <TextBlock
+                    x:Uid="PublishSoundPage-TitleTextBlock"
                     Style="{StaticResource TitleTextBlockStyle}"
-                    Text="Sound veröffentlichen"
                     HorizontalAlignment="Center" />
 
                 <TextBlock
-                    Text="Wähle einen Sound aus deinem Soundboard, den du veröffentlichen möchtest."
+                    x:Uid="PublishSoundPage-SoundSelectionDescriptionTextBlock"
                     HorizontalAlignment="Center"
                     MaxWidth="400"
                     TextWrapping="WrapWholeWords"
@@ -45,7 +45,7 @@
 
                 <AutoSuggestBox
                     Name="FilterAutoSuggestBox"
-                    PlaceholderText="Nach Sounds filtern"
+                    x:Uid="PublishSoundPage-FilterAutoSuggestBox"
                     QueryIcon="Find"
                     Margin="0,24,0,0"
                     Width="400"
@@ -62,7 +62,7 @@
                     SelectionChanged="SoundsListView_SelectionChanged" />
 
                 <TextBlock
-                    Text="Wähle einen Namen für den Sound"
+                    x:Uid="PublishSoundPage-SoundNameTextBlock"
                     HorizontalAlignment="Center"
                     MaxWidth="400"
                     TextWrapping="WrapWholeWords"
@@ -70,14 +70,15 @@
 
                 <TextBox
                     Name="SoundNameTextBox"
+                    x:Uid="PublishSoundPage-SoundNameTextBox"
                     HorizontalAlignment="Center"
                     Width="400"
-                    PlaceholderText="Name of the sound"
                     IsEnabled="False"
-                    Margin="0,16,0,0" />
+                    Margin="0,16,0,0"
+                    TextChanged="SoundNameTextBox_TextChanged" />
 
                 <TextBlock
-                    Text="Füge eine kurze Beschreibung hinzu."
+                    x:Uid="PublishSoundPage-SoundDescriptionTextBlock"
                     HorizontalAlignment="Center"
                     MaxWidth="400"
                     TextWrapping="WrapWholeWords"
@@ -85,17 +86,17 @@
 
                 <RichEditBox
                     Name="DescriptionRichEditBox"
+                    x:Uid="PublishSoundPage-SoundDescriptionRichEditBox"
                     HorizontalAlignment="Center"
                     Width="400"
                     Height="100"
-                    PlaceholderText="Enter a description for your sound."
                     IsEnabled="False"
                     Margin="0,16,0,0" />
 
                 <Button
                     Name="PublishButton"
+                    x:Uid="PublishSoundPage-PublishButton"
                     Style="{StaticResource AccentButtonStyle}"
-                    Content="Veröffentlichen"
                     HorizontalAlignment="Center"
                     Margin="0,16,0,0"
                     IsEnabled="False"

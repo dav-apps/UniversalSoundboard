@@ -1125,4 +1125,28 @@ This may take some time, depending on how large the import file is.</value>
   <data name="MyProfileButton.Text" xml:space="preserve">
     <value>My profile</value>
   </data>
+  <data name="PublishSoundPage-FilterAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>Filter for sounds</value>
+  </data>
+  <data name="PublishSoundPage-PublishButton.Content" xml:space="preserve">
+    <value>Publish</value>
+  </data>
+  <data name="PublishSoundPage-SoundDescriptionRichEditBox.PlaceholderText" xml:space="preserve">
+    <value>Enter a description for your sound.</value>
+  </data>
+  <data name="PublishSoundPage-SoundDescriptionTextBlock.Text" xml:space="preserve">
+    <value>Add a short description for your sound.</value>
+  </data>
+  <data name="PublishSoundPage-SoundNameTextBlock.Text" xml:space="preserve">
+    <value>Choose a name for the sound.</value>
+  </data>
+  <data name="PublishSoundPage-SoundNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Name of the sound</value>
+  </data>
+  <data name="PublishSoundPage-SoundSelectionDescriptionTextBlock.Text" xml:space="preserve">
+    <value>Select a sound from your soundboard that you would like to publish.</value>
+  </data>
+  <data name="PublishSoundPage-TitleTextBlock.Text" xml:space="preserve">
+    <value>Publish sound</value>
+  </data>
 </root>

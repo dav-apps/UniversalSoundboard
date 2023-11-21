@@ -85,6 +85,11 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.LoadingScreenMessage = "";
         }
 
+        private void SoundNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            PublishButton.IsEnabled = SoundNameTextBox.Text.Length > 2;
+        }
+
         private void SetThemeColors()
         {
             RequestedTheme = FileManager.GetRequestedTheme();

@@ -1123,4 +1123,28 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="MyProfileButton.Text" xml:space="preserve">
     <value>Mein Profil</value>
   </data>
+  <data name="PublishSoundPage-FilterAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>Nach Sounds filtern</value>
+  </data>
+  <data name="PublishSoundPage-PublishButton.Content" xml:space="preserve">
+    <value>Veröffentlichen</value>
+  </data>
+  <data name="PublishSoundPage-SoundDescriptionRichEditBox.PlaceholderText" xml:space="preserve">
+    <value>Gib eine Beschreibung für dein Sound ein.</value>
+  </data>
+  <data name="PublishSoundPage-SoundDescriptionTextBlock.Text" xml:space="preserve">
+    <value>Füge eine kurze Beschreibung für deinen Sound hinzu.</value>
+  </data>
+  <data name="PublishSoundPage-SoundNameTextBlock.Text" xml:space="preserve">
+    <value>Wähle einen Namen für den Sound.</value>
+  </data>
+  <data name="PublishSoundPage-SoundNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Name des Sounds</value>
+  </data>
+  <data name="PublishSoundPage-SoundSelectionDescriptionTextBlock.Text" xml:space="preserve">
+    <value>Wähle einen Sound aus deinem Soundboard, den du veröffentlichen möchtest.</value>
+  </data>
+  <data name="PublishSoundPage-TitleTextBlock.Text" xml:space="preserve">
+    <value>Sound veröffentlichen</value>
+  </data>
 </root>

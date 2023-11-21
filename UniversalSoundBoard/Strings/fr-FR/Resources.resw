@@ -1124,4 +1124,28 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="MyProfileButton.Text" xml:space="preserve">
     <value>Mon profil</value>
   </data>
+  <data name="PublishSoundPage-FilterAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>Filtrer les sons</value>
+  </data>
+  <data name="PublishSoundPage-PublishButton.Content" xml:space="preserve">
+    <value>Publier</value>
+  </data>
+  <data name="PublishSoundPage-SoundDescriptionRichEditBox.PlaceholderText" xml:space="preserve">
+    <value>Saisissez une description de votre son.</value>
+  </data>
+  <data name="PublishSoundPage-SoundDescriptionTextBlock.Text" xml:space="preserve">
+    <value>Ajoutez une brève description de votre son.</value>
+  </data>
+  <data name="PublishSoundPage-SoundNameTextBlock.Text" xml:space="preserve">
+    <value>Choisissez un nom pour le son.</value>
+  </data>
+  <data name="PublishSoundPage-SoundNameTextBox.PlaceholderText" xml:space="preserve">
+    <value>Nom du son</value>
+  </data>
+  <data name="PublishSoundPage-SoundSelectionDescriptionTextBlock.Text" xml:space="preserve">
+    <value>Choisissez un son de votre Soundboard que vous souhaitez publier.</value>
+  </data>
+  <data name="PublishSoundPage-TitleTextBlock.Text" xml:space="preserve">
+    <value>Publier un son</value>
+  </data>
 </root>
