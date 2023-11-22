@@ -39,7 +39,7 @@ namespace UniversalSoundboard.Pages
             UpdatePlayPauseButtonUI();
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
@@ -47,10 +47,15 @@ namespace UniversalSoundboard.Pages
                 return;
 
             soundItem = e.Parameter as SoundResponse;
+
             if (soundItem.Source != null)
                 sourceUri = new Uri(soundItem.Source);
 
             mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(soundItem.AudioFileUrl));
+            Bindings.Update();
+
+            // Load the entire sound from the API
+            soundItem = await ApiManager.RetrieveSound(soundItem.Uuid);
             Bindings.Update();
         }
 
