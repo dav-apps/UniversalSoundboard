@@ -71,6 +71,31 @@ namespace UniversalSoundboard.DataAccess
             return true;
         }
 
+        public static async Task<SoundResponse> RetrieveSound(string uuid)
+        {
+            var retrieveSoundRequest = new GraphQLRequest
+            {
+                OperationName = "RetrieveSound",
+                Query = @"
+                    query RetrieveSound($uuid: String!) {
+                        retrieveSound(uuid: $uuid) {
+                            name
+                            description
+                            audioFileUrl
+                            source
+                            user {
+                                firstName
+                                profileImage
+                            }
+                        }
+                    }
+                ",
+                Variables = new { uuid }
+            };
+
+            return (await GraphQLClient.SendQueryAsync<RetrieveSoundResponse>(retrieveSoundRequest)).Data.RetrieveSound;
+        }
+
         public static async Task<ListResponse<SoundResponse>> ListSounds(
             bool mine = false,
             bool random = false,
@@ -101,10 +126,7 @@ namespace UniversalSoundboard.DataAccess
                             items {
                                 uuid
                                 name
-                                description
                                 audioFileUrl
-                                type
-                                source
                             }
                         }
                     }
