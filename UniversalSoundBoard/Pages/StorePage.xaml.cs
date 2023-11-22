@@ -28,10 +28,10 @@ namespace UniversalSoundboard.Pages
             mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             SetThemeColors();
-            await LoadSounds();
+            LoadSounds();
         }
 
         private async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
@@ -49,18 +49,27 @@ namespace UniversalSoundboard.Pages
             ContentRoot.Background = appThemeColorBrush;
         }
 
-        private async Task LoadSounds()
+        private void LoadSounds()
+        {
+            var a = LoadSoundsOfTheDay();
+            var b = LoadRecentlyAddedSounds();
+        }
+
+        private async Task LoadSoundsOfTheDay()
+        {
+            var soundsOfTheDayResult = await ApiManager.ListSounds(random: true);
+            if (soundsOfTheDayResult.Items == null) return;
+
+            soundsOfTheDay = soundsOfTheDayResult.Items;
+            Bindings.Update();
+        }
+
+        private async Task LoadRecentlyAddedSounds()
         {
             var recentlyAddedSoundsResult = await ApiManager.ListSounds();
             if (recentlyAddedSoundsResult.Items == null) return;
 
             recentlyAddedSounds = recentlyAddedSoundsResult.Items;
-            Bindings.Update();
-
-            var soundsOfTheDayResult = await ApiManager.ListSounds(random: true);
-            if (soundsOfTheDayResult.Items == null) return;
-
-            soundsOfTheDay = soundsOfTheDayResult.Items;
             Bindings.Update();
         }
 

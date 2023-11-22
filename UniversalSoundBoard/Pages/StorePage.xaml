@@ -33,14 +33,14 @@
 
             <StackPanel Padding="16,85,16,16">
                 <TextBlock
-                    x:Uid="StorePage-RecentlyAddedSoundsTextBlock"
+                    x:Uid="StorePage-SoundsOfTheDayTextBlock"
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,0,0,12" />
 
                 <GridView
-                    Name="RecentlyAddedSoundsGridView"
+                    Name="SoundsOfTheDayGridView"
                     ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
-                    ItemsSource="{x:Bind recentlyAddedSounds}"
+                    ItemsSource="{x:Bind soundsOfTheDay}"
                     SelectionMode="None"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollMode="Auto"
@@ -56,14 +56,14 @@
                 </GridView>
 
                 <TextBlock
-                    x:Uid="StorePage-SoundsOfTheDayTextBlock"
+                    x:Uid="StorePage-RecentlyAddedSoundsTextBlock"
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,18,0,12" />
 
                 <GridView
-                    Name="SoundsOfTheDayGridView"
+                    Name="RecentlyAddedSoundsGridView"
                     ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
-                    ItemsSource="{x:Bind soundsOfTheDay}"
+                    ItemsSource="{x:Bind recentlyAddedSounds}"
                     SelectionMode="None"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollMode="Auto"
