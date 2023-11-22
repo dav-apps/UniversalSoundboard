@@ -99,6 +99,35 @@
                     </HyperlinkButton>
                 </StackPanel>
 
+                <Button
+                    Name="ProfileButton"
+                    Style="{StaticResource ButtonRevealStyle}"
+                    Height="46"
+                    Background="Transparent"
+                    HorizontalAlignment="Center"
+                    Margin="0,16,0,0"
+                    Visibility="{x:Bind soundItem.User, Converter={StaticResource NullToVisibilityConverter}}"
+                    Click="ProfileButton_Click">
+
+                    <StackPanel
+                        Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center">
+
+                        <PersonPicture
+                            ProfilePicture="{x:Bind soundItem.User.ProfileImage}"
+                            Height="30"
+                            Width="30" />
+
+                        <TextBlock
+                            Text="{x:Bind soundItem.User.FirstName}"
+                            VerticalAlignment="Center"
+                            Margin="12,-3,0,0"
+                            FontSize="17"
+                            FontFamily="Segoe UI" />
+                    </StackPanel>
+                </Button>
+
                 <TextBlock
                     Name="DescriptionTextBlock"
                     Text="{x:Bind soundItem.Description}"

@@ -11,6 +11,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundboard.Pages
 {
@@ -28,10 +29,17 @@ namespace UniversalSoundboard.Pages
             mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
         }
 
-        private async void Page_Loaded(object sender, RoutedEventArgs e)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             SetThemeColors();
-            await LoadSounds();
+        }
+
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter != null)
+                await LoadSounds((int)e.Parameter);
+            else
+                await LoadSounds();
         }
 
         private async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
@@ -49,13 +57,19 @@ namespace UniversalSoundboard.Pages
             ContentRoot.Background = appThemeColorBrush;
         }
 
-        private async Task LoadSounds()
+        private async Task LoadSounds(int userId = 0)
         {
-            var listSoundsResult = await ApiManager.ListSounds(mine: true);
-            if (listSoundsResult.Items == null) return;
+            ListResponse<SoundResponse> listSoundsResponse;
 
-            sounds = listSoundsResult.Items;
-            numberOfSoundsText = listSoundsResult.Total.ToString() + " sounds";
+            if (userId == 0)
+                listSoundsResponse = await ApiManager.ListSounds(mine: true);
+            else
+                listSoundsResponse = await ApiManager.ListSounds(userId: userId);
+
+            if (listSoundsResponse.Items == null) return;
+
+            sounds = listSoundsResponse.Items;
+            numberOfSoundsText = listSoundsResponse.Total.ToString() + " sounds";
             Bindings.Update();
         }
 

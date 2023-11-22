@@ -2352,7 +2352,7 @@ namespace UniversalSoundboard.Pages
         private async void PublishSoundsButton_Click(object sender, RoutedEventArgs e)
         {
             if (Dav.IsLoggedIn)
-                NavigateToPage(typeof(StoreProfilePage), new DrillInNavigationTransitionInfo());
+                NavigateToPage(typeof(StoreProfilePage), null, new DrillInNavigationTransitionInfo());
             else
             {
                 var publishSoundsLoginDialog = new PublishSoundsLoginDialog();
@@ -2364,7 +2364,7 @@ namespace UniversalSoundboard.Pages
         private async void PublishSoundsLoginDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
             if (await AccountPage.ShowLoginPage())
-                NavigateToPage(typeof(StoreProfilePage), new DrillInNavigationTransitionInfo());
+                NavigateToPage(typeof(StoreProfilePage), null, new DrillInNavigationTransitionInfo());
         }
         #endregion
     }

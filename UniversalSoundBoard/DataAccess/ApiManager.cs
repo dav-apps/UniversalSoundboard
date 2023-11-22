@@ -84,6 +84,7 @@ namespace UniversalSoundboard.DataAccess
                             audioFileUrl
                             source
                             user {
+                                id
                                 firstName
                                 profileImage
                             }

@@ -13,6 +13,7 @@ using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundboard.Pages
@@ -163,6 +164,15 @@ namespace UniversalSoundboard.Pages
         {
             downloadProgress = value;
             Bindings.Update();
+        }
+
+        private void ProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            MainPage.NavigateToPage(
+                typeof(StoreProfilePage),
+                soundItem.User.Id,
+                new DrillInNavigationTransitionInfo()
+            );
         }
     }
 }
