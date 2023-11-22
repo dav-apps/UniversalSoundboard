@@ -98,6 +98,7 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task<ListResponse<SoundResponse>> ListSounds(
             bool mine = false,
+            int userId = 0,
             bool random = false,
             string query = null,
             int limit = 10,
@@ -110,6 +111,7 @@ namespace UniversalSoundboard.DataAccess
                 Query = @"
                     query ListSounds(
                         $mine: Boolean
+                        $userId: Int
                         $random: Boolean
                         $query: String
                         $limit: Int
@@ -117,6 +119,7 @@ namespace UniversalSoundboard.DataAccess
                     ) {
                         listSounds(
                             mine: $mine
+                            userId: $userId
                             random: $random
                             query: $query
                             limit: $limit
@@ -131,7 +134,7 @@ namespace UniversalSoundboard.DataAccess
                         }
                     }
                 ",
-                Variables = new { mine, random, query, limit, offset }
+                Variables = new { mine, userId, random, query, limit, offset }
             };
 
             return (await GraphQLClient.SendQueryAsync<ListSoundsResponse>(listSoundsRequest)).Data.ListSounds;

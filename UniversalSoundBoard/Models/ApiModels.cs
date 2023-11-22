@@ -17,6 +17,13 @@ namespace UniversalSoundboard.Models
         public SoundResponse CreateSound { get; set; }
     }
 
+    public class UserResponse
+    {
+        public int Id { get; set; }
+        public string FirstName { get; set; }
+        public string ProfileImage { get; set; }
+    }
+
     public class SoundResponse
     {
         public string Uuid { get; set; }
@@ -25,6 +32,7 @@ namespace UniversalSoundboard.Models
         public string AudioFileUrl { get; set; }
         public string Type { get; set; }
         public string Source { get; set; }
+        public UserResponse User { get; set; }
     }
 
     public class ListResponse<T>
