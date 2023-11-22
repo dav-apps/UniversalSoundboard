@@ -1149,4 +1149,19 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PublishSoundPage-TitleTextBlock.Text" xml:space="preserve">
     <value>Publish sound</value>
   </data>
+  <data name="Store-Title" xml:space="preserve">
+    <value>Sound catalog</value>
+  </data>
+  <data name="StoreMenuItem.Content" xml:space="preserve">
+    <value>Sound catalog</value>
+  </data>
+  <data name="StorePage-RecentlyAddedSoundsTextBlock.Text" xml:space="preserve">
+    <value>Recently added sounds</value>
+  </data>
+  <data name="StorePage-SoundsOfTheDayTextBlock.Text" xml:space="preserve">
+    <value>Sounds of the day</value>
+  </data>
+  <data name="StoreProfilePage-PublishButton.Content" xml:space="preserve">
+    <value>Publish</value>
+  </data>
 </root>

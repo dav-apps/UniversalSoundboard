@@ -64,6 +64,7 @@
                     FontWeight="Light" />
 
                 <Button
+                    x:Uid="StoreProfilePage-PublishButton"
                     Name="PublishSoundButton"
                     Content="Publish sound"
                     HorizontalAlignment="Center"

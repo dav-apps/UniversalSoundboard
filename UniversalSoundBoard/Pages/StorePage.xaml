@@ -33,8 +33,8 @@
 
             <StackPanel Padding="16,85,16,16">
                 <TextBlock
+                    x:Uid="StorePage-RecentlyAddedSoundsTextBlock"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="Recently added sounds"
                     Margin="0,0,0,12" />
 
                 <GridView
@@ -56,8 +56,8 @@
                 </GridView>
 
                 <TextBlock
+                    x:Uid="StorePage-SoundsOfTheDayTextBlock"
                     Style="{StaticResource SubtitleTextBlockStyle}"
-                    Text="Sounds of the day"
                     Margin="0,18,0,12" />
 
                 <GridView

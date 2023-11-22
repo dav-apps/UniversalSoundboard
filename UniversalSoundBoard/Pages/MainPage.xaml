@@ -110,8 +110,8 @@
             <winui:NavigationView.FooterMenuItems>
                 <winui:NavigationViewItem
                     x:Name="StoreMenuItem"
-                    Icon="Shop"
-                    Content="Store" />
+                    x:Uid="StoreMenuItem"
+                    Icon="Audio" />
                 
                 <winui:NavigationViewItem
                     x:Name="LoginMenuItem"

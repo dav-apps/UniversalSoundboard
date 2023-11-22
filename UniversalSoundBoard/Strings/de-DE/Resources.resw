@@ -1147,4 +1147,19 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PublishSoundPage-TitleTextBlock.Text" xml:space="preserve">
     <value>Sound veröffentlichen</value>
   </data>
+  <data name="Store-Title" xml:space="preserve">
+    <value>Sound-Katalog</value>
+  </data>
+  <data name="StoreMenuItem.Content" xml:space="preserve">
+    <value>Sound-Katalog</value>
+  </data>
+  <data name="StorePage-RecentlyAddedSoundsTextBlock.Text" xml:space="preserve">
+    <value>Kürzlich hinzugefügte Sounds</value>
+  </data>
+  <data name="StorePage-SoundsOfTheDayTextBlock.Text" xml:space="preserve">
+    <value>Sounds des Tages</value>
+  </data>
+  <data name="StoreProfilePage-PublishButton.Content" xml:space="preserve">
+    <value>Veröffentlichen</value>
+  </data>
 </root>

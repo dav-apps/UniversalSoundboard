@@ -1148,4 +1148,19 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="PublishSoundPage-TitleTextBlock.Text" xml:space="preserve">
     <value>Publier un son</value>
   </data>
+  <data name="Store-Title" xml:space="preserve">
+    <value>Catalogue de sons</value>
+  </data>
+  <data name="StoreMenuItem.Content" xml:space="preserve">
+    <value>Catalogue de sons</value>
+  </data>
+  <data name="StorePage-RecentlyAddedSoundsTextBlock.Text" xml:space="preserve">
+    <value>Sons ajoutés récemment</value>
+  </data>
+  <data name="StorePage-SoundsOfTheDayTextBlock.Text" xml:space="preserve">
+    <value>Sons du jour</value>
+  </data>
+  <data name="StoreProfilePage-PublishButton.Content" xml:space="preserve">
+    <value>Publier</value>
+  </data>
 </root>
