@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
@@ -16,8 +17,9 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class StorePage : Page
     {
-        List<SoundResponse> recentlyAddedSounds = new List<SoundResponse>();
         List<SoundResponse> soundsOfTheDay = new List<SoundResponse>();
+        List<SoundResponse> recentlyAddedSounds = new List<SoundResponse>();
+        List<string> tags = new List<string>();
         MediaPlayer mediaPlayer;
         StoreSoundTileTemplate currentSoundItemTemplate;
 
@@ -26,6 +28,8 @@ namespace UniversalSoundboard.Pages
             InitializeComponent();
             mediaPlayer = new MediaPlayer();
             mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
+
+            LoadTags();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -71,6 +75,20 @@ namespace UniversalSoundboard.Pages
 
             recentlyAddedSounds = recentlyAddedSoundsResult.Items;
             Bindings.Update();
+        }
+
+        private void LoadTags()
+        {
+            Random random = new Random();
+            List<string> originalTags = FileManager.GetStoreTags();
+
+            for (int i = 0; i < originalTags.Count; i++)
+            {
+                int randomIndex = random.Next(originalTags.Count);
+
+                tags.Add(originalTags.ElementAt(randomIndex));
+                originalTags.RemoveAt(randomIndex);
+            }
         }
 
         private void StoreSoundTileTemplate_Play(object sender, EventArgs e)

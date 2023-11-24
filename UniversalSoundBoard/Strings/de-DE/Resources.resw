@@ -1162,4 +1162,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StoreProfilePage-PublishButton.Content" xml:space="preserve">
     <value>Veröffentlichen</value>
   </data>
+  <data name="StorePage-TagsTextBlock.Text" xml:space="preserve">
+    <value>Schlagwörter</value>
+  </data>
 </root>

@@ -4,6 +4,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
     xmlns:components="using:UniversalSoundboard.Components"
     xmlns:models="using:UniversalSoundboard.Models"
@@ -19,6 +20,10 @@
             <components:StoreSoundTileTemplate
                 Play="StoreSoundTileTemplate_Play"
                 Pause="StoreSoundTileTemplate_Pause" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="StoreTagItemTemplate" x:DataType="x:String">
+            <components:StoreTagItemTemplate />
         </DataTemplate>
     </Page.Resources>
 
@@ -74,6 +79,29 @@
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
                             <ItemsWrapGrid Orientation="Vertical" MaximumRowsOrColumns="2" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </GridView>
+
+                <TextBlock
+                    x:Uid="StorePage-TagsTextBlock"
+                    Style="{StaticResource SubtitleTextBlockStyle}"
+                    Margin="0,18,0,12" />
+
+                <GridView
+                    Name="TagsGridView"
+                    ItemTemplate="{StaticResource StoreTagItemTemplate}"
+                    ItemsSource="{x:Bind tags}"
+                    SelectionMode="None"
+                    Height="150"
+                    ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                    animations:ItemsReorderAnimation.Duration="0:0:0.15"
+                    IsItemClickEnabled="True"
+                    HorizontalAlignment="Left">
+
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <controls:WrapPanel Name="TagsWrapPanel" MaxWidth="800" />
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
                 </GridView>

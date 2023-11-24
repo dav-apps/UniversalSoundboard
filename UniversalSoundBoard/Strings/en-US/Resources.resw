@@ -1164,4 +1164,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StoreProfilePage-PublishButton.Content" xml:space="preserve">
     <value>Publish</value>
   </data>
+  <data name="StorePage-TagsTextBlock.Text" xml:space="preserve">
+    <value>Tags</value>
+  </data>
 </root>

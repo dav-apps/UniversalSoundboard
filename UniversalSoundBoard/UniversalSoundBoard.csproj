@@ -153,6 +153,9 @@
     <Compile Include="Components\StoreSoundTileTemplate.xaml.cs">
       <DependentUpon>StoreSoundTileTemplate.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Components\StoreTagItemTemplate.xaml.cs">
+      <DependentUpon>StoreTagItemTemplate.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Controllers\PlayingSoundsAnimationController.cs" />
     <Compile Include="Common\EventArgs.cs" />
     <Compile Include="Common\Exceptions.cs" />
@@ -440,6 +443,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="Components\StoreTagItemTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Pages\AccountPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -511,6 +518,9 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Uwp.Collections">
+      <Version>8.0.230907</Version>
+    </PackageReference>
+    <PackageReference Include="CommunityToolkit.Uwp.Controls.Primitives">
       <Version>8.0.230907</Version>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Uwp.Media">

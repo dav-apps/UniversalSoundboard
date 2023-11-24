@@ -3291,7 +3291,7 @@ namespace UniversalSoundboard.DataAccess
         public static void NavigateToStorePage()
         {
             itemViewHolder.Page = typeof(StorePage);
-            itemViewHolder.Title = "Store";
+            itemViewHolder.Title = loader.GetString("Store-Title");
             itemViewHolder.EditButtonVisible = false;
             itemViewHolder.PlayAllButtonVisible = false;
             itemViewHolder.BackButtonEnabled = true;
@@ -3818,6 +3818,113 @@ namespace UniversalSoundboard.DataAccess
                 default:
                     return "mp3";
             }
+        }
+
+        public static List<string> GetStoreTags()
+        {
+            return new List<string>
+            {
+                "multisample",
+                "field-recording",
+                "single-note",
+                "synthesizer",
+                "drum",
+                "loop",
+                "synth",
+                "noise",
+                "ambient",
+                "percussion",
+                "electronic",
+                "voice",
+                "ambience",
+                "sound",
+                "bass",
+                "music",
+                "water",
+                "metal",
+                "drums",
+                "soundscape",
+                "nature",
+                "effect",
+                "beat",
+                "atmosphere",
+                "ambiance",
+                "hit",
+                "fx",
+                "birds",
+                "game",
+                "sample",
+                "foley",
+                "sfx",
+                "vocal",
+                "glitch",
+                "piano",
+                "sci-fi",
+                "guitar",
+                "snare",
+                "drone",
+                "horror",
+                "kick",
+                "male",
+                "machine",
+                "city",
+                "recording",
+                "space",
+                "wind",
+                "owi",
+                "wood",
+                "electro",
+                "people",
+                "digital",
+                "door",
+                "female",
+                "experimental",
+                "dark",
+                "dance",
+                "reverb",
+                "pad",
+                "electric",
+                "processed",
+                "background",
+                "human",
+                "good-sounds",
+                "rain",
+                "traffic",
+                "neumann-u87",
+                "click",
+                "close",
+                "free",
+                "car",
+                "compmusic",
+                "open",
+                "weird",
+                "industrial",
+                "house",
+                "scary",
+                "cinematic",
+                "techno",
+                "rhythm",
+                "street",
+                "carnatic",
+                "fender-chroma-polaris",
+                "loops",
+                "indian-percussion",
+                "mridangam",
+                "h4n-zoom",
+                "sm-58",
+                "icassp2013-dataset",
+                "iitm",
+                "mridangam-stroke-dataset",
+                "speech",
+                "short",
+                "creepy",
+                "acoustic",
+                "1-shot",
+                "sound-design",
+                "bpm",
+                "engine",
+                "velocity"
+            };
         }
         #endregion
 

@@ -1163,4 +1163,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StoreProfilePage-PublishButton.Content" xml:space="preserve">
     <value>Publier</value>
   </data>
+  <data name="StorePage-TagsTextBlock.Text" xml:space="preserve">
+    <value>Etiquettes</value>
+  </data>
 </root>
