@@ -18,6 +18,7 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class StoreSearchPage : Page
     {
+        const int itemsPerPage = 15;
         List<string> tags = FileManager.GetStoreTags();
         ObservableCollection<SoundResponse> sounds = new ObservableCollection<SoundResponse>();
         MediaPlayer mediaPlayer;
@@ -115,8 +116,8 @@ namespace UniversalSoundboard.Pages
 
             ListResponse<SoundResponse> listSoundsResponse = await ApiManager.ListSounds(
                 query: SearchAutoSuggestBox.Text,
-                limit: 15,
-                offset: currentPage * 15
+                limit: itemsPerPage,
+                offset: currentPage * itemsPerPage
             );
 
             isLoading = false;

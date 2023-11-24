@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:ui="using:CommunityToolkit.WinUI"
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:davClassLibrary="using:davClassLibrary"
     xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
@@ -86,6 +87,21 @@
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
                 </GridView>
+
+                <winui:ProgressRing
+                    Width="24"
+                    Height="24"
+                    HorizontalAlignment="Center"
+                    Margin="0,16,0,0"
+                    Visibility="{x:Bind isLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button
+                    Name="LoadMoreButton"
+                    x:Uid="LoadMoreButton"
+                    HorizontalAlignment="Center"
+                    Margin="0,16,0,0"
+                    Visibility="{x:Bind isLoadMoreButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                    Click="LoadMoreButton_Click" />
             </StackPanel>
         </ScrollViewer>
 
