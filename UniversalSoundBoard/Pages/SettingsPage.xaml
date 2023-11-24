@@ -20,10 +20,6 @@
             <Setter Property="Margin" Value="0" />
         </Style>
 
-        <Style x:Key="SettingsPageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
-            <Setter Property="Padding" Value="0,85,0,0" />
-        </Style>
-
         <Style x:Key="SettingsHeaderStyle" TargetType="TextBlock">
             <Setter Property="FontSize" Value="21" />
             <Setter Property="FontWeight" Value="SemiBold" />
@@ -38,7 +34,8 @@
     <RelativePanel>
         <ScrollViewer
             Name="ContentRoot"
-            Style="{StaticResource SettingsPageScrollViewerStyle}"
+            Style="{StaticResource CustomScrollViewerStyle}"
+            Padding="0,85,0,0"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"

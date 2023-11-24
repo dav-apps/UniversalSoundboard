@@ -12,10 +12,6 @@
     Loaded="Page_Loaded">
 
     <Page.Resources>
-        <Style x:Key="StorePageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
-            <Setter Property="Padding" Value="0,85,0,0" />
-        </Style>
-
         <DataTemplate x:Key="StoreSoundTileItemTemplate" x:DataType="models:SoundResponse">
             <components:StoreSoundTileTemplate
                 Play="StoreSoundTileTemplate_Play"
@@ -30,7 +26,8 @@
     <RelativePanel>
         <ScrollViewer
             Name="ContentRoot"
-            Style="{StaticResource StorePageScrollViewerStyle}"
+            Style="{StaticResource CustomScrollViewerStyle}"
+            Padding="0,85,0,0"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"

@@ -14,17 +14,13 @@
         <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
         <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
         <converters:NullToVisibilityConverter x:Name="NullToVisibilityConverter" />
-
-        <!-- Styles -->
-        <Style x:Key="StorePageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
-            <Setter Property="Padding" Value="0,85,0,0" />
-        </Style>
     </Page.Resources>
 
     <RelativePanel>
         <ScrollViewer
             Name="ContentRoot"
-            Style="{StaticResource StorePageScrollViewerStyle}"
+            Style="{StaticResource CustomScrollViewerStyle}"
+            Padding="0,85,0,0"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"

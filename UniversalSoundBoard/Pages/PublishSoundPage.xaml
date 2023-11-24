@@ -10,11 +10,6 @@
     Loaded="Page_Loaded">
 
     <Page.Resources>
-        <!-- Styles -->
-        <Style x:Key="PublishSoundPageScrollViewerStyle" TargetType="ScrollViewer" BasedOn="{StaticResource CustomScrollViewerStyle}">
-            <Setter Property="Padding" Value="0,85,0,0" />
-        </Style>
-
         <!-- DataTemplates -->
         <DataTemplate x:Key="DialogSoundListItemTemplate" x:DataType="models:DialogSoundListItem">
             <components:DialogSoundListItemTemplate RemoveButtonVisible="False" />
@@ -24,7 +19,8 @@
     <RelativePanel>
         <ScrollViewer
             Name="ContentRoot"
-            Style="{StaticResource PublishSoundPageScrollViewerStyle}"
+            Style="{StaticResource CustomScrollViewerStyle}"
+            Padding="0,85,0,0"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
