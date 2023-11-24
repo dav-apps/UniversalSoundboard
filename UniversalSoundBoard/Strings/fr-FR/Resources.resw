@@ -1169,4 +1169,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StoreSearchAutoSuggestBox.PlaceholderText" xml:space="preserve">
     <value>Rechercher des sons</value>
   </data>
+  <data name="LoadMoreButton.Content" xml:space="preserve">
+    <value>Charger plus</value>
+  </data>
 </root>

@@ -1170,4 +1170,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StoreSearchAutoSuggestBox.PlaceholderText" xml:space="preserve">
     <value>Search for sounds</value>
   </data>
+  <data name="LoadMoreButton.Content" xml:space="preserve">
+    <value>Load more</value>
+  </data>
 </root>

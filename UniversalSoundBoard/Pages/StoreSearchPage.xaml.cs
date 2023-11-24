@@ -22,6 +22,8 @@ namespace UniversalSoundboard.Pages
         ObservableCollection<SoundResponse> sounds = new ObservableCollection<SoundResponse>();
         MediaPlayer mediaPlayer;
         StoreSoundTileTemplate currentSoundItemTemplate;
+        bool isLoading = true;
+        int currentPage = 0;
 
         public StoreSearchPage()
         {
@@ -91,6 +93,11 @@ namespace UniversalSoundboard.Pages
             mediaPlayer.Pause();
         }
 
+        private async void LoadMoreButton_Click(object sender, RoutedEventArgs e)
+        {
+            await LoadSounds(true);
+        }
+
         private void SetThemeColors()
         {
             RequestedTheme = FileManager.GetRequestedTheme();
@@ -98,12 +105,24 @@ namespace UniversalSoundboard.Pages
             ContentRoot.Background = appThemeColorBrush;
         }
 
-        private async Task LoadSounds()
+        private async Task LoadSounds(bool nextPage = false)
         {
-            ListResponse<SoundResponse> listSoundsResponse = await ApiManager.ListSounds(query: SearchAutoSuggestBox.Text);
-            if (listSoundsResponse.Items == null) return;
+            if (!nextPage) sounds.Clear();
 
-            sounds.Clear();
+            currentPage = nextPage ? currentPage + 1 : 0;
+            isLoading = true;
+            Bindings.Update();
+
+            ListResponse<SoundResponse> listSoundsResponse = await ApiManager.ListSounds(
+                query: SearchAutoSuggestBox.Text,
+                limit: 15,
+                offset: currentPage * 15
+            );
+
+            isLoading = false;
+            Bindings.Update();
+
+            if (listSoundsResponse.Items == null) return;
 
             foreach (var sound in listSoundsResponse.Items)
                 sounds.Add(sound);

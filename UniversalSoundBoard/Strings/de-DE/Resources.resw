@@ -1168,4 +1168,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StoreSearchAutoSuggestBox.PlaceholderText" xml:space="preserve">
     <value>Nach Sounds suchen</value>
   </data>
+  <data name="LoadMoreButton.Content" xml:space="preserve">
+    <value>Mehr laden</value>
+  </data>
 </root>

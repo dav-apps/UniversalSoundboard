@@ -5,12 +5,18 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:components="using:UniversalSoundboard.Components"
+    xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     Loading="Page_Loading">
 
     <Page.Resources>
+        <!-- Converters -->
+        <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
+        <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
+        
         <!-- DataTemplates -->
         <DataTemplate x:Key="StoreSoundTileItemTemplate" x:DataType="models:SoundResponse">
             <components:StoreSoundTileTemplate
@@ -60,6 +66,21 @@
                         </ItemsPanelTemplate>
                     </GridView.ItemsPanel>
                 </GridView>
+
+                <winui:ProgressRing
+                    Width="24"
+                    Height="24"
+                    HorizontalAlignment="Center"
+                    Margin="0,16,0,0"
+                    Visibility="{x:Bind isLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
+                <Button
+                    Name="LoadMoreButton"
+                    x:Uid="LoadMoreButton"
+                    HorizontalAlignment="Center"
+                    Margin="0,16,0,0"
+                    Visibility="{x:Bind isLoading, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
+                    Click="LoadMoreButton_Click" />
             </StackPanel>
         </ScrollViewer>
 
