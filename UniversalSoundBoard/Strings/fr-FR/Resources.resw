@@ -1172,4 +1172,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="LoadMoreButton.Content" xml:space="preserve">
     <value>Charger plus</value>
   </data>
+  <data name="StoreProfilePage-NumberOfSounds" xml:space="preserve">
+    <value>{0} sons</value>
+  </data>
 </root>

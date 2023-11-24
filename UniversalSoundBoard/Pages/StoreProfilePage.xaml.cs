@@ -18,9 +18,10 @@ namespace UniversalSoundboard.Pages
     public sealed partial class StoreProfilePage : Page
     {
         List<SoundResponse> sounds = new List<SoundResponse>();
-        private string numberOfSoundsText = "0 sounds";
         MediaPlayer mediaPlayer;
         StoreSoundTileTemplate currentSoundItemTemplate;
+        private string numberOfSoundsText = "";
+        private bool numberOfSoundsTextVisible = false;
 
         public StoreProfilePage()
         {
@@ -70,8 +71,10 @@ namespace UniversalSoundboard.Pages
 
             if (listSoundsResponse.Items == null) return;
 
+            numberOfSoundsText = string.Format(FileManager.loader.GetString("StoreProfilePage-NumberOfSounds"), listSoundsResponse.Total);
+            numberOfSoundsTextVisible = listSoundsResponse.Total > 1;
+
             sounds = listSoundsResponse.Items;
-            numberOfSoundsText = listSoundsResponse.Total.ToString() + " sounds";
             Bindings.Update();
         }
 

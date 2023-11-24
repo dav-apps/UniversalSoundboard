@@ -15,6 +15,7 @@
 
     <Page.Resources>
         <!-- Converters -->
+        <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
 
         <!-- DataTemplates -->
@@ -58,12 +59,12 @@
                     HorizontalAlignment="Center"
                     Margin="0,8,0,0"
                     FontSize="16"
-                    FontWeight="Light" />
+                    FontWeight="Light"
+                    Visibility="{x:Bind numberOfSoundsTextVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
                 <Button
                     x:Uid="StoreProfilePage-PublishButton"
                     Name="PublishSoundButton"
-                    Content="Publish sound"
                     HorizontalAlignment="Center"
                     Margin="0,12,0,0"
                     Click="PublishSoundButton_Click" />

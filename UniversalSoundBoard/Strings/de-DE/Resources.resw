@@ -1171,4 +1171,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="LoadMoreButton.Content" xml:space="preserve">
     <value>Mehr laden</value>
   </data>
+  <data name="StoreProfilePage-NumberOfSounds" xml:space="preserve">
+    <value>{0} Sounds</value>
+  </data>
 </root>

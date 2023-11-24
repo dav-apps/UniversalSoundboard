@@ -1173,4 +1173,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="LoadMoreButton.Content" xml:space="preserve">
     <value>Load more</value>
   </data>
+  <data name="StoreProfilePage-NumberOfSounds" xml:space="preserve">
+    <value>{0} sounds</value>
+  </data>
 </root>
