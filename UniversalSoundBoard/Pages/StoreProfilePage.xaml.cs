@@ -36,6 +36,8 @@ namespace UniversalSoundboard.Pages
 
         protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
+            base.OnNavigatedTo(e);
+
             if (e.Parameter != null)
                 await LoadSounds((int)e.Parameter);
             else
