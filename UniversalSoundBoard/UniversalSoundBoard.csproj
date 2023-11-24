@@ -262,6 +262,9 @@
     <Compile Include="Pages\StoreProfilePage.xaml.cs">
       <DependentUpon>StoreProfilePage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Pages\StoreSearchPage.xaml.cs">
+      <DependentUpon>StoreSearchPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\StoreSoundPage.xaml.cs">
       <DependentUpon>StoreSoundPage.xaml</DependentUpon>
     </Compile>
@@ -500,6 +503,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\StoreProfilePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\StoreSearchPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

@@ -115,5 +115,14 @@ namespace UniversalSoundboard.Pages
                 new DrillInNavigationTransitionInfo()
             );
         }
+
+        private void TagsGridView_ItemClick(object sender, ItemClickEventArgs e)
+        {
+            MainPage.NavigateToPage(
+                typeof(StoreSearchPage),
+                e.ClickedItem,
+                new DrillInNavigationTransitionInfo()
+            );
+        }
     }
 }

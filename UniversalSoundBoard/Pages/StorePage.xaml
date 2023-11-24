@@ -94,7 +94,8 @@
                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
                     animations:ItemsReorderAnimation.Duration="0:0:0.15"
                     IsItemClickEnabled="True"
-                    HorizontalAlignment="Left">
+                    HorizontalAlignment="Left"
+                    ItemClick="TagsGridView_ItemClick">
 
                     <GridView.ItemsPanel>
                         <ItemsPanelTemplate>
