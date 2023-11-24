@@ -1166,4 +1166,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StorePage-TagsTextBlock.Text" xml:space="preserve">
     <value>Etiquettes</value>
   </data>
+  <data name="StoreSearchAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>Rechercher des sons</value>
+  </data>
 </root>

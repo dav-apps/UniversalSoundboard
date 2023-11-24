@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using UniversalSoundboard.Components;
@@ -17,6 +18,7 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class StoreSearchPage : Page
     {
+        List<string> tags = FileManager.GetStoreTags();
         ObservableCollection<SoundResponse> sounds = new ObservableCollection<SoundResponse>();
         MediaPlayer mediaPlayer;
         StoreSoundTileTemplate currentSoundItemTemplate;

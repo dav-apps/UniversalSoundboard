@@ -33,6 +33,9 @@
             <StackPanel Padding="16,85,16,16">
                 <AutoSuggestBox
                     Name="SearchAutoSuggestBox"
+                    x:Uid="StoreSearchAutoSuggestBox"
+                    ItemsSource="{x:Bind tags}"
+                    QueryIcon="Find"
                     HorizontalAlignment="Center"
                     Width="400"
                     Height="42"

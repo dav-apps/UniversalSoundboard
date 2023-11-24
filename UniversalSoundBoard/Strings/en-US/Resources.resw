@@ -1167,4 +1167,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StorePage-TagsTextBlock.Text" xml:space="preserve">
     <value>Tags</value>
   </data>
+  <data name="StoreSearchAutoSuggestBox.PlaceholderText" xml:space="preserve">
+    <value>Search for sounds</value>
+  </data>
 </root>
