@@ -11,8 +11,18 @@ namespace UniversalSoundboard.Components
 {
     public sealed partial class StoreSoundTileTemplate : UserControl
     {
-        public SoundResponse SoundItem { get; set; }
         private bool isPlaying = false;
+        private double width = 250;
+
+        public SoundResponse SoundItem { get; set; }
+        public new double Width
+        {
+            get => width;
+            set
+            {
+                width = value;
+            }
+        }
 
         public event EventHandler<EventArgs> Play;
         public event EventHandler<EventArgs> Pause;

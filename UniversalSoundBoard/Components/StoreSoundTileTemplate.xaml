@@ -36,7 +36,7 @@
         </Style>
     </UserControl.Resources>
 
-    <StackPanel Orientation="Horizontal" Width="200" Padding="12">
+    <StackPanel Orientation="Horizontal" Width="{x:Bind width}" Padding="12">
         <Button
             x:Name="PlayPauseButton"
             Style="{StaticResource ActionButtonStyle}"
