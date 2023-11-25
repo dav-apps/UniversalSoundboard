@@ -1174,4 +1174,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StoreProfilePage-NumberOfSounds" xml:space="preserve">
     <value>{0} Sounds</value>
   </data>
+  <data name="StoreSoundPage-AddToSoundboardTextBlock.Text" xml:space="preserve">
+    <value>Zum Soundboard hinzufügen</value>
+  </data>
 </root>

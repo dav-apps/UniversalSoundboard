@@ -1176,4 +1176,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StoreProfilePage-NumberOfSounds" xml:space="preserve">
     <value>{0} sounds</value>
   </data>
+  <data name="StoreSoundPage-AddToSoundboardTextBlock.Text" xml:space="preserve">
+    <value>Add to soundboard</value>
+  </data>
 </root>

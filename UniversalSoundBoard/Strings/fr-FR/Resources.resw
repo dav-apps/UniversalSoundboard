@@ -1175,4 +1175,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StoreProfilePage-NumberOfSounds" xml:space="preserve">
     <value>{0} sons</value>
   </data>
+  <data name="StoreSoundPage-AddToSoundboardTextBlock.Text" xml:space="preserve">
+    <value>Ajouter au soundboard</value>
+  </data>
 </root>

@@ -101,6 +101,7 @@ namespace UniversalSoundboard.DataAccess
                             name
                             description
                             audioFileUrl
+                            type
                             source
                             user {
                                 id
