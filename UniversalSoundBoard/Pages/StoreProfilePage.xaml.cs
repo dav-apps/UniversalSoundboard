@@ -1,4 +1,5 @@
-﻿using System;
+﻿using davClassLibrary;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using UniversalSoundboard.Components;
@@ -22,6 +23,8 @@ namespace UniversalSoundboard.Pages
         MediaPlayer mediaPlayer;
         StoreSoundTileTemplate currentSoundItemTemplate;
         private int userId = 0;
+        private string userFirstName = "";
+        private string userProfileImage = FileManager.DefaultProfileImageUrl;
         private string numberOfSoundsText = "";
         private bool numberOfSoundsTextVisible = false;
         private bool isLoadMoreButtonVisible = false;
@@ -40,14 +43,15 @@ namespace UniversalSoundboard.Pages
             SetThemeColors();
         }
 
-        protected override async void OnNavigatedTo(NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
             if (e.Parameter != null)
                 userId = (int)e.Parameter;
 
-            await LoadSounds();
+            var a = LoadUser();
+            var b = LoadSounds();
         }
 
         private async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
@@ -63,6 +67,26 @@ namespace UniversalSoundboard.Pages
             RequestedTheme = FileManager.GetRequestedTheme();
             SolidColorBrush appThemeColorBrush = new SolidColorBrush(FileManager.GetApplicationThemeColor());
             ContentRoot.Background = appThemeColorBrush;
+        }
+
+        private async Task LoadUser()
+        {
+            if (userId != 0)
+            {
+                // Load the user data from the API
+                UserResponse retrieveUserResponse = await ApiManager.RetrieveUser(userId);
+                if (retrieveUserResponse == null) return;
+
+                userFirstName = retrieveUserResponse.FirstName;
+                userProfileImage = retrieveUserResponse.ProfileImage;
+            }
+            else
+            {
+                // Get the user data from the local user
+                userFirstName = Dav.User.FirstName;
+            }
+
+            Bindings.Update();
         }
 
         private async Task LoadSounds(bool nextPage = false)

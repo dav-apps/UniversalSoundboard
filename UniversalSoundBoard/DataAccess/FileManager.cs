@@ -148,6 +148,7 @@ namespace UniversalSoundboard.DataAccess
         public const string TileFolderName = "tile";
 
         public const string FluentIconsFontFamily = "/Assets/Fonts/SegoeFluentIcons.ttf#Segoe Fluent Icons";
+        public const string DefaultProfileImageUrl = "https://dav-backend.fra1.cdn.digitaloceanspaces.com/profileImages/default.png";
 
         public static List<string> allowedFileTypes = new List<string>
         {

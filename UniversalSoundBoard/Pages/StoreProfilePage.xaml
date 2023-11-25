@@ -18,6 +18,8 @@
         <!-- Converters -->
         <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
         <converters:FileToBitmapImageConverter x:Name="FileToBitmapImageConverter" />
+        <converters:IntToVisibilityConverter x:Name="IntToVisibilityConverter" />
+        <converters:IntToInvertedVisibilityConverter x:Name="IntToInvertedVisibilityConverter" />
 
         <!-- DataTemplates -->
         <DataTemplate x:Key="StoreSoundTileItemTemplate" x:DataType="models:SoundResponse">
@@ -42,16 +44,23 @@
                 <Ellipse
                     ui:Effects.Shadow="{StaticResource ProfileImageShadow}"
                     Height="150"
-                    Width="150">
+                    Width="150"
+                    Visibility="{x:Bind userId, Converter={StaticResource IntToInvertedVisibilityConverter}}">
 
                     <Ellipse.Fill>
                         <ImageBrush ImageSource="{x:Bind davClassLibrary:Dav.User.ProfileImage, Converter={StaticResource FileToBitmapImageConverter}}" />
                     </Ellipse.Fill>
                 </Ellipse>
 
+                <winui:PersonPicture
+                    ProfilePicture="{x:Bind userProfileImage}"
+                    Width="150"
+                    Height="150"
+                    Visibility="{x:Bind userId, Converter={StaticResource IntToVisibilityConverter}}" />
+
                 <TextBlock
                     Style="{StaticResource TitleTextBlockStyle}"
-                    Text="{x:Bind davClassLibrary:Dav.User.FirstName}"
+                    Text="{x:Bind userFirstName}"
                     HorizontalAlignment="Center"
                     Margin="0,18,0,0" />
 
@@ -68,6 +77,7 @@
                     Name="PublishSoundButton"
                     HorizontalAlignment="Center"
                     Margin="0,12,0,0"
+                    Visibility="{x:Bind userId, Converter={StaticResource IntToInvertedVisibilityConverter}}"
                     Click="PublishSoundButton_Click" />
 
                 <GridView

@@ -2,6 +2,11 @@
 
 namespace UniversalSoundboard.Models
 {
+    public class RetrieveUserResponse
+    {
+        public UserResponse RetrieveUser { get; set; }
+    }
+
     public class RetrieveSoundResponse
     {
         public SoundResponse RetrieveSound { get; set; }
