@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Components;
@@ -20,7 +21,7 @@ namespace UniversalSoundboard.Pages
     {
         List<SoundResponse> soundsOfTheDay = new List<SoundResponse>();
         List<SoundResponse> recentlyAddedSounds = new List<SoundResponse>();
-        List<string> tags = new List<string>();
+        ObservableCollection<string> tags = new ObservableCollection<string>();
         MediaPlayer mediaPlayer;
         StoreSoundTileTemplate currentSoundItemTemplate;
 
@@ -29,8 +30,6 @@ namespace UniversalSoundboard.Pages
             InitializeComponent();
             mediaPlayer = new MediaPlayer();
             mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
-
-            LoadTags();
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -64,6 +63,7 @@ namespace UniversalSoundboard.Pages
         {
             var a = LoadSoundsOfTheDay();
             var b = LoadRecentlyAddedSounds();
+            var c = LoadTags();
         }
 
         private async Task LoadSoundsOfTheDay()
@@ -84,10 +84,31 @@ namespace UniversalSoundboard.Pages
             Bindings.Update();
         }
 
-        private void LoadTags()
+        private async Task LoadTags()
         {
+            // Get all tags from the API
+            int totalTags = 0;
+
+            do
+            {
+                var listTagsResult = await ApiManager.ListTags(limit: 500, offset: FileManager.itemViewHolder.Tags.Count);
+                if (listTagsResult == null) break;
+
+                totalTags = listTagsResult.Total;
+
+                foreach (var item in listTagsResult.Items)
+                    FileManager.itemViewHolder.Tags.Add(item.Name);
+
+            } while (FileManager.itemViewHolder.Tags.Count < totalTags);
+
+            // Copy the tags list
+            List<string> originalTags = new List<string>();
+
+            foreach (string tag in FileManager.itemViewHolder.Tags)
+                originalTags.Add(tag);
+            
+            // Select tags randomly
             Random random = new Random();
-            List<string> originalTags = FileManager.GetStoreTags();
 
             for (int i = 0; i < originalTags.Count; i++)
             {

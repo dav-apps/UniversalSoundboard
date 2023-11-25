@@ -22,6 +22,11 @@ namespace UniversalSoundboard.Models
         public SoundResponse CreateSound { get; set; }
     }
 
+    public class ListTagsResponse
+    {
+        public ListResponse<TagResponse> ListTags { get; set; }
+    }
+
     public class UserResponse
     {
         public int Id { get; set; }
@@ -38,6 +43,12 @@ namespace UniversalSoundboard.Models
         public string Type { get; set; }
         public string Source { get; set; }
         public UserResponse User { get; set; }
+    }
+
+    public class TagResponse
+    {
+        public string Uuid { get; set; }
+        public string Name { get; set; }
     }
 
     public class ListResponse<T>

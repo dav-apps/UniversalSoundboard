@@ -109,6 +109,7 @@ namespace UniversalSoundboard.Common
         public ObservableCollection<PlayingSound> PlayingSounds { get; }    // A list of the Playing Sounds which are displayed in the right menu
         public List<PlayingSoundItem> PlayingSoundItems { get; }            // A list of all PlayingSoundItems
         public List<Guid> HotkeySoundMapping { get; }                       // A list of the sounds which are mapped to a specific hotkey, with the position in the list as id
+        public List<string> Tags { get; }                                   // List of all sound tags loaded from the API
         #endregion
 
         #region Layout & Design
@@ -219,6 +220,7 @@ namespace UniversalSoundboard.Common
             PlayingSounds = new ObservableCollection<PlayingSound>();
             PlayingSoundItems = new List<PlayingSoundItem>();
             HotkeySoundMapping = new List<Guid>();
+            Tags = new List<string>();
             #endregion
 
             #region Layout & Design

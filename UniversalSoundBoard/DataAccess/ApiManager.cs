@@ -178,5 +178,26 @@ namespace UniversalSoundboard.DataAccess
 
             return (await GraphQLClient.SendMutationAsync<CreateSoundResponse>(createSoundMutation)).Data.CreateSound;
         }
+
+        public static async Task<ListResponse<TagResponse>> ListTags(int limit = 10, int offset = 0)
+        {
+            var listTagsRequest = new GraphQLRequest
+            {
+                OperationName = "ListTags",
+                Query = @"
+                    query ListTags($limit: Int, $offset: Int) {
+                        listTags(limit: $limit, offset: $offset) {
+                            total
+                            items {
+                                name
+                            }
+                        }
+                    }
+                ",
+                Variables = new { limit, offset }
+            };
+
+            return (await GraphQLClient.SendQueryAsync<ListTagsResponse>(listTagsRequest)).Data.ListTags;
+        }
     }
 }

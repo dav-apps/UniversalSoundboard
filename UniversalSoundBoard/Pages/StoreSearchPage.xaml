@@ -40,7 +40,7 @@
                 <AutoSuggestBox
                     Name="SearchAutoSuggestBox"
                     x:Uid="StoreSearchAutoSuggestBox"
-                    ItemsSource="{x:Bind tags}"
+                    ItemsSource="{Binding Tags}"
                     QueryIcon="Find"
                     HorizontalAlignment="Center"
                     Width="400"
