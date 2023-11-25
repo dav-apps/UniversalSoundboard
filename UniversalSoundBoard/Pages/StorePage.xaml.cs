@@ -12,6 +12,7 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Navigation;
 
 namespace UniversalSoundboard.Pages
 {
@@ -36,6 +37,12 @@ namespace UniversalSoundboard.Pages
         {
             SetThemeColors();
             LoadSounds();
+        }
+
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            mediaPlayer.Pause();
         }
 
         private async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)

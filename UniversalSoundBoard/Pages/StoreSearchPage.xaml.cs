@@ -48,6 +48,12 @@ namespace UniversalSoundboard.Pages
                 SearchAutoSuggestBox.Text = searchText;
         }
 
+        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        {
+            base.OnNavigatedFrom(e);
+            mediaPlayer.Pause();
+        }
+
         private async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
         {
             await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
