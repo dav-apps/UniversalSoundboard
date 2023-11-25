@@ -45,6 +45,25 @@ namespace UniversalSoundboard.DataAccess
             }
         }
 
+        public static async Task<UserResponse> RetrieveUser(int id)
+        {
+            var retrieveUserRequest = new GraphQLRequest
+            {
+                OperationName = "RetrieveUser",
+                Query = @"
+                    query RetrieveUser($id: Int!) {
+                        retrieveUser(id: $id) {
+                            firstName
+                            profileImage
+                        }
+                    }
+                ",
+                Variables = new { id }
+            };
+
+            return (await GraphQLClient.SendQueryAsync<RetrieveUserResponse>(retrieveUserRequest)).Data.RetrieveUser;
+        }
+
         public static async Task<bool> UploadSoundFile(string uuid, StorageFile file, string contentType)
         {
             HttpResponseMessage response;
