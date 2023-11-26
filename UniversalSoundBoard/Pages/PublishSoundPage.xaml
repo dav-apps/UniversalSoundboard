@@ -4,6 +4,8 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:ui="using:CommunityToolkit.WinUI"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:components="using:UniversalSoundboard.Components"
     xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
@@ -26,7 +28,7 @@
             RelativePanel.AlignLeftWithPanel="True"
             RelativePanel.AlignRightWithPanel="True">
 
-            <StackPanel Padding="16,85,16,16">
+            <StackPanel Padding="16,85,16,16" Width="400">
                 <TextBlock
                     x:Uid="PublishSoundPage-TitleTextBlock"
                     Style="{StaticResource TitleTextBlockStyle}"
@@ -34,7 +36,6 @@
 
                 <TextBlock
                     x:Uid="PublishSoundPage-SoundSelectionDescriptionTextBlock"
-                    HorizontalAlignment="Center"
                     MaxWidth="400"
                     TextWrapping="WrapWholeWords"
                     Margin="0,16,0,0" />
@@ -53,13 +54,12 @@
                     ItemsSource="{x:Bind SoundsCollectionView}"
                     SelectionMode="Single"
                     Height="250"
-                    Width="400"
+                    Width="365"
                     Margin="0,12,0,0"
                     SelectionChanged="SoundsListView_SelectionChanged" />
 
                 <TextBlock
                     x:Uid="PublishSoundPage-SoundNameTextBlock"
-                    HorizontalAlignment="Center"
                     MaxWidth="400"
                     TextWrapping="WrapWholeWords"
                     Margin="0,32,0,0" />
@@ -67,7 +67,6 @@
                 <TextBox
                     Name="SoundNameTextBox"
                     x:Uid="PublishSoundPage-SoundNameTextBox"
-                    HorizontalAlignment="Center"
                     Width="400"
                     IsEnabled="False"
                     Margin="0,16,0,0"
@@ -75,7 +74,6 @@
 
                 <TextBlock
                     x:Uid="PublishSoundPage-SoundDescriptionTextBlock"
-                    HorizontalAlignment="Center"
                     MaxWidth="400"
                     TextWrapping="WrapWholeWords"
                     Margin="0,32,0,0" />
@@ -83,11 +81,42 @@
                 <RichEditBox
                     Name="DescriptionRichEditBox"
                     x:Uid="PublishSoundPage-SoundDescriptionRichEditBox"
-                    HorizontalAlignment="Center"
                     Width="400"
                     Height="100"
                     IsEnabled="False"
                     Margin="0,16,0,0" />
+
+                <controls:TokenizingTextBox
+                    x:Name="TagsTokenBox"
+                    ItemsSource="{x:Bind SelectedTags, Mode=TwoWay}"
+                    Width="400"
+                    Margin="0,16,0,0"
+                    MaximumTokens="5"
+                    PlaceholderText="Add tags"
+                    IsEnabled="False"
+                    TextMemberPath="Text"
+                    TokenDelimiter=","
+                    Header="Choose up to 5 tags for this sound."
+                    QueryIcon="{ui:FontIconSource Glyph=&#xE721;,FontSize=12}"
+                    SuggestedItemsSource="{x:Bind Tags, Mode=OneWay}"
+                    TextChanged="TagsTokenBox_TextChanged"
+                    TokenItemAdding="TagsTokenBox_TokenItemAdding">
+
+                    <controls:TokenizingTextBox.SuggestedItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </controls:TokenizingTextBox.SuggestedItemTemplate>
+                    <controls:TokenizingTextBox.TokenItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <TextBlock Text="{Binding}" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </controls:TokenizingTextBox.TokenItemTemplate>
+                </controls:TokenizingTextBox>
 
                 <Button
                     Name="PublishButton"

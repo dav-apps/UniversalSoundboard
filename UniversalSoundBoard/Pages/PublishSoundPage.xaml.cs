@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.WinUI.Collections;
+using CommunityToolkit.WinUI.Controls;
 using MimeTypes;
 using System;
 using System.Collections.ObjectModel;
@@ -15,7 +16,9 @@ namespace UniversalSoundboard.Pages
     {
         private ObservableCollection<DialogSoundListItem> SoundItems;
         private AdvancedCollectionView SoundsCollectionView;
-        Sound selectedItem = null;
+        private ObservableCollection<string> Tags = new ObservableCollection<string>();
+        private ObservableCollection<string> SelectedTags { get; set; }
+        private Sound selectedItem = null;
 
         public PublishSoundPage()
         {
@@ -23,9 +26,13 @@ namespace UniversalSoundboard.Pages
 
             SoundItems = new ObservableCollection<DialogSoundListItem>();
             SoundsCollectionView = new AdvancedCollectionView(SoundItems, true);
+            SelectedTags = new ObservableCollection<string>();
 
             foreach (var sound in FileManager.itemViewHolder.AllSounds)
                 SoundItems.Add(new DialogSoundListItem(sound));
+
+            foreach (var tag in FileManager.itemViewHolder.Tags)
+                Tags.Add(tag);
         }
 
         private void Page_Loaded(object sender, RoutedEventArgs e)
@@ -45,7 +52,28 @@ namespace UniversalSoundboard.Pages
             SoundNameTextBox.Text = selectedItem.Name;
             SoundNameTextBox.IsEnabled = true;
             DescriptionRichEditBox.IsEnabled = true;
+            TagsTokenBox.IsEnabled = true;
             PublishButton.IsEnabled = true;
+        }
+
+        private void SoundNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            PublishButton.IsEnabled = SoundNameTextBox.Text.Length > 2;
+        }
+
+        private void TagsTokenBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        {
+            Tags.Clear();
+
+            var filteredTags = FileManager.itemViewHolder.Tags.FindAll(tag => tag.ToLower().Contains(sender.Text.ToLower()));
+
+            foreach (var tag in filteredTags)
+                Tags.Add(tag);
+        }
+
+        private void TagsTokenBox_TokenItemAdding(TokenizingTextBox sender, TokenItemAddingEventArgs args)
+        {
+            args.Item = args.TokenText;
         }
 
         private async void PublishButton_Click(object sender, RoutedEventArgs e)
@@ -83,11 +111,6 @@ namespace UniversalSoundboard.Pages
             MainPage.NavigateBack();
             FileManager.itemViewHolder.LoadingScreenVisible = false;
             FileManager.itemViewHolder.LoadingScreenMessage = "";
-        }
-
-        private void SoundNameTextBox_TextChanged(object sender, TextChangedEventArgs e)
-        {
-            PublishButton.IsEnabled = SoundNameTextBox.Text.Length > 2;
         }
 
         private void SetThemeColors()
