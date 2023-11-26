@@ -3,6 +3,7 @@ using GraphQL;
 using GraphQL.Client.Http;
 using GraphQL.Client.Serializer.Newtonsoft;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -161,19 +162,27 @@ namespace UniversalSoundboard.DataAccess
             return (await GraphQLClient.SendQueryAsync<ListSoundsResponse>(listSoundsRequest)).Data.ListSounds;
         }
 
-        public static async Task<SoundResponse> CreateSound(string name, string description = null)
+        public static async Task<SoundResponse> CreateSound(string name, string description = null, List<string> tags = null)
         {
             var createSoundMutation = new GraphQLRequest
             {
                 OperationName = "CreateSound",
                 Query = @"
-                    mutation CreateSound($name: String!, $description: String) {
-                        createSound(name: $name, description: $description) {
+                    mutation CreateSound(
+                        $name: String!
+                        $description: String
+                        $tags: [String!]
+                    ) {
+                        createSound(
+                            name: $name
+                            description: $description
+                            tags: $tags
+                        ) {
                             uuid
                         }
                     }
                 ",
-                Variables = new { name, description }
+                Variables = new { name, description, tags }
             };
 
             return (await GraphQLClient.SendMutationAsync<CreateSoundResponse>(createSoundMutation)).Data.CreateSound;

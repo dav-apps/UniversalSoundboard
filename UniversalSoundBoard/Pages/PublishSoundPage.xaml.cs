@@ -3,6 +3,7 @@ using CommunityToolkit.WinUI.Controls;
 using MimeTypes;
 using System;
 using System.Collections.ObjectModel;
+using System.Linq;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.UI.Text;
@@ -85,7 +86,7 @@ namespace UniversalSoundboard.Pages
             string description = null;
             DescriptionRichEditBox.Document.GetText(TextGetOptions.None, out description);
 
-            var createSoundResult = await ApiManager.CreateSound(SoundNameTextBox.Text, description);
+            var createSoundResult = await ApiManager.CreateSound(SoundNameTextBox.Text, description, SelectedTags.ToList());
 
             if (createSoundResult == null)
             {
