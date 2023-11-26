@@ -3097,16 +3097,18 @@ namespace UniversalSoundboard.DataAccess
          */
         public static async Task GoBackAsync()
         {
-            // Sound page not visible?
-            if (itemViewHolder.Page != typeof(SoundPage))
+            if (
+                itemViewHolder.Page == typeof(StoreSoundPage)
+                || itemViewHolder.Page == typeof(StoreProfilePage)
+                || itemViewHolder.Page == typeof(StoreSearchPage)
+                || itemViewHolder.Page == typeof(PublishSoundPage)
+            )
             {
-                if (itemViewHolder.Page == typeof(StoreSoundPage))
-                {
                     // Navigate back to the Store page
                     MainPage.NavigateBack();
                     return;
                 }
-                else
+            else if (itemViewHolder.Page != typeof(SoundPage))
                 {
                     // Navigate to All Sounds
                     itemViewHolder.Page = typeof(SoundPage);
@@ -3118,7 +3120,6 @@ namespace UniversalSoundboard.DataAccess
                     UpdateBackButtonVisibility();
                     return;
                 }
-            }
 
             // Is on mobile and search box visible?
             if (
@@ -3168,6 +3169,7 @@ namespace UniversalSoundboard.DataAccess
                 AreTopButtonsNormal()
                 && Equals(itemViewHolder.SelectedCategory, Guid.Empty)
                 && string.IsNullOrEmpty(itemViewHolder.SearchQuery)
+                && itemViewHolder.Page == typeof(SoundPage)
             );
         }
 
@@ -3819,113 +3821,6 @@ namespace UniversalSoundboard.DataAccess
                 default:
                     return "mp3";
             }
-        }
-
-        public static List<string> GetStoreTags()
-        {
-            return new List<string>
-            {
-                "multisample",
-                "field-recording",
-                "single-note",
-                "synthesizer",
-                "drum",
-                "loop",
-                "synth",
-                "noise",
-                "ambient",
-                "percussion",
-                "electronic",
-                "voice",
-                "ambience",
-                "sound",
-                "bass",
-                "music",
-                "water",
-                "metal",
-                "drums",
-                "soundscape",
-                "nature",
-                "effect",
-                "beat",
-                "atmosphere",
-                "ambiance",
-                "hit",
-                "fx",
-                "birds",
-                "game",
-                "sample",
-                "foley",
-                "sfx",
-                "vocal",
-                "glitch",
-                "piano",
-                "sci-fi",
-                "guitar",
-                "snare",
-                "drone",
-                "horror",
-                "kick",
-                "male",
-                "machine",
-                "city",
-                "recording",
-                "space",
-                "wind",
-                "owi",
-                "wood",
-                "electro",
-                "people",
-                "digital",
-                "door",
-                "female",
-                "experimental",
-                "dark",
-                "dance",
-                "reverb",
-                "pad",
-                "electric",
-                "processed",
-                "background",
-                "human",
-                "good-sounds",
-                "rain",
-                "traffic",
-                "neumann-u87",
-                "click",
-                "close",
-                "free",
-                "car",
-                "compmusic",
-                "open",
-                "weird",
-                "industrial",
-                "house",
-                "scary",
-                "cinematic",
-                "techno",
-                "rhythm",
-                "street",
-                "carnatic",
-                "fender-chroma-polaris",
-                "loops",
-                "indian-percussion",
-                "mridangam",
-                "h4n-zoom",
-                "sm-58",
-                "icassp2013-dataset",
-                "iitm",
-                "mridangam-stroke-dataset",
-                "speech",
-                "short",
-                "creepy",
-                "acoustic",
-                "1-shot",
-                "sound-design",
-                "bpm",
-                "engine",
-                "velocity"
-            };
         }
         #endregion
 

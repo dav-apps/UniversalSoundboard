@@ -465,7 +465,10 @@ namespace UniversalSoundboard.Pages
             await FileManager.GoBackAsync();
             AdjustLayout();
 
-            if (FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty))
+            if (
+                FileManager.itemViewHolder.SelectedCategory.Equals(Guid.Empty)
+                && FileManager.itemViewHolder.Page == typeof(SoundPage)
+            )
             {
                 await Task.Delay(5);
                 SelectCategory(Guid.Empty);
@@ -626,6 +629,7 @@ namespace UniversalSoundboard.Pages
         public static void NavigateBack()
         {
             contentFrame.GoBack();
+            FileManager.itemViewHolder.Page = contentFrame.CurrentSourcePageType;
         }
         #endregion
 
