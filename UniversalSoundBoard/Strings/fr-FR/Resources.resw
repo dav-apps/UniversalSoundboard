@@ -1178,4 +1178,10 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StoreSoundPage-AddToSoundboardTextBlock.Text" xml:space="preserve">
     <value>Ajouter au soundboard</value>
   </data>
+  <data name="PublishSoundPage-TagsTokenBox.Header" xml:space="preserve">
+    <value>Choisissez jusqu'à 5 mots-clés pour ce son.</value>
+  </data>
+  <data name="PublishSoundPage-TagsTokenBox.PlaceholderText" xml:space="preserve">
+    <value>Saisissez une étiquette</value>
+  </data>
 </root>

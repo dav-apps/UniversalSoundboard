@@ -88,15 +88,14 @@
 
                 <controls:TokenizingTextBox
                     x:Name="TagsTokenBox"
+                    x:Uid="PublishSoundPage-TagsTokenBox"
                     ItemsSource="{x:Bind SelectedTags, Mode=TwoWay}"
                     Width="400"
                     Margin="0,16,0,0"
                     MaximumTokens="5"
-                    PlaceholderText="Add tags"
                     IsEnabled="False"
                     TextMemberPath="Text"
                     TokenDelimiter=","
-                    Header="Choose up to 5 tags for this sound."
                     QueryIcon="{ui:FontIconSource Glyph=&#xE721;,FontSize=12}"
                     SuggestedItemsSource="{x:Bind Tags, Mode=OneWay}"
                     TextChanged="TagsTokenBox_TextChanged"

@@ -1177,4 +1177,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StoreSoundPage-AddToSoundboardTextBlock.Text" xml:space="preserve">
     <value>Zum Soundboard hinzufügen</value>
   </data>
+  <data name="PublishSoundPage-TagsTokenBox.Header" xml:space="preserve">
+    <value>Wähle bis zu 5 Schlagwörter für diesen Sound.</value>
+  </data>
+  <data name="PublishSoundPage-TagsTokenBox.PlaceholderText" xml:space="preserve">
+    <value>Schlagwort eingeben</value>
+  </data>
 </root>

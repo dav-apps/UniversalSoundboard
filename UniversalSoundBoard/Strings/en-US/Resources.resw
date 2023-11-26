@@ -1179,4 +1179,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StoreSoundPage-AddToSoundboardTextBlock.Text" xml:space="preserve">
     <value>Add to soundboard</value>
   </data>
+  <data name="PublishSoundPage-TagsTokenBox.Header" xml:space="preserve">
+    <value>Choose up to 5 tags for this sound.</value>
+  </data>
+  <data name="PublishSoundPage-TagsTokenBox.PlaceholderText" xml:space="preserve">
+    <value>Enter tag</value>
+  </data>
 </root>
