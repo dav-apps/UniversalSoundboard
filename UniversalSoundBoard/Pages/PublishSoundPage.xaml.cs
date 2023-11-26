@@ -79,7 +79,7 @@ namespace UniversalSoundboard.Pages
 
         private async void PublishButton_Click(object sender, RoutedEventArgs e)
         {
-            FileManager.itemViewHolder.LoadingScreenMessage = "Sound wird hochgeladen...";
+            FileManager.itemViewHolder.LoadingScreenMessage = FileManager.loader.GetString("PublishSoundPage-LoadingScreenMessage");
             FileManager.itemViewHolder.LoadingScreenVisible = true;
 
             // Create the sound on the server

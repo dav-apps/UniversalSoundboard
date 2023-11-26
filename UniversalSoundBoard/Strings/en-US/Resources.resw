@@ -1185,4 +1185,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PublishSoundPage-TagsTokenBox.PlaceholderText" xml:space="preserve">
     <value>Enter tag</value>
   </data>
+  <data name="PublishSoundPage-LoadingScreenMessage" xml:space="preserve">
+    <value>Sound is being published...</value>
+  </data>
 </root>

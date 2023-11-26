@@ -1183,4 +1183,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PublishSoundPage-TagsTokenBox.PlaceholderText" xml:space="preserve">
     <value>Schlagwort eingeben</value>
   </data>
+  <data name="PublishSoundPage-LoadingScreenMessage" xml:space="preserve">
+    <value>Sound wird veröffentlicht...</value>
+  </data>
 </root>

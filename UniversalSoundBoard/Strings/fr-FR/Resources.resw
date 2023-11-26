@@ -1184,4 +1184,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="PublishSoundPage-TagsTokenBox.PlaceholderText" xml:space="preserve">
     <value>Saisissez une étiquette</value>
   </data>
+  <data name="PublishSoundPage-LoadingScreenMessage" xml:space="preserve">
+    <value>Le son est publié...</value>
+  </data>
 </root>
