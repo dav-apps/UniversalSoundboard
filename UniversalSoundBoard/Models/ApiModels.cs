@@ -42,6 +42,7 @@ namespace UniversalSoundboard.Models
         public string AudioFileUrl { get; set; }
         public string Type { get; set; }
         public string Source { get; set; }
+        public List<string> Tags { get; set; }
         public UserResponse User { get; set; }
     }
 

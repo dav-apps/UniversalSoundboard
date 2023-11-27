@@ -104,6 +104,7 @@ namespace UniversalSoundboard.DataAccess
                             audioFileUrl
                             type
                             source
+                            tags
                             user {
                                 id
                                 firstName

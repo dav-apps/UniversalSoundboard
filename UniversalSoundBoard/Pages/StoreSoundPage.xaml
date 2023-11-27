@@ -5,7 +5,9 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
+    xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:converters="using:UniversalSoundboard.Converters"
+    xmlns:components="using:UniversalSoundboard.Components"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
@@ -14,6 +16,11 @@
         <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
         <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
         <converters:NullToVisibilityConverter x:Name="NullToVisibilityConverter" />
+        
+        <!-- DataTemplates -->
+        <DataTemplate x:Key="StoreTagItemTemplate" x:DataType="x:String">
+            <components:StoreTagItemTemplate />
+        </DataTemplate>
     </Page.Resources>
 
     <RelativePanel>
@@ -131,6 +138,23 @@
                     TextWrapping="WrapWholeWords"
                     TextAlignment="Justify"
                     Margin="0,24,0,0" />
+
+                <GridView
+                    Name="TagsGridView"
+                    ItemTemplate="{StaticResource StoreTagItemTemplate}"
+                    ItemsSource="{x:Bind soundItem.Tags}"
+                    SelectionMode="None"
+                    IsItemClickEnabled="True"
+                    HorizontalAlignment="Center"
+                    Margin="0,16,0,0"
+                    ItemClick="TagsGridView_ItemClick">
+
+                    <GridView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <controls:WrapPanel Name="TagsWrapPanel" Width="380" />
+                        </ItemsPanelTemplate>
+                    </GridView.ItemsPanel>
+                </GridView>
             </StackPanel>
         </ScrollViewer>
 
