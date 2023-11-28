@@ -2352,6 +2352,20 @@ namespace UniversalSoundboard.Pages
         }
         #endregion
 
+        #region Store search
+        private void StoreSearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
+        {
+            if (args.QueryText.Length > 0)
+            {
+                NavigateToPage(
+                    typeof(StoreSearchPage),
+                    args.QueryText,
+                    new DrillInNavigationTransitionInfo()
+                );
+            }
+        }
+        #endregion
+
         #region Publish sounds
         private async void PublishSoundsButton_Click(object sender, RoutedEventArgs e)
         {

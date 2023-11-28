@@ -591,8 +591,21 @@
                                 Margin="0,0,10,0"
                                 Visibility="{Binding Page, Converter={StaticResource StoreRightHeaderOnSoundPageVisibleConverter}}">
 
+                                <AutoSuggestBox
+                                    Name="StoreSearchAutoSuggestBox"
+                                    x:Uid="StoreSearchAutoSuggestBox"
+                                    RelativePanel.AlignVerticalCenterWithPanel="True"
+                                    ItemsSource="{Binding Tags}"
+                                    Width="300"
+                                    QueryIcon="Find"
+                                    Margin="6,0,6,0"
+                                    VerticalAlignment="Center"
+                                    QuerySubmitted="StoreSearchAutoSuggestBox_QuerySubmitted" />
+
                                 <Button
                                     Name="PublishSoundsButton"
+                                    RelativePanel.AlignVerticalCenterWithPanel="True"
+                                    RelativePanel.RightOf="StoreSearchAutoSuggestBox"
                                     Style="{StaticResource TopButtonStyle}"
                                     Click="PublishSoundsButton_Click">
 
