@@ -405,18 +405,20 @@ namespace UniversalSoundboard.Pages
 
         private void AdjustLayout()
         {
+            double width = Window.Current.Bounds.Width;
+
             FileManager.AdjustLayout();
             UpdateTopButtonVisibilityForMobileSearch();
 
             // Set the width of the title bar and the position of the title, depending on whether the Hamburger button of the NavigationView is visible
             if (SideBar.DisplayMode == WinUI.NavigationViewDisplayMode.Minimal)
             {
-                TitleBar.Width = Window.Current.Bounds.Width - 96;
+                TitleBar.Width = width - 96;
                 WindowTitleTextBlock.Margin = new Thickness(97, 15, 0, 0);
             }
             else
             {
-                TitleBar.Width = Window.Current.Bounds.Width - 48;
+                TitleBar.Width = width - 48;
                 WindowTitleTextBlock.Margin = new Thickness(65, 15, 0, 0);
             }
 
@@ -425,6 +427,25 @@ namespace UniversalSoundboard.Pages
                 AccountMenuItem.Margin = new Thickness(-2, 1, 0, 0);
             else
                 AccountMenuItem.Margin = new Thickness(2, 1, 0, 0);
+
+            // Update the width / visibility of the Store search field
+            if (width < 650)
+            {
+                StoreSearchAutoSuggestBox.Visibility = Visibility.Collapsed;
+                StoreSearchButton.Visibility = Visibility.Visible;
+            }
+            else if (width < 800)
+            {
+                StoreSearchAutoSuggestBox.Width = 200;
+                StoreSearchAutoSuggestBox.Visibility = Visibility.Visible;
+                StoreSearchButton.Visibility = Visibility.Collapsed;
+            }
+            else
+            {
+                StoreSearchAutoSuggestBox.Width = 300;
+                StoreSearchAutoSuggestBox.Visibility = Visibility.Visible;
+                StoreSearchButton.Visibility = Visibility.Collapsed;
+            }
 
             // Update the app title if the user is on dav Plus or Pro
             if (Dav.IsLoggedIn)
@@ -2363,6 +2384,15 @@ namespace UniversalSoundboard.Pages
                     new DrillInNavigationTransitionInfo()
                 );
             }
+        }
+
+        private void StoreSearchButton_Click(object sender, RoutedEventArgs e)
+        {
+            NavigateToPage(
+                typeof(StoreSearchPage),
+                null,
+                new DrillInNavigationTransitionInfo()
+            );
         }
         #endregion
 

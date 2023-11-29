@@ -603,9 +603,26 @@
                                     QuerySubmitted="StoreSearchAutoSuggestBox_QuerySubmitted" />
 
                                 <Button
-                                    Name="PublishSoundsButton"
+                                    Name="StoreSearchButton" 
                                     RelativePanel.AlignVerticalCenterWithPanel="True"
                                     RelativePanel.RightOf="StoreSearchAutoSuggestBox"
+                                    Content="&#xE094;" 
+                                    Style="{StaticResource TopButtonStyle}"
+                                    Width="40"
+                                    Padding="0"
+                                    VerticalAlignment="Center"
+                                    Visibility="Collapsed"
+                                    Click="StoreSearchButton_Click">
+
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock x:Uid="SearchButton" />
+                                    </ToolTipService.ToolTip>
+                                </Button>
+
+                                <Button
+                                    Name="PublishSoundsButton"
+                                    RelativePanel.AlignVerticalCenterWithPanel="True"
+                                    RelativePanel.RightOf="StoreSearchButton"
                                     Style="{StaticResource TopButtonStyle}"
                                     Click="PublishSoundsButton_Click">
 
