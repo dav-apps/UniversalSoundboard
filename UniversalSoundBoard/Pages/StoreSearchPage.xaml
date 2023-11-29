@@ -10,13 +10,12 @@
     xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
-    Loading="Page_Loading">
+    Loaded="Page_Loaded">
 
     <Page.Resources>
         <!-- Converters -->
         <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
-        <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
-        
+
         <!-- DataTemplates -->
         <DataTemplate x:Key="StoreSoundTileItemTemplate" x:DataType="models:SoundResponse">
             <components:StoreSoundTileTemplate
@@ -79,7 +78,7 @@
                     x:Uid="LoadMoreButton"
                     HorizontalAlignment="Center"
                     Margin="0,16,0,0"
-                    Visibility="{x:Bind isLoading, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
+                    Visibility="{x:Bind loadMoreButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                     Click="LoadMoreButton_Click" />
             </StackPanel>
         </ScrollViewer>

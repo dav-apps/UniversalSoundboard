@@ -21,7 +21,8 @@ namespace UniversalSoundboard.Pages
         ObservableCollection<SoundResponse> sounds = new ObservableCollection<SoundResponse>();
         MediaPlayer mediaPlayer;
         StoreSoundTileTemplate currentSoundItemTemplate;
-        bool isLoading = true;
+        bool isLoading = false;
+        bool loadMoreButtonVisible = false;
         int currentPage = 0;
 
         public StoreSearchPage()
@@ -33,9 +34,15 @@ namespace UniversalSoundboard.Pages
             mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
         }
 
-        private void Page_Loading(FrameworkElement sender, object args)
+        private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             SetThemeColors();
+
+            if (SearchAutoSuggestBox.Text.Length == 0)
+            {
+                // Focus on the search input
+                SearchAutoSuggestBox.Focus(FocusState.Programmatic);
+            }
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -45,7 +52,10 @@ namespace UniversalSoundboard.Pages
             string searchText = e.Parameter as string;
 
             if (searchText != null)
+            {
                 SearchAutoSuggestBox.Text = searchText;
+                isLoading = true;
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -118,6 +128,7 @@ namespace UniversalSoundboard.Pages
 
             currentPage = nextPage ? currentPage + 1 : 0;
             isLoading = true;
+            loadMoreButtonVisible = false;
             Bindings.Update();
 
             ListResponse<SoundResponse> listSoundsResponse = await ApiManager.ListSounds(
@@ -127,6 +138,7 @@ namespace UniversalSoundboard.Pages
             );
 
             isLoading = false;
+            loadMoreButtonVisible = true;
             Bindings.Update();
 
             if (listSoundsResponse.Items == null) return;
