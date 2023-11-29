@@ -28,6 +28,7 @@ namespace UniversalSoundboard.Dialogs
                   FileManager.loader.GetString("Actions-Cancel")
             )
         {
+            ContentDialog.IsPrimaryButtonEnabled = false;
             Content = GetContent();
         }
 
