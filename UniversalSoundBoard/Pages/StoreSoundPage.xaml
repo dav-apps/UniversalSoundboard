@@ -6,6 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
+    xmlns:richText="using:RichTextControls"
     xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
     mc:Ignorable="d"
@@ -87,7 +88,7 @@
                     <HyperlinkButton
                         Margin="12,0,0,0"
                         NavigateUri="{x:Bind sourceUri}"
-                        Visibility="{x:Bind soundItem.Source, Converter={StaticResource NullToVisibilityConverter}}">
+                        Visibility="{x:Bind sourceUri, Converter={StaticResource NullToVisibilityConverter}}">
 
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock
@@ -131,12 +132,10 @@
                     </StackPanel>
                 </Button>
 
-                <TextBlock
+                <richText:HtmlTextBlock
                     Name="DescriptionTextBlock"
-                    Text="{x:Bind soundItem.Description}"
+                    Html="{x:Bind soundItem.Description}"
                     MaxWidth="380"
-                    TextWrapping="WrapWholeWords"
-                    TextAlignment="Justify"
                     Margin="0,24,0,0" />
 
                 <GridView

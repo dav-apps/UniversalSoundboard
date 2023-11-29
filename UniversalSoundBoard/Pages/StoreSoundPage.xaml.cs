@@ -22,7 +22,7 @@ namespace UniversalSoundboard.Pages
     {
         private SoundResponse soundItem;
         private MediaPlayer mediaPlayer;
-        private Uri sourceUri;
+        private Uri sourceUri = null;
         private bool isPlaying = false;
         private bool isDownloading = false;
         private int downloadProgress = 0;
@@ -54,14 +54,15 @@ namespace UniversalSoundboard.Pages
 
             soundItem = e.Parameter as SoundResponse;
 
-            if (soundItem.Source != null)
-                sourceUri = new Uri(soundItem.Source);
-
             mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(soundItem.AudioFileUrl));
             Bindings.Update();
 
             // Load the entire sound from the API
             soundItem = await ApiManager.RetrieveSound(soundItem.Uuid);
+
+            if (soundItem.Source != null)
+                sourceUri = new Uri(soundItem.Source);
+
             Bindings.Update();
         }
 
