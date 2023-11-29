@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.WinUI.Collections;
 using CommunityToolkit.WinUI.Controls;
+using Microsoft.AppCenter.Analytics;
 using MimeTypes;
 using System;
 using System.Collections.ObjectModel;
@@ -39,6 +40,8 @@ namespace UniversalSoundboard.Pages
         private void Page_Loaded(object sender, RoutedEventArgs e)
         {
             SetThemeColors();
+
+            Analytics.TrackEvent("PublishSoundPage-Navigation");
         }
 
         private void FilterAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
@@ -79,6 +82,8 @@ namespace UniversalSoundboard.Pages
 
         private async void PublishButton_Click(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("PublishSoundPage-PublishButton-Click");
+
             FileManager.itemViewHolder.LoadingScreenMessage = FileManager.loader.GetString("PublishSoundPage-LoadingScreenMessage");
             FileManager.itemViewHolder.LoadingScreenVisible = true;
 

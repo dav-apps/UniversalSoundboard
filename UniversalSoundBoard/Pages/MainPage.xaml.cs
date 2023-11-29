@@ -2399,6 +2399,11 @@ namespace UniversalSoundboard.Pages
         #region Publish sounds
         private async void PublishSoundsButton_Click(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("MainPage-PublishSoundsButton-Click", new Dictionary<string, string>
+            {
+                { "IsLoggedIn", Dav.IsLoggedIn.ToString() }
+            });
+
             if (Dav.IsLoggedIn)
                 NavigateToPage(typeof(StoreProfilePage), null, new DrillInNavigationTransitionInfo());
             else
@@ -2411,8 +2416,14 @@ namespace UniversalSoundboard.Pages
 
         private async void PublishSoundsLoginDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            if (await AccountPage.ShowLoginPage())
-                NavigateToPage(typeof(StoreProfilePage), null, new DrillInNavigationTransitionInfo());
+            bool result = await AccountPage.ShowLoginPage();
+
+            Analytics.TrackEvent("MainPage-PublishSoundsLoginDialog-PrimaryButtonClick", new Dictionary<string, string>
+            {
+                { "Result", result.ToString() }
+            });
+
+            if (result) NavigateToPage(typeof(StoreProfilePage), null, new DrillInNavigationTransitionInfo());
         }
         #endregion
     }

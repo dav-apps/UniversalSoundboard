@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Analytics;
+using System;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -170,6 +171,12 @@ namespace UniversalSoundboard.Pages
 
             // Add the sound to the list
             await FileManager.AddSound(uuid);
+
+            Analytics.TrackEvent("StoreSoundPage-AddToSoundboardDialog-PrimaryButtonClick", new Dictionary<string, string>
+            {
+                { "SoundUuid", soundItem.Uuid },
+                { "SoundName", soundItem.Name }
+            });
         }
 
         private void DownloadProgress(int value)
@@ -180,6 +187,11 @@ namespace UniversalSoundboard.Pages
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("StoreSoundPage-ProfileButton-Click", new Dictionary<string, string>
+            {
+                { "UserId", soundItem.User.Id.ToString() }
+            });
+
             MainPage.NavigateToPage(
                 typeof(StoreProfilePage),
                 soundItem.User.Id,
@@ -189,6 +201,11 @@ namespace UniversalSoundboard.Pages
 
         private void TagsGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            Analytics.TrackEvent("StoreSoundPage-TagsGridView-ItemClick", new Dictionary<string, string>
+            {
+                { "Tag", (string)e.ClickedItem }
+            });
+
             MainPage.NavigateToPage(
                 typeof(StoreSearchPage),
                 e.ClickedItem,

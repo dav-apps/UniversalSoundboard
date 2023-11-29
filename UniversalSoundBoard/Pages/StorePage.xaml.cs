@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Analytics;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
@@ -142,15 +143,30 @@ namespace UniversalSoundboard.Pages
 
         private void SoundsGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            var soundItem = e.ClickedItem as SoundResponse;
+            var gridView = sender as GridView;
+
+            Analytics.TrackEvent("StorePage-SoundsGridView-ItemClick", new Dictionary<string, string>
+            {
+                { "SoundUuid", soundItem.Uuid },
+                { "SoundName", soundItem.Name },
+                { "Section", gridView.Name }
+            });
+
             MainPage.NavigateToPage(
                 typeof(StoreSoundPage),
-                e.ClickedItem as SoundResponse,
+                soundItem,
                 new DrillInNavigationTransitionInfo()
             );
         }
 
         private void TagsGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
+            Analytics.TrackEvent("StorePage-TagsGridView-ItemClick", new Dictionary<string, string>
+            {
+                { "Tag", (string)e.ClickedItem }
+            });
+
             MainPage.NavigateToPage(
                 typeof(StoreSearchPage),
                 e.ClickedItem,

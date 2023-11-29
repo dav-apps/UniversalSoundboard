@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Analytics;
+using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using UniversalSoundboard.Components;
@@ -49,7 +51,7 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        protected override void OnNavigatedTo(NavigationEventArgs e)
+        protected override async void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
@@ -57,8 +59,18 @@ namespace UniversalSoundboard.Pages
 
             if (searchText != null)
             {
+                Analytics.TrackEvent("StoreSearchPage-Navigation", new Dictionary<string, string>
+                {
+                    { "SearchQuery", searchText }
+                });
+
                 SearchAutoSuggestBox.Text = searchText;
                 isLoading = true;
+                await LoadSounds(searchText);
+            }
+            else
+            {
+                Analytics.TrackEvent("StoreSearchPage-Navigation");
             }
         }
 
@@ -76,17 +88,23 @@ namespace UniversalSoundboard.Pages
             });
         }
 
-        private async void SearchAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
+        private async void SearchAutoSuggestBox_QuerySubmitted(AutoSuggestBox sender, AutoSuggestBoxQuerySubmittedEventArgs args)
         {
-            if (SearchAutoSuggestBox.Text.Length == 0)
+            if (args.QueryText.Length == 0)
                 sounds.Clear();
             else
-                await LoadSounds();
+                await LoadSounds(args.QueryText);
         }
 
         private void SoundsGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as SoundResponse;
+
+            Analytics.TrackEvent("StoreSearchPage-SoundsGridView-ItemClick", new Dictionary<string, string>
+            {
+                { "SoundUuid", item.Uuid },
+                { "SoundName", item.Name }
+            });
 
             if (item.AudioFileUrl != null)
             {
@@ -116,7 +134,7 @@ namespace UniversalSoundboard.Pages
 
         private async void LoadMoreButton_Click(object sender, RoutedEventArgs e)
         {
-            await LoadSounds(true);
+            await LoadSounds(SearchAutoSuggestBox.Text, true);
         }
 
         private void SetThemeColors()
@@ -126,9 +144,24 @@ namespace UniversalSoundboard.Pages
             ContentRoot.Background = appThemeColorBrush;
         }
 
-        private async Task LoadSounds(bool nextPage = false)
+        private async Task LoadSounds(string queryText, bool nextPage = false)
         {
-            if (!nextPage) sounds.Clear();
+            if (nextPage)
+            {
+                Analytics.TrackEvent("StoreSearchPage-LoadMoreButton-Click", new Dictionary<string, string>
+                {
+                    { "SearchQuery", queryText }
+                });
+            }
+            else
+            {
+                sounds.Clear();
+
+                Analytics.TrackEvent("StoreSearchPage-Search", new Dictionary<string, string>
+                {
+                    { "SearchQuery", queryText }
+                });
+            }
 
             currentPage = nextPage ? currentPage + 1 : 0;
             isLoading = true;
@@ -136,7 +169,7 @@ namespace UniversalSoundboard.Pages
             Bindings.Update();
 
             ListResponse<SoundResponse> listSoundsResponse = await ApiManager.ListSounds(
-                query: SearchAutoSuggestBox.Text,
+                query: queryText,
                 limit: itemsPerPage,
                 offset: currentPage * itemsPerPage
             );

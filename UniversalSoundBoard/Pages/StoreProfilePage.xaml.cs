@@ -1,5 +1,7 @@
 ﻿using davClassLibrary;
+using Microsoft.AppCenter.Analytics;
 using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using UniversalSoundboard.Components;
@@ -143,6 +145,12 @@ namespace UniversalSoundboard.Pages
         private void SoundsGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
             var item = e.ClickedItem as SoundResponse;
+
+            Analytics.TrackEvent("StoreProfilePage-SoundsGridView-ItemClick", new Dictionary<string, string>
+            {
+                { "SoundUuid", item.Uuid },
+                { "SoundName", item.Name }
+            });
 
             if (item.AudioFileUrl != null)
             {

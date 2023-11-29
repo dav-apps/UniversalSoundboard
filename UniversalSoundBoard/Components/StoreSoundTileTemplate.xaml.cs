@@ -1,4 +1,5 @@
-﻿using MimeTypes;
+﻿using Microsoft.AppCenter.Analytics;
+using MimeTypes;
 using System;
 using System.Linq;
 using UniversalSoundboard.DataAccess;
@@ -48,9 +49,15 @@ namespace UniversalSoundboard.Components
         private void PlayPauseButton_Click(object sender, RoutedEventArgs e)
         {
             if (isPlaying)
+            {
                 Pause?.Invoke(this, EventArgs.Empty);
+            }
             else
+            {
                 Play?.Invoke(this, EventArgs.Empty);
+
+                Analytics.TrackEvent("StoreSoundTileTemplate-Play");
+            }
 
             isPlaying = !isPlaying;
             UpdatePlayPauseButtonUI();
