@@ -34,7 +34,12 @@ namespace UniversalSoundboard.Pages
         public StoreProfilePage()
         {
             InitializeComponent();
-            mediaPlayer = new MediaPlayer();
+
+            mediaPlayer = new MediaPlayer
+            {
+                Volume = (double)FileManager.itemViewHolder.Volume / 100
+            };
+
             mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
         }
 
