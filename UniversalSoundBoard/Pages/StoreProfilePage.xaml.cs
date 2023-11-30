@@ -9,6 +9,7 @@ using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.Media.Core;
 using Windows.Media.Playback;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -191,6 +192,11 @@ namespace UniversalSoundboard.Pages
         private void PublishSoundButton_Click(object sender, RoutedEventArgs e)
         {
             MainPage.NavigateToPage(typeof(PublishSoundPage), new DrillInNavigationTransitionInfo());
+        }
+
+        private async void EditProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            await Launcher.LaunchUriAsync(new Uri("https://dav-apps.tech/user"));
         }
 
         private async void LoadMoreButton_Click(object sender, RoutedEventArgs e)

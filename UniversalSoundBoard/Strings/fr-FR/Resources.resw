@@ -1190,4 +1190,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StoreSearchPage-NoResultsTextBlock.Text" xml:space="preserve">
     <value>Aucun son trouvé</value>
   </data>
+  <data name="StoreProfilePage-EditProfileButton.Content" xml:space="preserve">
+    <value>Modifier votre profil</value>
+  </data>
 </root>

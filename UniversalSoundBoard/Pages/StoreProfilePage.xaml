@@ -73,13 +73,23 @@
                     FontWeight="Light"
                     Visibility="{x:Bind numberOfSoundsTextVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                <Button
-                    x:Uid="StoreProfilePage-PublishButton"
-                    Name="PublishSoundButton"
+                <StackPanel
+                    Orientation="Horizontal"
                     HorizontalAlignment="Center"
                     Margin="0,12,0,0"
-                    Visibility="{x:Bind userId, Converter={StaticResource IntToInvertedVisibilityConverter}}"
-                    Click="PublishSoundButton_Click" />
+                    Visibility="{x:Bind userId, Converter={StaticResource IntToInvertedVisibilityConverter}}">
+
+                    <Button
+                        Name="PublishSoundButton"
+                        x:Uid="StoreProfilePage-PublishButton"
+                        Click="PublishSoundButton_Click" />
+
+                    <Button
+                        Name="EditProfileButton"
+                        x:Uid="StoreProfilePage-EditProfileButton"
+                        Margin="8,0,0,0"
+                        Click="EditProfileButton_Click" />
+                </StackPanel>
 
                 <GridView
                     Name="SoundsGridView"

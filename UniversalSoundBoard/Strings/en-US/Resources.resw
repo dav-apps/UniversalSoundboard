@@ -1191,4 +1191,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StoreSearchPage-NoResultsTextBlock.Text" xml:space="preserve">
     <value>No sounds found</value>
   </data>
+  <data name="StoreProfilePage-EditProfileButton.Content" xml:space="preserve">
+    <value>Edit profile</value>
+  </data>
 </root>

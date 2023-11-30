@@ -1189,4 +1189,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StoreSearchPage-NoResultsTextBlock.Text" xml:space="preserve">
     <value>Keine Sounds gefunden</value>
   </data>
+  <data name="StoreProfilePage-EditProfileButton.Content" xml:space="preserve">
+    <value>Profil bearbeiten</value>
+  </data>
 </root>
