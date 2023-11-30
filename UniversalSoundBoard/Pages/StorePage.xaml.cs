@@ -25,6 +25,9 @@ namespace UniversalSoundboard.Pages
         ObservableCollection<string> tags = new ObservableCollection<string>();
         MediaPlayer mediaPlayer;
         StoreSoundTileTemplate currentSoundItemTemplate;
+        bool soundsOfTheDayLoading = true;
+        bool recentlyAddedSoundsLoading = true;
+        bool tagsLoading = true;
 
         public StorePage()
         {
@@ -78,6 +81,8 @@ namespace UniversalSoundboard.Pages
             if (soundsOfTheDayResult.Items == null) return;
 
             soundsOfTheDay = soundsOfTheDayResult.Items;
+            soundsOfTheDayLoading = false;
+
             Bindings.Update();
         }
 
@@ -87,6 +92,8 @@ namespace UniversalSoundboard.Pages
             if (recentlyAddedSoundsResult.Items == null) return;
 
             recentlyAddedSounds = recentlyAddedSoundsResult.Items;
+            recentlyAddedSoundsLoading = false;
+
             Bindings.Update();
         }
 
@@ -123,6 +130,9 @@ namespace UniversalSoundboard.Pages
                 tags.Add(originalTags.ElementAt(randomIndex));
                 originalTags.RemoveAt(randomIndex);
             }
+
+            tagsLoading = false;
+            Bindings.Update();
         }
 
         private void StoreSoundTileTemplate_Play(object sender, EventArgs e)

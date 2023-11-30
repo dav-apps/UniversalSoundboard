@@ -4,14 +4,21 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
     xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
+    xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
     xmlns:models="using:UniversalSoundboard.Models"
     mc:Ignorable="d"
     Loaded="Page_Loaded">
 
     <Page.Resources>
+        <!-- Converters -->
+        <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
+        <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
+        
+        <!-- DataTemplates -->
         <DataTemplate x:Key="StoreSoundTileItemTemplate" x:DataType="models:SoundResponse">
             <components:StoreSoundTileTemplate
                 Play="StoreSoundTileTemplate_Play"
@@ -39,10 +46,23 @@
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,0,0,12" />
 
+                <RelativePanel
+                    Height="150"
+                    Padding="48,0,0,0"
+                    Visibility="{x:Bind soundsOfTheDayLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <winui:ProgressRing
+                        Height="32"
+                        Width="32"
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        IsActive="True" />
+                </RelativePanel>
+
                 <GridView
                     Name="SoundsOfTheDayGridView"
                     ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
                     ItemsSource="{x:Bind soundsOfTheDay}"
+                    Visibility="{x:Bind soundsOfTheDayLoading, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
                     SelectionMode="None"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollMode="Auto"
@@ -62,10 +82,23 @@
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,18,0,12" />
 
+                <RelativePanel
+                    Height="150"
+                    Padding="48,0,0,0"
+                    Visibility="{x:Bind recentlyAddedSoundsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <winui:ProgressRing
+                        Height="32"
+                        Width="32"
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        IsActive="True" />
+                </RelativePanel>
+
                 <GridView
                     Name="RecentlyAddedSoundsGridView"
                     ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
                     ItemsSource="{x:Bind recentlyAddedSounds}"
+                    Visibility="{x:Bind recentlyAddedSoundsLoading, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
                     SelectionMode="None"
                     ScrollViewer.HorizontalScrollBarVisibility="Auto"
                     ScrollViewer.HorizontalScrollMode="Auto"
@@ -85,10 +118,23 @@
                     Style="{StaticResource SubtitleTextBlockStyle}"
                     Margin="0,18,0,12" />
 
+                <RelativePanel
+                    Height="150"
+                    Padding="48,0,0,0"
+                    Visibility="{x:Bind tagsLoading, Converter={StaticResource BooleanToVisibilityConverter}}">
+
+                    <winui:ProgressRing
+                        Height="32"
+                        Width="32"
+                        RelativePanel.AlignVerticalCenterWithPanel="True"
+                        IsActive="True" />
+                </RelativePanel>
+
                 <GridView
                     Name="TagsGridView"
                     ItemTemplate="{StaticResource StoreTagItemTemplate}"
                     ItemsSource="{x:Bind tags}"
+                    Visibility="{x:Bind tagsLoading, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
                     SelectionMode="None"
                     Height="150"
                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
