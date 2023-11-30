@@ -99,6 +99,7 @@ namespace UniversalSoundboard.Pages
                 MainPage.NavigateBack();
                 FileManager.itemViewHolder.LoadingScreenVisible = false;
                 FileManager.itemViewHolder.LoadingScreenMessage = "";
+                return;
             }
 
             // Find the mime type of the selected sound file

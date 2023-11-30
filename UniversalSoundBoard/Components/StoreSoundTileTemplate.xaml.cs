@@ -27,6 +27,7 @@ namespace UniversalSoundboard.Components
 
         public event EventHandler<EventArgs> Play;
         public event EventHandler<EventArgs> Pause;
+        public event EventHandler<EventArgs> SoundFileUploaded;
 
         public StoreSoundTileTemplate()
         {
@@ -77,6 +78,11 @@ namespace UniversalSoundboard.Components
             }
         }
 
+        public void UpdateBindings()
+        {
+            Bindings.Update();
+        }
+
         public void PlaybackStopped()
         {
             isPlaying = false;
@@ -94,6 +100,9 @@ namespace UniversalSoundboard.Components
 
         private async void SoundSelectionDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
+            FileManager.itemViewHolder.LoadingScreenMessage = FileManager.loader.GetString("PublishSoundPage-LoadingScreenMessage");
+            FileManager.itemViewHolder.LoadingScreenVisible = true;
+
             var soundSelectionDialog = sender as SoundSelectionDialog;
             DialogSoundListItem selectedSoundItem = soundSelectionDialog.SelectedSoundItem;
             
@@ -106,6 +115,11 @@ namespace UniversalSoundboard.Components
             catch (Exception) { }
 
             await ApiManager.UploadSoundFile(SoundItem.Uuid, selectedSoundItem.Sound.AudioFile, mimeType);
+
+            FileManager.itemViewHolder.LoadingScreenVisible = false;
+            FileManager.itemViewHolder.LoadingScreenMessage = "";
+
+            SoundFileUploaded?.Invoke(this, EventArgs.Empty);
         }
     }
 }

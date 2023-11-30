@@ -178,6 +178,16 @@ namespace UniversalSoundboard.Pages
             mediaPlayer.Pause();
         }
 
+        private async void StoreSoundTileTemplate_SoundFileUploaded(object sender, EventArgs e)
+        {
+            // Reload the sound item
+            var soundTileTemplate = sender as StoreSoundTileTemplate;
+
+            var newSoundItem = await ApiManager.RetrieveSound(soundTileTemplate.SoundItem.Uuid);
+            soundTileTemplate.SoundItem = newSoundItem;
+            soundTileTemplate.UpdateBindings();
+        }
+
         private void PublishSoundButton_Click(object sender, RoutedEventArgs e)
         {
             MainPage.NavigateToPage(typeof(PublishSoundPage), new DrillInNavigationTransitionInfo());

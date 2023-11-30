@@ -26,7 +26,8 @@
             <components:StoreSoundTileTemplate
                 Width="400"
                 Play="StoreSoundTileTemplate_Play"
-                Pause="StoreSoundTileTemplate_Pause" />
+                Pause="StoreSoundTileTemplate_Pause"
+                SoundFileUploaded="StoreSoundTileTemplate_SoundFileUploaded" />
         </DataTemplate>
     </Page.Resources>
 
