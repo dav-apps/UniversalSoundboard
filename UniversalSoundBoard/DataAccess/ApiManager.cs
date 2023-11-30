@@ -99,6 +99,7 @@ namespace UniversalSoundboard.DataAccess
                 Query = @"
                     query RetrieveSound($uuid: String!) {
                         retrieveSound(uuid: $uuid) {
+                            uuid
                             name
                             description
                             audioFileUrl

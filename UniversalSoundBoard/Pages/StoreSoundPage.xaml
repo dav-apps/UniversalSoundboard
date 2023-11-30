@@ -28,11 +28,12 @@
         <ScrollViewer
             Name="ContentRoot"
             Style="{StaticResource CustomScrollViewerStyle}"
-            Padding="0,85,0,0"
             RelativePanel.AlignTopWithPanel="True"
             RelativePanel.AlignBottomWithPanel="True"
             RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True">
+            RelativePanel.AlignRightWithPanel="True"
+            Padding="0,85,0,0"
+            Visibility="{x:Bind isLoading, Converter={StaticResource BooleanToInvertedVisibilityConverter}}">
 
             <StackPanel Padding="16,85,16,16">
                 <TextBlock
@@ -156,6 +157,14 @@
                 </GridView>
             </StackPanel>
         </ScrollViewer>
+
+        <winui:ProgressRing
+            RelativePanel.AlignHorizontalCenterWithPanel="True"
+            RelativePanel.AlignVerticalCenterWithPanel="True"
+            Height="40"
+            Width="40"
+            IsActive="True"
+            Visibility="{x:Bind isLoading, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
         <Grid
             RelativePanel.AlignTopWithPanel="True"

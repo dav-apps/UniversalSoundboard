@@ -40,6 +40,7 @@ using Windows.UI.Notifications;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Media.Imaging;
 using WinUI = Microsoft.UI.Xaml.Controls;
 
@@ -3300,6 +3301,20 @@ namespace UniversalSoundboard.DataAccess
             itemViewHolder.BackButtonEnabled = true;
 
             Analytics.TrackEvent("NavigateToStorePage");
+        }
+
+        public static void NavigateToStoreSoundPage(string uuid)
+        {
+            MainPage.NavigateToPage(typeof(StoreSoundPage), uuid, new DrillInNavigationTransitionInfo());
+            itemViewHolder.Title = loader.GetString("Store-Title");
+            itemViewHolder.EditButtonVisible = false;
+            itemViewHolder.PlayAllButtonVisible = false;
+            itemViewHolder.BackButtonEnabled = true;
+
+            Analytics.TrackEvent("NavigateToStoreSoundPage", new Dictionary<string, string>
+            {
+                { "Uuid", uuid }
+            });
         }
 
         public static void NavigateToAccountPage(string context = null)

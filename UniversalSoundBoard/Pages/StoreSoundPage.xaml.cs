@@ -24,6 +24,7 @@ namespace UniversalSoundboard.Pages
         private SoundResponse soundItem;
         private MediaPlayer mediaPlayer;
         private Uri sourceUri = null;
+        private bool isLoading = false;
         private bool isPlaying = false;
         private bool isDownloading = false;
         private int downloadProgress = 0;
@@ -53,18 +54,39 @@ namespace UniversalSoundboard.Pages
             if (e.Parameter == null)
                 return;
 
-            soundItem = e.Parameter as SoundResponse;
+            if (e.Parameter.GetType() == typeof(string))
+            {
+                isLoading = true;
+                Bindings.Update();
 
-            mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(soundItem.AudioFileUrl));
-            Bindings.Update();
+                // Get the sound from the API
+                soundItem = await ApiManager.RetrieveSound((string)e.Parameter);
+                if (soundItem == null) return;
 
-            // Load the entire sound from the API
-            soundItem = await ApiManager.RetrieveSound(soundItem.Uuid);
+                mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(soundItem.AudioFileUrl));
 
-            if (soundItem.Source != null)
-                sourceUri = new Uri(soundItem.Source);
+                if (soundItem.Source != null)
+                    sourceUri = new Uri(soundItem.Source);
 
-            Bindings.Update();
+                isLoading = false;
+                Bindings.Update();
+            }
+            else
+            {
+                soundItem = e.Parameter as SoundResponse;
+
+                mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(soundItem.AudioFileUrl));
+                Bindings.Update();
+
+                // Load the entire sound from the API
+                soundItem = await ApiManager.RetrieveSound(soundItem.Uuid);
+                if (soundItem == null) return;
+
+                if (soundItem.Source != null)
+                    sourceUri = new Uri(soundItem.Source);
+
+                Bindings.Update();
+            }
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -166,7 +188,7 @@ namespace UniversalSoundboard.Pages
                 categoryUuids,
                 targetFile,
                 null,
-                soundItem.Source
+                soundItem.Source ?? soundItem.Uuid
             );
 
             // Add the sound to the list

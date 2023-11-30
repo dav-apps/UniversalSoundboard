@@ -8,6 +8,8 @@ namespace UniversalSoundboard.Dialogs
 {
     public class PropertiesDialog : Dialog
     {
+        private string storeUuid = null;
+
         public PropertiesDialog(Sound sound, ulong audioFileSize = 0, ulong imageFileSize = 0)
             : base(
                   FileManager.loader.GetString("SoundItemOptionsFlyout-Properties"),
@@ -81,14 +83,26 @@ namespace UniversalSoundboard.Dialogs
                 Grid.SetRow(sourceDataStackPanel, row);
                 Grid.SetColumn(sourceDataStackPanel, 1);
 
-                Uri sourceUrl = new Uri(sound.Source);
-
-                HyperlinkButton hyperlinkButton = new HyperlinkButton {
-                    Content = sourceUrl.Host,
-                    NavigateUri = sourceUrl,
+                HyperlinkButton hyperlinkButton = new HyperlinkButton
+                {
                     Margin = new Thickness(0, 10, 0, 0),
                     Padding = new Thickness(0, 1, 0, 1)
                 };
+
+                if (Uri.IsWellFormedUriString(sound.Source, UriKind.Absolute))
+                {
+                    Uri sourceUrl = new Uri(sound.Source);
+
+                    hyperlinkButton.Content = sourceUrl.Host;
+                    hyperlinkButton.NavigateUri = sourceUrl;
+                }
+                else
+                {
+                    storeUuid = sound.Source;
+                    hyperlinkButton.Content = FileManager.loader.GetString("Store-Title");
+                    hyperlinkButton.Click += HyperlinkButton_Click;
+                }
+
                 sourceDataStackPanel.Children.Add(hyperlinkButton);
 
                 row++;
@@ -256,6 +270,14 @@ namespace UniversalSoundboard.Dialogs
 
             contentStackPanel.Children.Add(contentTextBlock);
             return contentStackPanel;
+        }
+
+        private void HyperlinkButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (storeUuid == null) return;
+
+            ContentDialog.Hide();
+            FileManager.NavigateToStoreSoundPage(storeUuid);
         }
     }
 }
