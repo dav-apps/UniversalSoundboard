@@ -66,6 +66,14 @@
                     </GridView.ItemsPanel>
                 </GridView>
 
+                <TextBlock
+                    x:Uid="StoreSearchPage-NoResultsTextBlock"
+                    HorizontalAlignment="Center"
+                    FontStyle="Italic"
+                    FontSize="18"
+                    Margin="0,8,0,0"
+                    Visibility="{x:Bind noResultsTextVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                 <winui:ProgressRing
                     Width="24"
                     Height="24"

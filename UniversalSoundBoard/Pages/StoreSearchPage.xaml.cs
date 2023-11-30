@@ -25,6 +25,7 @@ namespace UniversalSoundboard.Pages
         StoreSoundTileTemplate currentSoundItemTemplate;
         bool isLoading = false;
         bool loadMoreButtonVisible = false;
+        bool noResultsTextVisible = false;
         int currentPage = 0;
 
         public StoreSearchPage()
@@ -166,6 +167,7 @@ namespace UniversalSoundboard.Pages
             currentPage = nextPage ? currentPage + 1 : 0;
             isLoading = true;
             loadMoreButtonVisible = false;
+            noResultsTextVisible = false;
             Bindings.Update();
 
             ListResponse<SoundResponse> listSoundsResponse = await ApiManager.ListSounds(
@@ -178,7 +180,16 @@ namespace UniversalSoundboard.Pages
             loadMoreButtonVisible = true;
             Bindings.Update();
 
-            if (listSoundsResponse.Items == null) return;
+            if (listSoundsResponse.Items == null)
+            {
+                return;
+            }
+            else if (listSoundsResponse.Items.Count == 0)
+            {
+                noResultsTextVisible = true;
+                loadMoreButtonVisible = false;
+                Bindings.Update();
+            }
 
             foreach (var sound in listSoundsResponse.Items)
                 sounds.Add(sound);

@@ -1187,4 +1187,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="PublishSoundPage-LoadingScreenMessage" xml:space="preserve">
     <value>Le son est publié...</value>
   </data>
+  <data name="StoreSearchPage-NoResultsTextBlock.Text" xml:space="preserve">
+    <value>Aucun son trouvé</value>
+  </data>
 </root>
