@@ -1,6 +1,7 @@
 ﻿using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UniversalSoundboard.Components;
@@ -28,6 +29,7 @@ namespace UniversalSoundboard.Pages
         private bool isPlaying = false;
         private bool isDownloading = false;
         private int downloadProgress = 0;
+        private bool isInSoundboard = true;
 
         public StoreSoundPage()
         {
@@ -69,7 +71,6 @@ namespace UniversalSoundboard.Pages
                     sourceUri = new Uri(soundItem.Source);
 
                 isLoading = false;
-                Bindings.Update();
             }
             else
             {
@@ -84,9 +85,22 @@ namespace UniversalSoundboard.Pages
 
                 if (soundItem.Source != null)
                     sourceUri = new Uri(soundItem.Source);
-
-                Bindings.Update();
             }
+
+            // Check if the sound is already in the soundboard
+            var sound = FileManager.itemViewHolder.AllSounds.FirstOrDefault(s =>
+            {
+                if (s.Source == null) return false;
+
+                if (soundItem.Source != null)
+                    return s.Source.Equals(soundItem.Source);
+
+                return s.Source.Equals(soundItem.Uuid);
+            });
+
+            isInSoundboard = sound != null;
+
+            Bindings.Update();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -199,6 +213,9 @@ namespace UniversalSoundboard.Pages
                 { "SoundUuid", soundItem.Uuid },
                 { "SoundName", soundItem.Name }
             });
+
+            isInSoundboard = true;
+            Bindings.Update();
         }
 
         private void DownloadProgress(int value)

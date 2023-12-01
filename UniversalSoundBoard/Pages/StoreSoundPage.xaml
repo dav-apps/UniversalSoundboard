@@ -14,6 +14,7 @@
 
     <Page.Resources>
         <!-- Converters -->
+        <converters:InvertBooleanConverter x:Name="InvertBooleanConverter" />
         <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
         <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
         <converters:NullToVisibilityConverter x:Name="NullToVisibilityConverter" />
@@ -64,7 +65,11 @@
                 </Button>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,18,0,0">
-                    <Button Name="AddToSoundboardButton" Click="AddToSoundboardButton_Click">
+                    <Button
+                        Name="AddToSoundboardButton"
+                        IsEnabled="{x:Bind isInSoundboard, Converter={StaticResource InvertBooleanConverter}}"
+                        Click="AddToSoundboardButton_Click">
+
                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
                             <TextBlock
                                 Text="&#xE710;"
