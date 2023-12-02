@@ -555,10 +555,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="SettingsEntry-OpenMultipleSounds.Header" xml:space="preserve">
     <value>Allow multiple opened sounds</value>
   </data>
-  <data name="CategoryDeleteButton.Text" xml:space="preserve">
+  <data name="DeleteButton.Text" xml:space="preserve">
     <value>Delete</value>
   </data>
-  <data name="CategoryEditButton.Text" xml:space="preserve">
+  <data name="EditButton.Text" xml:space="preserve">
     <value>Edit</value>
   </data>
   <data name="CategoryPlayAllButton.Text" xml:space="preserve">

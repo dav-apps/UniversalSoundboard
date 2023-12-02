@@ -37,12 +37,48 @@
             Visibility="{x:Bind isLoading, Converter={StaticResource BooleanToInvertedVisibilityConverter}}">
 
             <StackPanel Padding="16,85,16,16">
-                <TextBlock
-                    Name="NameTextBlock"
-                    Text="{x:Bind soundItem.Name}"
-                    Style="{StaticResource TitleTextBlockStyle}"
+                <StackPanel
+                    Orientation="Horizontal"
                     HorizontalAlignment="Center"
-                    Margin="0,32,0,0" />
+                    Margin="0,32,0,0">
+
+                    <TextBlock
+                        Name="NameTextBlock"
+                        Text="{x:Bind soundItem.Name}"
+                        Style="{StaticResource TitleTextBlockStyle}" />
+
+                    <Button
+                        Name="EditButton"
+                        Style="{StaticResource IconButtonStyle}"
+                        Content="&#xE104;"
+                        Margin="12,0,0,0"
+                        Height="32"
+                        Width="32"
+                        CornerRadius="16"
+                        FontSize="16"
+                        Click="EditButton_Click">
+
+                        <ToolTipService.ToolTip>
+                            <TextBlock x:Uid="EditButton" />
+                        </ToolTipService.ToolTip>
+                    </Button>
+
+                    <Button
+                        Name="DeleteButton"
+                        Style="{StaticResource IconButtonStyle}"
+                        Content="&#xE107;"
+                        Margin="6,0,0,0"
+                        Height="32"
+                        Width="32"
+                        CornerRadius="16"
+                        FontSize="16"
+                        Click="DeleteButton_Click">
+
+                        <ToolTipService.ToolTip>
+                            <TextBlock x:Uid="DeleteButton" />
+                        </ToolTipService.ToolTip>
+                    </Button>
+                </StackPanel>
 
                 <Button
                     Name="PlayPauseButton"

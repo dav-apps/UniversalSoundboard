@@ -554,10 +554,10 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="SettingsEntry-OpenMultipleSounds.Header" xml:space="preserve">
     <value>Permettre plusieurs sons ouverts</value>
   </data>
-  <data name="CategoryDeleteButton.Text" xml:space="preserve">
+  <data name="DeleteButton.Text" xml:space="preserve">
     <value>Supprimer</value>
   </data>
-  <data name="CategoryEditButton.Text" xml:space="preserve">
+  <data name="EditButton.Text" xml:space="preserve">
     <value>Editer</value>
   </data>
   <data name="CategoryPlayAllButton.Text" xml:space="preserve">

@@ -251,5 +251,15 @@ namespace UniversalSoundboard.Pages
                 new DrillInNavigationTransitionInfo()
             );
         }
+
+        private void EditButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

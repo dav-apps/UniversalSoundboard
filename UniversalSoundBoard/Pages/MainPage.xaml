@@ -47,15 +47,8 @@
             <Setter Property="HorizontalContentAlignment" Value="Stretch" />
         </Style>
 
-        <Style x:Key="SmallTopButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
-            <Setter Property="FontFamily" Value="{StaticResource FluentIconsFontFamily}" />
-            <Setter Property="FontSize" Value="18" />
-            <Setter Property="Height" Value="36" />
-            <Setter Property="Width" Value="36" />
-            <Setter Property="CornerRadius" Value="18" />
+        <Style x:Key="SmallTopButtonStyle" TargetType="Button" BasedOn="{StaticResource IconButtonStyle}">
             <Setter Property="Margin" Value="5,0,0,0" />
-            <Setter Property="Padding" Value="0" />
-            <Setter Property="Background" Value="Transparent" />
         </Style>
 
         <Style x:Key="TopButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
@@ -197,7 +190,7 @@
                                         Click="CategoryEditButton_Click">
 
                                         <ToolTipService.ToolTip>
-                                            <TextBlock x:Uid="CategoryEditButton" />
+                                            <TextBlock x:Uid="EditButton" />
                                         </ToolTipService.ToolTip>
                                     </Button>
 
@@ -210,7 +203,7 @@
                                         Click="CategoryDeleteButton_Click">
 
                                         <ToolTipService.ToolTip>
-                                            <TextBlock x:Uid="CategoryDeleteButton" />
+                                            <TextBlock x:Uid="DeleteButton" />
                                         </ToolTipService.ToolTip>
                                     </Button>
 

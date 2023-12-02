@@ -553,10 +553,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="SettingsEntry-OpenMultipleSounds.Header" xml:space="preserve">
     <value>Erlaube mehrere geöffnete Sounds</value>
   </data>
-  <data name="CategoryDeleteButton.Text" xml:space="preserve">
+  <data name="DeleteButton.Text" xml:space="preserve">
     <value>Löschen</value>
   </data>
-  <data name="CategoryEditButton.Text" xml:space="preserve">
+  <data name="EditButton.Text" xml:space="preserve">
     <value>Bearbeiten</value>
   </data>
   <data name="CategoryPlayAllButton.Text" xml:space="preserve">

@@ -80,6 +80,16 @@
                 <Setter Property="Content" Value="&#xE946;" />
             </Style>
 
+            <Style x:Key="IconButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonRevealStyle}">
+                <Setter Property="FontFamily" Value="{StaticResource FluentIconsFontFamily}" />
+                <Setter Property="FontSize" Value="18" />
+                <Setter Property="Height" Value="36" />
+                <Setter Property="Width" Value="36" />
+                <Setter Property="CornerRadius" Value="18" />
+                <Setter Property="Padding" Value="0" />
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
+
             <Style x:Key="CustomPivotStyle" TargetType="Pivot">
                 <Setter Property="Margin" Value="0"/>
                 <Setter Property="Padding" Value="0"/>
