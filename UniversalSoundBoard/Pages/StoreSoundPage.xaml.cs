@@ -1,4 +1,5 @@
-﻿using Microsoft.AppCenter.Analytics;
+﻿using davClassLibrary;
+using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,6 +30,7 @@ namespace UniversalSoundboard.Pages
         private bool isPlaying = false;
         private bool isDownloading = false;
         private int downloadProgress = 0;
+        private bool belongsToUser = false;
         private bool isInSoundboard = true;
 
         public StoreSoundPage()
@@ -99,6 +101,9 @@ namespace UniversalSoundboard.Pages
             });
 
             isInSoundboard = sound != null;
+
+            if (soundItem.User != null)
+                belongsToUser = soundItem.User.Id == Dav.User.Id;
 
             Bindings.Update();
         }
@@ -257,9 +262,16 @@ namespace UniversalSoundboard.Pages
 
         }
 
-        private void DeleteButton_Click(object sender, RoutedEventArgs e)
+        private async void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
+            var deleteSoundDialog = new DeleteSoundDialog(soundItem.Name);
+            deleteSoundDialog.PrimaryButtonClick += DeleteSoundDialog_PrimaryButtonClick;
+            await deleteSoundDialog.ShowAsync();
+        }
 
+        private void DeleteSoundDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            
         }
     }
 }

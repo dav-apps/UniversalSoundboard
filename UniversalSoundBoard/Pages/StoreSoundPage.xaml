@@ -56,6 +56,7 @@
                         Width="32"
                         CornerRadius="16"
                         FontSize="16"
+                        Visibility="{x:Bind belongsToUser, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Click="EditButton_Click">
 
                         <ToolTipService.ToolTip>
@@ -72,6 +73,7 @@
                         Width="32"
                         CornerRadius="16"
                         FontSize="16"
+                        Visibility="{x:Bind belongsToUser, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Click="DeleteButton_Click">
 
                         <ToolTipService.ToolTip>
