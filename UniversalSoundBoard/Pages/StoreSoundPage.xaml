@@ -18,7 +18,8 @@
         <converters:BooleanToVisibilityConverter x:Name="BooleanToVisibilityConverter" />
         <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
         <converters:NullToVisibilityConverter x:Name="NullToVisibilityConverter" />
-        
+        <converters:NullToInvertedVisibilityConverter x:Name="NullToInvertedVisibilityConverter" />
+
         <!-- DataTemplates -->
         <DataTemplate x:Key="StoreTagItemTemplate" x:DataType="x:String">
             <components:StoreTagItemTemplate />
@@ -177,9 +178,18 @@
                 </Button>
 
                 <richText:HtmlTextBlock
-                    Name="DescriptionTextBlock"
+                    Name="DescriptionHtmlTextBlock"
                     Html="{x:Bind soundItem.Description}"
+                    Visibility="{x:Bind soundItem.Source, Converter={StaticResource NullToVisibilityConverter}}"
                     MaxWidth="380"
+                    Margin="0,24,0,0" />
+
+                <TextBlock
+                    Name="DescriptionTextBlock"
+                    Text="{x:Bind soundItem.Description}"
+                    Visibility="{x:Bind soundItem.Source, Converter={StaticResource NullToInvertedVisibilityConverter}}"
+                    MaxWidth="380"
+                    IsTextSelectionEnabled="True"
                     Margin="0,24,0,0" />
 
                 <GridView
