@@ -16,6 +16,12 @@
         <DataTemplate x:Key="DialogSoundListItemTemplate" x:DataType="models:DialogSoundListItem">
             <components:DialogSoundListItemTemplate RemoveButtonVisible="False" />
         </DataTemplate>
+
+        <DataTemplate x:Key="TagsTokenizingTextBoxItemTemplate" x:DataType="x:String">
+            <StackPanel>
+                <TextBlock Text="{Binding}" />
+            </StackPanel>
+        </DataTemplate>
     </Page.Resources>
 
     <RelativePanel>
@@ -89,7 +95,10 @@
                 <controls:TokenizingTextBox
                     x:Name="TagsTokenBox"
                     x:Uid="PublishSoundPage-TagsTokenBox"
+                    SuggestedItemTemplate="{StaticResource TagsTokenizingTextBoxItemTemplate}"
+                    TokenItemTemplate="{StaticResource TagsTokenizingTextBoxItemTemplate}"
                     ItemsSource="{x:Bind SelectedTags, Mode=TwoWay}"
+                    SuggestedItemsSource="{x:Bind Tags, Mode=OneWay}"
                     Width="400"
                     Margin="0,16,0,0"
                     MaximumTokens="5"
@@ -97,25 +106,8 @@
                     TextMemberPath="Text"
                     TokenDelimiter=","
                     QueryIcon="{ui:FontIconSource Glyph=&#xE721;,FontSize=12}"
-                    SuggestedItemsSource="{x:Bind Tags, Mode=OneWay}"
                     TextChanged="TagsTokenBox_TextChanged"
-                    TokenItemAdding="TagsTokenBox_TokenItemAdding">
-
-                    <controls:TokenizingTextBox.SuggestedItemTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="{Binding}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </controls:TokenizingTextBox.SuggestedItemTemplate>
-                    <controls:TokenizingTextBox.TokenItemTemplate>
-                        <DataTemplate>
-                            <StackPanel>
-                                <TextBlock Text="{Binding}" />
-                            </StackPanel>
-                        </DataTemplate>
-                    </controls:TokenizingTextBox.TokenItemTemplate>
-                </controls:TokenizingTextBox>
+                    TokenItemAdding="TagsTokenBox_TokenItemAdding" />
 
                 <Button
                     Name="PublishButton"
