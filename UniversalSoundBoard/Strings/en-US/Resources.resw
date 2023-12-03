@@ -1197,4 +1197,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StoreSoundPage-DeleteSound" xml:space="preserve">
     <value>Deleting sound...</value>
   </data>
+  <data name="EditSoundDialog-Title" xml:space="preserve">
+    <value>Edit sound</value>
+  </data>
 </root>

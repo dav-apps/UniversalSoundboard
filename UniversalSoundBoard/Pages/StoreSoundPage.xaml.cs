@@ -257,9 +257,18 @@ namespace UniversalSoundboard.Pages
             );
         }
 
-        private void EditButton_Click(object sender, RoutedEventArgs e)
+        private async void EditButton_Click(object sender, RoutedEventArgs e)
         {
+            var itemTemplate = Resources["TagsTokenizingTextBoxItemTemplate"] as DataTemplate;
 
+            var editSoundDialog = new EditSoundDialog(soundItem, itemTemplate);
+            editSoundDialog.PrimaryButtonClick += EditSoundDialog_PrimaryButtonClick;
+            await editSoundDialog.ShowAsync();
+        }
+
+        private void EditSoundDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            
         }
 
         private async void DeleteButton_Click(object sender, RoutedEventArgs e)

@@ -168,6 +168,7 @@
     <Compile Include="Dialogs\PublishSoundsLoginDialog.cs" />
     <Compile Include="Dialogs\SoundSelectionDialog.cs" />
     <Compile Include="Dialogs\StoreAddToSoundboardDialog.cs" />
+    <Compile Include="Dialogs\EditSoundDialog.cs" />
     <Compile Include="Models\ApiModels.cs" />
     <Compile Include="Models\HotkeyItem.cs" />
     <Compile Include="Components\HotkeyItemTemplate.xaml.cs">

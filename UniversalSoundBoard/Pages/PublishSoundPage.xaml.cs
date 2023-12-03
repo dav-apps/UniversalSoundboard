@@ -75,11 +75,6 @@ namespace UniversalSoundboard.Pages
                 Tags.Add(tag);
         }
 
-        private void TagsTokenBox_TokenItemAdding(TokenizingTextBox sender, TokenItemAddingEventArgs args)
-        {
-            args.Item = args.TokenText;
-        }
-
         private async void PublishButton_Click(object sender, RoutedEventArgs e)
         {
             Analytics.TrackEvent("PublishSoundPage-PublishButton-Click");

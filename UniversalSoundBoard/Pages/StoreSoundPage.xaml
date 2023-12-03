@@ -24,6 +24,12 @@
         <DataTemplate x:Key="StoreTagItemTemplate" x:DataType="x:String">
             <components:StoreTagItemTemplate />
         </DataTemplate>
+
+        <DataTemplate x:Key="TagsTokenizingTextBoxItemTemplate" x:DataType="x:String">
+            <StackPanel>
+                <TextBlock Text="{Binding}" />
+            </StackPanel>
+        </DataTemplate>
     </Page.Resources>
 
     <RelativePanel>

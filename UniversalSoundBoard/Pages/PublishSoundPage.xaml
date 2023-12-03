@@ -101,13 +101,12 @@
                     SuggestedItemsSource="{x:Bind Tags, Mode=OneWay}"
                     Width="400"
                     Margin="0,16,0,0"
-                    MaximumTokens="5"
+                    MaximumTokens="10"
                     IsEnabled="False"
                     TextMemberPath="Text"
                     TokenDelimiter=","
                     QueryIcon="{ui:FontIconSource Glyph=&#xE721;,FontSize=12}"
-                    TextChanged="TagsTokenBox_TextChanged"
-                    TokenItemAdding="TagsTokenBox_TokenItemAdding" />
+                    TextChanged="TagsTokenBox_TextChanged" />
 
                 <Button
                     Name="PublishButton"
