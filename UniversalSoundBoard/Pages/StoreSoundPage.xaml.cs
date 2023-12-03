@@ -269,9 +269,24 @@ namespace UniversalSoundboard.Pages
             await deleteSoundDialog.ShowAsync();
         }
 
-        private void DeleteSoundDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        private async void DeleteSoundDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            
+            FileManager.itemViewHolder.LoadingScreenMessage = FileManager.loader.GetString("StoreSoundPage-DeleteSound");
+            FileManager.itemViewHolder.LoadingScreenVisible = true;
+
+            var deleteSoundResult = await ApiManager.DeleteSound(soundItem.Uuid);
+
+            FileManager.itemViewHolder.LoadingScreenVisible = false;
+            FileManager.itemViewHolder.LoadingScreenMessage = "";
+
+            if (deleteSoundResult != null && deleteSoundResult.Uuid != null)
+            {
+                MainPage.NavigateToPage(
+                    typeof(StoreProfilePage),
+                    soundItem.User.Id,
+                    new DrillInNavigationTransitionInfo()
+                );
+            }
         }
     }
 }

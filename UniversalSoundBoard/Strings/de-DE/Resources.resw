@@ -1192,4 +1192,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StoreProfilePage-EditProfileButton.Content" xml:space="preserve">
     <value>Profil bearbeiten</value>
   </data>
+  <data name="StoreSoundPage-DeleteSound" xml:space="preserve">
+    <value>Sound wird gelöscht...</value>
+  </data>
 </root>

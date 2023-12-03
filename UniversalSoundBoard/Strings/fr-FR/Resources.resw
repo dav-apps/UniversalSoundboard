@@ -1193,4 +1193,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StoreProfilePage-EditProfileButton.Content" xml:space="preserve">
     <value>Modifier votre profil</value>
   </data>
+  <data name="StoreSoundPage-DeleteSound" xml:space="preserve">
+    <value>Supprimer le son...</value>
+  </data>
 </root>
