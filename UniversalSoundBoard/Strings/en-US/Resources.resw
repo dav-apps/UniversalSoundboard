@@ -1180,7 +1180,7 @@ This may take some time, depending on how large the import file is.</value>
     <value>Add to soundboard</value>
   </data>
   <data name="PublishSoundPage-TagsTokenBox.Header" xml:space="preserve">
-    <value>Choose up to 5 tags for this sound.</value>
+    <value>Choose up to 10 tags for this sound.</value>
   </data>
   <data name="PublishSoundPage-TagsTokenBox.PlaceholderText" xml:space="preserve">
     <value>Enter tag</value>
@@ -1199,5 +1199,23 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="EditSoundDialog-Title" xml:space="preserve">
     <value>Edit sound</value>
+  </data>
+  <data name="EditSoundDialog-DescriptionHeader" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="EditSoundDialog-DescriptionPlaceholder" xml:space="preserve">
+    <value>Enter a description for your sound.</value>
+  </data>
+  <data name="EditSoundDialog-NameHeader" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="EditSoundDialog-NamePlaceholder" xml:space="preserve">
+    <value>Name of the sound</value>
+  </data>
+  <data name="EditSoundDialog-TagsHeader" xml:space="preserve">
+    <value>Tags</value>
+  </data>
+  <data name="EditSoundDialog-TagsPlaceholder" xml:space="preserve">
+    <value>Enter tag</value>
   </data>
 </root>

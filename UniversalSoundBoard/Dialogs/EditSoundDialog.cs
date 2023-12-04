@@ -39,14 +39,15 @@ namespace UniversalSoundboard.Dialogs
             TextBox NameTextBox = new TextBox
             {
                 Text = sound.Name,
-                Header = "Name",
-                PlaceholderText = "Sound name",
+                Header = FileManager.loader.GetString("EditSoundDialog-NameHeader"),
+                PlaceholderText = FileManager.loader.GetString("EditSoundDialog-NamePlaceholder"),
                 Width = 300
             };
 
             RichEditBox DescriptionRichEditBox = new RichEditBox
             {
-                Header = "Description",
+                Header = FileManager.loader.GetString("EditSoundDialog-DescriptionHeader"),
+                PlaceholderText = FileManager.loader.GetString("EditSoundDialog-DescriptionPlaceholder"),
                 Margin = new Thickness(0, 16, 0, 0),
                 Width = 300
             };
@@ -55,12 +56,12 @@ namespace UniversalSoundboard.Dialogs
 
             var tagsTokenBox = new TokenizingTextBox
             {
+                Header = FileManager.loader.GetString("EditSoundDialog-TagsHeader"),
+                PlaceholderText = FileManager.loader.GetString("EditSoundDialog-TagsPlaceholder"),
                 SuggestedItemTemplate = itemTemplate,
                 TokenItemTemplate = itemTemplate,
                 ItemsSource = SelectedTags,
                 SuggestedItemsSource = Tags,
-                Header = "Tags",
-                PlaceholderText = "Enter a tag",
                 MaximumTokens = 10,
                 Width = 300,
                 Margin = new Thickness(0, 16, 0, 0)

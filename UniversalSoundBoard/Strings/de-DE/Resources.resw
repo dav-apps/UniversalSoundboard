@@ -1178,7 +1178,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>Zum Soundboard hinzufügen</value>
   </data>
   <data name="PublishSoundPage-TagsTokenBox.Header" xml:space="preserve">
-    <value>Wähle bis zu 5 Schlagwörter für diesen Sound.</value>
+    <value>Wähle bis zu 10 Schlagwörter für diesen Sound.</value>
   </data>
   <data name="PublishSoundPage-TagsTokenBox.PlaceholderText" xml:space="preserve">
     <value>Schlagwort eingeben</value>
@@ -1197,5 +1197,23 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="EditSoundDialog-Title" xml:space="preserve">
     <value>Sound bearbeiten</value>
+  </data>
+  <data name="EditSoundDialog-DescriptionHeader" xml:space="preserve">
+    <value>Beschreibung</value>
+  </data>
+  <data name="EditSoundDialog-DescriptionPlaceholder" xml:space="preserve">
+    <value>Gib eine Beschreibung für dein Sound ein.</value>
+  </data>
+  <data name="EditSoundDialog-NameHeader" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="EditSoundDialog-NamePlaceholder" xml:space="preserve">
+    <value>Name des Sounds</value>
+  </data>
+  <data name="EditSoundDialog-TagsHeader" xml:space="preserve">
+    <value>Schlagwörter</value>
+  </data>
+  <data name="EditSoundDialog-TagsPlaceholder" xml:space="preserve">
+    <value>Schlagwort eingeben</value>
   </data>
 </root>

@@ -1179,7 +1179,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
     <value>Ajouter au soundboard</value>
   </data>
   <data name="PublishSoundPage-TagsTokenBox.Header" xml:space="preserve">
-    <value>Choisissez jusqu'à 5 mots-clés pour ce son.</value>
+    <value>Choisissez jusqu'à 10 étiquettes pour ce son.</value>
   </data>
   <data name="PublishSoundPage-TagsTokenBox.PlaceholderText" xml:space="preserve">
     <value>Saisissez une étiquette</value>
@@ -1198,5 +1198,23 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   </data>
   <data name="EditSoundDialog-Title" xml:space="preserve">
     <value>Éditer le son</value>
+  </data>
+  <data name="EditSoundDialog-DescriptionHeader" xml:space="preserve">
+    <value>Description</value>
+  </data>
+  <data name="EditSoundDialog-DescriptionPlaceholder" xml:space="preserve">
+    <value>Saisissez une description de votre son.</value>
+  </data>
+  <data name="EditSoundDialog-NameHeader" xml:space="preserve">
+    <value>Nom</value>
+  </data>
+  <data name="EditSoundDialog-NamePlaceholder" xml:space="preserve">
+    <value>Choisissez un nom pour le son.</value>
+  </data>
+  <data name="EditSoundDialog-TagsHeader" xml:space="preserve">
+    <value>Étiquettes</value>
+  </data>
+  <data name="EditSoundDialog-TagsPlaceholder" xml:space="preserve">
+    <value>Saisissez une étiquette</value>
   </data>
 </root>
