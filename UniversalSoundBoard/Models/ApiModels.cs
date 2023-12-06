@@ -22,6 +22,11 @@ namespace UniversalSoundboard.Models
         public SoundResponse CreateSound { get; set; }
     }
 
+    public class UpdateSoundResponse
+    {
+        public SoundResponse UpdateSound { get; set; }
+    }
+
     public class DeleteSoundResponse
     {
         public SoundResponse DeleteSound { get; set; }
