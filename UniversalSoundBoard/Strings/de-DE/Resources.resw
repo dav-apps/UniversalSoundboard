@@ -1216,4 +1216,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="EditSoundDialog-TagsPlaceholder" xml:space="preserve">
     <value>Schlagwort eingeben</value>
   </data>
+  <data name="StoreSoundPage-UpdateSound" xml:space="preserve">
+    <value>Sound wird aktualisiert...</value>
+  </data>
 </root>

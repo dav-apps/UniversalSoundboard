@@ -1218,4 +1218,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="EditSoundDialog-TagsPlaceholder" xml:space="preserve">
     <value>Enter tag</value>
   </data>
+  <data name="StoreSoundPage-UpdateSound" xml:space="preserve">
+    <value>Updating sound...</value>
+  </data>
 </root>

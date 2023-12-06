@@ -1,5 +1,7 @@
 ﻿using CommunityToolkit.WinUI.Controls;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.UI.Text;
@@ -10,8 +12,30 @@ namespace UniversalSoundboard.Dialogs
 {
     public class EditSoundDialog : Dialog
     {
-        private ObservableCollection<string> Tags;
-        private ObservableCollection<string> SelectedTags;
+        private ObservableCollection<string> tags;
+        private ObservableCollection<string> selectedTags;
+        private TextBox NameTextBox;
+        private RichEditBox DescriptionRichEditBox;
+
+        public string Name
+        {
+            get => NameTextBox?.Text;
+        }
+        public string Description
+        {
+            get
+            {
+                if (DescriptionRichEditBox == null) return null;
+
+                string description = null;
+                DescriptionRichEditBox.Document.GetText(TextGetOptions.NoHidden, out description);
+                return description;
+            }
+        }
+        public List<string> SelectedTags
+        {
+            get => selectedTags.ToList();
+        }
 
         public EditSoundDialog(SoundResponse sound, DataTemplate itemTemplate)
             : base(
@@ -20,14 +44,14 @@ namespace UniversalSoundboard.Dialogs
                   FileManager.loader.GetString("Actions-Cancel")
                 )
         {
-            Tags = new ObservableCollection<string>();
-            SelectedTags = new ObservableCollection<string>();
+            tags = new ObservableCollection<string>();
+            selectedTags = new ObservableCollection<string>();
 
             foreach (var tag in FileManager.itemViewHolder.Tags)
-                Tags.Add(tag);
+                tags.Add(tag);
 
             foreach (var tag in sound.Tags)
-                SelectedTags.Add(tag);
+                selectedTags.Add(tag);
 
             Content = GetContent(sound, itemTemplate);
         }
@@ -36,7 +60,7 @@ namespace UniversalSoundboard.Dialogs
         {
             StackPanel contentStackPanel = new StackPanel();
 
-            TextBox NameTextBox = new TextBox
+            NameTextBox = new TextBox
             {
                 Text = sound.Name,
                 Header = FileManager.loader.GetString("EditSoundDialog-NameHeader"),
@@ -44,7 +68,7 @@ namespace UniversalSoundboard.Dialogs
                 Width = 300
             };
 
-            RichEditBox DescriptionRichEditBox = new RichEditBox
+            DescriptionRichEditBox = new RichEditBox
             {
                 Header = FileManager.loader.GetString("EditSoundDialog-DescriptionHeader"),
                 PlaceholderText = FileManager.loader.GetString("EditSoundDialog-DescriptionPlaceholder"),
@@ -60,8 +84,8 @@ namespace UniversalSoundboard.Dialogs
                 PlaceholderText = FileManager.loader.GetString("EditSoundDialog-TagsPlaceholder"),
                 SuggestedItemTemplate = itemTemplate,
                 TokenItemTemplate = itemTemplate,
-                ItemsSource = SelectedTags,
-                SuggestedItemsSource = Tags,
+                ItemsSource = selectedTags,
+                SuggestedItemsSource = tags,
                 MaximumTokens = 10,
                 Width = 300,
                 Margin = new Thickness(0, 16, 0, 0)
@@ -78,12 +102,12 @@ namespace UniversalSoundboard.Dialogs
 
         private void TagsTokenBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            Tags.Clear();
+            tags.Clear();
 
             var filteredTags = FileManager.itemViewHolder.Tags.FindAll(tag => tag.ToLower().Contains(sender.Text.ToLower()));
 
             foreach (var tag in filteredTags)
-                Tags.Add(tag);
+                tags.Add(tag);
         }
     }
 }

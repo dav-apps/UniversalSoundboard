@@ -465,7 +465,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
     <value>Ordre des sons</value>
   </data>
   <data name="UpdateSoundsMessage" xml:space="preserve">
-    <value>Actualiser des sons...</value>
+    <value>Mise à jour des sons...</value>
   </data>
   <data name="SettingsEntry-ShowListView.Header" xml:space="preserve">
     <value>Affichage des sons sous la forme d’une liste</value>
@@ -1216,5 +1216,8 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   </data>
   <data name="EditSoundDialog-TagsPlaceholder" xml:space="preserve">
     <value>Saisissez une étiquette</value>
+  </data>
+  <data name="StoreSoundPage-UpdateSound" xml:space="preserve">
+    <value>Mise à jour du son...</value>
   </data>
 </root>

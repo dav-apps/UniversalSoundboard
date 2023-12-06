@@ -266,9 +266,31 @@ namespace UniversalSoundboard.Pages
             await editSoundDialog.ShowAsync();
         }
 
-        private void EditSoundDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        private async void EditSoundDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            
+            var editSoundDialog = sender as EditSoundDialog;
+
+            string name = editSoundDialog.Name;
+            string description = editSoundDialog.Description;
+            List<string> tags = editSoundDialog.SelectedTags;
+
+            FileManager.itemViewHolder.LoadingScreenMessage = FileManager.loader.GetString("StoreSoundPage-UpdateSound");
+            FileManager.itemViewHolder.LoadingScreenVisible = true;
+
+            var updateSoundResult = await ApiManager.UpdateSound(soundItem.Uuid, name, description, tags);
+
+            FileManager.itemViewHolder.LoadingScreenVisible = false;
+            FileManager.itemViewHolder.LoadingScreenMessage = "";
+
+            if (updateSoundResult != null)
+            {
+                // Update the UI with the new values
+                soundItem.Name = name;
+                soundItem.Description = description;
+                soundItem.Tags = tags;
+
+                Bindings.Update();
+            }
         }
 
         private async void DeleteButton_Click(object sender, RoutedEventArgs e)

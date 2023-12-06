@@ -84,7 +84,7 @@ namespace UniversalSoundboard.Pages
 
             // Create the sound on the server
             string description = null;
-            DescriptionRichEditBox.Document.GetText(TextGetOptions.None, out description);
+            DescriptionRichEditBox.Document.GetText(TextGetOptions.NoHidden, out description);
 
             var createSoundResult = await ApiManager.CreateSound(SoundNameTextBox.Text, description, SelectedTags.ToList());
 
