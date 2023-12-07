@@ -88,7 +88,7 @@ namespace UniversalSoundboard.Pages
 
         private async Task LoadRecentlyAddedSounds()
         {
-            var recentlyAddedSoundsResult = await ApiManager.ListSounds();
+            var recentlyAddedSoundsResult = await ApiManager.ListSounds(latest: true);
             if (recentlyAddedSoundsResult.Items == null) return;
 
             recentlyAddedSounds = recentlyAddedSoundsResult.Items;

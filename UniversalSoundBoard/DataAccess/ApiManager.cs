@@ -124,6 +124,7 @@ namespace UniversalSoundboard.DataAccess
             bool mine = false,
             int userId = 0,
             bool random = false,
+            bool latest = false,
             string query = null,
             int limit = 10,
             int offset = 0
@@ -137,6 +138,7 @@ namespace UniversalSoundboard.DataAccess
                         $mine: Boolean
                         $userId: Int
                         $random: Boolean
+                        $latest: Boolean
                         $query: String
                         $limit: Int
                         $offset: Int
@@ -145,6 +147,7 @@ namespace UniversalSoundboard.DataAccess
                             mine: $mine
                             userId: $userId
                             random: $random
+                            latest: $latest
                             query: $query
                             limit: $limit
                             offset: $offset
@@ -158,7 +161,7 @@ namespace UniversalSoundboard.DataAccess
                         }
                     }
                 ",
-                Variables = new { mine, userId, random, query, limit, offset }
+                Variables = new { mine, userId, random, latest, query, limit, offset }
             };
 
             return (await GraphQLClient.SendQueryAsync<ListSoundsResponse>(listSoundsRequest)).Data.ListSounds;
