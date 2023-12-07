@@ -87,6 +87,23 @@
                             <TextBlock x:Uid="DeleteButton" />
                         </ToolTipService.ToolTip>
                     </Button>
+
+                    <Button
+                        Name="PromoteButton"
+                        Style="{StaticResource IconButtonStyle}"
+                        Content="&#xE789;"
+                        Margin="6,0,0,0"
+                        Height="32"
+                        Width="32"
+                        CornerRadius="16"
+                        FontSize="16"
+                        Visibility="{x:Bind belongsToUser, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Click="PromoteButton_Click">
+
+                        <ToolTipService.ToolTip>
+                            <TextBlock x:Uid="PromoteButton" />
+                        </ToolTipService.ToolTip>
+                    </Button>
                 </StackPanel>
 
                 <Button

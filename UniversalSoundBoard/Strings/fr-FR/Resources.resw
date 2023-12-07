@@ -1220,4 +1220,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StoreSoundPage-UpdateSound" xml:space="preserve">
     <value>Mise à jour du son...</value>
   </data>
+  <data name="PromoteButton.Text" xml:space="preserve">
+    <value>Promouvoir</value>
+  </data>
 </root>

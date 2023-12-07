@@ -319,5 +319,10 @@ namespace UniversalSoundboard.Pages
                 );
             }
         }
+
+        private void PromoteButton_Click(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

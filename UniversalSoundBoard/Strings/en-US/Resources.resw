@@ -1221,4 +1221,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StoreSoundPage-UpdateSound" xml:space="preserve">
     <value>Updating sound...</value>
   </data>
+  <data name="PromoteButton.Text" xml:space="preserve">
+    <value>Promote</value>
+  </data>
 </root>

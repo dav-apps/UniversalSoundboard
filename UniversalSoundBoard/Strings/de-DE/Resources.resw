@@ -1219,4 +1219,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StoreSoundPage-UpdateSound" xml:space="preserve">
     <value>Sound wird aktualisiert...</value>
   </data>
+  <data name="PromoteButton.Text" xml:space="preserve">
+    <value>Bewerben</value>
+  </data>
 </root>
