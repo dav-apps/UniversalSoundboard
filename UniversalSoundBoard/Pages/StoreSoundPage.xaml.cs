@@ -12,6 +12,7 @@ using UniversalSoundboard.Models;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -42,6 +43,7 @@ namespace UniversalSoundboard.Pages
                 Volume = (double)FileManager.itemViewHolder.Volume / 100
             };
 
+            FileManager.itemViewHolder.SoundPromotionStarted += ItemViewHolder_SoundPromotionStarted;
             mediaPlayer.MediaEnded += MediaPlayer_MediaEnded;
         }
 
@@ -112,6 +114,17 @@ namespace UniversalSoundboard.Pages
         {
             base.OnNavigatedFrom(e);
             mediaPlayer.Pause();
+        }
+
+        private async void ItemViewHolder_SoundPromotionStarted(object sender, EventArgs e)
+        {
+            isLoading = true;
+            Bindings.Update();
+
+            soundItem = await ApiManager.RetrieveSound(soundItem.Uuid);
+
+            isLoading = false;
+            Bindings.Update();
         }
 
         private async void MediaPlayer_MediaEnded(MediaPlayer sender, object args)
@@ -320,9 +333,12 @@ namespace UniversalSoundboard.Pages
             }
         }
 
-        private void PromoteButton_Click(object sender, RoutedEventArgs e)
+        private async void PromoteButton_Click(object sender, RoutedEventArgs e)
         {
+            var soundPromotionResponse = await ApiManager.CreateSoundPromotion(soundItem.Uuid);
 
+            if (soundPromotionResponse != null && soundPromotionResponse.SessionUrl != null)
+                await Launcher.LaunchUriAsync(new Uri(soundPromotionResponse.SessionUrl));
         }
     }
 }

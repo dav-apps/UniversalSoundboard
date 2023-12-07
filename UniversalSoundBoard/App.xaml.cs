@@ -175,6 +175,10 @@ namespace UniversalSoundboard
                         Analytics.TrackEvent("UpgradeSuccessful");
                     }
                 }
+                else if (eventArgs.Uri.AbsoluteUri.StartsWith("universalsoundboard://sound-promotion"))
+                {
+                    FileManager.itemViewHolder.TriggerSoundPromotionStartedEvent(this, EventArgs.Empty);
+                }
             }
         }
 
