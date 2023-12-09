@@ -59,10 +59,12 @@ namespace UniversalSoundboard.Models
         public string Source { get; set; }
         public List<string> Tags { get; set; }
         public UserResponse User { get; set; }
+        public SoundPromotionResponse Promotion { get; set; }
     }
 
     public class SoundPromotionResponse
     {
+        public string Uuid { get; set; }
         public string SessionUrl { get; set; }
     }
 

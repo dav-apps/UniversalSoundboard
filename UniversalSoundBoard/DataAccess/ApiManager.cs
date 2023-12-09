@@ -111,6 +111,9 @@ namespace UniversalSoundboard.DataAccess
                                 firstName
                                 profileImage
                             }
+                            promotion {
+                                uuid
+                            }
                         }
                     }
                 ",
