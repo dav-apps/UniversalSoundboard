@@ -96,6 +96,13 @@ namespace UniversalSoundboard.DataAccess
         }
         #endregion
 
+        #region Caching methods
+        public static void ClearListSoundsCache()
+        {
+            ListSoundsCache.Clear();
+        }
+        #endregion
+
         public static async Task<UserResponse> RetrieveUser(int id)
         {
             if (RetrieveUserCache.ContainsKey(id))
@@ -147,7 +154,7 @@ namespace UniversalSoundboard.DataAccess
                 return false;
             }
 
-            return true;
+            return response.IsSuccessStatusCode;
         }
 
         public static async Task<SoundResponse> RetrieveSound(string uuid, bool caching = true)

@@ -109,6 +109,9 @@ namespace UniversalSoundboard.Pages
             // Upload the file
             await ApiManager.UploadSoundFile(createSoundResult.Uuid, selectedItem.AudioFile, mimeType);
 
+            // Clear the cache for the StoreProfilePage
+            ApiManager.ClearListSoundsCache();
+
             // Navigate back to the profile page
             MainPage.NavigateBack();
             FileManager.itemViewHolder.LoadingScreenVisible = false;
