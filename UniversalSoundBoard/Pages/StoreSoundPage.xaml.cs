@@ -34,6 +34,7 @@ namespace UniversalSoundboard.Pages
         private bool belongsToUser = false;
         private bool isInSoundboard = true;
         private bool promoteButtonVisible = false;
+        private Task<SoundPromotionResponse> createSoundPromotionTask;
 
         public StoreSoundPage()
         {
@@ -337,6 +338,8 @@ namespace UniversalSoundboard.Pages
 
         private async void PromoteButton_Click(object sender, RoutedEventArgs e)
         {
+            createSoundPromotionTask = ApiManager.CreateSoundPromotion(soundItem.Uuid);
+
             var startSoundPromotionDialog = new StartSoundPromotionDialog();
             startSoundPromotionDialog.PrimaryButtonClick += StartSoundPromotionDialog_PrimaryButtonClick;
             await startSoundPromotionDialog.ShowAsync();
@@ -344,7 +347,7 @@ namespace UniversalSoundboard.Pages
 
         private async void StartSoundPromotionDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            var soundPromotionResponse = await ApiManager.CreateSoundPromotion(soundItem.Uuid);
+            var soundPromotionResponse = await createSoundPromotionTask;
 
             if (soundPromotionResponse != null && soundPromotionResponse.SessionUrl != null)
                 await Launcher.LaunchUriAsync(new Uri(soundPromotionResponse.SessionUrl));
