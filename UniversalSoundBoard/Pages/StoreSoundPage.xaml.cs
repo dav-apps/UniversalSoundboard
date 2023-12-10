@@ -356,6 +356,12 @@ namespace UniversalSoundboard.Pages
                 FileManager.loader.GetString("StoreSoundPage-CreateSoundPromotionTitle")
             );
 
+            Analytics.TrackEvent("StoreSoundPage-PromoteButtonClick", new Dictionary<string, string>
+            {
+                { "SoundUuid", soundItem.Uuid },
+                { "SoundName", soundItem.Name }
+            });
+
             var startSoundPromotionDialog = new StartSoundPromotionDialog();
             startSoundPromotionDialog.PrimaryButtonClick += StartSoundPromotionDialog_PrimaryButtonClick;
             await startSoundPromotionDialog.ShowAsync();
@@ -367,6 +373,12 @@ namespace UniversalSoundboard.Pages
 
             if (soundPromotionResponse != null && soundPromotionResponse.SessionUrl != null)
                 await Launcher.LaunchUriAsync(new Uri(soundPromotionResponse.SessionUrl));
+
+            Analytics.TrackEvent("StoreSoundPage-StartSoundPromotionDialog-PrimaryButtonClick", new Dictionary<string, string>
+            {
+                { "SoundUuid", soundItem.Uuid },
+                { "SoundName", soundItem.Name }
+            });
         }
     }
 }
