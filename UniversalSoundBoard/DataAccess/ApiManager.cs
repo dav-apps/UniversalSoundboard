@@ -119,7 +119,7 @@ namespace UniversalSoundboard.DataAccess
             var responseData = response?.Data?.RetrieveUser;
 
             if (responseData != null)
-                RetrieveUserCache.Add(id, responseData);
+                RetrieveUserCache[id] = responseData;
 
             return responseData;
         }
@@ -150,9 +150,9 @@ namespace UniversalSoundboard.DataAccess
             return true;
         }
 
-        public static async Task<SoundResponse> RetrieveSound(string uuid)
+        public static async Task<SoundResponse> RetrieveSound(string uuid, bool caching = true)
         {
-            if (RetrieveSoundCache.ContainsKey(uuid))
+            if (RetrieveSoundCache.ContainsKey(uuid) && caching)
                 return RetrieveSoundCache.GetValueOrDefault(uuid);
 
             var retrieveSoundRequest = new GraphQLRequest
@@ -186,7 +186,7 @@ namespace UniversalSoundboard.DataAccess
             var responseData = response?.Data?.RetrieveSound;
 
             if (responseData != null)
-                RetrieveSoundCache.Add(uuid, responseData);
+                RetrieveSoundCache[uuid] = responseData;
 
             return responseData;
         }
@@ -244,7 +244,7 @@ namespace UniversalSoundboard.DataAccess
             var responseData = response?.Data?.ListSounds;
 
             if (responseData != null)
-                ListSoundsCache.Add(cacheKey, responseData);
+                ListSoundsCache[cacheKey] = responseData;
 
             return responseData;
         }
@@ -370,7 +370,7 @@ namespace UniversalSoundboard.DataAccess
             var responseData = response?.Data?.ListTags;
 
             if (responseData != null)
-                ListTagsCache.Add(cacheKey, responseData);
+                ListTagsCache[cacheKey] = responseData;
 
             return responseData;
         }

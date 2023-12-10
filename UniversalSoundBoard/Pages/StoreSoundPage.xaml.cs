@@ -124,7 +124,7 @@ namespace UniversalSoundboard.Pages
             isLoading = true;
             Bindings.Update();
 
-            soundItem = await ApiManager.RetrieveSound(soundItem.Uuid);
+            soundItem = await ApiManager.RetrieveSound(soundItem.Uuid, caching: false);
 
             isLoading = false;
             Bindings.Update();
