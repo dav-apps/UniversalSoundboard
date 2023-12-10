@@ -46,8 +46,61 @@ namespace UniversalSoundboard.DataAccess
             }
         }
 
+        #region Caching variables
+        private static Dictionary<int, UserResponse> retrieveUserCache;
+        private static Dictionary<int, UserResponse> RetrieveUserCache
+        {
+            get
+            {
+                if (retrieveUserCache == null)
+                    retrieveUserCache = new Dictionary<int, UserResponse>();
+
+                return retrieveUserCache;
+            }
+        }
+
+        private static Dictionary<string, SoundResponse> retrieveSoundCache;
+        private static Dictionary<string, SoundResponse> RetrieveSoundCache
+        {
+            get
+            {
+                if (retrieveSoundCache == null)
+                    retrieveSoundCache = new Dictionary<string, SoundResponse>();
+
+                return retrieveSoundCache;
+            }
+        }
+
+        private static Dictionary<string, ListResponse<SoundResponse>> listSoundsCache;
+        private static Dictionary<string, ListResponse<SoundResponse>> ListSoundsCache
+        {
+            get
+            {
+                if (listSoundsCache == null)
+                    listSoundsCache = new Dictionary<string, ListResponse<SoundResponse>>();
+
+                return listSoundsCache;
+            }
+        }
+
+        private static Dictionary<string, ListResponse<TagResponse>> listTagsCache;
+        private static Dictionary<string, ListResponse<TagResponse>> ListTagsCache
+        {
+            get
+            {
+                if (listTagsCache == null)
+                    listTagsCache = new Dictionary<string, ListResponse<TagResponse>>();
+
+                return listTagsCache;
+            }
+        }
+        #endregion
+
         public static async Task<UserResponse> RetrieveUser(int id)
         {
+            if (RetrieveUserCache.ContainsKey(id))
+                return RetrieveUserCache.GetValueOrDefault(id);
+
             var retrieveUserRequest = new GraphQLRequest
             {
                 OperationName = "RetrieveUser",
@@ -63,7 +116,12 @@ namespace UniversalSoundboard.DataAccess
             };
 
             var response = await GraphQLClient.SendQueryAsync<RetrieveUserResponse>(retrieveUserRequest);
-            return response?.Data?.RetrieveUser;
+            var responseData = response?.Data?.RetrieveUser;
+
+            if (responseData != null)
+                RetrieveUserCache.Add(id, responseData);
+
+            return responseData;
         }
 
         public static async Task<bool> UploadSoundFile(string uuid, StorageFile file, string contentType)
@@ -94,6 +152,9 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task<SoundResponse> RetrieveSound(string uuid)
         {
+            if (RetrieveSoundCache.ContainsKey(uuid))
+                return RetrieveSoundCache.GetValueOrDefault(uuid);
+
             var retrieveSoundRequest = new GraphQLRequest
             {
                 OperationName = "RetrieveSound",
@@ -122,7 +183,12 @@ namespace UniversalSoundboard.DataAccess
             };
 
             var response = await GraphQLClient.SendQueryAsync<RetrieveSoundResponse>(retrieveSoundRequest);
-            return response?.Data?.RetrieveSound;
+            var responseData = response?.Data?.RetrieveSound;
+
+            if (responseData != null)
+                RetrieveSoundCache.Add(uuid, responseData);
+
+            return responseData;
         }
 
         public static async Task<ListResponse<SoundResponse>> ListSounds(
@@ -135,6 +201,11 @@ namespace UniversalSoundboard.DataAccess
             int offset = 0
         )
         {
+            string cacheKey = string.Format("{0}:{1}:{2}:{3}:{4}:{5}:{6}", mine, userId, random, latest, query, limit, offset);
+
+            if (ListSoundsCache.ContainsKey(cacheKey))
+                return ListSoundsCache.GetValueOrDefault(cacheKey);
+
             var listSoundsRequest = new GraphQLRequest
             {
                 OperationName = "ListSounds",
@@ -170,7 +241,12 @@ namespace UniversalSoundboard.DataAccess
             };
 
             var response = await GraphQLClient.SendQueryAsync<ListSoundsResponse>(listSoundsRequest);
-            return response?.Data?.ListSounds;
+            var responseData = response?.Data?.ListSounds;
+
+            if (responseData != null)
+                ListSoundsCache.Add(cacheKey, responseData);
+
+            return responseData;
         }
 
         public static async Task<SoundResponse> CreateSound(string name, string description = null, List<string> tags = null)
@@ -269,6 +345,11 @@ namespace UniversalSoundboard.DataAccess
 
         public static async Task<ListResponse<TagResponse>> ListTags(int limit = 10, int offset = 0)
         {
+            string cacheKey = string.Format("{0}:{1}", limit, offset);
+
+            if (ListTagsCache.ContainsKey(cacheKey))
+                return ListTagsCache.GetValueOrDefault(cacheKey);
+
             var listTagsRequest = new GraphQLRequest
             {
                 OperationName = "ListTags",
@@ -286,7 +367,12 @@ namespace UniversalSoundboard.DataAccess
             };
 
             var response = await GraphQLClient.SendQueryAsync<ListTagsResponse>(listTagsRequest);
-            return response?.Data?.ListTags;
+            var responseData = response?.Data?.ListTags;
+
+            if (responseData != null)
+                ListTagsCache.Add(cacheKey, responseData);
+
+            return responseData;
         }
     }
 }
