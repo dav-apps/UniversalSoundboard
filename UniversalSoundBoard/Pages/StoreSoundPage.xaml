@@ -97,7 +97,7 @@
                         Width="32"
                         CornerRadius="16"
                         FontSize="16"
-                        Visibility="{x:Bind belongsToUser, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Visibility="{x:Bind promoteButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
                         Click="PromoteButton_Click">
 
                         <ToolTipService.ToolTip>

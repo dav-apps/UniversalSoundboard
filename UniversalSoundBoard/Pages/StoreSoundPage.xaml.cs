@@ -33,6 +33,7 @@ namespace UniversalSoundboard.Pages
         private int downloadProgress = 0;
         private bool belongsToUser = false;
         private bool isInSoundboard = true;
+        private bool promoteButtonVisible = false;
 
         public StoreSoundPage()
         {
@@ -102,10 +103,11 @@ namespace UniversalSoundboard.Pages
                 return s.Source.Equals(soundItem.Uuid);
             });
 
-            isInSoundboard = sound != null;
-
             if (soundItem.User != null)
                 belongsToUser = soundItem.User.Id == Dav.User.Id;
+
+            isInSoundboard = sound != null;
+            promoteButtonVisible = belongsToUser && soundItem.Promotion == null;
 
             Bindings.Update();
         }
