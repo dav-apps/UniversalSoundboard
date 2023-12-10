@@ -174,9 +174,17 @@ namespace UniversalSoundboard.Pages
 
         private async void AddToSoundboardButton_Click(object sender, RoutedEventArgs e)
         {
-            var addToSoundboardDialog = new StoreAddToSoundboardDialog();
-            addToSoundboardDialog.PrimaryButtonClick += AddToSoundboardDialog_PrimaryButtonClick;
-            await addToSoundboardDialog.ShowAsync();
+            if (FileManager.itemViewHolder.Categories.Count > 1)
+            {
+                // Show the dialog to select categories
+                var addToSoundboardDialog = new StoreAddToSoundboardDialog();
+                addToSoundboardDialog.PrimaryButtonClick += AddToSoundboardDialog_PrimaryButtonClick;
+                await addToSoundboardDialog.ShowAsync();
+            }
+            else
+            {
+                await AddSoundToSoundboard(new List<Guid>());
+            }
         }
 
         private async void AddToSoundboardDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
@@ -189,6 +197,11 @@ namespace UniversalSoundboard.Pages
             foreach (var item in dialog.SelectedItems)
                 categoryUuids.Add((Guid)((CustomTreeViewNode)item).Tag);
 
+            await AddSoundToSoundboard(categoryUuids);
+        }
+
+        public async Task AddSoundToSoundboard(List<Guid> categoryUuids)
+        {
             // Start downloading the audio file
             isDownloading = true;
             downloadProgress = 0;
@@ -229,7 +242,7 @@ namespace UniversalSoundboard.Pages
             // Add the sound to the list
             await FileManager.AddSound(uuid);
 
-            Analytics.TrackEvent("StoreSoundPage-AddToSoundboardDialog-PrimaryButtonClick", new Dictionary<string, string>
+            Analytics.TrackEvent("StoreSoundPage-AddToSoundboard", new Dictionary<string, string>
             {
                 { "SoundUuid", soundItem.Uuid },
                 { "SoundName", soundItem.Name }

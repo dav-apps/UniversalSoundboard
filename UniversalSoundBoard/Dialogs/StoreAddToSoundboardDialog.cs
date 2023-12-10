@@ -14,7 +14,7 @@ namespace UniversalSoundboard.Dialogs
         private WinUI.TreeView CategoriesTreeView;
         public IList<object> SelectedItems
         {
-            get => CategoriesTreeView?.SelectedItems;
+            get => CategoriesTreeView?.SelectedItems ?? new List<object>();
         }
 
         public StoreAddToSoundboardDialog()
