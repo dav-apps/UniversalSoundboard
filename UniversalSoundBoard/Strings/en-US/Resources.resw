@@ -1224,4 +1224,28 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PromoteButton.Text" xml:space="preserve">
     <value>Promote</value>
   </data>
+  <data name="StartSoundPromotionDialog-FirstPoint-Head" xml:space="preserve">
+    <value>Boost Visibility</value>
+  </data>
+  <data name="StartSoundPromotionDialog-FirstPoint-Text" xml:space="preserve">
+    <value>: With just a tap, elevate your sound to center stage! Your promoted sound will be featured on the start page for the next three days, ensuring maximum exposure to our vibrant community.</value>
+  </data>
+  <data name="StartSoundPromotionDialog-HowItWorks" xml:space="preserve">
+    <value>This is how it works:</value>
+  </data>
+  <data name="StartSoundPromotionDialog-Intro" xml:space="preserve">
+    <value>Have you created a masterpiece that deserves the world's attention? Now, you can bring it to the world's attention with our new promotion feature! 🚀</value>
+  </data>
+  <data name="StartSoundPromotionDialog-PrimaryButton" xml:space="preserve">
+    <value>Start promotion</value>
+  </data>
+  <data name="StartSoundPromotionDialog-SecondPoint-Head" xml:space="preserve">
+    <value>Maximize Impact</value>
+  </data>
+  <data name="StartSoundPromotionDialog-SecondPoint-Text" xml:space="preserve">
+    <value>: Whether you're a seasoned artist or a rising star, this feature is your chance to make a lasting impression. Amplify your reach and influence on the UniversalSoundboard sound catalog.</value>
+  </data>
+  <data name="StartSoundPromotionDialog-Title" xml:space="preserve">
+    <value>🎉 Promote your sound, capture the spotlight!</value>
+  </data>
 </root>

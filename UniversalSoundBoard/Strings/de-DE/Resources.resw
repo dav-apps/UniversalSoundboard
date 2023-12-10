@@ -1222,4 +1222,28 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PromoteButton.Text" xml:space="preserve">
     <value>Bewerben</value>
   </data>
+  <data name="StartSoundPromotionDialog-FirstPoint-Head" xml:space="preserve">
+    <value>Sichtbarkeit erhöhen</value>
+  </data>
+  <data name="StartSoundPromotionDialog-FirstPoint-Text" xml:space="preserve">
+    <value>: Mit nur einem Fingertipp steht dein Sound im Mittelpunkt! Dein Sound wird für die nächsten drei Tage auf der Startseite angezeigt, und sorgt so für maximale Sichtbarkeit in unserer lebhaften Community.</value>
+  </data>
+  <data name="StartSoundPromotionDialog-HowItWorks" xml:space="preserve">
+    <value>Und so funktioniert es:</value>
+  </data>
+  <data name="StartSoundPromotionDialog-Intro" xml:space="preserve">
+    <value>Hast du ein Meisterwerk geschaffen, das die Aufmerksamkeit der Welt verdient? Jetzt kannst du die Welt darauf aufmerksam machen - mit unserer neuen Werbefunktion! 🚀</value>
+  </data>
+  <data name="StartSoundPromotionDialog-PrimaryButton" xml:space="preserve">
+    <value>Promotion starten</value>
+  </data>
+  <data name="StartSoundPromotionDialog-SecondPoint-Head" xml:space="preserve">
+    <value>Maximale Wirkung</value>
+  </data>
+  <data name="StartSoundPromotionDialog-SecondPoint-Text" xml:space="preserve">
+    <value>: Ob du ein erfahrener Künstler oder ein aufstrebender Star bist, diese Funktion ist deine Chance, einen bleibenden Eindruck zu hinterlassen. Erhöhe deine Reichweite und Einfluss im Soundkatalog von UniversalSoundboard.</value>
+  </data>
+  <data name="StartSoundPromotionDialog-Title" xml:space="preserve">
+    <value>🎉 Bewirb deinen Sound, erobere das Rampenlicht!</value>
+  </data>
 </root>

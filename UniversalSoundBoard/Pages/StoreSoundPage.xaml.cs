@@ -337,6 +337,13 @@ namespace UniversalSoundboard.Pages
 
         private async void PromoteButton_Click(object sender, RoutedEventArgs e)
         {
+            var startSoundPromotionDialog = new StartSoundPromotionDialog();
+            startSoundPromotionDialog.PrimaryButtonClick += StartSoundPromotionDialog_PrimaryButtonClick;
+            await startSoundPromotionDialog.ShowAsync();
+        }
+
+        private async void StartSoundPromotionDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        {
             var soundPromotionResponse = await ApiManager.CreateSoundPromotion(soundItem.Uuid);
 
             if (soundPromotionResponse != null && soundPromotionResponse.SessionUrl != null)

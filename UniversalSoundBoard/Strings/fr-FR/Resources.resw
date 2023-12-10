@@ -1223,4 +1223,28 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="PromoteButton.Text" xml:space="preserve">
     <value>Promouvoir</value>
   </data>
+  <data name="StartSoundPromotionDialog-FirstPoint-Head" xml:space="preserve">
+    <value>Augmentez votre visibilité</value>
+  </data>
+  <data name="StartSoundPromotionDialog-FirstPoint-Text" xml:space="preserve">
+    <value> : Placez votre son sur le devant de la scène ! Votre son promu sera affiché sur la page d'accueil pendant les trois jours suivants, pour une exposition maximale à notre communauté dynamique.</value>
+  </data>
+  <data name="StartSoundPromotionDialog-HowItWorks" xml:space="preserve">
+    <value>Voici comment cela fonctionne :</value>
+  </data>
+  <data name="StartSoundPromotionDialog-Intro" xml:space="preserve">
+    <value>Vous avez créé un chef-d'œuvre qui mérite l'attention du monde entier ? Vous pouvez désormais attirer l'attention du monde entier grâce à notre nouvelle fonction de promotion ! 🚀</value>
+  </data>
+  <data name="StartSoundPromotionDialog-PrimaryButton" xml:space="preserve">
+    <value>Commencer la promotion</value>
+  </data>
+  <data name="StartSoundPromotionDialog-SecondPoint-Head" xml:space="preserve">
+    <value>Effet maximal</value>
+  </data>
+  <data name="StartSoundPromotionDialog-SecondPoint-Text" xml:space="preserve">
+    <value> : Que vous soyez un artiste chevronné ou une étoile montante, cette fonction vous permet de marquer les esprits. Cette fonctionnalité est votre chance de faire une impression durable. Amplifiez votre portée et votre influence sur le catalogue de sons.</value>
+  </data>
+  <data name="StartSoundPromotionDialog-Title" xml:space="preserve">
+    <value>🎉 Faites la promotion de votre son, captez l'attention !</value>
+  </data>
 </root>
