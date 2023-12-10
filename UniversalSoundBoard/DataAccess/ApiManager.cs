@@ -62,7 +62,8 @@ namespace UniversalSoundboard.DataAccess
                 Variables = new { id }
             };
 
-            return (await GraphQLClient.SendQueryAsync<RetrieveUserResponse>(retrieveUserRequest)).Data.RetrieveUser;
+            var response = await GraphQLClient.SendQueryAsync<RetrieveUserResponse>(retrieveUserRequest);
+            return response?.Data?.RetrieveUser;
         }
 
         public static async Task<bool> UploadSoundFile(string uuid, StorageFile file, string contentType)
@@ -120,7 +121,8 @@ namespace UniversalSoundboard.DataAccess
                 Variables = new { uuid }
             };
 
-            return (await GraphQLClient.SendQueryAsync<RetrieveSoundResponse>(retrieveSoundRequest)).Data.RetrieveSound;
+            var response = await GraphQLClient.SendQueryAsync<RetrieveSoundResponse>(retrieveSoundRequest);
+            return response?.Data?.RetrieveSound;
         }
 
         public static async Task<ListResponse<SoundResponse>> ListSounds(
@@ -167,7 +169,8 @@ namespace UniversalSoundboard.DataAccess
                 Variables = new { mine, userId, random, latest, query, limit, offset }
             };
 
-            return (await GraphQLClient.SendQueryAsync<ListSoundsResponse>(listSoundsRequest)).Data.ListSounds;
+            var response = await GraphQLClient.SendQueryAsync<ListSoundsResponse>(listSoundsRequest);
+            return response?.Data?.ListSounds;
         }
 
         public static async Task<SoundResponse> CreateSound(string name, string description = null, List<string> tags = null)
@@ -193,7 +196,8 @@ namespace UniversalSoundboard.DataAccess
                 Variables = new { name, description, tags }
             };
 
-            return (await GraphQLClient.SendMutationAsync<CreateSoundResponse>(createSoundMutation)).Data.CreateSound;
+            var response = await GraphQLClient.SendMutationAsync<CreateSoundResponse>(createSoundMutation);
+            return response?.Data?.CreateSound;
         }
 
         public static async Task<SoundResponse> UpdateSound(string uuid, string name = null, string description = null, List<string> tags = null)
@@ -221,7 +225,8 @@ namespace UniversalSoundboard.DataAccess
                 Variables = new { uuid, name, description, tags }
             };
 
-            return (await GraphQLClient.SendMutationAsync<UpdateSoundResponse>(updateSoundMutation)).Data.UpdateSound;
+            var response = await GraphQLClient.SendMutationAsync<UpdateSoundResponse>(updateSoundMutation);
+            return response?.Data?.UpdateSound;
         }
 
         public static async Task<SoundResponse> DeleteSound(string uuid)
@@ -239,7 +244,8 @@ namespace UniversalSoundboard.DataAccess
                 Variables = new { uuid }
             };
 
-            return (await GraphQLClient.SendMutationAsync<DeleteSoundResponse>(deleteSoundMutation)).Data.DeleteSound;
+            var response = await GraphQLClient.SendMutationAsync<DeleteSoundResponse>(deleteSoundMutation);
+            return response?.Data?.DeleteSound;
         }
 
         public static async Task<SoundPromotionResponse> CreateSoundPromotion(string uuid, string title = null)
@@ -257,7 +263,8 @@ namespace UniversalSoundboard.DataAccess
                 Variables = new { uuid, title }
             };
 
-            return (await GraphQLClient.SendMutationAsync<CreateSoundPromotionResponse>(createSoundPromotionMutation)).Data.CreateSoundPromotion;
+            var response = await GraphQLClient.SendMutationAsync<CreateSoundPromotionResponse>(createSoundPromotionMutation);
+            return response?.Data?.CreateSoundPromotion;
         }
 
         public static async Task<ListResponse<TagResponse>> ListTags(int limit = 10, int offset = 0)
@@ -278,7 +285,8 @@ namespace UniversalSoundboard.DataAccess
                 Variables = new { limit, offset }
             };
 
-            return (await GraphQLClient.SendQueryAsync<ListTagsResponse>(listTagsRequest)).Data.ListTags;
+            var response = await GraphQLClient.SendQueryAsync<ListTagsResponse>(listTagsRequest);
+            return response?.Data?.ListTags;
         }
     }
 }
