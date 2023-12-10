@@ -242,19 +242,19 @@ namespace UniversalSoundboard.DataAccess
             return (await GraphQLClient.SendMutationAsync<DeleteSoundResponse>(deleteSoundMutation)).Data.DeleteSound;
         }
 
-        public static async Task<SoundPromotionResponse> CreateSoundPromotion(string uuid)
+        public static async Task<SoundPromotionResponse> CreateSoundPromotion(string uuid, string title = null)
         {
             var createSoundPromotionMutation = new GraphQLRequest
             {
                 OperationName = "CreateSoundPromotion",
                 Query = @"
-                    mutation CreateSoundPromotion($uuid: String!) {
-                        createSoundPromotion(uuid: $uuid) {
+                    mutation CreateSoundPromotion($uuid: String!, $title: String) {
+                        createSoundPromotion(uuid: $uuid, title: $title) {
                             sessionUrl
                         }
                     }
                 ",
-                Variables = new { uuid }
+                Variables = new { uuid, title }
             };
 
             return (await GraphQLClient.SendMutationAsync<CreateSoundPromotionResponse>(createSoundPromotionMutation)).Data.CreateSoundPromotion;

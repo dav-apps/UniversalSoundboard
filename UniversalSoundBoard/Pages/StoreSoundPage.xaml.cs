@@ -338,7 +338,10 @@ namespace UniversalSoundboard.Pages
 
         private async void PromoteButton_Click(object sender, RoutedEventArgs e)
         {
-            createSoundPromotionTask = ApiManager.CreateSoundPromotion(soundItem.Uuid);
+            createSoundPromotionTask = ApiManager.CreateSoundPromotion(
+                soundItem.Uuid,
+                FileManager.loader.GetString("StoreSoundPage-CreateSoundPromotionTitle")
+            );
 
             var startSoundPromotionDialog = new StartSoundPromotionDialog();
             startSoundPromotionDialog.PrimaryButtonClick += StartSoundPromotionDialog_PrimaryButtonClick;

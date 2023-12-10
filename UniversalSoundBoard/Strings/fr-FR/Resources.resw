@@ -1247,4 +1247,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StartSoundPromotionDialog-Title" xml:space="preserve">
     <value>🎉 Faites la promotion de votre son, captez l'attention !</value>
   </data>
+  <data name="StoreSoundPage-CreateSoundPromotionTitle" xml:space="preserve">
+    <value>Promotion du son durant trois jours</value>
+  </data>
 </root>

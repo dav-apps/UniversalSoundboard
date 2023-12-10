@@ -1248,4 +1248,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StartSoundPromotionDialog-Title" xml:space="preserve">
     <value>🎉 Promote your sound, capture the spotlight!</value>
   </data>
+  <data name="StoreSoundPage-CreateSoundPromotionTitle" xml:space="preserve">
+    <value>Sound promotion for three days</value>
+  </data>
 </root>

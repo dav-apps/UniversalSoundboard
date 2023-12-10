@@ -1246,4 +1246,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StartSoundPromotionDialog-Title" xml:space="preserve">
     <value>🎉 Bewirb deinen Sound, erobere das Rampenlicht!</value>
   </data>
+  <data name="StoreSoundPage-CreateSoundPromotionTitle" xml:space="preserve">
+    <value>Sound-Bewerbung für drei Tage</value>
+  </data>
 </root>
