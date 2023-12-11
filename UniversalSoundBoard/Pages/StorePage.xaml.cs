@@ -78,7 +78,7 @@ namespace UniversalSoundboard.Pages
         private async Task LoadSoundsOfTheDay()
         {
             var soundsOfTheDayResult = await ApiManager.ListSounds(random: true);
-            if (soundsOfTheDayResult.Items == null) return;
+            if (soundsOfTheDayResult?.Items == null) return;
 
             soundsOfTheDay = soundsOfTheDayResult.Items;
             soundsOfTheDayLoading = false;

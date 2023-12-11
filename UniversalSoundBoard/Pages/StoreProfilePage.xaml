@@ -91,6 +91,15 @@
                         Click="EditProfileButton_Click" />
                 </StackPanel>
 
+                <TextBlock
+                    Name="NoSoundsTextBlock"
+                    x:Uid="StoreProfilePage-NoSoundsTextBlock"
+                    HorizontalAlignment="Center"
+                    FontSize="16"
+                    FontStyle="Italic"
+                    Margin="0,24,0,0"
+                    Visibility="{x:Bind noSoundsTextVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
+
                 <GridView
                     Name="SoundsGridView"
                     ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"

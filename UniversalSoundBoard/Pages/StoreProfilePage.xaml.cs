@@ -26,10 +26,12 @@ namespace UniversalSoundboard.Pages
         MediaPlayer mediaPlayer;
         StoreSoundTileTemplate currentSoundItemTemplate;
         private int userId = 0;
+        private bool loggedInUser = false;
         private string userFirstName = "";
         private string userProfileImage = FileManager.DefaultProfileImageUrl;
         private string numberOfSoundsText = "";
         private bool numberOfSoundsTextVisible = false;
+        private bool noSoundsTextVisible = false;
         private bool isLoadMoreButtonVisible = false;
         private bool isLoading = true;
         private int currentPage = 0;
@@ -93,11 +95,13 @@ namespace UniversalSoundboard.Pages
 
                 userFirstName = retrieveUserResponse.FirstName;
                 userProfileImage = retrieveUserResponse.ProfileImage;
+                loggedInUser = false;
             }
             else
             {
                 // Get the user data from the local user
                 userFirstName = Dav.User.FirstName;
+                loggedInUser = true;
             }
 
             Bindings.Update();
@@ -137,10 +141,12 @@ namespace UniversalSoundboard.Pages
             isLoadMoreButtonVisible = listSoundsResponse.Total > currentPage * itemsPerPage + itemsPerPage;
             numberOfSoundsText = string.Format(FileManager.loader.GetString("StoreProfilePage-NumberOfSounds"), listSoundsResponse.Total);
             numberOfSoundsTextVisible = listSoundsResponse.Total > 1;
-            Bindings.Update();
 
             foreach (var sound in listSoundsResponse.Items)
                 sounds.Add(sound);
+
+            noSoundsTextVisible = sounds.Count == 0 && loggedInUser;
+            Bindings.Update();
         }
 
         private void SoundsGridView_ItemClick(object sender, ItemClickEventArgs e)

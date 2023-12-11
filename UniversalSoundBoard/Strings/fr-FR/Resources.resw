@@ -1250,4 +1250,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StoreSoundPage-CreateSoundPromotionTitle" xml:space="preserve">
     <value>Promotion du son durant trois jours</value>
   </data>
+  <data name="StoreProfilePage-NoSoundsTextBlock.Text" xml:space="preserve">
+    <value>Vous n'avez pas de sons publiés</value>
+  </data>
 </root>

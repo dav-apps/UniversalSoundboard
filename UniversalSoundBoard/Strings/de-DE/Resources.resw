@@ -1249,4 +1249,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StoreSoundPage-CreateSoundPromotionTitle" xml:space="preserve">
     <value>Sound-Bewerbung für drei Tage</value>
   </data>
+  <data name="StoreProfilePage-NoSoundsTextBlock.Text" xml:space="preserve">
+    <value>Du hast keine veröffentlichten Sounds</value>
+  </data>
 </root>

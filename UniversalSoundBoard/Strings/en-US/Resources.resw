@@ -1251,4 +1251,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StoreSoundPage-CreateSoundPromotionTitle" xml:space="preserve">
     <value>Sound promotion for three days</value>
   </data>
+  <data name="StoreProfilePage-NoSoundsTextBlock.Text" xml:space="preserve">
+    <value>You don't have any published sounds</value>
+  </data>
 </root>
