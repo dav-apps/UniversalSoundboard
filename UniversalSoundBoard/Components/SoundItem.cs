@@ -1,10 +1,8 @@
-﻿using davClassLibrary;
-using Microsoft.AppCenter.Analytics;
+﻿using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
@@ -28,7 +26,6 @@ namespace UniversalSoundboard.Components
 
         public event EventHandler<EventArgs> ImageUpdated;
 
-        private bool downloadFilesCanceled = false;
         private List<StorageFile> soundFiles = new List<StorageFile>();
         private string exportedFilePath = "";
 
@@ -118,7 +115,7 @@ namespace UniversalSoundboard.Components
         #region Share
         private async void OptionsFlyout_ShareFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            if (!await DownloadFile()) return;
+            if (!await FileManager.DownloadFileOfSound(sound)) return;
 
             // Copy the file into the temp folder
             soundFiles.Clear();
@@ -152,7 +149,7 @@ namespace UniversalSoundboard.Components
         #region Export sound
         private async void OptionsFlyout_ExportSoundFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            if (!await DownloadFile()) return;
+            if (!await FileManager.DownloadFileOfSound(sound)) return;
 
             // Open a folder picker and save the file there
             var savePicker = new Windows.Storage.Pickers.FileSavePicker
@@ -402,35 +399,6 @@ namespace UniversalSoundboard.Components
                 imageFileSize = await FileManager.GetFileSizeAsync(sound.ImageFile);
 
             await new PropertiesDialog(sound, audioFileSize, imageFileSize).ShowAsync();
-        }
-        #endregion
-
-        #region File download
-        private async Task<bool> DownloadFile()
-        {
-            var downloadStatus = sound.GetAudioFileDownloadStatus();
-
-            if (
-                downloadStatus == TableObjectFileDownloadStatus.NoFileOrNotLoggedIn
-                || downloadStatus == TableObjectFileDownloadStatus.Downloaded
-            ) return true;
-
-            var downloadFilesDialog = new DownloadFilesDialog(new List<Sound> { sound }, MainPage.soundFileDownloadProgressTemplate, MainPage.listViewItemStyle);
-            downloadFilesDialog.CloseButtonClick += DownloadFilesContentDialog_CloseButtonClick;
-            await downloadFilesDialog.ShowAsync();
-
-            if (downloadFilesCanceled)
-            {
-                downloadFilesCanceled = false;
-                return false;
-            }
-
-            return true;
-        }
-
-        private void DownloadFilesContentDialog_CloseButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            downloadFilesCanceled = true;
         }
         #endregion
     }

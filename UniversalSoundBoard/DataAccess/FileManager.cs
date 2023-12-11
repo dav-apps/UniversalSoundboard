@@ -1324,6 +1324,23 @@ namespace UniversalSoundboard.DataAccess
             foreach (var uuid in removedSoundUuids)
                 RemoveSound(uuid);
         }
+
+        public static async Task<bool> DownloadFileOfSound(Sound sound)
+        {
+            if (sound == null) return false;
+
+            var downloadStatus = sound.GetAudioFileDownloadStatus();
+
+            if (
+                downloadStatus == TableObjectFileDownloadStatus.NoFileOrNotLoggedIn
+                || downloadStatus == TableObjectFileDownloadStatus.Downloaded
+            ) return true;
+
+            var downloadFilesDialog = new DownloadFilesDialog(new List<Sound> { sound }, MainPage.soundFileDownloadProgressTemplate, MainPage.listViewItemStyle);
+            await downloadFilesDialog.ShowAsync();
+
+            return !downloadFilesDialog.DownloadCanceled;
+        }
         #endregion
 
         #region Category methods

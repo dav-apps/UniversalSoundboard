@@ -10,6 +10,7 @@ namespace UniversalSoundboard.Dialogs
     public class DownloadFilesDialog : Dialog
     {
         public ObservableCollection<Sound> Sounds { get; private set; }
+        public bool DownloadCanceled { get; private set; }
 
         public DownloadFilesDialog(
             List<Sound> sounds,
@@ -22,6 +23,9 @@ namespace UniversalSoundboard.Dialogs
         {
             Sounds = new ObservableCollection<Sound>(sounds);
             Content = GetContent(itemTemplate, itemStyle);
+
+            DownloadCanceled = false;
+            CloseButtonClick += DownloadFilesDialog_CloseButtonClick;
         }
 
         private Grid GetContent(DataTemplate itemTemplate, Style itemStyle)
@@ -41,6 +45,11 @@ namespace UniversalSoundboard.Dialogs
 
             containerGrid.Children.Add(progressListView);
             return containerGrid;
+        }
+
+        private void DownloadFilesDialog_CloseButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            DownloadCanceled = true;
         }
     }
 }
