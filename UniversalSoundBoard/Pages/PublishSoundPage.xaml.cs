@@ -1,5 +1,4 @@
 ﻿using CommunityToolkit.WinUI.Collections;
-using CommunityToolkit.WinUI.Controls;
 using Microsoft.AppCenter.Analytics;
 using MimeTypes;
 using System;
@@ -77,6 +76,8 @@ namespace UniversalSoundboard.Pages
 
         private async void PublishButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!await FileManager.DownloadFileOfSound(selectedItem)) return;
+
             Analytics.TrackEvent("PublishSoundPage-PublishButton-Click");
 
             FileManager.itemViewHolder.LoadingScreenMessage = FileManager.loader.GetString("PublishSoundPage-LoadingScreenMessage");

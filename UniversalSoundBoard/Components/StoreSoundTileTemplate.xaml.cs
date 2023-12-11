@@ -2,6 +2,7 @@
 using MimeTypes;
 using System;
 using System.Linq;
+using System.Threading.Tasks;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
@@ -100,11 +101,17 @@ namespace UniversalSoundboard.Components
 
         private async void SoundSelectionDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
         {
-            FileManager.itemViewHolder.LoadingScreenMessage = FileManager.loader.GetString("PublishSoundPage-LoadingScreenMessage");
-            FileManager.itemViewHolder.LoadingScreenVisible = true;
-
             var soundSelectionDialog = sender as SoundSelectionDialog;
             DialogSoundListItem selectedSoundItem = soundSelectionDialog.SelectedSoundItem;
+
+            // Close the current dialog and wait for the closing to finish
+            sender.Hide();
+            await Task.Delay(500);
+
+            if (!await FileManager.DownloadFileOfSound(selectedSoundItem.Sound)) return;
+
+            FileManager.itemViewHolder.LoadingScreenMessage = FileManager.loader.GetString("PublishSoundPage-LoadingScreenMessage");
+            FileManager.itemViewHolder.LoadingScreenVisible = true;
             
             string mimeType = "audio/mpeg";
 
