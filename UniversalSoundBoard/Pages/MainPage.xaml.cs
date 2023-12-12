@@ -604,6 +604,12 @@ namespace UniversalSoundboard.Pages
             OutputDeviceButton.Flyout = menuFlyout;
         }
 
+        private async void ManageOutputDevicesMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var outputDevicesDialog = new OutputDevicesDialog();
+            await outputDevicesDialog.ShowAsync();
+        }
+
         private async Task ContinuePlaylistDownload()
         {
             if (!FileManager.itemViewHolder.ShowContinuePlaylistDownloadIAN)
