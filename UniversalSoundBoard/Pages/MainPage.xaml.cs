@@ -32,6 +32,7 @@ using Windows.UI.Xaml;
 using Windows.UI;
 using WinUI = Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
+using Microsoft.UI.Xaml.Controls;
 
 namespace UniversalSoundboard.Pages
 {
@@ -277,7 +278,7 @@ namespace UniversalSoundboard.Pages
                 return;
             }
 
-            string outputDevice = (string)(sender as ToggleMenuFlyoutItem).Tag;
+            string outputDevice = (string)(sender as RadioMenuFlyoutItem).Tag;
 
             if (outputDevice == null)
             {
@@ -563,7 +564,7 @@ namespace UniversalSoundboard.Pages
                 Placement = FlyoutPlacementMode.Bottom
             };
 
-            ToggleMenuFlyoutItem standardItem = new ToggleMenuFlyoutItem
+            RadioMenuFlyoutItem standardItem = new RadioMenuFlyoutItem
             {
                 Text = FileManager.loader.GetString("StandardOutputDevice"),
                 IsChecked = true
@@ -574,7 +575,7 @@ namespace UniversalSoundboard.Pages
 
             foreach (var device in FileManager.deviceWatcherHelper.Devices)
             {
-                ToggleMenuFlyoutItem item = new ToggleMenuFlyoutItem
+                RadioMenuFlyoutItem item = new RadioMenuFlyoutItem
                 {
                     Text = device.Name,
                     Tag = device.Id,
@@ -587,6 +588,18 @@ namespace UniversalSoundboard.Pages
                 if (item.IsChecked)
                     standardItem.IsChecked = false;
             }
+
+            menuFlyout.Items.Add(new MenuFlyoutSeparator());
+
+            var manageOutputDevicesMenuFlyoutItem = new MenuFlyoutItem
+            {
+                Text = "Manage output devices",
+                Icon = new FontIcon { Glyph = "\uE15E" }
+            };
+
+            manageOutputDevicesMenuFlyoutItem.Click += ManageOutputDevicesMenuFlyoutItem_Click;
+
+            menuFlyout.Items.Add(manageOutputDevicesMenuFlyoutItem);
 
             OutputDeviceButton.Flyout = menuFlyout;
         }
