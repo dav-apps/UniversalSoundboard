@@ -278,7 +278,7 @@ namespace UniversalSoundboard.Pages
                 return;
             }
 
-            string outputDevice = (string)(sender as RadioMenuFlyoutItem).Tag;
+            string outputDevice = (string)(sender as ToggleMenuFlyoutItem).Tag;
 
             if (outputDevice == null)
             {
@@ -564,7 +564,7 @@ namespace UniversalSoundboard.Pages
                 Placement = FlyoutPlacementMode.Bottom
             };
 
-            RadioMenuFlyoutItem standardItem = new RadioMenuFlyoutItem
+            ToggleMenuFlyoutItem standardItem = new ToggleMenuFlyoutItem
             {
                 Text = FileManager.loader.GetString("StandardOutputDevice"),
                 IsChecked = true
@@ -575,7 +575,7 @@ namespace UniversalSoundboard.Pages
 
             foreach (var device in FileManager.deviceWatcherHelper.Devices)
             {
-                RadioMenuFlyoutItem item = new RadioMenuFlyoutItem
+                ToggleMenuFlyoutItem item = new ToggleMenuFlyoutItem
                 {
                     Text = device.Name,
                     Tag = device.Id,
@@ -593,7 +593,7 @@ namespace UniversalSoundboard.Pages
 
             var manageOutputDevicesMenuFlyoutItem = new MenuFlyoutItem
             {
-                Text = "Manage output devices",
+                Text = FileManager.loader.GetString("ManageOutputDevices"),
                 Icon = new FontIcon { Glyph = "\uE15E" }
             };
 

@@ -8,7 +8,11 @@ namespace UniversalSoundboard.Dialogs
 {
     public class OutputDevicesDialog : Dialog
     {
-        public OutputDevicesDialog() : base("Output devices", FileManager.loader.GetString("Actions-Close"))
+        public OutputDevicesDialog()
+            : base(
+                  FileManager.loader.GetString("OutputDevicesDialog-Title"),
+                  FileManager.loader.GetString("Actions-Close")
+            )
         {
             Content = GetContent();
         }
