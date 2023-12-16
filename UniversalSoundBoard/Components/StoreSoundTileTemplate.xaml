@@ -63,11 +63,21 @@
             </ToolTipService.ToolTip>
         </Button>
 
-        <TextBlock
-            Text="{x:Bind SoundItem.Name}"
+        <StackPanel
+            Orientation="Vertical"
             VerticalAlignment="Center"
             HorizontalAlignment="Left"
-            Margin="12,0,0,0"
-            ToolTipService.ToolTip="{x:Bind SoundItem.Name}" />
+            Margin="12,0,0,0">
+
+            <TextBlock
+                Text="{x:Bind SoundItem.Name}"
+                FontSize="15"
+                ToolTipService.ToolTip="{x:Bind SoundItem.Name}" />
+
+            <TextBlock
+                Text="{x:Bind durationText}"
+                FontSize="12"
+                FontWeight="ExtraLight" />
+        </StackPanel>
     </StackPanel>
 </UserControl>

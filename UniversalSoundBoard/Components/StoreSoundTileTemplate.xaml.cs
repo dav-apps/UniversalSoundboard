@@ -15,6 +15,7 @@ namespace UniversalSoundboard.Components
     {
         private bool isPlaying = false;
         private double width = 250;
+        private string durationText = "";
 
         public SoundResponse SoundItem { get; set; }
         public new double Width
@@ -45,6 +46,14 @@ namespace UniversalSoundboard.Components
             if (DataContext == null) return;
 
             SoundItem = DataContext as SoundResponse;
+
+            if (SoundItem.Duration.HasValue && SoundItem.Duration.Value > 0)
+            {
+                // Set the duration string
+                int seconds = (int)Math.Ceiling(SoundItem.Duration.Value);
+                durationText = string.Format("{0:D2}:{1:D2}", seconds / 60, seconds % 60);
+            }
+
             Bindings.Update();
         }
 
