@@ -52,7 +52,10 @@
                     <TextBlock
                         Name="NameTextBlock"
                         Text="{x:Bind soundItem.Name}"
-                        Style="{StaticResource TitleTextBlockStyle}" />
+                        Style="{StaticResource TitleTextBlockStyle}"
+                        TextWrapping="WrapWholeWords"
+                        MaxWidth="475"
+                        ToolTipService.ToolTip="{x:Bind soundItem.Name}" />
 
                     <Button
                         Name="EditButton"
