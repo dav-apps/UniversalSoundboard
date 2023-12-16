@@ -1104,11 +1104,11 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Actions-Login" xml:space="preserve">
     <value>Log in</value>
   </data>
-  <data name="PublishSoundsLoginDialog-Description" xml:space="preserve">
-    <value>Please log in to publish sounds in the Sound Catalog.</value>
+  <data name="PublishSoundsLoginDialog-Intro" xml:space="preserve">
+    <value>Now, you have the power to contribute and share your unique sounds with our vibrant community. Whether it's your musical masterpiece, a hilarious recording, or an ambient creation, your sound deserves to be heard!</value>
   </data>
   <data name="PublishSoundsLoginDialog-Title" xml:space="preserve">
-    <value>Log in required</value>
+    <value>✨ Unleash Your Creativity: Publish Your Own Sounds!</value>
   </data>
   <data name="SelectSoundButton.Text" xml:space="preserve">
     <value>Select sound</value>
@@ -1253,5 +1253,20 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="StoreProfilePage-NoSoundsTextBlock.Text" xml:space="preserve">
     <value>You don't have any published sounds</value>
+  </data>
+  <data name="PublishSoundsLoginDialog-FirstPoint-Head" xml:space="preserve">
+    <value>Seamless Sound Sharing</value>
+  </data>
+  <data name="PublishSoundsLoginDialog-FirstPoint-Text" xml:space="preserve">
+    <value>: Easily share your sounds with fellow enthusiasts.</value>
+  </data>
+  <data name="PublishSoundsLoginDialog-HowItWorks" xml:space="preserve">
+    <value>Unlock a world of possibilities:</value>
+  </data>
+  <data name="PublishSoundsLoginDialog-SecondPoint-Head" xml:space="preserve">
+    <value>Build Your Sound Profile</value>
+  </data>
+  <data name="PublishSoundsLoginDialog-SecondPoint-Text" xml:space="preserve">
+    <value>: Showcase your evolving creativity in your profile.</value>
   </data>
 </root>
