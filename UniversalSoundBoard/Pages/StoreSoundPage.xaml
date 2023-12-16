@@ -33,6 +33,20 @@
     </Page.Resources>
 
     <RelativePanel>
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup>
+                <VisualState x:Name="Large">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="800" />
+                    </VisualState.StateTriggers>
+
+                    <VisualState.Setters>
+                        <Setter Target="NameTextBlock.MaxWidth" Value="500" />
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
         <ScrollViewer
             Name="ContentRoot"
             Style="{StaticResource CustomScrollViewerStyle}"
@@ -51,62 +65,67 @@
 
                     <TextBlock
                         Name="NameTextBlock"
-                        Text="{x:Bind soundItem.Name}"
                         Style="{StaticResource TitleTextBlockStyle}"
+                        Text="{x:Bind soundItem.Name}"
                         TextWrapping="WrapWholeWords"
-                        MaxWidth="475"
+                        MaxWidth="380"
                         ToolTipService.ToolTip="{x:Bind soundItem.Name}" />
 
-                    <Button
-                        Name="EditButton"
-                        Style="{StaticResource IconButtonStyle}"
-                        Content="&#xE104;"
-                        Margin="12,0,0,0"
-                        Height="32"
-                        Width="32"
-                        CornerRadius="16"
-                        FontSize="16"
-                        Visibility="{x:Bind belongsToUser, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Click="EditButton_Click">
+                    <StackPanel
+                        Orientation="Horizontal"
+                        Margin="12,8,0,0"
+                        VerticalAlignment="Top">
 
-                        <ToolTipService.ToolTip>
-                            <TextBlock x:Uid="EditButton" />
-                        </ToolTipService.ToolTip>
-                    </Button>
+                        <Button
+                            Name="EditButton"
+                            Style="{StaticResource IconButtonStyle}"
+                            Content="&#xE104;"
+                            Height="32"
+                            Width="32"
+                            CornerRadius="16"
+                            FontSize="16"
+                            Visibility="{x:Bind belongsToUser, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Click="EditButton_Click">
 
-                    <Button
-                        Name="DeleteButton"
-                        Style="{StaticResource IconButtonStyle}"
-                        Content="&#xE107;"
-                        Margin="6,0,0,0"
-                        Height="32"
-                        Width="32"
-                        CornerRadius="16"
-                        FontSize="16"
-                        Visibility="{x:Bind belongsToUser, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Click="DeleteButton_Click">
+                            <ToolTipService.ToolTip>
+                                <TextBlock x:Uid="EditButton" />
+                            </ToolTipService.ToolTip>
+                        </Button>
 
-                        <ToolTipService.ToolTip>
-                            <TextBlock x:Uid="DeleteButton" />
-                        </ToolTipService.ToolTip>
-                    </Button>
+                        <Button
+                            Name="DeleteButton"
+                            Style="{StaticResource IconButtonStyle}"
+                            Content="&#xE107;"
+                            Margin="6,0,0,0"
+                            Height="32"
+                            Width="32"
+                            CornerRadius="16"
+                            FontSize="16"
+                            Visibility="{x:Bind belongsToUser, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Click="DeleteButton_Click">
 
-                    <Button
-                        Name="PromoteButton"
-                        Style="{StaticResource IconButtonStyle}"
-                        Content="&#xE789;"
-                        Margin="6,0,0,0"
-                        Height="32"
-                        Width="32"
-                        CornerRadius="16"
-                        FontSize="16"
-                        Visibility="{x:Bind promoteButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Click="PromoteButton_Click">
+                            <ToolTipService.ToolTip>
+                                <TextBlock x:Uid="DeleteButton" />
+                            </ToolTipService.ToolTip>
+                        </Button>
 
-                        <ToolTipService.ToolTip>
-                            <TextBlock x:Uid="PromoteButton" />
-                        </ToolTipService.ToolTip>
-                    </Button>
+                        <Button
+                            Name="PromoteButton"
+                            Style="{StaticResource IconButtonStyle}"
+                            Content="&#xE789;"
+                            Margin="6,0,0,0"
+                            Height="32"
+                            Width="32"
+                            CornerRadius="16"
+                            FontSize="16"
+                            Visibility="{x:Bind promoteButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}"
+                            Click="PromoteButton_Click">
+
+                            <ToolTipService.ToolTip>
+                                <TextBlock x:Uid="PromoteButton" />
+                            </ToolTipService.ToolTip>
+                        </Button>
+                    </StackPanel>
                 </StackPanel>
 
                 <Button
