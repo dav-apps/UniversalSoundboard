@@ -240,6 +240,7 @@ namespace UniversalSoundboard.DataAccess
                                 uuid
                                 name
                                 audioFileUrl
+                                duration
                             }
                         }
                     }

@@ -56,6 +56,9 @@ namespace UniversalSoundboard.Models
         public string Description { get; set; }
         public string AudioFileUrl { get; set; }
         public string Type { get; set; }
+        public int? Channels { get; set; }
+        public int? SampleRate { get; set; }
+        public double? Duration { get; set; }
         public string Source { get; set; }
         public List<string> Tags { get; set; }
         public UserResponse User { get; set; }
