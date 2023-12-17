@@ -176,6 +176,17 @@
                     </Button>
 
                     <Button
+                        Name="ShareButton"
+                        Margin="12,0,0,0"
+                        Click="ShareButton_Click">
+
+                        <TextBlock
+                            Text="&#xE72D;"
+                            FontFamily="{StaticResource FluentIconsFontFamily}"
+                            FontSize="16" />
+                    </Button>
+
+                    <Button
                         Name="MoreButton"
                         Margin="12,0,0,0"
                         Visibility="{x:Bind moreButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}">

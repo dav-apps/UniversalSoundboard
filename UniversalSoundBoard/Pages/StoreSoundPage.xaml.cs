@@ -9,6 +9,7 @@ using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using UniversalSoundboard.Models;
+using Windows.ApplicationModel.DataTransfer;
 using Windows.Media.Core;
 using Windows.Media.Playback;
 using Windows.Storage;
@@ -70,7 +71,12 @@ namespace UniversalSoundboard.Pages
 
                 // Get the sound from the API
                 soundItem = await ApiManager.RetrieveSound((string)e.Parameter);
-                if (soundItem == null) return;
+
+                if (soundItem == null)
+                {
+                    MainPage.NavigateToPage(typeof(StorePage));
+                    return;
+                }
 
                 mediaPlayer.Source = MediaSource.CreateFromUri(new Uri(soundItem.AudioFileUrl));
 
@@ -88,7 +94,12 @@ namespace UniversalSoundboard.Pages
 
                 // Load the entire sound from the API
                 soundItem = await ApiManager.RetrieveSound(soundItem.Uuid);
-                if (soundItem == null) return;
+
+                if (soundItem == null)
+                {
+                    MainPage.NavigateToPage(typeof(StorePage));
+                    return;
+                }
 
                 if (soundItem.Source != null)
                     sourceUri = new Uri(soundItem.Source);
@@ -381,6 +392,20 @@ namespace UniversalSoundboard.Pages
                 { "SoundUuid", soundItem.Uuid },
                 { "SoundName", soundItem.Name }
             });
+        }
+
+        private void ShareButton_Click(object sender, RoutedEventArgs e)
+        {
+            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+            DataTransferManager.ShowShareUI();
+        }
+
+        private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
+        {
+            DataRequest request = args.Request;
+            request.Data.Properties.Title = "Share sound";
+            request.Data.SetWebLink(new Uri(string.Format("{0}/sound/{1}", FileManager.UniversalSoundboardWebsiteBaseUrl, soundItem.Uuid)));
         }
 
         private async void ReportMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
