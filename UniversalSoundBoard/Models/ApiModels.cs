@@ -32,6 +32,11 @@ namespace UniversalSoundboard.Models
         public SoundResponse DeleteSound { get; set; }
     }
 
+    public class CreateSoundReportResponse
+    {
+        public SoundReportResponse CreateSoundReport { get; set; }
+    }
+
     public class CreateSoundPromotionResponse
     {
         public SoundPromotionResponse CreateSoundPromotion { get; set; }
@@ -63,6 +68,11 @@ namespace UniversalSoundboard.Models
         public List<string> Tags { get; set; }
         public UserResponse User { get; set; }
         public SoundPromotionResponse Promotion { get; set; }
+    }
+
+    public class SoundReportResponse
+    {
+        public string Uuid { get; set; }
     }
 
     public class SoundPromotionResponse
