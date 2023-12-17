@@ -1268,4 +1268,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="PublishSoundsLoginDialog-SecondPoint-Text" xml:space="preserve">
     <value>: Mettez en avant votre créativité évolutive dans votre profil.</value>
   </data>
+  <data name="StoreSoundPage-MoreButton-ReportMenuFlyoutItem.Text" xml:space="preserve">
+    <value>Signaler</value>
+  </data>
 </root>

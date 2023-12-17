@@ -175,6 +175,21 @@
                         </StackPanel>
                     </Button>
 
+                    <Button Name="MoreButton" Margin="12,0,0,0">
+                        <TextBlock
+                            Text="&#xE712;"
+                            FontFamily="{StaticResource FluentIconsFontFamily}"
+                            FontSize="16" />
+
+                        <Button.Flyout>
+                            <MenuFlyout Placement="Bottom">
+                                <MenuFlyoutItem
+                                    x:Uid="StoreSoundPage-MoreButton-ReportMenuFlyoutItem"
+                                    Icon="Flag" />
+                            </MenuFlyout>
+                        </Button.Flyout>
+                    </Button>
+
                     <HyperlinkButton
                         Margin="12,0,0,0"
                         NavigateUri="{x:Bind sourceUri}"

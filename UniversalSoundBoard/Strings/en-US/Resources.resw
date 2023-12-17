@@ -1269,4 +1269,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PublishSoundsLoginDialog-SecondPoint-Text" xml:space="preserve">
     <value>: Showcase your evolving creativity in your profile.</value>
   </data>
+  <data name="StoreSoundPage-MoreButton-ReportMenuFlyoutItem.Text" xml:space="preserve">
+    <value>Report</value>
+  </data>
 </root>
