@@ -77,7 +77,8 @@
             <TextBlock
                 Text="{x:Bind durationText}"
                 FontSize="12"
-                FontWeight="ExtraLight" />
+                FontWeight="ExtraLight"
+                Visibility="{x:Bind durationText, Converter={StaticResource NullToVisibilityConverter}}" />
         </StackPanel>
     </StackPanel>
 </UserControl>

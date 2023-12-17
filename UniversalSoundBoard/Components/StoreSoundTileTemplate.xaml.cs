@@ -15,7 +15,7 @@ namespace UniversalSoundboard.Components
     {
         private bool isPlaying = false;
         private double width = 250;
-        private string durationText = "";
+        private string durationText = null;
 
         public SoundResponse SoundItem { get; set; }
         public new double Width
