@@ -1268,6 +1268,18 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="PublishSoundsLoginDialog-SecondPoint-Text" xml:space="preserve">
     <value>: Mettez en avant votre créativité évolutive dans votre profil.</value>
   </data>
+  <data name="Actions-Send" xml:space="preserve">
+    <value>Envoyer</value>
+  </data>
+  <data name="ReportSoundDialog-Description" xml:space="preserve">
+    <value>Faites-nous savoir si ce son est inapproprié et doit être supprimé.</value>
+  </data>
+  <data name="ReportSoundDialog-DescriptionBox-Placeholder" xml:space="preserve">
+    <value>Quel est le problème avec ce son ?</value>
+  </data>
+  <data name="ReportSoundDialog-Title" xml:space="preserve">
+    <value>Signaler un son</value>
+  </data>
   <data name="StoreSoundPage-MoreButton-ReportMenuFlyoutItem.Text" xml:space="preserve">
     <value>Signaler</value>
   </data>

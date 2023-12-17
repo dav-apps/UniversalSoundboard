@@ -1267,6 +1267,18 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="PublishSoundsLoginDialog-SecondPoint-Text" xml:space="preserve">
     <value>: Zeige deine sich entwickelnde Kreativität in deinem Profil.</value>
   </data>
+  <data name="Actions-Send" xml:space="preserve">
+    <value>Senden</value>
+  </data>
+  <data name="ReportSoundDialog-Description" xml:space="preserve">
+    <value>Lass es uns wissen, falls dieser Sound unangemessen ist und entfernt werden sollte.</value>
+  </data>
+  <data name="ReportSoundDialog-DescriptionBox-Placeholder" xml:space="preserve">
+    <value>Was ist das Problem bei diesem Sound?</value>
+  </data>
+  <data name="ReportSoundDialog-Title" xml:space="preserve">
+    <value>Sound melden</value>
+  </data>
   <data name="StoreSoundPage-MoreButton-ReportMenuFlyoutItem.Text" xml:space="preserve">
     <value>Melden</value>
   </data>

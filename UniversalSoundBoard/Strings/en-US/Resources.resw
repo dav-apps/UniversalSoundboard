@@ -1269,6 +1269,18 @@ This may take some time, depending on how large the import file is.</value>
   <data name="PublishSoundsLoginDialog-SecondPoint-Text" xml:space="preserve">
     <value>: Showcase your evolving creativity in your profile.</value>
   </data>
+  <data name="Actions-Send" xml:space="preserve">
+    <value>Send</value>
+  </data>
+  <data name="ReportSoundDialog-Description" xml:space="preserve">
+    <value>Let us know if this sound is inappropriate and should be removed.</value>
+  </data>
+  <data name="ReportSoundDialog-DescriptionBox-Placeholder" xml:space="preserve">
+    <value>What is the problem with this sound?</value>
+  </data>
+  <data name="ReportSoundDialog-Title" xml:space="preserve">
+    <value>Report sound</value>
+  </data>
   <data name="StoreSoundPage-MoreButton-ReportMenuFlyoutItem.Text" xml:space="preserve">
     <value>Report</value>
   </data>
