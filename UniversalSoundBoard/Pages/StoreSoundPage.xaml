@@ -175,7 +175,11 @@
                         </StackPanel>
                     </Button>
 
-                    <Button Name="MoreButton" Margin="12,0,0,0">
+                    <Button
+                        Name="MoreButton"
+                        Margin="12,0,0,0"
+                        Visibility="{x:Bind moreButtonVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+
                         <TextBlock
                             Text="&#xE712;"
                             FontFamily="{StaticResource FluentIconsFontFamily}"

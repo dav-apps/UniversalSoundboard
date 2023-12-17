@@ -34,6 +34,7 @@ namespace UniversalSoundboard.Pages
         private bool belongsToUser = false;
         private bool isInSoundboard = true;
         private bool promoteButtonVisible = false;
+        private bool moreButtonVisible = false;
         private Task<SoundPromotionResponse> createSoundPromotionTask;
 
         public StoreSoundPage()
@@ -109,6 +110,7 @@ namespace UniversalSoundboard.Pages
 
             isInSoundboard = sound != null;
             promoteButtonVisible = belongsToUser && soundItem.Promotion == null;
+            moreButtonVisible = soundItem.Source == null && !belongsToUser;
 
             Bindings.Update();
         }
