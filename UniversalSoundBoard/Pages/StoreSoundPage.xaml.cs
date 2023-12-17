@@ -380,5 +380,18 @@ namespace UniversalSoundboard.Pages
                 { "SoundName", soundItem.Name }
             });
         }
+
+        private async void ReportMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            var reportSoundDialog = new ReportSoundDialog();
+            reportSoundDialog.PrimaryButtonClick += ReportSoundDialog_PrimaryButtonClick;
+            await reportSoundDialog.ShowAsync();
+        }
+
+        private async void ReportSoundDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            ReportSoundDialog dialog = sender as ReportSoundDialog;
+            await ApiManager.CreateSoundReport(soundItem.Uuid, dialog.Description);
+        }
     }
 }

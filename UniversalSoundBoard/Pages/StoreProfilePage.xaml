@@ -46,6 +46,7 @@
                     ui:Effects.Shadow="{StaticResource ProfileImageShadow}"
                     Height="150"
                     Width="150"
+                    Margin="0,16,0,0"
                     Visibility="{x:Bind userId, Converter={StaticResource IntToInvertedVisibilityConverter}}">
 
                     <Ellipse.Fill>

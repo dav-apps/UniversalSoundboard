@@ -184,8 +184,10 @@
                         <Button.Flyout>
                             <MenuFlyout Placement="Bottom">
                                 <MenuFlyoutItem
+                                    Name="ReportMenuFlyoutItem"
                                     x:Uid="StoreSoundPage-MoreButton-ReportMenuFlyoutItem"
-                                    Icon="Flag" />
+                                    Icon="Flag"
+                                    Click="ReportMenuFlyoutItem_Click" />
                             </MenuFlyout>
                         </Button.Flyout>
                     </Button>
