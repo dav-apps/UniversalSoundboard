@@ -69,39 +69,15 @@ namespace UniversalSoundboard.DataAccess
         #endregion
 
         #region dav Keys
-        public static string ApiKey => Environment == davClassLibrary.Environment.Production ? Env.DavApiKeyProd : Env.DavApiKeyDev;
-
-        private const string WebsiteBaseUrlProduction = "https://dav-login-7ymir.ondigitalocean.app";
-        private const string WebsiteBaseUrlDevelopment = "https://2361f4e2f9f3.ngrok.io";
-        public static string WebsiteBaseUrl => Environment == davClassLibrary.Environment.Production ? WebsiteBaseUrlProduction : WebsiteBaseUrlDevelopment;
-
-        private const int AppIdProduction = 1;                 // Dev: 2; Prod: 1
-        private const int AppIdDevelopment = 2;
-        public static int AppId => Environment == davClassLibrary.Environment.Production ? AppIdProduction : AppIdDevelopment;
-
-        private const int SoundFileTableIdProduction = 6;      // Dev: 2; Prod: 6
-        private const int SoundFileTableIdDevelopment = 2;
-        public static int SoundFileTableId => Environment == davClassLibrary.Environment.Production ? SoundFileTableIdProduction : SoundFileTableIdDevelopment;
-
-        private const int ImageFileTableIdProduction = 7;      // Dev: 3; Prod: 7
-        private const int ImageFileTableIdDevelopment = 3;
-        public static int ImageFileTableId => Environment == davClassLibrary.Environment.Production ? ImageFileTableIdProduction : ImageFileTableIdDevelopment;
-
-        private const int CategoryTableIdProduction = 8;        // Dev: 4; Prod: 8
-        private const int CategoryTableIdDevelopment = 4;
-        public static int CategoryTableId => Environment == davClassLibrary.Environment.Production ? CategoryTableIdProduction : CategoryTableIdDevelopment;
-
-        private const int SoundTableIdProduction = 5;           // Dev: 1; Prod: 5
-        private const int SoundTableIdDevelopment = 1;
-        public static int SoundTableId => Environment == davClassLibrary.Environment.Production ? SoundTableIdProduction : SoundTableIdDevelopment;
-
-        private const int PlayingSoundTableIdProduction = 9;    // Dev: 5; Prod: 9
-        private const int PlayingSoundTableIdDevelopment = 5;
-        public static int PlayingSoundTableId => Environment == davClassLibrary.Environment.Production ? PlayingSoundTableIdProduction : PlayingSoundTableIdDevelopment;
-
-        private const int OrderTableIdProduction = 12;          // Dev: 6; Prod: 12
-        private const int OrderTableIdDevelopment = 6;
-        public static int OrderTableId => Environment == davClassLibrary.Environment.Production ? OrderTableIdProduction : OrderTableIdDevelopment;
+        public static string ApiKey { get => Env.DavApiKey; }
+        public const string WebsiteBaseUrl = "https://dav-login-7ymir.ondigitalocean.app";
+        public const int AppId = 1;
+        public const int SoundFileTableId = 6;
+        public const int ImageFileTableId = 7;
+        public const int CategoryTableId = 8;
+        public const int SoundTableId = 5;
+        public const int PlayingSoundTableId = 9;
+        public const int OrderTableId = 12;
         #endregion
 
         #region Table property names
