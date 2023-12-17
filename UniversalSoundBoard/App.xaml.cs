@@ -4,6 +4,7 @@ using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Web;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
@@ -178,6 +179,16 @@ namespace UniversalSoundboard
                 else if (eventArgs.Uri.AbsoluteUri.StartsWith("universalsoundboard://sound-promotion"))
                 {
                     FileManager.itemViewHolder.TriggerSoundPromotionStartedEvent(this, EventArgs.Empty);
+                }
+                else if (eventArgs.Uri.AbsoluteUri.StartsWith("universalsoundboard://sound/"))
+                {
+                    // Get the uuid from the uri
+                    string uuid = eventArgs.Uri.AbsoluteUri.Split("/").Last();
+
+                    if (MainPage.pageLoaded)
+                        FileManager.NavigateToStoreSoundPage(uuid, "Share");
+                    else
+                        MainPage.SharedSoundUuid = uuid;
                 }
             }
         }

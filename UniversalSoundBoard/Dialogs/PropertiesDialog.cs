@@ -277,7 +277,7 @@ namespace UniversalSoundboard.Dialogs
             if (storeUuid == null) return;
 
             ContentDialog.Hide();
-            FileManager.NavigateToStoreSoundPage(storeUuid);
+            FileManager.NavigateToStoreSoundPage(storeUuid, "PropertiesDialog");
         }
     }
 }

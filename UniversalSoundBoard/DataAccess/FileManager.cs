@@ -71,6 +71,7 @@ namespace UniversalSoundboard.DataAccess
         #region dav Keys
         public static string ApiKey { get => Env.DavApiKey; }
         public const string WebsiteBaseUrl = "https://dav-login-7ymir.ondigitalocean.app";
+        public const string UniversalSoundboardWebsiteBaseUrl = "https://universalsoundboard.dav-apps.tech";
         public const int AppId = 1;
         public const int SoundFileTableId = 6;
         public const int ImageFileTableId = 7;
@@ -3296,7 +3297,7 @@ namespace UniversalSoundboard.DataAccess
             Analytics.TrackEvent("NavigateToStorePage");
         }
 
-        public static void NavigateToStoreSoundPage(string uuid)
+        public static void NavigateToStoreSoundPage(string uuid, string context)
         {
             MainPage.NavigateToPage(typeof(StoreSoundPage), uuid, new DrillInNavigationTransitionInfo());
             itemViewHolder.Title = loader.GetString("Store-Title");
@@ -3306,7 +3307,8 @@ namespace UniversalSoundboard.DataAccess
 
             Analytics.TrackEvent("NavigateToStoreSoundPage", new Dictionary<string, string>
             {
-                { "Uuid", uuid }
+                { "Uuid", uuid },
+                { "Context", context }
             });
         }
 

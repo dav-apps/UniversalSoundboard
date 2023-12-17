@@ -61,6 +61,8 @@ namespace UniversalSoundboard.Pages
         public static double windowWidth = 500;
         public static uint screenWidth = 0;
         public static uint screenHeight = 0;
+        public static bool pageLoaded = false;
+        public static string SharedSoundUuid = null;
 
         public MainPage()
         {
@@ -110,6 +112,13 @@ namespace UniversalSoundboard.Pages
                 await FileManager.ShowCategoryAsync(initialCategory);
 
             FileManager.itemViewHolder.TriggerSoundsLoadedEvent(this);
+            pageLoaded = true;
+
+            if (SharedSoundUuid != null)
+            {
+                FileManager.NavigateToStoreSoundPage(SharedSoundUuid, "Share");
+                SharedSoundUuid = null;
+            }
 
             IncreaseAppStartCounter();
             UpdateOutputDeviceFlyout();
