@@ -1286,4 +1286,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="ShareButton.Text" xml:space="preserve">
     <value>Partager</value>
   </data>
+  <data name="Currency" xml:space="preserve">
+    <value>eur</value>
+  </data>
 </root>

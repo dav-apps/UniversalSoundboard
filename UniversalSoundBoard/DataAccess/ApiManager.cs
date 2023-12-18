@@ -332,6 +332,33 @@ namespace UniversalSoundboard.DataAccess
             return response?.Data?.DeleteSound;
         }
 
+        public static async Task<SoundPromotionResponse> CreateSoundPromotion(string uuid, string title = null, string currency = "eur")
+        {
+            var createSoundPromotionMutation = new GraphQLRequest
+            {
+                OperationName = "CreateSoundPromotion",
+                Query = @"
+                    mutation CreateSoundPromotion(
+                        $uuid: String!
+                        $title: String
+                        $currency: String
+                    ) {
+                        createSoundPromotion(
+                            uuid: $uuid
+                            title: $title
+                            currency: $currency
+                        ) {
+                            sessionUrl
+                        }
+                    }
+                ",
+                Variables = new { uuid, title, currency }
+            };
+
+            var response = await GraphQLClient.SendMutationAsync<CreateSoundPromotionResponse>(createSoundPromotionMutation);
+            return response?.Data?.CreateSoundPromotion;
+        }
+
         public static async Task<SoundReportResponse> CreateSoundReport(string uuid, string description)
         {
             var createSoundReportMutation = new GraphQLRequest
@@ -349,25 +376,6 @@ namespace UniversalSoundboard.DataAccess
 
             var response = await GraphQLClient.SendMutationAsync<CreateSoundReportResponse>(createSoundReportMutation);
             return response?.Data?.CreateSoundReport;
-        }
-
-        public static async Task<SoundPromotionResponse> CreateSoundPromotion(string uuid, string title = null)
-        {
-            var createSoundPromotionMutation = new GraphQLRequest
-            {
-                OperationName = "CreateSoundPromotion",
-                Query = @"
-                    mutation CreateSoundPromotion($uuid: String!, $title: String) {
-                        createSoundPromotion(uuid: $uuid, title: $title) {
-                            sessionUrl
-                        }
-                    }
-                ",
-                Variables = new { uuid, title }
-            };
-
-            var response = await GraphQLClient.SendMutationAsync<CreateSoundPromotionResponse>(createSoundPromotionMutation);
-            return response?.Data?.CreateSoundPromotion;
         }
 
         public static async Task<ListResponse<TagResponse>> ListTags(int limit = 10, int offset = 0)

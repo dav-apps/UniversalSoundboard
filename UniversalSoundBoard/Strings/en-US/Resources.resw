@@ -1287,4 +1287,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="ShareButton.Text" xml:space="preserve">
     <value>Share</value>
   </data>
+  <data name="Currency" xml:space="preserve">
+    <value>usd</value>
+  </data>
 </root>

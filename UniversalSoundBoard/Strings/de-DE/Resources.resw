@@ -1285,4 +1285,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="ShareButton.Text" xml:space="preserve">
     <value>Teilen</value>
   </data>
+  <data name="Currency" xml:space="preserve">
+    <value>eur</value>
+  </data>
 </root>

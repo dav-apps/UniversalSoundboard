@@ -366,7 +366,8 @@ namespace UniversalSoundboard.Pages
         {
             createSoundPromotionTask = ApiManager.CreateSoundPromotion(
                 soundItem.Uuid,
-                FileManager.loader.GetString("StoreSoundPage-CreateSoundPromotionTitle")
+                FileManager.loader.GetString("StoreSoundPage-CreateSoundPromotionTitle"),
+                FileManager.loader.GetString("Currency")
             );
 
             Analytics.TrackEvent("StoreSoundPage-PromoteButtonClick", new Dictionary<string, string>
