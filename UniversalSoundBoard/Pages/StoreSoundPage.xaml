@@ -184,6 +184,10 @@
                             Text="&#xE72D;"
                             FontFamily="{StaticResource FluentIconsFontFamily}"
                             FontSize="16" />
+
+                        <ToolTipService.ToolTip>
+                            <TextBlock x:Uid="ShareButton" />
+                        </ToolTipService.ToolTip>
                     </Button>
 
                     <Button

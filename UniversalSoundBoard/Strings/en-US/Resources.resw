@@ -1284,4 +1284,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StoreSoundPage-MoreButton-ReportMenuFlyoutItem.Text" xml:space="preserve">
     <value>Report</value>
   </data>
+  <data name="ShareButton.Text" xml:space="preserve">
+    <value>Share</value>
+  </data>
 </root>

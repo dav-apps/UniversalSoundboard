@@ -1283,4 +1283,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StoreSoundPage-MoreButton-ReportMenuFlyoutItem.Text" xml:space="preserve">
     <value>Signaler</value>
   </data>
+  <data name="ShareButton.Text" xml:space="preserve">
+    <value>Partager</value>
+  </data>
 </root>

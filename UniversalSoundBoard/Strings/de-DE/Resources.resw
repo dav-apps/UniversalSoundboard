@@ -1282,4 +1282,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="StoreSoundPage-MoreButton-ReportMenuFlyoutItem.Text" xml:space="preserve">
     <value>Melden</value>
   </data>
+  <data name="ShareButton.Text" xml:space="preserve">
+    <value>Teilen</value>
+  </data>
 </root>
