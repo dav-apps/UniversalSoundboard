@@ -1,4 +1,5 @@
 ﻿using Microsoft.AppCenter.Analytics;
+using Microsoft.Toolkit.Uwp.UI;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -12,6 +13,7 @@ using Windows.Media.Playback;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.UI.Xaml.Navigation;
@@ -149,6 +151,26 @@ namespace UniversalSoundboard.Pages
         private void StoreSoundTileTemplate_Pause(object sender, EventArgs e)
         {
             mediaPlayer.Pause();
+        }
+
+        private async void SoundsOfTheDayGridView_StoreSoundTileTemplate_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        {
+            await Task.Delay(1);
+            var delta = e.GetCurrentPoint((UIElement)sender).Properties.MouseWheelDelta;
+            ScrollHorizontalGridView(SoundsOfTheDayGridView, delta);
+        }
+
+        private async void RecentlyAddedSoundsGridView_StoreSoundTileTemplate_PointerWheelChanged(object sender, PointerRoutedEventArgs e)
+        {
+            await Task.Delay(1);
+            var delta = e.GetCurrentPoint((UIElement)sender).Properties.MouseWheelDelta;
+            ScrollHorizontalGridView(RecentlyAddedSoundsGridView, delta);
+        }
+
+        private void ScrollHorizontalGridView(GridView gridView, int delta)
+        {
+            ScrollViewer scrollViewer = gridView.FindDescendant<ScrollViewer>();
+            scrollViewer?.ChangeView(scrollViewer.HorizontalOffset - delta, null, null);
         }
 
         private void SoundsGridView_ItemClick(object sender, ItemClickEventArgs e)

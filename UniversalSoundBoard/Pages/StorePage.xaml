@@ -19,10 +19,18 @@
         <converters:BooleanToInvertedVisibilityConverter x:Name="BooleanToInvertedVisibilityConverter" />
         
         <!-- DataTemplates -->
-        <DataTemplate x:Key="StoreSoundTileItemTemplate" x:DataType="models:SoundResponse">
+        <DataTemplate x:Key="SoundsOfTheDayGridView_StoreSoundTileItemTemplate" x:DataType="models:SoundResponse">
             <components:StoreSoundTileTemplate
                 Play="StoreSoundTileTemplate_Play"
-                Pause="StoreSoundTileTemplate_Pause" />
+                Pause="StoreSoundTileTemplate_Pause"
+                PointerWheelChanged="SoundsOfTheDayGridView_StoreSoundTileTemplate_PointerWheelChanged" />
+        </DataTemplate>
+
+        <DataTemplate x:Key="RecentlyAddedSoundsGridView_StoreSoundTileItemTemplate" x:DataType="models:SoundResponse">
+            <components:StoreSoundTileTemplate
+                Play="StoreSoundTileTemplate_Play"
+                Pause="StoreSoundTileTemplate_Pause"
+                PointerWheelChanged="RecentlyAddedSoundsGridView_StoreSoundTileTemplate_PointerWheelChanged" />
         </DataTemplate>
 
         <DataTemplate x:Key="StoreTagItemTemplate" x:DataType="x:String">
@@ -60,7 +68,7 @@
 
                 <GridView
                     Name="SoundsOfTheDayGridView"
-                    ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
+                    ItemTemplate="{StaticResource SoundsOfTheDayGridView_StoreSoundTileItemTemplate}"
                     ItemsSource="{x:Bind soundsOfTheDay}"
                     Visibility="{x:Bind soundsOfTheDayLoading, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
                     SelectionMode="None"
@@ -96,7 +104,7 @@
 
                 <GridView
                     Name="RecentlyAddedSoundsGridView"
-                    ItemTemplate="{StaticResource StoreSoundTileItemTemplate}"
+                    ItemTemplate="{StaticResource RecentlyAddedSoundsGridView_StoreSoundTileItemTemplate}"
                     ItemsSource="{x:Bind recentlyAddedSounds}"
                     Visibility="{x:Bind recentlyAddedSoundsLoading, Converter={StaticResource BooleanToInvertedVisibilityConverter}}"
                     SelectionMode="None"

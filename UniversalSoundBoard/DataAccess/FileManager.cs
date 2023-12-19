@@ -3275,14 +3275,14 @@ namespace UniversalSoundboard.DataAccess
             if (GetRequestedTheme() == ElementTheme.Dark)
             {
                 // Set the colors for the content background variables
-                (Application.Current.Resources["ContentBackgroundBrush"] as SolidColorBrush).Color = ((Color)Application.Current.Resources["DarkThemeContentBackgroundColor"]);
-                (Application.Current.Resources["ContentBorderBrush"] as SolidColorBrush).Color = ((Color)Application.Current.Resources["DarkThemeContentBorderBrushColor"]);
+                (Application.Current.Resources["ContentBackgroundBrush"] as SolidColorBrush).Color = (Color)Application.Current.Resources["DarkThemeContentBackgroundColor"];
+                (Application.Current.Resources["ContentBorderBrush"] as SolidColorBrush).Color = (Color)Application.Current.Resources["DarkThemeContentBorderBrushColor"];
             }
             else
             {
                 // Set the colors for the content background variables
-                (Application.Current.Resources["ContentBackgroundBrush"] as SolidColorBrush).Color = ((Color)Application.Current.Resources["LightThemeContentBackgroundColor"]);
-                (Application.Current.Resources["ContentBorderBrush"] as SolidColorBrush).Color = ((Color)Application.Current.Resources["LightThemeContentBorderBrushColor"]);
+                (Application.Current.Resources["ContentBackgroundBrush"] as SolidColorBrush).Color = (Color)Application.Current.Resources["LightThemeContentBackgroundColor"];
+                (Application.Current.Resources["ContentBorderBrush"] as SolidColorBrush).Color = (Color)Application.Current.Resources["LightThemeContentBorderBrushColor"];
             }
         }
 
