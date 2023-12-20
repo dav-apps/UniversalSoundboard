@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using Windows.Storage;
@@ -99,7 +100,7 @@ namespace UniversalSoundboard.Dialogs
                 SuggestedStartLocation = PickerLocationId.MusicLibrary
             };
 
-            foreach (var fileType in FileManager.allowedFileTypes)
+            foreach (var fileType in Constants.allowedFileTypes)
                 picker.FileTypeFilter.Add(fileType);
 
             var files = await picker.PickMultipleFilesAsync();

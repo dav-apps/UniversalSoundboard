@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -50,14 +51,14 @@ namespace UniversalSoundboard.Dialogs
 
             IconSelectionComboBox = new ComboBox
             {
-                FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
+                FontFamily = new FontFamily(Constants.FluentIconsFontFamily),
                 FontSize = 25,
                 Margin = new Thickness(0, 15, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Center
             };
 
             foreach (string icon in IconsList)
-                IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = icon, FontFamily = new FontFamily(FileManager.FluentIconsFontFamily), FontSize = 25 });
+                IconSelectionComboBox.Items.Add(new ComboBoxItem { Content = icon, FontFamily = new FontFamily(Constants.FluentIconsFontFamily), FontSize = 25 });
 
             Random random = new Random();
             int randomNumber = random.Next(IconsList.Count);

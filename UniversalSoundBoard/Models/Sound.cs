@@ -83,7 +83,7 @@ namespace UniversalSoundboard.Models
         public string GetAudioFileExtension()
         {
             if (AudioFileTableObject == null) return null;
-            return AudioFileTableObject.GetPropertyValue(FileManager.TableObjectExtPropertyName);
+            return AudioFileTableObject.GetPropertyValue(Constants.TableObjectExtPropertyName);
         }
 
         public void ScheduleAudioFileDownload(Progress<(Guid, int)> progress)
@@ -101,7 +101,7 @@ namespace UniversalSoundboard.Models
         public string GetImageFileExtension()
         {
             if (ImageFileTableObject == null) return null;
-            return ImageFileTableObject.GetPropertyValue(FileManager.TableObjectExtPropertyName);
+            return ImageFileTableObject.GetPropertyValue(Constants.TableObjectExtPropertyName);
         }
 
         public static Uri GetDefaultImageUri()

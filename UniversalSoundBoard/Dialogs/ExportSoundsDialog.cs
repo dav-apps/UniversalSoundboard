@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.Storage;
@@ -89,7 +90,7 @@ namespace UniversalSoundboard.Dialogs
 
             Button folderButton = new Button
             {
-                FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
+                FontFamily = new FontFamily(Constants.FluentIconsFontFamily),
                 Content = "\uE838",
                 FontSize = 18,
                 Width = 35,

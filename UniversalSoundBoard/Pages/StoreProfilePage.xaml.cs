@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
@@ -28,7 +29,7 @@ namespace UniversalSoundboard.Pages
         private int userId = 0;
         private bool loggedInUser = false;
         private string userFirstName = "";
-        private string userProfileImage = FileManager.DefaultProfileImageUrl;
+        private string userProfileImage = Constants.DefaultProfileImageUrl;
         private string numberOfSoundsText = "";
         private bool numberOfSoundsTextVisible = false;
         private bool noSoundsTextVisible = false;

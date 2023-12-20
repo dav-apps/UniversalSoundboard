@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
 using Windows.UI.Xaml;
@@ -48,7 +49,7 @@ namespace UniversalSoundboard.Dialogs
 
             IconSelectionComboBox = new ComboBox
             {
-                FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
+                FontFamily = new FontFamily(Constants.FluentIconsFontFamily),
                 FontSize = 25,
                 Margin = new Thickness(0, 15, 0, 0),
                 HorizontalAlignment = HorizontalAlignment.Center
@@ -59,7 +60,7 @@ namespace UniversalSoundboard.Dialogs
 
             foreach (string icon in IconsList)
             {
-                ComboBoxItem item = new ComboBoxItem { Content = icon, FontFamily = new FontFamily(FileManager.FluentIconsFontFamily), FontSize = 25 };
+                ComboBoxItem item = new ComboBoxItem { Content = icon, FontFamily = new FontFamily(Constants.FluentIconsFontFamily), FontSize = 25 };
                 if (icon == category.Icon)
                     item.IsSelected = true;
 

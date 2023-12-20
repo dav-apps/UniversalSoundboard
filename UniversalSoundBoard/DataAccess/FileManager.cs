@@ -48,41 +48,6 @@ namespace UniversalSoundboard.DataAccess
 {
     public class FileManager
     {
-        #region Variables
-        #region Other constants
-        public const string TableObjectExtPropertyName = "ext";
-        public const string CategoryOrderType = "0";
-        public const string SoundOrderType = "1";
-
-        public const string ImportFolderName = "import";
-        public const string ImportZipFileName = "import.zip";
-        public const string ExportFolderName = "export";
-        public const string ExportZipFileName = "export.zip";
-        public const string ExportDataFileName = "data.json";
-        public const string TileFolderName = "tile";
-
-        public const string FluentIconsFontFamily = "/Assets/Fonts/SegoeFluentIcons.ttf#Segoe Fluent Icons";
-        public const string DefaultProfileImageUrl = "https://dav-backend.fra1.cdn.digitaloceanspaces.com/profileImages/default.png";
-
-        public static List<string> allowedFileTypes = new List<string>
-        {
-            ".mp3",
-            ".m4a",
-            ".wav",
-            ".ogg",
-            ".wma",
-            ".flac"
-        };
-
-        public static List<string> allowedAudioMimeTypes = new List<string>
-        {
-            "audio/mpeg",   // .mp3
-            "audio/mp4",    // .m4a
-            "audio/wav",    // .wav
-            "audio/ogg"     // .ogg
-        };
-        #endregion
-
         #region Local variables
         public static ItemViewHolder itemViewHolder;
         public static davClassLibrary.Environment Environment = davClassLibrary.Environment.Production;
@@ -106,7 +71,6 @@ namespace UniversalSoundboard.DataAccess
         private static readonly List<Guid> LoadedSoundOrders = new List<Guid>();
 
         public static List<InAppNotificationItem> InAppNotificationItems = new List<InAppNotificationItem>();
-        #endregion
         #endregion
 
         #region Filesystem methods
@@ -161,7 +125,7 @@ namespace UniversalSoundboard.DataAccess
             itemViewHolder.ExportAndImportButtonsEnabled = false;
 
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
-            StorageFolder exportFolder = await localCacheFolder.CreateFolderAsync(ExportFolderName, CreationCollisionOption.GenerateUniqueName);
+            StorageFolder exportFolder = await localCacheFolder.CreateFolderAsync(Constants.ExportFolderName, CreationCollisionOption.GenerateUniqueName);
 
             var progress = new Progress<int>((int value) =>
             {
@@ -177,7 +141,7 @@ namespace UniversalSoundboard.DataAccess
             // Create the zip file
             StorageFile zipFile = await Task.Run(async () =>
             {
-                StorageFile file = await localCacheFolder.CreateFileAsync(ExportZipFileName, CreationCollisionOption.GenerateUniqueName);
+                StorageFile file = await localCacheFolder.CreateFileAsync(Constants.ExportZipFileName, CreationCollisionOption.GenerateUniqueName);
                 await file.DeleteAsync();
                 ZipFile.CreateFromDirectory(exportFolder.Path, file.Path);
                 return file;
@@ -237,8 +201,8 @@ namespace UniversalSoundboard.DataAccess
             itemViewHolder.ExportAndImportButtonsEnabled = false;
 
             StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
-            StorageFolder importFolder = await localCacheFolder.CreateFolderAsync(ImportFolderName, CreationCollisionOption.GenerateUniqueName);
-            StorageFile newZipFile = await zipFile.CopyAsync(localCacheFolder, ImportZipFileName, NameCollisionOption.ReplaceExisting);
+            StorageFolder importFolder = await localCacheFolder.CreateFolderAsync(Constants.ImportFolderName, CreationCollisionOption.GenerateUniqueName);
+            StorageFile newZipFile = await zipFile.CopyAsync(localCacheFolder, Constants.ImportZipFileName, NameCollisionOption.ReplaceExisting);
 
             await Task.Run(() =>
             {
@@ -534,7 +498,7 @@ namespace UniversalSoundboard.DataAccess
             if (saveAsZip)
             {
                 StorageFolder localCacheFolder = ApplicationData.Current.LocalCacheFolder;
-                StorageFolder exportFolder = await localCacheFolder.CreateFolderAsync(ExportFolderName, CreationCollisionOption.GenerateUniqueName);
+                StorageFolder exportFolder = await localCacheFolder.CreateFolderAsync(Constants.ExportFolderName, CreationCollisionOption.GenerateUniqueName);
 
                 // Copy the selected files into the export folder
                 foreach (var sound in sounds)
@@ -543,7 +507,7 @@ namespace UniversalSoundboard.DataAccess
                 // Create the zip file from the export folder
                 StorageFile zipFile = await Task.Run(async () =>
                 {
-                    StorageFile file = await localCacheFolder.CreateFileAsync(ExportZipFileName, CreationCollisionOption.GenerateUniqueName);
+                    StorageFile file = await localCacheFolder.CreateFileAsync(Constants.ExportZipFileName, CreationCollisionOption.GenerateUniqueName);
                     await file.DeleteAsync();
                     ZipFile.CreateFromDirectory(exportFolder.Path, file.Path);
                     return file;
@@ -2428,7 +2392,7 @@ namespace UniversalSoundboard.DataAccess
             var categoryOrderTableObjects = tableObjects.FindAll((TableObject obj) =>
             {
                 // Check if the object is of type Category
-                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != CategoryOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != Constants.CategoryOrderType) return false;
 
                 // Check if the object has the correct parent category uuid
                 string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);
@@ -2736,7 +2700,7 @@ namespace UniversalSoundboard.DataAccess
             var soundOrderTableObjects = tableObjects.FindAll((TableObject obj) =>
             {
                 // Check if the object is of type Sound
-                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != SoundOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != Constants.SoundOrderType) return false;
 
                 // Check if the object has the correct category uuid
                 string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);

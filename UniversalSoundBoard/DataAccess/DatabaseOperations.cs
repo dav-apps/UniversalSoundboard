@@ -210,7 +210,7 @@ namespace UniversalSoundboard.DataAccess
             TableObject tableObject = tableObjects.Find(obj =>
             {
                 // Check if the object is of type Category
-                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != FileManager.CategoryOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != Constants.CategoryOrderType) return false;
 
                 // Check if the object has the correct parent category uuid
                 string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);
@@ -229,7 +229,7 @@ namespace UniversalSoundboard.DataAccess
                 List<Property> properties = new List<Property>
                 {
                     // Set the type property
-                    new Property { Name = Constants.OrderTableTypePropertyName, Value = FileManager.CategoryOrderType },
+                    new Property { Name = Constants.OrderTableTypePropertyName, Value = Constants.CategoryOrderType },
                     // Set the category property
                     new Property { Name = Constants.OrderTableCategoryPropertyName, Value = parentCategoryUuid.ToString() }
                 };
@@ -275,7 +275,7 @@ namespace UniversalSoundboard.DataAccess
             TableObject tableObject = tableObjects.Find(obj =>
             {
                 // Check if the object is of type Category
-                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != FileManager.CategoryOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != Constants.CategoryOrderType) return false;
 
                 string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);
                 Guid? cUuid = FileManager.ConvertStringToGuid(categoryUuidString);
@@ -298,7 +298,7 @@ namespace UniversalSoundboard.DataAccess
             List<TableObject> tableObjects = await GetAllOrdersAsync();
             TableObject tableObject = tableObjects.Find((TableObject obj) => {
                 // Check if the object is of type Sound
-                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != FileManager.SoundOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != Constants.SoundOrderType) return false;
 
                 // Check if the object has the right category uuid
                 string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);
@@ -317,7 +317,7 @@ namespace UniversalSoundboard.DataAccess
                 List<Property> properties = new List<Property>
                 {
                     // Set the type property
-                    new Property { Name = Constants.OrderTableTypePropertyName, Value = FileManager.SoundOrderType },
+                    new Property { Name = Constants.OrderTableTypePropertyName, Value = Constants.SoundOrderType },
                     // Set the category property
                     new Property { Name = Constants.OrderTableCategoryPropertyName, Value = categoryUuid.ToString() },
                     // Set the favourite property
@@ -369,7 +369,7 @@ namespace UniversalSoundboard.DataAccess
             List<TableObject> tableObjects = await GetAllOrdersAsync();
             TableObject tableObject = tableObjects.Find((TableObject obj) => {
                 // Check if the object is of type Sound
-                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != FileManager.SoundOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != Constants.SoundOrderType) return false;
 
                 // Check if the object has the right category uuid
                 string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);
@@ -493,7 +493,7 @@ namespace UniversalSoundboard.DataAccess
                 }
 
                 // Write the list of tableObjects as json
-                StorageFile dataFile = await exportFolder.CreateFileAsync(FileManager.ExportDataFileName, CreationCollisionOption.ReplaceExisting);
+                StorageFile dataFile = await exportFolder.CreateFileAsync(Constants.ExportDataFileName, CreationCollisionOption.ReplaceExisting);
                 await FileManager.WriteFileAsync(dataFile, tableObjectDataList);
             }
             catch(Exception outerException)
@@ -506,7 +506,7 @@ namespace UniversalSoundboard.DataAccess
         {
             try
             {
-                StorageFile dataFile = await importFolder.GetFileAsync(FileManager.ExportDataFileName);
+                StorageFile dataFile = await importFolder.GetFileAsync(Constants.ExportDataFileName);
                 if (dataFile == null) return;
 
                 List<TableObjectData> tableObjectDataList = await FileManager.GetTableObjectDataFromFile(dataFile);

@@ -53,7 +53,7 @@ namespace UniversalSoundboard.Models
                 response = await req.GetResponseAsync();
 
                 // Check if the content type is a supported audio format
-                if (!FileManager.allowedAudioMimeTypes.Contains(response.ContentType))
+                if (!Constants.allowedAudioMimeTypes.Contains(response.ContentType))
                 {
                     Analytics.TrackEvent("AudioFileDownload-NotSupportedFormat", new Dictionary<string, string>
                     {

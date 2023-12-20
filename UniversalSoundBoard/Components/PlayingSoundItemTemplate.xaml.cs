@@ -468,7 +468,7 @@ namespace UniversalSoundboard.Components
                 Text = FileManager.loader.GetString("MoreButton-OutputDevice"),
                 Icon = new FontIcon
                 {
-                    FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
+                    FontFamily = new FontFamily(Constants.FluentIconsFontFamily),
                     Glyph = "\uE7F5"
                 }
             };
@@ -484,7 +484,7 @@ namespace UniversalSoundboard.Components
                 Text = FileManager.loader.GetString("PlaybackSpeed"),
                 Icon = new FontIcon
                 {
-                    FontFamily = new FontFamily(FileManager.FluentIconsFontFamily),
+                    FontFamily = new FontFamily(Constants.FluentIconsFontFamily),
                     Glyph = "\uEC58"
                 }
             };

@@ -653,7 +653,7 @@ namespace UniversalSoundboard.Pages
 
             foreach (var item in storageItems)
             {
-                if (item.IsOfType(StorageItemTypes.File) && FileManager.allowedFileTypes.Contains((item as StorageFile).FileType))
+                if (item.IsOfType(StorageItemTypes.File) && Constants.allowedFileTypes.Contains((item as StorageFile).FileType))
                 {
                     fileTypesSupported = true;
                     break;
@@ -687,7 +687,7 @@ namespace UniversalSoundboard.Pages
             {
                 if (
                     storageItem.IsOfType(StorageItemTypes.File)
-                    && FileManager.allowedFileTypes.Contains((storageItem as StorageFile).FileType)
+                    && Constants.allowedFileTypes.Contains((storageItem as StorageFile).FileType)
                 ) files.Add((StorageFile)storageItem);
             }
 

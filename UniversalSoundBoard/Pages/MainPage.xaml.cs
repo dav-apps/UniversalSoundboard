@@ -1307,7 +1307,7 @@ namespace UniversalSoundboard.Pages
                 SuggestedStartLocation = Windows.Storage.Pickers.PickerLocationId.MusicLibrary
             };
 
-            foreach (var fileType in FileManager.allowedFileTypes)
+            foreach (var fileType in Constants.allowedFileTypes)
                 picker.FileTypeFilter.Add(fileType);
 
             var files = await picker.PickMultipleFilesAsync();

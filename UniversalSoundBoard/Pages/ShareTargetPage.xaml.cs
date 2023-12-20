@@ -110,7 +110,7 @@ namespace UniversalSoundboard.Pages
             {
                 foreach (StorageFile storagefile in items)
                 {
-                    if (!FileManager.allowedFileTypes.Contains(storagefile.FileType)) continue;
+                    if (!Constants.allowedFileTypes.Contains(storagefile.FileType)) continue;
 
                     Guid soundUuid = await FileManager.CreateSoundAsync(null, storagefile.DisplayName, categoryUuids, storagefile);
 

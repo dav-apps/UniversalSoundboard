@@ -1,4 +1,5 @@
-﻿using Windows.UI;
+﻿using System.Collections.Generic;
+using Windows.UI;
 
 namespace UniversalSoundboard.Common
 {
@@ -67,6 +68,40 @@ namespace UniversalSoundboard.Common
         public const string OrderTableTypePropertyName = "type";
         public const string OrderTableCategoryPropertyName = "category";
         public const string OrderTableFavouritePropertyName = "favs";
+        #endregion
+
+        #region Other constants
+        public const string TableObjectExtPropertyName = "ext";
+        public const string CategoryOrderType = "0";
+        public const string SoundOrderType = "1";
+
+        public const string ImportFolderName = "import";
+        public const string ImportZipFileName = "import.zip";
+        public const string ExportFolderName = "export";
+        public const string ExportZipFileName = "export.zip";
+        public const string ExportDataFileName = "data.json";
+        public const string TileFolderName = "tile";
+
+        public const string FluentIconsFontFamily = "/Assets/Fonts/SegoeFluentIcons.ttf#Segoe Fluent Icons";
+        public const string DefaultProfileImageUrl = "https://dav-backend.fra1.cdn.digitaloceanspaces.com/profileImages/default.png";
+
+        public static readonly List<string> allowedFileTypes = new List<string>
+        {
+            ".mp3",
+            ".m4a",
+            ".wav",
+            ".ogg",
+            ".wma",
+            ".flac"
+        };
+
+        public static readonly List<string> allowedAudioMimeTypes = new List<string>
+        {
+            "audio/mpeg",   // .mp3
+            "audio/mp4",    // .m4a
+            "audio/wav",    // .wav
+            "audio/ogg"     // .ogg
+        };
         #endregion
     }
 }
