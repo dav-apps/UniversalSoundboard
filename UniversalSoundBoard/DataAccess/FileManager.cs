@@ -72,6 +72,7 @@ namespace UniversalSoundboard.DataAccess
         public static string ApiKey { get => Env.DavApiKey; }
         public const string WebsiteBaseUrl = "https://dav-login-7ymir.ondigitalocean.app";
         public const string UniversalSoundboardWebsiteBaseUrl = "https://universalsoundboard.dav-apps.tech";
+        public const string ApiBaseUrl = "https://universalsoundboard-api-rmkdv.ondigitalocean.app/";
         public const int AppId = 1;
         public const int SoundFileTableId = 6;
         public const int ImageFileTableId = 7;
@@ -3099,22 +3100,22 @@ namespace UniversalSoundboard.DataAccess
                 || itemViewHolder.Page == typeof(PublishSoundPage)
             )
             {
-                    // Navigate back to the Store page
-                    MainPage.NavigateBack();
-                    return;
-                }
+                // Navigate back to the Store page
+                MainPage.NavigateBack();
+                return;
+            }
             else if (itemViewHolder.Page != typeof(SoundPage))
-                {
-                    // Navigate to All Sounds
-                    itemViewHolder.Page = typeof(SoundPage);
-                    itemViewHolder.SelectedCategory = Guid.Empty;
-                    itemViewHolder.Title = loader.GetString("AllSounds");
-                    itemViewHolder.EditButtonVisible = false;
-                    await LoadAllSoundsAsync();
-                    UpdatePlayAllButtonVisibility();
-                    UpdateBackButtonVisibility();
-                    return;
-                }
+            {
+                // Navigate to All Sounds
+                itemViewHolder.Page = typeof(SoundPage);
+                itemViewHolder.SelectedCategory = Guid.Empty;
+                itemViewHolder.Title = loader.GetString("AllSounds");
+                itemViewHolder.EditButtonVisible = false;
+                await LoadAllSoundsAsync();
+                UpdatePlayAllButtonVisibility();
+                UpdateBackButtonVisibility();
+                return;
+            }
 
             // Is on mobile and search box visible?
             if (

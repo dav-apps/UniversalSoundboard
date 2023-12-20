@@ -36,7 +36,7 @@ namespace UniversalSoundboard.DataAccess
             {
                 if (graphQLClient == null)
                 {
-                    graphQLClient = new GraphQLHttpClient("http://localhost:4003/", new NewtonsoftJsonSerializer());
+                    graphQLClient = new GraphQLHttpClient(FileManager.ApiBaseUrl, new NewtonsoftJsonSerializer());
 
                     if (Dav.AccessToken != null)
                         graphQLClient.HttpClient.DefaultRequestHeaders.Add("Authorization", Dav.AccessToken);
