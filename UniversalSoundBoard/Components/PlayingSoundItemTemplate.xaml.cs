@@ -309,7 +309,7 @@ namespace UniversalSoundboard.Components
             if (
                 PlayingSoundItemContainer.IsInBottomPlayingSoundsBar
                 && args.Uuid.Equals(PlayingSoundItem.Uuid)
-                && Window.Current.Bounds.Width >= FileManager.mobileMaxWidth
+                && Window.Current.Bounds.Width >= Constants.mobileMaxWidth
             ) Content = null;
         }
         #endregion
@@ -759,7 +759,7 @@ namespace UniversalSoundboard.Components
                 else
                     layoutType = PlayingSoundItemLayoutType.SingleSoundLarge;
             }
-            else if (windowWidth < FileManager.mobileMaxWidth)
+            else if (windowWidth < Constants.mobileMaxWidth)
                 layoutType = PlayingSoundItemLayoutType.Compact;
             else if (itemWidth <= 210)
                 layoutType = PlayingSoundItemLayoutType.Mini;

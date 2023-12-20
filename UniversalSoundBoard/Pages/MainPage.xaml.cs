@@ -394,7 +394,7 @@ namespace UniversalSoundboard.Pages
             listViewItemStyle = Resources["ListViewItemStyle"] as Style;
             soundFileDownloadProgressTemplate = Resources["SoundFileDownloadProgressTemplate"] as DataTemplate;
 
-            SideBar.ExpandedModeThresholdWidth = FileManager.sideBarCollapsedMaxWidth;
+            SideBar.ExpandedModeThresholdWidth = Constants.sideBarCollapsedMaxWidth;
 
             // Set the background of the sidebar content
             SideBar.Background = new SolidColorBrush(FileManager.GetApplicationThemeColor());
@@ -486,7 +486,7 @@ namespace UniversalSoundboard.Pages
         private void UpdateTopButtonVisibilityForMobileSearch()
         {
             // Hide the top buttons if the app window is small and the search box is visible
-            mobileSearchVisible = Window.Current.Bounds.Width < FileManager.hideSearchBoxMaxWidth && FileManager.itemViewHolder.SearchAutoSuggestBoxVisible;
+            mobileSearchVisible = Window.Current.Bounds.Width < Constants.hideSearchBoxMaxWidth && FileManager.itemViewHolder.SearchAutoSuggestBoxVisible;
             Bindings.Update();
         }
 

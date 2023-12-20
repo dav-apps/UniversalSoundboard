@@ -49,13 +49,6 @@ namespace UniversalSoundboard.DataAccess
     public class FileManager
     {
         #region Variables
-        #region Design constants
-        public const int mobileMaxWidth = 775;
-        public const int topButtonsCollapsedMaxWidth = 1600;
-        public const int sideBarCollapsedMaxWidth = 1100;
-        public const int hideSearchBoxMaxWidth = 800;
-        #endregion
-
         #region Colors for the background of PlayingSoundsBar and SideBar
         private static readonly double sideBarAcrylicBackgroundTintOpacity = 0.6;
         private static readonly double playingSoundsBarAcrylicBackgroundTintOpacity = 0.85;
@@ -3042,7 +3035,7 @@ namespace UniversalSoundboard.DataAccess
         {
             double marginBottom = 10;
             if (!itemViewHolder.OpenMultipleSounds && itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 70;
-            else if (MainPage.windowWidth < mobileMaxWidth && itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 57;
+            else if (MainPage.windowWidth < Constants.mobileMaxWidth && itemViewHolder.PlayingSounds.Count >= 1) marginBottom = 57;
 
             foreach (var ianItem in InAppNotificationItems)
             {
@@ -3119,7 +3112,7 @@ namespace UniversalSoundboard.DataAccess
 
             // Is on mobile and search box visible?
             if (
-                Window.Current.Bounds.Width < hideSearchBoxMaxWidth
+                Window.Current.Bounds.Width < Constants.hideSearchBoxMaxWidth
                 && itemViewHolder.SearchAutoSuggestBoxVisible
             )
             {
@@ -3174,8 +3167,8 @@ namespace UniversalSoundboard.DataAccess
             return
                 !itemViewHolder.MultiSelectionEnabled
                 && (
-                    (Window.Current.Bounds.Width >= hideSearchBoxMaxWidth && itemViewHolder.SearchAutoSuggestBoxVisible)
-                    || (Window.Current.Bounds.Width < hideSearchBoxMaxWidth && itemViewHolder.SearchButtonVisible)
+                    (Window.Current.Bounds.Width >= Constants.hideSearchBoxMaxWidth && itemViewHolder.SearchAutoSuggestBoxVisible)
+                    || (Window.Current.Bounds.Width < Constants.hideSearchBoxMaxWidth && itemViewHolder.SearchButtonVisible)
                 );
         }
 
@@ -3189,7 +3182,7 @@ namespace UniversalSoundboard.DataAccess
 
         public static void ResetSearchArea()
         {
-            if (Window.Current.Bounds.Width < hideSearchBoxMaxWidth)
+            if (Window.Current.Bounds.Width < Constants.hideSearchBoxMaxWidth)
             {
                 // Clear text and show buttons
                 itemViewHolder.SearchAutoSuggestBoxVisible = false;
@@ -3202,12 +3195,12 @@ namespace UniversalSoundboard.DataAccess
         public static void AdjustLayout()
         {
             double width = Window.Current.Bounds.Width;
-            itemViewHolder.TopButtonsCollapsed = width < topButtonsCollapsedMaxWidth;
+            itemViewHolder.TopButtonsCollapsed = width < Constants.topButtonsCollapsedMaxWidth;
 
             if (string.IsNullOrEmpty(itemViewHolder.SearchQuery))
             {
-                itemViewHolder.SearchAutoSuggestBoxVisible = !(width < hideSearchBoxMaxWidth);
-                itemViewHolder.SearchButtonVisible = width < hideSearchBoxMaxWidth;
+                itemViewHolder.SearchAutoSuggestBoxVisible = !(width < Constants.hideSearchBoxMaxWidth);
+                itemViewHolder.SearchButtonVisible = width < Constants.hideSearchBoxMaxWidth;
             }
 
             UpdateBackButtonVisibility();

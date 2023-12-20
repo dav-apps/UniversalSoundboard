@@ -138,7 +138,7 @@ namespace UniversalSoundboard.Controllers
             bool oldIsMobile = IsMobile;
 
             maxBottomPlayingSoundsBarHeight = Window.Current.Bounds.Height * 0.5;
-            IsMobile = Window.Current.Bounds.Width < FileManager.mobileMaxWidth;
+            IsMobile = Window.Current.Bounds.Width < Constants.mobileMaxWidth;
 
             if (
                 playingSoundItemsLoaded

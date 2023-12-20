@@ -272,7 +272,7 @@ namespace UniversalSoundboard.Pages
         #region Helper methods
         private void AdjustLayout()
         {
-            isMobile = Window.Current.Bounds.Width < FileManager.mobileMaxWidth;
+            isMobile = Window.Current.Bounds.Width < Constants.mobileMaxWidth;
         }
 
         private GridView GetVisibleGridView()
