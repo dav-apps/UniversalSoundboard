@@ -49,38 +49,6 @@ namespace UniversalSoundboard.DataAccess
     public class FileManager
     {
         #region Variables
-        #region Table property names
-        public const string SoundTableNamePropertyName = "name";
-        public const string SoundTableFavouritePropertyName = "favourite";
-        public const string SoundTableSoundUuidPropertyName = "sound_uuid";
-        public const string SoundTableImageUuidPropertyName = "image_uuid";
-        public const string SoundTableCategoryUuidPropertyName = "category_uuid";
-        public const string SoundTableDefaultVolumePropertyName = "default_volume";
-        public const string SoundTableDefaultMutedPropertyName = "default_muted";
-        public const string SoundTableDefaultPlaybackSpeedPropertyName = "default_playback_speed";
-        public const string SoundTableDefaultRepetitionsPropertyName = "default_repetitions";
-        public const string SoundTableDefaultOutputDevicePropertyName = "default_output_device";
-        public const string SoundTableHotkeysPropertyName = "hotkeys";
-        public const string SoundTableSourcePropertyName = "source";
-
-        public const string CategoryTableParentPropertyName = "parent";
-        public const string CategoryTableNamePropertyName = "name";
-        public const string CategoryTableIconPropertyName = "icon";
-
-        public const string PlayingSoundTableSoundIdsPropertyName = "sound_ids";
-        public const string PlayingSoundTableCurrentPropertyName = "current";
-        public const string PlayingSoundTableRepetitionsPropertyName = "repetitions";
-        public const string PlayingSoundTableRandomlyPropertyName = "randomly";
-        public const string PlayingSoundTableVolumePropertyName = "volume2";
-        public const string PlayingSoundTableMutedPropertyName = "muted";
-        public const string PlayingSoundTableOutputDevicePropertyName = "output_device";
-        public const string PlayingSoundTablePlaybackSpeedPropertyName = "playback_speed";
-
-        public const string OrderTableTypePropertyName = "type";
-        public const string OrderTableCategoryPropertyName = "category";
-        public const string OrderTableFavouritePropertyName = "favs";
-        #endregion
-
         #region Other constants
         public const string TableObjectExtPropertyName = "ext";
         public const string CategoryOrderType = "0";
@@ -665,10 +633,10 @@ namespace UniversalSoundboard.DataAccess
         {
             if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return null;
 
-            Sound sound = new Sound(soundTableObject.Uuid, soundTableObject.GetPropertyValue(SoundTableNamePropertyName) ?? loader.GetString("UntitledSound"));
+            Sound sound = new Sound(soundTableObject.Uuid, soundTableObject.GetPropertyValue(Constants.SoundTableNamePropertyName) ?? loader.GetString("UntitledSound"));
 
             // Get the audio file
-            Guid? audioFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableSoundUuidPropertyName));
+            Guid? audioFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(Constants.SoundTableSoundUuidPropertyName));
 
             if (audioFileUuid.HasValue && !audioFileUuid.Equals(Guid.Empty))
             {
@@ -706,14 +674,14 @@ namespace UniversalSoundboard.DataAccess
 
             // Get favourite
             bool favourite = false;
-            var favouriteString = soundTableObject.GetPropertyValue(SoundTableFavouritePropertyName);
+            var favouriteString = soundTableObject.GetPropertyValue(Constants.SoundTableFavouritePropertyName);
             if (!string.IsNullOrEmpty(favouriteString))
                 bool.TryParse(favouriteString, out favourite);
 
             sound.Favourite = favourite;
 
             // Get the categories
-            var categoryUuidsString = soundTableObject.GetPropertyValue(SoundTableCategoryUuidPropertyName);
+            var categoryUuidsString = soundTableObject.GetPropertyValue(Constants.SoundTableCategoryUuidPropertyName);
             sound.Categories = new List<Category>();
             if (!string.IsNullOrEmpty(categoryUuidsString))
             {
@@ -732,7 +700,7 @@ namespace UniversalSoundboard.DataAccess
             // Get the image
             BitmapImage image = new BitmapImage { UriSource = Sound.GetDefaultImageUri() };
 
-            Guid? imageFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName));
+            Guid? imageFileUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(Constants.SoundTableImageUuidPropertyName));
             if (imageFileUuid.HasValue && !imageFileUuid.Equals(Guid.Empty))
             {
                 var imageFileTableObject = await DatabaseOperations.GetTableObjectAsync(imageFileUuid.Value);
@@ -763,7 +731,7 @@ namespace UniversalSoundboard.DataAccess
 
             // DefaultVolume
             int defaultVolume = 100;
-            string defaultVolumeString = soundTableObject.GetPropertyValue(SoundTableDefaultVolumePropertyName);
+            string defaultVolumeString = soundTableObject.GetPropertyValue(Constants.SoundTableDefaultVolumePropertyName);
             if (!string.IsNullOrEmpty(defaultVolumeString))
                 int.TryParse(defaultVolumeString, out defaultVolume);
 
@@ -771,7 +739,7 @@ namespace UniversalSoundboard.DataAccess
 
             // DefaultMuted
             bool defaultMuted = false;
-            string defaultMutedString = soundTableObject.GetPropertyValue(SoundTableDefaultMutedPropertyName);
+            string defaultMutedString = soundTableObject.GetPropertyValue(Constants.SoundTableDefaultMutedPropertyName);
             if (!string.IsNullOrEmpty(defaultMutedString))
                 bool.TryParse(defaultMutedString, out defaultMuted);
 
@@ -779,7 +747,7 @@ namespace UniversalSoundboard.DataAccess
 
             // DefaultPlaybackSpeed
             int defaultPlaybackSpeed = 100;
-            string defaultPlaybackSpeedString = soundTableObject.GetPropertyValue(SoundTableDefaultPlaybackSpeedPropertyName);
+            string defaultPlaybackSpeedString = soundTableObject.GetPropertyValue(Constants.SoundTableDefaultPlaybackSpeedPropertyName);
             if (!string.IsNullOrEmpty(defaultPlaybackSpeedString))
                 int.TryParse(defaultPlaybackSpeedString, out defaultPlaybackSpeed);
 
@@ -787,17 +755,17 @@ namespace UniversalSoundboard.DataAccess
 
             // DefaultRepetitions
             int defaultRepetitions = 0;
-            string defaultRepetitionsString = soundTableObject.GetPropertyValue(SoundTableDefaultRepetitionsPropertyName);
+            string defaultRepetitionsString = soundTableObject.GetPropertyValue(Constants.SoundTableDefaultRepetitionsPropertyName);
             if (!string.IsNullOrEmpty(defaultRepetitionsString))
                 int.TryParse(defaultRepetitionsString, out defaultRepetitions);
 
             sound.DefaultRepetitions = defaultRepetitions;
 
             // DefaultOutputDevice
-            sound.DefaultOutputDevice = soundTableObject.GetPropertyValue(SoundTableDefaultOutputDevicePropertyName);
+            sound.DefaultOutputDevice = soundTableObject.GetPropertyValue(Constants.SoundTableDefaultOutputDevicePropertyName);
 
             // Hotkeys
-            string hotkeysString = soundTableObject.GetPropertyValue(SoundTableHotkeysPropertyName);
+            string hotkeysString = soundTableObject.GetPropertyValue(Constants.SoundTableHotkeysPropertyName);
             if (!string.IsNullOrEmpty(hotkeysString))
             {
                 foreach(string hotkeyCombinationString in hotkeysString.Split(','))
@@ -817,7 +785,7 @@ namespace UniversalSoundboard.DataAccess
             }
 
             // Source
-            sound.Source = soundTableObject.GetPropertyValue(SoundTableSourcePropertyName);
+            sound.Source = soundTableObject.GetPropertyValue(Constants.SoundTableSourcePropertyName);
 
             return sound;
         }
@@ -1999,7 +1967,7 @@ namespace UniversalSoundboard.DataAccess
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
-            await soundTableObject.SetPropertyValueAsync(SoundTableNamePropertyName, newName);
+            await soundTableObject.SetPropertyValueAsync(Constants.SoundTableNamePropertyName, newName);
         }
 
         public static async Task SetCategoriesOfSoundAsync(Guid uuid, List<Guid> categoryUuids)
@@ -2008,7 +1976,7 @@ namespace UniversalSoundboard.DataAccess
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
-            await soundTableObject.SetPropertyValueAsync(SoundTableCategoryUuidPropertyName, string.Join(",", categoryUuids));
+            await soundTableObject.SetPropertyValueAsync(Constants.SoundTableCategoryUuidPropertyName, string.Join(",", categoryUuids));
         }
 
         public static async Task SetFavouriteOfSoundAsync(Guid uuid, bool favourite)
@@ -2017,7 +1985,7 @@ namespace UniversalSoundboard.DataAccess
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
-            await soundTableObject.SetPropertyValueAsync(SoundTableFavouritePropertyName, favourite.ToString());
+            await soundTableObject.SetPropertyValueAsync(Constants.SoundTableFavouritePropertyName, favourite.ToString());
         }
 
         public static async Task SetDefaultVolumeOfSoundAsync(Guid uuid, int defaultVolume, bool defaultMuted)
@@ -2028,8 +1996,8 @@ namespace UniversalSoundboard.DataAccess
 
             await soundTableObject.SetPropertyValuesAsync(new Dictionary<string, string>
             {
-                { SoundTableDefaultVolumePropertyName, defaultVolume.ToString() },
-                { SoundTableDefaultMutedPropertyName, defaultMuted.ToString() }
+                { Constants.SoundTableDefaultVolumePropertyName, defaultVolume.ToString() },
+                { Constants.SoundTableDefaultMutedPropertyName, defaultMuted.ToString() }
             });
         }
 
@@ -2039,7 +2007,7 @@ namespace UniversalSoundboard.DataAccess
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
-            await soundTableObject.SetPropertyValueAsync(SoundTableDefaultPlaybackSpeedPropertyName, defaultPlaybackSpeed.ToString());
+            await soundTableObject.SetPropertyValueAsync(Constants.SoundTableDefaultPlaybackSpeedPropertyName, defaultPlaybackSpeed.ToString());
         }
 
         public static async Task SetDefaultRepetitionsOfSoundAsync(Guid uuid, int defaultRepetitions)
@@ -2048,7 +2016,7 @@ namespace UniversalSoundboard.DataAccess
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
-            await soundTableObject.SetPropertyValueAsync(SoundTableDefaultRepetitionsPropertyName, defaultRepetitions.ToString());
+            await soundTableObject.SetPropertyValueAsync(Constants.SoundTableDefaultRepetitionsPropertyName, defaultRepetitions.ToString());
         }
 
         public static async Task SetDefaultOutputDeviceOfSoundAsync(Guid uuid, string defaultOutputDevice)
@@ -2057,7 +2025,7 @@ namespace UniversalSoundboard.DataAccess
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
-            await soundTableObject.SetPropertyValueAsync(SoundTableDefaultOutputDevicePropertyName, defaultOutputDevice);
+            await soundTableObject.SetPropertyValueAsync(Constants.SoundTableDefaultOutputDevicePropertyName, defaultOutputDevice);
         }
 
         public static async Task SetHotkeysOfSoundAsync(Guid uuid, List<Hotkey> hotkeys)
@@ -2076,7 +2044,7 @@ namespace UniversalSoundboard.DataAccess
                 hotkeyStrings.Add(hotkey.ToDataString());
             }
 
-            await soundTableObject.SetPropertyValueAsync(SoundTableHotkeysPropertyName, string.Join(",", hotkeyStrings));
+            await soundTableObject.SetPropertyValueAsync(Constants.SoundTableHotkeysPropertyName, string.Join(",", hotkeyStrings));
         }
 
         public static async Task SetImageUuidOfSoundAsync(Guid uuid, Guid imageUuid)
@@ -2085,7 +2053,7 @@ namespace UniversalSoundboard.DataAccess
             var soundTableObject = await DatabaseOperations.GetTableObjectAsync(uuid);
             if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
-            await soundTableObject.SetPropertyValueAsync(SoundTableImageUuidPropertyName, imageUuid.ToString());
+            await soundTableObject.SetPropertyValueAsync(Constants.SoundTableImageUuidPropertyName, imageUuid.ToString());
         }
 
         public static async Task UpdateImageOfSoundAsync(Guid uuid, StorageFile file)
@@ -2094,7 +2062,7 @@ namespace UniversalSoundboard.DataAccess
             var soundTableObject = await DatabaseOperations.GetTableObjectAsync(uuid);
             if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
-            Guid? imageUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName));
+            Guid? imageUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(Constants.SoundTableImageUuidPropertyName));
             StorageFile newImageFile = await file.CopyAsync(ApplicationData.Current.LocalCacheFolder, "newImage" + file.FileType, NameCollisionOption.ReplaceExisting);
 
             if (!imageUuid.HasValue || Equals(imageUuid, Guid.Empty))
@@ -2102,7 +2070,7 @@ namespace UniversalSoundboard.DataAccess
                 // Create new image file
                 Guid imageFileUuid = Guid.NewGuid();
                 await DatabaseOperations.CreateImageFileAsync(imageFileUuid, newImageFile);
-                await soundTableObject.SetPropertyValueAsync(SoundTableImageUuidPropertyName, imageFileUuid.ToString());
+                await soundTableObject.SetPropertyValueAsync(Constants.SoundTableImageUuidPropertyName, imageFileUuid.ToString());
             }
             else
             {
@@ -2142,7 +2110,7 @@ namespace UniversalSoundboard.DataAccess
             // Get all categories
             foreach (var categoryTableObject in categoriesTableObjectList)
             {
-                string parent = categoryTableObject.GetPropertyValue(CategoryTableParentPropertyName);
+                string parent = categoryTableObject.GetPropertyValue(Constants.CategoryTableParentPropertyName);
                 bool isRootCategory = parent == null;
 
                 if (!isRootCategory)
@@ -2172,7 +2140,7 @@ namespace UniversalSoundboard.DataAccess
             if (withChildren)
             {
                 // Get the children of the category
-                List<TableObject> childrenTableObjects = await DatabaseOperations.GetTableObjectsByPropertyAsync(CategoryTableParentPropertyName, categoryTableObject.Uuid.ToString());
+                List<TableObject> childrenTableObjects = await DatabaseOperations.GetTableObjectsByPropertyAsync(Constants.CategoryTableParentPropertyName, categoryTableObject.Uuid.ToString());
 
                 List<Category> children = new List<Category>();
                 List<Category> sortedChildren = new List<Category>();
@@ -2190,8 +2158,8 @@ namespace UniversalSoundboard.DataAccess
 
                 return new Category(
                     categoryTableObject.Uuid,
-                    categoryTableObject.GetPropertyValue(CategoryTableNamePropertyName),
-                    categoryTableObject.GetPropertyValue(CategoryTableIconPropertyName),
+                    categoryTableObject.GetPropertyValue(Constants.CategoryTableNamePropertyName),
+                    categoryTableObject.GetPropertyValue(Constants.CategoryTableIconPropertyName),
                     sortedChildren
                 );
             }
@@ -2199,8 +2167,8 @@ namespace UniversalSoundboard.DataAccess
             {
                 return new Category(
                     categoryTableObject.Uuid,
-                    categoryTableObject.GetPropertyValue(CategoryTableNamePropertyName),
-                    categoryTableObject.GetPropertyValue(CategoryTableIconPropertyName)
+                    categoryTableObject.GetPropertyValue(Constants.CategoryTableNamePropertyName),
+                    categoryTableObject.GetPropertyValue(Constants.CategoryTableIconPropertyName)
                 );
             }
         }
@@ -2279,7 +2247,7 @@ namespace UniversalSoundboard.DataAccess
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (playingSoundTableObject == null || playingSoundTableObject.TableId != Constants.PlayingSoundTableId) return;
 
-            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableCurrentPropertyName, current.ToString());
+            await playingSoundTableObject.SetPropertyValueAsync(Constants.PlayingSoundTableCurrentPropertyName, current.ToString());
         }
 
         public static async Task SetRepetitionsOfPlayingSoundAsync(Guid uuid, int repetitions)
@@ -2288,7 +2256,7 @@ namespace UniversalSoundboard.DataAccess
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (playingSoundTableObject == null || playingSoundTableObject.TableId != Constants.PlayingSoundTableId) return;
 
-            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableRepetitionsPropertyName, repetitions.ToString());
+            await playingSoundTableObject.SetPropertyValueAsync(Constants.PlayingSoundTableRepetitionsPropertyName, repetitions.ToString());
         }
 
         public static async Task SetSoundsListOfPlayingSoundAsync(Guid uuid, List<Sound> sounds)
@@ -2301,7 +2269,7 @@ namespace UniversalSoundboard.DataAccess
             foreach (Sound sound in sounds)
                 soundUuids.Add(sound.Uuid);
 
-            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableSoundIdsPropertyName, string.Join(",", soundUuids));
+            await playingSoundTableObject.SetPropertyValueAsync(Constants.PlayingSoundTableSoundIdsPropertyName, string.Join(",", soundUuids));
         }
 
         public static async Task SetVolumeOfPlayingSoundAsync(Guid uuid, int volume)
@@ -2315,7 +2283,7 @@ namespace UniversalSoundboard.DataAccess
             else if (volume < 0)
                 volume = 0;
 
-            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableVolumePropertyName, volume.ToString());
+            await playingSoundTableObject.SetPropertyValueAsync(Constants.PlayingSoundTableVolumePropertyName, volume.ToString());
         }
 
         public static async Task SetMutedOfPlayingSoundAsync(Guid uuid, bool muted)
@@ -2324,7 +2292,7 @@ namespace UniversalSoundboard.DataAccess
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (playingSoundTableObject == null || playingSoundTableObject.TableId != Constants.PlayingSoundTableId) return;
 
-            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableMutedPropertyName, muted.ToString());
+            await playingSoundTableObject.SetPropertyValueAsync(Constants.PlayingSoundTableMutedPropertyName, muted.ToString());
         }
 
         public static async Task SetOutputDeviceOfPlayingSoundAsync(Guid uuid, string outputDevice)
@@ -2333,7 +2301,7 @@ namespace UniversalSoundboard.DataAccess
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
             if (playingSoundTableObject == null || playingSoundTableObject.TableId != Constants.PlayingSoundTableId) return;
 
-            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableOutputDevicePropertyName, outputDevice);
+            await playingSoundTableObject.SetPropertyValueAsync(Constants.PlayingSoundTableOutputDevicePropertyName, outputDevice);
         }
 
         public static async Task SetPlaybackSpeedOfPlayingSoundAsync(Guid uuid, int playbackSpeed)
@@ -2347,7 +2315,7 @@ namespace UniversalSoundboard.DataAccess
             else if (playbackSpeed < 25)
                 playbackSpeed = 25;
 
-            await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTablePlaybackSpeedPropertyName, playbackSpeed.ToString());
+            await playingSoundTableObject.SetPropertyValueAsync(Constants.PlayingSoundTablePlaybackSpeedPropertyName, playbackSpeed.ToString());
         }
 
         public static async Task DeletePlayingSoundAsync(Guid uuid)
@@ -2358,7 +2326,7 @@ namespace UniversalSoundboard.DataAccess
         private static async Task<PlayingSound> ConvertTableObjectToPlayingSoundAsync(TableObject tableObject)
         {
             List<Sound> sounds = new List<Sound>();
-            string soundIds = tableObject.GetPropertyValue(PlayingSoundTableSoundIdsPropertyName);
+            string soundIds = tableObject.GetPropertyValue(Constants.PlayingSoundTableSoundIdsPropertyName);
 
             // Get the sounds
             if (!string.IsNullOrEmpty(soundIds))
@@ -2392,37 +2360,37 @@ namespace UniversalSoundboard.DataAccess
 
             // Get the properties of the table object
             int current = 0;
-            string currentString = tableObject.GetPropertyValue(PlayingSoundTableCurrentPropertyName);
+            string currentString = tableObject.GetPropertyValue(Constants.PlayingSoundTableCurrentPropertyName);
             if (!string.IsNullOrEmpty(currentString))
                 int.TryParse(currentString, out current);
 
             int repetitions = 1;
-            string repetitionsString = tableObject.GetPropertyValue(PlayingSoundTableRepetitionsPropertyName);
+            string repetitionsString = tableObject.GetPropertyValue(Constants.PlayingSoundTableRepetitionsPropertyName);
             if (!string.IsNullOrEmpty(repetitionsString))
                 int.TryParse(repetitionsString, out repetitions);
 
             bool randomly = false;
-            string randomlyString = tableObject.GetPropertyValue(PlayingSoundTableRandomlyPropertyName);
+            string randomlyString = tableObject.GetPropertyValue(Constants.PlayingSoundTableRandomlyPropertyName);
             if (!string.IsNullOrEmpty(randomlyString))
                 bool.TryParse(randomlyString, out randomly);
 
             double volume = 100;
-            string volumeString = tableObject.GetPropertyValue(PlayingSoundTableVolumePropertyName);
+            string volumeString = tableObject.GetPropertyValue(Constants.PlayingSoundTableVolumePropertyName);
             if (!string.IsNullOrEmpty(volumeString))
                 double.TryParse(volumeString, out volume);
 
             bool muted = false;
-            string mutedString = tableObject.GetPropertyValue(PlayingSoundTableMutedPropertyName);
+            string mutedString = tableObject.GetPropertyValue(Constants.PlayingSoundTableMutedPropertyName);
             if (!string.IsNullOrEmpty(mutedString))
                 bool.TryParse(mutedString, out muted);
 
             string outputDevice = null;
 
             if (Dav.IsLoggedIn && Dav.User.Plan > 0)
-                outputDevice = tableObject.GetPropertyValue(PlayingSoundTableOutputDevicePropertyName);
+                outputDevice = tableObject.GetPropertyValue(Constants.PlayingSoundTableOutputDevicePropertyName);
 
             int playbackSpeed = 100;
-            string playbackSpeedString = tableObject.GetPropertyValue(PlayingSoundTablePlaybackSpeedPropertyName);
+            string playbackSpeedString = tableObject.GetPropertyValue(Constants.PlayingSoundTablePlaybackSpeedPropertyName);
             if (!string.IsNullOrEmpty(playbackSpeedString))
                 int.TryParse(playbackSpeedString, out playbackSpeed);
 
@@ -2460,10 +2428,10 @@ namespace UniversalSoundboard.DataAccess
             var categoryOrderTableObjects = tableObjects.FindAll((TableObject obj) =>
             {
                 // Check if the object is of type Category
-                if (obj.GetPropertyValue(OrderTableTypePropertyName) != CategoryOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != CategoryOrderType) return false;
 
                 // Check if the object has the correct parent category uuid
-                string categoryUuidString = obj.GetPropertyValue(OrderTableCategoryPropertyName);
+                string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);
                 Guid? cUuid = ConvertStringToGuid(categoryUuidString);
                 if (!cUuid.HasValue)
                 {
@@ -2768,15 +2736,15 @@ namespace UniversalSoundboard.DataAccess
             var soundOrderTableObjects = tableObjects.FindAll((TableObject obj) =>
             {
                 // Check if the object is of type Sound
-                if (obj.GetPropertyValue(OrderTableTypePropertyName) != SoundOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != SoundOrderType) return false;
 
                 // Check if the object has the correct category uuid
-                string categoryUuidString = obj.GetPropertyValue(OrderTableCategoryPropertyName);
+                string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);
                 Guid? cUuid = ConvertStringToGuid(categoryUuidString);
                 if (!cUuid.HasValue) return false;
 
                 // Get the favourite value
-                string favString = obj.GetPropertyValue(OrderTableFavouritePropertyName);
+                string favString = obj.GetPropertyValue(Constants.OrderTableFavouritePropertyName);
                 bool.TryParse(favString, out bool fav);
 
                 return categoryUuid.Equals(cUuid) && favourite == fav;

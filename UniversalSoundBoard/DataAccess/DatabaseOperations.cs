@@ -53,16 +53,16 @@ namespace UniversalSoundboard.DataAccess
             // Create TableObject with sound informations and TableObject with the Soundfile
             var properties = new List<Property>
             {
-                new Property{ Name = FileManager.SoundTableNamePropertyName, Value = name },
-                new Property{ Name = FileManager.SoundTableFavouritePropertyName, Value = favourite.ToString() },
-                new Property{ Name = FileManager.SoundTableSoundUuidPropertyName, Value = soundUuid.ToString() }
+                new Property{ Name = Constants.SoundTableNamePropertyName, Value = name },
+                new Property{ Name = Constants.SoundTableFavouritePropertyName, Value = favourite.ToString() },
+                new Property{ Name = Constants.SoundTableSoundUuidPropertyName, Value = soundUuid.ToString() }
             };
 
             if (categoryUuids != null)
-                properties.Add(new Property { Name = FileManager.SoundTableCategoryUuidPropertyName, Value = string.Join(",", categoryUuids) });
+                properties.Add(new Property { Name = Constants.SoundTableCategoryUuidPropertyName, Value = string.Join(",", categoryUuids) });
 
             if (source != null)
-                properties.Add(new Property { Name = FileManager.SoundTableSourcePropertyName, Value = source });
+                properties.Add(new Property { Name = Constants.SoundTableSourcePropertyName, Value = source });
 
             return await TableObject.CreateAsync(uuid, Constants.SoundTableId, properties);
         }
@@ -78,8 +78,8 @@ namespace UniversalSoundboard.DataAccess
             if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             // Delete the sound file and the image file
-            Guid? soundFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
-            Guid? imageFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableImageUuidPropertyName));
+            Guid? soundFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(Constants.SoundTableSoundUuidPropertyName));
+            Guid? imageFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(Constants.SoundTableImageUuidPropertyName));
 
             if (soundFileUuid.HasValue && !Equals(soundFileUuid, Guid.Empty))
             {
@@ -126,12 +126,12 @@ namespace UniversalSoundboard.DataAccess
         {
             List<Property> properties = new List<Property>
             {
-                new Property{ Name = FileManager.CategoryTableNamePropertyName, Value = name },
-                new Property{ Name = FileManager.CategoryTableIconPropertyName, Value = icon }
+                new Property{ Name = Constants.CategoryTableNamePropertyName, Value = name },
+                new Property{ Name = Constants.CategoryTableIconPropertyName, Value = icon }
             };
 
             if (parent.HasValue)
-                properties.Add(new Property { Name = FileManager.CategoryTableParentPropertyName, Value = parent.Value.ToString() });
+                properties.Add(new Property { Name = Constants.CategoryTableParentPropertyName, Value = parent.Value.ToString() });
 
             return await TableObject.CreateAsync(uuid, Constants.CategoryTableId, properties);
         }
@@ -147,11 +147,11 @@ namespace UniversalSoundboard.DataAccess
             if (categoryTableObject == null || categoryTableObject.TableId != Constants.CategoryTableId) return;
 
             if (parent.HasValue)
-                await categoryTableObject.SetPropertyValueAsync(FileManager.CategoryTableParentPropertyName, parent.Value.ToString());
+                await categoryTableObject.SetPropertyValueAsync(Constants.CategoryTableParentPropertyName, parent.Value.ToString());
             if (!string.IsNullOrEmpty(name))
-                await categoryTableObject.SetPropertyValueAsync(FileManager.CategoryTableNamePropertyName, name);
+                await categoryTableObject.SetPropertyValueAsync(Constants.CategoryTableNamePropertyName, name);
             if (!string.IsNullOrEmpty(icon))
-                await categoryTableObject.SetPropertyValueAsync(FileManager.CategoryTableIconPropertyName, icon);
+                await categoryTableObject.SetPropertyValueAsync(Constants.CategoryTableIconPropertyName, icon);
         }
 
         public static async Task DeleteCategoryAsync(Guid uuid)
@@ -168,12 +168,12 @@ namespace UniversalSoundboard.DataAccess
         {
             var properties = new List<Property>
             {
-                new Property{ Name = FileManager.PlayingSoundTableSoundIdsPropertyName, Value = string.Join(",", soundUuids) },
-                new Property{ Name = FileManager.PlayingSoundTableCurrentPropertyName, Value = current.ToString() },
-                new Property{ Name = FileManager.PlayingSoundTableRepetitionsPropertyName, Value = repetitions.ToString() },
-                new Property{ Name = FileManager.PlayingSoundTableRandomlyPropertyName, Value = randomly.ToString() },
-                new Property{ Name = FileManager.PlayingSoundTableVolumePropertyName, Value = volume.ToString() },
-                new Property{ Name = FileManager.PlayingSoundTableMutedPropertyName, Value = muted.ToString() }
+                new Property{ Name = Constants.PlayingSoundTableSoundIdsPropertyName, Value = string.Join(",", soundUuids) },
+                new Property{ Name = Constants.PlayingSoundTableCurrentPropertyName, Value = current.ToString() },
+                new Property{ Name = Constants.PlayingSoundTableRepetitionsPropertyName, Value = repetitions.ToString() },
+                new Property{ Name = Constants.PlayingSoundTableRandomlyPropertyName, Value = randomly.ToString() },
+                new Property{ Name = Constants.PlayingSoundTableVolumePropertyName, Value = volume.ToString() },
+                new Property{ Name = Constants.PlayingSoundTableMutedPropertyName, Value = muted.ToString() }
             };
 
             return await TableObject.CreateAsync(uuid, Constants.PlayingSoundTableId, properties);
@@ -210,10 +210,10 @@ namespace UniversalSoundboard.DataAccess
             TableObject tableObject = tableObjects.Find(obj =>
             {
                 // Check if the object is of type Category
-                if (obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) != FileManager.CategoryOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != FileManager.CategoryOrderType) return false;
 
                 // Check if the object has the correct parent category uuid
-                string categoryUuidString = obj.GetPropertyValue(FileManager.OrderTableCategoryPropertyName);
+                string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);
                 Guid? cUuid = FileManager.ConvertStringToGuid(categoryUuidString);
                 if (!cUuid.HasValue)
                 {
@@ -229,9 +229,9 @@ namespace UniversalSoundboard.DataAccess
                 List<Property> properties = new List<Property>
                 {
                     // Set the type property
-                    new Property { Name = FileManager.OrderTableTypePropertyName, Value = FileManager.CategoryOrderType },
+                    new Property { Name = Constants.OrderTableTypePropertyName, Value = FileManager.CategoryOrderType },
                     // Set the category property
-                    new Property { Name = FileManager.OrderTableCategoryPropertyName, Value = parentCategoryUuid.ToString() }
+                    new Property { Name = Constants.OrderTableCategoryPropertyName, Value = parentCategoryUuid.ToString() }
                 };
 
                 int i = 0;
@@ -275,9 +275,9 @@ namespace UniversalSoundboard.DataAccess
             TableObject tableObject = tableObjects.Find(obj =>
             {
                 // Check if the object is of type Category
-                if (obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) != FileManager.CategoryOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != FileManager.CategoryOrderType) return false;
 
-                string categoryUuidString = obj.GetPropertyValue(FileManager.OrderTableCategoryPropertyName);
+                string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);
                 Guid? cUuid = FileManager.ConvertStringToGuid(categoryUuidString);
                 if (!cUuid.HasValue) return false;
 
@@ -298,14 +298,14 @@ namespace UniversalSoundboard.DataAccess
             List<TableObject> tableObjects = await GetAllOrdersAsync();
             TableObject tableObject = tableObjects.Find((TableObject obj) => {
                 // Check if the object is of type Sound
-                if (obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) != FileManager.SoundOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != FileManager.SoundOrderType) return false;
 
                 // Check if the object has the right category uuid
-                string categoryUuidString = obj.GetPropertyValue(FileManager.OrderTableCategoryPropertyName);
+                string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);
                 Guid? cUuid = FileManager.ConvertStringToGuid(categoryUuidString);
                 if (!cUuid.HasValue) return false;
 
-                string favString = obj.GetPropertyValue(FileManager.OrderTableFavouritePropertyName);
+                string favString = obj.GetPropertyValue(Constants.OrderTableFavouritePropertyName);
                 bool.TryParse(favString, out bool fav);
 
                 return Equals(categoryUuid, cUuid) && favourite == fav;
@@ -317,11 +317,11 @@ namespace UniversalSoundboard.DataAccess
                 List<Property> properties = new List<Property>
                 {
                     // Set the type property
-                    new Property { Name = FileManager.OrderTableTypePropertyName, Value = FileManager.SoundOrderType },
+                    new Property { Name = Constants.OrderTableTypePropertyName, Value = FileManager.SoundOrderType },
                     // Set the category property
-                    new Property { Name = FileManager.OrderTableCategoryPropertyName, Value = categoryUuid.ToString() },
+                    new Property { Name = Constants.OrderTableCategoryPropertyName, Value = categoryUuid.ToString() },
                     // Set the favourite property
-                    new Property { Name = FileManager.OrderTableFavouritePropertyName, Value = favourite.ToString() }
+                    new Property { Name = Constants.OrderTableFavouritePropertyName, Value = favourite.ToString() }
                 };
 
                 int i = 0;
@@ -369,14 +369,14 @@ namespace UniversalSoundboard.DataAccess
             List<TableObject> tableObjects = await GetAllOrdersAsync();
             TableObject tableObject = tableObjects.Find((TableObject obj) => {
                 // Check if the object is of type Sound
-                if (obj.GetPropertyValue(FileManager.OrderTableTypePropertyName) != FileManager.SoundOrderType) return false;
+                if (obj.GetPropertyValue(Constants.OrderTableTypePropertyName) != FileManager.SoundOrderType) return false;
 
                 // Check if the object has the right category uuid
-                string categoryUuidString = obj.GetPropertyValue(FileManager.OrderTableCategoryPropertyName);
+                string categoryUuidString = obj.GetPropertyValue(Constants.OrderTableCategoryPropertyName);
                 Guid? cUuid = FileManager.ConvertStringToGuid(categoryUuidString);
                 if (!cUuid.HasValue) return false;
 
-                string favString = obj.GetPropertyValue(FileManager.OrderTableFavouritePropertyName);
+                string favString = obj.GetPropertyValue(Constants.OrderTableFavouritePropertyName);
                 bool.TryParse(favString, out bool fav);
 
                 return Equals(categoryUuid, cUuid) && favourite == fav;

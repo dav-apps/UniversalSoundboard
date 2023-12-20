@@ -36,5 +36,37 @@ namespace UniversalSoundboard.Common
         public const int PlayingSoundTableId = 9;
         public const int OrderTableId = 12;
         #endregion
+
+        #region Table property names
+        public const string SoundTableNamePropertyName = "name";
+        public const string SoundTableFavouritePropertyName = "favourite";
+        public const string SoundTableSoundUuidPropertyName = "sound_uuid";
+        public const string SoundTableImageUuidPropertyName = "image_uuid";
+        public const string SoundTableCategoryUuidPropertyName = "category_uuid";
+        public const string SoundTableDefaultVolumePropertyName = "default_volume";
+        public const string SoundTableDefaultMutedPropertyName = "default_muted";
+        public const string SoundTableDefaultPlaybackSpeedPropertyName = "default_playback_speed";
+        public const string SoundTableDefaultRepetitionsPropertyName = "default_repetitions";
+        public const string SoundTableDefaultOutputDevicePropertyName = "default_output_device";
+        public const string SoundTableHotkeysPropertyName = "hotkeys";
+        public const string SoundTableSourcePropertyName = "source";
+
+        public const string CategoryTableParentPropertyName = "parent";
+        public const string CategoryTableNamePropertyName = "name";
+        public const string CategoryTableIconPropertyName = "icon";
+
+        public const string PlayingSoundTableSoundIdsPropertyName = "sound_ids";
+        public const string PlayingSoundTableCurrentPropertyName = "current";
+        public const string PlayingSoundTableRepetitionsPropertyName = "repetitions";
+        public const string PlayingSoundTableRandomlyPropertyName = "randomly";
+        public const string PlayingSoundTableVolumePropertyName = "volume2";
+        public const string PlayingSoundTableMutedPropertyName = "muted";
+        public const string PlayingSoundTableOutputDevicePropertyName = "output_device";
+        public const string PlayingSoundTablePlaybackSpeedPropertyName = "playback_speed";
+
+        public const string OrderTableTypePropertyName = "type";
+        public const string OrderTableCategoryPropertyName = "category";
+        public const string OrderTableFavouritePropertyName = "favs";
+        #endregion
     }
 }
