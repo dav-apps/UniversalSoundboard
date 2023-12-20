@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Models;
 using Windows.Storage;
 
@@ -63,18 +64,18 @@ namespace UniversalSoundboard.DataAccess
             if (source != null)
                 properties.Add(new Property { Name = FileManager.SoundTableSourcePropertyName, Value = source });
 
-            return await TableObject.CreateAsync(uuid, FileManager.SoundTableId, properties);
+            return await TableObject.CreateAsync(uuid, Constants.SoundTableId, properties);
         }
 
         public static async Task<List<TableObject>> GetAllSoundsAsync()
         {
-            return await Dav.Database.GetAllTableObjectsAsync(FileManager.SoundTableId, false);
+            return await Dav.Database.GetAllTableObjectsAsync(Constants.SoundTableId, false);
         }
         
         public static async Task DeleteSoundAsync(Guid uuid)
         {
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != FileManager.SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             // Delete the sound file and the image file
             Guid? soundFileUuid = FileManager.ConvertStringToGuid(soundTableObject.GetPropertyValue(FileManager.SoundTableSoundUuidPropertyName));
@@ -101,20 +102,20 @@ namespace UniversalSoundboard.DataAccess
         #region SoundFile
         public static async Task<TableObject> CreateSoundFileAsync(Guid uuid, StorageFile audioFile)
         {
-            return await TableObject.CreateAsync(uuid, FileManager.SoundFileTableId, new FileInfo(audioFile.Path));
+            return await TableObject.CreateAsync(uuid, Constants.SoundFileTableId, new FileInfo(audioFile.Path));
         }
         #endregion
 
         #region ImageFile
         public static async Task<TableObject> CreateImageFileAsync(Guid uuid, StorageFile imageFile)
         {
-            return await TableObject.CreateAsync(uuid, FileManager.ImageFileTableId, new FileInfo(imageFile.Path));
+            return await TableObject.CreateAsync(uuid, Constants.ImageFileTableId, new FileInfo(imageFile.Path));
         }
 
         public static async Task UpdateImageFileAsync(Guid uuid, StorageFile imageFile)
         {
             var imageFileTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (imageFileTableObject == null || imageFileTableObject.TableId != FileManager.ImageFileTableId) return;
+            if (imageFileTableObject == null || imageFileTableObject.TableId != Constants.ImageFileTableId) return;
 
             await imageFileTableObject.SetFileAsync(new FileInfo(imageFile.Path));
         }
@@ -132,18 +133,18 @@ namespace UniversalSoundboard.DataAccess
             if (parent.HasValue)
                 properties.Add(new Property { Name = FileManager.CategoryTableParentPropertyName, Value = parent.Value.ToString() });
 
-            return await TableObject.CreateAsync(uuid, FileManager.CategoryTableId, properties);
+            return await TableObject.CreateAsync(uuid, Constants.CategoryTableId, properties);
         }
 
         public static async Task<List<TableObject>> GetAllCategoriesAsync()
         {
-            return await Dav.Database.GetAllTableObjectsAsync(FileManager.CategoryTableId, false);
+            return await Dav.Database.GetAllTableObjectsAsync(Constants.CategoryTableId, false);
         }
 
         public static async Task UpdateCategoryAsync(Guid uuid, Guid? parent, string name, string icon)
         {
             var categoryTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (categoryTableObject == null || categoryTableObject.TableId != FileManager.CategoryTableId) return;
+            if (categoryTableObject == null || categoryTableObject.TableId != Constants.CategoryTableId) return;
 
             if (parent.HasValue)
                 await categoryTableObject.SetPropertyValueAsync(FileManager.CategoryTableParentPropertyName, parent.Value.ToString());
@@ -156,7 +157,7 @@ namespace UniversalSoundboard.DataAccess
         public static async Task DeleteCategoryAsync(Guid uuid)
         {
             var categoryTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (categoryTableObject == null || categoryTableObject.TableId != FileManager.CategoryTableId) return;
+            if (categoryTableObject == null || categoryTableObject.TableId != Constants.CategoryTableId) return;
 
             await categoryTableObject.DeleteAsync();
         }
@@ -175,18 +176,18 @@ namespace UniversalSoundboard.DataAccess
                 new Property{ Name = FileManager.PlayingSoundTableMutedPropertyName, Value = muted.ToString() }
             };
 
-            return await TableObject.CreateAsync(uuid, FileManager.PlayingSoundTableId, properties);
+            return await TableObject.CreateAsync(uuid, Constants.PlayingSoundTableId, properties);
         }
 
         public static async Task<List<TableObject>> GetAllPlayingSoundsAsync()
         {
-            return await Dav.Database.GetAllTableObjectsAsync(FileManager.PlayingSoundTableId, false);
+            return await Dav.Database.GetAllTableObjectsAsync(Constants.PlayingSoundTableId, false);
         }
 
         public static async Task<TableObject> GetPlayingSoundAsync(Guid uuid)
         {
             var tableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (tableObject == null || tableObject.TableId != FileManager.PlayingSoundTableId) return null;
+            if (tableObject == null || tableObject.TableId != Constants.PlayingSoundTableId) return null;
 
             return tableObject;
         }
@@ -195,7 +196,7 @@ namespace UniversalSoundboard.DataAccess
         #region Order
         public static async Task<List<TableObject>> GetAllOrdersAsync()
         {
-            return await Dav.Database.GetAllTableObjectsAsync(FileManager.OrderTableId, false);
+            return await Dav.Database.GetAllTableObjectsAsync(Constants.OrderTableId, false);
         }
         #endregion
 
@@ -240,7 +241,7 @@ namespace UniversalSoundboard.DataAccess
                     i++;
                 }
 
-                await TableObject.CreateAsync(Guid.NewGuid(), FileManager.OrderTableId, properties);
+                await TableObject.CreateAsync(Guid.NewGuid(), Constants.OrderTableId, properties);
             }
             else
             {
@@ -330,7 +331,7 @@ namespace UniversalSoundboard.DataAccess
                     i++;
                 }
 
-                await TableObject.CreateAsync(Guid.NewGuid(), FileManager.OrderTableId, properties);
+                await TableObject.CreateAsync(Guid.NewGuid(), Constants.OrderTableId, properties);
             }
             else
             {

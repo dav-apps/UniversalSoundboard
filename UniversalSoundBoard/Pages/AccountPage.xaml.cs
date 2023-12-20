@@ -132,7 +132,7 @@ namespace UniversalSoundboard.Pages
             {
                 Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
                 string action = showSignup ? "signup" : "login";
-                Uri requestUrl = new Uri(string.Format("{0}/{1}?appId={2}&apiKey={3}&redirectUrl={4}", FileManager.WebsiteBaseUrl, action, FileManager.AppId, FileManager.ApiKey, redirectUrl));
+                Uri requestUrl = new Uri(string.Format("{0}/{1}?appId={2}&apiKey={3}&redirectUrl={4}", Constants.WebsiteBaseUrl, action, Constants.AppId, Constants.ApiKey, redirectUrl));
 
                 var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
                 if (webAuthenticationResult.ResponseStatus != WebAuthenticationStatus.Success) return false;

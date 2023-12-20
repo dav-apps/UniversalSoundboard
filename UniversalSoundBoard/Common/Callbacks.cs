@@ -15,7 +15,7 @@ namespace UniversalSoundboard.Common
             if (!changed) return;
             CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
-            if (tableId == FileManager.SoundTableId)
+            if (tableId == Constants.SoundTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () =>
                 {
                     if (FileManager.itemViewHolder.AppState == AppState.InitialSync)
@@ -31,9 +31,9 @@ namespace UniversalSoundboard.Common
                             await FileManager.ShowCategoryAsync(FileManager.itemViewHolder.SelectedCategory);
                     }
                 });
-            else if (tableId == FileManager.CategoryTableId && complete)
+            else if (tableId == Constants.CategoryTableId && complete)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.LoadCategoriesAsync());
-            else if (tableId == FileManager.PlayingSoundTableId && complete)
+            else if (tableId == Constants.PlayingSoundTableId && complete)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.LoadPlayingSoundsAsync());
         }
 
@@ -41,17 +41,17 @@ namespace UniversalSoundboard.Common
         {
             CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
-            if (tableObject.TableId == FileManager.SoundTableId)
+            if (tableObject.TableId == Constants.SoundTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadSound(tableObject.Uuid));
-            else if (tableObject.TableId == FileManager.CategoryTableId)
+            else if (tableObject.TableId == Constants.CategoryTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadCategory(tableObject.Uuid));
-            else if (tableObject.TableId == FileManager.PlayingSoundTableId)
+            else if (tableObject.TableId == Constants.PlayingSoundTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, async () => await FileManager.ReloadPlayingSoundAsync(tableObject.Uuid));
             else if (
                 fileDownloaded
                 && (
-                    tableObject.TableId == FileManager.SoundFileTableId
-                    || tableObject.TableId == FileManager.ImageFileTableId
+                    tableObject.TableId == Constants.SoundFileTableId
+                    || tableObject.TableId == Constants.ImageFileTableId
                 )
             )
             {
@@ -69,11 +69,11 @@ namespace UniversalSoundboard.Common
         {
             CoreDispatcher dispatcher = CoreApplication.MainView.CoreWindow.Dispatcher;
 
-            if (tableId == FileManager.SoundTableId)
+            if (tableId == Constants.SoundTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () => FileManager.RemoveSound(uuid));
-            else if (tableId == FileManager.CategoryTableId)
+            else if (tableId == Constants.CategoryTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () => FileManager.RemoveCategory(uuid));
-            else if (tableId == FileManager.PlayingSoundTableId)
+            else if (tableId == Constants.PlayingSoundTableId)
                 await dispatcher.RunAsync(CoreDispatcherPriority.Low, () => FileManager.RemovePlayingSound(uuid));
         }
 

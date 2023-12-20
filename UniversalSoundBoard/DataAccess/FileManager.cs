@@ -49,20 +49,6 @@ namespace UniversalSoundboard.DataAccess
     public class FileManager
     {
         #region Variables
-        #region dav Keys
-        public static string ApiKey { get => Env.DavApiKey; }
-        public const string WebsiteBaseUrl = "https://dav-login-7ymir.ondigitalocean.app";
-        public const string UniversalSoundboardWebsiteBaseUrl = "https://universalsoundboard.dav-apps.tech";
-        public const string ApiBaseUrl = "https://universalsoundboard-api-rmkdv.ondigitalocean.app/";
-        public const int AppId = 1;
-        public const int SoundFileTableId = 6;
-        public const int ImageFileTableId = 7;
-        public const int CategoryTableId = 8;
-        public const int SoundTableId = 5;
-        public const int PlayingSoundTableId = 9;
-        public const int OrderTableId = 12;
-        #endregion
-
         #region Table property names
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
@@ -670,14 +656,14 @@ namespace UniversalSoundboard.DataAccess
         public static async Task<Sound> GetSoundAsync(Guid uuid)
         {
             var soundTableObject = await DatabaseOperations.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return null;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return null;
 
             return await GetSoundAsync(soundTableObject);
         }
 
         public static async Task<Sound> GetSoundAsync(TableObject soundTableObject)
         {
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return null;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return null;
 
             Sound sound = new Sound(soundTableObject.Uuid, soundTableObject.GetPropertyValue(SoundTableNamePropertyName) ?? loader.GetString("UntitledSound"));
 
@@ -2011,7 +1997,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the sound table object
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             await soundTableObject.SetPropertyValueAsync(SoundTableNamePropertyName, newName);
         }
@@ -2020,7 +2006,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the sound table object
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             await soundTableObject.SetPropertyValueAsync(SoundTableCategoryUuidPropertyName, string.Join(",", categoryUuids));
         }
@@ -2029,7 +2015,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the sound table object
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             await soundTableObject.SetPropertyValueAsync(SoundTableFavouritePropertyName, favourite.ToString());
         }
@@ -2038,7 +2024,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the sound table object
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             await soundTableObject.SetPropertyValuesAsync(new Dictionary<string, string>
             {
@@ -2051,7 +2037,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the sound table object
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             await soundTableObject.SetPropertyValueAsync(SoundTableDefaultPlaybackSpeedPropertyName, defaultPlaybackSpeed.ToString());
         }
@@ -2060,7 +2046,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the sound table object
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             await soundTableObject.SetPropertyValueAsync(SoundTableDefaultRepetitionsPropertyName, defaultRepetitions.ToString());
         }
@@ -2069,7 +2055,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the sound table object
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             await soundTableObject.SetPropertyValueAsync(SoundTableDefaultOutputDevicePropertyName, defaultOutputDevice);
         }
@@ -2078,7 +2064,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the sound table object
             var soundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             List<string> hotkeyStrings = new List<string>();
 
@@ -2097,7 +2083,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the sound table object
             var soundTableObject = await DatabaseOperations.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             await soundTableObject.SetPropertyValueAsync(SoundTableImageUuidPropertyName, imageUuid.ToString());
         }
@@ -2106,7 +2092,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the sound table object
             var soundTableObject = await DatabaseOperations.GetTableObjectAsync(uuid);
-            if (soundTableObject == null || soundTableObject.TableId != SoundTableId) return;
+            if (soundTableObject == null || soundTableObject.TableId != Constants.SoundTableId) return;
 
             Guid? imageUuid = ConvertStringToGuid(soundTableObject.GetPropertyValue(SoundTableImageUuidPropertyName));
             StorageFile newImageFile = await file.CopyAsync(ApplicationData.Current.LocalCacheFolder, "newImage" + file.FileType, NameCollisionOption.ReplaceExisting);
@@ -2181,7 +2167,7 @@ namespace UniversalSoundboard.DataAccess
         public static async Task<Category> GetCategoryAsync(Guid uuid, bool withChildren = true)
         {
             var categoryTableObject = await DatabaseOperations.GetTableObjectAsync(uuid);
-            if (categoryTableObject == null || categoryTableObject.TableId != CategoryTableId) return null;
+            if (categoryTableObject == null || categoryTableObject.TableId != Constants.CategoryTableId) return null;
 
             if (withChildren)
             {
@@ -2291,7 +2277,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the playing sound table object
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != Constants.PlayingSoundTableId) return;
 
             await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableCurrentPropertyName, current.ToString());
         }
@@ -2300,7 +2286,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the playing sound table object
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != Constants.PlayingSoundTableId) return;
 
             await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableRepetitionsPropertyName, repetitions.ToString());
         }
@@ -2309,7 +2295,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the playing sound table object
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != Constants.PlayingSoundTableId) return;
 
             List<Guid> soundUuids = new List<Guid>();
             foreach (Sound sound in sounds)
@@ -2322,7 +2308,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the playing sound table object
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != Constants.PlayingSoundTableId) return;
 
             if (volume > 100)
                 volume = 100;
@@ -2336,7 +2322,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the playing sound table object
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != Constants.PlayingSoundTableId) return;
 
             await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableMutedPropertyName, muted.ToString());
         }
@@ -2345,7 +2331,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the playing sound table object
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != Constants.PlayingSoundTableId) return;
 
             await playingSoundTableObject.SetPropertyValueAsync(PlayingSoundTableOutputDevicePropertyName, outputDevice);
         }
@@ -2354,7 +2340,7 @@ namespace UniversalSoundboard.DataAccess
         {
             // Get the playing sound table object
             var playingSoundTableObject = await Dav.Database.GetTableObjectAsync(uuid);
-            if (playingSoundTableObject == null || playingSoundTableObject.TableId != PlayingSoundTableId) return;
+            if (playingSoundTableObject == null || playingSoundTableObject.TableId != Constants.PlayingSoundTableId) return;
 
             if (playbackSpeed > 200)
                 playbackSpeed = 200;

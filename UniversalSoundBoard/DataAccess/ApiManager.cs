@@ -8,6 +8,7 @@ using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Models;
 using Windows.Storage;
 
@@ -36,7 +37,7 @@ namespace UniversalSoundboard.DataAccess
             {
                 if (graphQLClient == null)
                 {
-                    graphQLClient = new GraphQLHttpClient(FileManager.ApiBaseUrl, new NewtonsoftJsonSerializer());
+                    graphQLClient = new GraphQLHttpClient(Constants.ApiBaseUrl, new NewtonsoftJsonSerializer());
 
                     if (Dav.AccessToken != null)
                         graphQLClient.HttpClient.DefaultRequestHeaders.Add("Authorization", Dav.AccessToken);

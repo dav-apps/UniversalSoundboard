@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using UniversalSoundboard.Common;
 using UniversalSoundboard.Components;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
@@ -406,7 +407,7 @@ namespace UniversalSoundboard.Pages
         {
             DataRequest request = args.Request;
             request.Data.Properties.Title = "Share sound";
-            request.Data.SetWebLink(new Uri(string.Format("{0}/sound/{1}", FileManager.UniversalSoundboardWebsiteBaseUrl, soundItem.Uuid)));
+            request.Data.SetWebLink(new Uri(string.Format("{0}/sound/{1}", Constants.UniversalSoundboardWebsiteBaseUrl, soundItem.Uuid)));
         }
 
         private async void ReportMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
