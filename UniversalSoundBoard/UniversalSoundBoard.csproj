@@ -544,13 +544,13 @@
       <Version>1.64.0.3205</Version>
     </PackageReference>
     <PackageReference Include="GraphQL.Client">
-      <Version>6.0.1</Version>
+      <Version>6.0.2</Version>
     </PackageReference>
     <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft">
-      <Version>6.0.1</Version>
+      <Version>6.0.2</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.11.54</Version>
+      <Version>1.11.56</Version>
     </PackageReference>
     <PackageReference Include="MediaTypeMap.Core">
       <Version>2.3.3</Version>
