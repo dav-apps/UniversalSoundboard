@@ -48,6 +48,8 @@ namespace UniversalSoundboard.Common
         private const string limiterEffectLoudnessKey = "limiterEffectLoudness";
         private const string isReverbEffectEnabledKey = "isReverbEffectEnabled";
         private const string reverbEffectDecayKey = "reverbEffectDecay";
+        private const string isPitchShiftEffectEnabledKey = "isPitchShiftEffectEnabled";
+        private const string pitchShiftEffectPitchKey = "pitchShiftEffectPitch";
         #endregion
 
         #region Constants for localSettings defaults
@@ -81,6 +83,8 @@ namespace UniversalSoundboard.Common
         private const int limiterEffectLoudnessDefault = 1000;
         private const bool isReverbEffectEnabledDefault = false;
         private const double reverbEffectDecayDefault = 2;
+        private const bool isPitchShiftEffectEnabledDefault = false;
+        private const double pitchShiftEffectPitchDefault = 1;
         #endregion
 
         #region Variables
@@ -164,6 +168,8 @@ namespace UniversalSoundboard.Common
         private int _limiterEffectLoudness;                 // The loudness of the global limiter effect
         private bool _isReverbEffectEnabled;                // If true, the global reverb effect is enabled for all sounds
         private double _reverbEffectDecay;                  // The decay of the global reverb effect
+        private bool _isPitchShiftEffectEnabled;            // If true, the global pitch shift effect is enabled for all sounds
+        private double _pitchShiftEffectPitch;              // The pitch of the global pitch shift effect
         #endregion
 
         #region Events
@@ -531,6 +537,20 @@ namespace UniversalSoundboard.Common
                 _reverbEffectDecay = reverbEffectDecayDefault;
             else
                 _reverbEffectDecay = (double)localSettings.Values[reverbEffectDecayKey];
+            #endregion
+
+            #region isPitchShiftEffectEnabled
+            if (localSettings.Values[isPitchShiftEffectEnabledKey] == null)
+                _isPitchShiftEffectEnabled = isPitchShiftEffectEnabledDefault;
+            else
+                _isPitchShiftEffectEnabled = (bool)localSettings.Values[isPitchShiftEffectEnabledKey];
+            #endregion
+
+            #region pitchShiftEffectPitch
+            if (localSettings.Values[pitchShiftEffectPitchKey] == null)
+                _pitchShiftEffectPitch = pitchShiftEffectPitchDefault;
+            else
+                _pitchShiftEffectPitch = (double)localSettings.Values[pitchShiftEffectPitchKey];
             #endregion
             #endregion
         }
@@ -1412,6 +1432,36 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[reverbEffectDecayKey] = value;
                 _reverbEffectDecay = value;
                 NotifyPropertyChanged(ReverbEffectDecayKey);
+            }
+        }
+        #endregion
+
+        #region IsPitchShiftEffectEnabled
+        public const string IsPitchShiftEffectEnabledKey = "IsPitchShiftEffectEnabled";
+        public bool IsPitchShiftEffectEnabled
+        {
+            get => _isPitchShiftEffectEnabled;
+            set
+            {
+                if (_isPitchShiftEffectEnabled.Equals(value)) return;
+                localSettings.Values[isPitchShiftEffectEnabledKey] = value;
+                _isPitchShiftEffectEnabled = value;
+                NotifyPropertyChanged(IsPitchShiftEffectEnabledKey);
+            }
+        }
+        #endregion
+
+        #region PitchShiftEffectPitch
+        public const string PitchShiftEffectPitchKey = "PitchShiftEffectPitch";
+        public double PitchShiftEffectPitch
+        {
+            get => _pitchShiftEffectPitch;
+            set
+            {
+                if (_pitchShiftEffectPitch.Equals(value)) return;
+                localSettings.Values[pitchShiftEffectPitchKey] = value;
+                _pitchShiftEffectPitch = value;
+                NotifyPropertyChanged(PitchShiftEffectPitchKey);
             }
         }
         #endregion
