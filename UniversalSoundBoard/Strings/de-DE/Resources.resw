@@ -1288,4 +1288,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="Currency" xml:space="preserve">
     <value>eur</value>
   </data>
+  <data name="EffectManagerPage-PitchTextBlock.Text" xml:space="preserve">
+    <value>Tonhöhe</value>
+  </data>
 </root>

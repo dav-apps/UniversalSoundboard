@@ -50,6 +50,11 @@ namespace UniversalSoundboard.Pages
             ReverbEffectDecaySlider.IsEnabled = FileManager.itemViewHolder.IsReverbEffectEnabled;
             ReverbEffectDecaySlider.Value = FileManager.itemViewHolder.ReverbEffectDecay;
 
+            // Pitch shift effect
+            PitchShiftEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsPitchShiftEffectEnabled;
+            PitchShiftEffectPitchSlider.IsEnabled = FileManager.itemViewHolder.IsPitchShiftEffectEnabled;
+            PitchShiftEffectPitchSlider.Value = FileManager.itemViewHolder.PitchShiftEffectPitch;
+
             initialized = true;
         }
 
@@ -140,6 +145,22 @@ namespace UniversalSoundboard.Pages
         {
             if (!initialized) return;
             FileManager.itemViewHolder.ReverbEffectDecay = e.NewValue;
+        }
+        #endregion
+
+        #region Pitch shift effect
+        private void PitchShiftEffectEnableToggle_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (!initialized) return;
+
+            FileManager.itemViewHolder.IsPitchShiftEffectEnabled = PitchShiftEffectEnableToggle.IsOn;
+            PitchShiftEffectPitchSlider.IsEnabled = PitchShiftEffectEnableToggle.IsOn;
+        }
+
+        private void PitchShiftEffectPitchSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
+        {
+            if (!initialized) return;
+            FileManager.itemViewHolder.PitchShiftEffectPitch = e.NewValue;
         }
         #endregion
     }

@@ -1290,4 +1290,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="Currency" xml:space="preserve">
     <value>usd</value>
   </data>
+  <data name="EffectManagerPage-PitchTextBlock.Text" xml:space="preserve">
+    <value>Pitch</value>
+  </data>
 </root>

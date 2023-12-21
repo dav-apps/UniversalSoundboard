@@ -171,6 +171,28 @@
                         ValueChanged="ReverbEffectDecaySlider_ValueChanged" />
                 </StackPanel>
             </StackPanel>
+
+            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="2" Grid.Column="1">
+                <RelativePanel>
+                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Pitch shift" />
+
+                    <ToggleSwitch
+                        Name="PitchShiftEffectEnableToggle"
+                        Style="{StaticResource EffectEnableToggleStyle}"
+                        Toggled="PitchShiftEffectEnableToggle_Toggled" />
+                </RelativePanel>
+
+                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                    <TextBlock x:Uid="EffectManagerPage-PitchTextBlock" />
+
+                    <Slider
+                        Name="PitchShiftEffectPitchSlider"
+                        Minimum="0.1"
+                        Maximum="2.0"
+                        StepFrequency="0.1"
+                        ValueChanged="PitchShiftEffectPitchSlider_ValueChanged" />
+                </StackPanel>
+            </StackPanel>
         </Grid>
     </RelativePanel>
 </Page>
