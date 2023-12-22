@@ -183,14 +183,14 @@
                 </RelativePanel>
 
                 <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock x:Uid="EffectManagerPage-PitchTextBlock" />
+                    <TextBlock x:Uid="EffectManagerPage-FactorTextBlock" />
 
                     <Slider
-                        Name="PitchShiftEffectPitchSlider"
+                        Name="PitchShiftEffectFactorSlider"
                         Minimum="0.1"
                         Maximum="2.0"
-                        StepFrequency="0.1"
-                        ValueChanged="PitchShiftEffectPitchSlider_ValueChanged" />
+                        StepFrequency="0.01"
+                        ValueChanged="PitchShiftEffectFactorSlider_ValueChanged" />
                 </StackPanel>
             </StackPanel>
         </Grid>

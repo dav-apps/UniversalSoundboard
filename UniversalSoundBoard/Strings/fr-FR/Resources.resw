@@ -1289,7 +1289,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="Currency" xml:space="preserve">
     <value>eur</value>
   </data>
-  <data name="EffectManagerPage-PitchTextBlock.Text" xml:space="preserve">
+  <data name="EffectManagerPage-FactorTextBlock.Text" xml:space="preserve">
     <value>Hauteur</value>
   </data>
 </root>

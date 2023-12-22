@@ -49,7 +49,7 @@ namespace UniversalSoundboard.Common
         private const string isReverbEffectEnabledKey = "isReverbEffectEnabled";
         private const string reverbEffectDecayKey = "reverbEffectDecay";
         private const string isPitchShiftEffectEnabledKey = "isPitchShiftEffectEnabled";
-        private const string pitchShiftEffectPitchKey = "pitchShiftEffectPitch";
+        private const string pitchShiftEffectFactorKey = "pitchShiftEffectFactor";
         #endregion
 
         #region Constants for localSettings defaults
@@ -84,7 +84,7 @@ namespace UniversalSoundboard.Common
         private const bool isReverbEffectEnabledDefault = false;
         private const double reverbEffectDecayDefault = 2;
         private const bool isPitchShiftEffectEnabledDefault = false;
-        private const double pitchShiftEffectPitchDefault = 1;
+        private const double pitchShiftEffectFactorDefault = 1;
         #endregion
 
         #region Variables
@@ -169,7 +169,7 @@ namespace UniversalSoundboard.Common
         private bool _isReverbEffectEnabled;                // If true, the global reverb effect is enabled for all sounds
         private double _reverbEffectDecay;                  // The decay of the global reverb effect
         private bool _isPitchShiftEffectEnabled;            // If true, the global pitch shift effect is enabled for all sounds
-        private double _pitchShiftEffectPitch;              // The pitch of the global pitch shift effect
+        private double _pitchShiftEffectFactor;             // The pitch factor of the global pitch shift effect. 0.5 = octave down, 1 = normal, 2 = octave up
         #endregion
 
         #region Events
@@ -546,11 +546,11 @@ namespace UniversalSoundboard.Common
                 _isPitchShiftEffectEnabled = (bool)localSettings.Values[isPitchShiftEffectEnabledKey];
             #endregion
 
-            #region pitchShiftEffectPitch
-            if (localSettings.Values[pitchShiftEffectPitchKey] == null)
-                _pitchShiftEffectPitch = pitchShiftEffectPitchDefault;
+            #region pitchShiftEffectFactor
+            if (localSettings.Values[pitchShiftEffectFactorKey] == null)
+                _pitchShiftEffectFactor = pitchShiftEffectFactorDefault;
             else
-                _pitchShiftEffectPitch = (double)localSettings.Values[pitchShiftEffectPitchKey];
+                _pitchShiftEffectFactor = (double)localSettings.Values[pitchShiftEffectFactorKey];
             #endregion
             #endregion
         }
@@ -1451,16 +1451,16 @@ namespace UniversalSoundboard.Common
         }
         #endregion
 
-        #region PitchShiftEffectPitch
-        public const string PitchShiftEffectPitchKey = "PitchShiftEffectPitch";
-        public double PitchShiftEffectPitch
+        #region PitchShiftEffectFactor
+        public const string PitchShiftEffectPitchKey = "PitchShiftEffectFactor";
+        public double PitchShiftEffectFactor
         {
-            get => _pitchShiftEffectPitch;
+            get => _pitchShiftEffectFactor;
             set
             {
-                if (_pitchShiftEffectPitch.Equals(value)) return;
-                localSettings.Values[pitchShiftEffectPitchKey] = value;
-                _pitchShiftEffectPitch = value;
+                if (_pitchShiftEffectFactor.Equals(value)) return;
+                localSettings.Values[pitchShiftEffectFactorKey] = value;
+                _pitchShiftEffectFactor = value;
                 NotifyPropertyChanged(PitchShiftEffectPitchKey);
             }
         }
