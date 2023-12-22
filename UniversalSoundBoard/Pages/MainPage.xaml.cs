@@ -345,7 +345,13 @@ namespace UniversalSoundboard.Pages
                 settings += $"showCategoriesIcons: {FileManager.itemViewHolder.ShowCategoriesIcons}\n";
                 settings += $"showAcrylicBackground: {FileManager.itemViewHolder.ShowAcrylicBackground}\n";
                 settings += $"isLoggedIn: {Dav.IsLoggedIn}\n";
-                if (Dav.IsLoggedIn) settings += $"plan: {Dav.User.Plan}";
+                if (Dav.IsLoggedIn) settings += $"plan: {Dav.User.Plan}\n";
+                settings += $"isFadeInEffectEnabled: {FileManager.itemViewHolder.IsFadeInEffectEnabled}\n";
+                settings += $"isFadeOutEffectEnabled: {FileManager.itemViewHolder.IsFadeOutEffectEnabled}\n";
+                settings += $"isEchoEffectEnabled: {FileManager.itemViewHolder.IsEchoEffectEnabled}\n";
+                settings += $"isLimiterEffectEnabled: {FileManager.itemViewHolder.IsLimiterEffectEnabled}\n";
+                settings += $"isReverbEffectEnabled: {FileManager.itemViewHolder.IsReverbEffectEnabled}\n";
+                settings += $"isPitchShiftEffectEnabled: {FileManager.itemViewHolder.IsPitchShiftEffectEnabled}";
 
                 return new ErrorAttachmentLog[]
                 {
@@ -364,7 +370,13 @@ namespace UniversalSoundboard.Pages
                 { "showListView", FileManager.itemViewHolder.ShowListView.ToString() },
                 { "showCategoriesIcons", FileManager.itemViewHolder.ShowCategoriesIcons.ToString() },
                 { "showAcrylicBackground", FileManager.itemViewHolder.ShowAcrylicBackground.ToString() },
-                { "isLoggedIn", Dav.IsLoggedIn.ToString() }
+                { "isLoggedIn", Dav.IsLoggedIn.ToString() },
+                { "isFadeInEffectEnabled", FileManager.itemViewHolder.IsFadeInEffectEnabled.ToString() },
+                { "isFadeOutEffectEnabled", FileManager.itemViewHolder.IsFadeOutEffectEnabled.ToString() },
+                { "isEchoEffectEnabled", FileManager.itemViewHolder.IsEchoEffectEnabled.ToString() },
+                { "isLimiterEffectEnabled", FileManager.itemViewHolder.IsLimiterEffectEnabled.ToString() },
+                { "isReverbEffectEnabled", FileManager.itemViewHolder.IsReverbEffectEnabled.ToString() },
+                { "isPitchShiftEffectEnabled", FileManager.itemViewHolder.IsPitchShiftEffectEnabled.ToString() }
             };
 
             if (Dav.IsLoggedIn)
@@ -1874,6 +1886,8 @@ namespace UniversalSoundboard.Pages
                 soundRecorderAppWindowContentFrame = new Frame();
                 soundRecorderAppWindowContentFrame.Navigate(typeof(SoundRecorderPage));
                 ElementCompositionPreview.SetAppWindowContent(soundRecorderAppWindow, soundRecorderAppWindowContentFrame);
+
+                Analytics.TrackEvent("MainPage-ToolsButton-SoundRecorder", new Dictionary<string, string>());
             }
 
             await soundRecorderAppWindow.TryShowAsync();
@@ -1896,8 +1910,10 @@ namespace UniversalSoundboard.Pages
                 effectManagerAppWindowContentFrame = new Frame();
                 effectManagerAppWindowContentFrame.Navigate(typeof(EffectManagerPage));
                 ElementCompositionPreview.SetAppWindowContent(effectManagerAppWindow, effectManagerAppWindowContentFrame);
-            }
 
+                Analytics.TrackEvent("MainPage-ToolsButton-EffectManager", new Dictionary<string, string>());
+            }
+            
             await effectManagerAppWindow.TryShowAsync();
         }
         #endregion

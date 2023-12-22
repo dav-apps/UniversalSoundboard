@@ -1,4 +1,6 @@
-﻿using System.ComponentModel;
+﻿using Microsoft.AppCenter.Analytics;
+using System.Collections.Generic;
+using System.ComponentModel;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using Windows.UI.Xaml;
@@ -75,6 +77,11 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.IsFadeInEffectEnabled = FadeInEffectEnableToggle.IsOn;
             FadeInEffectDurationSlider.IsEnabled = FadeInEffectEnableToggle.IsOn;
+
+            if (FadeInEffectEnableToggle.IsOn)
+                Analytics.TrackEvent("EffectManagerPage-FadeInEffect-Enabled", new Dictionary<string, string>());
+            else
+                Analytics.TrackEvent("EffectManagerPage-FadeInEffect-Disabled", new Dictionary<string, string>());
         }
 
         private void FadeInEffectDurationSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -91,6 +98,11 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.IsFadeOutEffectEnabled = FadeOutEffectEnableToggle.IsOn;
             FadeOutEffectDurationSlider.IsEnabled = FadeOutEffectEnableToggle.IsOn;
+
+            if (FadeOutEffectEnableToggle.IsOn)
+                Analytics.TrackEvent("EffectManagerPage-FadeOutEffect-Enabled", new Dictionary<string, string>());
+            else
+                Analytics.TrackEvent("EffectManagerPage-FadeOutEffect-Disabled", new Dictionary<string, string>());
         }
 
         private void FadeOutEffectDurationSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -107,6 +119,11 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.IsEchoEffectEnabled = EchoEffectEnableToggle.IsOn;
             EchoEffectDelaySlider.IsEnabled = EchoEffectEnableToggle.IsOn;
+
+            if (EchoEffectEnableToggle.IsOn)
+                Analytics.TrackEvent("EffectManagerPage-EchoEffect-Enabled", new Dictionary<string, string>());
+            else
+                Analytics.TrackEvent("EffectManagerPage-EchoEffect-Disabled", new Dictionary<string, string>());
         }
 
         private void EchoEffectDelaySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -123,6 +140,11 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.IsLimiterEffectEnabled = LimiterEffectEnableToggle.IsOn;
             LimiterEffectLoudnessSlider.IsEnabled = LimiterEffectEnableToggle.IsOn;
+
+            if (LimiterEffectEnableToggle.IsOn)
+                Analytics.TrackEvent("EffectManagerPage-LimiterEffect-Enabled", new Dictionary<string, string>());
+            else
+                Analytics.TrackEvent("EffectManagerPage-LimiterEffect-Disabled", new Dictionary<string, string>());
         }
 
         private void LimiterEffectLoudnessSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -139,6 +161,11 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.IsReverbEffectEnabled = ReverbEffectEnableToggle.IsOn;
             ReverbEffectDecaySlider.IsEnabled = ReverbEffectEnableToggle.IsOn;
+
+            if (ReverbEffectEnableToggle.IsOn)
+                Analytics.TrackEvent("EffectManagerPage-ReverbEffect-Enabled", new Dictionary<string, string>());
+            else
+                Analytics.TrackEvent("EffectManagerPage-ReverbEffect-Disabled", new Dictionary<string, string>());
         }
 
         private void ReverbEffectDecaySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -155,6 +182,11 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.IsPitchShiftEffectEnabled = PitchShiftEffectEnableToggle.IsOn;
             PitchShiftEffectFactorSlider.IsEnabled = PitchShiftEffectEnableToggle.IsOn;
+
+            if (PitchShiftEffectEnableToggle.IsOn)
+                Analytics.TrackEvent("EffectManagerPage-PitchShiftEffect-Enabled", new Dictionary<string, string>());
+            else
+                Analytics.TrackEvent("EffectManagerPage-PitchShiftEffect-Disabled", new Dictionary<string, string>());
         }
 
         private void PitchShiftEffectFactorSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
