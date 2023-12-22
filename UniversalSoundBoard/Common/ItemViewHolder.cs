@@ -1452,7 +1452,7 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region PitchShiftEffectFactor
-        public const string PitchShiftEffectPitchKey = "PitchShiftEffectFactor";
+        public const string PitchShiftEffectFactorKey = "PitchShiftEffectFactor";
         public double PitchShiftEffectFactor
         {
             get => _pitchShiftEffectFactor;
@@ -1461,7 +1461,7 @@ namespace UniversalSoundboard.Common
                 if (_pitchShiftEffectFactor.Equals(value)) return;
                 localSettings.Values[pitchShiftEffectFactorKey] = value;
                 _pitchShiftEffectFactor = value;
-                NotifyPropertyChanged(PitchShiftEffectPitchKey);
+                NotifyPropertyChanged(PitchShiftEffectFactorKey);
             }
         }
         #endregion

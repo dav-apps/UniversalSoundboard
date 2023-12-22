@@ -235,6 +235,12 @@ namespace UniversalSoundboard.Models
                 case ItemViewHolder.ReverbEffectDecayKey:
                     PlayingSound.AudioPlayer.ReverbDecay = FileManager.itemViewHolder.ReverbEffectDecay;
                     break;
+                case ItemViewHolder.IsPitchShiftEffectEnabledKey:
+                    PlayingSound.AudioPlayer.IsPitchShiftEnabled = FileManager.itemViewHolder.IsPitchShiftEffectEnabled;
+                    break;
+                case ItemViewHolder.PitchShiftEffectFactorKey:
+                    PlayingSound.AudioPlayer.PitchShiftFactor = FileManager.itemViewHolder.PitchShiftEffectFactor;
+                    break;
             }
         }
 
@@ -433,6 +439,8 @@ namespace UniversalSoundboard.Models
             PlayingSound.AudioPlayer.LimiterLoudness = FileManager.itemViewHolder.LimiterEffectLoudness;
             PlayingSound.AudioPlayer.IsReverbEnabled = FileManager.itemViewHolder.IsReverbEffectEnabled;
             PlayingSound.AudioPlayer.ReverbDecay = FileManager.itemViewHolder.ReverbEffectDecay;
+            PlayingSound.AudioPlayer.IsPitchShiftEnabled = FileManager.itemViewHolder.IsPitchShiftEffectEnabled;
+            PlayingSound.AudioPlayer.PitchShiftFactor = FileManager.itemViewHolder.PitchShiftEffectFactor;
 
             try
             {

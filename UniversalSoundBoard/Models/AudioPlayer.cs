@@ -37,6 +37,8 @@ namespace UniversalSoundboard.Models
         private int limiterLoudness = 1000;
         private bool isReverbEnabled = false;
         private double reverbDecay = 2;
+        private bool isPitchShiftEnabled = false;
+        private double pitchShiftFactor = 1;
 
         private AudioGraph AudioGraph;
         private AudioFileInputNode FileInputNode;
@@ -47,6 +49,7 @@ namespace UniversalSoundboard.Models
         private EchoEffectDefinition echoEffectDefinition;
         private LimiterEffectDefinition limiterEffectDefinition;
         private ReverbEffectDefinition reverbEffectDefinition;
+        private AudioEffectDefinition pitchShiftEffectDefinition;
 
         public bool IsInitialized
         {
@@ -136,6 +139,16 @@ namespace UniversalSoundboard.Models
         {
             get => reverbDecay;
             set => setReverbDecay(value);
+        }
+        public bool IsPitchShiftEnabled
+        {
+            get => isPitchShiftEnabled;
+            set => setIsPitchShiftEnabled(value);
+        }
+        public double PitchShiftFactor
+        {
+            get => pitchShiftFactor;
+            set => setPitchShiftFactor(value);
         }
 
         public event EventHandler<EventArgs> MediaEnded;
@@ -289,6 +302,9 @@ namespace UniversalSoundboard.Models
             FileInputNode.EffectDefinitions.Add(reverbEffectDefinition);
             if (!isReverbEnabled) DisableReverbEffect();
 
+            FileInputNode.EffectDefinitions.Add(pitchShiftEffectDefinition);
+            if (!isPitchShiftEnabled) DisablePitchShiftEffect();
+
             FileInputNode.FileCompleted += FileInputNode_FileCompleted;
         }
 
@@ -404,6 +420,14 @@ namespace UniversalSoundboard.Models
                 RearDelay = 3,
                 DecayTime = reverbDecay
             };
+
+            pitchShiftEffectDefinition = new AudioEffectDefinition(
+                typeof(PitchShiftAudioEffect).FullName,
+                new PropertySet
+                {
+                    { "Pitch", (float)pitchShiftFactor }
+                }
+            );
         }
 
         private void EnableEffect(AudioEffectDefinition effectDefinition)
@@ -508,205 +532,242 @@ namespace UniversalSoundboard.Models
             catch (Exception) { }
         }
         #endregion
+
+        #region Pitch shift effect
+        private void EnablePitchShiftEffect()
+        {
+            if (FileInputNode == null || pitchShiftEffectDefinition == null)
+                return;
+
+            try
+            {
+                FileInputNode.EnableEffectsByDefinition(pitchShiftEffectDefinition);
+            }
+            catch (Exception) { }
+        }
+
+        private void DisablePitchShiftEffect()
+        {
+            if (FileInputNode == null || pitchShiftEffectDefinition == null)
+                return;
+
+            try
+            {
+                FileInputNode.DisableEffectsByDefinition(pitchShiftEffectDefinition);
+            }
+            catch (Exception) { }
+        }
+        #endregion
         #endregion
 
         #region Setter methods
-        private void setAudioFile(StorageFile audioFile)
+        private void setAudioFile(StorageFile value)
         {
-            if (this.audioFile == audioFile) return;
+            if (audioFile == value) return;
 
-            this.audioFile = audioFile;
+            audioFile = value;
             audioFileChanged = true;
         }
 
-        private void setOutputDevice(DeviceInformation outputDevice)
+        private void setOutputDevice(DeviceInformation value)
         {
-            if (this.outputDevice == outputDevice) return;
+            if (outputDevice == value) return;
 
-            this.outputDevice = outputDevice;
+            outputDevice = value;
             outputDeviceChanged = true;
         }
 
-        private void setPosition(TimeSpan position)
+        private void setPosition(TimeSpan value)
         {
-            if (FileInputNode != null && position > FileInputNode.Duration)
+            if (FileInputNode != null && value > FileInputNode.Duration)
                 return;
             
-            FileInputNode?.Seek(position);
-            this.position = position;
+            FileInputNode?.Seek(value);
+            position = value;
             DisableEffect(fadeInEffectDefinition);
         }
 
-        private void setVolume(double volume)
+        private void setVolume(double value)
         {
             // Don't set the volume if the player is muted or if the volume didn't change
-            if (isMuted || volume == this.volume) return;
+            if (isMuted || volume.Equals(value)) return;
 
-            if (volume > 1)
-                volume = 1;
-            else if (volume < 0)
-                volume = 0;
+            if (value > 1)
+                value = 1;
+            else if (value < 0)
+                value = 0;
 
             if (FileInputNode != null)
-                FileInputNode.OutgoingGain = volume;
+                FileInputNode.OutgoingGain = value;
 
-            this.volume = volume;
+            volume = value;
         }
 
-        private void setIsMuted(bool muted)
+        private void setIsMuted(bool value)
         {
             // Don't change the value if it didn't change
-            if (muted == isMuted) return;
+            if (isMuted.Equals(value)) return;
 
             if (FileInputNode != null && DeviceOutputNode != null)
             {
-                if (muted)
+                if (value)
                     FileInputNode.OutgoingGain = 0;
                 else
                     FileInputNode.OutgoingGain = volume;
             }
 
-            isMuted = muted;
+            isMuted = value;
         }
 
-        private async void setPlaybackRate(double playbackRate)
+        private async void setPlaybackRate(double value)
         {
             // Don't change the value if it didn't change
-            if (this.playbackRate == playbackRate)
+            if (playbackRate.Equals(value))
                 return;
 
-            this.playbackRate = playbackRate;
+            playbackRate = value;
 
             if (FileInputNode == null)
                 return;
 
-            FileInputNode.PlaybackSpeedFactor = playbackRate;
+            FileInputNode.PlaybackSpeedFactor = value;
             playbackRateChanged = true;
 
             await Init();
         }
 
-        private void setIsFadeInEnabled(bool isFadeInEnabled)
+        private void setIsFadeInEnabled(bool value)
         {
-            if (this.isFadeInEnabled == isFadeInEnabled)
+            if (isFadeInEnabled.Equals(value))
                 return;
 
-            this.isFadeInEnabled = isFadeInEnabled;
+            isFadeInEnabled = value;
         }
 
-        private void setFadeInDuration(int fadeInDuration)
+        private void setFadeInDuration(int value)
         {
-            if (this.fadeInDuration == fadeInDuration)
+            if (fadeInDuration.Equals(value))
                 return;
 
-            this.fadeInDuration = fadeInDuration;
+            fadeInDuration = value;
 
             if (fadeInEffectDefinition != null)
-                fadeInEffectDefinition.Properties["Duration"] = fadeInDuration;
+                fadeInEffectDefinition.Properties["Duration"] = value;
         }
 
-        private void setIsFadeOutEnabled(bool isFadeOutEnabled)
+        private void setIsFadeOutEnabled(bool value)
         {
-            if (this.isFadeOutEnabled = isFadeOutEnabled)
+            if (isFadeOutEnabled.Equals(value))
                 return;
 
-            this.isFadeOutEnabled = isFadeOutEnabled;
+            isFadeOutEnabled = value;
         }
 
-        private void setFadeOutDuration(int fadeOutDuration)
+        private void setFadeOutDuration(int value)
         {
-            if (this.fadeOutDuration.Equals(fadeOutDuration))
+            if (fadeOutDuration.Equals(value))
                 return;
 
-            this.fadeOutDuration = fadeOutDuration;
+            fadeOutDuration = value;
 
             if (fadeOutEffectDefinition != null)
-                fadeOutEffectDefinition.Properties["Duration"] = (float)fadeOutDuration;
+                fadeOutEffectDefinition.Properties["Duration"] = (float)value;
         }
 
-        private void setIsEchoEnabled(bool isEchoEnabled)
+        private void setIsEchoEnabled(bool value)
         {
-            if (this.isEchoEnabled == isEchoEnabled)
+            if (isEchoEnabled.Equals(value))
                 return;
 
-            this.isEchoEnabled = isEchoEnabled;
+            isEchoEnabled = value;
 
-            if (FileInputNode != null)
-            {
-                if (isEchoEnabled)
-                    EnableEchoEffect();
-                else
-                    DisableEchoEffect();
-            }
+            if (value)
+                EnableEchoEffect();
+            else
+                DisableEchoEffect();
         }
 
-        private void setEchoDelay(int echoDelay)
+        private void setEchoDelay(int value)
         {
-            if (this.echoDelay == echoDelay)
+            if (echoDelay.Equals(value))
                 return;
 
-            this.echoDelay = echoDelay;
+            echoDelay = value;
 
             if (echoEffectDefinition != null)
-                echoEffectDefinition.Delay = echoDelay;
+                echoEffectDefinition.Delay = value;
         }
 
-        private void setIsLimiterEnabled(bool isLimiterEnabled)
+        private void setIsLimiterEnabled(bool value)
         {
-            if (this.isLimiterEnabled == isLimiterEnabled)
+            if (isLimiterEnabled.Equals(value))
                 return;
 
-            this.isLimiterEnabled = isLimiterEnabled;
+            isLimiterEnabled = value;
 
-            if (FileInputNode != null)
-            {
-                if (isLimiterEnabled)
-                    EnableLimiterEffect();
-                else
-                    DisableLimiterEffect();
-            }
+            if (value)
+                EnableLimiterEffect();
+            else
+                DisableLimiterEffect();
         }
 
-        private void setLimiterLoudness(int limiterLoudness)
+        private void setLimiterLoudness(int value)
         {
-            if (this.limiterLoudness == limiterLoudness)
+            if (limiterLoudness.Equals(value))
                 return;
 
-            this.limiterLoudness = limiterLoudness;
+            limiterLoudness = value;
 
             if (limiterEffectDefinition != null)
-                limiterEffectDefinition.Loudness = (uint)limiterLoudness;
+                limiterEffectDefinition.Loudness = (uint)value;
         }
 
-        private void setIsReverbEnabled(bool isReverbEnabled)
+        private void setIsReverbEnabled(bool value)
         {
-            if (this.isReverbEnabled == isReverbEnabled)
+            if (isReverbEnabled.Equals(value))
                 return;
 
-            this.isReverbEnabled = isReverbEnabled;
+            isReverbEnabled = value;
 
-            if (FileInputNode != null)
-            {
-                try
-                {
-                    if (isReverbEnabled)
-                        EnableReverbEffect();
-                    else
-                        DisableReverbEffect();
-                }
-                catch (Exception) { }
-            }
+            if (value)
+                EnableReverbEffect();
+            else
+                DisableReverbEffect();
         }
 
-        private void setReverbDecay(double reverbDecay)
+        private void setReverbDecay(double value)
         {
-            if (this.reverbDecay == reverbDecay)
+            if (reverbDecay.Equals(value))
                 return;
 
-            this.reverbDecay = reverbDecay;
+            reverbDecay = value;
 
             if (reverbEffectDefinition != null)
-                reverbEffectDefinition.DecayTime = reverbDecay;
+                reverbEffectDefinition.DecayTime = value;
+        }
+
+        private void setIsPitchShiftEnabled(bool value)
+        {
+            if (isPitchShiftEnabled.Equals(value))
+                return;
+
+            isPitchShiftEnabled = value;
+
+            if (isPitchShiftEnabled)
+                EnablePitchShiftEffect();
+            else // TODO: Check for playback rate
+                DisablePitchShiftEffect();
+        }
+
+        private void setPitchShiftFactor(double value)
+        {
+            if (pitchShiftFactor.Equals(value))
+                return;
+
+            pitchShiftFactor = value;
+
+            if (pitchShiftEffectDefinition != null)
+                pitchShiftEffectDefinition.Properties["Pitch"] = (float)value;
         }
         #endregion
 
