@@ -53,7 +53,7 @@ namespace UniversalSoundboard.Pages
             // Pitch shift effect
             PitchShiftEffectEnableToggle.IsOn = FileManager.itemViewHolder.IsPitchShiftEffectEnabled;
             PitchShiftEffectFactorSlider.IsEnabled = FileManager.itemViewHolder.IsPitchShiftEffectEnabled;
-            PitchShiftEffectFactorSlider.Value = FileManager.itemViewHolder.PitchShiftEffectFactor;
+            PitchShiftEffectFactorSlider.Value = FileManager.itemViewHolder.PitchShiftEffectFactor * 100;
 
             initialized = true;
         }
@@ -160,7 +160,7 @@ namespace UniversalSoundboard.Pages
         private void PitchShiftEffectFactorSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
         {
             if (!initialized) return;
-            FileManager.itemViewHolder.PitchShiftEffectFactor = e.NewValue;
+            FileManager.itemViewHolder.PitchShiftEffectFactor = e.NewValue / 100;
         }
         #endregion
     }
