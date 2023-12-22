@@ -20,7 +20,6 @@ namespace UniversalSoundboard.Models
         private DeviceInformation outputDevice;
         private bool audioFileChanged = true;
         private bool outputDeviceChanged = true;
-        private bool playbackRateChanged = true;
         private bool effectsChanged = true;
         private bool isPlaying = false;
         private TimeSpan position = TimeSpan.Zero;
@@ -195,7 +194,6 @@ namespace UniversalSoundboard.Models
             if (
                 audioFileChanged
                 || outputDeviceChanged
-                || playbackRateChanged
                 || effectsChanged
             )
             {
@@ -207,7 +205,6 @@ namespace UniversalSoundboard.Models
 
                 outputDeviceChanged = false;
                 audioFileChanged = false;
-                playbackRateChanged = false;
                 effectsChanged = false;
             }
 
@@ -276,15 +273,6 @@ namespace UniversalSoundboard.Models
 
             FileInputNode.PlaybackSpeedFactor = playbackRate;
 
-            if (playbackRate != 1f)
-            {
-                // Set the pitch for the current playback rate
-                FileInputNode.EffectDefinitions.Add(new AudioEffectDefinition(
-                    typeof(PitchShiftAudioEffect).FullName,
-                    new PropertySet { { "Pitch", 1 / (float)playbackRate } }
-                ));
-            }
-
             // Fade in effect
             FileInputNode.EffectDefinitions.Add(fadeInEffectDefinition);
             if (!isFadeInEnabled) DisableEffect(fadeInEffectDefinition);
@@ -293,17 +281,21 @@ namespace UniversalSoundboard.Models
             FileInputNode.EffectDefinitions.Add(fadeOutEffectDefinition);
             DisableEffect(fadeOutEffectDefinition);
 
+            // Echo effect
             FileInputNode.EffectDefinitions.Add(echoEffectDefinition);
             if (!isEchoEnabled) DisableEchoEffect();
 
+            // Limiter effect
             FileInputNode.EffectDefinitions.Add(limiterEffectDefinition);
             if (!isLimiterEnabled) DisableLimiterEffect();
 
+            // Reverb effect
             FileInputNode.EffectDefinitions.Add(reverbEffectDefinition);
             if (!isReverbEnabled) DisableReverbEffect();
 
+            // Pitch shift effect
             FileInputNode.EffectDefinitions.Add(pitchShiftEffectDefinition);
-            if (!isPitchShiftEnabled) DisablePitchShiftEffect();
+            UpdatePitchShiftEffect();
 
             FileInputNode.FileCompleted += FileInputNode_FileCompleted;
         }
@@ -425,7 +417,7 @@ namespace UniversalSoundboard.Models
                 typeof(PitchShiftAudioEffect).FullName,
                 new PropertySet
                 {
-                    { "Pitch", (float)pitchShiftFactor }
+                    { "Pitch", (float)(pitchShiftFactor / playbackRate) }
                 }
             );
         }
@@ -557,6 +549,24 @@ namespace UniversalSoundboard.Models
             }
             catch (Exception) { }
         }
+
+        private void UpdatePitchShiftEffect()
+        {
+            if (pitchShiftEffectDefinition == null) return;
+
+            if (!IsPitchShiftEnabled && playbackRate == 1)
+            {
+                DisablePitchShiftEffect();
+            }
+            else
+            {
+                double pitch = pitchShiftFactor;
+                if (!isPitchShiftEnabled) pitch = 1;
+
+                pitchShiftEffectDefinition.Properties["Pitch"] = (float)(pitch / playbackRate);
+                EnablePitchShiftEffect();
+            }
+        }
         #endregion
         #endregion
 
@@ -619,9 +629,8 @@ namespace UniversalSoundboard.Models
             isMuted = value;
         }
 
-        private async void setPlaybackRate(double value)
+        private void setPlaybackRate(double value)
         {
-            // Don't change the value if it didn't change
             if (playbackRate.Equals(value))
                 return;
 
@@ -631,9 +640,7 @@ namespace UniversalSoundboard.Models
                 return;
 
             FileInputNode.PlaybackSpeedFactor = value;
-            playbackRateChanged = true;
-
-            await Init();
+            UpdatePitchShiftEffect();
         }
 
         private void setIsFadeInEnabled(bool value)
@@ -752,22 +759,13 @@ namespace UniversalSoundboard.Models
                 return;
 
             isPitchShiftEnabled = value;
-
-            if (isPitchShiftEnabled)
-                EnablePitchShiftEffect();
-            else // TODO: Check for playback rate
-                DisablePitchShiftEffect();
+            UpdatePitchShiftEffect();
         }
 
         private void setPitchShiftFactor(double value)
         {
-            if (pitchShiftFactor.Equals(value))
-                return;
-
             pitchShiftFactor = value;
-
-            if (pitchShiftEffectDefinition != null)
-                pitchShiftEffectDefinition.Properties["Pitch"] = (float)value;
+            UpdatePitchShiftEffect();
         }
         #endregion
 

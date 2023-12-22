@@ -2367,6 +2367,7 @@ namespace UniversalSoundboard.DataAccess
             {
                 player.Volume = (double)itemViewHolder.Volume / 100 * (volume / 100);
                 player.IsMuted = itemViewHolder.Muted || muted;
+                player.PlaybackRate = (double)playbackSpeed / 100;
 
                 return new PlayingSound(tableObject.Uuid, player, newSounds, current, repetitions, randomly, Convert.ToInt32(volume), muted, outputDevice, playbackSpeed);
             }
