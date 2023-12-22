@@ -1086,7 +1086,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
     <value>Durée (ms)</value>
   </data>
   <data name="EffectManagerPage-LoudnessTextBlock.Text" xml:space="preserve">
-    <value>Intensité sonore</value>
+    <value>Intensité</value>
   </data>
   <data name="PropertiesDialog-Source" xml:space="preserve">
     <value>Source</value>
@@ -1290,6 +1290,24 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
     <value>eur</value>
   </data>
   <data name="EffectManagerPage-FactorTextBlock.Text" xml:space="preserve">
+    <value>Facteur</value>
+  </data>
+  <data name="EffectManagerPage-EchoTextBlock.Text" xml:space="preserve">
+    <value>Écho</value>
+  </data>
+  <data name="EffectManagerPage-FadeInTextBlock.Text" xml:space="preserve">
+    <value>Fondu en ouverture</value>
+  </data>
+  <data name="EffectManagerPage-FadeOutTextBlock.Text" xml:space="preserve">
+    <value>Fondu en fermeture</value>
+  </data>
+  <data name="EffectManagerPage-LimiterTextBlock.Text" xml:space="preserve">
+    <value>Limiteur</value>
+  </data>
+  <data name="EffectManagerPage-PitchShiftTextBlock.Text" xml:space="preserve">
     <value>Hauteur</value>
+  </data>
+  <data name="EffectManagerPage-ReverbTextBlock.Text" xml:space="preserve">
+    <value>Réverbération</value>
   </data>
 </root>

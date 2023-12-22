@@ -44,154 +44,168 @@
             Style="{StaticResource CaptionTextBlockStyle}"
             Margin="13,8,0,0" />
 
-        <Grid
-            RelativePanel.AlignLeftWithPanel="True"
-            RelativePanel.AlignRightWithPanel="True"
-            RelativePanel.AlignTopWithPanel="True"
-            RelativePanel.AlignBottomWithPanel="True"
-            Margin="0,32,0,0"
-            Padding="12">
+        <ScrollViewer>
+            <Grid
+                RelativePanel.AlignLeftWithPanel="True"
+                RelativePanel.AlignRightWithPanel="True"
+                RelativePanel.AlignTopWithPanel="True"
+                RelativePanel.AlignBottomWithPanel="True"
+                Margin="0,32,0,0"
+                Padding="12">
 
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
-            </Grid.RowDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="Auto" />
-                <ColumnDefinition Width="Auto" />
-            </Grid.ColumnDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
 
-            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="0" Grid.Column="0">
-                <RelativePanel>
-                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Fade in" />
+                <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="0" Grid.Column="0">
+                    <RelativePanel>
+                        <TextBlock
+                            x:Uid="EffectManagerPage-FadeInTextBlock"
+                            Style="{StaticResource EffectHeaderStyle}" />
 
-                    <ToggleSwitch
-                        Name="FadeInEffectEnableToggle"
-                        Style="{StaticResource EffectEnableToggleStyle}"
-                        Toggled="FadeInEffectEnableToggle_Toggled" />
-                </RelativePanel>
+                        <ToggleSwitch
+                            Name="FadeInEffectEnableToggle"
+                            Style="{StaticResource EffectEnableToggleStyle}"
+                            Toggled="FadeInEffectEnableToggle_Toggled" />
+                    </RelativePanel>
 
-                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock x:Uid="EffectManagerPage-DurationTextBlock" />
+                    <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                        <TextBlock x:Uid="EffectManagerPage-DurationTextBlock" />
 
-                    <Slider
-                        Name="FadeInEffectDurationSlider"
-                        Minimum="100"
-                        Maximum="10000"
-                        StepFrequency="100"
-                        ValueChanged="FadeInEffectDurationSlider_ValueChanged" />
+                        <Slider
+                            Name="FadeInEffectDurationSlider"
+                            Minimum="100"
+                            Maximum="10000"
+                            StepFrequency="100"
+                            ValueChanged="FadeInEffectDurationSlider_ValueChanged" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
 
-            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="0" Grid.Column="1">
-                <RelativePanel>
-                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Fade out" />
+                <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="0" Grid.Column="1">
+                    <RelativePanel>
+                        <TextBlock
+                            x:Uid="EffectManagerPage-FadeOutTextBlock"
+                            Style="{StaticResource EffectHeaderStyle}" />
 
-                    <ToggleSwitch
-                        Name="FadeOutEffectEnableToggle"
-                        Style="{StaticResource EffectEnableToggleStyle}"
-                        Toggled="FadeOutEffectEnableToggle_Toggled" />
-                </RelativePanel>
+                        <ToggleSwitch
+                            Name="FadeOutEffectEnableToggle"
+                            Style="{StaticResource EffectEnableToggleStyle}"
+                            Toggled="FadeOutEffectEnableToggle_Toggled" />
+                    </RelativePanel>
 
-                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock x:Uid="EffectManagerPage-DurationTextBlock" />
+                    <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                        <TextBlock x:Uid="EffectManagerPage-DurationTextBlock" />
 
-                    <Slider
-                        Name="FadeOutEffectDurationSlider"
-                        Minimum="100"
-                        Maximum="10000"
-                        StepFrequency="100"
-                        ValueChanged="FadeOutEffectDurationSlider_ValueChanged" />
+                        <Slider
+                            Name="FadeOutEffectDurationSlider"
+                            Minimum="100"
+                            Maximum="10000"
+                            StepFrequency="100"
+                            ValueChanged="FadeOutEffectDurationSlider_ValueChanged" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
 
-            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="1"  Grid.Column="0">
-                <RelativePanel>
-                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Echo" />
+                <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="1"  Grid.Column="0">
+                    <RelativePanel>
+                        <TextBlock
+                            x:Uid="EffectManagerPage-EchoTextBlock"
+                            Style="{StaticResource EffectHeaderStyle}" />
 
-                    <ToggleSwitch
-                        Name="EchoEffectEnableToggle"
-                        Style="{StaticResource EffectEnableToggleStyle}"
-                        Toggled="EchoEffectEnableToggle_Toggled" />
-                </RelativePanel>
+                        <ToggleSwitch
+                            Name="EchoEffectEnableToggle"
+                            Style="{StaticResource EffectEnableToggleStyle}"
+                            Toggled="EchoEffectEnableToggle_Toggled" />
+                    </RelativePanel>
 
-                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock x:Uid="EffectManagerPage-DelayTextBlock" />
+                    <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                        <TextBlock x:Uid="EffectManagerPage-DelayTextBlock" />
 
-                    <Slider
-                        Name="EchoEffectDelaySlider"
-                        Minimum="50"
-                        Maximum="2000"
-                        StepFrequency="10"
-                        ValueChanged="EchoEffectDelaySlider_ValueChanged" />
+                        <Slider
+                            Name="EchoEffectDelaySlider"
+                            Minimum="50"
+                            Maximum="2000"
+                            StepFrequency="10"
+                            ValueChanged="EchoEffectDelaySlider_ValueChanged" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
 
-            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="1" Grid.Column="1">
-                <RelativePanel>
-                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Limiter" />
+                <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="1" Grid.Column="1">
+                    <RelativePanel>
+                        <TextBlock
+                            x:Uid="EffectManagerPage-LimiterTextBlock"
+                            Style="{StaticResource EffectHeaderStyle}" />
 
-                    <ToggleSwitch
-                        Name="LimiterEffectEnableToggle"
-                        Style="{StaticResource EffectEnableToggleStyle}"
-                        Toggled="LimiterEffectEnableToggle_Toggled" />
-                </RelativePanel>
+                        <ToggleSwitch
+                            Name="LimiterEffectEnableToggle"
+                            Style="{StaticResource EffectEnableToggleStyle}"
+                            Toggled="LimiterEffectEnableToggle_Toggled" />
+                    </RelativePanel>
 
-                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock x:Uid="EffectManagerPage-LoudnessTextBlock" />
+                    <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                        <TextBlock x:Uid="EffectManagerPage-LoudnessTextBlock" />
 
-                    <Slider
-                        Name="LimiterEffectLoudnessSlider"
-                        Minimum="100"
-                        Maximum="1800"
-                        ValueChanged="LimiterEffectLoudnessSlider_ValueChanged" />
+                        <Slider
+                            Name="LimiterEffectLoudnessSlider"
+                            Minimum="100"
+                            Maximum="1800"
+                            ValueChanged="LimiterEffectLoudnessSlider_ValueChanged" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
 
-            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="2" Grid.Column="0">
-                <RelativePanel>
-                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Reverb" />
+                <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="2" Grid.Column="0">
+                    <RelativePanel>
+                        <TextBlock
+                            x:Uid="EffectManagerPage-ReverbTextBlock"
+                            Style="{StaticResource EffectHeaderStyle}" />
 
-                    <ToggleSwitch
-                        Name="ReverbEffectEnableToggle"
-                        Style="{StaticResource EffectEnableToggleStyle}"
-                        Toggled="ReverbEffectEnableToggle_Toggled" />
-                </RelativePanel>
+                        <ToggleSwitch
+                            Name="ReverbEffectEnableToggle"
+                            Style="{StaticResource EffectEnableToggleStyle}"
+                            Toggled="ReverbEffectEnableToggle_Toggled" />
+                    </RelativePanel>
 
-                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock x:Uid="EffectManagerPage-DecayTextBlock" />
+                    <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                        <TextBlock x:Uid="EffectManagerPage-DecayTextBlock" />
 
-                    <Slider
-                        Name="ReverbEffectDecaySlider"
-                        Minimum="0.5"
-                        Maximum="20"
-                        StepFrequency="0.5"
-                        ValueChanged="ReverbEffectDecaySlider_ValueChanged" />
+                        <Slider
+                            Name="ReverbEffectDecaySlider"
+                            Minimum="0.5"
+                            Maximum="20"
+                            StepFrequency="0.5"
+                            ValueChanged="ReverbEffectDecaySlider_ValueChanged" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
 
-            <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="2" Grid.Column="1">
-                <RelativePanel>
-                    <TextBlock Style="{StaticResource EffectHeaderStyle}" Text="Pitch shift" />
+                <StackPanel Style="{StaticResource EffectContainerStyle}" Grid.Row="2" Grid.Column="1">
+                    <RelativePanel>
+                        <TextBlock
+                            x:Uid="EffectManagerPage-PitchShiftTextBlock"
+                            Style="{StaticResource EffectHeaderStyle}" />
 
-                    <ToggleSwitch
-                        Name="PitchShiftEffectEnableToggle"
-                        Style="{StaticResource EffectEnableToggleStyle}"
-                        Toggled="PitchShiftEffectEnableToggle_Toggled" />
-                </RelativePanel>
+                        <ToggleSwitch
+                            Name="PitchShiftEffectEnableToggle"
+                            Style="{StaticResource EffectEnableToggleStyle}"
+                            Toggled="PitchShiftEffectEnableToggle_Toggled" />
+                    </RelativePanel>
 
-                <StackPanel Style="{StaticResource EffectContentContainerStyle}">
-                    <TextBlock x:Uid="EffectManagerPage-FactorTextBlock" />
+                    <StackPanel Style="{StaticResource EffectContentContainerStyle}">
+                        <TextBlock x:Uid="EffectManagerPage-FactorTextBlock" />
 
-                    <Slider
-                        Name="PitchShiftEffectFactorSlider"
-                        Minimum="50"
-                        Maximum="200"
-                        ValueChanged="PitchShiftEffectFactorSlider_ValueChanged" />
+                        <Slider
+                            Name="PitchShiftEffectFactorSlider"
+                            Minimum="50"
+                            Maximum="200"
+                            ValueChanged="PitchShiftEffectFactorSlider_ValueChanged" />
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
-        </Grid>
+            </Grid>
+        </ScrollViewer>
     </RelativePanel>
 </Page>

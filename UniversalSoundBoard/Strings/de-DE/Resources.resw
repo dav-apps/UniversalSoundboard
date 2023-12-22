@@ -1289,6 +1289,24 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>eur</value>
   </data>
   <data name="EffectManagerPage-FactorTextBlock.Text" xml:space="preserve">
+    <value>Faktor</value>
+  </data>
+  <data name="EffectManagerPage-EchoTextBlock.Text" xml:space="preserve">
+    <value>Echo</value>
+  </data>
+  <data name="EffectManagerPage-FadeInTextBlock.Text" xml:space="preserve">
+    <value>Einblenden</value>
+  </data>
+  <data name="EffectManagerPage-FadeOutTextBlock.Text" xml:space="preserve">
+    <value>Ausblenden</value>
+  </data>
+  <data name="EffectManagerPage-LimiterTextBlock.Text" xml:space="preserve">
+    <value>Begrenzer</value>
+  </data>
+  <data name="EffectManagerPage-PitchShiftTextBlock.Text" xml:space="preserve">
     <value>Tonhöhe</value>
+  </data>
+  <data name="EffectManagerPage-ReverbTextBlock.Text" xml:space="preserve">
+    <value>Nachhall</value>
   </data>
 </root>

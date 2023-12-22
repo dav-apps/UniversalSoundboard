@@ -1291,6 +1291,24 @@ This may take some time, depending on how large the import file is.</value>
     <value>usd</value>
   </data>
   <data name="EffectManagerPage-FactorTextBlock.Text" xml:space="preserve">
+    <value>Factor</value>
+  </data>
+  <data name="EffectManagerPage-EchoTextBlock.Text" xml:space="preserve">
+    <value>Echo</value>
+  </data>
+  <data name="EffectManagerPage-FadeInTextBlock.Text" xml:space="preserve">
+    <value>Fade in</value>
+  </data>
+  <data name="EffectManagerPage-FadeOutTextBlock.Text" xml:space="preserve">
+    <value>Fade out</value>
+  </data>
+  <data name="EffectManagerPage-LimiterTextBlock.Text" xml:space="preserve">
+    <value>Limiter</value>
+  </data>
+  <data name="EffectManagerPage-PitchShiftTextBlock.Text" xml:space="preserve">
     <value>Pitch</value>
+  </data>
+  <data name="EffectManagerPage-ReverbTextBlock.Text" xml:space="preserve">
+    <value>Reverb</value>
   </data>
 </root>
