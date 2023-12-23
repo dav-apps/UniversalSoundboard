@@ -664,10 +664,12 @@ namespace UniversalSoundboard.Models
 
         private void setIsFadeOutEnabled(bool value)
         {
-            if (isFadeOutEnabled.Equals(value))
-                return;
-
             isFadeOutEnabled = value;
+
+            if (value)
+                EnableEffect(fadeOutEffectDefinition);
+            else
+                DisableEffect(fadeOutEffectDefinition);
         }
 
         private void setFadeOutDuration(int value)
