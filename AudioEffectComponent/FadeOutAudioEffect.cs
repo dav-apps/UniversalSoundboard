@@ -84,6 +84,10 @@ namespace AudioEffectComponent
             AudioFrame inputFrame = context.InputFrame;
             AudioFrame outputFrame = context.OutputFrame;
 
+            // Reset the fade out
+            if (sampleIndex == 0)
+                sampleIndex = effectSampleCount;
+
             using (
                 AudioBuffer inputBuffer = inputFrame.LockBuffer(AudioBufferAccessMode.Read),
                 outputBuffer = outputFrame.LockBuffer(AudioBufferAccessMode.Write)
