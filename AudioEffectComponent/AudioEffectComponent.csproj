@@ -131,6 +131,7 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="FadeAudioEffect.cs" />
     <Compile Include="FadeInAudioEffect.cs" />
     <Compile Include="FadeOutAudioEffect.cs" />
     <Compile Include="PitchShiftAudioEffect.cs" />
