@@ -85,16 +85,25 @@ namespace AudioEffectComponent
 
                 // Convert the audio data to an array, as the input for PitchShift
                 int dataInFloatLength = (int)inputBuffer.Length / sizeof(float);
-                float[] inputDataArray = new float[dataInFloatLength];
 
-                for (int i = 0; i < dataInFloatLength; i++)
-                    inputDataArray[i] = inputDataInFloat[i];
+                if (Pitch == 1)
+                {
+                    for (int i = 0; i < dataInFloatLength; i++)
+                        outputDataInFloat[i] = inputDataInFloat[i];
+                }
+                else
+                {
+                    float[] inputDataArray = new float[dataInFloatLength];
 
-                PitchShifter.PitchShift(Pitch, dataInFloatLength, currentEncodingProperties.SampleRate, inputDataArray);
+                    for (int i = 0; i < dataInFloatLength; i++)
+                        inputDataArray[i] = inputDataInFloat[i];
 
-                // Copy the data to the output
-                for (int i = 0; i < dataInFloatLength; i++)
-                    outputDataInFloat[i] = inputDataArray[i];
+                    PitchShifter.PitchShift(Pitch, dataInFloatLength, currentEncodingProperties.SampleRate, inputDataArray);
+
+                    // Copy the data to the output
+                    for (int i = 0; i < dataInFloatLength; i++)
+                        outputDataInFloat[i] = inputDataArray[i];
+                }
             }
         }
 
