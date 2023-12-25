@@ -19,6 +19,19 @@ namespace AudioEffectComponent
         public bool TimeIndependent { get { return true; } }
         public bool UseInputFrameForOutput { get { return false; } }
 
+        public bool IsEnabled
+        {
+            get
+            {
+                object val;
+
+                if (configuration != null && configuration.TryGetValue("IsEnabled", out val))
+                    return (bool)val;
+
+                return false;
+            }
+        }
+
         // Duration of the fade in in ms
         public float Duration
         {
@@ -47,7 +60,6 @@ namespace AudioEffectComponent
                 supportedEncodingProperties.Add(encodingProps2);
 
                 return supportedEncodingProperties;
-
             }
         }
 
@@ -56,6 +68,17 @@ namespace AudioEffectComponent
             currentEncodingProperties = encodingProperties;
             effectSampleCount = (int)(encodingProperties.SampleRate * encodingProperties.ChannelCount * ((double)Duration / 1000));
             sampleIndex = 0;
+
+            configuration.MapChanged -= Configuration_MapChanged;
+            configuration.MapChanged += Configuration_MapChanged;
+        }
+
+        private void Configuration_MapChanged(IObservableMap<string, object> sender, IMapChangedEventArgs<string> @event)
+        {
+            if (IsEnabled)
+                sampleIndex = 0;
+            else
+                sampleIndex = effectSampleCount;
         }
 
         public void SetProperties(IPropertySet configuration)
@@ -101,10 +124,17 @@ namespace AudioEffectComponent
 
                 for (int i = 0; i < dataInFloatLength; i++)
                 {
-                    outputDataInFloat[i] = inputDataInFloat[i] * ((float)sampleIndex / effectSampleCount);
+                    if (IsEnabled)
+                    {
+                        outputDataInFloat[i] = inputDataInFloat[i] * ((float)sampleIndex / effectSampleCount);
 
-                    if (sampleIndex < effectSampleCount)
-                        sampleIndex++;
+                        if (sampleIndex < effectSampleCount)
+                            sampleIndex++;
+                    }
+                    else
+                    {
+                        outputDataInFloat[i] = inputDataInFloat[i];
+                    }
                 }
             }
         }

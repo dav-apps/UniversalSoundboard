@@ -19,6 +19,19 @@ namespace AudioEffectComponent
         public bool TimeIndependent { get { return true; } }
         public bool UseInputFrameForOutput { get { return false; } }
 
+        public bool IsEnabled
+        {
+            get
+            {
+                object val;
+
+                if (configuration != null && configuration.TryGetValue("IsEnabled", out val))
+                    return (bool)val;
+
+                return false;
+            }
+        }
+
         // Duration of the fade out in ms
         public float Duration
         {
@@ -63,7 +76,11 @@ namespace AudioEffectComponent
         private void Configuration_MapChanged(IObservableMap<string, object> sender, IMapChangedEventArgs<string> @event)
         {
             effectSampleCount = (int)(currentEncodingProperties.SampleRate * currentEncodingProperties.ChannelCount * ((double)Duration / 1000));
-            sampleIndex = effectSampleCount;
+
+            if (IsEnabled)
+                sampleIndex = effectSampleCount;
+            else
+                sampleIndex = 0;
         }
 
         public void SetProperties(IPropertySet configuration)
@@ -83,10 +100,6 @@ namespace AudioEffectComponent
         {
             AudioFrame inputFrame = context.InputFrame;
             AudioFrame outputFrame = context.OutputFrame;
-
-            // Reset the fade out
-            if (sampleIndex == 0)
-                sampleIndex = effectSampleCount;
 
             using (
                 AudioBuffer inputBuffer = inputFrame.LockBuffer(AudioBufferAccessMode.Read),
@@ -113,10 +126,17 @@ namespace AudioEffectComponent
 
                 for (int i = 0; i < dataInFloatLength; i++)
                 {
-                    outputDataInFloat[i] = inputDataInFloat[i] * ((float)sampleIndex / effectSampleCount);
+                    if (IsEnabled)
+                    {
+                        outputDataInFloat[i] = inputDataInFloat[i] * ((float)sampleIndex / effectSampleCount);
 
-                    if (sampleIndex > 0)
-                        sampleIndex--;
+                        if (sampleIndex > 0)
+                            sampleIndex--;
+                    }
+                    else
+                    {
+                        outputDataInFloat[i] = inputDataInFloat[i];
+                    }
                 }
             }
         }
