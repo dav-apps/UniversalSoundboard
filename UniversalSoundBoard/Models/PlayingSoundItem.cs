@@ -469,6 +469,10 @@ namespace UniversalSoundboard.Models
                 if (!PlayingSound.AudioPlayer.IsInitialized)
                     await InitAudioPlayer();
 
+                // Start fade in if enabled
+                if (FileManager.itemViewHolder.IsFadeInEffectEnabled)
+                    PlayingSound.AudioPlayer.IsFadeInEnabled = true;
+
                 PlayingSound.AudioPlayer.IsFadeOutEnabled = false;
                 PlayingSound.AudioPlayer.Play();
                 positionChangeTimer.Start();
@@ -1086,7 +1090,10 @@ namespace UniversalSoundboard.Models
         {
             // Start fade out if enabled
             if (FileManager.itemViewHolder.IsFadeOutEffectEnabled)
+            {
                 await PlayingSound.AudioPlayer.FadeOut(FileManager.itemViewHolder.FadeOutEffectDuration);
+                PlayingSound.AudioPlayer.Pause();
+            }
 
             // Start the remove animation
             HidePlayingSound?.Invoke(this, new EventArgs());

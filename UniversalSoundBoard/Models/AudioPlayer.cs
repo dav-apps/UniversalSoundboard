@@ -275,11 +275,11 @@ namespace UniversalSoundboard.Models
 
             // Fade in effect
             FileInputNode.EffectDefinitions.Add(fadeInEffectDefinition);
-            if (!isFadeInEnabled) DisableEffect(fadeInEffectDefinition);
+            if (!isFadeInEnabled) DisableFadeInEffect();
 
             // Fade out effect
             FileInputNode.EffectDefinitions.Add(fadeOutEffectDefinition);
-            DisableEffect(fadeOutEffectDefinition);
+            DisableFadeOutEffect();
 
             // Echo effect
             FileInputNode.EffectDefinitions.Add(echoEffectDefinition);
@@ -361,13 +361,13 @@ namespace UniversalSoundboard.Models
                 Crashes.TrackError(e);
             }
 
-            DisableEffect(fadeInEffectDefinition);
+            DisableFadeInEffect();
             isPlaying = false;
         }
 
         public async Task FadeOut(int milliseconds)
         {
-            EnableEffect(fadeOutEffectDefinition);
+            EnableFadeOutEffect();
             await Task.Delay(milliseconds);
         }
 
@@ -379,6 +379,7 @@ namespace UniversalSoundboard.Models
                 typeof(FadeInAudioEffect).FullName,
                 new PropertySet
                 {
+                    { "IsEnabled", false },
                     { "Duration", (float)fadeInDuration }
                 }
             );
@@ -387,6 +388,7 @@ namespace UniversalSoundboard.Models
                 typeof(FadeOutAudioEffect).FullName,
                 new PropertySet
                 {
+                    { "IsEnabled", false },
                     { "Duration", (float)fadeOutDuration }
                 }
             );
@@ -421,29 +423,41 @@ namespace UniversalSoundboard.Models
                 }
             );
         }
+        #endregion
 
-        private void EnableEffect(AudioEffectDefinition effectDefinition)
+        #region Fade in effect
+        private void EnableFadeInEffect()
         {
-            if (FileInputNode == null || effectDefinition == null)
+            if (FileInputNode == null || fadeInEffectDefinition == null)
                 return;
 
-            try
-            {
-                FileInputNode.EnableEffectsByDefinition(effectDefinition);
-            }
-            catch (Exception) { }
+            fadeInEffectDefinition.Properties["IsEnabled"] = true;
         }
 
-        private void DisableEffect(AudioEffectDefinition effectDefinition)
+        private void DisableFadeInEffect()
         {
-            if (FileInputNode == null || effectDefinition == null)
+            if (FileInputNode == null || fadeInEffectDefinition == null)
                 return;
 
-            try
-            {
-                FileInputNode.DisableEffectsByDefinition(effectDefinition);
-            }
-            catch (Exception) { }
+            fadeInEffectDefinition.Properties["IsEnabled"] = false;
+        }
+        #endregion
+
+        #region Fade out effect
+        private void EnableFadeOutEffect()
+        {
+            if (FileInputNode == null || fadeOutEffectDefinition == null)
+                return;
+
+            fadeOutEffectDefinition.Properties["IsEnabled"] = true;
+        }
+
+        private void DisableFadeOutEffect()
+        {
+            if (FileInputNode == null || fadeOutEffectDefinition == null)
+                return;
+
+            fadeOutEffectDefinition.Properties["IsEnabled"] = false;
         }
         #endregion
 
@@ -594,7 +608,7 @@ namespace UniversalSoundboard.Models
             
             FileInputNode?.Seek(value);
             position = value;
-            DisableEffect(fadeInEffectDefinition);
+            DisableFadeInEffect();
         }
 
         private void setVolume(double value)
@@ -645,10 +659,12 @@ namespace UniversalSoundboard.Models
 
         private void setIsFadeInEnabled(bool value)
         {
-            if (isFadeInEnabled.Equals(value))
-                return;
-
             isFadeInEnabled = value;
+
+            if (value)
+                EnableFadeInEffect();
+            else
+                DisableFadeOutEffect();
         }
 
         private void setFadeInDuration(int value)
@@ -667,9 +683,9 @@ namespace UniversalSoundboard.Models
             isFadeOutEnabled = value;
 
             if (value)
-                EnableEffect(fadeOutEffectDefinition);
+                EnableFadeOutEffect();
             else
-                DisableEffect(fadeOutEffectDefinition);
+                DisableFadeOutEffect();
         }
 
         private void setFadeOutDuration(int value)
