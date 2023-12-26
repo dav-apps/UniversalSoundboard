@@ -109,11 +109,11 @@ namespace UniversalSoundboard.Common
     #region PlayingSoundItem
     public class PlaybackStateChangedEventArgs : EventArgs
     {
-        public bool IsPlaying { get; }
+        public PlaybackState PlaybackState { get; }
 
-        public PlaybackStateChangedEventArgs(bool isPlaying)
+        public PlaybackStateChangedEventArgs(PlaybackState playbackState)
         {
-            IsPlaying = isPlaying;
+            PlaybackState = playbackState;
         }
     }
 

@@ -100,4 +100,11 @@
         Top,
         Bottom
     }
+
+    public enum PlaybackState
+    {
+        Playing,
+        FadeOut,
+        Paused
+    }
 }
