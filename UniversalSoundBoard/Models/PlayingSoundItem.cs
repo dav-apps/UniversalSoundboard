@@ -485,7 +485,7 @@ namespace UniversalSoundboard.Models
             return true;
         }
 
-        private async Task<bool> PauseAudioPlayer()
+        private async Task<bool> PauseAudioPlayer(bool fadeOut = true)
         {
             if (isPauseRunning) return true;
             isPauseRunning = true;
@@ -496,7 +496,7 @@ namespace UniversalSoundboard.Models
                     await InitAudioPlayer();
 
                 // Start fade out if enabled
-                if (FileManager.itemViewHolder.IsFadeOutEffectEnabled)
+                if (FileManager.itemViewHolder.IsFadeOutEffectEnabled && fadeOut)
                     await PlayingSound.AudioPlayer.FadeOut(FileManager.itemViewHolder.FadeOutEffectDuration);
 
                 PlayingSound.AudioPlayer.Pause();
@@ -590,7 +590,7 @@ namespace UniversalSoundboard.Models
                     || playingSoundItem.Uuid.Equals(PlayingSound.Uuid)
                 ) continue;
 
-                await playingSoundItem.SetPlayPause(false, false);
+                await playingSoundItem.SetPlayPause(false, false, false);
             }
         }
 
@@ -857,7 +857,7 @@ namespace UniversalSoundboard.Models
         /**
          * Plays or pauses the MediaPlayer
          */
-        public async Task SetPlayPause(bool play, bool updateSmtc = true)
+        public async Task SetPlayPause(bool play, bool updateSmtc = true, bool fadeOut = true)
         {
             if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
 
@@ -889,12 +889,15 @@ namespace UniversalSoundboard.Models
             }
             else if (!currentSoundIsDownloading && !play)
             {
-                PlaybackStateChanged?.Invoke(
-                    this,
-                    new PlaybackStateChangedEventArgs(PlaybackState.FadeOut)
-                );
+                if (FileManager.itemViewHolder.IsFadeOutEffectEnabled && fadeOut)
+                {
+                    PlaybackStateChanged?.Invoke(
+                        this,
+                        new PlaybackStateChangedEventArgs(PlaybackState.FadeOut)
+                    );
+                }
 
-                await PauseAudioPlayer();
+                await PauseAudioPlayer(fadeOut);
 
                 PlaybackStateChanged?.Invoke(
                     this,
