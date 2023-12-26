@@ -36,7 +36,8 @@ namespace UniversalSoundboard.Components
         private bool skipSoundsListViewSelectionChanged;
         private bool skipProgressSliderValueChanged = false;
         private bool isSoundsListVisible = false;
-        private bool isFadingOut = false;
+        private bool isPlayingSoundDisabled = false;
+        private bool isPlayPauseButtonDisabled = false;
 
         private const string MoreButtonOutputDeviceFlyoutSubItemName = "MoreButtonOutputDeviceFlyoutSubItem";
         private const string MoreButtonPlaybackSpeedFlyoutSubItemName = "MoreButtonPlaybackSpeedFlyoutSubItemName";
@@ -153,7 +154,7 @@ namespace UniversalSoundboard.Components
         #region PlayingSoundItem event handlers
         private void PlayingSoundItem_PlaybackStateChanged(object sender, PlaybackStateChangedEventArgs e)
         {
-            UpdatePlayPauseButton(e.IsPlaying);
+            UpdatePlayPauseButton(e.PlaybackState);
         }
 
         private void PlayingSoundItem_PositionChanged(object sender, PositionChangedEventArgs e)
@@ -441,7 +442,8 @@ namespace UniversalSoundboard.Components
 
         private async void RemoveButton_Click(object sender, RoutedEventArgs e)
         {
-            isFadingOut = true;
+            isPlayingSoundDisabled = true;
+            isPlayPauseButtonDisabled = true;
             Bindings.Update();
 
             await PlayingSoundItem.Hide();
@@ -928,18 +930,29 @@ namespace UniversalSoundboard.Components
             TotalTimeElement.Visibility = timesVisible ? Visibility.Visible : Visibility.Collapsed;
         }
 
-        private void UpdatePlayPauseButton(bool isPlaying)
+        private void UpdatePlayPauseButton(PlaybackState playbackState)
         {
-            if (isPlaying)
-            {
-                PlayPauseButton.Content = "\uE103";
-                PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PauseButtonToolTip");
-            }
-            else
+            if (playbackState == PlaybackState.Paused)
             {
                 PlayPauseButton.Content = "\uE102";
                 PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PlayButtonToolTip");
+                isPlayPauseButtonDisabled = false;
             }
+            else if (playbackState == PlaybackState.FadeOut)
+            {
+                PlayPauseButton.Content = "\uE103";
+                PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PauseButtonToolTip");
+                isPlayPauseButtonDisabled = true;
+            }
+            else
+            {
+                // Playing
+                PlayPauseButton.Content = "\uE103";
+                PlayPauseButtonToolTip.Text = FileManager.loader.GetString("PauseButtonToolTip");
+                isPlayPauseButtonDisabled = false;
+            }
+
+            Bindings.Update();
         }
 
         private void UpdateExpandButton()

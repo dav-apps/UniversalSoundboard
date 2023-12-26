@@ -57,6 +57,7 @@ namespace UniversalSoundboard.Models
         private bool removed = false;
         private bool updateOutputDeviceRunning = false;
         private bool runUpdateOutputDeviceAgain = false;
+        private bool isPauseRunning = false;
 
         private DispatcherTimer positionChangeTimer;
         private TimeSpan position;
@@ -486,6 +487,9 @@ namespace UniversalSoundboard.Models
 
         private async Task<bool> PauseAudioPlayer()
         {
+            if (isPauseRunning) return true;
+            isPauseRunning = true;
+
             try
             {
                 if (!PlayingSound.AudioPlayer.IsInitialized)
@@ -504,9 +508,11 @@ namespace UniversalSoundboard.Models
             }
             catch (AudioIOException)
             {
+                isPauseRunning = false;
                 return false;
             }
 
+            isPauseRunning = false;
             return true;
         }
 
@@ -594,7 +600,13 @@ namespace UniversalSoundboard.Models
             UpdateFavouriteFlyoutItem();
             UpdateVolumeControl();
 
-            PlaybackStateChanged?.Invoke(this, new PlaybackStateChangedEventArgs(PlayingSound.AudioPlayer.IsPlaying || PlayingSound.StartPlaying));
+            PlaybackStateChanged?.Invoke(
+                this,
+                new PlaybackStateChangedEventArgs(
+                    PlayingSound.AudioPlayer.IsPlaying || PlayingSound.StartPlaying
+                        ? PlaybackState.Playing : PlaybackState.Paused
+                )
+            );
             LocalFileButtonVisibilityChanged?.Invoke(this, new LocalFileButtonVisibilityEventArgs(PlayingSound.LocalFile ? Visibility.Visible : Visibility.Collapsed));
             RepetitionsChanged?.Invoke(this, new RepetitionsChangedEventArgs(PlayingSound.Repetitions));
             PlaybackSpeedChanged?.Invoke(this, new PlaybackSpeedChangedEventArgs(PlayingSound.PlaybackSpeed));
@@ -858,7 +870,9 @@ namespace UniversalSoundboard.Models
                 PlayingSound.StartPlaying = play;
                 PlaybackStateChanged?.Invoke(
                     this,
-                    new PlaybackStateChangedEventArgs(PlayingSound.StartPlaying)
+                    new PlaybackStateChangedEventArgs(
+                        PlayingSound.StartPlaying ? PlaybackState.Playing : PlaybackState.Paused
+                    )
                 );
                 if (updateSmtc) FileManager.UpdateSystemMediaTransportControls(PlayingSound.StartPlaying);
             }
@@ -868,17 +882,25 @@ namespace UniversalSoundboard.Models
 
                 PlaybackStateChanged?.Invoke(
                     this,
-                    new PlaybackStateChangedEventArgs(true)
+                    new PlaybackStateChangedEventArgs(PlaybackState.Playing)
                 );
                 await StopAllOtherPlayingSounds();
                 if (updateSmtc) FileManager.UpdateSystemMediaTransportControls(true);
             }
-            else if (!currentSoundIsDownloading && !play && await PauseAudioPlayer())
+            else if (!currentSoundIsDownloading && !play)
             {
                 PlaybackStateChanged?.Invoke(
                     this,
-                    new PlaybackStateChangedEventArgs(false)
+                    new PlaybackStateChangedEventArgs(PlaybackState.FadeOut)
                 );
+
+                await PauseAudioPlayer();
+
+                PlaybackStateChanged?.Invoke(
+                    this,
+                    new PlaybackStateChangedEventArgs(PlaybackState.Paused)
+                );
+
                 if (updateSmtc) FileManager.UpdateSystemMediaTransportControls(false);
             }
         }
