@@ -464,7 +464,7 @@ namespace UniversalSoundboard.Models
             positionChangeTimer.Tick += PositionChangeTimer_Tick;
         }
 
-        private async Task<bool> StartAudioPlayer()
+        private async Task<bool> StartAudioPlayer(bool fadeIn = true)
         {
             try
             {
@@ -472,8 +472,7 @@ namespace UniversalSoundboard.Models
                     await InitAudioPlayer();
 
                 // Start fade in if enabled
-                if (FileManager.itemViewHolder.IsFadeInEffectEnabled)
-                    PlayingSound.AudioPlayer.IsFadeInEnabled = true;
+                PlayingSound.AudioPlayer.IsFadeInEnabled = FileManager.itemViewHolder.IsFadeInEffectEnabled && fadeIn;
 
                 PlayingSound.AudioPlayer.Play();
                 positionChangeTimer.Start();
@@ -555,7 +554,7 @@ namespace UniversalSoundboard.Models
 
             bool wasPlaying = PlayingSound.AudioPlayer.IsPlaying;
 
-            if (!await PauseAudioPlayer())
+            if (!await PauseAudioPlayer(false))
                 return;
 
             await SetAudioPlayerPosition(TimeSpan.Zero);
@@ -567,7 +566,7 @@ namespace UniversalSoundboard.Models
             {
                 await SetPlayPause(true);
 
-                if (!await StartAudioPlayer())
+                if (!await StartAudioPlayer(false))
                     return;
             }
 
