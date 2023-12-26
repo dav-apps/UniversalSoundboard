@@ -667,8 +667,11 @@ namespace UniversalSoundboard.Components
 
         private async void MoreButton_OpenSoundSeparatelyFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
-            if (PlayingSound.Current >= PlayingSound.Sounds.Count) return;
+            if (
+                PlayingSound == null
+                || PlayingSound.AudioPlayer == null
+                || PlayingSound.Current >= PlayingSound.Sounds.Count
+            ) return;
 
             // Get the current sound
             Sound sound = PlayingSound.Sounds.ElementAt(PlayingSound.Current);
@@ -682,12 +685,13 @@ namespace UniversalSoundboard.Components
                     PlayingSound.Volume,
                     PlayingSound.Muted,
                     PlayingSound.PlaybackSpeed,
-                    PlayingSound.AudioPlayer.IsPlaying ? PlayingSound.AudioPlayer.Position : TimeSpan.Zero
+                    PlayingSound.AudioPlayer.IsPlaying ? PlayingSound.AudioPlayer.Position : TimeSpan.Zero,
+                    false
                 )
             );
 
             // Pause this PlayingSound
-            await PlayingSoundItem.SetPlayPause(false);
+            await PlayingSoundItem.SetPlayPause(false, fadeOut: false);
         }
 
         private async void MoreButton_FavouriteItem_Click(object sender, RoutedEventArgs e)

@@ -249,7 +249,8 @@ namespace UniversalSoundboard.Pages
                 args.Volume,
                 args.Muted,
                 args.PlaybackSpeed,
-                args.Position
+                args.Position,
+                args.FadeIn
             );
         }
 
@@ -351,7 +352,8 @@ namespace UniversalSoundboard.Pages
             int? volume = null,
             bool? muted = null,
             int? playbackSpeed = null,
-            TimeSpan? position = null
+            TimeSpan? position = null,
+            bool fadeIn = true
         )
         {
             List<Sound> soundList = new List<Sound> { sound };
@@ -380,7 +382,8 @@ namespace UniversalSoundboard.Pages
                 Repetitions = sound.DefaultRepetitions,
                 StartPlaying = startPlaying,
                 StartPosition = position,
-                OutputDevice = Dav.IsLoggedIn && Dav.User.Plan > 0 ? sound.DefaultOutputDevice : null
+                OutputDevice = Dav.IsLoggedIn && Dav.User.Plan > 0 ? sound.DefaultOutputDevice : null,
+                FadeIn = fadeIn
             };
 
             await ShowNextPlayingSound(playingSound);

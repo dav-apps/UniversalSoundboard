@@ -19,6 +19,7 @@ namespace UniversalSoundboard.Models
         public bool StartPlaying { get; set; }
         public TimeSpan? StartPosition { get; set; }
         public bool LocalFile { get; set; }
+        public bool FadeIn { get; set; }
 
         public PlayingSound()
         {
@@ -31,6 +32,7 @@ namespace UniversalSoundboard.Models
             PlaybackSpeed = 100;
             StartPlaying = false;
             LocalFile = false;
+            FadeIn = true;
         }
 
         public PlayingSound(AudioPlayer player, Sound sound)
@@ -45,6 +47,7 @@ namespace UniversalSoundboard.Models
             PlaybackSpeed = 100;
             StartPlaying = false;
             LocalFile = false;
+            FadeIn = true;
         }
 
         public PlayingSound(Guid uuid, AudioPlayer player, List<Sound> sounds, int current, int repetitions, bool randomly)
@@ -60,6 +63,7 @@ namespace UniversalSoundboard.Models
             PlaybackSpeed = 100;
             StartPlaying = false;
             LocalFile = false;
+            FadeIn = true;
         }
 
         public PlayingSound(Guid uuid, AudioPlayer player, List<Sound> sounds, int current, int repetitions, bool randomly, int volume, bool muted, string outputDevice, int playbackSpeed)
@@ -76,6 +80,7 @@ namespace UniversalSoundboard.Models
             PlaybackSpeed = playbackSpeed;
             StartPlaying = false;
             LocalFile = false;
+            FadeIn = true;
         }
     }
 }

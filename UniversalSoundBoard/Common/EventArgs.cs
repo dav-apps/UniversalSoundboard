@@ -303,6 +303,7 @@ namespace UniversalSoundboard.Common
         public bool? Muted { get; set; }
         public int? PlaybackSpeed { get; set; }
         public TimeSpan? Position { get; set; }
+        public bool FadeIn { get; set; }
 
         public PlaySoundEventArgs(
             Sound sound,
@@ -310,7 +311,8 @@ namespace UniversalSoundboard.Common
             int? volume = null,
             bool? muted = null,
             int? playbackSpeed = null,
-            TimeSpan? position = null
+            TimeSpan? position = null,
+            bool fadeIn = true
         )
         {
             Sound = sound;
@@ -319,6 +321,7 @@ namespace UniversalSoundboard.Common
             Muted = muted;
             PlaybackSpeed = playbackSpeed;
             Position = position;
+            FadeIn = fadeIn;
         }
     }
 

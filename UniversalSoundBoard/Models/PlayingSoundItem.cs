@@ -181,12 +181,12 @@ namespace UniversalSoundboard.Models
                 }
                 else if (PlayingSound.StartPlaying)
                 {
-                    await SetPlayPause(true);
+                    await SetPlayPause(true, fadeIn: PlayingSound.FadeIn);
                 }
             }
             else if (PlayingSound.StartPlaying)
             {
-                await SetPlayPause(true);
+                await SetPlayPause(true, fadeIn: PlayingSound.FadeIn);
             }
         }
 
@@ -564,7 +564,7 @@ namespace UniversalSoundboard.Models
 
             if (wasPlaying || startPlaying)
             {
-                await SetPlayPause(true);
+                await SetPlayPause(true, fadeIn: false);
 
                 if (!await StartAudioPlayer(false))
                     return;
@@ -590,7 +590,7 @@ namespace UniversalSoundboard.Models
                     || playingSoundItem.Uuid.Equals(PlayingSound.Uuid)
                 ) continue;
 
-                await playingSoundItem.SetPlayPause(false, false, false);
+                await playingSoundItem.SetPlayPause(false, false, fadeOut: false);
             }
         }
 
@@ -857,7 +857,12 @@ namespace UniversalSoundboard.Models
         /**
          * Plays or pauses the MediaPlayer
          */
-        public async Task SetPlayPause(bool play, bool updateSmtc = true, bool fadeOut = true)
+        public async Task SetPlayPause(
+            bool play,
+            bool updateSmtc = true,
+            bool fadeIn = true,
+            bool fadeOut = true
+        )
         {
             if (
                 PlayingSound == null
@@ -881,7 +886,7 @@ namespace UniversalSoundboard.Models
                 );
                 if (updateSmtc) FileManager.UpdateSystemMediaTransportControls(PlayingSound.StartPlaying);
             }
-            else if (!currentSoundIsDownloading && play && await StartAudioPlayer())
+            else if (!currentSoundIsDownloading && play && await StartAudioPlayer(fadeIn))
             {
                 PlayingSound.StartPlaying = false;
 
