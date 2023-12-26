@@ -1143,7 +1143,7 @@ namespace UniversalSoundboard.Models
             FileManager.itemViewHolder.PlayingSoundItems.Remove(this);
 
             if (PlayingSound.AudioPlayer != null)
-                await PauseAudioPlayer();
+                await PauseAudioPlayer(false);
 
             // Remove this PlayingSound from the SMTC, if it was active
             if (PlayingSound.Uuid.Equals(FileManager.itemViewHolder.ActivePlayingSound))
