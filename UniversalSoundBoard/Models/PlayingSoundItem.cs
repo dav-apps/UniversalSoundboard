@@ -1085,7 +1085,7 @@ namespace UniversalSoundboard.Models
         public async Task Hide()
         {
             // Start fade out if enabled
-            if (FileManager.itemViewHolder.IsFadeOutEffectEnabled)
+            if (PlayingSound.AudioPlayer.IsPlaying && FileManager.itemViewHolder.IsFadeOutEffectEnabled)
             {
                 await PlayingSound.AudioPlayer.FadeOut(FileManager.itemViewHolder.FadeOutEffectDuration);
                 PlayingSound.AudioPlayer.Pause();
