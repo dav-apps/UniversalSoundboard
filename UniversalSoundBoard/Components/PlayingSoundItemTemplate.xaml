@@ -798,7 +798,7 @@
                         Name="PreviousButton"
                         Style="{StaticResource MediaControlButtonStyle}"
                         Content="&#xE100;"
-                        IsEnabled="{x:Bind isPlayingSoundDisabled, Converter={StaticResource InvertBooleanConverter}}"
+                        IsEnabled="{x:Bind isPlayPauseButtonDisabled, Converter={StaticResource InvertBooleanConverter}}"
                         UseLayoutRounding="False"
                         Click="PreviousButton_Click">
 
@@ -833,7 +833,7 @@
                     Name="NextButton"
                     Style="{StaticResource MediaControlButtonStyle}"
                     Content="&#xE101;"
-                    IsEnabled="{x:Bind isPlayingSoundDisabled, Converter={StaticResource InvertBooleanConverter}}"
+                    IsEnabled="{x:Bind isPlayPauseButtonDisabled, Converter={StaticResource InvertBooleanConverter}}"
                     UseLayoutRounding="False"
                     Click="NextButton_Click">
 
