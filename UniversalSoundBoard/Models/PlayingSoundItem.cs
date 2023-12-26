@@ -58,6 +58,7 @@ namespace UniversalSoundboard.Models
         private bool updateOutputDeviceRunning = false;
         private bool runUpdateOutputDeviceAgain = false;
         private bool isPauseRunning = false;
+        private bool isFadeOutRunning = false;
 
         private DispatcherTimer positionChangeTimer;
         private TimeSpan position;
@@ -859,7 +860,12 @@ namespace UniversalSoundboard.Models
          */
         public async Task SetPlayPause(bool play, bool updateSmtc = true, bool fadeOut = true)
         {
-            if (PlayingSound == null || PlayingSound.AudioPlayer == null) return;
+            if (
+                PlayingSound == null
+                || PlayingSound.AudioPlayer == null
+                || isPauseRunning
+                || isFadeOutRunning
+            ) return;
 
             if (updateSmtc)
                 FileManager.itemViewHolder.ActivePlayingSound = PlayingSound.Uuid;
@@ -1112,6 +1118,7 @@ namespace UniversalSoundboard.Models
             // Start fade out if enabled
             if (PlayingSound.AudioPlayer.IsPlaying && FileManager.itemViewHolder.IsFadeOutEffectEnabled)
             {
+                isFadeOutRunning = true;
                 await PlayingSound.AudioPlayer.FadeOut(FileManager.itemViewHolder.FadeOutEffectDuration);
                 PlayingSound.AudioPlayer.Pause();
             }
