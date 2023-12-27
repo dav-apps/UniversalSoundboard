@@ -207,18 +207,6 @@ namespace UniversalSoundboard.Models
                 case ItemViewHolder.OutputDeviceKey:
                     await UpdateOutputDevice();
                     break;
-                case ItemViewHolder.IsFadeInEffectEnabledKey:
-                    PlayingSound.AudioPlayer.IsFadeInEnabled = FileManager.itemViewHolder.IsFadeInEffectEnabled;
-                    break;
-                case ItemViewHolder.FadeInEffectDurationKey:
-                    PlayingSound.AudioPlayer.FadeInDuration = FileManager.itemViewHolder.FadeInEffectDuration;
-                    break;
-                case ItemViewHolder.IsFadeOutEffectEnabledKey:
-                    PlayingSound.AudioPlayer.IsFadeOutEnabled = FileManager.itemViewHolder.IsFadeOutEffectEnabled;
-                    break;
-                case ItemViewHolder.FadeOutEffectDurationKey:
-                    PlayingSound.AudioPlayer.FadeOutDuration = FileManager.itemViewHolder.FadeOutEffectDuration;
-                    break;
                 case ItemViewHolder.IsEchoEffectEnabledKey:
                     PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
                     break;
@@ -472,6 +460,7 @@ namespace UniversalSoundboard.Models
                     await InitAudioPlayer();
 
                 // Start fade in if enabled
+                PlayingSound.AudioPlayer.FadeInDuration = FileManager.itemViewHolder.FadeInEffectDuration;
                 PlayingSound.AudioPlayer.IsFadeInEnabled = FileManager.itemViewHolder.IsFadeInEffectEnabled && fadeIn;
 
                 PlayingSound.AudioPlayer.Play();
@@ -497,7 +486,10 @@ namespace UniversalSoundboard.Models
 
                 // Start fade out if enabled
                 if (FileManager.itemViewHolder.IsFadeOutEffectEnabled && fadeOut)
+                {
+                    PlayingSound.AudioPlayer.FadeOutDuration = FileManager.itemViewHolder.FadeOutEffectDuration;
                     await PlayingSound.AudioPlayer.FadeOut(FileManager.itemViewHolder.FadeOutEffectDuration);
+                }
 
                 PlayingSound.AudioPlayer.Pause();
 
@@ -1123,6 +1115,7 @@ namespace UniversalSoundboard.Models
             if (PlayingSound.AudioPlayer.IsPlaying && FileManager.itemViewHolder.IsFadeOutEffectEnabled)
             {
                 isFadeOutRunning = true;
+                PlayingSound.AudioPlayer.FadeOutDuration = FileManager.itemViewHolder.FadeOutEffectDuration;
                 await PlayingSound.AudioPlayer.FadeOut(FileManager.itemViewHolder.FadeOutEffectDuration);
                 PlayingSound.AudioPlayer.Pause();
             }
