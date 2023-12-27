@@ -1898,7 +1898,7 @@ namespace UniversalSoundboard.Pages
             if (effectManagerAppWindow == null)
             {
                 effectManagerAppWindow = await AppWindow.TryCreateAsync();
-                effectManagerAppWindow.RequestSize(new Size(564, 458));
+                effectManagerAppWindow.RequestSize(new Size(500, 500));
                 effectManagerAppWindow.Title = FileManager.loader.GetString("EffectManager-Title");
                 effectManagerAppWindow.TitleBar.ExtendsContentIntoTitleBar = true;
                 effectManagerAppWindow.TitleBar.ButtonForegroundColor = FileManager.itemViewHolder.CurrentTheme == AppTheme.Dark ? Colors.White : Colors.Black;

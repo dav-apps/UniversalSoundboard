@@ -60,6 +60,26 @@ namespace UniversalSoundboard.Pages
             initialized = true;
         }
 
+        private void Page_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            double windowWidth = ContentRoot.ActualWidth;
+            double containerWidth = 300;
+
+            if (windowWidth < 550)
+                containerWidth = 225;
+            else if (windowWidth < 650)
+                containerWidth = 250;
+            else if (windowWidth < 750)
+                containerWidth = 275;
+
+            FadeInContainer.Width = containerWidth;
+            FadeOutContainer.Width = containerWidth;
+            EchoContainer.Width = containerWidth;
+            LimiterContainer.Width = containerWidth;
+            ReverbContainer.Width = containerWidth;
+            PitchContainer.Width = containerWidth;
+        }
+        
         private void ItemViewHolder_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             switch (e.PropertyName)
