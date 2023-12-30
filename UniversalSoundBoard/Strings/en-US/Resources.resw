@@ -196,7 +196,7 @@
     <value>Rename</value>
   </data>
   <data name="Version.Text" xml:space="preserve">
-    <value>2.3.8</value>
+    <value>2.4</value>
   </data>
   <data name="MoreButton-Cast.Text" xml:space="preserve">
     <value>Cast to Device</value>
@@ -1150,10 +1150,10 @@ This may take some time, depending on how large the import file is.</value>
     <value>Publish sound</value>
   </data>
   <data name="Store-Title" xml:space="preserve">
-    <value>Sound catalog</value>
+    <value>Sound Catalog</value>
   </data>
   <data name="StoreMenuItem.Content" xml:space="preserve">
-    <value>Sound catalog</value>
+    <value>Sound Catalog</value>
   </data>
   <data name="StorePage-RecentlyAddedSoundsTextBlock.Text" xml:space="preserve">
     <value>Recently added sounds</value>
