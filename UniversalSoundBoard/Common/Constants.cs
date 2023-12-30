@@ -24,11 +24,14 @@ namespace UniversalSoundboard.Common
         public static readonly Color secondaryWindowDarkBackgroundColor = Color.FromArgb(255, 13, 18, 33);        // #0d1221
         #endregion
 
-        #region dav Keys
-        public static string ApiKey { get => Env.DavApiKey; }
+        #region URLs
         public const string WebsiteBaseUrl = "https://dav-login-7ymir.ondigitalocean.app";
         public const string UniversalSoundboardWebsiteBaseUrl = "https://universalsoundboard.dav-apps.tech";
         public const string ApiBaseUrl = "https://universalsoundboard-api-rmkdv.ondigitalocean.app/";
+        #endregion
+
+        #region dav Keys
+        public static string ApiKey { get => Env.DavApiKey; }
         public const int AppId = 1;
         public const int SoundFileTableId = 6;
         public const int ImageFileTableId = 7;
