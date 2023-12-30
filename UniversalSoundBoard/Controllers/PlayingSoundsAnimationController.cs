@@ -948,23 +948,16 @@ namespace UniversalSoundboard.Controllers
 
         private async Task ShowAllPlayingSoundItems()
         {
-            // Check if all PlayingSoundItemContainers in the list were loaded
-            int itemCount = PlayingSoundsToShowList.Count;
-            int loadedItemCount = 0;
+            List<PlayingSoundItemContainer> itemsToShow = new List<PlayingSoundItemContainer>();
 
             foreach (var item in PlayingSoundsToShowList)
-                if (item.IsLoaded) loadedItemCount++;
-
-            if (
-                itemCount == 0
-                || itemCount != loadedItemCount
-            ) return;
+                itemsToShow.Add(item);
 
             if (showBottomPlayingSoundsBar)
             {
                 showBottomPlayingSoundsBar = false;
 
-                foreach (var item in PlayingSoundsToShowList)
+                foreach (var item in itemsToShow)
                 {
                     if (
                         item == null
@@ -989,7 +982,7 @@ namespace UniversalSoundboard.Controllers
                 && !BottomPlayingSoundsBarReachedTop
             )
             {
-                foreach (var itemToShow in PlayingSoundsToShowList)
+                foreach (var itemToShow in itemsToShow)
                 {
                     if (
                         itemToShow == null
@@ -1038,7 +1031,7 @@ namespace UniversalSoundboard.Controllers
             }
             else if (IsMobile)
             {
-                foreach (var itemToShow in PlayingSoundsToShowList)
+                foreach (var itemToShow in itemsToShow)
                 {
                     if (
                         itemToShow == null
@@ -1170,7 +1163,7 @@ namespace UniversalSoundboard.Controllers
             {
                 // The normal PlayingSoundsBar is visible
                 // Show all PlayingSounds in the list
-                foreach (var item in PlayingSoundsToShowList)
+                foreach (var item in itemsToShow)
                 {
                     if (
                         item == null

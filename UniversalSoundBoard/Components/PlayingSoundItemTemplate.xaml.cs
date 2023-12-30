@@ -142,10 +142,11 @@ namespace UniversalSoundboard.Components
 
             var playingSoundItemContainer = DataContext as PlayingSoundItemContainer;
 
-            if (playingSoundItemContainer == null || initialized) return;
+            if (playingSoundItemContainer == null) return;
 
             PlayingSoundItemContainer = playingSoundItemContainer;
             PlayingSoundItemContainer.PlayingSoundItemTemplate = this;
+            initialized = false;
 
             Init();
         }
