@@ -1311,4 +1311,7 @@ This may take some time, depending on how large the import file is.</value>
   <data name="EffectManagerPage-ReverbTextBlock.Text" xml:space="preserve">
     <value>Reverb</value>
   </data>
+  <data name="StoreSoundPage-SourceTextBlock.Text" xml:space="preserve">
+    <value>Source</value>
+  </data>
 </root>

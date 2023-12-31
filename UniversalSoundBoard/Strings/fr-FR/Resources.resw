@@ -1310,4 +1310,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="EffectManagerPage-ReverbTextBlock.Text" xml:space="preserve">
     <value>Réverbération</value>
   </data>
+  <data name="StoreSoundPage-SourceTextBlock.Text" xml:space="preserve">
+    <value>Source</value>
+  </data>
 </root>

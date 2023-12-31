@@ -223,7 +223,7 @@
                                 FontSize="16" />
 
                             <TextBlock
-                                Text="Quelle"
+                                x:Uid="StoreSoundPage-SourceTextBlock"
                                 Margin="8,-2,0,0" />
                         </StackPanel>
                     </HyperlinkButton>
