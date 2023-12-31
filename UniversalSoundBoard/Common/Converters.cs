@@ -100,7 +100,13 @@ namespace UniversalSoundboard.Converters
         public object Convert(object value, Type targetType, object parameter, string language)
         {
             var type = value as Type;
-            return type == typeof(StorePage) || type == typeof(StoreSoundPage) ? Visibility.Visible : Visibility.Collapsed;
+            bool isStorePageType =
+                type == typeof(StorePage)
+                || type == typeof(StoreSoundPage)
+                || type == typeof(StoreSearchPage)
+                || type == typeof(StoreProfilePage);
+
+            return isStorePageType ? Visibility.Visible : Visibility.Collapsed;
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, string language)
