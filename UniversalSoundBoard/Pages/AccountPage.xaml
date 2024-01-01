@@ -219,31 +219,6 @@
                                 Style="{StaticResource PlusCardBorder}"
                                 Visibility="{x:Bind davPlusHotkeyFeatureVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                            <Grid Padding="20,12">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*" />
-                                    <ColumnDefinition Width="Auto" />
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock
-                                    Style="{StaticResource PlusCardFeatureTextStyle}"
-                                    x:Uid="Account-PlusCardFeature-SoundRecorderTextBlock" />
-
-                                <Button Style="{StaticResource InfoButtonStyle}">
-                                    <Button.Flyout>
-                                        <Flyout>
-                                            <StackPanel MaxWidth="300">
-                                                <TextBlock
-                                                    x:Uid="Account-PlusCardFeature-SoundRecorderFlyoutTextBlock"
-                                                    TextWrapping="WrapWholeWords" />
-                                            </StackPanel>
-                                        </Flyout>
-                                    </Button.Flyout>
-                                </Button>
-                            </Grid>
-
-                            <StackPanel Name="PlusCardBorder4" Style="{StaticResource PlusCardBorder}" />
-
                             <Grid
                                 Padding="20,12"
                                 Visibility="{x:Bind davPlusHotkeyFeatureVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
@@ -270,7 +245,7 @@
                                 </Button>
                             </Grid>
 
-                            <StackPanel Name="PlusCardBorder5" Style="{StaticResource PlusCardBorder}" />
+                            <StackPanel Name="PlusCardBorder4" Style="{StaticResource PlusCardBorder}" />
 
                             <StackPanel Padding="20,12">
                                 <TextBlock
@@ -278,7 +253,7 @@
                                     Style="{StaticResource PlusCardFeatureTextStyle}" />
                             </StackPanel>
 
-                            <StackPanel Name="PlusCardBorder6" Style="{StaticResource PlusCardBorder}" />
+                            <StackPanel Name="PlusCardBorder5" Style="{StaticResource PlusCardBorder}" />
 
                             <StackPanel
                                 Padding="20,12"

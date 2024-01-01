@@ -1027,12 +1027,6 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="InAppNotification-ContinuePlaylistDownload" xml:space="preserve">
     <value>Der Playlist-Download wurde beim letzten Mal untergebrochen. Möchtest du den Download fortsetzen?</value>
   </data>
-  <data name="Account-PlusCardFeature-SoundRecorderFlyoutTextBlock.Text" xml:space="preserve">
-    <value>Mit dem Sound-Recorder kannst du Sounds aufnehmen und zu deinem Soundboard hinzufügen.</value>
-  </data>
-  <data name="Account-PlusCardFeature-SoundRecorderTextBlock.Text" xml:space="preserve">
-    <value>Bekomme Zugriff zum Sound-Recorder</value>
-  </data>
   <data name="SoundRecorderPage-MinimizeWarningInfoBar.Message" xml:space="preserve">
     <value>Die App kann kein Audio aufnehmen, wenn sie minimiert ist.</value>
   </data>

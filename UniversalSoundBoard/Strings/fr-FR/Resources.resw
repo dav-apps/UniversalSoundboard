@@ -1028,12 +1028,6 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="InAppNotification-ContinuePlaylistDownload" xml:space="preserve">
     <value>Le téléchargement de la playlist a été interrompu la dernière fois. Souhaitez-vous poursuivre le téléchargement ?</value>
   </data>
-  <data name="Account-PlusCardFeature-SoundRecorderFlyoutTextBlock.Text" xml:space="preserve">
-    <value>Avec l'enregistreur de son, vous pouvez enregistrer des sons et les ajouter à votre Soundboard.</value>
-  </data>
-  <data name="Account-PlusCardFeature-SoundRecorderTextBlock.Text" xml:space="preserve">
-    <value>Accéder à l'enregistreur de son</value>
-  </data>
   <data name="SoundRecorderPage-MinimizeWarningInfoBar.Message" xml:space="preserve">
     <value>L'application ne peut pas enregistrer d'audio lorsqu'elle est réduite.</value>
   </data>

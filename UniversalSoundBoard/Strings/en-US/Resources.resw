@@ -1029,12 +1029,6 @@ This may take some time, depending on how large the import file is.</value>
   <data name="InAppNotification-ContinuePlaylistDownload" xml:space="preserve">
     <value>The playlist download was interrupted last time. Do you want to continue the download?</value>
   </data>
-  <data name="Account-PlusCardFeature-SoundRecorderFlyoutTextBlock.Text" xml:space="preserve">
-    <value>With the sound recorder you can record sounds and add them to your soundboard.</value>
-  </data>
-  <data name="Account-PlusCardFeature-SoundRecorderTextBlock.Text" xml:space="preserve">
-    <value>Get access to the sound recorder</value>
-  </data>
   <data name="SoundRecorderPage-MinimizeWarningInfoBar.Message" xml:space="preserve">
     <value>The app can' t record audio when minimized.</value>
   </data>
