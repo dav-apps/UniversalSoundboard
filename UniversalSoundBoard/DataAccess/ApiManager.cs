@@ -22,10 +22,7 @@ namespace UniversalSoundboard.DataAccess
             get
             {
                 if (httpClient == null)
-                {
-                    httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(60) };
-                    httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", Dav.AccessToken);
-                }
+                    CreateHttpClient(Dav.AccessToken);
 
                 return httpClient;
             }
@@ -36,15 +33,34 @@ namespace UniversalSoundboard.DataAccess
             get
             {
                 if (graphQLClient == null)
-                {
-                    graphQLClient = new GraphQLHttpClient(Constants.ApiBaseUrl, new NewtonsoftJsonSerializer());
-
-                    if (Dav.AccessToken != null)
-                        graphQLClient.HttpClient.DefaultRequestHeaders.Add("Authorization", Dav.AccessToken);
-                }
+                    CreateGraphQLClient(Dav.AccessToken);
 
                 return graphQLClient;
             }
+        }
+
+        private static void CreateHttpClient(string accessToken)
+        {
+            httpClient = new HttpClient { Timeout = TimeSpan.FromMinutes(60) };
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+        }
+
+        private static void CreateGraphQLClient(string accessToken)
+        {
+            graphQLClient = new GraphQLHttpClient(Constants.ApiBaseUrl, new NewtonsoftJsonSerializer());
+            if (accessToken != null) graphQLClient.HttpClient.DefaultRequestHeaders.Add("Authorization", accessToken);
+        }
+
+        public static void ReloadClients(string accessToken)
+        {
+            httpClient?.Dispose();
+            httpClient = null;
+
+            graphQLClient?.Dispose();
+            graphQLClient = null;
+
+            CreateHttpClient(accessToken);
+            CreateGraphQLClient(accessToken);
         }
 
         #region Caching variables

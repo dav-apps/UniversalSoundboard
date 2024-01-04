@@ -140,6 +140,7 @@ namespace UniversalSoundboard.Pages
 
                 // Log the user in with the access token
                 Dav.Login(accessToken);
+                ApiManager.ReloadClients(accessToken);
 
                 // Show InAppNotification for sync
                 FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
