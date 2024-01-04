@@ -2447,8 +2447,19 @@ namespace UniversalSoundboard.Pages
             {
                 { "Result", result.ToString() }
             });
+            
+            if (result)
+            {
+                // Wait for the user data to load
+                for (int i = 0; i < 5; i++)
+                {
+                    await Task.Delay(2000);
+                    if (Dav.User.Id != 0) break;
+                }
 
-            if (result) NavigateToPage(typeof(StoreProfilePage), null, new DrillInNavigationTransitionInfo());
+                if (Dav.User.Id != 0)
+                    NavigateToPage(typeof(StoreProfilePage), null, new DrillInNavigationTransitionInfo());
+            }
         }
         #endregion
     }
