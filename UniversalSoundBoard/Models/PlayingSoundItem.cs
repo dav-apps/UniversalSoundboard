@@ -1,5 +1,6 @@
 ﻿using davClassLibrary;
 using Microsoft.AppCenter.Analytics;
+using Microsoft.AppCenter.Crashes;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -436,7 +437,13 @@ namespace UniversalSoundboard.Models
             {
                 await PlayingSound.AudioPlayer.Init();
             }
-            catch(AudioIOException) { }
+            catch (Exception e)
+            {
+                Crashes.TrackError(e, new Dictionary<string, string>
+                {
+                    { "Sound.Source", CurrentSound.Source }
+                });
+            }
 
             await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
             {
