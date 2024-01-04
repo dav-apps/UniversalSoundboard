@@ -391,7 +391,7 @@
                         </TextBlock>
                     </StackPanel>
 
-                    <TextBlock Text="Copyright © 2023 by dav" />
+                    <TextBlock Text="Copyright © 2024 by dav" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
