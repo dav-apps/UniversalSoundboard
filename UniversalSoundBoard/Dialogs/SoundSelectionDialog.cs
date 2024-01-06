@@ -66,7 +66,7 @@ namespace UniversalSoundboard.Dialogs
 
         private void FilterAutoSuggestBox_TextChanged(AutoSuggestBox sender, AutoSuggestBoxTextChangedEventArgs args)
         {
-            SoundsCollectionView.Filter = item => ((DialogSoundListItem)item).Sound.Name.Contains(sender.Text);
+            SoundsCollectionView.Filter = item => ((DialogSoundListItem)item).Sound.Name.ToLower().Contains(sender.Text.ToLower());
         }
 
         private void SoundsListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
