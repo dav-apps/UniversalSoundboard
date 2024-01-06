@@ -164,7 +164,7 @@ namespace UniversalSoundboard.DataAccess
 
             try
             {
-                response = await HttpClient.PutAsync($"http://localhost:4003/sounds/{uuid}", content);
+                response = await HttpClient.PutAsync($"{Constants.ApiBaseUrl}/sounds/{uuid}", content);
             }
             catch (Exception)
             {

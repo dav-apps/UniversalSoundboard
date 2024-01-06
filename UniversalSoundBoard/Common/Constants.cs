@@ -27,7 +27,7 @@ namespace UniversalSoundboard.Common
         #region URLs
         public const string WebsiteBaseUrl = "https://dav-login-7ymir.ondigitalocean.app";
         public const string UniversalSoundboardWebsiteBaseUrl = "https://universalsoundboard.dav-apps.tech";
-        public const string ApiBaseUrl = "https://universalsoundboard-api-rmkdv.ondigitalocean.app/";
+        public const string ApiBaseUrl = "https://universalsoundboard-api-rmkdv.ondigitalocean.app";
         #endregion
 
         #region dav Keys
