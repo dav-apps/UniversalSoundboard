@@ -274,6 +274,7 @@ namespace UniversalSoundboard.Models
 
             // Fade effect
             FileInputNode.EffectDefinitions.Add(fadeEffectDefinition);
+            if (!isFadeInEnabled) FileInputNode.DisableEffectsByDefinition(fadeEffectDefinition);
 
             // Echo effect
             FileInputNode.EffectDefinitions.Add(echoEffectDefinition);
@@ -420,6 +421,12 @@ namespace UniversalSoundboard.Models
 
             fadeEffectDefinition.Properties["IsFadeInEnabled"] = true;
             fadeEffectDefinition.Properties["IsFadeOutEnabled"] = false;
+
+            try
+            {
+                FileInputNode.EnableEffectsByDefinition(fadeEffectDefinition);
+            }
+            catch (Exception) { }
         }
 
         private void DisableFadeInEffect()
@@ -428,6 +435,12 @@ namespace UniversalSoundboard.Models
                 return;
 
             fadeEffectDefinition.Properties["IsFadeInEnabled"] = false;
+
+            try
+            {
+                FileInputNode.DisableEffectsByDefinition(fadeEffectDefinition);
+            }
+            catch (Exception) { }
         }
         #endregion
 
@@ -439,6 +452,12 @@ namespace UniversalSoundboard.Models
 
             fadeEffectDefinition.Properties["IsFadeInEnabled"] = false;
             fadeEffectDefinition.Properties["IsFadeOutEnabled"] = true;
+
+            try
+            {
+                FileInputNode.EnableEffectsByDefinition(fadeEffectDefinition);
+            }
+            catch (Exception) { }
         }
 
         private void DisableFadeOutEffect()
@@ -447,6 +466,12 @@ namespace UniversalSoundboard.Models
                 return;
 
             fadeEffectDefinition.Properties["IsFadeOutEnabled"] = false;
+
+            try
+            {
+                FileInputNode.DisableEffectsByDefinition(fadeEffectDefinition);
+            }
+            catch (Exception) { }
         }
         #endregion
 

@@ -472,6 +472,23 @@ namespace UniversalSoundboard.Models
 
                 PlayingSound.AudioPlayer.Play();
                 positionChangeTimer.Start();
+
+                if (PlayingSound.AudioPlayer.IsFadeInEnabled)
+                {
+                    // Disable the fade effect after the fade in has ended
+                    var timer = new DispatcherTimer
+                    {
+                        Interval = TimeSpan.FromMilliseconds(PlayingSound.AudioPlayer.FadeInDuration)
+                    };
+
+                    timer.Tick += (object sender, object e) =>
+                    {
+                        PlayingSound.AudioPlayer.IsFadeInEnabled = false;
+                        timer.Stop();
+                    };
+
+                    timer.Start();
+                }
             }
             catch (AudioIOException)
             {
