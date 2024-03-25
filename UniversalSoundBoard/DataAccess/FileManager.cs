@@ -3337,16 +3337,9 @@ namespace UniversalSoundboard.DataAccess
             else
             {
                 // Show dialog which explains that this feature is only for Plus users
-                var davPlusHotkeysDialog = new DavPlusHotkeysDialog();
-                davPlusHotkeysDialog.PrimaryButtonClick += DavPlusHotkeysContentDialog_PrimaryButtonClick;
-                await davPlusHotkeysDialog.ShowAsync();
+                var upgradePlusDialog = new UpgradePlusDialog();
+                await upgradePlusDialog.ShowAsync();
             }
-        }
-
-        private static void DavPlusHotkeysContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            // Navigate to the Account page
-            NavigateToAccountPage("DavPlusHotkeysDialog");
         }
         #endregion
 

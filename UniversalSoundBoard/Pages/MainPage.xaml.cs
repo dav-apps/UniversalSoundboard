@@ -278,9 +278,8 @@ namespace UniversalSoundboard.Pages
 
             if (!usingPlus)
             {
-                var davPlusOutputDeviceDialog = new DavPlusOutputDeviceDialog();
-                davPlusOutputDeviceDialog.PrimaryButtonClick += DavPlusOutputDeviceContentDialog_PrimaryButtonClick;
-                await davPlusOutputDeviceDialog.ShowAsync();
+                var upgradePlusDialog = new UpgradePlusDialog();
+                await upgradePlusDialog.ShowAsync();
 
                 UpdateOutputDeviceFlyout();
                 return;
@@ -300,12 +299,6 @@ namespace UniversalSoundboard.Pages
 
             await Task.Delay(100);
             UpdateOutputDeviceFlyout();
-        }
-
-        private void DavPlusOutputDeviceContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            // Navigate to the Account page
-            FileManager.NavigateToAccountPage("DavPlusOutputDeviceDialog (MainPage)");
         }
 
         private async void WriteReviewInAppNotificationEventArgs_PrimaryButtonClick(object sender, RoutedEventArgs e)

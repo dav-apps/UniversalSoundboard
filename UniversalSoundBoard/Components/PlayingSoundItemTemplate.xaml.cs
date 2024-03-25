@@ -584,16 +584,9 @@ namespace UniversalSoundboard.Components
             else
             {
                 // Show dialog which explains that this feature is only for Plus users
-                var davPlusOutputDeviceDialog = new DavPlusOutputDeviceDialog();
-                davPlusOutputDeviceDialog.PrimaryButtonClick += DavPlusOutputDeviceContentDialog_PrimaryButtonClick;
-                await davPlusOutputDeviceDialog.ShowAsync();
+                var upgradePlusDialog = new UpgradePlusDialog();
+                await upgradePlusDialog.ShowAsync();
             }
-        }
-
-        private void DavPlusOutputDeviceContentDialog_PrimaryButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
-        {
-            // Navigate to the Account page
-            FileManager.NavigateToAccountPage("DavPlusOutputDeviceDialog (PlayingSoundItemTemplate)");
         }
 
         private async void MoreButton_Repeat_0x_Click(object sender, RoutedEventArgs e)

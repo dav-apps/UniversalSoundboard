@@ -728,15 +728,6 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="Actions-LearnMore" xml:space="preserve">
     <value>Plus d’informations</value>
   </data>
-  <data name="DavPlusHotkeysDialog-Content" xml:space="preserve">
-    <value>Les raccourcis ne sont disponibles que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
-  </data>
-  <data name="DavPlusDialog-Title" xml:space="preserve">
-    <value>dav Plus requis</value>
-  </data>
-  <data name="DavPlusOutputDeviceDialog-Content" xml:space="preserve">
-    <value>La modification du périphérique de sortie n’est disponible que pour les utilisateurs de dav Plus. Connectez-vous et modifiez votre abonnement pour utiliser cette fonctionnalité.</value>
-  </data>
   <data name="Export-Image" xml:space="preserve">
     <value>Exporter l’image</value>
   </data>
