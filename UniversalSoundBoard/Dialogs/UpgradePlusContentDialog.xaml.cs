@@ -2,9 +2,9 @@
 
 namespace UniversalSoundboard.Dialogs
 {
-    public sealed partial class DavPlusContentDialog : ContentDialog
+    public sealed partial class UpgradePlusContentDialog : ContentDialog
     {
-        public DavPlusContentDialog()
+        public UpgradePlusContentDialog()
         {
             InitializeComponent();
         }

@@ -166,8 +166,8 @@
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
     <Compile Include="DataAccess\ApiManager.cs" />
-    <Compile Include="Dialogs\DavPlusContentDialog.xaml.cs">
-      <DependentUpon>DavPlusContentDialog.xaml</DependentUpon>
+    <Compile Include="Dialogs\UpgradePlusContentDialog.xaml.cs">
+      <DependentUpon>UpgradePlusContentDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="Dialogs\PublishSoundsLoginDialog.cs" />
     <Compile Include="Dialogs\ReportSoundDialog.cs" />
@@ -193,7 +193,7 @@
     <Compile Include="Dialogs\AddSoundsErrorDialog.cs" />
     <Compile Include="Dialogs\CancelYouTubePlaylistDownloadDialog.cs" />
     <Compile Include="Dialogs\DavPlusHotkeysDialog.cs" />
-    <Compile Include="Dialogs\DavPlusOutputDeviceDialog.cs" />
+    <Compile Include="Dialogs\UpgradePlusDialog.cs" />
     <Compile Include="Dialogs\DefaultSoundSettingsDialog.cs" />
     <Compile Include="Dialogs\DeleteCategoryDialog.cs" />
     <Compile Include="Dialogs\DeleteSoundDialog.cs" />
@@ -457,7 +457,7 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Dialogs\DavPlusContentDialog.xaml">
+    <Page Include="Dialogs\UpgradePlusContentDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
