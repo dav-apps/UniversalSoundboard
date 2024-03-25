@@ -166,6 +166,9 @@
     <Compile Include="Components\CustomTreeViewNode.cs" />
     <Compile Include="Common\Converters.cs" />
     <Compile Include="DataAccess\ApiManager.cs" />
+    <Compile Include="Dialogs\DavPlusContentDialog.xaml.cs">
+      <DependentUpon>DavPlusContentDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Dialogs\PublishSoundsLoginDialog.cs" />
     <Compile Include="Dialogs\ReportSoundDialog.cs" />
     <Compile Include="Dialogs\SoundSelectionDialog.cs" />
@@ -451,6 +454,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Components\StoreTagItemTemplate.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Dialogs\DavPlusContentDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
