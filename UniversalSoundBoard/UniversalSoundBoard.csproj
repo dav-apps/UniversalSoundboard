@@ -529,28 +529,28 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="CommunityToolkit.Uwp.Collections">
-      <Version>8.0.230907</Version>
+      <Version>8.0.240109</Version>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Uwp.Controls.Primitives">
-      <Version>8.0.230907</Version>
+      <Version>8.0.240109</Version>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Uwp.Controls.TokenizingTextBox">
-      <Version>8.0.230907</Version>
+      <Version>8.0.240109</Version>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Uwp.Media">
-      <Version>8.0.230907</Version>
+      <Version>8.0.240109</Version>
     </PackageReference>
     <PackageReference Include="Google.Apis.YouTube.v3">
-      <Version>1.64.0.3205</Version>
+      <Version>1.67.0.3358</Version>
     </PackageReference>
     <PackageReference Include="GraphQL.Client">
-      <Version>6.0.2</Version>
+      <Version>6.0.3</Version>
     </PackageReference>
     <PackageReference Include="GraphQL.Client.Serializer.Newtonsoft">
-      <Version>6.0.2</Version>
+      <Version>6.0.3</Version>
     </PackageReference>
     <PackageReference Include="HtmlAgilityPack">
-      <Version>1.11.57</Version>
+      <Version>1.11.59</Version>
     </PackageReference>
     <PackageReference Include="MediaTypeMap.Core">
       <Version>2.3.3</Version>
