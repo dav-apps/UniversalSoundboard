@@ -1298,4 +1298,22 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="StoreSoundPage-SourceTextBlock.Text" xml:space="preserve">
     <value>Source</value>
   </data>
+  <data name="UpgradePlusContentDialog-Benefit1TextBlock.Text" xml:space="preserve">
+    <value>Modifier le périphérique de sortie pour l'ensemble du soundboard et pour les sons individuels.</value>
+  </data>
+  <data name="UpgradePlusContentDialog-Benefit2TextBlock.Text" xml:space="preserve">
+    <value>Attribuez des raccourcis clavier à vos sons préférés, pour une lecture instantanée d'une simple pression sur un bouton.</value>
+  </data>
+  <data name="UpgradePlusContentDialog-Benefit3TextBlock.Text" xml:space="preserve">
+    <value>Obtenir l'accès à toutes les futures fonctionnalités Plus dès qu'elles apparaissent.</value>
+  </data>
+  <data name="UpgradePlusContentDialog-DavPlusTextBlock.Content" xml:space="preserve">
+    <value>3 € par mois avec dav Plus</value>
+  </data>
+  <data name="UpgradePlusContentDialog-IntroTextBlock.Text" xml:space="preserve">
+    <value>Améliorez votre expérience avec le soundboard grâce à des fonctions exclusives !</value>
+  </data>
+  <data name="UpgradePlusContentDialog-OrTextBlock.Text" xml:space="preserve">
+    <value>ou</value>
+  </data>
 </root>

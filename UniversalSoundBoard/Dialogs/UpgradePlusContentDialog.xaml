@@ -6,7 +6,6 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
     Title="UniversalSoundboard Plus"
-    CloseButtonText="Close"
     Style="{StaticResource DefaultContentDialogStyle}">
 
     <ContentDialog.Resources>
@@ -17,7 +16,7 @@
     </ContentDialog.Resources>
 
     <StackPanel>
-        <TextBlock>Enhance your soundboard experience with access to exclusive features!</TextBlock>
+        <TextBlock x:Uid="UpgradePlusContentDialog-IntroTextBlock"></TextBlock>
 
         <Grid Margin="8,12,0,0">
             <Grid.ColumnDefinitions>
@@ -28,7 +27,7 @@
             <TextBlock Grid.Column="0">🎧</TextBlock>
 
             <StackPanel Grid.Column="1" Margin="4,0,0,0">
-                <TextBlock>Change the output device for the entire soundboard and for individual sounds.</TextBlock>
+                <TextBlock x:Uid="UpgradePlusContentDialog-Benefit1TextBlock"></TextBlock>
             </StackPanel>
         </Grid>
 
@@ -41,7 +40,7 @@
             <TextBlock Grid.Column="0">📯</TextBlock>
 
             <StackPanel Grid.Column="1" Margin="4,0,0,0">
-                <TextBlock>Assign hotkeys to your favorite sounds, enabling instant playback with a single button press.</TextBlock>
+                <TextBlock x:Uid="UpgradePlusContentDialog-Benefit2TextBlock"></TextBlock>
             </StackPanel>
         </Grid>
 
@@ -54,14 +53,29 @@
             <TextBlock Grid.Column="0">🚀</TextBlock>
 
             <StackPanel Grid.Column="1" Margin="4,0,0,0">
-                <TextBlock>Unlock all upcoming Plus features to elevate your experience even further!</TextBlock>
+                <TextBlock x:Uid="UpgradePlusContentDialog-Benefit3TextBlock"></TextBlock>
             </StackPanel>
         </Grid>
 
         <StackPanel Margin="0,24,0,0">
-            <Button Style="{StaticResource AccentButtonStyle}" HorizontalAlignment="Center" Width="230">22,99 € for lifetime access</Button>
-            <TextBlock HorizontalAlignment="Center" Margin="0,6,0,8">or</TextBlock>
-            <Button HorizontalAlignment="Center" Width="230">3 € per month with dav Plus</Button>
+            <Button
+                Style="{StaticResource AccentButtonStyle}"
+                HorizontalAlignment="Center"
+                Width="230">
+                22,99 € for lifetime access
+            </Button>
+
+            <TextBlock
+                x:Uid="UpgradePlusContentDialog-OrTextBlock"
+                HorizontalAlignment="Center"
+                Margin="0,6,0,8"
+            ></TextBlock>
+
+            <Button
+                x:Uid="UpgradePlusContentDialog-DavPlusTextBlock"
+                HorizontalAlignment="Center"
+                Width="230"
+            ></Button>
         </StackPanel>
     </StackPanel>
 </ContentDialog>

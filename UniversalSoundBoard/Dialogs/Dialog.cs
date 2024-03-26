@@ -42,10 +42,11 @@ namespace UniversalSoundboard.Dialogs
             ContentDialog.CloseButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => CloseButtonClick?.Invoke(this, args);
         }
 
-        public Dialog(ContentDialog contentDialog)
+        public Dialog(ContentDialog contentDialog, string closeButtonText)
         {
             Uuid = Guid.NewGuid();
             ContentDialog = contentDialog;
+            ContentDialog.CloseButtonText = closeButtonText;
             ContentDialog.Tag = Uuid;
         }
 

@@ -1299,4 +1299,22 @@ This may take some time, depending on how large the import file is.</value>
   <data name="StoreSoundPage-SourceTextBlock.Text" xml:space="preserve">
     <value>Source</value>
   </data>
+  <data name="UpgradePlusContentDialog-Benefit1TextBlock.Text" xml:space="preserve">
+    <value>Change the output device for the entire soundboard and for individual sounds.</value>
+  </data>
+  <data name="UpgradePlusContentDialog-Benefit2TextBlock.Text" xml:space="preserve">
+    <value>Assign hotkeys to your favorite sounds, enabling instant playback with a single button press.</value>
+  </data>
+  <data name="UpgradePlusContentDialog-Benefit3TextBlock.Text" xml:space="preserve">
+    <value>Get access to all future Plus features as soon as they are released.</value>
+  </data>
+  <data name="UpgradePlusContentDialog-DavPlusTextBlock.Content" xml:space="preserve">
+    <value>3 € per month with dav Plus</value>
+  </data>
+  <data name="UpgradePlusContentDialog-IntroTextBlock.Text" xml:space="preserve">
+    <value>Enhance your soundboard experience with exclusive features!</value>
+  </data>
+  <data name="UpgradePlusContentDialog-OrTextBlock.Text" xml:space="preserve">
+    <value>or</value>
+  </data>
 </root>
