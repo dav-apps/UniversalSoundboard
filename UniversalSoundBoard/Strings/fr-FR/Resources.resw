@@ -1307,7 +1307,7 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="UpgradePlusContentDialog-Benefit3TextBlock.Text" xml:space="preserve">
     <value>Obtenir l'accès à toutes les futures fonctionnalités Plus dès qu'elles apparaissent.</value>
   </data>
-  <data name="UpgradePlusContentDialog-DavPlusTextBlock.Content" xml:space="preserve">
+  <data name="UpgradePlusContentDialog-DavPlusButton.Content" xml:space="preserve">
     <value>3 € par mois avec dav Plus</value>
   </data>
   <data name="UpgradePlusContentDialog-IntroTextBlock.Text" xml:space="preserve">
@@ -1315,5 +1315,8 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   </data>
   <data name="UpgradePlusContentDialog-OrTextBlock.Text" xml:space="preserve">
     <value>ou</value>
+  </data>
+  <data name="UpgradePlusContentDialog-PriceButtonText" xml:space="preserve">
+    <value>{0} pour l'accès permanent</value>
   </data>
 </root>

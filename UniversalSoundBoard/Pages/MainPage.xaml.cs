@@ -32,6 +32,8 @@ using Windows.UI.Xaml;
 using Windows.UI;
 using WinUI = Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
+using Windows.Services.Store;
+using System.Diagnostics;
 
 namespace UniversalSoundboard.Pages
 {
@@ -124,6 +126,7 @@ namespace UniversalSoundboard.Pages
             UpdateOutputDeviceFlyout();
             await ContinuePlaylistDownload();
             await FileManager.StartHotkeyProcess();
+            await LoadUpgradePlusPrice();
             await Dav.SyncData();
         }
 
@@ -641,6 +644,19 @@ namespace UniversalSoundboard.Pages
                 this,
                 showInAppNotificationEventArgs
             );
+        }
+
+        private async Task LoadUpgradePlusPrice()
+        {
+            var context = StoreContext.GetDefault();
+
+            string[] productKinds = { "Durable" };
+            string[] storeIds = new string[] { Constants.UniversalSoundboardPlusAddonStoreId };
+
+            StoreProductQueryResult queryResult = await context.GetStoreProductsAsync(new List<string>(productKinds), storeIds);
+
+            if (queryResult.Products.Count > 0)
+                FileManager.itemViewHolder.UpgradePlusPrice = queryResult.Products.First().Value.Price.FormattedPrice;
         }
 
         public static void NavigateToPage(

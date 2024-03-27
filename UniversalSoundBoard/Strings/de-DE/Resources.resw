@@ -1306,7 +1306,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="UpgradePlusContentDialog-Benefit3TextBlock.Text" xml:space="preserve">
     <value>Erhalte Zugriff auf alle zukünftigen Plus-Funktionen, sobald sie erscheinen.</value>
   </data>
-  <data name="UpgradePlusContentDialog-DavPlusTextBlock.Content" xml:space="preserve">
+  <data name="UpgradePlusContentDialog-DavPlusButton.Content" xml:space="preserve">
     <value>3 € pro Monat mit dav Plus</value>
   </data>
   <data name="UpgradePlusContentDialog-IntroTextBlock.Text" xml:space="preserve">
@@ -1314,5 +1314,8 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="UpgradePlusContentDialog-OrTextBlock.Text" xml:space="preserve">
     <value>oder</value>
+  </data>
+  <data name="UpgradePlusContentDialog-PriceButtonText" xml:space="preserve">
+    <value>{0} für dauerhaften Zugriff</value>
   </data>
 </root>

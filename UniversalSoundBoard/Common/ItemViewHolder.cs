@@ -102,6 +102,7 @@ namespace UniversalSoundboard.Common
         private ulong _soundboardSize;              // The size of the entire soundboard in byte
         private Guid _activePlayingSound;           // The PlayingSound that was last activated and is currently visible in SystemMediaTransportControls
         private bool _addingSounds;                 // If true, sounds are currently being added and all buttons for adding or downloading sounds are disabled
+        private string _upgradePlusPrice;           // The price for the universalsoundboard-plus addon in the MS Store
         #endregion
 
         #region Lists
@@ -216,6 +217,7 @@ namespace UniversalSoundboard.Common
             _soundboardSize = 0;
             _activePlayingSound = Guid.Empty;
             _addingSounds = false;
+            _upgradePlusPrice = "22,99 €";
             #endregion
 
             #region Lists
@@ -735,6 +737,20 @@ namespace UniversalSoundboard.Common
                 if (_addingSounds.Equals(value)) return;
                 _addingSounds = value;
                 NotifyPropertyChanged(AddingSoundsKey);
+            }
+        }
+        #endregion
+
+        #region UpgradePlusPrice
+        public const string UpgradePlusPriceKey = "UpgradePlusPrice";
+        public string UpgradePlusPrice
+        {
+            get => _upgradePlusPrice;
+            set
+            {
+                if (_upgradePlusPrice.Equals(value)) return;
+                _upgradePlusPrice = value;
+                NotifyPropertyChanged(UpgradePlusPriceKey);
             }
         }
         #endregion

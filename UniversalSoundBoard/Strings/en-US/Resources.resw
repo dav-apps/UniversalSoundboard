@@ -1308,13 +1308,16 @@ This may take some time, depending on how large the import file is.</value>
   <data name="UpgradePlusContentDialog-Benefit3TextBlock.Text" xml:space="preserve">
     <value>Get access to all future Plus features as soon as they are released.</value>
   </data>
-  <data name="UpgradePlusContentDialog-DavPlusTextBlock.Content" xml:space="preserve">
-    <value>3 € per month with dav Plus</value>
+  <data name="UpgradePlusContentDialog-DavPlusButton.Content" xml:space="preserve">
+    <value>€3 per month with dav Plus</value>
   </data>
   <data name="UpgradePlusContentDialog-IntroTextBlock.Text" xml:space="preserve">
     <value>Enhance your soundboard experience with exclusive features!</value>
   </data>
   <data name="UpgradePlusContentDialog-OrTextBlock.Text" xml:space="preserve">
     <value>or</value>
+  </data>
+  <data name="UpgradePlusContentDialog-PriceButtonText" xml:space="preserve">
+    <value>{0} for permanent access</value>
   </data>
 </root>

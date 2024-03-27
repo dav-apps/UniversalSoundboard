@@ -60,22 +60,19 @@
         <StackPanel Margin="0,24,0,0">
             <Button
                 Style="{StaticResource AccentButtonStyle}"
+                Content="{x:Bind price}"
                 HorizontalAlignment="Center"
-                Width="230">
-                22,99 € for lifetime access
-            </Button>
+                Width="230" />
 
             <TextBlock
                 x:Uid="UpgradePlusContentDialog-OrTextBlock"
                 HorizontalAlignment="Center"
-                Margin="0,6,0,8"
-            ></TextBlock>
+                Margin="0,6,0,8" />
 
             <Button
-                x:Uid="UpgradePlusContentDialog-DavPlusTextBlock"
+                x:Uid="UpgradePlusContentDialog-DavPlusButton"
                 HorizontalAlignment="Center"
-                Width="230"
-            ></Button>
+                Width="230" />
         </StackPanel>
     </StackPanel>
 </ContentDialog>
