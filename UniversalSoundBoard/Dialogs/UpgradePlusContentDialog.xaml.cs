@@ -1,6 +1,9 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
+using Windows.Services.Store;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 
 namespace UniversalSoundboard.Dialogs
@@ -8,6 +11,8 @@ namespace UniversalSoundboard.Dialogs
     public sealed partial class UpgradePlusContentDialog : ContentDialog
     {
         string price = "";
+
+        public event EventHandler<EventArgs> UpgradePlusSucceeded;
 
         public UpgradePlusContentDialog()
         {
@@ -31,6 +36,15 @@ namespace UniversalSoundboard.Dialogs
             );
 
             Bindings.Update();
+        }
+
+        private async void UpgradePlusButton_Click(object sender, RoutedEventArgs e)
+        {
+            var context = StoreContext.GetDefault();
+            StorePurchaseResult result = await context.RequestPurchaseAsync(Constants.UniversalSoundboardPlusAddonStoreId);
+            
+            if (result.Status == StorePurchaseStatus.Succeeded)
+                UpgradePlusSucceeded?.Invoke(this, new EventArgs());
         }
     }
 }

@@ -103,6 +103,7 @@ namespace UniversalSoundboard.Common
         private Guid _activePlayingSound;           // The PlayingSound that was last activated and is currently visible in SystemMediaTransportControls
         private bool _addingSounds;                 // If true, sounds are currently being added and all buttons for adding or downloading sounds are disabled
         private string _upgradePlusPrice;           // The price for the universalsoundboard-plus addon in the MS Store
+        private bool _plusPurchased;                // If true, the user has purchased the universalsoundboard-plus addon in the MS Store
         #endregion
 
         #region Lists
@@ -218,6 +219,7 @@ namespace UniversalSoundboard.Common
             _activePlayingSound = Guid.Empty;
             _addingSounds = false;
             _upgradePlusPrice = "22,99 €";
+            _plusPurchased = false;
             #endregion
 
             #region Lists
@@ -751,6 +753,20 @@ namespace UniversalSoundboard.Common
                 if (_upgradePlusPrice.Equals(value)) return;
                 _upgradePlusPrice = value;
                 NotifyPropertyChanged(UpgradePlusPriceKey);
+            }
+        }
+        #endregion
+
+        #region PlusPurchased
+        public const string PlusPurchasedKey = "PlusPurchased";
+        public bool PlusPurchased
+        {
+            get => _plusPurchased;
+            set
+            {
+                if (_plusPurchased.Equals(value)) return;
+                _plusPurchased = value;
+                NotifyPropertyChanged(PlusPurchasedKey);
             }
         }
         #endregion

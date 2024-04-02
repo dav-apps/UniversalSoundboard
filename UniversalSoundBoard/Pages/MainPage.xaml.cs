@@ -126,7 +126,7 @@ namespace UniversalSoundboard.Pages
             UpdateOutputDeviceFlyout();
             await ContinuePlaylistDownload();
             await FileManager.StartHotkeyProcess();
-            await LoadUpgradePlusPrice();
+            await LoadPlusInfo();
             await Dav.SyncData();
         }
 
@@ -271,21 +271,27 @@ namespace UniversalSoundboard.Pages
 
         private async void OutputDeviceItem_Click(object sender, RoutedEventArgs e)
         {
-            // Check if the user is on dav Plus
+            // Check if the user is on dav Plus or has purchased USB Plus
             bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
+            bool purchasedPlus = FileManager.itemViewHolder.PlusPurchased;
 
             Analytics.TrackEvent("OutputDeviceButton-ItemClick", new Dictionary<string, string>
             {
-                { "usingPlus", usingPlus.ToString() }
+                { "usingPlus", usingPlus.ToString() },
+                { "purchasedPlus", purchasedPlus.ToString() }
             });
 
-            if (!usingPlus)
+            if (!usingPlus && !purchasedPlus)
             {
                 var upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
                 await upgradePlusDialog.ShowAsync();
 
-                UpdateOutputDeviceFlyout();
-                return;
+                if (!FileManager.itemViewHolder.PlusPurchased)
+                {
+                    UpdateOutputDeviceFlyout();
+                    return;
+                }
             }
 
             string outputDevice = (string)(sender as ToggleMenuFlyoutItem).Tag;
@@ -302,6 +308,11 @@ namespace UniversalSoundboard.Pages
 
             await Task.Delay(100);
             UpdateOutputDeviceFlyout();
+        }
+
+        private void UpgradePlusDialog_UpgradePlusSucceeded(object sender, EventArgs e)
+        {
+            FileManager.itemViewHolder.PlusPurchased = true;
         }
 
         private async void WriteReviewInAppNotificationEventArgs_PrimaryButtonClick(object sender, RoutedEventArgs e)
@@ -646,7 +657,7 @@ namespace UniversalSoundboard.Pages
             );
         }
 
-        private async Task LoadUpgradePlusPrice()
+        private async Task LoadPlusInfo()
         {
             var context = StoreContext.GetDefault();
 
@@ -654,9 +665,10 @@ namespace UniversalSoundboard.Pages
             string[] storeIds = new string[] { Constants.UniversalSoundboardPlusAddonStoreId };
 
             StoreProductQueryResult queryResult = await context.GetStoreProductsAsync(new List<string>(productKinds), storeIds);
+            if (queryResult.Products.Count == 0) return;
 
-            if (queryResult.Products.Count > 0)
-                FileManager.itemViewHolder.UpgradePlusPrice = queryResult.Products.First().Value.Price.FormattedPrice;
+            FileManager.itemViewHolder.UpgradePlusPrice = queryResult.Products.First().Value.Price.FormattedPrice;
+            FileManager.itemViewHolder.PlusPurchased = queryResult.Products.First().Value.IsInUserCollection;
         }
 
         public static void NavigateToPage(

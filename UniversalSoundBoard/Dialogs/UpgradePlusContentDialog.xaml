@@ -59,10 +59,12 @@
 
         <StackPanel Margin="0,24,0,0">
             <Button
+                Name="UpgradePlusButton"
                 Style="{StaticResource AccentButtonStyle}"
                 Content="{x:Bind price}"
                 HorizontalAlignment="Center"
-                Width="230" />
+                Width="230"
+                Click="UpgradePlusButton_Click" />
 
             <TextBlock
                 x:Uid="UpgradePlusContentDialog-OrTextBlock"
@@ -70,6 +72,7 @@
                 Margin="0,6,0,8" />
 
             <Button
+                Name="DavPlusButton"
                 x:Uid="UpgradePlusContentDialog-DavPlusButton"
                 HorizontalAlignment="Center"
                 Width="230" />
