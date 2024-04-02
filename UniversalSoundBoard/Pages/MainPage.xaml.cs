@@ -33,7 +33,6 @@ using Windows.UI;
 using WinUI = Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.Services.Store;
-using System.Diagnostics;
 
 namespace UniversalSoundboard.Pages
 {

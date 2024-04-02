@@ -3324,22 +3324,31 @@ namespace UniversalSoundboard.DataAccess
             if (sound == null) return;
 
             bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
+            bool purchasedPlus = itemViewHolder.PlusPurchased;
 
             Analytics.TrackEvent("HotkeyPressed", new Dictionary<string, string>
             {
-                { "usingPlus", usingPlus.ToString() }
+                { "usingPlus", usingPlus.ToString() },
+                { "purchasedPlus", purchasedPlus.ToString() }
             });
 
-            if (usingPlus)
-            {
-                itemViewHolder.TriggerPlaySoundEvent(null, new PlaySoundEventArgs(sound));
-            }
-            else
+            if (!usingPlus && !purchasedPlus)
             {
                 // Show dialog which explains that this feature is only for Plus users
                 var upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
                 await upgradePlusDialog.ShowAsync();
+
+                if (!itemViewHolder.PlusPurchased)
+                    return;
             }
+
+            itemViewHolder.TriggerPlaySoundEvent(null, new PlaySoundEventArgs(sound));
+        }
+
+        private static void UpgradePlusDialog_UpgradePlusSucceeded(object sender, EventArgs e)
+        {
+            itemViewHolder.PlusPurchased = true;
         }
         #endregion
 

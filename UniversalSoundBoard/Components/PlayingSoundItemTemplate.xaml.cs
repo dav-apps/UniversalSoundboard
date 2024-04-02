@@ -571,22 +571,31 @@ namespace UniversalSoundboard.Components
         private async void MoreButton_OutputDevice_Click(object sender, RoutedEventArgs e)
         {
             bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
+            bool purchasedPlus = FileManager.itemViewHolder.PlusPurchased;
 
             Analytics.TrackEvent("PlayingSound-OutputDeviceButton-ItemClick", new Dictionary<string, string>
             {
-                { "usingPlus", usingPlus.ToString() }
+                { "usingPlus", usingPlus.ToString() },
+                { "purchasedPlus", purchasedPlus.ToString() }
             });
 
-            if (usingPlus)
-            {
-                await SetOutputDevice((string)(sender as ToggleMenuFlyoutItem).Tag);
-            }
-            else
+            if (!usingPlus && !purchasedPlus)
             {
                 // Show dialog which explains that this feature is only for Plus users
                 var upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
                 await upgradePlusDialog.ShowAsync();
+
+                if (!FileManager.itemViewHolder.PlusPurchased)
+                    return;
             }
+
+            await SetOutputDevice((string)(sender as ToggleMenuFlyoutItem).Tag);
+        }
+
+        private void UpgradePlusDialog_UpgradePlusSucceeded(object sender, EventArgs e)
+        {
+            FileManager.itemViewHolder.PlusPurchased = true;
         }
 
         private async void MoreButton_Repeat_0x_Click(object sender, RoutedEventArgs e)
