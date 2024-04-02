@@ -25,6 +25,7 @@ namespace UniversalSoundboard.Pages
     public sealed partial class SettingsPage : Page
     {
         bool initialized = false;
+        bool hotkeysEnabled = false;
         string soundboardSize = "";
         string userId = "";
         Visibility soundboardSizeVisibility = Visibility.Collapsed;
@@ -47,6 +48,9 @@ namespace UniversalSoundboard.Pages
             SetThemeColors();
             InitSettings();
             await FileManager.CalculateSoundboardSizeAsync();
+
+            hotkeysEnabled = (Dav.IsLoggedIn && Dav.User.Plan > 0) || FileManager.itemViewHolder.PlusPurchased;
+            Bindings.Update();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -177,9 +181,6 @@ namespace UniversalSoundboard.Pages
         #region Hotkeys
         private void LoadHotkeys()
         {
-            if (!Dav.IsLoggedIn || Dav.User.Plan == 0)
-                HotkeysInfoBar.Visibility = Visibility.Visible;
-
             foreach (var sound in FileManager.itemViewHolder.AllSounds)
                 if (sound.Hotkeys.Count > 0)
                     SoundsWithHotkeysList.Add(sound);
