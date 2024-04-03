@@ -37,7 +37,7 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0">📯</TextBlock>
+            <TextBlock Grid.Column="0">⌨️</TextBlock>
 
             <StackPanel Grid.Column="1" Margin="4,0,0,0">
                 <TextBlock x:Uid="UpgradePlusContentDialog-Benefit2TextBlock"></TextBlock>

@@ -1,5 +1,4 @@
-﻿using davClassLibrary;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using UniversalSoundboard.Common;
@@ -9,7 +8,6 @@ using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using WinUI = Microsoft.UI.Xaml.Controls;
 
 namespace UniversalSoundboard.Dialogs
 {
@@ -51,22 +49,6 @@ namespace UniversalSoundboard.Dialogs
             {
                 Orientation = Orientation.Vertical
             };
-
-            if (!Dav.IsLoggedIn || Dav.User.Plan == Plan.Free)
-            {
-                // Add message for dav Plus required
-                WinUI.InfoBar infoBar = new WinUI.InfoBar
-                {
-                    IsOpen = true,
-                    Severity = WinUI.InfoBarSeverity.Warning,
-                    IsClosable = false,
-                    Title = FileManager.loader.GetString("DavPlusDialog-Title"),
-                    Message = FileManager.loader.GetString("DavPlusHotkeysDialog-Content"),
-                    Margin = new Thickness(0, 0, 0, 10)
-                };
-
-                contentStackPanel.Children.Add(infoBar);
-            }
 
             // Add description
             TextBlock descriptionTextBlock = new TextBlock

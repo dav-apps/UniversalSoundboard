@@ -1,4 +1,5 @@
-﻿using Microsoft.AppCenter.Analytics;
+﻿using davClassLibrary;
+using Microsoft.AppCenter.Analytics;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -90,7 +91,26 @@ namespace UniversalSoundboard.Components
         #region Hotkeys
         private async void OptionsFlyout_HotkeysFlyoutItemClick(object sender, RoutedEventArgs e)
         {
+            bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
+            bool purchasedPlus = FileManager.itemViewHolder.PlusPurchased;
+
+            if (!usingPlus && !purchasedPlus)
+            {
+                // Show dialog which explains that this feature is only for Plus users
+                var upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
+                await upgradePlusDialog.ShowAsync();
+
+                if (!FileManager.itemViewHolder.PlusPurchased)
+                    return;
+            }
+
             await new HotkeysDialog(sound, SoundPage.hotkeyItemTemplate, MainPage.accentButtonStyle).ShowAsync();
+        }
+
+        private void UpgradePlusDialog_UpgradePlusSucceeded(object sender, EventArgs e)
+        {
+            FileManager.itemViewHolder.PlusPurchased = true;
         }
         #endregion
 
