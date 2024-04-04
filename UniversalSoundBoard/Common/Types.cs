@@ -6,13 +6,6 @@
         SoundRecorder
     }
 
-    public enum SoundOrder
-    {
-        Custom = 0,
-        Name = 1,
-        CreationDate = 2
-    }
-
     public enum NewSoundOrder
     {
         Custom = 0,

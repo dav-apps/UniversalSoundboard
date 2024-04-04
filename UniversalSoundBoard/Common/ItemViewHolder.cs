@@ -21,8 +21,6 @@ namespace UniversalSoundboard.Common
         private const string openMultipleSoundsKey = "openMultipleSounds";
         private const string multiSoundPlaybackKey = "multiSoundPlayback";
         private const string showSoundsPivotKey = "showSoundsPivot";
-        private const string soundOrderKey = "soundOrder";
-        private const string soundOrderReversedKey = "soundOrderReversed";
         private const string newSoundOrderKey = "newSoundOrder";
         private const string useStandardOutputDeviceKey = "useStandardOutputDevice";
         private const string outputDeviceKey = "outputDevice";
@@ -57,8 +55,7 @@ namespace UniversalSoundboard.Common
         private const bool openMultipleSoundsDefault = true;
         private const bool multiSoundPlaybackDefault = false;
         private const bool showSoundsPivotDefault = true;
-        private const SoundOrder soundOrderDefault = Common.SoundOrder.Custom;
-        private const bool soundOrderReversedDefault = false;
+        private const NewSoundOrder newSoundOrderDefault = NewSoundOrder.Custom;
         private const bool useStandardOutputDeviceDefault = true;
         private const string outputDeviceDefault = "";
         private const bool showListViewDefault = false;
@@ -299,47 +296,9 @@ namespace UniversalSoundboard.Common
 
             #region soundOrder
             if (localSettings.Values[newSoundOrderKey] == null)
-            {
-                // Try to get the old settings
-                var oldSoundOrder = soundOrderDefault;
-
-                if (localSettings.Values[soundOrderKey] != null)
-                    oldSoundOrder = (SoundOrder)localSettings.Values[soundOrderKey];
-
-                var oldSoundOrderReversed = soundOrderReversedDefault;
-
-                if (localSettings.Values[soundOrderReversedKey] != null)
-                    oldSoundOrderReversed = (bool)localSettings.Values[soundOrderReversedKey];
-
-                // Set the new settings
-                NewSoundOrder newSoundOrder = NewSoundOrder.Custom;
-
-                switch (oldSoundOrder)
-                {
-                    case Common.SoundOrder.Name:
-                        if (oldSoundOrderReversed)
-                            newSoundOrder = NewSoundOrder.NameDescending;
-                        else
-                            newSoundOrder = NewSoundOrder.NameAscending;
-
-                        break;
-                    case Common.SoundOrder.CreationDate:
-                        if (oldSoundOrderReversed)
-                            newSoundOrder = NewSoundOrder.CreationDateDescending;
-                        else
-                            newSoundOrder = NewSoundOrder.CreationDateAscending;
-
-                        break;
-                }
-
-                // Save the new sound order
-                localSettings.Values[newSoundOrderKey] = (int)newSoundOrder;
-                _soundOrder = newSoundOrder;
-            }
+                _soundOrder = newSoundOrderDefault;
             else
-            {
                 _soundOrder = (NewSoundOrder)localSettings.Values[newSoundOrderKey];
-            }
             #endregion
 
             #region useStandardOutputDevice
