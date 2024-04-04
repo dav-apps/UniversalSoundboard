@@ -478,16 +478,20 @@ namespace UniversalSoundboard.Pages
                 StoreSearchButton.Visibility = Visibility.Collapsed;
             }
 
-            // Update the app title if the user is on dav Plus or Pro
-            if (Dav.IsLoggedIn)
+            // Update the app title if the user is on UniversalSoundboard Plus, dav Plus or dav Pro
+            if (FileManager.itemViewHolder.PlusPurchased)
             {
-                if (((int)Dav.User.Plan) == 1)
-                    appTitle = "UniversalSoundboard Plus";
-                else if (((int)Dav.User.Plan) == 2)
-                    appTitle = "UniversalSoundboard Pro";
-
-                Bindings.Update();
+                appTitle = "UniversalSoundboard Plus";
             }
+            else if (Dav.IsLoggedIn)
+            {
+                if (Dav.User.Plan == Plan.Plus)
+                    appTitle = "UniversalSoundboard Plus";
+                else if (Dav.User.Plan == Plan.Pro)
+                    appTitle = "UniversalSoundboard Pro";
+            }
+
+            Bindings.Update();
         }
 
         private void UpdateTitleWidth()
