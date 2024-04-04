@@ -262,32 +262,13 @@ namespace UniversalSoundboard.Dialogs
 
             CreateOutputDeviceComboBox();
             outputDeviceDataStackPanel.Children.Add(OutputDeviceComboBox);
-
-            if (!Dav.IsLoggedIn || Dav.User.Plan == 0)
-            {
-                OutputDeviceComboBox.IsEnabled = false;
-
-                // Create the info button
-                Button infoButton = new Button
-                {
-                    Style = infoButtonStyle,
-                    Margin = new Thickness(10, 0, 6, 0)
-                };
-
-                TextBlock infoButtonTextBlock = new TextBlock
-                {
-                    Text = FileManager.loader.GetString("DavPlusOutputDeviceDialog-Content"),
-                    TextWrapping = TextWrapping.WrapWholeWords,
-                    MaxWidth = 300
-                };
-
-                infoButton.Flyout = new Flyout { Content = infoButtonTextBlock };
-                outputDeviceDataStackPanel.Children.Add(infoButton);
-            }
             
-            row++;
-            contentGrid.Children.Add(outputDeviceHeaderStackPanel);
-            contentGrid.Children.Add(outputDeviceDataStackPanel);
+            if (FileManager.IsUserOnPlus())
+            {
+                row++;
+                contentGrid.Children.Add(outputDeviceHeaderStackPanel);
+                contentGrid.Children.Add(outputDeviceDataStackPanel);
+            }
             #endregion
 
             return contentGrid;
