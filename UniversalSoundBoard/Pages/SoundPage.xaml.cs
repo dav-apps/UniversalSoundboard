@@ -515,7 +515,7 @@ namespace UniversalSoundboard.Pages
                 canReorderItems = false;
             else if (FileManager.itemViewHolder.SearchQuery.Length > 0)
                 canReorderItems = false;
-            else if (FileManager.itemViewHolder.SoundOrder == NewSoundOrder.Custom)
+            else if (FileManager.itemViewHolder.SoundOrder == SoundOrder.Custom)
                 canReorderItems = true;
             else
                 canReorderItems = false;

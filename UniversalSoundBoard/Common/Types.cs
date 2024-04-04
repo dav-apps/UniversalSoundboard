@@ -6,7 +6,7 @@
         SoundRecorder
     }
 
-    public enum NewSoundOrder
+    public enum SoundOrder
     {
         Custom = 0,
         NameAscending = 1,

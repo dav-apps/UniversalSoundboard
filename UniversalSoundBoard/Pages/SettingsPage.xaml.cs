@@ -171,9 +171,9 @@ namespace UniversalSoundboard.Pages
         private void SoundOrderComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!initialized) return;
-            FileManager.itemViewHolder.SoundOrder = (NewSoundOrder)SoundOrderComboBox.SelectedIndex;
+            FileManager.itemViewHolder.SoundOrder = (SoundOrder)SoundOrderComboBox.SelectedIndex;
 
-            if (FileManager.itemViewHolder.SoundOrder == NewSoundOrder.Custom)
+            if (FileManager.itemViewHolder.SoundOrder == SoundOrder.Custom)
                 FileManager.itemViewHolder.AllSoundsChanged = true;
         }
         #endregion

@@ -55,7 +55,7 @@ namespace UniversalSoundboard.Common
         private const bool openMultipleSoundsDefault = true;
         private const bool multiSoundPlaybackDefault = false;
         private const bool showSoundsPivotDefault = true;
-        private const NewSoundOrder newSoundOrderDefault = NewSoundOrder.Custom;
+        private const SoundOrder soundOrderDefault = Common.SoundOrder.Custom;
         private const bool useStandardOutputDeviceDefault = true;
         private const string outputDeviceDefault = "";
         private const bool showListViewDefault = false;
@@ -142,7 +142,7 @@ namespace UniversalSoundboard.Common
         private bool _openMultipleSounds;                   // If false, removes all PlayingSounds whenever the user opens a new one; if true, adds new opened sounds to existing PlayingSounds
         private bool _multiSoundPlayback;                   // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
         private bool _showSoundsPivot;                      // If true shows the pivot to select Sounds or Favourite sounds
-        private NewSoundOrder _soundOrder;                  // The selected sound order in the settings
+        private SoundOrder _soundOrder;                     // The selected sound order in the settings
         private bool _useStandardOutputDevice;              // If true, the standard output device of the OS is used for playback
         private string _outputDevice;                       // The id of the selected output device
         private bool _showListView;                         // If true, shows the sounds on the SoundPage in a ListView
@@ -296,9 +296,9 @@ namespace UniversalSoundboard.Common
 
             #region soundOrder
             if (localSettings.Values[newSoundOrderKey] == null)
-                _soundOrder = newSoundOrderDefault;
+                _soundOrder = soundOrderDefault;
             else
-                _soundOrder = (NewSoundOrder)localSettings.Values[newSoundOrderKey];
+                _soundOrder = (SoundOrder)localSettings.Values[newSoundOrderKey];
             #endregion
 
             #region useStandardOutputDevice
@@ -1043,7 +1043,7 @@ namespace UniversalSoundboard.Common
 
         #region SoundOrder
         public const string SoundOrderKey = "SoundOrder";
-        public NewSoundOrder SoundOrder
+        public SoundOrder SoundOrder
         {
             get => _soundOrder;
             set

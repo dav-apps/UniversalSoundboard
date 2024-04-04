@@ -972,24 +972,24 @@ namespace UniversalSoundboard.DataAccess
                 // Add the sound at the correct position
                 switch (itemViewHolder.SoundOrder)
                 {
-                    case NewSoundOrder.NameAscending:
+                    case SoundOrder.NameAscending:
                         var soundsList = itemViewHolder.Sounds.ToList();
                         soundsList.Add(sound);
                         soundsList.Sort((x, y) => string.Compare(x.Name, y.Name));
 
                         itemViewHolder.Sounds.Insert(soundsList.IndexOf(sound), sound);
                         break;
-                    case NewSoundOrder.NameDescending:
+                    case SoundOrder.NameDescending:
                         var soundsList2 = itemViewHolder.Sounds.ToList();
                         soundsList2.Add(sound);
                         soundsList2.Sort((x, y) => string.Compare(y.Name, x.Name));
 
                         itemViewHolder.Sounds.Insert(soundsList2.IndexOf(sound), sound);
                         break;
-                    case NewSoundOrder.CreationDateAscending:
+                    case SoundOrder.CreationDateAscending:
                         itemViewHolder.Sounds.Add(sound);
                         break;
-                    case NewSoundOrder.CreationDateDescending:
+                    case SoundOrder.CreationDateDescending:
                         itemViewHolder.Sounds.Insert(0, sound);
                         break;
                     default:
@@ -2534,32 +2534,32 @@ namespace UniversalSoundboard.DataAccess
         /**
          * Sorts the sounds list by the given sound order
          */
-        private static async Task<List<Sound>> SortSoundsList(List<Sound> sounds, NewSoundOrder order, Guid categoryUuid, bool favourite)
+        private static async Task<List<Sound>> SortSoundsList(List<Sound> sounds, SoundOrder order, Guid categoryUuid, bool favourite)
         {
             List<Sound> sortedSounds = new List<Sound>();
 
             switch (order)
             {
-                case NewSoundOrder.NameAscending:
+                case SoundOrder.NameAscending:
                     sounds.Sort((x, y) => string.Compare(x.Name, y.Name));
 
                     foreach (var sound in sounds)
                         sortedSounds.Add(sound);
 
                     break;
-                case NewSoundOrder.NameDescending:
+                case SoundOrder.NameDescending:
                     sounds.Sort((x, y) => string.Compare(y.Name, x.Name));
 
                     foreach (var sound in sounds)
                         sortedSounds.Add(sound);
 
                     break;
-                case NewSoundOrder.CreationDateAscending:
+                case SoundOrder.CreationDateAscending:
                     foreach (var sound in sounds)
                         sortedSounds.Add(sound);
 
                     break;
-                case NewSoundOrder.CreationDateDescending:
+                case SoundOrder.CreationDateDescending:
                     foreach (var sound in sounds)
                         sortedSounds.Add(sound);
 
