@@ -3350,6 +3350,15 @@ namespace UniversalSoundboard.DataAccess
         {
             itemViewHolder.PlusPurchased = true;
         }
+
+        public static bool IsUserOnPlus()
+        {
+            // Check if the user is on dav Plus or has purchased USB Plus
+            bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
+            bool purchasedPlus = itemViewHolder.PlusPurchased;
+
+            return usingPlus || purchasedPlus;
+        }
         #endregion
 
         #region Helper Methods

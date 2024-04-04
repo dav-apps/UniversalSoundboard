@@ -29,6 +29,7 @@ namespace UniversalSoundboard.Components
 
         private List<StorageFile> soundFiles = new List<StorageFile>();
         private string exportedFilePath = "";
+        private UpgradePlusDialog upgradePlusDialog = null;
 
         public SoundItem(Sound sound)
         {
@@ -36,11 +37,19 @@ namespace UniversalSoundboard.Components
 
             this.sound = sound;
             this.sound.ImageDownloaded += Sound_ImageDownloaded;
+
+            FileManager.itemViewHolder.UserPlanChanged += ItemViewHolder_UserPlanChanged;
         }
 
         private void Sound_ImageDownloaded(object sender, EventArgs e)
         {
             ImageUpdated?.Invoke(this, new EventArgs());
+        }
+
+        private void ItemViewHolder_UserPlanChanged(object sender, EventArgs e)
+        {
+            if (upgradePlusDialog != null && FileManager.IsUserOnPlus())
+                upgradePlusDialog.Hide();
         }
 
         public void ShowFlyout(object sender, Point position)
@@ -97,11 +106,11 @@ namespace UniversalSoundboard.Components
             if (!usingPlus && !purchasedPlus)
             {
                 // Show dialog which explains that this feature is only for Plus users
-                var upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog = new UpgradePlusDialog();
                 upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
                 await upgradePlusDialog.ShowAsync();
 
-                if (!FileManager.itemViewHolder.PlusPurchased)
+                if (!FileManager.IsUserOnPlus())
                     return;
             }
 

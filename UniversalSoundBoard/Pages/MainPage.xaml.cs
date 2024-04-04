@@ -47,6 +47,7 @@ namespace UniversalSoundboard.Pages
         public static Frame effectManagerAppWindowContentFrame;
         private readonly ObservableCollection<object> menuItems = new ObservableCollection<object>();
         private PlaySoundsSuccessivelyDialog playSoundsSuccessivelyDialog;
+        private UpgradePlusDialog upgradePlusDialog = null;
         private Guid initialCategory = Guid.Empty;                          // The category that was selected before the sounds started loading
         private Guid selectedCategory = Guid.Empty;                         // The category that was right clicked for the flyout
         private List<string> Suggestions = new List<string>();              // The suggestions for the SearchAutoSuggestBox
@@ -211,6 +212,9 @@ namespace UniversalSoundboard.Pages
         private void ItemViewHolder_UserPlanChanged(object sender, EventArgs e)
         {
             AdjustLayout();
+
+            if (upgradePlusDialog != null && FileManager.IsUserOnPlus())
+                upgradePlusDialog.Hide();
         }
 
         private async void ItemViewHolder_CategoryUpdated(object sender, CategoryEventArgs args)
@@ -282,11 +286,11 @@ namespace UniversalSoundboard.Pages
 
             if (!usingPlus && !purchasedPlus)
             {
-                var upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog = new UpgradePlusDialog();
                 upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
                 await upgradePlusDialog.ShowAsync();
 
-                if (!FileManager.itemViewHolder.PlusPurchased)
+                if (!FileManager.IsUserOnPlus())
                 {
                     UpdateOutputDeviceFlyout();
                     return;

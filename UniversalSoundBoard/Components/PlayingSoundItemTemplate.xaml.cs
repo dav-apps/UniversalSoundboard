@@ -38,6 +38,7 @@ namespace UniversalSoundboard.Components
         private bool isSoundsListVisible = false;
         private bool isPlayingSoundDisabled = false;
         private bool isPlayPauseButtonDisabled = false;
+        private UpgradePlusDialog upgradePlusDialog = null;
 
         private const string MoreButtonOutputDeviceFlyoutSubItemName = "MoreButtonOutputDeviceFlyoutSubItem";
         private const string MoreButtonPlaybackSpeedFlyoutSubItemName = "MoreButtonPlaybackSpeedFlyoutSubItemName";
@@ -113,6 +114,8 @@ namespace UniversalSoundboard.Components
 
             FileManager.itemViewHolder.HidePlayingSoundItem -= ItemViewHolder_HidePlayingSoundItem;
             FileManager.itemViewHolder.HidePlayingSoundItem += ItemViewHolder_HidePlayingSoundItem;
+            FileManager.itemViewHolder.UserPlanChanged -= ItemViewHolder_UserPlanChanged;
+            FileManager.itemViewHolder.UserPlanChanged += ItemViewHolder_UserPlanChanged;
 
             PlayingSoundItem.Init();
 
@@ -313,6 +316,12 @@ namespace UniversalSoundboard.Components
                 && args.Uuid.Equals(PlayingSoundItem.Uuid)
                 && Window.Current.Bounds.Width >= Constants.mobileMaxWidth
             ) Content = null;
+        }
+
+        private void ItemViewHolder_UserPlanChanged(object sender, EventArgs e)
+        {
+            if (upgradePlusDialog != null && FileManager.IsUserOnPlus())
+                upgradePlusDialog.Hide();
         }
         #endregion
 
@@ -582,11 +591,11 @@ namespace UniversalSoundboard.Components
             if (!usingPlus && !purchasedPlus)
             {
                 // Show dialog which explains that this feature is only for Plus users
-                var upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog = new UpgradePlusDialog();
                 upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
                 await upgradePlusDialog.ShowAsync();
 
-                if (!FileManager.itemViewHolder.PlusPurchased)
+                if (!FileManager.IsUserOnPlus())
                     return;
             }
 

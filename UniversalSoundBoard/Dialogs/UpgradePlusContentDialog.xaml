@@ -75,7 +75,8 @@
                 Name="DavPlusButton"
                 x:Uid="UpgradePlusContentDialog-DavPlusButton"
                 HorizontalAlignment="Center"
-                Width="230" />
+                Width="230"
+                Click="DavPlusButton_Click" />
         </StackPanel>
     </StackPanel>
 </ContentDialog>
