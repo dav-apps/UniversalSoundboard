@@ -244,8 +244,8 @@ namespace UniversalSoundboard.Pages
 
             var createCheckoutSessionResponse = await CheckoutSessionsController.CreateCheckoutSession(
                 1,
-                "https://universalsoundboard.dav-apps.tech/upgrade?success=true&plan=1",
-                "https://universalsoundboard.dav-apps.tech/upgrade?success=false"
+                Constants.CreateCheckoutSessionSuccessUrl,
+                Constants.CreateCheckoutSessionCancelUrl
             );
 
             PlusCardSelectButton.IsEnabled = true;

@@ -88,6 +88,8 @@ namespace UniversalSoundboard.Common
         public const string FluentIconsFontFamily = "/Assets/Fonts/SegoeFluentIcons.ttf#Segoe Fluent Icons";
         public const string DefaultProfileImageUrl = "https://dav-backend.fra1.cdn.digitaloceanspaces.com/profileImages/default.png";
         public const string UniversalSoundboardPlusAddonStoreId = "9NRQTG6ZVDVX";
+        public const string CreateCheckoutSessionSuccessUrl = "https://universalsoundboard.dav-apps.tech/upgrade?success=true&plan=1";
+        public const string CreateCheckoutSessionCancelUrl = "https://universalsoundboard.dav-apps.tech/upgrade?success=false";
 
         public static readonly List<string> allowedFileTypes = new List<string>
         {
