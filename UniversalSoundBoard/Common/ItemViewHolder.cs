@@ -17,6 +17,7 @@ namespace UniversalSoundboard.Common
     {
         #region Constants for the localSettings keys
         private const string userIdKey = "userId";
+        private const string plusPurchasedKey = "plusPurchased";
         private const string savePlayingSoundsKey = "savePlayingSounds";
         private const string openMultipleSoundsKey = "openMultipleSounds";
         private const string multiSoundPlaybackKey = "multiSoundPlayback";
@@ -51,6 +52,7 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Constants for localSettings defaults
+        private const bool plusPurchasedDefault = false;
         private const bool savePlayingSoundsDefault = true;
         private const bool openMultipleSoundsDefault = true;
         private const bool multiSoundPlaybackDefault = false;
@@ -100,7 +102,6 @@ namespace UniversalSoundboard.Common
         private Guid _activePlayingSound;           // The PlayingSound that was last activated and is currently visible in SystemMediaTransportControls
         private bool _addingSounds;                 // If true, sounds are currently being added and all buttons for adding or downloading sounds are disabled
         private string _upgradePlusPrice;           // The price for the universalsoundboard-plus addon in the MS Store
-        private bool _plusPurchased;                // If true, the user has purchased the universalsoundboard-plus addon in the MS Store
         #endregion
 
         #region Lists
@@ -138,6 +139,7 @@ namespace UniversalSoundboard.Common
 
         #region Settings
         private Guid _userId;                               // A unique id for the current installation
+        private bool _plusPurchased;                        // If true, the user has purchased the universalsoundboard-plus addon in the MS Store
         private bool _savePlayingSounds;                    // If true saves the PlayingSounds and loads them when starting the app
         private bool _openMultipleSounds;                   // If false, removes all PlayingSounds whenever the user opens a new one; if true, adds new opened sounds to existing PlayingSounds
         private bool _multiSoundPlayback;                   // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
@@ -216,7 +218,6 @@ namespace UniversalSoundboard.Common
             _activePlayingSound = Guid.Empty;
             _addingSounds = false;
             _upgradePlusPrice = "22,99 €";
-            _plusPurchased = false;
             #endregion
 
             #region Lists
@@ -266,6 +267,13 @@ namespace UniversalSoundboard.Common
                 _userId = (Guid)localSettings.Values[userIdKey];
             #endregion
 
+            #region plusPurchased
+            if (localSettings.Values[plusPurchasedKey] == null)
+                _plusPurchased = plusPurchasedDefault;
+            else
+                _plusPurchased = (bool)localSettings.Values[plusPurchasedKey];
+            #endregion
+
             #region savePlayingSounds
             if (localSettings.Values[savePlayingSoundsKey] == null)
                 _savePlayingSounds = savePlayingSoundsDefault;
@@ -302,7 +310,7 @@ namespace UniversalSoundboard.Common
             #endregion
 
             #region useStandardOutputDevice
-            if (Dav.IsLoggedIn && Dav.User.Plan > 0)
+            if ((Dav.IsLoggedIn && Dav.User.Plan > 0) || PlusPurchased)
             {
                 if (localSettings.Values[useStandardOutputDeviceKey] == null)
                     _useStandardOutputDevice = useStandardOutputDeviceDefault;
@@ -715,20 +723,6 @@ namespace UniversalSoundboard.Common
             }
         }
         #endregion
-
-        #region PlusPurchased
-        public const string PlusPurchasedKey = "PlusPurchased";
-        public bool PlusPurchased
-        {
-            get => _plusPurchased;
-            set
-            {
-                if (_plusPurchased.Equals(value)) return;
-                _plusPurchased = value;
-                NotifyPropertyChanged(PlusPurchasedKey);
-            }
-        }
-        #endregion
         #endregion
 
         #region Layout & Design
@@ -978,6 +972,21 @@ namespace UniversalSoundboard.Common
         public Guid UserId
         {
             get => _userId;
+        }
+        #endregion
+
+        #region PlusPurchased
+        public const string PlusPurchasedKey = "PlusPurchased";
+        public bool PlusPurchased
+        {
+            get => _plusPurchased;
+            set
+            {
+                if (_plusPurchased.Equals(value)) return;
+                localSettings.Values[plusPurchasedKey] = value;
+                _plusPurchased = value;
+                NotifyPropertyChanged(PlusPurchasedKey);
+            }
         }
         #endregion
 

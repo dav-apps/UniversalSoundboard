@@ -666,6 +666,8 @@ namespace UniversalSoundboard.Pages
 
         private async Task LoadPlusInfo()
         {
+            if (FileManager.itemViewHolder.PlusPurchased) return;
+
             var context = StoreContext.GetDefault();
 
             string[] productKinds = { "Durable" };
