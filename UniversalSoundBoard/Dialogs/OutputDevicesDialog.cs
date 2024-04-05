@@ -1,4 +1,5 @@
-﻿using UniversalSoundboard.DataAccess;
+﻿using System;
+using UniversalSoundboard.DataAccess;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using WinUI = Microsoft.UI.Xaml.Controls;
@@ -52,7 +53,7 @@ namespace UniversalSoundboard.Dialogs
             LoadDevices();
         }
 
-        private void DeviceWatcherHelper_DevicesChanged(object sender, System.EventArgs e)
+        private void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
         {
             LoadDevices();
         }

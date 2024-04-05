@@ -52,6 +52,7 @@ namespace UniversalSoundboard.Pages
         private Guid selectedCategory = Guid.Empty;                         // The category that was right clicked for the flyout
         private List<string> Suggestions = new List<string>();              // The suggestions for the SearchAutoSuggestBox
         private List<StorageFile> sharedFiles = new List<StorageFile>();    // The files that get shared
+        private MenuFlyout OutputDeviceButtonFlyout = null;
         bool selectionButtonsEnabled = false;                               // If true, the buttons for multi selection are enabled
         bool downloadFilesCanceled = false;
         bool mobileSearchVisible = false;                                   // If true, the app window is small, the search box is visible and the other top buttons are hidden
@@ -270,6 +271,14 @@ namespace UniversalSoundboard.Pages
             {
                 UpdateOutputDeviceFlyout();
             });
+        }
+
+        private async void OutputDeviceButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (FileManager.itemViewHolder.MultipleOutputDevices)
+                await new OutputDevicesDialog().ShowAsync();
+            else
+                OutputDeviceButtonFlyout.ShowAt(OutputDeviceButton);
         }
 
         private async void OutputDeviceItem_Click(object sender, RoutedEventArgs e)
@@ -615,8 +624,8 @@ namespace UniversalSoundboard.Pages
 
         private void UpdateOutputDeviceFlyout()
         {
-            if (OutputDeviceButton.Flyout != null && OutputDeviceButton.Flyout.IsOpen) return;
-            OutputDeviceButton.Flyout = null;
+            if (OutputDeviceButtonFlyout != null && OutputDeviceButtonFlyout.IsOpen)
+                return;
 
             MenuFlyout menuFlyout = new MenuFlyout
             {
@@ -659,7 +668,7 @@ namespace UniversalSoundboard.Pages
 
             menuFlyout.Items.Add(manageMenuFlyoutItem);
 
-            OutputDeviceButton.Flyout = menuFlyout;
+            OutputDeviceButtonFlyout = menuFlyout;
         }
 
         private async Task ContinuePlaylistDownload()
