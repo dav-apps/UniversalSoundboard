@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using UniversalSoundboard.DataAccess;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -64,19 +66,30 @@ namespace UniversalSoundboard.Dialogs
 
             if (FileManager.itemViewHolder.MultipleOutputDevices)
             {
-                devicesStackPanel.Children.Add(new CheckBox
+                var standardOutputDeviceCheckbox = new CheckBox
                 {
                     Content = FileManager.loader.GetString("StandardOutputDevice"),
                     IsChecked = FileManager.itemViewHolder.UseStandardOutputDevice
-                });
+                };
+
+                standardOutputDeviceCheckbox.Checked += StandardOutputDeviceCheckbox_Checked;
+                standardOutputDeviceCheckbox.Unchecked += StandardOutputDeviceCheckbox_Unchecked;
+
+                devicesStackPanel.Children.Add(standardOutputDeviceCheckbox);
 
                 foreach (var device in FileManager.deviceWatcherHelper.Devices)
                 {
-                    devicesStackPanel.Children.Add(new CheckBox
+                    var outputDeviceCheckbox = new CheckBox
                     {
                         Content = device.Name,
-                        Tag = device.Id
-                    });
+                        Tag = device.Id,
+                        IsChecked = FileManager.itemViewHolder.OutputDevice.Contains(device.Id)
+                    };
+
+                    outputDeviceCheckbox.Checked += OutputDeviceCheckbox_Checked;
+                    outputDeviceCheckbox.Unchecked += OutputDeviceCheckbox_Unchecked;
+
+                    devicesStackPanel.Children.Add(outputDeviceCheckbox);
                 }
             }
             else
@@ -91,14 +104,49 @@ namespace UniversalSoundboard.Dialogs
                 {
                     radioButtons.Items.Add(device.Name);
 
-                    if (!FileManager.itemViewHolder.UseStandardOutputDevice && FileManager.itemViewHolder.OutputDevice == device.Id)
-                        radioButtons.SelectedIndex = i;
+                    if (
+                        !FileManager.itemViewHolder.UseStandardOutputDevice
+                        && FileManager.itemViewHolder.OutputDevice.StartsWith(device.Id)
+                    ) radioButtons.SelectedIndex = i;
 
                     i++;
                 }
 
                 devicesStackPanel.Children.Add(radioButtons);
             }
+        }
+
+        private void StandardOutputDeviceCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            FileManager.itemViewHolder.UseStandardOutputDevice = true;
+        }
+
+        private void StandardOutputDeviceCheckbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            FileManager.itemViewHolder.UseStandardOutputDevice = false;
+        }
+
+        private void OutputDeviceCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkbox = sender as CheckBox;
+            string deviceId = checkbox.Tag as string;
+
+            if (FileManager.itemViewHolder.OutputDevice.Contains(deviceId)) return;
+
+            List<string> deviceIds = FileManager.itemViewHolder.OutputDevice.Split(",").ToList();
+            deviceIds.Add(deviceId);
+            FileManager.itemViewHolder.OutputDevice = string.Join(",", deviceIds);
+        }
+
+        private void OutputDeviceCheckbox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            CheckBox checkbox = sender as CheckBox;
+            string deviceId = checkbox.Tag as string;
+
+            if (!FileManager.itemViewHolder.OutputDevice.Contains(deviceId)) return;
+
+            string[] deviceIds = FileManager.itemViewHolder.OutputDevice.Split(",");
+            FileManager.itemViewHolder.OutputDevice = string.Join(",", deviceIds.Where(id => id != deviceId).ToArray());
         }
     }
 }
