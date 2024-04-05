@@ -313,6 +313,31 @@ namespace UniversalSoundboard.Pages
             UpdateOutputDeviceFlyout();
         }
 
+        private async void ManageMenuFlyoutItem_Click(object sender, RoutedEventArgs e)
+        {
+            // Check if the user is on dav Plus or has purchased USB Plus
+            bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
+            bool purchasedPlus = FileManager.itemViewHolder.PlusPurchased;
+
+            Analytics.TrackEvent("OutputDeviceButton-ManageOutputDevices-ItemClick", new Dictionary<string, string>
+            {
+                { "usingPlus", usingPlus.ToString() },
+                { "purchasedPlus", purchasedPlus.ToString() }
+            });
+
+            if (!usingPlus && !purchasedPlus)
+            {
+                upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
+                await upgradePlusDialog.ShowAsync();
+
+                if (!FileManager.IsUserOnPlus())
+                    return;
+            }
+
+            await new OutputDevicesDialog().ShowAsync();
+        }
+
         private void UpgradePlusDialog_UpgradePlusSucceeded(object sender, EventArgs e)
         {
             FileManager.itemViewHolder.PlusPurchased = true;
@@ -622,6 +647,17 @@ namespace UniversalSoundboard.Pages
                 if (item.IsChecked)
                     standardItem.IsChecked = false;
             }
+
+            menuFlyout.Items.Add(new MenuFlyoutSeparator());
+
+            var manageMenuFlyoutItem = new MenuFlyoutItem
+            {
+                Text = "Manage output devices"
+            };
+
+            manageMenuFlyoutItem.Click += ManageMenuFlyoutItem_Click;
+
+            menuFlyout.Items.Add(manageMenuFlyoutItem);
 
             OutputDeviceButton.Flyout = menuFlyout;
         }

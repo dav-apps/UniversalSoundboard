@@ -23,6 +23,7 @@ namespace UniversalSoundboard.Common
         private const string multiSoundPlaybackKey = "multiSoundPlayback";
         private const string showSoundsPivotKey = "showSoundsPivot";
         private const string newSoundOrderKey = "newSoundOrder";
+        private const string multipleOutputDevicesKey = "multipleOutputDevices";
         private const string useStandardOutputDeviceKey = "useStandardOutputDevice";
         private const string outputDeviceKey = "outputDevice";
         private const string showListViewKey = "showListView";
@@ -57,7 +58,8 @@ namespace UniversalSoundboard.Common
         private const bool openMultipleSoundsDefault = true;
         private const bool multiSoundPlaybackDefault = false;
         private const bool showSoundsPivotDefault = true;
-        private const SoundOrder soundOrderDefault = Common.SoundOrder.Custom;
+        private const SoundOrder soundOrderDefault = SoundOrder.Custom;
+        private const bool multipleOutputDevicesDefault = false;
         private const bool useStandardOutputDeviceDefault = true;
         private const string outputDeviceDefault = "";
         private const bool showListViewDefault = false;
@@ -145,6 +147,7 @@ namespace UniversalSoundboard.Common
         private bool _multiSoundPlayback;                   // If true, can play multiple sounds at the same time; if false, stops the currently playing sound when playing another sound
         private bool _showSoundsPivot;                      // If true shows the pivot to select Sounds or Favourite sounds
         private SoundOrder _soundOrder;                     // The selected sound order in the settings
+        private bool _multipleOutputDevices;                // If true, the user can select multiple output devices
         private bool _useStandardOutputDevice;              // If true, the standard output device of the OS is used for playback
         private string _outputDevice;                       // The id of the selected output device
         private bool _showListView;                         // If true, shows the sounds on the SoundPage in a ListView
@@ -307,6 +310,20 @@ namespace UniversalSoundboard.Common
                 _soundOrder = soundOrderDefault;
             else
                 _soundOrder = (SoundOrder)localSettings.Values[newSoundOrderKey];
+            #endregion
+
+            #region multipleOutputDevices
+            if ((Dav.IsLoggedIn && Dav.User.Plan > 0) || PlusPurchased)
+            {
+                if (localSettings.Values[multipleOutputDevicesKey] == null)
+                    _multipleOutputDevices = multipleOutputDevicesDefault;
+                else
+                    _multipleOutputDevices = (bool)localSettings.Values[multipleOutputDevicesKey];
+            }
+            else
+            {
+                _multipleOutputDevices = multipleOutputDevicesDefault;
+            }
             #endregion
 
             #region useStandardOutputDevice
@@ -1061,6 +1078,21 @@ namespace UniversalSoundboard.Common
                 localSettings.Values[newSoundOrderKey] = (int)value;
                 _soundOrder = value;
                 NotifyPropertyChanged(SoundOrderKey);
+            }
+        }
+        #endregion
+
+        #region MultipleOutputDevices
+        public const string MultipleOutputDevicesKey = "MultipleOutputDevices";
+        public bool MultipleOutputDevices
+        {
+            get => _multipleOutputDevices;
+            set
+            {
+                if (_multipleOutputDevices.Equals(value)) return;
+                localSettings.Values[multipleOutputDevicesKey] = value;
+                _multipleOutputDevices = value;
+                NotifyPropertyChanged(MultipleOutputDevicesKey);
             }
         }
         #endregion
