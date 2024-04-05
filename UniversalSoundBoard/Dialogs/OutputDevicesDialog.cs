@@ -9,7 +9,11 @@ namespace UniversalSoundboard.Dialogs
     {
         private StackPanel devicesStackPanel;
 
-        public OutputDevicesDialog() : base("Ausgabegeräte", FileManager.loader.GetString("Actions-Close"))
+        public OutputDevicesDialog()
+            : base(
+                  FileManager.loader.GetString("OutputDevicesDialog-Title"),
+                  FileManager.loader.GetString("Actions-Close")
+            )
         {
             Content = GetContent();
 
@@ -59,6 +63,12 @@ namespace UniversalSoundboard.Dialogs
 
             if (FileManager.itemViewHolder.MultipleOutputDevices)
             {
+                devicesStackPanel.Children.Add(new CheckBox
+                {
+                    Content = FileManager.loader.GetString("StandardOutputDevice"),
+                    IsChecked = FileManager.itemViewHolder.UseStandardOutputDevice
+                });
+
                 foreach (var device in FileManager.deviceWatcherHelper.Devices)
                 {
                     devicesStackPanel.Children.Add(new CheckBox
@@ -72,8 +82,19 @@ namespace UniversalSoundboard.Dialogs
             {
                 WinUI.RadioButtons radioButtons = new WinUI.RadioButtons();
 
+                radioButtons.Items.Add(FileManager.loader.GetString("StandardOutputDevice"));
+                radioButtons.SelectedIndex = 0;
+                int i = 1;
+
                 foreach (var device in FileManager.deviceWatcherHelper.Devices)
+                {
                     radioButtons.Items.Add(device.Name);
+
+                    if (!FileManager.itemViewHolder.UseStandardOutputDevice && FileManager.itemViewHolder.OutputDevice == device.Id)
+                        radioButtons.SelectedIndex = i;
+
+                    i++;
+                }
 
                 devicesStackPanel.Children.Add(radioButtons);
             }

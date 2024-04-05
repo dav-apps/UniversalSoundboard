@@ -1312,4 +1312,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="UpgradePlusContentDialog-PriceButtonText" xml:space="preserve">
     <value>{0} für dauerhaften Zugriff</value>
   </data>
+  <data name="ManageOutputDevices" xml:space="preserve">
+    <value>Ausgabegeräte verwalten</value>
+  </data>
+  <data name="OutputDevicesDialog-Title" xml:space="preserve">
+    <value>Ausgabegeräte</value>
+  </data>
 </root>

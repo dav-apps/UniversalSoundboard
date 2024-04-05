@@ -1313,4 +1313,10 @@ Vous pouvez continuer à utiliser l’application, mais merci de ne pas la ferme
   <data name="UpgradePlusContentDialog-PriceButtonText" xml:space="preserve">
     <value>{0} pour l'accès permanent</value>
   </data>
+  <data name="ManageOutputDevices" xml:space="preserve">
+    <value>Gérer les périphériques de sortie</value>
+  </data>
+  <data name="OutputDevicesDialog-Title" xml:space="preserve">
+    <value>Périphériques de sortie</value>
+  </data>
 </root>

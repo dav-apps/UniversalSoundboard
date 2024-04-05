@@ -652,7 +652,7 @@ namespace UniversalSoundboard.Pages
 
             var manageMenuFlyoutItem = new MenuFlyoutItem
             {
-                Text = "Manage output devices"
+                Text = FileManager.loader.GetString("ManageOutputDevices")
             };
 
             manageMenuFlyoutItem.Click += ManageMenuFlyoutItem_Click;

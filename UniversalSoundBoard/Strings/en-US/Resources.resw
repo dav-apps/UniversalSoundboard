@@ -1314,4 +1314,10 @@ This may take some time, depending on how large the import file is.</value>
   <data name="UpgradePlusContentDialog-PriceButtonText" xml:space="preserve">
     <value>{0} for permanent access</value>
   </data>
+  <data name="ManageOutputDevices" xml:space="preserve">
+    <value>Manage output devices</value>
+  </data>
+  <data name="OutputDevicesDialog-Title" xml:space="preserve">
+    <value>Output devices</value>
+  </data>
 </root>
