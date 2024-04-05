@@ -276,9 +276,15 @@ namespace UniversalSoundboard.Pages
         private async void OutputDeviceButton_Click(object sender, RoutedEventArgs e)
         {
             if (FileManager.itemViewHolder.MultipleOutputDevices)
-                await new OutputDevicesDialog().ShowAsync();
+            {
+                OutputDevicesDialog outputDevicesDialog = new OutputDevicesDialog();
+                outputDevicesDialog.CloseButtonClick += OutputDevicesDialog_CloseButtonClick;
+                await outputDevicesDialog.ShowAsync();
+            }
             else
+            {
                 OutputDeviceButtonFlyout.ShowAt(OutputDeviceButton);
+            }
         }
 
         private async void OutputDeviceItem_Click(object sender, RoutedEventArgs e)
@@ -344,12 +350,19 @@ namespace UniversalSoundboard.Pages
                     return;
             }
 
-            await new OutputDevicesDialog().ShowAsync();
+            OutputDevicesDialog outputDevicesDialog = new OutputDevicesDialog();
+            outputDevicesDialog.CloseButtonClick += OutputDevicesDialog_CloseButtonClick;
+            await outputDevicesDialog.ShowAsync();
         }
 
         private void UpgradePlusDialog_UpgradePlusSucceeded(object sender, EventArgs e)
         {
             FileManager.itemViewHolder.PlusPurchased = true;
+        }
+
+        private void OutputDevicesDialog_CloseButtonClick(Dialog sender, ContentDialogButtonClickEventArgs args)
+        {
+            UpdateOutputDeviceFlyout();
         }
 
         private async void WriteReviewInAppNotificationEventArgs_PrimaryButtonClick(object sender, RoutedEventArgs e)

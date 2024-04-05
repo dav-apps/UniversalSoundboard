@@ -96,20 +96,32 @@ namespace UniversalSoundboard.Dialogs
             {
                 WinUI.RadioButtons radioButtons = new WinUI.RadioButtons();
 
-                radioButtons.Items.Add(FileManager.loader.GetString("StandardOutputDevice"));
-                radioButtons.SelectedIndex = 0;
-                int i = 1;
+                RadioButton standardOutputDeviceRadioButton = new RadioButton
+                {
+                    Content = FileManager.loader.GetString("StandardOutputDevice")
+                };
+
+                standardOutputDeviceRadioButton.Checked += StandardOutputDeviceRadioButton_Checked;
+
+                radioButtons.Items.Add(standardOutputDeviceRadioButton);
+                radioButtons.SelectedItem = standardOutputDeviceRadioButton;
 
                 foreach (var device in FileManager.deviceWatcherHelper.Devices)
                 {
-                    radioButtons.Items.Add(device.Name);
+                    RadioButton outputDeviceRadioButton = new RadioButton
+                    {
+                        Content = device.Name,
+                        Tag = device.Id
+                    };
+
+                    outputDeviceRadioButton.Checked += OutputDeviceRadioButton_Checked;
+
+                    radioButtons.Items.Add(outputDeviceRadioButton);
 
                     if (
                         !FileManager.itemViewHolder.UseStandardOutputDevice
                         && FileManager.itemViewHolder.OutputDevice.StartsWith(device.Id)
-                    ) radioButtons.SelectedIndex = i;
-
-                    i++;
+                    ) radioButtons.SelectedItem = outputDeviceRadioButton;
                 }
 
                 devicesStackPanel.Children.Add(radioButtons);
@@ -147,6 +159,20 @@ namespace UniversalSoundboard.Dialogs
 
             string[] deviceIds = FileManager.itemViewHolder.OutputDevice.Split(",");
             FileManager.itemViewHolder.OutputDevice = string.Join(",", deviceIds.Where(id => id != deviceId).ToArray());
+        }
+
+        private void StandardOutputDeviceRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            FileManager.itemViewHolder.UseStandardOutputDevice = true;
+        }
+
+        private void OutputDeviceRadioButton_Checked(object sender, RoutedEventArgs e)
+        {
+            RadioButton radioButton = sender as RadioButton;
+            string deviceId = radioButton.Tag as string;
+
+            FileManager.itemViewHolder.UseStandardOutputDevice = false;
+            FileManager.itemViewHolder.OutputDevice = deviceId;
         }
     }
 }
