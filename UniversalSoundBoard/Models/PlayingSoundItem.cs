@@ -1071,53 +1071,39 @@ namespace UniversalSoundboard.Models
             }
 
             updateOutputDeviceRunning = true;
-            string deviceId = null;
+            List<string> deviceIds = new List<string>();
 
             // Get the output device of the PlayingSound or from the settings
             if (!string.IsNullOrEmpty(PlayingSound.OutputDevice))
-                deviceId = PlayingSound.OutputDevice;
+            {
+                deviceIds.Add(PlayingSound.OutputDevice);
+            }
             else if (!FileManager.itemViewHolder.UseStandardOutputDevice)
-                deviceId = FileManager.itemViewHolder.OutputDevice;
+            {
+                foreach (string deviceId in FileManager.itemViewHolder.OutputDevice.Split(","))
+                    deviceIds.Add(deviceId);
+            }
 
-            if (!string.IsNullOrEmpty(deviceId))
+            PlayingSound.AudioPlayer.OutputDevices.Clear();
+
+            foreach (string deviceId in deviceIds)
             {
                 DeviceInformation deviceInfo = await FileManager.GetDeviceInformationById(deviceId);
 
                 if (deviceInfo != null && deviceInfo.IsEnabled)
-                {
-                    if (PlayingSound.AudioPlayer.OutputDevice == null || PlayingSound.AudioPlayer.OutputDevice.Id != deviceInfo.Id)
-                    {
-                        try
-                        {
-                            PlayingSound.AudioPlayer.OutputDevice = deviceInfo;
-                            await InitAudioPlayer();
-                        }
-                        catch (Exception) { }
-                    }
-
-                    OutputDeviceButtonVisibilityChanged?.Invoke(
-                        this,
-                        new OutputDeviceButtonVisibilityEventArgs(string.IsNullOrEmpty(PlayingSound.OutputDevice) ? Visibility.Collapsed : Visibility.Visible)
-                    );
-
-                    await UpdateOutputDeviceEnd();
-                    return;
-                }
-            }
-
-            if (PlayingSound.AudioPlayer.OutputDevice == null)
-            {
-                await UpdateOutputDeviceEnd();
-                return;
+                    PlayingSound.AudioPlayer.OutputDevices.Add(deviceInfo);
             }
 
             try
             {
-                PlayingSound.AudioPlayer.OutputDevice = null;
                 await InitAudioPlayer();
             }
             catch (Exception) { }
-            OutputDeviceButtonVisibilityChanged?.Invoke(this, new OutputDeviceButtonVisibilityEventArgs(Visibility.Collapsed));
+
+            OutputDeviceButtonVisibilityChanged?.Invoke(
+                this,
+                new OutputDeviceButtonVisibilityEventArgs(string.IsNullOrEmpty(PlayingSound.OutputDevice) ? Visibility.Collapsed : Visibility.Visible)
+            );
 
             await UpdateOutputDeviceEnd();
         }

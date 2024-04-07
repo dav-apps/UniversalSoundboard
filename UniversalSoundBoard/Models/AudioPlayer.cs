@@ -1,6 +1,10 @@
 ﻿using AudioEffectComponent;
 using Microsoft.AppCenter.Crashes;
 using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.Linq;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using Windows.Devices.Enumeration;
@@ -17,9 +21,8 @@ namespace UniversalSoundboard.Models
         private bool isInitialized = false;
         private bool isInitializing = false;
         private StorageFile audioFile;
-        private DeviceInformation outputDevice;
         private bool audioFileChanged = true;
-        private bool outputDeviceChanged = true;
+        private bool outputDevicesChanged = true;
         private bool effectsChanged = true;
         private bool isPlaying = false;
         private TimeSpan position = TimeSpan.Zero;
@@ -39,15 +42,7 @@ namespace UniversalSoundboard.Models
         private bool isPitchShiftEnabled = false;
         private double pitchShiftFactor = 1;
 
-        private AudioGraph AudioGraph;
-        private AudioFileInputNode FileInputNode;
-        private AudioDeviceOutputNode DeviceOutputNode;
-
-        private AudioEffectDefinition fadeEffectDefinition;
-        private EchoEffectDefinition echoEffectDefinition;
-        private LimiterEffectDefinition limiterEffectDefinition;
-        private ReverbEffectDefinition reverbEffectDefinition;
-        private AudioEffectDefinition pitchShiftEffectDefinition;
+        private List<AudioGraphContainer> AudioGraphContainers;
 
         public bool IsInitialized
         {
@@ -58,19 +53,23 @@ namespace UniversalSoundboard.Models
             get => audioFile;
             set => setAudioFile(value);
         }
-        public DeviceInformation OutputDevice
-        {
-            get => outputDevice;
-            set => setOutputDevice(value);
-        }
+        public readonly ObservableCollection<DeviceInformation> OutputDevices;
         public bool IsPlaying { get => isPlaying; }
         public TimeSpan Duration
         {
-            get => FileInputNode?.Duration ?? TimeSpan.Zero;
+            get
+            {
+                var audioGraphContainer = AudioGraphContainers.FirstOrDefault();
+                return audioGraphContainer?.FileInputNode?.Duration ?? TimeSpan.Zero;
+            }
         }
         public TimeSpan Position
         {
-            get => FileInputNode?.Position ?? position;
+            get
+            {
+                var audioGraphContainer = AudioGraphContainers.FirstOrDefault();
+                return audioGraphContainer?.FileInputNode?.Position ?? position;
+            }
             set => setPosition(value);
         }
         public double Volume
@@ -152,22 +151,20 @@ namespace UniversalSoundboard.Models
         public event EventHandler<EventArgs> MediaEnded;
         public event EventHandler<AudioGraphUnrecoverableErrorOccurredEventArgs> UnrecoverableErrorOccurred;
 
-        public AudioPlayer() { }
+        public AudioPlayer()
+        {
+            AudioGraphContainers = new List<AudioGraphContainer>();
+            OutputDevices = new ObservableCollection<DeviceInformation>();
+            OutputDevices.CollectionChanged += OutputDevices_CollectionChanged;
+        }
 
         public AudioPlayer(StorageFile audioFile)
         {
-            this.audioFile = audioFile;
-        }
+            AudioGraphContainers = new List<AudioGraphContainer>();
+            OutputDevices = new ObservableCollection<DeviceInformation>();
+            OutputDevices.CollectionChanged += OutputDevices_CollectionChanged;
 
-        public AudioPlayer(DeviceInformation outputDevice)
-        {
-            this.outputDevice = outputDevice;
-        }
-
-        public AudioPlayer(StorageFile audioFile, DeviceInformation outputDevice)
-        {
             this.audioFile = audioFile;
-            this.outputDevice = outputDevice;
         }
 
         public async Task Init()
@@ -178,13 +175,13 @@ namespace UniversalSoundboard.Models
             if (isInitializing) return;
             isInitializing = true;
 
-            if (!isInitialized || outputDeviceChanged)
+            if (!isInitialized || outputDevicesChanged)
             {
                 // Create the AudioGraph
                 await InitAudioGraph();
 
                 // Create the output node
-                await InitDeviceOutputNode();
+                await InitDeviceOutputNodes();
 
                 // Init the audio effects
                 InitEffectDefinitions();
@@ -192,17 +189,17 @@ namespace UniversalSoundboard.Models
 
             if (
                 audioFileChanged
-                || outputDeviceChanged
+                || outputDevicesChanged
                 || effectsChanged
             )
             {
                 // Create the input node
-                await InitFileInputNode();
+                await InitFileInputNodes();
 
-                if (DeviceOutputNode != null)
-                    FileInputNode.AddOutgoingConnection(DeviceOutputNode);
+                foreach (var audioGraphContainer in AudioGraphContainers)
+                    audioGraphContainer.FileInputNode.AddOutgoingConnection(audioGraphContainer.DeviceOutputNode);
 
-                outputDeviceChanged = false;
+                outputDevicesChanged = false;
                 audioFileChanged = false;
                 effectsChanged = false;
             }
@@ -210,114 +207,129 @@ namespace UniversalSoundboard.Models
             isInitialized = true;
 
             if (IsPlaying)
-                AudioGraph.Start();
+                foreach (var audioGraphContainer in AudioGraphContainers)
+                    audioGraphContainer.AudioGraph.Start();
 
             isInitializing = false;
         }
 
         private async Task InitAudioGraph()
         {
-            var settings = new AudioGraphSettings(AudioRenderCategory.Media);
-            settings.PrimaryRenderDevice = outputDevice;
-            var createAudioGraphResult = await AudioGraph.CreateAsync(settings);
-
-            if (createAudioGraphResult.Status != AudioGraphCreationStatus.Success)
+            // Stop all AudioGraphs
+            try
             {
-                isInitializing = false;
-                throw new AudioGraphInitException(createAudioGraphResult.Status);
+                foreach (var audioGraphContainer in AudioGraphContainers)
+                    audioGraphContainer.AudioGraph.Stop();
+            }
+            catch (Exception e)
+            {
+                Crashes.TrackError(e);
             }
 
-            if (AudioGraph != null)
+            // Create an AudioGraph for each output device
+            foreach (var outputDevice in OutputDevices)
             {
-                try
+                var settings = new AudioGraphSettings(AudioRenderCategory.Media)
                 {
-                    AudioGraph.Stop();
-                }
-                catch (Exception e)
-                {
-                    Crashes.TrackError(e);
-                }
-            }
+                    PrimaryRenderDevice = outputDevice
+                };
 
-            AudioGraph = createAudioGraphResult.Graph;
-            AudioGraph.UnrecoverableErrorOccurred += AudioGraph_UnrecoverableErrorOccurred;
+                var createAudioGraphResult = await AudioGraph.CreateAsync(settings);
+
+                if (createAudioGraphResult.Status != AudioGraphCreationStatus.Success)
+                {
+                    isInitializing = false;
+                    throw new AudioGraphInitException(createAudioGraphResult.Status);
+                }
+
+                createAudioGraphResult.Graph.UnrecoverableErrorOccurred += AudioGraph_UnrecoverableErrorOccurred;
+                AudioGraphContainers.Add(new AudioGraphContainer(createAudioGraphResult.Graph));
+            }
         }
 
-        private async Task InitFileInputNode()
+        private async Task InitFileInputNodes()
         {
-            FileInputNode?.Stop();
+            foreach (var audioGraphContainer in AudioGraphContainers)
+                if (audioGraphContainer.FileInputNode != null)
+                    audioGraphContainer.FileInputNode.Stop();
 
-            var oldPosition = FileInputNode?.Position;
-            var inputNodeResult = await AudioGraph.CreateFileInputNodeAsync(audioFile);
+            var oldPosition = AudioGraphContainers.FirstOrDefault()?.FileInputNode?.Position;
 
-            if (inputNodeResult.Status != AudioFileNodeCreationStatus.Success)
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                isInitializing = false;
-                throw new FileInputNodeInitException(inputNodeResult.Status);
+                var inputNodeResult = await audioGraphContainer.AudioGraph.CreateFileInputNodeAsync(audioFile);
+
+                if (inputNodeResult.Status != AudioFileNodeCreationStatus.Success)
+                {
+                    isInitializing = false;
+                    throw new FileInputNodeInitException(inputNodeResult.Status);
+                }
+
+                audioGraphContainer.FileInputNode?.Dispose();
+                audioGraphContainer.FileInputNode = inputNodeResult.FileInputNode;
+
+                if (oldPosition.HasValue)
+                    audioGraphContainer.FileInputNode.Seek(oldPosition.Value);
+                else
+                    audioGraphContainer.FileInputNode.Seek(position);
+
+                if (isMuted)
+                    audioGraphContainer.FileInputNode.OutgoingGain = 0;
+                else
+                    audioGraphContainer.FileInputNode.OutgoingGain = volume;
+
+                audioGraphContainer.FileInputNode.PlaybackSpeedFactor = playbackRate;
+
+                // Fade effect
+                audioGraphContainer.FileInputNode.EffectDefinitions.Add(audioGraphContainer.FadeEffectDefinition);
+                if (!isFadeInEnabled) audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
+
+                // Echo effect
+                audioGraphContainer.FileInputNode.EffectDefinitions.Add(audioGraphContainer.EchoEffectDefinition);
+                if (!isEchoEnabled) DisableEchoEffect();
+
+                // Limiter effect
+                audioGraphContainer.FileInputNode.EffectDefinitions.Add(audioGraphContainer.LimiterEffectDefinition);
+                if (!isLimiterEnabled) DisableLimiterEffect();
+
+                // Reverb effect
+                audioGraphContainer.FileInputNode.EffectDefinitions.Add(audioGraphContainer.ReverbEffectDefinition);
+                if (!IsReverbEnabled) DisableReverbEffect();
+
+                // Pitch shift effect
+                audioGraphContainer.FileInputNode.EffectDefinitions.Add(audioGraphContainer.PitchShiftEffectDefinition);
+                UpdatePitchShiftEffect();
+
+                audioGraphContainer.FileInputNode.FileCompleted += FileInputNode_FileCompleted;
             }
-
-            FileInputNode?.Dispose();
-
-            FileInputNode = inputNodeResult.FileInputNode;
-
-            if (oldPosition.HasValue)
-                FileInputNode.Seek(oldPosition.Value);
-            else
-                FileInputNode.Seek(position);
-
-            if (isMuted)
-                FileInputNode.OutgoingGain = 0;
-            else
-                FileInputNode.OutgoingGain = volume;
-
-            FileInputNode.PlaybackSpeedFactor = playbackRate;
-
-            // Fade effect
-            FileInputNode.EffectDefinitions.Add(fadeEffectDefinition);
-            if (!isFadeInEnabled) FileInputNode.DisableEffectsByDefinition(fadeEffectDefinition);
-
-            // Echo effect
-            FileInputNode.EffectDefinitions.Add(echoEffectDefinition);
-            if (!isEchoEnabled) DisableEchoEffect();
-
-            // Limiter effect
-            FileInputNode.EffectDefinitions.Add(limiterEffectDefinition);
-            if (!isLimiterEnabled) DisableLimiterEffect();
-
-            // Reverb effect
-            FileInputNode.EffectDefinitions.Add(reverbEffectDefinition);
-            if (!isReverbEnabled) DisableReverbEffect();
-
-            // Pitch shift effect
-            FileInputNode.EffectDefinitions.Add(pitchShiftEffectDefinition);
-            UpdatePitchShiftEffect();
-
-            FileInputNode.FileCompleted += FileInputNode_FileCompleted;
         }
 
-        private async Task InitDeviceOutputNode()
+        private async Task InitDeviceOutputNodes()
         {
-            if (DeviceOutputNode != null)
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                try
+                if (audioGraphContainer.DeviceOutputNode != null)
                 {
-                    DeviceOutputNode.Stop();
+                    try
+                    {
+                        audioGraphContainer.DeviceOutputNode.Stop();
+                    }
+                    catch (Exception e)
+                    {
+                        Crashes.TrackError(e);
+                    }
                 }
-                catch(Exception e)
+
+                var outputNodeResult = await audioGraphContainer.AudioGraph.CreateDeviceOutputNodeAsync();
+
+                if (outputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
                 {
-                    Crashes.TrackError(e);
+                    isInitializing = false;
+                    throw new DeviceOutputNodeInitException(outputNodeResult.Status);
                 }
+
+                audioGraphContainer.DeviceOutputNode = outputNodeResult.DeviceOutputNode;
             }
-
-            var outputNodeResult = await AudioGraph.CreateDeviceOutputNodeAsync();
-
-            if (outputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
-            {
-                isInitializing = false;
-                throw new DeviceOutputNodeInitException(outputNodeResult.Status);
-            }
-
-            DeviceOutputNode = outputNodeResult.DeviceOutputNode;
         }
 
         public void Play()
@@ -327,14 +339,17 @@ namespace UniversalSoundboard.Models
 
             if (isPlaying) return;
 
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                AudioGraph.Start();
-            }
-            catch(Exception e)
-            {
-                Crashes.TrackError(e);
-                throw new AudioIOException();
+                try
+                {
+                    audioGraphContainer.AudioGraph.Start();
+                }
+                catch (Exception e)
+                {
+                    Crashes.TrackError(e);
+                    throw new AudioIOException();
+                }
             }
 
             isPlaying = true;
@@ -347,13 +362,17 @@ namespace UniversalSoundboard.Models
 
             if (!isPlaying) return;
 
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                AudioGraph.Stop();
-            }
-            catch(Exception e)
-            {
-                Crashes.TrackError(e);
+                try
+                {
+                    audioGraphContainer.AudioGraph.Stop();
+                }
+                catch (Exception e)
+                {
+                    Crashes.TrackError(e);
+                    throw new AudioIOException();
+                }
             }
 
             DisableFadeInEffect();
@@ -370,218 +389,279 @@ namespace UniversalSoundboard.Models
         #region General effects
         private void InitEffectDefinitions()
         {
-            fadeEffectDefinition = new AudioEffectDefinition(
-                typeof(FadeAudioEffect).FullName,
-                new PropertySet
+            foreach (var audioGraphContainer in AudioGraphContainers)
+            {
+                audioGraphContainer.FadeEffectDefinition = new AudioEffectDefinition(
+                    typeof(FadeAudioEffect).FullName,
+                    new PropertySet
+                    {
+                        { "IsFadeInEnabled", false },
+                        { "IsFadeOutEnabled", false },
+                        { "FadeInDuration", FadeInDuration },
+                        { "FadeOutDuration", FadeOutDuration }
+                    }
+                );
+
+                audioGraphContainer.EchoEffectDefinition = new EchoEffectDefinition(audioGraphContainer.AudioGraph)
                 {
-                    { "IsFadeInEnabled", false },
-                    { "IsFadeOutEnabled", false },
-                    { "FadeInDuration", FadeInDuration },
-                    { "FadeOutDuration", FadeOutDuration }
-                }
-            );
+                    Delay = echoDelay,
+                    WetDryMix = 0.7f,
+                    Feedback = 0.5f
+                };
 
-            echoEffectDefinition = new EchoEffectDefinition(AudioGraph)
-            {
-                Delay = echoDelay,
-                WetDryMix = 0.7f,
-                Feedback = 0.5f
-            };
-
-            limiterEffectDefinition = new LimiterEffectDefinition(AudioGraph)
-            {
-                Loudness = (uint)limiterLoudness,
-                Release = 10
-            };
-
-            reverbEffectDefinition = new ReverbEffectDefinition(AudioGraph)
-            {
-                WetDryMix = 50,
-                ReflectionsDelay = 120,
-                ReverbDelay = 30,
-                RearDelay = 3,
-                DecayTime = reverbDecay
-            };
-
-            pitchShiftEffectDefinition = new AudioEffectDefinition(
-                typeof(PitchShiftAudioEffect).FullName,
-                new PropertySet
+                audioGraphContainer.LimiterEffectDefinition = new LimiterEffectDefinition(audioGraphContainer.AudioGraph)
                 {
-                    { "Pitch", (float)(pitchShiftFactor / playbackRate) }
-                }
-            );
+                    Loudness = (uint)limiterLoudness,
+                    Release = 10
+                };
+
+                audioGraphContainer.ReverbEffectDefinition = new ReverbEffectDefinition(audioGraphContainer.AudioGraph)
+                {
+                    WetDryMix = 50,
+                    ReflectionsDelay = 120,
+                    ReverbDelay = 30,
+                    RearDelay = 3,
+                    DecayTime = reverbDecay
+                };
+
+                audioGraphContainer.PitchShiftEffectDefinition = new AudioEffectDefinition(
+                    typeof(PitchShiftAudioEffect).FullName,
+                    new PropertySet
+                    {
+                        { "Pitch", (float)(pitchShiftFactor / playbackRate) }
+                    }
+                );
+            }
         }
         #endregion
 
         #region Fade in effect
         private void EnableFadeInEffect()
         {
-            if (FileInputNode == null || fadeEffectDefinition == null)
-                return;
-
-            fadeEffectDefinition.Properties["IsFadeInEnabled"] = true;
-            fadeEffectDefinition.Properties["IsFadeOutEnabled"] = false;
-
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.EnableEffectsByDefinition(fadeEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.FadeEffectDefinition == null
+                ) return;
+
+                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeInEnabled"] = true;
+                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeOutEnabled"] = false;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.EnableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
 
         private void DisableFadeInEffect()
         {
-            if (FileInputNode == null || fadeEffectDefinition == null)
-                return;
-
-            fadeEffectDefinition.Properties["IsFadeInEnabled"] = false;
-
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.DisableEffectsByDefinition(fadeEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.FadeEffectDefinition == null
+                ) return;
+
+                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeInEnabled"] = false;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
         #endregion
 
         #region Fade out effect
         private void EnableFadeOutEffect()
         {
-            if (FileInputNode == null || fadeEffectDefinition == null)
-                return;
-
-            fadeEffectDefinition.Properties["IsFadeInEnabled"] = false;
-            fadeEffectDefinition.Properties["IsFadeOutEnabled"] = true;
-
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.EnableEffectsByDefinition(fadeEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.FadeEffectDefinition == null
+                ) return;
+
+                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeInEnabled"] = false;
+                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeOutEnabled"] = true;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.EnableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
 
         private void DisableFadeOutEffect()
         {
-            if (FileInputNode == null || fadeEffectDefinition == null)
-                return;
-
-            fadeEffectDefinition.Properties["IsFadeOutEnabled"] = false;
-
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.DisableEffectsByDefinition(fadeEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.FadeEffectDefinition == null
+                ) return;
+
+                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeOutEnabled"] = false;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
         #endregion
 
         #region Echo effect
         private void EnableEchoEffect()
         {
-            if (FileInputNode == null || echoEffectDefinition == null)
-                return;
-
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.EnableEffectsByDefinition(echoEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.EchoEffectDefinition == null
+                ) return;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.EnableEffectsByDefinition(audioGraphContainer.EchoEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
 
         private void DisableEchoEffect()
         {
-            if (FileInputNode == null || echoEffectDefinition == null)
-                return;
-
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.DisableEffectsByDefinition(echoEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.EchoEffectDefinition == null
+                ) return;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.EchoEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
         #endregion
 
         #region Limiter effect
         private void EnableLimiterEffect()
         {
-            if (FileInputNode == null || limiterEffectDefinition == null)
-                return;
-
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.EnableEffectsByDefinition(limiterEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.LimiterEffectDefinition == null
+                ) return;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.EnableEffectsByDefinition(audioGraphContainer.LimiterEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
 
         private void DisableLimiterEffect()
         {
-            if (FileInputNode == null || limiterEffectDefinition == null)
-                return;
-            
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.DisableEffectsByDefinition(limiterEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.LimiterEffectDefinition == null
+                ) return;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.LimiterEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
         #endregion
 
         #region Reverb effect
         private void EnableReverbEffect()
         {
-            if (FileInputNode == null || reverbEffectDefinition == null)
-                return;
-
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.EnableEffectsByDefinition(reverbEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.ReverbEffectDefinition == null
+                ) return;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.EnableEffectsByDefinition(audioGraphContainer.ReverbEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
 
         private void DisableReverbEffect()
         {
-            if (FileInputNode == null || reverbEffectDefinition == null)
-                return;
-
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.DisableEffectsByDefinition(reverbEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.ReverbEffectDefinition == null
+                ) return;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.ReverbEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
         #endregion
 
         #region Pitch shift effect
         private void EnablePitchShiftEffect()
         {
-            if (FileInputNode == null || pitchShiftEffectDefinition == null)
-                return;
-
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.EnableEffectsByDefinition(pitchShiftEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.PitchShiftEffectDefinition == null
+                ) return;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.EnableEffectsByDefinition(audioGraphContainer.PitchShiftEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
 
         private void DisablePitchShiftEffect()
         {
-            if (FileInputNode == null || pitchShiftEffectDefinition == null)
-                return;
-
-            try
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                FileInputNode.DisableEffectsByDefinition(pitchShiftEffectDefinition);
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || audioGraphContainer.PitchShiftEffectDefinition == null
+                ) return;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.PitchShiftEffectDefinition);
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
         }
 
         private void UpdatePitchShiftEffect()
         {
-            if (pitchShiftEffectDefinition == null) return;
-
             if (!IsPitchShiftEnabled && playbackRate == 1)
             {
                 DisablePitchShiftEffect();
@@ -591,7 +671,9 @@ namespace UniversalSoundboard.Models
                 double pitch = pitchShiftFactor;
                 if (!isPitchShiftEnabled) pitch = 1;
 
-                pitchShiftEffectDefinition.Properties["Pitch"] = (float)(pitch / playbackRate);
+                foreach (var audioGraphContainer in AudioGraphContainers)
+                    audioGraphContainer.PitchShiftEffectDefinition.Properties["Pitch"] = (float)(pitch / playbackRate);
+
                 EnablePitchShiftEffect();
             }
         }
@@ -607,20 +689,18 @@ namespace UniversalSoundboard.Models
             audioFileChanged = true;
         }
 
-        private void setOutputDevice(DeviceInformation value)
-        {
-            if (outputDevice == value) return;
-
-            outputDevice = value;
-            outputDeviceChanged = true;
-        }
-
         private void setPosition(TimeSpan value)
         {
-            if (FileInputNode != null && value > FileInputNode.Duration)
-                return;
+            foreach (var audioGraphContainer in AudioGraphContainers)
+            {
+                if (
+                    audioGraphContainer.FileInputNode == null
+                    || value > audioGraphContainer.FileInputNode.Duration
+                ) continue;
+
+                audioGraphContainer.FileInputNode.Seek(value);
+            }
             
-            FileInputNode?.Seek(value);
             position = value;
             DisableFadeInEffect();
         }
@@ -635,8 +715,9 @@ namespace UniversalSoundboard.Models
             else if (value < 0)
                 value = 0;
 
-            if (FileInputNode != null)
-                FileInputNode.OutgoingGain = value;
+            foreach (var audioGraphContainer in AudioGraphContainers)
+                if (audioGraphContainer.FileInputNode != null)
+                    audioGraphContainer.FileInputNode.OutgoingGain = value;
 
             volume = value;
         }
@@ -646,12 +727,18 @@ namespace UniversalSoundboard.Models
             // Don't change the value if it didn't change
             if (isMuted.Equals(value)) return;
 
-            if (FileInputNode != null && DeviceOutputNode != null)
+            foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                if (value)
-                    FileInputNode.OutgoingGain = 0;
-                else
-                    FileInputNode.OutgoingGain = volume;
+                if (
+                    audioGraphContainer.FileInputNode != null
+                    && audioGraphContainer.DeviceOutputNode != null
+                )
+                {
+                    if (value)
+                        audioGraphContainer.FileInputNode.OutgoingGain = 0;
+                    else
+                        audioGraphContainer.FileInputNode.OutgoingGain = volume;
+                }
             }
 
             isMuted = value;
@@ -664,10 +751,10 @@ namespace UniversalSoundboard.Models
 
             playbackRate = value;
 
-            if (FileInputNode == null)
-                return;
+            foreach (var audioGraphContainer in AudioGraphContainers)
+                if (audioGraphContainer.FileInputNode != null)
+                    audioGraphContainer.FileInputNode.PlaybackSpeedFactor = value;
 
-            FileInputNode.PlaybackSpeedFactor = value;
             UpdatePitchShiftEffect();
         }
 
@@ -688,8 +775,9 @@ namespace UniversalSoundboard.Models
 
             fadeInDuration = value;
 
-            if (fadeEffectDefinition != null)
-                fadeEffectDefinition.Properties["FadeInDuration"] = value;
+            foreach (var audioGraphContainer in AudioGraphContainers)
+                if (audioGraphContainer.FadeEffectDefinition != null)
+                    audioGraphContainer.FadeEffectDefinition.Properties["FadeInDuration"] = value;
         }
 
         private void setIsFadeOutEnabled(bool value)
@@ -709,8 +797,9 @@ namespace UniversalSoundboard.Models
 
             fadeOutDuration = value;
 
-            if (fadeEffectDefinition != null)
-                fadeEffectDefinition.Properties["FadeOutDuration"] = value;
+            foreach (var audioGraphContainer in AudioGraphContainers)
+                if (audioGraphContainer.FadeEffectDefinition != null)
+                    audioGraphContainer.FadeEffectDefinition.Properties["FadeOutDuration"] = value;
         }
 
         private void setIsEchoEnabled(bool value)
@@ -733,8 +822,9 @@ namespace UniversalSoundboard.Models
 
             echoDelay = value;
 
-            if (echoEffectDefinition != null)
-                echoEffectDefinition.Delay = value;
+            foreach (var audioGraphContainer in AudioGraphContainers)
+                if (audioGraphContainer.EchoEffectDefinition != null)
+                    audioGraphContainer.EchoEffectDefinition.Delay = value;
         }
 
         private void setIsLimiterEnabled(bool value)
@@ -757,8 +847,9 @@ namespace UniversalSoundboard.Models
 
             limiterLoudness = value;
 
-            if (limiterEffectDefinition != null)
-                limiterEffectDefinition.Loudness = (uint)value;
+            foreach (var audioGraphContainer in AudioGraphContainers)
+                if (audioGraphContainer.LimiterEffectDefinition != null)
+                    audioGraphContainer.LimiterEffectDefinition.Loudness = (uint)value;
         }
 
         private void setIsReverbEnabled(bool value)
@@ -781,8 +872,9 @@ namespace UniversalSoundboard.Models
 
             reverbDecay = value;
 
-            if (reverbEffectDefinition != null)
-                reverbEffectDefinition.DecayTime = value;
+            foreach (var audioGraphContainer in AudioGraphContainers)
+                if (audioGraphContainer.ReverbEffectDefinition != null)
+                    audioGraphContainer.ReverbEffectDefinition.DecayTime = value;
         }
 
         private void setIsPitchShiftEnabled(bool value)
@@ -810,6 +902,11 @@ namespace UniversalSoundboard.Models
         private void FileInputNode_FileCompleted(AudioFileInputNode sender, object args)
         {
             MediaEnded?.Invoke(this, new EventArgs());
+        }
+
+        private void OutputDevices_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            outputDevicesChanged = true;
         }
         #endregion
     }
