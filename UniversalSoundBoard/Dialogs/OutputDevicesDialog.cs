@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Pages;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using WinUI = Microsoft.UI.Xaml.Controls;
@@ -55,9 +56,12 @@ namespace UniversalSoundboard.Dialogs
             LoadDevices();
         }
 
-        private void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
+        private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
         {
-            LoadDevices();
+            await MainPage.dispatcher.RunAsync(Windows.UI.Core.CoreDispatcherPriority.Normal, () =>
+            {
+                LoadDevices();
+            });
         }
 
         private void LoadDevices()
@@ -66,17 +70,6 @@ namespace UniversalSoundboard.Dialogs
 
             if (FileManager.itemViewHolder.MultipleOutputDevices)
             {
-                var standardOutputDeviceCheckbox = new CheckBox
-                {
-                    Content = FileManager.loader.GetString("StandardOutputDevice"),
-                    IsChecked = FileManager.itemViewHolder.UseStandardOutputDevice
-                };
-
-                standardOutputDeviceCheckbox.Checked += StandardOutputDeviceCheckbox_Checked;
-                standardOutputDeviceCheckbox.Unchecked += StandardOutputDeviceCheckbox_Unchecked;
-
-                devicesStackPanel.Children.Add(standardOutputDeviceCheckbox);
-
                 foreach (var device in FileManager.deviceWatcherHelper.Devices)
                 {
                     var outputDeviceCheckbox = new CheckBox
@@ -126,16 +119,6 @@ namespace UniversalSoundboard.Dialogs
 
                 devicesStackPanel.Children.Add(radioButtons);
             }
-        }
-
-        private void StandardOutputDeviceCheckbox_Checked(object sender, RoutedEventArgs e)
-        {
-            FileManager.itemViewHolder.UseStandardOutputDevice = true;
-        }
-
-        private void StandardOutputDeviceCheckbox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            FileManager.itemViewHolder.UseStandardOutputDevice = false;
         }
 
         private void OutputDeviceCheckbox_Checked(object sender, RoutedEventArgs e)
