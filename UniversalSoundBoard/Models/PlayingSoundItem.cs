@@ -1078,7 +1078,10 @@ namespace UniversalSoundboard.Models
             {
                 deviceIds.Add(PlayingSound.OutputDevice);
             }
-            else if (!FileManager.itemViewHolder.UseStandardOutputDevice)
+            else if (
+                !FileManager.itemViewHolder.UseStandardOutputDevice
+                || FileManager.itemViewHolder.MultipleOutputDevices
+            )
             {
                 foreach (string deviceId in FileManager.itemViewHolder.OutputDevice.Split(","))
                     deviceIds.Add(deviceId);

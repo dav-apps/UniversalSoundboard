@@ -219,32 +219,23 @@ namespace UniversalSoundboard.Models
             try
             {
                 foreach (var audioGraphContainer in AudioGraphContainers)
+                {
                     audioGraphContainer.AudioGraph.Stop();
+                    audioGraphContainer.AudioGraph.Dispose();
+                }
             }
             catch (Exception e)
             {
                 Crashes.TrackError(e);
             }
 
-            // Create an AudioGraph for each output device
-            foreach (var outputDevice in OutputDevices)
-            {
-                var settings = new AudioGraphSettings(AudioRenderCategory.Media)
-                {
-                    PrimaryRenderDevice = outputDevice
-                };
+            AudioGraphContainers.Clear();
 
-                var createAudioGraphResult = await AudioGraph.CreateAsync(settings);
-
-                if (createAudioGraphResult.Status != AudioGraphCreationStatus.Success)
-                {
-                    isInitializing = false;
-                    throw new AudioGraphInitException(createAudioGraphResult.Status);
-                }
-
-                createAudioGraphResult.Graph.UnrecoverableErrorOccurred += AudioGraph_UnrecoverableErrorOccurred;
-                AudioGraphContainers.Add(new AudioGraphContainer(createAudioGraphResult.Graph));
-            }
+            if (OutputDevices.Count > 0)
+                foreach (var outputDevice in OutputDevices)
+                    AudioGraphContainers.Add(new AudioGraphContainer(await CreateAudioGraph(outputDevice)));
+            else
+                AudioGraphContainers.Add(new AudioGraphContainer(await CreateAudioGraph(null)));
         }
 
         private async Task InitFileInputNodes()
@@ -907,6 +898,27 @@ namespace UniversalSoundboard.Models
         private void OutputDevices_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             outputDevicesChanged = true;
+        }
+        #endregion
+
+        #region Utility methods
+        private async Task<AudioGraph> CreateAudioGraph(DeviceInformation outputDevice)
+        {
+            var settings = new AudioGraphSettings(AudioRenderCategory.Media)
+            {
+                PrimaryRenderDevice = outputDevice
+            };
+
+            var createAudioGraphResult = await AudioGraph.CreateAsync(settings);
+
+            if (createAudioGraphResult.Status != AudioGraphCreationStatus.Success)
+            {
+                isInitializing = false;
+                throw new AudioGraphInitException(createAudioGraphResult.Status);
+            }
+
+            createAudioGraphResult.Graph.UnrecoverableErrorOccurred += AudioGraph_UnrecoverableErrorOccurred;
+            return createAudioGraphResult.Graph;
         }
         #endregion
     }
