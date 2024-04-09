@@ -12,6 +12,7 @@ namespace UniversalSoundboard.Dialogs
     public class OutputDevicesDialog : Dialog
     {
         private StackPanel devicesStackPanel;
+        private List<CheckBox> outputDeviceCheckboxes = new List<CheckBox>();
 
         public OutputDevicesDialog()
             : base(
@@ -30,7 +31,7 @@ namespace UniversalSoundboard.Dialogs
 
             ToggleSwitch multipleOutputDevicesToggle = new ToggleSwitch
             {
-                Header = "Erlaube mehrere Ausgabegeräte",
+                Header = FileManager.loader.GetString("OutputDevicesDialog-AllowMultipleOutputDevices"),
                 IsOn = FileManager.itemViewHolder.MultipleOutputDevices
             };
 
@@ -67,6 +68,7 @@ namespace UniversalSoundboard.Dialogs
         private void LoadDevices()
         {
             devicesStackPanel.Children.Clear();
+            outputDeviceCheckboxes.Clear();
 
             if (FileManager.itemViewHolder.MultipleOutputDevices)
             {
@@ -82,8 +84,11 @@ namespace UniversalSoundboard.Dialogs
                     outputDeviceCheckbox.Checked += OutputDeviceCheckbox_Checked;
                     outputDeviceCheckbox.Unchecked += OutputDeviceCheckbox_Unchecked;
 
+                    outputDeviceCheckboxes.Add(outputDeviceCheckbox);
                     devicesStackPanel.Children.Add(outputDeviceCheckbox);
                 }
+
+                UpdateOutputDeviceCheckboxes();
             }
             else
             {
@@ -121,6 +126,33 @@ namespace UniversalSoundboard.Dialogs
             }
         }
 
+        private void UpdateOutputDeviceCheckboxes()
+        {
+            int checkedItems = 0;
+
+            foreach (var checkbox in outputDeviceCheckboxes)
+                if (checkbox.IsChecked.Value) checkedItems++;
+
+            if (checkedItems == 1)
+            {
+                // Disable the single checked checkbox
+                foreach (var checkbox in outputDeviceCheckboxes)
+                {
+                    if (checkbox.IsChecked.Value)
+                    {
+                        checkbox.IsEnabled = false;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                // Enable all checkboxes
+                foreach (var checkbox in outputDeviceCheckboxes)
+                    checkbox.IsEnabled = true;
+            }
+        }
+
         private void OutputDeviceCheckbox_Checked(object sender, RoutedEventArgs e)
         {
             CheckBox checkbox = sender as CheckBox;
@@ -131,6 +163,8 @@ namespace UniversalSoundboard.Dialogs
             List<string> deviceIds = FileManager.itemViewHolder.OutputDevice.Split(",").ToList();
             deviceIds.Add(deviceId);
             FileManager.itemViewHolder.OutputDevice = string.Join(",", deviceIds);
+
+            UpdateOutputDeviceCheckboxes();
         }
 
         private void OutputDeviceCheckbox_Unchecked(object sender, RoutedEventArgs e)
@@ -142,6 +176,8 @@ namespace UniversalSoundboard.Dialogs
 
             string[] deviceIds = FileManager.itemViewHolder.OutputDevice.Split(",");
             FileManager.itemViewHolder.OutputDevice = string.Join(",", deviceIds.Where(id => id != deviceId).ToArray());
+
+            UpdateOutputDeviceCheckboxes();
         }
 
         private void StandardOutputDeviceRadioButton_Checked(object sender, RoutedEventArgs e)

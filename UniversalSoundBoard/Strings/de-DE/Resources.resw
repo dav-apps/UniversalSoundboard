@@ -1318,4 +1318,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="OutputDevicesDialog-Title" xml:space="preserve">
     <value>Ausgabegeräte</value>
   </data>
+  <data name="OutputDevicesDialog-AllowMultipleOutputDevices" xml:space="preserve">
+    <value>Erlaube mehrere Ausgabegeräte</value>
+  </data>
 </root>
