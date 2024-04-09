@@ -206,6 +206,7 @@ namespace UniversalSoundboard.Models
                     break;
                 case ItemViewHolder.UseStandardOutputDeviceKey:
                 case ItemViewHolder.OutputDeviceKey:
+                case ItemViewHolder.MultipleOutputDevicesKey:
                     await UpdateOutputDevice();
                     break;
                 case ItemViewHolder.IsEchoEffectEnabledKey:

@@ -215,6 +215,12 @@ namespace UniversalSoundboard.Models
 
         private async Task InitAudioGraph()
         {
+            // Save the current position
+            var currentPosition = AudioGraphContainers.FirstOrDefault()?.FileInputNode?.Position;
+
+            if (currentPosition.HasValue)
+                position = currentPosition.Value;
+
             // Stop all AudioGraphs
             try
             {
@@ -241,10 +247,7 @@ namespace UniversalSoundboard.Models
         private async Task InitFileInputNodes()
         {
             foreach (var audioGraphContainer in AudioGraphContainers)
-                if (audioGraphContainer.FileInputNode != null)
-                    audioGraphContainer.FileInputNode.Stop();
-
-            var oldPosition = AudioGraphContainers.FirstOrDefault()?.FileInputNode?.Position;
+                audioGraphContainer.FileInputNode?.Stop();
 
             foreach (var audioGraphContainer in AudioGraphContainers)
             {
@@ -259,10 +262,7 @@ namespace UniversalSoundboard.Models
                 audioGraphContainer.FileInputNode?.Dispose();
                 audioGraphContainer.FileInputNode = inputNodeResult.FileInputNode;
 
-                if (oldPosition.HasValue)
-                    audioGraphContainer.FileInputNode.Seek(oldPosition.Value);
-                else
-                    audioGraphContainer.FileInputNode.Seek(position);
+                audioGraphContainer.FileInputNode.Seek(position);
 
                 if (isMuted)
                     audioGraphContainer.FileInputNode.OutgoingGain = 0;
