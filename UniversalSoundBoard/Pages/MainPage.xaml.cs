@@ -701,20 +701,33 @@ namespace UniversalSoundboard.Pages
         private void AppStartTracking()
         {
             int numberOfSounds = FileManager.itemViewHolder.AllSounds.Count;
-            string numberOfSoundsCategory = "> 200";
+            string numberOfSoundsArea = ">= 200";
 
             if (numberOfSounds < 50)
-                numberOfSoundsCategory = "0 - 49";
+                numberOfSoundsArea = "0 - 49";
             else if (numberOfSounds < 100)
-                numberOfSoundsCategory = "50 - 99";
+                numberOfSoundsArea = "50 - 99";
             else if (numberOfSounds < 150)
-                numberOfSoundsCategory = "100 - 149";
+                numberOfSoundsArea = "100 - 149";
             else if (numberOfSounds < 200)
-                numberOfSoundsCategory = "150 - 199";
+                numberOfSoundsArea = "150 - 199";
+
+            int numberOfCategories = FileManager.itemViewHolder.Categories.Count - 1;
+            string numberOfCategoriesArea = ">= 20";
+
+            if (numberOfCategories < 5)
+                numberOfCategoriesArea = "0 - 4";
+            else if (numberOfCategories < 10)
+                numberOfCategoriesArea = "5 - 9";
+            else if (numberOfCategories < 15)
+                numberOfCategoriesArea = "10 - 14";
+            else if (numberOfCategories < 20)
+                numberOfCategoriesArea = "15 - 19";
 
             var appStartDict = new Dictionary<string, string>
             {
-                { "Number of sounds", numberOfSoundsCategory },
+                { "Number of sounds", numberOfSoundsArea },
+                { "Number of categories", numberOfCategoriesArea },
                 { "Screen resolution", $"{screenWidth}x{screenHeight}" },
                 { "savePlayingSounds", FileManager.itemViewHolder.SavePlayingSounds.ToString() },
                 { "openMultipleSounds", FileManager.itemViewHolder.OpenMultipleSounds.ToString() },
