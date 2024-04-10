@@ -128,6 +128,7 @@ namespace UniversalSoundboard.Pages
             await ContinuePlaylistDownload();
             await FileManager.StartHotkeyProcess();
             await LoadPlusInfo();
+            AppStartTracking();
             await Dav.SyncData();
         }
 
@@ -415,31 +416,6 @@ namespace UniversalSoundboard.Pages
                     ErrorAttachmentLog.AttachmentWithText(settings, "settings.txt")
                 };
             };
-
-            var appStartDict = new Dictionary<string, string>
-            {
-                { "Screen resolution", $"{screenWidth}x{screenHeight}" },
-                { "savePlayingSounds", FileManager.itemViewHolder.SavePlayingSounds.ToString() },
-                { "openMultipleSounds", FileManager.itemViewHolder.OpenMultipleSounds.ToString() },
-                { "multiSoundPlayback", FileManager.itemViewHolder.MultiSoundPlayback.ToString() },
-                { "showSoundsPivot", FileManager.itemViewHolder.ShowSoundsPivot.ToString() },
-                { "soundOrder", FileManager.itemViewHolder.SoundOrder.ToString() },
-                { "showListView", FileManager.itemViewHolder.ShowListView.ToString() },
-                { "showCategoriesIcons", FileManager.itemViewHolder.ShowCategoriesIcons.ToString() },
-                { "showAcrylicBackground", FileManager.itemViewHolder.ShowAcrylicBackground.ToString() },
-                { "isLoggedIn", Dav.IsLoggedIn.ToString() },
-                { "isFadeInEffectEnabled", FileManager.itemViewHolder.IsFadeInEffectEnabled.ToString() },
-                { "isFadeOutEffectEnabled", FileManager.itemViewHolder.IsFadeOutEffectEnabled.ToString() },
-                { "isEchoEffectEnabled", FileManager.itemViewHolder.IsEchoEffectEnabled.ToString() },
-                { "isLimiterEffectEnabled", FileManager.itemViewHolder.IsLimiterEffectEnabled.ToString() },
-                { "isReverbEffectEnabled", FileManager.itemViewHolder.IsReverbEffectEnabled.ToString() },
-                { "isPitchShiftEffectEnabled", FileManager.itemViewHolder.IsPitchShiftEffectEnabled.ToString() }
-            };
-
-            if (Dav.IsLoggedIn)
-                appStartDict.Add("plan", Dav.User.Plan.ToString());
-
-            Analytics.TrackEvent("AppStart", appStartDict);
         }
 
         private void CustomiseTitleBar()
@@ -720,6 +696,47 @@ namespace UniversalSoundboard.Pages
                 this,
                 showInAppNotificationEventArgs
             );
+        }
+
+        private void AppStartTracking()
+        {
+            int numberOfSounds = FileManager.itemViewHolder.AllSounds.Count;
+            string numberOfSoundsCategory = "> 200";
+
+            if (numberOfSounds < 50)
+                numberOfSoundsCategory = "0 - 49";
+            else if (numberOfSounds < 100)
+                numberOfSoundsCategory = "50 - 99";
+            else if (numberOfSounds < 150)
+                numberOfSoundsCategory = "100 - 149";
+            else if (numberOfSounds < 200)
+                numberOfSoundsCategory = "150 - 199";
+
+            var appStartDict = new Dictionary<string, string>
+            {
+                { "Number of sounds", numberOfSoundsCategory },
+                { "Screen resolution", $"{screenWidth}x{screenHeight}" },
+                { "savePlayingSounds", FileManager.itemViewHolder.SavePlayingSounds.ToString() },
+                { "openMultipleSounds", FileManager.itemViewHolder.OpenMultipleSounds.ToString() },
+                { "multiSoundPlayback", FileManager.itemViewHolder.MultiSoundPlayback.ToString() },
+                { "showSoundsPivot", FileManager.itemViewHolder.ShowSoundsPivot.ToString() },
+                { "soundOrder", FileManager.itemViewHolder.SoundOrder.ToString() },
+                { "showListView", FileManager.itemViewHolder.ShowListView.ToString() },
+                { "showCategoriesIcons", FileManager.itemViewHolder.ShowCategoriesIcons.ToString() },
+                { "showAcrylicBackground", FileManager.itemViewHolder.ShowAcrylicBackground.ToString() },
+                { "isLoggedIn", Dav.IsLoggedIn.ToString() },
+                { "isFadeInEffectEnabled", FileManager.itemViewHolder.IsFadeInEffectEnabled.ToString() },
+                { "isFadeOutEffectEnabled", FileManager.itemViewHolder.IsFadeOutEffectEnabled.ToString() },
+                { "isEchoEffectEnabled", FileManager.itemViewHolder.IsEchoEffectEnabled.ToString() },
+                { "isLimiterEffectEnabled", FileManager.itemViewHolder.IsLimiterEffectEnabled.ToString() },
+                { "isReverbEffectEnabled", FileManager.itemViewHolder.IsReverbEffectEnabled.ToString() },
+                { "isPitchShiftEffectEnabled", FileManager.itemViewHolder.IsPitchShiftEffectEnabled.ToString() }
+            };
+
+            if (Dav.IsLoggedIn)
+                appStartDict.Add("plan", Dav.User.Plan.ToString());
+
+            Analytics.TrackEvent("AppStart", appStartDict);
         }
 
         private async Task LoadPlusInfo()
