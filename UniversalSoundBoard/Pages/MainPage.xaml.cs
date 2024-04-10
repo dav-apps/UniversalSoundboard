@@ -737,6 +737,7 @@ namespace UniversalSoundboard.Pages
                 { "showListView", FileManager.itemViewHolder.ShowListView.ToString() },
                 { "showCategoriesIcons", FileManager.itemViewHolder.ShowCategoriesIcons.ToString() },
                 { "showAcrylicBackground", FileManager.itemViewHolder.ShowAcrylicBackground.ToString() },
+                { "multipleOutputDevices", FileManager.itemViewHolder.MultipleOutputDevices.ToString() },
                 { "isLoggedIn", Dav.IsLoggedIn.ToString() },
                 { "isFadeInEffectEnabled", FileManager.itemViewHolder.IsFadeInEffectEnabled.ToString() },
                 { "isFadeOutEffectEnabled", FileManager.itemViewHolder.IsFadeOutEffectEnabled.ToString() },

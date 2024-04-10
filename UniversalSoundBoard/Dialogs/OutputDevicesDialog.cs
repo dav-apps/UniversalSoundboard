@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Analytics;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using UniversalSoundboard.DataAccess;
@@ -55,6 +56,11 @@ namespace UniversalSoundboard.Dialogs
         {
             FileManager.itemViewHolder.MultipleOutputDevices = (sender as ToggleSwitch).IsOn;
             LoadDevices();
+
+            if (FileManager.itemViewHolder.MultipleOutputDevices)
+                Analytics.TrackEvent("OutputDevicesDialog-MultipleOutputDevices-Enabled");
+            else
+                Analytics.TrackEvent("OutputDevicesDialog-MultipleOutputDevices-Disabled");
         }
 
         private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
@@ -165,6 +171,8 @@ namespace UniversalSoundboard.Dialogs
             FileManager.itemViewHolder.OutputDevice = string.Join(",", deviceIds);
 
             UpdateOutputDeviceCheckboxes();
+
+            Analytics.TrackEvent("OutputDevicesDialog-OutputDeviceCheckbox-Checked");
         }
 
         private void OutputDeviceCheckbox_Unchecked(object sender, RoutedEventArgs e)
@@ -178,11 +186,15 @@ namespace UniversalSoundboard.Dialogs
             FileManager.itemViewHolder.OutputDevice = string.Join(",", deviceIds.Where(id => id != deviceId).ToArray());
 
             UpdateOutputDeviceCheckboxes();
+
+            Analytics.TrackEvent("OutputDevicesDialog-OutputDeviceCheckbox-Unchecked");
         }
 
         private void StandardOutputDeviceRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             FileManager.itemViewHolder.UseStandardOutputDevice = true;
+
+            Analytics.TrackEvent("OutputDevicesDialog-StandardOutputDeviceRadioButton-Checked");
         }
 
         private void OutputDeviceRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -192,6 +204,8 @@ namespace UniversalSoundboard.Dialogs
 
             FileManager.itemViewHolder.UseStandardOutputDevice = false;
             FileManager.itemViewHolder.OutputDevice = deviceId;
+
+            Analytics.TrackEvent("OutputDevicesDialog-OutputDeviceRadioButton-Checked");
         }
     }
 }
