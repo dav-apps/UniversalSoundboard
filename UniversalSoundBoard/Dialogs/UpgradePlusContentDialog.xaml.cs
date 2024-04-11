@@ -15,6 +15,7 @@ namespace UniversalSoundboard.Dialogs
 {
     public sealed partial class UpgradePlusContentDialog : ContentDialog
     {
+        private bool loginSuccessful = false;
         string price = "";
 
         public event EventHandler<EventArgs> UpgradePlusSucceeded;
@@ -36,6 +37,8 @@ namespace UniversalSoundboard.Dialogs
 
         private async void ItemViewHolder_UserSyncFinished(object sender, EventArgs e)
         {
+            if (!loginSuccessful) return;
+
             if (Dav.User.Plan == 0)
                 await NavigateToCheckout();
             else
@@ -65,7 +68,7 @@ namespace UniversalSoundboard.Dialogs
         {
             if (!Dav.IsLoggedIn)
             {
-                await AccountPage.ShowLoginPage();
+                loginSuccessful = await AccountPage.ShowLoginPage();
             }
             else if (Dav.User.Plan == 0)
             {
