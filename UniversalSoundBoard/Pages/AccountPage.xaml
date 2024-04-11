@@ -181,12 +181,19 @@
                             <StackPanel Padding="20,12">
                                 <TextBlock
                                     x:Uid="Account-PlusCardFeature-StorageTextBlock"
-                                    Style="{StaticResource PlusCardFeatureTextStyle}" />
+                                    Style="{StaticResource PlusCardFeatureTextStyle}"
+                                    VerticalAlignment="Center" />
                             </StackPanel>
 
-                            <StackPanel Name="PlusCardBorder2" Style="{StaticResource PlusCardBorder}" />
+                            <StackPanel
+                                Name="PlusCardBorder2"
+                                Style="{StaticResource PlusCardBorder}"
+                                Visibility="{x:Bind outputDevicesFeatureVisible, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
-                            <Grid Padding="20,12">
+                            <Grid
+                                Padding="20,12"
+                                Visibility="{x:Bind outputDevicesFeatureVisible, Converter={StaticResource BooleanToVisibilityConverter}}">
+
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*" />
                                     <ColumnDefinition Width="Auto" />
@@ -194,7 +201,8 @@
 
                                 <TextBlock
                                     Style="{StaticResource PlusCardFeatureTextStyle}"
-                                    x:Uid="Account-PlusCardFeature-OutputDeviceTextBlock" />
+                                    x:Uid="Account-PlusCardFeature-OutputDeviceTextBlock"
+                                    VerticalAlignment="Center" />
 
                                 <Button Style="{StaticResource InfoButtonStyle}">
                                     <Button.Flyout>
@@ -230,7 +238,8 @@
 
                                 <TextBlock
                                     x:Uid="Account-PlusCardFeature-HotkeysTextBlock"
-                                    Style="{StaticResource PlusCardFeatureTextStyle}" />
+                                    Style="{StaticResource PlusCardFeatureTextStyle}"
+                                    VerticalAlignment="Center" />
 
                                 <Button Style="{StaticResource InfoButtonStyle}">
                                     <Button.Flyout>
@@ -250,7 +259,8 @@
                             <StackPanel Padding="20,12">
                                 <TextBlock
                                     x:Uid="Account-PlusCardFeature-SupportTextBlock"
-                                    Style="{StaticResource PlusCardFeatureTextStyle}" />
+                                    Style="{StaticResource PlusCardFeatureTextStyle}"
+                                    VerticalAlignment="Center" />
                             </StackPanel>
 
                             <StackPanel Name="PlusCardBorder5" Style="{StaticResource PlusCardBorder}" />

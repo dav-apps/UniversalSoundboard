@@ -23,6 +23,7 @@ namespace UniversalSoundboard.Pages
 {
     public sealed partial class AccountPage : Page
     {
+        bool outputDevicesFeatureVisible = false;
         bool davPlusHotkeyFeatureVisible = false;
 
         public AccountPage()
@@ -120,7 +121,8 @@ namespace UniversalSoundboard.Pages
             LoggedOutContent.Visibility = Dav.IsLoggedIn ? Visibility.Collapsed : Visibility.Visible;
             ManageSubscriptionButton.Visibility = Dav.IsLoggedIn && Dav.User.Plan > 0 ? Visibility.Visible : Visibility.Collapsed;
 
-            davPlusHotkeyFeatureVisible = ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0);
+            outputDevicesFeatureVisible = !FileManager.itemViewHolder.PlusPurchased;
+            davPlusHotkeyFeatureVisible = ApiInformation.IsApiContractPresent("Windows.ApplicationModel.FullTrustAppContract", 1, 0) && !FileManager.itemViewHolder.PlusPurchased;
             Bindings.Update();
         }
 
