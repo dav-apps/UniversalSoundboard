@@ -721,7 +721,7 @@ This may take some time, depending on how large the import file is.</value>
     <value>Use this feature to set the output device for the entire app and for each opened sound separately.</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock2.Text" xml:space="preserve">
-    <value>This also makes it possible to play different sounds on different devices at the same time.</value>
+    <value>In addition, you can play your sounds on multiple output devices at the same time.</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceTextBlock.Text" xml:space="preserve">
     <value>Change the output device</value>

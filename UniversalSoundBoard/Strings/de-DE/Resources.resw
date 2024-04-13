@@ -719,7 +719,7 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
     <value>Mit dieser Funktion kannst du das Ausgabegerät für die gesamte App und separat für einzelne geöffnete Sounds einstellen.</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceFlyoutTextBlock2.Text" xml:space="preserve">
-    <value>Damit ist es auch möglich, unterschiedliche Sounds auf unterschiedlichen Geräten gleichzeitig abzuspielen.</value>
+    <value>Zusätzlich dazu kannst du deine Sounds auf mehreren Ausgabegeräten gleichzeitig abspielen lassen.</value>
   </data>
   <data name="Account-PlusCardFeature-OutputDeviceTextBlock.Text" xml:space="preserve">
     <value>Ändere das Ausgabegerät</value>

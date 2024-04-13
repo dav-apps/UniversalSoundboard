@@ -154,7 +154,7 @@
                             Name="PlusCardStackPanel"
                             RelativePanel.AlignHorizontalCenterWithPanel="True"
                             Visibility="{x:Bind davClassLibrary:Dav.User.Plan, Converter={StaticResource DavPlanFreeVisibilityConverter}}"
-                            Width="300"
+                            Width="330"
                             Margin="0,90,0,0"
                             CornerRadius="4"
                             BorderThickness="1"
@@ -163,7 +163,7 @@
 
                             <StackPanel Orientation="Vertical" Margin="20">
                                 <TextBlock
-                                    Text="dav Plus"
+                                    Text="UniversalSoundboard Plus"
                                     FontSize="24"
                                     HorizontalAlignment="Center" />
 
