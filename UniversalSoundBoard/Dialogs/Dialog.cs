@@ -35,11 +35,14 @@ namespace UniversalSoundboard.Dialogs
             Uuid = Guid.NewGuid();
             ContentDialog = new ContentDialog
             {
-                Tag = Uuid
+                Tag = Uuid,
+                RequestedTheme = FileManager.GetRequestedTheme()
             };
 
             ContentDialog.PrimaryButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => PrimaryButtonClick?.Invoke(this, args);
             ContentDialog.CloseButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => CloseButtonClick?.Invoke(this, args);
+
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
         }
 
         public Dialog(ContentDialog contentDialog, string closeButtonText)
@@ -48,6 +51,9 @@ namespace UniversalSoundboard.Dialogs
             ContentDialog = contentDialog;
             ContentDialog.CloseButtonText = closeButtonText;
             ContentDialog.Tag = Uuid;
+            ContentDialog.RequestedTheme = FileManager.GetRequestedTheme();
+
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
         }
 
         public Dialog(
@@ -66,6 +72,8 @@ namespace UniversalSoundboard.Dialogs
             };
 
             ContentDialog.CloseButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => CloseButtonClick?.Invoke(this, args);
+
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
         }
 
         public Dialog(
@@ -104,6 +112,14 @@ namespace UniversalSoundboard.Dialogs
 
             ContentDialog.PrimaryButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => PrimaryButtonClick?.Invoke(this, args);
             ContentDialog.CloseButtonClick += (ContentDialog sender, ContentDialogButtonClickEventArgs args) => CloseButtonClick?.Invoke(this, args);
+
+            FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
+        }
+
+        private void ItemViewHolder_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs args)
+        {
+            if (args.PropertyName.Equals(ItemViewHolder.CurrentThemeKey))
+                ContentDialog.RequestedTheme = FileManager.GetRequestedTheme();
         }
 
         public async Task ShowAsync(AppWindowType appWindowType = AppWindowType.Main)
