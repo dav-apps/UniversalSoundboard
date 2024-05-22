@@ -548,7 +548,11 @@ namespace UniversalSoundboard.DataAccess
 
         private static async Task CopySoundFileIntoFolderAsync(Sound sound, StorageFolder destinationFolder)
         {
-            if (!File.Exists(sound.AudioFile.Path)) return;
+            if (
+                sound.AudioFile == null
+                || !File.Exists(sound.AudioFile.Path)
+            ) return;
+
             string ext = sound.GetAudioFileExtension();
 
             if (string.IsNullOrEmpty(ext))
