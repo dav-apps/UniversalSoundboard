@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.AppCenter.Analytics;
+using System;
 using UniversalSoundboard.DataAccess;
 
 namespace UniversalSoundboard.Dialogs
@@ -21,6 +22,8 @@ namespace UniversalSoundboard.Dialogs
         {
             UpgradePlusSucceeded?.Invoke(this, e);
             Hide();
+
+            Analytics.TrackEvent("UpgradePlusDialog-UpgradePlus");
         }
     }
 }

@@ -1,6 +1,8 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Controllers;
+using Microsoft.AppCenter.Analytics;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
@@ -59,13 +61,23 @@ namespace UniversalSoundboard.Dialogs
         {
             var context = StoreContext.GetDefault();
             StorePurchaseResult result = await context.RequestPurchaseAsync(Constants.UniversalSoundboardPlusAddonStoreId);
-            
+
+            Analytics.TrackEvent("UpgradePlusDialog-PurchasePlus", new Dictionary<string, string>
+            {
+                { "succeeded", (result.Status == StorePurchaseStatus.Succeeded).ToString() }
+            });
+
             if (result.Status == StorePurchaseStatus.Succeeded)
                 UpgradePlusSucceeded?.Invoke(this, new EventArgs());
         }
 
         private async void DavPlusButton_Click(object sender, RoutedEventArgs e)
         {
+            Analytics.TrackEvent("UpgradePlusDialog-UpgradePlusButtonClick", new Dictionary<string, string>
+            {
+                { "isLoggedIn", Dav.IsLoggedIn.ToString() }
+            });
+
             if (!Dav.IsLoggedIn)
             {
                 loginSuccessful = await AccountPage.ShowLoginPage();
