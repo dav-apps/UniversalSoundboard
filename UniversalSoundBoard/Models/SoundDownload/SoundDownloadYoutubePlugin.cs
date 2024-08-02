@@ -1,6 +1,4 @@
-﻿using DotNetTools.SharpGrabber;
-using DotNetTools.SharpGrabber.Grabbed;
-using Google.Apis.YouTube.v3.Data;
+﻿using Google.Apis.YouTube.v3.Data;
 using Microsoft.AppCenter.Crashes;
 using System;
 using System.Collections.Generic;
@@ -10,6 +8,7 @@ using System.Threading.Tasks;
 using System.Web;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
+using YoutubeExplode;
 
 namespace UniversalSoundboard.Models
 {
@@ -36,10 +35,10 @@ namespace UniversalSoundboard.Models
 
         public override async Task<SoundDownloadPluginResult> GetResult()
         {
-            var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
-            GrabResult grabResult;
             string videoId = null;
             string playlistId = null;
+            string title = null;
+            string imageUri = null;
 
             if (IsShortYoutubeUrl(Url))
             {
@@ -59,10 +58,11 @@ namespace UniversalSoundboard.Models
 
             try
             {
-                grabResult = await grabber.GrabAsync(new Uri(youtubeLink));
-
-                if (grabResult == null)
-                    throw new SoundDownloadException();
+                var youtube = new YoutubeClient();
+                var videoResult = await youtube.Videos.GetAsync(youtubeLink);
+                
+                title = videoResult.Title;
+                imageUri = videoResult.Thumbnails.Last().Url;
             }
             catch (Exception e)
             {
@@ -74,17 +74,9 @@ namespace UniversalSoundboard.Models
                 throw new SoundDownloadException();
             }
 
-            string title = grabResult.Title;
-            string imageUri = null;
             string playlistTitle = null;
             bool playlistLoadSuccessful = true;
             List<SoundDownloadItem> soundItems = new List<SoundDownloadItem>();
-
-            var imageResources = grabResult.Resources<GrabbedImage>();
-            GrabbedImage smallThumbnail = imageResources.ToList().Find(image => image.ResourceUri.ToString().Split('/').Last() == "default.jpg");
-
-            if (smallThumbnail != null)
-                imageUri = smallThumbnail.ResourceUri.ToString();
 
             try
             {
@@ -173,7 +165,7 @@ namespace UniversalSoundboard.Models
                 {
                     soundItems.Add(
                         new SoundDownloadYoutubeItem(
-                            grabResult.Title,
+                            title,
                             youtubeLink,
                             youtubeLink,
                             youtubeLink,

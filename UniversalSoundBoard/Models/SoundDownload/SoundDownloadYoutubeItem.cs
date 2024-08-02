@@ -1,20 +1,20 @@
-﻿using DotNetTools.SharpGrabber.Grabbed;
-using DotNetTools.SharpGrabber;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Windows.Storage;
 using System.Threading;
 using UniversalSoundboard.DataAccess;
+using YoutubeExplode;
+using YoutubeExplode.Common;
+using YoutubeExplode.Videos.Streams;
 using Microsoft.AppCenter.Crashes;
-using UniversalSoundboard.Common;
 
 namespace UniversalSoundboard.Models
 {
     public class SoundDownloadYoutubeItem : SoundDownloadItem
     {
-        private GrabResult grabResult;
+        YoutubeClient youtube = new YoutubeClient();
 
         public SoundDownloadYoutubeItem(
             string name,
@@ -40,16 +40,13 @@ namespace UniversalSoundboard.Models
 
         public override async Task<StorageFile> DownloadImageFile()
         {
-            var grabResult = await GrabVideoData();
-            if (grabResult == null) return null;
-
-            var imageResources = grabResult.Resources<GrabbedImage>();
+            var videoResult = await youtube.Videos.GetAsync(AudioFileUrl);
 
             // Create a file in the cache
             StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
             StorageFile targetFile = await cacheFolder.CreateFileAsync("download.jpg", CreationCollisionOption.GenerateUniqueName);
 
-            bool imageDownloaded = await DownloadBestImageOfYoutubeVideo(targetFile, imageResources);
+            bool imageDownloaded = await DownloadBestImageOfYoutubeVideo(targetFile, videoResult.Thumbnails);
 
             if (!imageDownloaded)
                 return null;
@@ -59,155 +56,54 @@ namespace UniversalSoundboard.Models
 
         public override async Task<StorageFile> DownloadAudioFile(IProgress<int> progress, CancellationToken cancellationToken)
         {
-            var grabResult = await GrabVideoData();
-            if (grabResult == null) return null;
-
-            var mediaResources = grabResult.Resources<GrabbedMedia>();
+            var manifest = await youtube.Videos.Streams.GetManifestAsync(AudioFileUrl);
+            var result = manifest.GetAudioOnlyStreams().GetWithHighestBitrate();
 
             // Create a file in the cache
             StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
             StorageFile targetFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
 
-            // Find the audio track with the highest sample rate
-            GrabbedMedia bestAudio = FindBestAudioOfYoutubeVideo(mediaResources);
-
-            if (bestAudio == null)
-                return null;
-
-            bool audioDownloaded = false;
-
-            await Task.Run(async () =>
+            try
             {
-                audioDownloaded = (
-                    await FileManager.DownloadBinaryDataToFile(
-                        targetFile,
-                        bestAudio.ResourceUri,
-                        progress,
-                        cancellationToken
-                    )
-                ).Key;
-            });
-
-            if (!audioDownloaded)
+                await youtube.Videos.Streams.DownloadAsync(
+                    result,
+                    targetFile.Path,
+                    new Progress<double>((double value) => progress.Report((int)(value * 100))),
+                    cancellationToken
+                );
+            }
+            catch (Exception e)
+            {
+                Crashes.TrackError(e);
                 return null;
+            }
 
             return targetFile;
         }
 
-        private async Task<GrabResult> GrabVideoData()
+        private async Task<bool> DownloadBestImageOfYoutubeVideo(StorageFile targetFile, IReadOnlyList<Thumbnail> thumbnails)
         {
-            if (grabResult != null) return grabResult;
+            Thumbnail selectedThumbnail = thumbnails.First();
 
-            var grabber = GrabberBuilder.New().UseDefaultServices().AddYouTube().Build();
-
-            try
+            foreach (var thumbnail in thumbnails)
             {
-                grabResult = await grabber.GrabAsync(new Uri(AudioFileUrl));
-
-                if (grabResult == null)
-                    throw new SoundDownloadException();
-            }
-            catch (Exception e)
-            {
-                Crashes.TrackError(e, new Dictionary<string, string>
-                {
-                    { "YoutubeLink", AudioFileUrl }
-                });
-
-                throw new SoundDownloadException();
+                if (
+                    thumbnail.Resolution.Width > selectedThumbnail.Resolution.Width
+                    && thumbnail.Resolution.Height > selectedThumbnail.Resolution.Height
+                ) selectedThumbnail = thumbnail;
             }
 
-            return grabResult;
-        }
+            var imageFileDownloadResult = await FileManager.DownloadBinaryDataToFile(targetFile, new Uri(selectedThumbnail.Url), null);
 
-        private GrabbedMedia FindBestAudioOfYoutubeVideo(IEnumerable<GrabbedMedia> mediaResources)
-        {
-            GrabbedMedia bestAudio = null;
-
-            foreach (var media in mediaResources)
+            if (!imageFileDownloadResult.Key)
             {
-                if (media.Format.Extension != "m4a") continue;
+                // Try again
+                imageFileDownloadResult = await FileManager.DownloadBinaryDataToFile(targetFile, new Uri(selectedThumbnail.Url), null);
 
-                int? bitrate = media.GetBitRate();
-                if (!bitrate.HasValue) continue;
-
-                if (bestAudio == null || bestAudio.GetBitRate().Value < bitrate.Value)
-                    bestAudio = media;
+                if (!imageFileDownloadResult.Key) return false;
             }
 
-            return bestAudio;
-        }
-
-        private async Task<bool> DownloadBestImageOfYoutubeVideo(StorageFile targetFile, IEnumerable<GrabbedImage> imageResources)
-        {
-            // Find the thumbnail image with the highest resolution
-            List<GrabbedImage> images = new List<GrabbedImage>();
-            GrabbedImage maxresDefaultImage = null;
-            GrabbedImage mqDefaultImage = null;
-            GrabbedImage sdDefaultImage = null;
-            GrabbedImage hqDefaultImage = null;
-            GrabbedImage defaultImage = null;
-
-            foreach (var media in imageResources)
-            {
-                string mediaFileName = media.ResourceUri.ToString().Split('/').Last();
-
-                switch (mediaFileName)
-                {
-                    case "maxresdefault.jpg":
-                        maxresDefaultImage = media;
-                        break;
-                    case "mqdefault.jpg":
-                        mqDefaultImage = media;
-                        break;
-                    case "sddefault.jpg":
-                        sdDefaultImage = media;
-                        break;
-                    case "hqdefault.jpg":
-                        hqDefaultImage = media;
-                        break;
-                    case "default.jpg":
-                        defaultImage = media;
-                        break;
-                }
-            }
-
-            if (maxresDefaultImage != null)
-                images.Add(maxresDefaultImage);
-            if (mqDefaultImage != null)
-                images.Add(mqDefaultImage);
-            if (sdDefaultImage != null)
-                images.Add(sdDefaultImage);
-            if (hqDefaultImage != null)
-                images.Add(hqDefaultImage);
-            if (defaultImage != null)
-                images.Add(defaultImage);
-
-            // Download the thumbnail image
-            GrabbedImage currentImage;
-
-            while (images.Count() > 0)
-            {
-                currentImage = images[0];
-                images.RemoveAt(0);
-
-                var imageFileDownloadResult = await FileManager.DownloadBinaryDataToFile(targetFile, currentImage.ResourceUri, null);
-
-                if (!imageFileDownloadResult.Key)
-                {
-                    if (imageFileDownloadResult.Value == 404)
-                    {
-                        // Try to download the next image in the list
-                        continue;
-                    }
-
-                    return false;
-                }
-
-                return true;
-            }
-
-            return false;
+            return true;
         }
     }
 }
