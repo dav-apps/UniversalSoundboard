@@ -523,8 +523,10 @@ namespace UniversalSoundboard.Models
                     positionChangeTimer.Stop();
                 });
             }
-            catch (AudioIOException)
+            catch (Exception e)
             {
+                Crashes.TrackError(e);
+
                 isPauseRunning = false;
                 return false;
             }
