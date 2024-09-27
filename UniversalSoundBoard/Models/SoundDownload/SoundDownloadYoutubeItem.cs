@@ -56,29 +56,29 @@ namespace UniversalSoundboard.Models
 
         public override async Task<StorageFile> DownloadAudioFile(IProgress<int> progress, CancellationToken cancellationToken)
         {
-            var manifest = await youtube.Videos.Streams.GetManifestAsync(AudioFileUrl);
-            var result = manifest.GetAudioOnlyStreams().GetWithHighestBitrate();
-
-            // Create a file in the cache
-            StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
-            StorageFile targetFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
-
             try
             {
+                var manifest = await youtube.Videos.Streams.GetManifestAsync(AudioFileUrl);
+                var result = manifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+
+                // Create a file in the cache
+                StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
+                StorageFile targetFile = await cacheFolder.CreateFileAsync("download.m4a", CreationCollisionOption.GenerateUniqueName);
+
                 await youtube.Videos.Streams.DownloadAsync(
                     result,
                     targetFile.Path,
                     new Progress<double>((double value) => progress.Report((int)(value * 100))),
                     cancellationToken
                 );
+
+                return targetFile;
             }
             catch (Exception e)
             {
                 Crashes.TrackError(e);
                 return null;
             }
-
-            return targetFile;
         }
 
         private async Task<bool> DownloadBestImageOfYoutubeVideo(StorageFile targetFile, IReadOnlyList<Thumbnail> thumbnails)
