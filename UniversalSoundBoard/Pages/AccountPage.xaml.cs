@@ -1,6 +1,6 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Controllers;
-using Microsoft.AppCenter.Analytics;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
@@ -185,10 +185,13 @@ namespace UniversalSoundboard.Pages
             bool result = await ShowLoginPage();
             UpdateUserLayout();
 
-            Analytics.TrackEvent("LoginButtonClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("LoginButtonClick", scope =>
             {
-                { "Context", "AccountPage" },
-                { "Result", result.ToString() }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "Context", "AccountPage" },
+                    { "Result", result.ToString() }
+                });
             });
         }
 
@@ -207,7 +210,7 @@ namespace UniversalSoundboard.Pages
             // Remove the sounds that are not saved locally
             await FileManager.RemoveNotLocallySavedSoundsAsync();
 
-            Analytics.TrackEvent("AccountPage-Logout");
+            SentrySdk.CaptureMessage("AccountPage-Logout");
         }
 
         private async void SignupButton_Click(object sender, RoutedEventArgs e)
@@ -215,9 +218,9 @@ namespace UniversalSoundboard.Pages
             bool result = await ShowLoginPage(true);
             UpdateUserLayout();
 
-            Analytics.TrackEvent("AccountPage-SignupButtonClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("AccountPage-SignupButtonClick", scope =>
             {
-                { "Result", result.ToString() }
+                scope.SetTag("Result", result.ToString());
             });
         }
 
@@ -242,7 +245,7 @@ namespace UniversalSoundboard.Pages
             PlusCardSelectButton.Margin = new Thickness(32, 0, 0, 0);
             PlusCardSelectButtonProgressRing.Visibility = Visibility.Visible;
 
-            Analytics.TrackEvent("AccountPage-PlusCardSelectButtonClick");
+            SentrySdk.CaptureMessage("AccountPage-PlusCardSelectButtonClick");
 
             var createCheckoutSessionResponse = await CheckoutSessionsController.CreateCheckoutSession(
                 1,
@@ -262,9 +265,9 @@ namespace UniversalSoundboard.Pages
             {
                 if (createCheckoutSessionResponse.Errors.Length > 0)
                 {
-                    Analytics.TrackEvent("AccountPage-PlusCardSelectButtonClick-Error", new Dictionary<string, string>
+                    SentrySdk.CaptureMessage("AccountPage-PlusCardSelectButtonClick-Error", scope =>
                     {
-                        { "ErrorCode", createCheckoutSessionResponse.Errors[0].Code.ToString() }
+                        scope.SetTag("ErrorCode", createCheckoutSessionResponse.Errors[0].Code.ToString());
                     });
                 }
 

@@ -2,7 +2,6 @@
 using davClassLibrary.Models;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
-using Microsoft.AppCenter.Analytics;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.Toolkit.Uwp.UI.Controls;
@@ -3198,7 +3197,7 @@ namespace UniversalSoundboard.DataAccess
             itemViewHolder.PlayAllButtonVisible = false;
             itemViewHolder.BackButtonEnabled = true;
 
-            Analytics.TrackEvent("NavigateToStorePage");
+            SentrySdk.CaptureMessage("NavigateToStorePage");
         }
 
         public static void NavigateToStoreSoundPage(string uuid, string context)
@@ -3209,10 +3208,13 @@ namespace UniversalSoundboard.DataAccess
             itemViewHolder.PlayAllButtonVisible = false;
             itemViewHolder.BackButtonEnabled = true;
 
-            Analytics.TrackEvent("NavigateToStoreSoundPage", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("NavigateToStoreSoundPage", scope =>
             {
-                { "Uuid", uuid },
-                { "Context", context }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "Uuid", uuid },
+                    { "Context", context }
+                });
             });
         }
 
@@ -3226,9 +3228,9 @@ namespace UniversalSoundboard.DataAccess
 
             if (context != null)
             {
-                Analytics.TrackEvent("NavigateToAccountPage", new Dictionary<string, string>
+                SentrySdk.CaptureMessage("NavigateToAccountPage", scope =>
                 {
-                    { "Context", context }
+                    scope.SetTag("Context", context);
                 });
             }
         }
@@ -3329,10 +3331,13 @@ namespace UniversalSoundboard.DataAccess
             bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
             bool purchasedPlus = itemViewHolder.PlusPurchased;
 
-            Analytics.TrackEvent("HotkeyPressed", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("HotkeyPressed", scope =>
             {
-                { "usingPlus", usingPlus.ToString() },
-                { "purchasedPlus", purchasedPlus.ToString() }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "usingPlus", usingPlus.ToString() },
+                    { "purchasedPlus", purchasedPlus.ToString() }
+                });
             });
 
             if (!usingPlus && !purchasedPlus)

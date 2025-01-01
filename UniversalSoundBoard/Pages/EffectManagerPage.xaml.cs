@@ -1,5 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
-using System.Collections.Generic;
+﻿using Sentry;
 using System.ComponentModel;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
@@ -99,9 +98,9 @@ namespace UniversalSoundboard.Pages
             FadeInEffectDurationSlider.IsEnabled = FadeInEffectEnableToggle.IsOn;
 
             if (FadeInEffectEnableToggle.IsOn)
-                Analytics.TrackEvent("EffectManagerPage-FadeInEffect-Enabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-FadeInEffect-Enabled");
             else
-                Analytics.TrackEvent("EffectManagerPage-FadeInEffect-Disabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-FadeInEffect-Disabled");
         }
 
         private void FadeInEffectDurationSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -120,9 +119,9 @@ namespace UniversalSoundboard.Pages
             FadeOutEffectDurationSlider.IsEnabled = FadeOutEffectEnableToggle.IsOn;
 
             if (FadeOutEffectEnableToggle.IsOn)
-                Analytics.TrackEvent("EffectManagerPage-FadeOutEffect-Enabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-FadeOutEffect-Enabled");
             else
-                Analytics.TrackEvent("EffectManagerPage-FadeOutEffect-Disabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-FadeOutEffect-Disabled");
         }
 
         private void FadeOutEffectDurationSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -141,9 +140,9 @@ namespace UniversalSoundboard.Pages
             EchoEffectDelaySlider.IsEnabled = EchoEffectEnableToggle.IsOn;
 
             if (EchoEffectEnableToggle.IsOn)
-                Analytics.TrackEvent("EffectManagerPage-EchoEffect-Enabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-EchoEffect-Enabled");
             else
-                Analytics.TrackEvent("EffectManagerPage-EchoEffect-Disabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-EchoEffect-Disabled");
         }
 
         private void EchoEffectDelaySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -162,9 +161,9 @@ namespace UniversalSoundboard.Pages
             LimiterEffectLoudnessSlider.IsEnabled = LimiterEffectEnableToggle.IsOn;
 
             if (LimiterEffectEnableToggle.IsOn)
-                Analytics.TrackEvent("EffectManagerPage-LimiterEffect-Enabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-LimiterEffect-Enabled");
             else
-                Analytics.TrackEvent("EffectManagerPage-LimiterEffect-Disabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-LimiterEffect-Disabled");
         }
 
         private void LimiterEffectLoudnessSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -183,9 +182,9 @@ namespace UniversalSoundboard.Pages
             ReverbEffectDecaySlider.IsEnabled = ReverbEffectEnableToggle.IsOn;
 
             if (ReverbEffectEnableToggle.IsOn)
-                Analytics.TrackEvent("EffectManagerPage-ReverbEffect-Enabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-ReverbEffect-Enabled");
             else
-                Analytics.TrackEvent("EffectManagerPage-ReverbEffect-Disabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-ReverbEffect-Disabled");
         }
 
         private void ReverbEffectDecaySlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)
@@ -204,9 +203,9 @@ namespace UniversalSoundboard.Pages
             PitchShiftEffectFactorSlider.IsEnabled = PitchShiftEffectEnableToggle.IsOn;
 
             if (PitchShiftEffectEnableToggle.IsOn)
-                Analytics.TrackEvent("EffectManagerPage-PitchShiftEffect-Enabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-PitchShiftEffect-Enabled");
             else
-                Analytics.TrackEvent("EffectManagerPage-PitchShiftEffect-Disabled", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("EffectManagerPage-PitchShiftEffect-Disabled");
         }
 
         private void PitchShiftEffectFactorSlider_ValueChanged(object sender, RangeBaseValueChangedEventArgs e)

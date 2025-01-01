@@ -1,7 +1,6 @@
-﻿using Microsoft.AppCenter.Analytics;
-using Microsoft.Toolkit.Uwp.UI;
+﻿using Microsoft.Toolkit.Uwp.UI;
+using Sentry;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
@@ -317,7 +316,7 @@ namespace UniversalSoundboard.Dialogs
 
                     ContentDialog.IsPrimaryButtonEnabled = true;
                     Result = new SoundDownloadResult(SoundItems, result.PlaylistTitle);
-                    Analytics.TrackEvent("SoundDownload-Source-YouTube");
+                    SentrySdk.CaptureMessage("SoundDownload-Source-YouTube");
                 }
                 catch (SoundDownloadException)
                 {
@@ -344,7 +343,7 @@ namespace UniversalSoundboard.Dialogs
                     SoundListStackPanel.Visibility = Visibility.Visible;
                     SoundListView.SelectAll();
                     Result = new SoundDownloadResult(SoundItems, result.PlaylistTitle);
-                    Analytics.TrackEvent("SoundDownload-Source-Zophar");
+                    SentrySdk.CaptureMessage("SoundDownload-Source-Zophar");
                 }
                 catch (SoundDownloadException)
                 {
@@ -375,7 +374,7 @@ namespace UniversalSoundboard.Dialogs
                     ContentDialog.IsPrimaryButtonEnabled = true;
 
                     Result = new SoundDownloadResult(new ObservableCollection<SoundDownloadItem> { soundItem }, null);
-                    Analytics.TrackEvent("SoundDownload-Source-MyInstants");
+                    SentrySdk.CaptureMessage("SoundDownload-Source-MyInstants");
                 }
                 catch(SoundDownloadException)
                 {
@@ -415,7 +414,7 @@ namespace UniversalSoundboard.Dialogs
                     ContentDialog.IsPrimaryButtonEnabled = true;
 
                     Result = new SoundDownloadResult(new ObservableCollection<SoundDownloadItem> { soundItem }, null);
-                    Analytics.TrackEvent("SoundDownload-Source-AudioFile");
+                    SentrySdk.CaptureMessage("SoundDownload-Source-AudioFile");
                 }
                 catch (SoundDownloadException)
                 {
@@ -424,9 +423,9 @@ namespace UniversalSoundboard.Dialogs
                 }
             }
 
-            Analytics.TrackEvent("SoundDownloadDialog-UrlChanged", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("SoundDownloadDialog-UrlChanged", scope =>
             {
-                { "Url", input }
+                scope.SetTag("Url", input);
             });
         }
 

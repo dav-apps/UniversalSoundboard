@@ -1,5 +1,5 @@
-﻿using Microsoft.AppCenter.Analytics;
-using MimeTypes;
+﻿using MimeTypes;
+using Sentry;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -67,7 +67,7 @@ namespace UniversalSoundboard.Components
             {
                 Play?.Invoke(this, EventArgs.Empty);
 
-                Analytics.TrackEvent("StoreSoundTileTemplate-Play");
+                SentrySdk.CaptureMessage("StoreSoundTileTemplate-Play");
             }
 
             isPlaying = !isPlaying;

@@ -1,5 +1,5 @@
 ﻿using davClassLibrary;
-using Microsoft.AppCenter.Analytics;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -256,10 +256,13 @@ namespace UniversalSoundboard.Pages
             // Add the sound to the list
             await FileManager.AddSound(uuid);
 
-            Analytics.TrackEvent("StoreSoundPage-AddToSoundboard", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("StoreSoundPage-AddToSoundboard", scope =>
             {
-                { "SoundUuid", soundItem.Uuid },
-                { "SoundName", soundItem.Name }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "SoundUuid", soundItem.Uuid },
+                    { "SoundName", soundItem.Name }
+                });
             });
 
             isInSoundboard = true;
@@ -274,9 +277,9 @@ namespace UniversalSoundboard.Pages
 
         private void ProfileButton_Click(object sender, RoutedEventArgs e)
         {
-            Analytics.TrackEvent("StoreSoundPage-ProfileButton-Click", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("StoreSoundPage-ProfileButton-Click", scope =>
             {
-                { "UserId", soundItem.User.Id.ToString() }
+                scope.SetTag("UserId", soundItem.User.Id.ToString());
             });
 
             MainPage.NavigateToPage(
@@ -288,9 +291,9 @@ namespace UniversalSoundboard.Pages
 
         private void TagsGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            Analytics.TrackEvent("StoreSoundPage-TagsGridView-ItemClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("StoreSoundPage-TagsGridView-ItemClick", scope =>
             {
-                { "Tag", (string)e.ClickedItem }
+                scope.SetTag("Tag", (string)e.ClickedItem);
             });
 
             MainPage.NavigateToPage(
@@ -371,10 +374,13 @@ namespace UniversalSoundboard.Pages
                 FileManager.loader.GetString("Currency")
             );
 
-            Analytics.TrackEvent("StoreSoundPage-PromoteButtonClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("StoreSoundPage-PromoteButtonClick", scope =>
             {
-                { "SoundUuid", soundItem.Uuid },
-                { "SoundName", soundItem.Name }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "SoundUuid", soundItem.Uuid },
+                    { "SoundName", soundItem.Name }
+                });
             });
 
             var startSoundPromotionDialog = new StartSoundPromotionDialog();
@@ -389,10 +395,13 @@ namespace UniversalSoundboard.Pages
             if (soundPromotionResponse != null && soundPromotionResponse.SessionUrl != null)
                 await Launcher.LaunchUriAsync(new Uri(soundPromotionResponse.SessionUrl));
 
-            Analytics.TrackEvent("StoreSoundPage-StartSoundPromotionDialog-PrimaryButtonClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("StoreSoundPage-StartSoundPromotionDialog-PrimaryButtonClick", scope =>
             {
-                { "SoundUuid", soundItem.Uuid },
-                { "SoundName", soundItem.Name }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "SoundUuid", soundItem.Uuid },
+                    { "SoundName", soundItem.Name }
+                });
             });
         }
 

@@ -1,8 +1,7 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Controllers;
-using Microsoft.AppCenter.Analytics;
+using Sentry;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
@@ -62,9 +61,9 @@ namespace UniversalSoundboard.Dialogs
             var context = StoreContext.GetDefault();
             StorePurchaseResult result = await context.RequestPurchaseAsync(Constants.UniversalSoundboardPlusAddonStoreId);
 
-            Analytics.TrackEvent("UpgradePlusDialog-PurchasePlus", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("UpgradePlusDialog-PurchasePlus", scope =>
             {
-                { "succeeded", (result.Status == StorePurchaseStatus.Succeeded).ToString() }
+                scope.SetTag("succeeded", (result.Status == StorePurchaseStatus.Succeeded).ToString());
             });
 
             if (result.Status == StorePurchaseStatus.Succeeded)
@@ -73,9 +72,9 @@ namespace UniversalSoundboard.Dialogs
 
         private async void DavPlusButton_Click(object sender, RoutedEventArgs e)
         {
-            Analytics.TrackEvent("UpgradePlusDialog-UpgradePlusButtonClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("UpgradePlusDialog-UpgradePlusButtonClick", scope =>
             {
-                { "isLoggedIn", Dav.IsLoggedIn.ToString() }
+                scope.SetTag("isLoggedIn", Dav.IsLoggedIn.ToString());
             });
 
             if (!Dav.IsLoggedIn)

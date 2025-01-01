@@ -1,4 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
+﻿using Sentry;
 using System;
 using UniversalSoundboard.DataAccess;
 
@@ -23,7 +23,7 @@ namespace UniversalSoundboard.Dialogs
             UpgradePlusSucceeded?.Invoke(this, e);
             Hide();
 
-            Analytics.TrackEvent("UpgradePlusDialog-UpgradePlus");
+            SentrySdk.CaptureMessage("UpgradePlusDialog-UpgradePlus");
         }
     }
 }

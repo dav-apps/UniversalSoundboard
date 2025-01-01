@@ -1,5 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
-using Sentry;
+﻿using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -254,9 +253,9 @@ namespace UniversalSoundboard.Pages
             ShrinkRecorderStoryboardAnimation.To = RecordingRelativePanel.ActualHeight / 1.5;
             ShrinkRecorderStoryboard.Begin();
 
-            Analytics.TrackEvent("SoundRecorder-StopRecording", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("SoundRecorder-StopRecording", async scope =>
             {
-                { "Duration", (await recordedSoundItem.GetDuration()).ToString("mm\\:ss") }
+                scope.SetTag("Duration", (await recordedSoundItem.GetDuration()).ToString("mm\\:ss"));
             });
         }
 

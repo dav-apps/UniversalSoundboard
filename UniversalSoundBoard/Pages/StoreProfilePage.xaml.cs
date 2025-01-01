@@ -1,5 +1,5 @@
 ﻿using davClassLibrary;
-using Microsoft.AppCenter.Analytics;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -154,10 +154,13 @@ namespace UniversalSoundboard.Pages
         {
             var item = e.ClickedItem as SoundResponse;
 
-            Analytics.TrackEvent("StoreProfilePage-SoundsGridView-ItemClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("StoreProfilePage-SoundsGridView-ItemClick", scope =>
             {
-                { "SoundUuid", item.Uuid },
-                { "SoundName", item.Name }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "SoundUuid", item.Uuid },
+                    { "SoundName", item.Name }
+                });
             });
 
             if (item.AudioFileUrl != null)

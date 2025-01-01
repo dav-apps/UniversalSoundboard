@@ -1,4 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
+﻿using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -58,9 +58,9 @@ namespace UniversalSoundboard.Dialogs
             LoadDevices();
 
             if (FileManager.itemViewHolder.MultipleOutputDevices)
-                Analytics.TrackEvent("OutputDevicesDialog-MultipleOutputDevices-Enabled");
+                SentrySdk.CaptureMessage("OutputDevicesDialog-MultipleOutputDevices-Enabled");
             else
-                Analytics.TrackEvent("OutputDevicesDialog-MultipleOutputDevices-Disabled");
+                SentrySdk.CaptureMessage("OutputDevicesDialog-MultipleOutputDevices-Disabled");
         }
 
         private async void DeviceWatcherHelper_DevicesChanged(object sender, EventArgs e)
@@ -172,7 +172,7 @@ namespace UniversalSoundboard.Dialogs
 
             UpdateOutputDeviceCheckboxes();
 
-            Analytics.TrackEvent("OutputDevicesDialog-OutputDeviceCheckbox-Checked");
+            SentrySdk.CaptureMessage("OutputDevicesDialog-OutputDeviceCheckbox-Checked");
         }
 
         private void OutputDeviceCheckbox_Unchecked(object sender, RoutedEventArgs e)
@@ -187,14 +187,14 @@ namespace UniversalSoundboard.Dialogs
 
             UpdateOutputDeviceCheckboxes();
 
-            Analytics.TrackEvent("OutputDevicesDialog-OutputDeviceCheckbox-Unchecked");
+            SentrySdk.CaptureMessage("OutputDevicesDialog-OutputDeviceCheckbox-Unchecked");
         }
 
         private void StandardOutputDeviceRadioButton_Checked(object sender, RoutedEventArgs e)
         {
             FileManager.itemViewHolder.UseStandardOutputDevice = true;
 
-            Analytics.TrackEvent("OutputDevicesDialog-StandardOutputDeviceRadioButton-Checked");
+            SentrySdk.CaptureMessage("OutputDevicesDialog-StandardOutputDeviceRadioButton-Checked");
         }
 
         private void OutputDeviceRadioButton_Checked(object sender, RoutedEventArgs e)
@@ -205,7 +205,7 @@ namespace UniversalSoundboard.Dialogs
             FileManager.itemViewHolder.UseStandardOutputDevice = false;
             FileManager.itemViewHolder.OutputDevice = deviceId;
 
-            Analytics.TrackEvent("OutputDevicesDialog-OutputDeviceRadioButton-Checked");
+            SentrySdk.CaptureMessage("OutputDevicesDialog-OutputDeviceRadioButton-Checked");
         }
     }
 }

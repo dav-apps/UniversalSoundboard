@@ -1,4 +1,4 @@
-﻿using Microsoft.AppCenter.Analytics;
+﻿using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -60,9 +60,9 @@ namespace UniversalSoundboard.Pages
 
             if (searchText != null)
             {
-                Analytics.TrackEvent("StoreSearchPage-Navigation", new Dictionary<string, string>
+                SentrySdk.CaptureMessage("StoreSearchPage-Navigation", scope =>
                 {
-                    { "SearchQuery", searchText }
+                    scope.SetTag("SearchQuery", searchText);
                 });
 
                 SearchAutoSuggestBox.Text = searchText;
@@ -71,7 +71,7 @@ namespace UniversalSoundboard.Pages
             }
             else
             {
-                Analytics.TrackEvent("StoreSearchPage-Navigation");
+                SentrySdk.CaptureMessage("StoreSearchPage-Navigation");
             }
         }
 
@@ -101,10 +101,13 @@ namespace UniversalSoundboard.Pages
         {
             var item = e.ClickedItem as SoundResponse;
 
-            Analytics.TrackEvent("StoreSearchPage-SoundsGridView-ItemClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("StoreSearchPage-SoundsGridView-ItemClick", scope =>
             {
-                { "SoundUuid", item.Uuid },
-                { "SoundName", item.Name }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "SoundUuid", item.Uuid },
+                    { "SoundName", item.Name }
+                });
             });
 
             if (item.AudioFileUrl != null)
@@ -149,18 +152,18 @@ namespace UniversalSoundboard.Pages
         {
             if (nextPage)
             {
-                Analytics.TrackEvent("StoreSearchPage-LoadMoreButton-Click", new Dictionary<string, string>
+                SentrySdk.CaptureMessage("StoreSearchPage-LoadMoreButton-Click", scope =>
                 {
-                    { "SearchQuery", queryText }
+                    scope.SetTag("SearchQuery", queryText);
                 });
             }
             else
             {
                 sounds.Clear();
 
-                Analytics.TrackEvent("StoreSearchPage-Search", new Dictionary<string, string>
+                SentrySdk.CaptureMessage("StoreSearchPage-Search", scope =>
                 {
-                    { "SearchQuery", queryText }
+                    scope.SetTag("SearchQuery", queryText);
                 });
             }
 

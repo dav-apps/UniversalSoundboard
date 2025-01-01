@@ -1,7 +1,6 @@
 ﻿using davClassLibrary;
-using Microsoft.AppCenter.Analytics;
+using Sentry;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Numerics;
 using System.Threading.Tasks;
@@ -582,10 +581,10 @@ namespace UniversalSoundboard.Components
             bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
             bool purchasedPlus = FileManager.itemViewHolder.PlusPurchased;
 
-            Analytics.TrackEvent("PlayingSound-OutputDeviceButton-ItemClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("PlayingSound-OutputDeviceButton-ItemClick", scope =>
             {
-                { "usingPlus", usingPlus.ToString() },
-                { "purchasedPlus", purchasedPlus.ToString() }
+                scope.SetTag("usingPlus", usingPlus.ToString());
+                scope.SetTag("purchasedPlus", purchasedPlus.ToString());
             });
 
             if (!usingPlus && !purchasedPlus)

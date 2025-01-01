@@ -1,5 +1,5 @@
 ﻿using davClassLibrary;
-using Microsoft.AppCenter.Analytics;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -221,7 +221,7 @@ namespace UniversalSoundboard.Components
                     args
                 );
 
-                Analytics.TrackEvent("SoundItem-ExportSound");
+                SentrySdk.CaptureMessage("SoundItem-ExportSound");
             }
         }
 
@@ -280,7 +280,7 @@ namespace UniversalSoundboard.Components
                     args
                 );
 
-                Analytics.TrackEvent("SoundItem-ExportImage");
+                SentrySdk.CaptureMessage("SoundItem-ExportImage");
             }
         }
         #endregion

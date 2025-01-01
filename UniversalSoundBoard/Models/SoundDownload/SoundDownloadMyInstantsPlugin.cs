@@ -1,5 +1,4 @@
 ﻿using HtmlAgilityPack;
-using Microsoft.AppCenter.Analytics;
 using Sentry;
 using System;
 using System.Collections.Generic;
@@ -55,9 +54,9 @@ namespace UniversalSoundboard.Models
                 // Check if the content type is a supported audio format
                 if (!Constants.allowedAudioMimeTypes.Contains(response.ContentType))
                 {
-                    Analytics.TrackEvent("AudioFileDownload-NotSupportedFormat", new Dictionary<string, string>
+                    SentrySdk.CaptureMessage("AudioFileDownload-NotSupportedFormat", scope =>
                     {
-                        { "Link", Url }
+                        scope.SetTag("Link", Url);
                     });
 
                     throw new SoundDownloadException();

@@ -1,5 +1,5 @@
 ﻿using davClassLibrary;
-using Microsoft.AppCenter.Analytics;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -601,10 +601,13 @@ namespace UniversalSoundboard.Pages
         {
             bool result = await AccountPage.ShowLoginPage();
 
-            Analytics.TrackEvent("LoginButtonClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("LoginButtonClick", scope =>
             {
-                { "Context", "StartMessage" },
-                { "Result", result.ToString() }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "Context", "StartMessage" },
+                    { "Result", result.ToString() }
+                });
             });
         }
 
@@ -623,9 +626,9 @@ namespace UniversalSoundboard.Pages
             await FileManager.ImportDataAsync(dialog.ImportFile, true);
             FileManager.UpdatePlayAllButtonVisibility();
 
-            Analytics.TrackEvent("ImportData", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("ImportData", scope =>
             {
-                { "Context", "StartMessage" }
+                scope.SetTag("Context", "StartMessage");
             });
         }
         #endregion

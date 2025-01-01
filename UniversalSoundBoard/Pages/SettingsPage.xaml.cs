@@ -1,8 +1,7 @@
 ﻿using davClassLibrary;
-using Microsoft.AppCenter.Analytics;
 using Microsoft.Toolkit.Uwp.Helpers;
+using Sentry;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
@@ -308,7 +307,7 @@ namespace UniversalSoundboard.Pages
         {
             var dialog = sender as ExportSoundboardDialog;
             await FileManager.ExportDataAsync(dialog.ExportFolder);
-            Analytics.TrackEvent("ExportData");
+            SentrySdk.CaptureMessage("ExportData");
         }
 
         private async void ImportDataButton_Click(object sender, RoutedEventArgs e)
@@ -324,9 +323,9 @@ namespace UniversalSoundboard.Pages
 
             await FileManager.ImportDataAsync(dialog.ImportFile, false);
 
-            Analytics.TrackEvent("ImportData", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("ImportData", scope =>
             {
-                { "Context", "Settings" }
+                scope.SetTag("Context", "Settings");
             });
         }
 
@@ -334,19 +333,19 @@ namespace UniversalSoundboard.Pages
         {
             await SystemInformation.LaunchStoreForReviewAsync();
             FileManager.itemViewHolder.AppReviewed = true;
-            Analytics.TrackEvent("SettingsPage-ReviewButtonClick");
+            SentrySdk.CaptureMessage("SettingsPage-ReviewButtonClick");
         }
 
         private async void SendFeedbackButton_Click(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("https://forms.gle/Y2fJnwDTyWMwBRbk7"));
-            Analytics.TrackEvent("SettingsPage-SendFeedbackButtonClick");
+            SentrySdk.CaptureMessage("SettingsPage-SendFeedbackButtonClick");
         }
 
         private async void CreateIssueButton_Click(object sender, RoutedEventArgs e)
         {
             await Launcher.LaunchUriAsync(new Uri("https://github.com/dav-apps/UniversalSoundboard/issues"));
-            Analytics.TrackEvent("SettingsPage-CreateIssueButtonClick");
+            SentrySdk.CaptureMessage("SettingsPage-CreateIssueButtonClick");
         }
         #endregion
 

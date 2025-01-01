@@ -296,10 +296,13 @@ namespace UniversalSoundboard.Pages
             bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
             bool purchasedPlus = FileManager.itemViewHolder.PlusPurchased;
 
-            Analytics.TrackEvent("OutputDeviceButton-ItemClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("OutputDeviceButton-ItemClick", scope =>
             {
-                { "usingPlus", usingPlus.ToString() },
-                { "purchasedPlus", purchasedPlus.ToString() }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "usingPlus", usingPlus.ToString() },
+                    { "purchasedPlus", purchasedPlus.ToString() }
+                });
             });
 
             if (!usingPlus && !purchasedPlus)
@@ -337,10 +340,13 @@ namespace UniversalSoundboard.Pages
             bool usingPlus = Dav.IsLoggedIn && Dav.User.Plan > 0;
             bool purchasedPlus = FileManager.itemViewHolder.PlusPurchased;
 
-            Analytics.TrackEvent("OutputDeviceButton-ManageOutputDevices-ItemClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("OutputDeviceButton-ManageOutputDevices-ItemClick", scope =>
             {
-                { "usingPlus", usingPlus.ToString() },
-                { "purchasedPlus", purchasedPlus.ToString() }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "usingPlus", usingPlus.ToString() },
+                    { "purchasedPlus", purchasedPlus.ToString() }
+                });
             });
 
             if (!usingPlus && !purchasedPlus)
@@ -373,9 +379,9 @@ namespace UniversalSoundboard.Pages
             await Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?ProductId=9NBLGGH51005"));
             FileManager.DismissInAppNotification(InAppNotificationType.WriteReview);
 
-            Analytics.TrackEvent("InAppNotification-WriteReview-PrimaryButtonClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("InAppNotification-WriteReview-PrimaryButtonClick", scope =>
             {
-                { "AppStarts", FileManager.itemViewHolder.AppStartCounter.ToString() }
+                scope.SetTag("AppStarts", FileManager.itemViewHolder.AppStartCounter.ToString());
             });
         }
         #endregion
@@ -621,9 +627,9 @@ namespace UniversalSoundboard.Pages
 
             if (count % 20 == 0)
             {
-                Analytics.TrackEvent("AppStarts", new Dictionary<string, string>
+                SentrySdk.CaptureMessage("AppStarts", scope =>
                 {
-                    { "Count", count.ToString() }
+                    scope.SetTag("Count", count.ToString());
                 });
             }
 
@@ -783,7 +789,10 @@ namespace UniversalSoundboard.Pages
             if (Dav.IsLoggedIn)
                 appStartDict.Add("plan", Dav.User.Plan.ToString());
 
-            Analytics.TrackEvent("AppStart", appStartDict);
+            SentrySdk.CaptureMessage("AppStart", scope =>
+            {
+                scope.SetTags(appStartDict);
+            });
         }
 
         private async Task LoadPlusInfo()
@@ -1571,10 +1580,13 @@ namespace UniversalSoundboard.Pages
 
             FileManager.itemViewHolder.AddingSounds = false;
 
-            Analytics.TrackEvent("AddSounds", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("AddSounds", scope =>
             {
-                { "AddedSounds", i.ToString() },
-                { "NotAddedSounds", notAddedSounds.Count.ToString() }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "AddedSounds", i.ToString() },
+                    { "NotAddedSounds", notAddedSounds.Count.ToString() }
+                });
             });
         }
         #endregion
@@ -1582,7 +1594,7 @@ namespace UniversalSoundboard.Pages
         #region SoundDownload
         private async void DownloadSoundsFlyoutItem_Click(object sender, RoutedEventArgs e)
         {
-            Analytics.TrackEvent("AddButton-DownloadSounds", new Dictionary<string, string>());
+            SentrySdk.CaptureMessage("AddButton-DownloadSounds");
 
             var soundDownloadListItemTemplate = Resources["SoundDownloadListItemTemplate"] as DataTemplate;
 
@@ -1928,7 +1940,10 @@ namespace UniversalSoundboard.Pages
                         if (i > 10) break;
                     }
 
-                    Analytics.TrackEvent("PlaylistDownload-NotDownloadedSounds", notDownloadedSoundsDict);
+                    SentrySdk.CaptureMessage("PlaylistDownload-NotDownloadedSounds", scope =>
+                    {
+                        scope.SetTags(notDownloadedSoundsDict);
+                    });
                 }
                 else
                 {
@@ -2039,7 +2054,7 @@ namespace UniversalSoundboard.Pages
                 soundRecorderAppWindowContentFrame.Navigate(typeof(SoundRecorderPage));
                 ElementCompositionPreview.SetAppWindowContent(soundRecorderAppWindow, soundRecorderAppWindowContentFrame);
 
-                Analytics.TrackEvent("MainPage-ToolsButton-SoundRecorder", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("MainPage-ToolsButton-SoundRecorder");
             }
 
             await soundRecorderAppWindow.TryShowAsync();
@@ -2063,7 +2078,7 @@ namespace UniversalSoundboard.Pages
                 effectManagerAppWindowContentFrame.Navigate(typeof(EffectManagerPage));
                 ElementCompositionPreview.SetAppWindowContent(effectManagerAppWindow, effectManagerAppWindowContentFrame);
 
-                Analytics.TrackEvent("MainPage-ToolsButton-EffectManager", new Dictionary<string, string>());
+                SentrySdk.CaptureMessage("MainPage-ToolsButton-EffectManager");
             }
             
             await effectManagerAppWindow.TryShowAsync();
@@ -2576,9 +2591,9 @@ namespace UniversalSoundboard.Pages
         #region Publish sounds
         private async void PublishSoundsButton_Click(object sender, RoutedEventArgs e)
         {
-            Analytics.TrackEvent("MainPage-PublishSoundsButton-Click", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("MainPage-PublishSoundsButton-Click", scope =>
             {
-                { "IsLoggedIn", Dav.IsLoggedIn.ToString() }
+                scope.SetTag("IsLoggedIn", Dav.IsLoggedIn.ToString());
             });
 
             if (Dav.IsLoggedIn)
@@ -2595,9 +2610,9 @@ namespace UniversalSoundboard.Pages
         {
             bool result = await AccountPage.ShowLoginPage();
 
-            Analytics.TrackEvent("MainPage-PublishSoundsLoginDialog-PrimaryButtonClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("MainPage-PublishSoundsLoginDialog-PrimaryButtonClick", scope =>
             {
-                { "Result", result.ToString() }
+                scope.SetTag("Result", result.ToString());
             });
             
             if (result)

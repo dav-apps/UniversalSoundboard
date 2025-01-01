@@ -1,5 +1,5 @@
-﻿using Microsoft.AppCenter.Analytics;
-using Microsoft.Toolkit.Uwp.UI;
+﻿using Microsoft.Toolkit.Uwp.UI;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -178,11 +178,14 @@ namespace UniversalSoundboard.Pages
             var soundItem = e.ClickedItem as SoundResponse;
             var gridView = sender as GridView;
 
-            Analytics.TrackEvent("StorePage-SoundsGridView-ItemClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("StorePage-SoundsGridView-ItemClick", scope =>
             {
-                { "SoundUuid", soundItem.Uuid },
-                { "SoundName", soundItem.Name },
-                { "Section", gridView.Name }
+                scope.SetTags(new Dictionary<string, string>
+                {
+                    { "SoundUuid", soundItem.Uuid },
+                    { "SoundName", soundItem.Name },
+                    { "Section", gridView.Name }
+                });
             });
 
             MainPage.NavigateToPage(
@@ -194,9 +197,9 @@ namespace UniversalSoundboard.Pages
 
         private void TagsGridView_ItemClick(object sender, ItemClickEventArgs e)
         {
-            Analytics.TrackEvent("StorePage-TagsGridView-ItemClick", new Dictionary<string, string>
+            SentrySdk.CaptureMessage("StorePage-TagsGridView-ItemClick", scope =>
             {
-                { "Tag", (string)e.ClickedItem }
+                scope.SetTag("Tag", (string)e.ClickedItem);
             });
 
             MainPage.NavigateToPage(

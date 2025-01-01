@@ -1,6 +1,5 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Common;
-using Microsoft.AppCenter.Analytics;
 using Sentry;
 using Sentry.Protocol;
 using System;
@@ -199,7 +198,7 @@ namespace UniversalSoundboard
                             Dav.User.Plan = Plan.Pro;
 
                         FileManager.itemViewHolder.TriggerUserPlanChangedEvent(this, new EventArgs());
-                        Analytics.TrackEvent("UpgradeSuccessful");
+                        SentrySdk.CaptureMessage("UpgradeSuccessful");
                     }
                 }
                 else if (eventArgs.Uri.AbsoluteUri.StartsWith("universalsoundboard://sound-promotion"))
