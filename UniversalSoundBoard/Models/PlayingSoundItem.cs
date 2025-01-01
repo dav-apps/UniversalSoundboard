@@ -1,6 +1,6 @@
 ﻿using davClassLibrary;
 using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
@@ -440,9 +440,9 @@ namespace UniversalSoundboard.Models
             }
             catch (Exception e)
             {
-                Crashes.TrackError(e, new Dictionary<string, string>
+                SentrySdk.CaptureException(e, scope =>
                 {
-                    { "Sound.Source", CurrentSound.Source }
+                    scope.SetTag("Sound.Source", CurrentSound.Source);
                 });
             }
 
@@ -525,7 +525,7 @@ namespace UniversalSoundboard.Models
             }
             catch (Exception e)
             {
-                Crashes.TrackError(e);
+                SentrySdk.CaptureException(e);
 
                 isPauseRunning = false;
                 return false;

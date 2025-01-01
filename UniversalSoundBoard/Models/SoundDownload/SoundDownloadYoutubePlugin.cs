@@ -1,5 +1,5 @@
 ﻿using Google.Apis.YouTube.v3.Data;
-using Microsoft.AppCenter.Crashes;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,9 +66,9 @@ namespace UniversalSoundboard.Models
             }
             catch (Exception e)
             {
-                Crashes.TrackError(e, new Dictionary<string, string>
+                SentrySdk.CaptureException(e, scope =>
                 {
-                    { "YoutubeLink", Url }
+                    scope.SetTag("YoutubeLink", Url);
                 });
 
                 throw new SoundDownloadException();

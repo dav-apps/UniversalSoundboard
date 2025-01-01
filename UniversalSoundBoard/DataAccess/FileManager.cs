@@ -3,10 +3,10 @@ using davClassLibrary.Models;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
 using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
 using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.Toolkit.Uwp.UI.Controls;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -1110,9 +1110,9 @@ namespace UniversalSoundboard.DataAccess
             {
                 tileUpdater = TileUpdateManager.CreateTileUpdaterForApplication();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Crashes.TrackError(e);
+                SentrySdk.CaptureException(e);
                 return;
             }
 
@@ -1756,7 +1756,7 @@ namespace UniversalSoundboard.DataAccess
             }
             catch (AudioIOException e)
             {
-                Crashes.TrackError(e);
+                SentrySdk.CaptureException(e);
             }
 
             player.Volume = ((double)itemViewHolder.Volume) / 100;
@@ -1898,11 +1898,10 @@ namespace UniversalSoundboard.DataAccess
             }
             catch(Exception e)
             {
-                var properties = new Dictionary<string, string>
+                SentrySdk.CaptureException(e, scope =>
                 {
-                    { "FilePath", audioFile.Path }
-                };
-                Crashes.TrackError(e, properties);
+                    scope.SetTag("FilePath", audioFile.Path);
+                });
 
                 return Guid.Empty;
             }

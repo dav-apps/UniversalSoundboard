@@ -1,4 +1,4 @@
-﻿using Microsoft.AppCenter.Crashes;
+﻿using Sentry;
 using System;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
@@ -68,7 +68,7 @@ namespace UniversalSoundboard.Models
                     }
                     catch (AudioIOException e)
                     {
-                        Crashes.TrackError(e);
+                        SentrySdk.CaptureException(e);
                     }
                 }
             });
@@ -84,7 +84,7 @@ namespace UniversalSoundboard.Models
                 }
                 catch (AudioIOException e)
                 {
-                    Crashes.TrackError(e);
+                    SentrySdk.CaptureException(e);
                 }
             }
 
@@ -101,7 +101,7 @@ namespace UniversalSoundboard.Models
                 }
                 catch (AudioIOException e)
                 {
-                    Crashes.TrackError(e);
+                    SentrySdk.CaptureException(e);
                     return false;
                 }
             }
@@ -110,9 +110,9 @@ namespace UniversalSoundboard.Models
             {
                 audioPlayer.Play();
             }
-            catch(AudioIOException e)
+            catch (AudioIOException e)
             {
-                Crashes.TrackError(e);
+                SentrySdk.CaptureException(e);
                 return false;
             }
 
@@ -130,7 +130,7 @@ namespace UniversalSoundboard.Models
             }
             catch (AudioIOException e)
             {
-                Crashes.TrackError(e);
+                SentrySdk.CaptureException(e);
                 return false;
             }
             

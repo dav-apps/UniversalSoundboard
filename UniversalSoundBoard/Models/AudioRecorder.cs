@@ -1,4 +1,4 @@
-﻿using Microsoft.AppCenter.Crashes;
+﻿using Sentry;
 using System;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
@@ -201,9 +201,9 @@ namespace UniversalSoundboard.Models
             {
                 AudioGraph.Start();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Crashes.TrackError(e);
+                SentrySdk.CaptureException(e);
                 return;
             }
             
@@ -226,9 +226,9 @@ namespace UniversalSoundboard.Models
                 await FileOutputNode.FinalizeAsync();
                 AudioGraph.ResetAllNodes();
             }
-            catch(Exception e)
+            catch (Exception e)
             {
-                Crashes.TrackError(e);
+                SentrySdk.CaptureException(e);
             }
 
             isInitialized = false;
@@ -246,9 +246,9 @@ namespace UniversalSoundboard.Models
                     AudioGraph.Stop();
                     AudioGraph.Dispose();
                 }
-                catch(AudioIOException e)
+                catch (AudioIOException e)
                 {
-                    Crashes.TrackError(e);
+                    SentrySdk.CaptureException(e);
                 }
             }
 

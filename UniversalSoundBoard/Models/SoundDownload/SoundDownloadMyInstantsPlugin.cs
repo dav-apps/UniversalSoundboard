@@ -1,6 +1,6 @@
 ﻿using HtmlAgilityPack;
 using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Net;
@@ -65,9 +65,9 @@ namespace UniversalSoundboard.Models
             }
             catch (Exception e)
             {
-                Crashes.TrackError(e, new Dictionary<string, string>
+                SentrySdk.CaptureException(e, scope =>
                 {
-                    { "Link", Url }
+                    scope.SetTag("Link", Url);
                 });
 
                 throw new SoundDownloadException();

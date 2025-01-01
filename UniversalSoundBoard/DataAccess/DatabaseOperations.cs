@@ -1,6 +1,6 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Models;
-using Microsoft.AppCenter.Crashes;
+using Sentry;
 using SQLite;
 using System;
 using System.Collections.Generic;
@@ -485,7 +485,7 @@ namespace UniversalSoundboard.DataAccess
                     }
                     catch (Exception innerException)
                     {
-                        Crashes.TrackError(innerException);
+                        SentrySdk.CaptureException(innerException);
                     }
 
                     i++;
@@ -496,9 +496,9 @@ namespace UniversalSoundboard.DataAccess
                 StorageFile dataFile = await exportFolder.CreateFileAsync(Constants.ExportDataFileName, CreationCollisionOption.ReplaceExisting);
                 await FileManager.WriteFileAsync(dataFile, tableObjectDataList);
             }
-            catch(Exception outerException)
+            catch (Exception outerException)
             {
-                Crashes.TrackError(outerException);
+                SentrySdk.CaptureException(outerException);
             }
         }
 
@@ -539,18 +539,18 @@ namespace UniversalSoundboard.DataAccess
                             }
                         }
                     }
-                    catch(Exception innerException)
+                    catch (Exception innerException)
                     {
-                        Crashes.TrackError(innerException);
+                        SentrySdk.CaptureException(innerException);
                     }
 
                     i++;
                     progress.Report((int)Math.Round(100.0 / tableObjectDataList.Count * i));
                 }
             }
-            catch(Exception outerException)
+            catch (Exception outerException)
             {
-                Crashes.TrackError(outerException);
+                SentrySdk.CaptureException(outerException);
             }
         }
         #endregion

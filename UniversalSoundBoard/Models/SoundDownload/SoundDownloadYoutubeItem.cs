@@ -8,7 +8,7 @@ using UniversalSoundboard.DataAccess;
 using YoutubeExplode;
 using YoutubeExplode.Common;
 using YoutubeExplode.Videos.Streams;
-using Microsoft.AppCenter.Crashes;
+using Sentry;
 
 namespace UniversalSoundboard.Models
 {
@@ -76,7 +76,7 @@ namespace UniversalSoundboard.Models
             }
             catch (Exception e)
             {
-                Crashes.TrackError(e);
+                SentrySdk.CaptureException(e);
                 return null;
             }
         }

@@ -1,5 +1,5 @@
 ﻿using AudioEffectComponent;
-using Microsoft.AppCenter.Crashes;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -232,7 +232,7 @@ namespace UniversalSoundboard.Models
             }
             catch (Exception e)
             {
-                Crashes.TrackError(e);
+                SentrySdk.CaptureException(e);
             }
 
             AudioGraphContainers.Clear();
@@ -307,7 +307,7 @@ namespace UniversalSoundboard.Models
                     }
                     catch (Exception e)
                     {
-                        Crashes.TrackError(e);
+                        SentrySdk.CaptureException(e);
                     }
                 }
 
@@ -338,7 +338,7 @@ namespace UniversalSoundboard.Models
                 }
                 catch (Exception e)
                 {
-                    Crashes.TrackError(e);
+                    SentrySdk.CaptureException(e);
                     throw new AudioIOException();
                 }
             }
@@ -361,7 +361,7 @@ namespace UniversalSoundboard.Models
                 }
                 catch (Exception e)
                 {
-                    Crashes.TrackError(e);
+                    SentrySdk.CaptureException(e);
                     throw new AudioIOException();
                 }
             }

@@ -1,5 +1,5 @@
 ﻿using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
+using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -125,9 +125,9 @@ namespace UniversalSoundboard.Pages
                         // Init the audio recorder
                         await audioRecorder.Init(true, true);
                     }
-                    catch(AudioIOException e)
+                    catch (AudioIOException e)
                     {
-                        Crashes.TrackError(e);
+                        SentrySdk.CaptureException(e);
                     }
                 }
                 
@@ -328,9 +328,9 @@ namespace UniversalSoundboard.Pages
             {
                 await audioRecorder.Init(true, true);
             }
-            catch(AudioIOException e)
+            catch (AudioIOException e)
             {
-                Crashes.TrackError(e);
+                SentrySdk.CaptureException(e);
                 return;
             }
 
@@ -450,9 +450,9 @@ namespace UniversalSoundboard.Pages
                 audioRecorder.InputDevice = inputDevice?.DeviceInformation;
                 await audioRecorder.Init(true, true);
             }
-            catch(AudioIOException e)
+            catch (AudioIOException e)
             {
-                Crashes.TrackError(e);
+                SentrySdk.CaptureException(e);
             }
         }
 
