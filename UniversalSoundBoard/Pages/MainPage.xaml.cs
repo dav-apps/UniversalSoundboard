@@ -1,7 +1,4 @@
 ﻿using davClassLibrary;
-using Microsoft.AppCenter.Analytics;
-using Microsoft.AppCenter.Crashes;
-using Microsoft.AppCenter;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -73,7 +70,7 @@ namespace UniversalSoundboard.Pages
         {
             InitializeComponent();
             SetThemeColors();
-            InitAppCenter();
+            InitSentry();
 
             RootGrid.DataContext = FileManager.itemViewHolder;
             dispatcher = CoreWindow.GetForCurrentThread().Dispatcher;
@@ -387,15 +384,12 @@ namespace UniversalSoundboard.Pages
         #endregion
 
         #region General methods
-        private void InitAppCenter()
+        private void InitSentry()
         {
             // Get the screen resolution
             var displayInfo = DisplayInformation.GetForCurrentView();
             screenWidth = displayInfo.ScreenWidthInRawPixels;
             screenHeight = displayInfo.ScreenHeightInRawPixels;
-
-            AppCenter.Start(Env.AppCenterSecretKey, typeof(Analytics), typeof(Crashes));
-            AppCenter.SetUserId(FileManager.itemViewHolder.UserId.ToString());
 
             SentrySdk.ConfigureScope(scope =>
             {
@@ -427,34 +421,6 @@ namespace UniversalSoundboard.Pages
                     Email = Dav.IsLoggedIn ? Dav.User.Email : null
                 };
             });
-
-            Crashes.GetErrorAttachments = (ErrorReport report) =>
-            {
-                // Collect settings
-                string settings = "";
-                settings += $"Screen resolution: {screenWidth}x{screenHeight}\n";
-                settings += $"savePlayingSounds: {FileManager.itemViewHolder.SavePlayingSounds}\n";
-                settings += $"openMultipleSounds: {FileManager.itemViewHolder.OpenMultipleSounds}\n";
-                settings += $"multiSoundPlayback: {FileManager.itemViewHolder.MultiSoundPlayback}\n";
-                settings += $"showSoundsPivot: {FileManager.itemViewHolder.ShowSoundsPivot}\n";
-                settings += $"soundOrder: {FileManager.itemViewHolder.SoundOrder}\n";
-                settings += $"showListView: {FileManager.itemViewHolder.ShowListView}\n";
-                settings += $"showCategoriesIcons: {FileManager.itemViewHolder.ShowCategoriesIcons}\n";
-                settings += $"showAcrylicBackground: {FileManager.itemViewHolder.ShowAcrylicBackground}\n";
-                settings += $"isLoggedIn: {Dav.IsLoggedIn}\n";
-                if (Dav.IsLoggedIn) settings += $"plan: {Dav.User.Plan}\n";
-                settings += $"isFadeInEffectEnabled: {FileManager.itemViewHolder.IsFadeInEffectEnabled}\n";
-                settings += $"isFadeOutEffectEnabled: {FileManager.itemViewHolder.IsFadeOutEffectEnabled}\n";
-                settings += $"isEchoEffectEnabled: {FileManager.itemViewHolder.IsEchoEffectEnabled}\n";
-                settings += $"isLimiterEffectEnabled: {FileManager.itemViewHolder.IsLimiterEffectEnabled}\n";
-                settings += $"isReverbEffectEnabled: {FileManager.itemViewHolder.IsReverbEffectEnabled}\n";
-                settings += $"isPitchShiftEffectEnabled: {FileManager.itemViewHolder.IsPitchShiftEffectEnabled}";
-
-                return new ErrorAttachmentLog[]
-                {
-                    ErrorAttachmentLog.AttachmentWithText(settings, "settings.txt")
-                };
-            };
         }
 
         private void CustomiseTitleBar()
