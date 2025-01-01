@@ -33,6 +33,8 @@ using Windows.UI;
 using WinUI = Microsoft.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Animation;
 using Windows.Services.Store;
+using Sentry;
+using System.Text;
 
 namespace UniversalSoundboard.Pages
 {
@@ -388,6 +390,37 @@ namespace UniversalSoundboard.Pages
 
             AppCenter.Start(Env.AppCenterSecretKey, typeof(Analytics), typeof(Crashes));
             AppCenter.SetUserId(FileManager.itemViewHolder.UserId.ToString());
+
+            SentrySdk.ConfigureScope(scope =>
+            {
+                // Collect settings
+                string settings = "";
+                settings += $"Screen resolution: {screenWidth}x{screenHeight}\n";
+                settings += $"savePlayingSounds: {FileManager.itemViewHolder.SavePlayingSounds}\n";
+                settings += $"openMultipleSounds: {FileManager.itemViewHolder.OpenMultipleSounds}\n";
+                settings += $"multiSoundPlayback: {FileManager.itemViewHolder.MultiSoundPlayback}\n";
+                settings += $"showSoundsPivot: {FileManager.itemViewHolder.ShowSoundsPivot}\n";
+                settings += $"soundOrder: {FileManager.itemViewHolder.SoundOrder}\n";
+                settings += $"showListView: {FileManager.itemViewHolder.ShowListView}\n";
+                settings += $"showCategoriesIcons: {FileManager.itemViewHolder.ShowCategoriesIcons}\n";
+                settings += $"showAcrylicBackground: {FileManager.itemViewHolder.ShowAcrylicBackground}\n";
+                settings += $"isLoggedIn: {Dav.IsLoggedIn}\n";
+                if (Dav.IsLoggedIn) settings += $"plan: {Dav.User.Plan}\n";
+                settings += $"isFadeInEffectEnabled: {FileManager.itemViewHolder.IsFadeInEffectEnabled}\n";
+                settings += $"isFadeOutEffectEnabled: {FileManager.itemViewHolder.IsFadeOutEffectEnabled}\n";
+                settings += $"isEchoEffectEnabled: {FileManager.itemViewHolder.IsEchoEffectEnabled}\n";
+                settings += $"isLimiterEffectEnabled: {FileManager.itemViewHolder.IsLimiterEffectEnabled}\n";
+                settings += $"isReverbEffectEnabled: {FileManager.itemViewHolder.IsReverbEffectEnabled}\n";
+                settings += $"isPitchShiftEffectEnabled: {FileManager.itemViewHolder.IsPitchShiftEffectEnabled}";
+
+                scope.AddAttachment(Encoding.UTF8.GetBytes(settings), "settings.txt");
+
+                scope.User = new SentryUser
+                {
+                    Id = FileManager.itemViewHolder.UserId.ToString(),
+                    Email = Dav.IsLoggedIn ? Dav.User.Email : null
+                };
+            });
 
             Crashes.GetErrorAttachments = (ErrorReport report) =>
             {

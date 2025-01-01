@@ -1,10 +1,14 @@
 ﻿using davClassLibrary;
 using davClassLibrary.Common;
 using Microsoft.AppCenter.Analytics;
+using Sentry;
+using Sentry.Protocol;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.ExceptionServices;
+using System.Security;
 using System.Web;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
@@ -20,6 +24,7 @@ using Windows.Storage;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Navigation;
+using UnhandledExceptionEventArgs = Windows.UI.Xaml.UnhandledExceptionEventArgs;
 
 namespace UniversalSoundboard
 {
@@ -37,6 +42,8 @@ namespace UniversalSoundboard
         /// </summary>
         public App()
         {
+            UnhandledException += OnUnhandledException;
+
             InitializeComponent();
             Suspending += OnSuspending;
 
@@ -77,6 +84,25 @@ namespace UniversalSoundboard
                 FileManager.itemViewHolder.CurrentTheme = AppTheme.Dark;
             else
                 FileManager.itemViewHolder.CurrentTheme = RequestedTheme == ApplicationTheme.Light ? AppTheme.Light : AppTheme.Dark;
+
+            // Init Sentry
+            SentrySdk.Init(options =>
+            {
+                // Tells which project in Sentry to send events to:
+                options.Dsn = Env.SentryDsn;
+
+                // When configuring for the first time, to see what the SDK is doing:
+                options.Debug = true;
+
+                // Set traces_sample_rate to 1.0 to capture 100% of transactions for tracing.
+                // We recommend adjusting this value in production.
+                options.TracesSampleRate = 1.0;
+
+                // Enable Global Mode since this is a client app.
+                options.IsGlobalModeEnabled = true;
+
+                // TODO:Any other Sentry options you need go here.
+            });
         }
 
         /// <summary>
@@ -285,9 +311,13 @@ namespace UniversalSoundboard
         /// </summary>
         /// <param name="sender">The source of the suspend request.</param>
         /// <param name="e">Details about the suspend request.</param>
-        private void OnSuspending(object sender, SuspendingEventArgs e)
+        private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
+
+            // Flush Sentry events when suspending
+            await SentrySdk.FlushAsync(TimeSpan.FromSeconds(2));
+
             //TODO: Save application state and stop any background activity
             deferral.Complete();
         }
@@ -307,6 +337,27 @@ namespace UniversalSoundboard
 
                 AppServiceTriggerDetails triggerDetails = (args.TaskInstance.TriggerDetails as AppServiceTriggerDetails);
                 triggerDetails.AppServiceConnection.RequestReceived += AppServiceConnection_RequestReceived;
+            }
+        }
+
+        [SecurityCritical]
+        [HandleProcessCorruptedStateExceptions]
+        private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            // Get a reference to the exception, because the Exception property is cleared when accessed.
+            var exception = e.Exception;
+
+            if (exception != null)
+            {
+                // Tell Sentry this was an unhandled exception
+                exception.Data[Mechanism.HandledKey] = false;
+                exception.Data[Mechanism.MechanismKey] = "Application.UnhandledException";
+
+                // Capture the exception
+                SentrySdk.CaptureException(exception);
+
+                // Flush the event immediately
+                SentrySdk.FlushAsync(TimeSpan.FromSeconds(2)).GetAwaiter().GetResult();
             }
         }
 
