@@ -56,19 +56,19 @@ namespace UniversalSoundboard
             Dav.Init(
                 FileManager.Environment,
                 Constants.AppId,
-                new List<int>
+                new List<string>
                 {
-                    Constants.OrderTableId,
-                    Constants.CategoryTableId,
-                    Constants.SoundFileTableId,
-                    Constants.SoundTableId,
-                    Constants.PlayingSoundTableId,
-                    Constants.ImageFileTableId
+                    Constants.OrderTableName,
+                    Constants.CategoryTableName,
+                    Constants.SoundFileTableName,
+                    Constants.SoundTableName,
+                    Constants.PlayingSoundTableName,
+                    Constants.ImageFileTableName
                 },
-                new List<int>
+                new List<string>
                 {
-                    Constants.SoundFileTableId,
-                    Constants.SoundTableId
+                    Constants.SoundFileTableName,
+                    Constants.SoundTableName
                 },
                 FileManager.GetDavDataPath()
             );

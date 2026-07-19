@@ -42,6 +42,7 @@ namespace UniversalSoundboard.Common
         #endregion
 
         #region Table property names
+        public const string SoundTableName = "Sound";
         public const string SoundTableNamePropertyName = "name";
         public const string SoundTableFavouritePropertyName = "favourite";
         public const string SoundTableSoundUuidPropertyName = "sound_uuid";
@@ -55,10 +56,12 @@ namespace UniversalSoundboard.Common
         public const string SoundTableHotkeysPropertyName = "hotkeys";
         public const string SoundTableSourcePropertyName = "source";
 
+        public const string CategoryTableName = "Category";
         public const string CategoryTableParentPropertyName = "parent";
         public const string CategoryTableNamePropertyName = "name";
         public const string CategoryTableIconPropertyName = "icon";
 
+        public const string PlayingSoundTableName = "PlayingSound";
         public const string PlayingSoundTableSoundIdsPropertyName = "sound_ids";
         public const string PlayingSoundTableCurrentPropertyName = "current";
         public const string PlayingSoundTableRepetitionsPropertyName = "repetitions";
@@ -68,9 +71,13 @@ namespace UniversalSoundboard.Common
         public const string PlayingSoundTableOutputDevicePropertyName = "output_device";
         public const string PlayingSoundTablePlaybackSpeedPropertyName = "playback_speed";
 
+        public const string OrderTableName = "Order";
         public const string OrderTableTypePropertyName = "type";
         public const string OrderTableCategoryPropertyName = "category";
         public const string OrderTableFavouritePropertyName = "favs";
+
+        public const string SoundFileTableName = "SoundFile";
+        public const string ImageFileTableName = "ImageFile";
         #endregion
 
         #region Other constants
