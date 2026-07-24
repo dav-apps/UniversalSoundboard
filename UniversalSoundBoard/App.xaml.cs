@@ -46,9 +46,6 @@ namespace UniversalSoundboard
             InitializeComponent();
             Suspending += OnSuspending;
 
-            // Init Websocket
-            Websockets.Net.WebsocketConnection.Link();
-
             // Initialize Dav settings
             ProjectInterface.LocalDataSettings = new LocalDataSettings();
             ProjectInterface.Callbacks = new Callbacks();

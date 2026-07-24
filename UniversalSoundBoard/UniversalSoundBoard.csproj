@@ -593,9 +593,6 @@
     <PackageReference Include="sqlite-net-pcl">
       <Version>1.11.285</Version>
     </PackageReference>
-    <PackageReference Include="Websockets.Net">
-      <Version>1.0.1</Version>
-    </PackageReference>
     <PackageReference Include="YoutubeExplode">
       <Version>6.6.0</Version>
     </PackageReference>
