@@ -247,8 +247,9 @@ namespace UniversalSoundboard.Pages
 
             SentrySdk.CaptureMessage("AccountPage-PlusCardSelectButtonClick");
 
-            var createCheckoutSessionResponse = await CheckoutSessionsController.CreateCheckoutSession(
-                1,
+            var createCheckoutSessionResponse = await CheckoutSessionsController.CreateSubscriptionCheckoutSession(
+                "url",
+                Plan.Plus,
                 Constants.CreateCheckoutSessionSuccessUrl,
                 Constants.CreateCheckoutSessionCancelUrl
             );
@@ -259,15 +260,15 @@ namespace UniversalSoundboard.Pages
 
             if (createCheckoutSessionResponse.Success)
             {
-                await Launcher.LaunchUriAsync(new Uri(createCheckoutSessionResponse.Data.SessionUrl));
+                await Launcher.LaunchUriAsync(new Uri(createCheckoutSessionResponse.Data.url));
             }
             else
             {
-                if (createCheckoutSessionResponse.Errors.Length > 0)
+                if (createCheckoutSessionResponse.Errors.Count > 0)
                 {
                     SentrySdk.CaptureMessage("AccountPage-PlusCardSelectButtonClick-Error", scope =>
                     {
-                        scope.SetTag("ErrorCode", createCheckoutSessionResponse.Errors[0].Code.ToString());
+                        scope.SetTag("ErrorCodes", string.Join(", ", createCheckoutSessionResponse.Errors));
                     });
                 }
 

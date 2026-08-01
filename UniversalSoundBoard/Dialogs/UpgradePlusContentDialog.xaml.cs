@@ -91,14 +91,15 @@ namespace UniversalSoundboard.Dialogs
 
         private async Task NavigateToCheckout()
         {
-            var createCheckoutSessionResponse = await CheckoutSessionsController.CreateCheckoutSession(
-                    1,
+            var createCheckoutSessionResponse = await CheckoutSessionsController.CreateSubscriptionCheckoutSession(
+                    "url",
+                    Plan.Plus,
                     Constants.CreateCheckoutSessionSuccessUrl,
                     Constants.CreateCheckoutSessionCancelUrl
                 );
 
-            if (createCheckoutSessionResponse.Success)
-                await Launcher.LaunchUriAsync(new Uri(createCheckoutSessionResponse.Data.SessionUrl));
+            if (createCheckoutSessionResponse.Errors == null)
+                await Launcher.LaunchUriAsync(new Uri(createCheckoutSessionResponse.Data.url));
         }
     }
 }
