@@ -157,8 +157,8 @@ namespace UniversalSoundboard.Tests.DataAccess
             var orders = await DatabaseOperations.GetAllOrdersAsync();
             Assert.AreEqual(2, orders.Count);
 
-            await orders[0].SetPropertyValueAsync(FileManager.OrderTableCategoryPropertyName, categoryUuid.ToString());
-            await orders[1].SetPropertyValueAsync(FileManager.OrderTableCategoryPropertyName, categoryUuid.ToString());
+            await orders[0].SetPropertyValueAsync(Constants.OrderTableCategoryPropertyName, categoryUuid.ToString());
+            await orders[1].SetPropertyValueAsync(Constants.OrderTableCategoryPropertyName, categoryUuid.ToString());
 
             // Act
             List<Sound> sortedSounds = await FileManager.SortSoundsListByCustomOrderAsync(secondSoundsList, categoryUuid, false);

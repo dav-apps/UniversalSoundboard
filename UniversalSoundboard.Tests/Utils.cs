@@ -18,20 +18,20 @@ namespace UniversalSoundboard.Tests
 
             Dav.Init(
                 Environment.Test,
-                FileManager.AppId,
-                new List<int>
+                Constants.AppId,
+                new List<string>
                 {
-                    FileManager.OrderTableId,
-                    FileManager.CategoryTableId,
-                    FileManager.SoundTableId,
-                    FileManager.SoundFileTableId,
-                    FileManager.PlayingSoundTableId,
-                    FileManager.ImageFileTableId
+                    Constants.OrderTableName,
+                    Constants.CategoryTableName,
+                    Constants.SoundFileTableName,
+                    Constants.SoundTableName,
+                    Constants.PlayingSoundTableName,
+                    Constants.ImageFileTableName
                 },
-                new List<int>
+                new List<string>
                 {
-                    FileManager.SoundTableId,
-                    FileManager.SoundFileTableId
+                    Constants.SoundFileTableName,
+                    Constants.SoundTableName
                 },
                 FileManager.GetDavDataPath()
             );
