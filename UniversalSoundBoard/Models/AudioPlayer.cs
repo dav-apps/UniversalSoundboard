@@ -367,6 +367,7 @@ namespace UniversalSoundboard.Models
             }
 
             DisableFadeInEffect();
+            DisableFadeOutEffect();
             isPlaying = false;
         }
 
@@ -756,7 +757,7 @@ namespace UniversalSoundboard.Models
             if (value)
                 EnableFadeInEffect();
             else
-                DisableFadeOutEffect();
+                DisableFadeInEffect();
         }
 
         private void setFadeInDuration(int value)

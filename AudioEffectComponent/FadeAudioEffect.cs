@@ -156,16 +156,25 @@ namespace AudioEffectComponent
                 // Process audio data
                 int dataInFloatLength = (int)inputBuffer.Length / sizeof(float);
 
+                // Read the configuration once per callback instead of once per sample.
+                // These can't change mid-callback: property updates only happen from the
+                // UI/dispatcher thread via Configuration_MapChanged, which runs strictly
+                // between ProcessFrame calls. Re-reading them per sample means thousands
+                // of PropertySet lookups per audio quantum on the real-time audio thread,
+                // which risks missing the callback deadline and causing clicks/hitching.
+                bool isFadeInEnabled = IsFadeInEnabled;
+                bool isFadeOutEnabled = IsFadeOutEnabled;
+
                 for (int i = 0; i < dataInFloatLength; i++)
                 {
-                    if (IsFadeInEnabled)
+                    if (isFadeInEnabled)
                     {
                         outputDataInFloat[i] = inputDataInFloat[i] * ((float)sampleIndex / fadeInEffectSampleCount);
 
                         if (sampleIndex < fadeInEffectSampleCount)
                             sampleIndex++;
                     }
-                    else if (IsFadeOutEnabled)
+                    else if (isFadeOutEnabled)
                     {
                         outputDataInFloat[i] = inputDataInFloat[i] * ((float)sampleIndex / fadeOutEffectSampleCount);
 
