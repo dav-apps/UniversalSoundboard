@@ -131,7 +131,6 @@
     <RestoreProjectStyle>PackageReference</RestoreProjectStyle>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="FadeAudioEffect.cs" />
     <Compile Include="PitchShiftAudioEffect.cs" />
     <Compile Include="PitchShifter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

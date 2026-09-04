@@ -61,7 +61,6 @@ namespace UniversalSoundboard.Models
         private bool isFadeOutRunning = false;
 
         private DispatcherTimer positionChangeTimer;
-        private DispatcherTimer fadeInEndTimer;
         private TimeSpan position;
         #endregion
 
@@ -141,7 +140,7 @@ namespace UniversalSoundboard.Models
             // Set the appropriate output device
             await UpdateOutputDevice();
             await InitAudioPlayer();
-            InitTimers();
+            InitPositionChangeTimer();
 
             if (Dav.IsLoggedIn && !PlayingSound.LocalFile)
             {
@@ -413,11 +412,6 @@ namespace UniversalSoundboard.Models
             }
         }
 
-        private void FadeInEndTimer_Tick(object sender, object e)
-        {
-            fadeInEndTimer.Stop();
-            PlayingSound.AudioPlayer.IsFadeInEnabled = false;
-        }
         #endregion
 
         #region Functionality
@@ -465,14 +459,11 @@ namespace UniversalSoundboard.Models
             });
         }
 
-        private void InitTimers()
+        private void InitPositionChangeTimer()
         {
             positionChangeTimer = new DispatcherTimer();
             positionChangeTimer.Interval = TimeSpan.FromMilliseconds(200);
             positionChangeTimer.Tick += PositionChangeTimer_Tick;
-
-            fadeInEndTimer = new DispatcherTimer();
-            fadeInEndTimer.Tick += FadeInEndTimer_Tick;
         }
 
         private async Task<bool> StartAudioPlayer(bool fadeIn = true)
@@ -489,16 +480,8 @@ namespace UniversalSoundboard.Models
                 PlayingSound.AudioPlayer.Play();
                 positionChangeTimer.Start();
 
-                // Disable the fade effect after the fade in has ended.
-                // One reusable timer, so that starting playback again cancels the pending one
-                // instead of leaving several timers running next to each other.
-                fadeInEndTimer.Stop();
-
-                if (PlayingSound.AudioPlayer.IsFadeInEnabled)
-                {
-                    fadeInEndTimer.Interval = TimeSpan.FromMilliseconds(PlayingSound.AudioPlayer.FadeInDuration);
-                    fadeInEndTimer.Start();
-                }
+                // The AudioPlayer ends the fade in on its own once the gain ramp has finished,
+                // no timer needed here
             }
             catch (AudioIOException)
             {
@@ -530,7 +513,6 @@ namespace UniversalSoundboard.Models
                 await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     positionChangeTimer.Stop();
-                    fadeInEndTimer.Stop();
                 });
             }
             catch (Exception e)

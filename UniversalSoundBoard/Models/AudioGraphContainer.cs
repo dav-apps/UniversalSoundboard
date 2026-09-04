@@ -8,7 +8,6 @@ namespace UniversalSoundboard.Models
         public AudioGraph AudioGraph { get; set; }
         public AudioFileInputNode FileInputNode { get; set; }
         public AudioDeviceOutputNode DeviceOutputNode { get; set; }
-        public AudioEffectDefinition FadeEffectDefinition { get; set; }
         public EchoEffectDefinition EchoEffectDefinition { get; set; }
         public LimiterEffectDefinition LimiterEffectDefinition { get; set; }
         public ReverbEffectDefinition ReverbEffectDefinition { get; set; }

@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using Windows.Devices.Enumeration;
@@ -33,6 +35,8 @@ namespace UniversalSoundboard.Models
         private int fadeInDuration = 1000;
         private bool isFadeOutEnabled = false;
         private int fadeOutDuration = 1000;
+        private double fadeGain = 1;
+        private CancellationTokenSource fadeCancellationTokenSource;
         private bool isEchoEnabled = false;
         private int echoDelay = 1000;
         private bool isLimiterEnabled = false;
@@ -264,17 +268,7 @@ namespace UniversalSoundboard.Models
 
                 audioGraphContainer.FileInputNode.Seek(position);
 
-                if (isMuted)
-                    audioGraphContainer.FileInputNode.OutgoingGain = 0;
-                else
-                    audioGraphContainer.FileInputNode.OutgoingGain = volume;
-
                 audioGraphContainer.FileInputNode.PlaybackSpeedFactor = playbackRate;
-
-                // Fade effect
-                audioGraphContainer.FileInputNode.EffectDefinitions.Add(audioGraphContainer.FadeEffectDefinition);
-                if (!isFadeInEnabled && !isFadeOutEnabled)
-                    audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
 
                 // Echo effect
                 audioGraphContainer.FileInputNode.EffectDefinitions.Add(audioGraphContainer.EchoEffectDefinition);
@@ -294,6 +288,9 @@ namespace UniversalSoundboard.Models
 
                 audioGraphContainer.FileInputNode.FileCompleted += FileInputNode_FileCompleted;
             }
+
+            // The nodes are new, so volume, muted and a running fade have to be applied again
+            ApplyOutgoingGain();
         }
 
         private async Task InitDeviceOutputNodes()
@@ -367,21 +364,35 @@ namespace UniversalSoundboard.Models
                 }
             }
 
+            CancelFade();
+
             isFadeInEnabled = false;
             isFadeOutEnabled = false;
-            UpdateFadeEffect();
+
+            // The graph is already stopped, so restoring the gain here is inaudible and the next
+            // playback does not start out silent after a fade out
+            fadeGain = 1;
+            ApplyOutgoingGain();
+
             isPlaying = false;
         }
 
+        /**
+         * Fades the volume out and returns when the fade has finished.
+         */
         public async Task FadeOut(int milliseconds)
         {
-            // Set the fields directly instead of going through the setters, so that a fade out
-            // still starts when isFadeOutEnabled happens to be true already
+            var token = RestartFade();
+
             isFadeInEnabled = false;
             isFadeOutEnabled = true;
-            UpdateFadeEffect();
 
-            await Task.Delay(milliseconds);
+            // Start from the current gain, so interrupting a running fade in does not make the
+            // volume jump up to full before fading out
+            await RunFade(fadeGain, 0, milliseconds, token);
+
+            if (!token.IsCancellationRequested)
+                isFadeOutEnabled = false;
         }
 
         #region Effect methods
@@ -390,17 +401,6 @@ namespace UniversalSoundboard.Models
         {
             foreach (var audioGraphContainer in AudioGraphContainers)
             {
-                audioGraphContainer.FadeEffectDefinition = new AudioEffectDefinition(
-                    typeof(FadeAudioEffect).FullName,
-                    new PropertySet
-                    {
-                        { "IsFadeInEnabled", false },
-                        { "IsFadeOutEnabled", false },
-                        { "FadeInDuration", FadeInDuration },
-                        { "FadeOutDuration", FadeOutDuration }
-                    }
-                );
-
                 audioGraphContainer.EchoEffectDefinition = new EchoEffectDefinition(audioGraphContainer.AudioGraph)
                 {
                     Delay = echoDelay,
@@ -434,32 +434,103 @@ namespace UniversalSoundboard.Models
         }
         #endregion
 
-        #region Fade effect
+        #region Fade
         /**
-         * Writes the current fade state to the effect definition and enables or disables the effect.
+         * The fades ramp the OutgoingGain of the input nodes instead of running a per sample audio
+         * effect.
          *
-         * Fade in and fade out share a single FadeEffectDefinition, so both flags always have to be
-         * written together and the effect may only be disabled when neither fade is running.
-         * Handling them separately means that ending one fade also cancels the other one.
+         * A managed IBasicAudioEffect runs on the real time audio thread and allocates COM objects
+         * for every audio quantum, and it has to be inserted into and removed from the node's effect
+         * chain while playback is running. On a latency sensitive endpoint - a Bluetooth headset,
+         * for example - that is the most fragile part of the pipeline. Ramping the gain keeps the
+         * audio thread free of managed code entirely. At a 15 ms step a 10 s fade still has more
+         * than 600 steps, and AudioGraph smooths gain changes on its own.
          */
-        private void UpdateFadeEffect()
-        {
-            foreach (var audioGraphContainer in AudioGraphContainers)
-            {
-                if (
-                    audioGraphContainer.FileInputNode == null
-                    || audioGraphContainer.FadeEffectDefinition == null
-                ) continue;
+        private const int fadeStepMilliseconds = 15;
 
-                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeInEnabled"] = isFadeInEnabled;
-                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeOutEnabled"] = isFadeOutEnabled && !isFadeInEnabled;
+        /**
+         * Cancels a running fade and returns the token for the new one.
+         */
+        private CancellationToken RestartFade()
+        {
+            CancelFade();
+
+            fadeCancellationTokenSource = new CancellationTokenSource();
+            return fadeCancellationTokenSource.Token;
+        }
+
+        private void CancelFade()
+        {
+            if (fadeCancellationTokenSource == null) return;
+
+            fadeCancellationTokenSource.Cancel();
+            fadeCancellationTokenSource.Dispose();
+            fadeCancellationTokenSource = null;
+        }
+
+        /**
+         * Ramps the fade gain from one value to another. The progress is derived from the elapsed
+         * time and not from the number of steps, so a delayed step does not stretch the fade.
+         */
+        private async Task RunFade(double from, double to, int milliseconds, CancellationToken token)
+        {
+            var stopwatch = Stopwatch.StartNew();
+
+            while (!token.IsCancellationRequested)
+            {
+                double progress = milliseconds <= 0
+                    ? 1
+                    : (double)stopwatch.ElapsedMilliseconds / milliseconds;
+
+                if (progress >= 1) break;
+
+                fadeGain = from + (to - from) * progress;
+                ApplyOutgoingGain();
 
                 try
                 {
-                    if (isFadeInEnabled || isFadeOutEnabled)
-                        audioGraphContainer.FileInputNode.EnableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
-                    else
-                        audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
+                    await Task.Delay(fadeStepMilliseconds, token);
+                }
+                catch (OperationCanceledException)
+                {
+                    return;
+                }
+            }
+
+            if (token.IsCancellationRequested) return;
+
+            fadeGain = to;
+            ApplyOutgoingGain();
+        }
+
+        private async void RunFadeIn()
+        {
+            var token = RestartFade();
+
+            // Drop to silence before the graph is started, so the fade in cannot begin with a burst
+            fadeGain = 0;
+            ApplyOutgoingGain();
+
+            await RunFade(0, 1, fadeInDuration, token);
+
+            if (!token.IsCancellationRequested)
+                isFadeInEnabled = false;
+        }
+
+        /**
+         * Applies volume, muted and the current fade gain to all input nodes.
+         */
+        private void ApplyOutgoingGain()
+        {
+            double gain = (isMuted ? 0 : volume) * fadeGain;
+
+            foreach (var audioGraphContainer in AudioGraphContainers)
+            {
+                if (audioGraphContainer.FileInputNode == null) continue;
+
+                try
+                {
+                    audioGraphContainer.FileInputNode.OutgoingGain = gain;
                 }
                 catch (Exception) { }
             }
@@ -656,25 +727,24 @@ namespace UniversalSoundboard.Models
             if (isFadeInEnabled)
             {
                 isFadeInEnabled = false;
-                UpdateFadeEffect();
+                CancelFade();
+                fadeGain = 1;
+                ApplyOutgoingGain();
             }
         }
 
         private void setVolume(double value)
         {
-            // Don't set the volume if the player is muted or if the volume didn't change
-            if (isMuted || volume.Equals(value)) return;
+            // Don't set the volume if it didn't change
+            if (volume.Equals(value)) return;
 
             if (value > 1)
                 value = 1;
             else if (value < 0)
                 value = 0;
 
-            foreach (var audioGraphContainer in AudioGraphContainers)
-                if (audioGraphContainer.FileInputNode != null)
-                    audioGraphContainer.FileInputNode.OutgoingGain = value;
-
             volume = value;
+            ApplyOutgoingGain();
         }
 
         private void setIsMuted(bool value)
@@ -682,21 +752,8 @@ namespace UniversalSoundboard.Models
             // Don't change the value if it didn't change
             if (isMuted.Equals(value)) return;
 
-            foreach (var audioGraphContainer in AudioGraphContainers)
-            {
-                if (
-                    audioGraphContainer.FileInputNode != null
-                    && audioGraphContainer.DeviceOutputNode != null
-                )
-                {
-                    if (value)
-                        audioGraphContainer.FileInputNode.OutgoingGain = 0;
-                    else
-                        audioGraphContainer.FileInputNode.OutgoingGain = volume;
-                }
-            }
-
             isMuted = value;
+            ApplyOutgoingGain();
         }
 
         private void setPlaybackRate(double value)
@@ -719,7 +776,18 @@ namespace UniversalSoundboard.Models
                 return;
 
             isFadeInEnabled = value;
-            UpdateFadeEffect();
+
+            if (value)
+            {
+                RunFadeIn();
+            }
+            else
+            {
+                // The fade in was ended from the outside, jump to the full volume
+                CancelFade();
+                fadeGain = 1;
+                ApplyOutgoingGain();
+            }
         }
 
         private void setFadeInDuration(int value)
@@ -728,10 +796,6 @@ namespace UniversalSoundboard.Models
                 return;
 
             fadeInDuration = value;
-
-            foreach (var audioGraphContainer in AudioGraphContainers)
-                if (audioGraphContainer.FadeEffectDefinition != null)
-                    audioGraphContainer.FadeEffectDefinition.Properties["FadeInDuration"] = value;
         }
 
         private void setIsFadeOutEnabled(bool value)
@@ -739,8 +803,19 @@ namespace UniversalSoundboard.Models
             if (isFadeOutEnabled.Equals(value))
                 return;
 
-            isFadeOutEnabled = value;
-            UpdateFadeEffect();
+            if (value)
+            {
+                // Not awaited on purpose - FadeOut is the API for starting a fade out and waiting
+                // for it, this setter only exists so the property stays symmetric
+                var fadeOutTask = FadeOut(fadeOutDuration);
+            }
+            else
+            {
+                isFadeOutEnabled = false;
+                CancelFade();
+                fadeGain = 1;
+                ApplyOutgoingGain();
+            }
         }
 
         private void setFadeOutDuration(int value)
@@ -749,10 +824,6 @@ namespace UniversalSoundboard.Models
                 return;
 
             fadeOutDuration = value;
-
-            foreach (var audioGraphContainer in AudioGraphContainers)
-                if (audioGraphContainer.FadeEffectDefinition != null)
-                    audioGraphContainer.FadeEffectDefinition.Properties["FadeOutDuration"] = value;
         }
 
         private void setIsEchoEnabled(bool value)
