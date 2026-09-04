@@ -61,6 +61,7 @@ namespace UniversalSoundboard.Models
         private bool isFadeOutRunning = false;
 
         private DispatcherTimer positionChangeTimer;
+        private DispatcherTimer fadeInEndTimer;
         private TimeSpan position;
         #endregion
 
@@ -140,7 +141,7 @@ namespace UniversalSoundboard.Models
             // Set the appropriate output device
             await UpdateOutputDevice();
             await InitAudioPlayer();
-            InitPositionChangeTimer();
+            InitTimers();
 
             if (Dav.IsLoggedIn && !PlayingSound.LocalFile)
             {
@@ -411,6 +412,12 @@ namespace UniversalSoundboard.Models
                 PositionChanged?.Invoke(this, new PositionChangedEventArgs(position));
             }
         }
+
+        private void FadeInEndTimer_Tick(object sender, object e)
+        {
+            fadeInEndTimer.Stop();
+            PlayingSound.AudioPlayer.IsFadeInEnabled = false;
+        }
         #endregion
 
         #region Functionality
@@ -423,9 +430,12 @@ namespace UniversalSoundboard.Models
             }
 
             // Set the global effect values
-            PlayingSound.AudioPlayer.IsFadeInEnabled = FileManager.itemViewHolder.IsFadeInEffectEnabled;
+            // IsFadeInEnabled / IsFadeOutEnabled must not be set from the settings here: on the
+            // AudioPlayer they mean "a fade is running right now", not "the fade effect is enabled
+            // in the settings". Assigning the setting starts a fade out whenever InitAudioPlayer
+            // runs, which cancels a running fade in and makes the volume jump to full.
+            // The fades are started by StartAudioPlayer and PauseAudioPlayer instead.
             PlayingSound.AudioPlayer.FadeInDuration = FileManager.itemViewHolder.FadeInEffectDuration;
-            PlayingSound.AudioPlayer.IsFadeOutEnabled = FileManager.itemViewHolder.IsFadeOutEffectEnabled;
             PlayingSound.AudioPlayer.FadeOutDuration = FileManager.itemViewHolder.FadeOutEffectDuration;
             PlayingSound.AudioPlayer.IsEchoEnabled = FileManager.itemViewHolder.IsEchoEffectEnabled;
             PlayingSound.AudioPlayer.EchoDelay = FileManager.itemViewHolder.EchoEffectDelay;
@@ -455,11 +465,14 @@ namespace UniversalSoundboard.Models
             });
         }
 
-        private void InitPositionChangeTimer()
+        private void InitTimers()
         {
             positionChangeTimer = new DispatcherTimer();
             positionChangeTimer.Interval = TimeSpan.FromMilliseconds(200);
             positionChangeTimer.Tick += PositionChangeTimer_Tick;
+
+            fadeInEndTimer = new DispatcherTimer();
+            fadeInEndTimer.Tick += FadeInEndTimer_Tick;
         }
 
         private async Task<bool> StartAudioPlayer(bool fadeIn = true)
@@ -476,21 +489,15 @@ namespace UniversalSoundboard.Models
                 PlayingSound.AudioPlayer.Play();
                 positionChangeTimer.Start();
 
+                // Disable the fade effect after the fade in has ended.
+                // One reusable timer, so that starting playback again cancels the pending one
+                // instead of leaving several timers running next to each other.
+                fadeInEndTimer.Stop();
+
                 if (PlayingSound.AudioPlayer.IsFadeInEnabled)
                 {
-                    // Disable the fade effect after the fade in has ended
-                    var timer = new DispatcherTimer
-                    {
-                        Interval = TimeSpan.FromMilliseconds(PlayingSound.AudioPlayer.FadeInDuration)
-                    };
-
-                    timer.Tick += (object sender, object e) =>
-                    {
-                        PlayingSound.AudioPlayer.IsFadeInEnabled = false;
-                        timer.Stop();
-                    };
-
-                    timer.Start();
+                    fadeInEndTimer.Interval = TimeSpan.FromMilliseconds(PlayingSound.AudioPlayer.FadeInDuration);
+                    fadeInEndTimer.Start();
                 }
             }
             catch (AudioIOException)
@@ -523,6 +530,7 @@ namespace UniversalSoundboard.Models
                 await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
                     positionChangeTimer.Stop();
+                    fadeInEndTimer.Stop();
                 });
             }
             catch (Exception e)
@@ -1092,21 +1100,50 @@ namespace UniversalSoundboard.Models
                     deviceIds.Add(deviceId);
             }
 
-            PlayingSound.AudioPlayer.OutputDevices.Clear();
+            List<DeviceInformation> newOutputDevices = new List<DeviceInformation>();
 
             foreach (string deviceId in deviceIds)
             {
                 DeviceInformation deviceInfo = await FileManager.GetDeviceInformationById(deviceId);
 
                 if (deviceInfo != null && deviceInfo.IsEnabled)
+                    newOutputDevices.Add(deviceInfo);
+            }
+
+            // Only touch the AudioPlayer if the output devices really changed. Clearing the list
+            // marks the AudioPlayer as changed and forces a complete rebuild of the AudioGraph on
+            // the next Init, which interrupts playback and any running fade. This method runs on
+            // every DevicesChanged event, and those also fire when nothing relevant changed.
+            bool outputDevicesChanged = newOutputDevices.Count != PlayingSound.AudioPlayer.OutputDevices.Count;
+
+            if (!outputDevicesChanged)
+            {
+                for (int i = 0; i < newOutputDevices.Count; i++)
+                {
+                    if (!newOutputDevices[i].Id.Equals(PlayingSound.AudioPlayer.OutputDevices[i].Id))
+                    {
+                        outputDevicesChanged = true;
+                        break;
+                    }
+                }
+            }
+
+            if (outputDevicesChanged)
+            {
+                PlayingSound.AudioPlayer.OutputDevices.Clear();
+
+                foreach (var deviceInfo in newOutputDevices)
                     PlayingSound.AudioPlayer.OutputDevices.Add(deviceInfo);
             }
 
-            try
+            if (outputDevicesChanged || !PlayingSound.AudioPlayer.IsInitialized)
             {
-                await InitAudioPlayer();
+                try
+                {
+                    await InitAudioPlayer();
+                }
+                catch (Exception) { }
             }
-            catch (Exception) { }
 
             OutputDeviceButtonVisibilityChanged?.Invoke(
                 this,

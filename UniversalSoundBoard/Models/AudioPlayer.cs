@@ -273,7 +273,8 @@ namespace UniversalSoundboard.Models
 
                 // Fade effect
                 audioGraphContainer.FileInputNode.EffectDefinitions.Add(audioGraphContainer.FadeEffectDefinition);
-                if (!isFadeInEnabled) audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
+                if (!isFadeInEnabled && !isFadeOutEnabled)
+                    audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
 
                 // Echo effect
                 audioGraphContainer.FileInputNode.EffectDefinitions.Add(audioGraphContainer.EchoEffectDefinition);
@@ -366,14 +367,20 @@ namespace UniversalSoundboard.Models
                 }
             }
 
-            DisableFadeInEffect();
-            DisableFadeOutEffect();
+            isFadeInEnabled = false;
+            isFadeOutEnabled = false;
+            UpdateFadeEffect();
             isPlaying = false;
         }
 
         public async Task FadeOut(int milliseconds)
         {
-            EnableFadeOutEffect();
+            // Set the fields directly instead of going through the setters, so that a fade out
+            // still starts when isFadeOutEnabled happens to be true already
+            isFadeInEnabled = false;
+            isFadeOutEnabled = true;
+            UpdateFadeEffect();
+
             await Task.Delay(milliseconds);
         }
 
@@ -427,82 +434,32 @@ namespace UniversalSoundboard.Models
         }
         #endregion
 
-        #region Fade in effect
-        private void EnableFadeInEffect()
+        #region Fade effect
+        /**
+         * Writes the current fade state to the effect definition and enables or disables the effect.
+         *
+         * Fade in and fade out share a single FadeEffectDefinition, so both flags always have to be
+         * written together and the effect may only be disabled when neither fade is running.
+         * Handling them separately means that ending one fade also cancels the other one.
+         */
+        private void UpdateFadeEffect()
         {
             foreach (var audioGraphContainer in AudioGraphContainers)
             {
                 if (
                     audioGraphContainer.FileInputNode == null
                     || audioGraphContainer.FadeEffectDefinition == null
-                ) return;
+                ) continue;
 
-                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeInEnabled"] = true;
-                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeOutEnabled"] = false;
-
-                try
-                {
-                    audioGraphContainer.FileInputNode.EnableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
-                }
-                catch (Exception) { }
-            }
-        }
-
-        private void DisableFadeInEffect()
-        {
-            foreach (var audioGraphContainer in AudioGraphContainers)
-            {
-                if (
-                    audioGraphContainer.FileInputNode == null
-                    || audioGraphContainer.FadeEffectDefinition == null
-                ) return;
-
-                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeInEnabled"] = false;
+                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeInEnabled"] = isFadeInEnabled;
+                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeOutEnabled"] = isFadeOutEnabled && !isFadeInEnabled;
 
                 try
                 {
-                    audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
-                }
-                catch (Exception) { }
-            }
-        }
-        #endregion
-
-        #region Fade out effect
-        private void EnableFadeOutEffect()
-        {
-            foreach (var audioGraphContainer in AudioGraphContainers)
-            {
-                if (
-                    audioGraphContainer.FileInputNode == null
-                    || audioGraphContainer.FadeEffectDefinition == null
-                ) return;
-
-                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeInEnabled"] = false;
-                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeOutEnabled"] = true;
-
-                try
-                {
-                    audioGraphContainer.FileInputNode.EnableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
-                }
-                catch (Exception) { }
-            }
-        }
-
-        private void DisableFadeOutEffect()
-        {
-            foreach (var audioGraphContainer in AudioGraphContainers)
-            {
-                if (
-                    audioGraphContainer.FileInputNode == null
-                    || audioGraphContainer.FadeEffectDefinition == null
-                ) return;
-
-                audioGraphContainer.FadeEffectDefinition.Properties["IsFadeOutEnabled"] = false;
-
-                try
-                {
-                    audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
+                    if (isFadeInEnabled || isFadeOutEnabled)
+                        audioGraphContainer.FileInputNode.EnableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
+                    else
+                        audioGraphContainer.FileInputNode.DisableEffectsByDefinition(audioGraphContainer.FadeEffectDefinition);
                 }
                 catch (Exception) { }
             }
@@ -694,7 +651,13 @@ namespace UniversalSoundboard.Models
             }
             
             position = value;
-            DisableFadeInEffect();
+
+            // Seeking cancels a running fade in
+            if (isFadeInEnabled)
+            {
+                isFadeInEnabled = false;
+                UpdateFadeEffect();
+            }
         }
 
         private void setVolume(double value)
@@ -752,12 +715,11 @@ namespace UniversalSoundboard.Models
 
         private void setIsFadeInEnabled(bool value)
         {
-            isFadeInEnabled = value;
+            if (isFadeInEnabled.Equals(value))
+                return;
 
-            if (value)
-                EnableFadeInEffect();
-            else
-                DisableFadeInEffect();
+            isFadeInEnabled = value;
+            UpdateFadeEffect();
         }
 
         private void setFadeInDuration(int value)
@@ -774,12 +736,11 @@ namespace UniversalSoundboard.Models
 
         private void setIsFadeOutEnabled(bool value)
         {
-            isFadeOutEnabled = value;
+            if (isFadeOutEnabled.Equals(value))
+                return;
 
-            if (value)
-                EnableFadeOutEffect();
-            else
-                DisableFadeOutEffect();
+            isFadeOutEnabled = value;
+            UpdateFadeEffect();
         }
 
         private void setFadeOutDuration(int value)
