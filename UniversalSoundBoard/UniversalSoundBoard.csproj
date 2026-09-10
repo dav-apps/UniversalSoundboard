@@ -437,6 +437,9 @@
     <PackageReference Include="CommunityToolkit.Uwp.Controls.TokenizingTextBox">
       <Version>8.2.251219</Version>
     </PackageReference>
+    <!-- Win2D's build assets register its native WinRT classes in the package.
+         They are not imported through the Toolkit's transitive dependency. -->
+    <PackageReference Include="Win2D.uwp" Version="1.28.1" />
     <PackageReference Include="CommunityToolkit.Uwp.Media">
       <Version>8.2.251219</Version>
     </PackageReference>

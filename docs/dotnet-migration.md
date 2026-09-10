@@ -35,7 +35,11 @@ dotnet run --project UniversalSoundboard.Tests/Regression/Regression.csproj
 
 Current `CommunityToolkit.Uwp.*` packages supply animations and visual-tree helpers. The legacy Toolkit notification/loading/splitter controls and RichTextControls are rebuilt in `UniversalSoundboard.Compatibility`; see its README and retained MIT licenses. Tile notifications now use the existing notifications package instead of the incompatible `NotificationsExtensions.Win10` binary. AngleSharp and System.Drawing.Common are explicitly upgraded for the modern runtime.
 
+Win2D is referenced explicitly because its native WinRT registration build assets are not imported through the Toolkit's transitive dependency. The separate packaging project includes its WinMD and architecture-specific native DLL at the package root and enables `AppxHarvestWinmdRegistration`. The application publish output also contains the DLL in its own directory; the root copy is the registered WinRT server. Copying the DLL alone is insufficient: without these registrations, the profile shadow on AccountPage throws `REGDB_E_CLASSNOTREG`. When changing packaging, verify that the final manifest registers `Microsoft.Graphics.Canvas.Geometry.CanvasGeometry` and `Microsoft.Graphics.Canvas.CanvasDevice` against the packaged DLL, and open AccountPage in the installed package.
+
 The old `.rd.xml` files are no longer build inputs. They do not configure .NET 10 trimming or Native AOT. WinRT converter classes are partial so the C#/WinRT generator can supply interop support. Debug telemetry continues to use Sentry's `debug` environment.
+
+Win2D also requires the `Microsoft.VCLibs` UWP SDK reference in the packaging project. Its native DLL imports `MSVCP140_APP.dll` and `VCRUNTIME140_APP.dll`; the separate `UWPDesktop` runtime used by the companion does not supply these. Missing this dependency produces `0x8007007E` when activating CanvasGeometry even when its class is registered.
 
 ## Verification scope
 

@@ -37,6 +37,7 @@
     <ProjectGuid>c86f0684-38bf-4d79-9711-515ebde3baf1</ProjectGuid>
     <TargetPlatformVersion>10.0.26100.0</TargetPlatformVersion>
     <TargetPlatformMinVersion>10.0.19041.0</TargetPlatformMinVersion>
+    <AppxHarvestWinmdRegistration>true</AppxHarvestWinmdRegistration>
     <DefaultLanguage>de-DE</DefaultLanguage>
     <AppxPackageSigningEnabled>True</AppxPackageSigningEnabled>
     <EntryPointProjectUniqueName>..\UniversalSoundBoard\UniversalSoundBoard.csproj</EntryPointProjectUniqueName>
@@ -96,6 +97,19 @@
     <None Include="Package.StoreAssociation.xml" />
   </ItemGroup>
   <Import Project="$(WapProjPath)\Microsoft.DesktopBridge.targets" />
+  <ItemGroup>
+    <!-- The separate packaging project must harvest Win2D's native activation metadata. -->
+    <!-- Win2D imports the *_APP C++ runtime, which UWPDesktop does not contain. -->
+    <SDKReference Include="Microsoft.VCLibs, Version=14.0" />
+    <PackageReference Include="Win2D.uwp" Version="1.28.1" GeneratePathProperty="true" />
+    <Content Include="$(PkgWin2D_uwp)\lib\uap10.0\Microsoft.Graphics.Canvas.winmd">
+      <Link>Microsoft.Graphics.Canvas.winmd</Link>
+      <Implementation>Microsoft.Graphics.Canvas.dll</Implementation>
+    </Content>
+    <Content Include="$(PkgWin2D_uwp)\runtimes\win-$([System.String]::Copy('$(Platform)').ToLowerInvariant())\native\Microsoft.Graphics.Canvas.dll">
+      <Link>Microsoft.Graphics.Canvas.dll</Link>
+    </Content>
+  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\UniversalSoundboard.Hotkey\UniversalSoundboard.Hotkey.csproj">
       <SkipGetTargetFrameworkProperties>True</SkipGetTargetFrameworkProperties>
