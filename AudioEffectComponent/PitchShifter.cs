@@ -1,4 +1,4 @@
-﻿/****************************************************************************
+/****************************************************************************
 *
 * NAME: PitchShift.cs
 * VERSION: 1.2
@@ -45,47 +45,59 @@
 *****************************************************************************/
 
 using System;
-using System.Runtime.InteropServices.WindowsRuntime;
+
 
 namespace AudioEffectComponent
 {
-    public sealed class PitchShifter
+    internal sealed class PitchShifter
     {
-        #region Private Static Memebers
-        private static int MAX_FRAME_LENGTH = 16000;
-        private static float[] gInFIFO = new float[MAX_FRAME_LENGTH];
-        private static float[] gOutFIFO = new float[MAX_FRAME_LENGTH];
-        private static float[] gFFTworksp = new float[2 * MAX_FRAME_LENGTH];
-        private static float[] gLastPhase = new float[MAX_FRAME_LENGTH / 2 + 1];
-        private static float[] gSumPhase = new float[MAX_FRAME_LENGTH / 2 + 1];
-        private static float[] gOutputAccum = new float[2 * MAX_FRAME_LENGTH];
-        private static float[] gAnaFreq = new float[MAX_FRAME_LENGTH];
-        private static float[] gAnaMagn = new float[MAX_FRAME_LENGTH];
-        private static float[] gSynFreq = new float[MAX_FRAME_LENGTH];
-        private static float[] gSynMagn = new float[MAX_FRAME_LENGTH];
-        private static long gRover;
+        #region Per-stream state
+        private const int MAX_FRAME_LENGTH = 2048;
+        private readonly float[] gInFIFO = new float[MAX_FRAME_LENGTH];
+        private readonly float[] gOutFIFO = new float[MAX_FRAME_LENGTH];
+        private readonly float[] gFFTworksp = new float[2 * MAX_FRAME_LENGTH];
+        private readonly float[] gLastPhase = new float[MAX_FRAME_LENGTH / 2 + 1];
+        private readonly float[] gSumPhase = new float[MAX_FRAME_LENGTH / 2 + 1];
+        private readonly float[] gOutputAccum = new float[2 * MAX_FRAME_LENGTH];
+        private readonly float[] gAnaFreq = new float[MAX_FRAME_LENGTH];
+        private readonly float[] gAnaMagn = new float[MAX_FRAME_LENGTH];
+        private readonly float[] gSynFreq = new float[MAX_FRAME_LENGTH];
+        private readonly float[] gSynMagn = new float[MAX_FRAME_LENGTH];
+        private long gRover;
         #endregion
 
-        #region Public Static Methods
-        public static void PitchShift(float pitchShift, long numSampsToProcess, float sampleRate, [WriteOnlyArray] float[] indata)
+        #region Processing
+        public void Reset()
         {
-            PitchShift(pitchShift, numSampsToProcess, (long)2048, (long)10, sampleRate, indata);
+            Array.Clear(gInFIFO);
+            Array.Clear(gOutFIFO);
+            Array.Clear(gLastPhase);
+            Array.Clear(gSumPhase);
+            Array.Clear(gOutputAccum);
+            gRover = 0;
         }
 
-        public static void PitchShift(
+        public void PitchShift(float pitchShift, long numSampsToProcess, float sampleRate, Span<float> indata)
+        {
+            // A power-of-two overlap divides the FFT window exactly. The old
+            // overlap of 10 truncated the hop and introduced phase/gain errors.
+            PitchShift(pitchShift, numSampsToProcess, (long)2048, (long)16, sampleRate, indata);
+        }
+
+        public void PitchShift(
             float pitchShift,
             long numSampsToProcess,
             long fftFrameSize,
             long osamp,
             float sampleRate,
-            [WriteOnlyArray] float[] indata
+            Span<float> indata
         )
         {
             double magn, phase, tmp, window, real, imag;
             double freqPerBin, expct;
             long i, k, qpd, index, inFifoLatency, stepSize, fftFrameSize2;
 
-            float[] outdata = indata;
+            Span<float> outdata = indata;
             /* set up some handy variables */
             fftFrameSize2 = fftFrameSize / 2;
             stepSize = fftFrameSize / osamp;
@@ -98,8 +110,8 @@ namespace AudioEffectComponent
             for (i = 0; i < numSampsToProcess; i++)
             {
                 /* As long as we have not yet collected enough data just read in */
-                gInFIFO[gRover] = indata[i];
-                outdata[i] = gOutFIFO[gRover - inFifoLatency];
+                gInFIFO[gRover] = indata[(int)i];
+                outdata[(int)i] = gOutFIFO[gRover - inFifoLatency];
                 gRover++;
 
                 /* now we have enough data for processing */
@@ -193,7 +205,7 @@ namespace AudioEffectComponent
                         tmp += (double)k * expct;
 
                         /* accumulate delta phase to get bin phase */
-                        gSumPhase[k] += (float)tmp;
+                        gSumPhase[k] = (float)Math.IEEERemainder(gSumPhase[k] + tmp, 2.0 * Math.PI);
                         phase = gSumPhase[k];
 
                         /* get real and imag part and re-interleave */
@@ -211,7 +223,10 @@ namespace AudioEffectComponent
                     for (k = 0; k < fftFrameSize; k++)
                     {
                         window = -.5 * Math.Cos(2.0 * Math.PI * (double)k / (double)fftFrameSize) + .5;
-                        gOutputAccum[k] += (float)(2.0 * window * gFFTworksp[2 * k] / (fftFrameSize2 * osamp));
+                        // Two Hann windows sum to 3/8 of the overlap count.
+                        // Normalize to unity gain; the original factor 2 gave
+                        // 1.5x gain and could clip otherwise valid input audio.
+                        gOutputAccum[k] += (float)((4.0 / 3.0) * window * gFFTworksp[2 * k] / (fftFrameSize2 * osamp));
                     }
                     for (k = 0; k < stepSize; k++) gOutFIFO[k] = gOutputAccum[k];
 
@@ -228,7 +243,7 @@ namespace AudioEffectComponent
         #endregion
 
         #region Private Static Methods
-        public static void ShortTimeFourierTransform([WriteOnlyArray] float[] fftBuffer, long fftFrameSize, long sign)
+        public static void ShortTimeFourierTransform(float[] fftBuffer, long fftFrameSize, long sign)
         {
             float wr, wi, arg, temp;
             float tr, ti, ur, ui;

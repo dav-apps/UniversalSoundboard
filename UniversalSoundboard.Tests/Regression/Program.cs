@@ -88,4 +88,5 @@ Check(audioEvent.Extra.ContainsKey("audio.capture_stack"), "capture-site fallbac
 var regularEvent = new Sentry.SentryEvent(new Exception("unrelated"));
 Check(ReferenceEquals(AudioDiagnostics.EnrichEvent(regularEvent), regularEvent)
     && !regularEvent.Extra.ContainsKey("audio.exception_details"), "unrelated errors unchanged");
+PitchQualityChecks.Run(Check);
 Console.WriteLine($"Passed {checks} regression checks.");

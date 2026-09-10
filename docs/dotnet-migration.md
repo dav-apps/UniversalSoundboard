@@ -63,6 +63,14 @@ vstest.console.exe UniversalSoundboard.Tests/bin/x64/Debug/net10.0-windows10.0.2
 
 The packaging restore still reports `NU1605` through HtmlAgilityPack's legacy UWP dependency graph; the executable itself resolves .NET 10 assets. The test resource index emits `PRI263` for MSTest's neutral resources. These warnings are not suppressed. Existing obsolete API warnings in application code remain separate cleanup work.
 
-The standalone regression checks cover URL parsing, serialized initialization and diagnostics. Hardware changes, payments, account synchronization, importing/exporting real libraries and ARM64/x86 execution require integration testing on the appropriate machines and accounts before release.
+The standalone regression checks cover URL parsing, serialized initialization, diagnostics and pitch processing. Hardware changes, payments, account synchronization, importing/exporting real libraries and ARM64/x86 execution require integration testing on the appropriate machines and accounts before release.
+
+The pitch processor now owns FFT state per effect and channel instead of sharing static buffers across concurrent sounds and output devices. Mono and stereo float audio are supported at 44.1/48 kHz. The 2048-sample FFT uses an exact 128-sample hop (16 overlaps); the previous overlap of 10 truncated the hop while retaining incompatible phase calculations. Phase accumulation is wrapped to avoid losing precision during long playback. Audio blocks reuse a fixed scratch buffer, and queued audio/phase history is cleared when the graph requests a reset or the effect switches to bypass. The effect correctly reports that it depends on previous frames.
+
+The overlap-add normalization also removes an unintended 1.5x amplitude gain: a 0.2-amplitude sine at unity pitch previously measured 0.212 RMS instead of 0.141 RMS. Correcting this gain reduces the risk of clipping loud material.
+
+DSP regression checks cover all speed-menu pitch ratios at both sample rates, finite/non-silent output, tone frequency, unity-pitch gain, block-size independence, interleaved independent streams, silence, reset behavior, rapid parameter changes and allocation-free processing. These are objective signal checks, not a listening assessment. The existing phase vocoder can still smear transients or attenuate individual tones at extreme ratios, particularly pitch 4 (0.25x playback); switching to/from bypass also changes processing latency.
+
+After these audio changes, all 106 standalone regression checks and x64 Debug/Release package builds passed. The updated Debug package was exercised through all eight speed-menu choices with non-zero endpoint output; pausing returned the endpoint to silence. Endpoint peak measurements confirm playback, not perceptual audio quality or absence of clipping.
 
 Reference: [Microsoft's UWP modernization guide](https://learn.microsoft.com/en-us/windows/uwp/dotnet-native/modernize-uwp-apps-with-dotnet).
