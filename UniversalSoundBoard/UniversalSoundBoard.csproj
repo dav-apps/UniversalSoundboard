@@ -172,6 +172,7 @@
     <Compile Include="Dialogs\ShareErrorDialog.cs" />
     <Compile Include="Common\PurchaseTelemetry.cs" />
     <Compile Include="Common\YoutubeUrl.cs" />
+    <Compile Include="Common\YoutubeAudioStream.cs" />
     <Compile Include="Models\OldDatabaseModels.cs" />
     <Compile Include="Models\PlayingSound.cs" />
     <Compile Include="Pages\AccountPage.xaml.cs">
@@ -473,7 +474,7 @@
       <Version>1.11.285</Version>
     </PackageReference>
     <PackageReference Include="YoutubeExplode">
-      <Version>6.6.0</Version>
+      <Version>6.6.2</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>

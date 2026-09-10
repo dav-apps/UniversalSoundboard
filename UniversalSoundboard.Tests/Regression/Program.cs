@@ -102,4 +102,5 @@ Check(ShareFileName.Create(new string('a', 115) + "🎵", "mp3") == new string('
     "share truncation preserves surrogate pairs");
 Check(ShareFileName.Create("Sound", "../wav") == "Sound._wav", "extension cannot introduce a path");
 PitchQualityChecks.Run(Check);
+YoutubeAudioChecks.Run(Check);
 Console.WriteLine($"Passed {checks} regression checks.");

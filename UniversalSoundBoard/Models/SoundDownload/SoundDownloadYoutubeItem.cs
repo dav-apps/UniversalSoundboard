@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Windows.Storage;
 using System.Threading;
 using UniversalSoundboard.DataAccess;
+using UniversalSoundboard.Common;
 using YoutubeExplode;
 using YoutubeExplode.Common;
 using YoutubeExplode.Videos.Streams;
@@ -58,8 +59,8 @@ namespace UniversalSoundboard.Models
         {
             try
             {
-                var manifest = await youtube.Videos.Streams.GetManifestAsync(AudioFileUrl);
-                var result = manifest.GetAudioOnlyStreams().GetWithHighestBitrate();
+                var manifest = await youtube.Videos.Streams.GetManifestAsync(AudioFileUrl, cancellationToken);
+                var result = YoutubeAudioStream.Select(manifest);
 
                 // Create a file in the cache
                 StorageFolder cacheFolder = ApplicationData.Current.LocalCacheFolder;
@@ -68,11 +69,16 @@ namespace UniversalSoundboard.Models
                 await youtube.Videos.Streams.DownloadAsync(
                     result,
                     targetFile.Path,
-                    new Progress<double>((double value) => progress.Report((int)(value * 100))),
+                    new Progress<double>((double value) => progress?.Report((int)(value * 100))),
                     cancellationToken
                 );
 
                 return targetFile;
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+                // The caller checks the token and handles a user-requested cancellation.
+                return null;
             }
             catch (Exception e)
             {

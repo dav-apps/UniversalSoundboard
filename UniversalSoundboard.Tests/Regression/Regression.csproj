@@ -12,5 +12,7 @@
     <Compile Include="..\..\UniversalSoundBoard\Common\ShareFileName.cs" Link="ShareFileName.cs" />
     <Compile Include="..\..\UniversalSoundBoard\Common\AudioDiagnostics.cs" Link="AudioDiagnostics.cs" />
     <PackageReference Include="Sentry" Version="6.9.0" />
+    <Compile Include="..\..\UniversalSoundBoard\Common\YoutubeAudioStream.cs" Link="YoutubeAudioStream.cs" />
+    <PackageReference Include="YoutubeExplode" Version="6.6.2" />
   </ItemGroup>
 </Project>
