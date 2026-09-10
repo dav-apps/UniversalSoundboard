@@ -5,6 +5,8 @@ using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
+using WinRT;
 using System.Threading.Tasks;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
@@ -34,6 +36,9 @@ namespace UniversalSoundboard.Pages
         AudioRecorder audioRecorder;
         DispatcherTimer timer;
         List<List<float>> channelValues = new List<List<float>>();
+        private readonly object waveformLock = new object();
+        private const int MaxWaveformSamples = 2048;
+        private bool isStopping;
         ObservableCollection<RecordedSoundItem> recordedSoundItems = new ObservableCollection<RecordedSoundItem>();
         private bool skipInputDeviceComboBoxChanged = false;
         private bool skipRecordedSoundItemRemoved = false;
@@ -200,7 +205,7 @@ namespace UniversalSoundboard.Pages
 
         private async void RecordButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!audioRecorder.IsInitialized) return;
+            if (audioRecorder == null || !audioRecorder.IsInitialized || isStopping) return;
 
             if (audioRecorder.IsRecording)
             {
@@ -230,33 +235,45 @@ namespace UniversalSoundboard.Pages
 
         private async Task StopRecording()
         {
-            RecordButton.Content = "\uE7C8";
-            RecordButtonToolTip.Text = FileManager.loader.GetString("StartRecording");
-
-            timer.Stop();
-            await audioRecorder.Stop();
-
-            InputDeviceComboBox.IsEnabled = true;
-            WaveformCanvas.Children.Clear();
-
-            // Add the new recorded sounds to the list
-            var recordedSoundItem = new RecordedSoundItem(string.Format(FileManager.loader.GetString("Recording"), soundItemsCounter), outputFile);
-            recordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
-            recordedSoundItem.Removed += RecordedSoundItem_Removed;
-            recordedSoundItems.Insert(0, recordedSoundItem);
-
-            await InitAudioRecorder();
-
-            // Show the list of recorded sounds
-            RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, false);
-            ShrinkRecorderStoryboardAnimation.From = RecordingRelativePanel.ActualHeight;
-            ShrinkRecorderStoryboardAnimation.To = RecordingRelativePanel.ActualHeight / 1.5;
-            ShrinkRecorderStoryboard.Begin();
-
-            SentrySdk.CaptureMessage("SoundRecorder-StopRecording", async scope =>
+            if (isStopping || audioRecorder == null || !audioRecorder.IsRecording) return;
+            isStopping = true;
+            RecordButton.IsEnabled = false;
+            try
             {
-                scope.SetTag("Duration", (await recordedSoundItem.GetDuration()).ToString("mm\\:ss"));
-            });
+                RecordButton.Content = "\uE7C8";
+                RecordButtonToolTip.Text = FileManager.loader.GetString("StartRecording");
+
+                timer.Stop();
+                await audioRecorder.Stop();
+
+                InputDeviceComboBox.IsEnabled = true;
+                WaveformCanvas.Children.Clear();
+
+                // Add the new recorded sounds to the list
+                var recordedSoundItem = new RecordedSoundItem(string.Format(FileManager.loader.GetString("Recording"), soundItemsCounter), outputFile);
+                recordedSoundItem.AudioPlayerStarted += RecordedSoundItem_AudioPlayerStarted;
+                recordedSoundItem.Removed += RecordedSoundItem_Removed;
+                recordedSoundItems.Insert(0, recordedSoundItem);
+
+                await InitAudioRecorder();
+
+                // Show the list of recorded sounds
+                RelativePanel.SetAlignBottomWithPanel(RecordingRelativePanel, false);
+                ShrinkRecorderStoryboardAnimation.From = RecordingRelativePanel.ActualHeight;
+                ShrinkRecorderStoryboardAnimation.To = RecordingRelativePanel.ActualHeight / 1.5;
+                ShrinkRecorderStoryboard.Begin();
+
+                var duration = await recordedSoundItem.GetDuration();
+                SentrySdk.CaptureMessage("SoundRecorder-StopRecording", scope =>
+                {
+                    scope.SetTag("Duration", duration.ToString("mm\\:ss"));
+                });
+            }
+            finally
+            {
+                isStopping = false;
+                RecordButton.IsEnabled = audioRecorder != null && audioRecorder.IsInitialized;
+            }
         }
 
         private void RecordedSoundItem_AudioPlayerStarted(object sender, EventArgs e)
@@ -314,6 +331,7 @@ namespace UniversalSoundboard.Pages
 
         private async Task InitAudioRecorder()
         {
+            audioRecorder?.Dispose();
             // Create an output file in the cache
             outputFile = await ApplicationData.Current.LocalCacheFolder.CreateFileAsync(
                 string.Format("{0}.wav", Guid.NewGuid()),
@@ -333,11 +351,14 @@ namespace UniversalSoundboard.Pages
                 return;
             }
 
-            channelValues.Clear();
-            channelCount = audioRecorder.ChannelCount;
+            lock (waveformLock)
+            {
+                channelValues.Clear();
+                channelCount = audioRecorder.ChannelCount;
 
-            for (int c = 0; c < channelCount; c++)
-                channelValues.Add(new List<float>());
+                for (int c = 0; c < channelCount; c++)
+                    channelValues.Add(new List<float>());
+            }
         }
 
         private void SetSize()
@@ -358,15 +379,19 @@ namespace UniversalSoundboard.Pages
 
         private async Task ClearPageData()
         {
+            timer.Stop();
+            FileManager.itemViewHolder.PropertyChanged -= ItemViewHolder_PropertyChanged;
+            inputDeviceWatcherHelper.DevicesChanged -= InputDeviceWatcherHelper_DevicesChanged;
+            MainPage.soundRecorderAppWindow.CloseRequested -= SoundRecorderAppWindow_CloseRequested;
             skipRecordedSoundItemRemoved = true;
 
             foreach (var recordedSoundItem in recordedSoundItems)
                 await recordedSoundItem.Remove();
 
             recordedSoundItems.Clear();
-            audioRecorder.Dispose();
+            audioRecorder?.Dispose();
 
-            if (System.IO.File.Exists(outputFile.Path))
+            if (outputFile != null && System.IO.File.Exists(outputFile.Path))
                 await outputFile.DeleteAsync();
         }
 
@@ -398,14 +423,19 @@ namespace UniversalSoundboard.Pages
             int lineWidth = 5;
             int maxSamples = (int)canvasWidth / lineWidth;
 
-            int firstChannelValueCount = channelValues[0].Count;
-            int secondChannelValueCount = channelValues[1].Count;
+            List<float> firstChannelValues;
+            List<float> secondChannelValues;
+            lock (waveformLock)
+            {
+                int firstChannelValueCount = channelValues[0].Count;
+                int secondChannelValueCount = channelValues[1].Count;
 
-            if (firstChannelValueCount > maxSamples) firstChannelValueCount = maxSamples;
-            if (secondChannelValueCount > maxSamples) secondChannelValueCount = maxSamples;
+                if (firstChannelValueCount > maxSamples) firstChannelValueCount = maxSamples;
+                if (secondChannelValueCount > maxSamples) secondChannelValueCount = maxSamples;
 
-            List<float> firstChannelValues = channelValues[0].GetRange(0, firstChannelValueCount);
-            List<float> secondChannelValues = channelValues[1].GetRange(0, secondChannelValueCount);
+                firstChannelValues = channelValues[0].GetRange(0, firstChannelValueCount);
+                secondChannelValues = channelValues[1].GetRange(0, secondChannelValueCount);
+            }
 
             for (int i = 0; i < firstChannelValues.Count; i++)
             {
@@ -423,7 +453,7 @@ namespace UniversalSoundboard.Pages
                 WaveformCanvas.Children.Add(line);
             }
 
-            for (int i = 0; i < secondChannelValueCount; i++)
+            for (int i = 0; i < secondChannelValues.Count; i++)
             {
                 double xPos = canvasWidth - (i * lineWidth);
 
@@ -478,33 +508,32 @@ namespace UniversalSoundboard.Pages
             skipInputDeviceComboBoxChanged = false;
         }
 
-        [ComImport]
+        [GeneratedComInterface]
         [Guid("5B0D3235-4DBA-4D44-865E-8F1D0E4FD04D")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        unsafe interface IMemoryBufferByteAccess
+        internal unsafe partial interface IMemoryBufferByteAccess
         {
             void GetBuffer(out byte* buffer, out uint capacity);
         }
 
         unsafe private void ProcessFrameOutput(AudioFrame frame)
         {
-            if (
-                audioRecorder.SamplesPerQuantum == 0
-                || channelValues.Count < 2
-            ) return;
-
             using (AudioBuffer buffer = frame.LockBuffer(AudioBufferAccessMode.Read))
             using (IMemoryBufferReference reference = buffer.CreateReference())
             {
                 byte* dataInBytes;
                 uint capacityInBytes;
-                ((IMemoryBufferByteAccess)reference).GetBuffer(out dataInBytes, out capacityInBytes);
+                reference.As<IMemoryBufferByteAccess>().GetBuffer(out dataInBytes, out capacityInBytes);
+
+                // Capacity can include unused memory. The frame node supplies stereo float PCM.
+                int sampleCount = (int)(Math.Min(buffer.Length, capacityInBytes) / (2 * sizeof(float)));
+                if (dataInBytes == null || sampleCount == 0) return;
 
                 var dataInFloat = (float*)dataInBytes;
                 float firstChannelSum = 0;
                 float secondChannelSum = 0;
                 
-                for (int i = 0; i < capacityInBytes / sizeof(float); i++)
+                for (int i = 0; i < sampleCount * 2; i++)
                 {
                     float val = dataInFloat[i];
 
@@ -516,8 +545,15 @@ namespace UniversalSoundboard.Pages
                         secondChannelSum += Math.Abs(val);
                 }
 
-                channelValues[0].Insert(0, firstChannelSum / audioRecorder.SamplesPerQuantum);
-                channelValues[1].Insert(0, secondChannelSum / audioRecorder.SamplesPerQuantum);
+                lock (waveformLock)
+                {
+                    if (channelValues.Count < 2) return;
+                    channelValues[0].Insert(0, firstChannelSum / sampleCount);
+                    channelValues[1].Insert(0, secondChannelSum / sampleCount);
+                    foreach (var values in channelValues)
+                        if (values.Count > MaxWaveformSamples)
+                            values.RemoveRange(MaxWaveformSamples, values.Count - MaxWaveformSamples);
+                }
             }
         }
     }

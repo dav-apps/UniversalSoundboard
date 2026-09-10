@@ -178,13 +178,19 @@ namespace UniversalSoundboard.Models
         
         private void InitFrameOutputNode()
         {
-            FrameOutputNode = AudioGraph.CreateFrameOutputNode(recordingFormat.Audio);
+            // Waveform processing reads floats; keep the WAV file's 16-bit format separate.
+            var frameFormat = AudioEncodingProperties.CreatePcm(16000, 2, 32);
+            frameFormat.Subtype = MediaEncodingSubtypes.Float;
+            FrameOutputNode = AudioGraph.CreateFrameOutputNode(frameFormat);
             DeviceInputNode.AddOutgoingConnection(FrameOutputNode);
 
-            AudioGraph.QuantumStarted += (AudioGraph sender, object args) =>
-            {
-                QuantumStarted?.Invoke(this, new AudioRecorderQuantumStartedEventArgs(FrameOutputNode.GetFrame()));
-            };
+            AudioGraph.QuantumProcessed += AudioGraph_QuantumProcessed;
+        }
+
+        private void AudioGraph_QuantumProcessed(AudioGraph sender, object args)
+        {
+            using (var frame = FrameOutputNode.GetFrame())
+                QuantumStarted?.Invoke(this, new AudioRecorderQuantumStartedEventArgs(frame));
         }
 
         public void Start()
@@ -223,7 +229,8 @@ namespace UniversalSoundboard.Models
             try
             {
                 AudioGraph.Stop();
-                await FileOutputNode.FinalizeAsync();
+                if (FileOutputNode != null)
+                    await FileOutputNode.FinalizeAsync();
                 AudioGraph.ResetAllNodes();
             }
             catch (Exception e)
@@ -244,6 +251,8 @@ namespace UniversalSoundboard.Models
                 try
                 {
                     AudioGraph.Stop();
+                    AudioGraph.QuantumProcessed -= AudioGraph_QuantumProcessed;
+                    AudioGraph.UnrecoverableErrorOccurred -= AudioGraph_UnrecoverableErrorOccurred;
                     AudioGraph.Dispose();
                 }
                 catch (AudioIOException e)
