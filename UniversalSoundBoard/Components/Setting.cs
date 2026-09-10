@@ -3,7 +3,7 @@ using Windows.UI.Xaml.Controls;
 
 namespace UniversalSoundboard.Components
 {
-    public class Setting : ContentControl
+    public partial class Setting : ContentControl
     {
         public Setting()
         {

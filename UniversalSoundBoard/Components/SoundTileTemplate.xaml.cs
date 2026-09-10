@@ -2,7 +2,7 @@
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Input;
-using Microsoft.Toolkit.Uwp.UI.Animations;
+using CommunityToolkit.WinUI.Animations;
 using Windows.Foundation;
 using Windows.UI.Xaml.Media.Imaging;
 using System.Threading.Tasks;

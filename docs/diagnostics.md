@@ -8,7 +8,7 @@ Audio initialization is serialized. A failure invalidates initialization state a
 
 Audio exceptions carry `audio.stage` and `audio.status`. Annotated player failures also include `audio.output_count`, `audio.file_type`, and `audio.hresult`. No file path or audio-device name is added by this instrumentation.
 
-The Sentry before-send processor retains `audio.exception_details` (the original exception and inner exceptions) and a separately labelled `audio.capture_stack`. The latter is the capture site, not the throw site. Available frame names and source lines still depend on runtime metadata and symbols, especially in .NET Native release builds. Generated `.appxsym` packages are not automatically uploaded to Sentry by this change.
+The Sentry before-send processor retains `audio.exception_details` (the original exception and inner exceptions) and a separately labelled `audio.capture_stack`. The latter is the capture site, not the throw site. Available frame names and source lines still depend on runtime metadata and symbols, especially in the Native AOT audio component. Generated symbol packages are not automatically uploaded to Sentry by this change. The application itself uses self-contained .NET 10; see [the migration notes](dotnet-migration.md).
 
 ## Plus events
 
@@ -48,6 +48,6 @@ With the .NET 10 SDK installed:
 dotnet run --project UniversalSoundboard.Tests/Regression/Regression.csproj
 ```
 
-These checks link the actual URL parser, async-operation gate, and Sentry audio enrichment. They test short links with share parameters, partial/invalid input, host validation, playlist preservation, concurrent initialization, recovery after failure, and exception diagnostic fields. They do not initialize Sentry or send test events. Live Store payments, audio hardware changes, and .NET Native symbolication require separate integration verification.
+These checks link the actual URL parser, async-operation gate, and Sentry audio enrichment. They test short links with share parameters, partial/invalid input, host validation, playlist preservation, concurrent initialization, recovery after failure, and exception diagnostic fields. They do not initialize Sentry or send test events. Live Store payments, audio hardware changes, and Native AOT symbolication require separate integration verification.
 
 Local Sentry API credentials belong outside compiled source. The analysis token is stored in the ignored `.review/sentry-token.txt`; it is not needed by the app.

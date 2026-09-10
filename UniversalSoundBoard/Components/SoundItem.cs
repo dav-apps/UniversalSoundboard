@@ -1,4 +1,4 @@
-﻿using davClassLibrary;
+using davClassLibrary;
 using Sentry;
 using System;
 using System.Collections.Generic;
@@ -325,13 +325,13 @@ namespace UniversalSoundboard.Components
                 if (imageFile == null)
                     imageFile = await StorageFile.GetFileFromApplicationUriAsync(Sound.GetDefaultImageUri());
 
-                NotificationsExtensions.Tiles.TileBinding binding = new NotificationsExtensions.Tiles.TileBinding()
+                Microsoft.Toolkit.Uwp.Notifications.TileBinding binding = new Microsoft.Toolkit.Uwp.Notifications.TileBinding()
                 {
-                    Branding = NotificationsExtensions.Tiles.TileBranding.NameAndLogo,
+                    Branding = Microsoft.Toolkit.Uwp.Notifications.TileBranding.NameAndLogo,
 
-                    Content = new NotificationsExtensions.Tiles.TileBindingContentAdaptive()
+                    Content = new Microsoft.Toolkit.Uwp.Notifications.TileBindingContentAdaptive()
                     {
-                        BackgroundImage = new NotificationsExtensions.Tiles.TileBackgroundImage()
+                        BackgroundImage = new Microsoft.Toolkit.Uwp.Notifications.TileBackgroundImage()
                         {
                             Source = imageFile.Path,
                             AlternateText = sound.Name
@@ -339,9 +339,9 @@ namespace UniversalSoundboard.Components
                     }
                 };
 
-                NotificationsExtensions.Tiles.TileContent content = new NotificationsExtensions.Tiles.TileContent()
+                Microsoft.Toolkit.Uwp.Notifications.TileContent content = new Microsoft.Toolkit.Uwp.Notifications.TileContent()
                 {
-                    Visual = new NotificationsExtensions.Tiles.TileVisual()
+                    Visual = new Microsoft.Toolkit.Uwp.Notifications.TileVisual()
                     {
                         TileSmall = binding,
                         TileMedium = binding,

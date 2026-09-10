@@ -4,12 +4,14 @@ using Windows.Media.Effects;
 using Windows.Media.MediaProperties;
 using Windows.Foundation.Collections;
 using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.Marshalling;
+using WinRT;
 using Windows.Media;
 using Windows.Foundation;
 
 namespace AudioEffectComponent
 {
-    public sealed class PitchShiftAudioEffect : IBasicAudioEffect
+    public sealed partial class PitchShiftAudioEffect : IBasicAudioEffect
     {
         private AudioEncodingProperties currentEncodingProperties;
         IPropertySet configuration;
@@ -55,10 +57,10 @@ namespace AudioEffectComponent
             }
         }
 
-        [ComImport]
+        [GeneratedComInterface]
         [Guid("5B0D3235-4DBA-4D44-865E-8F1D0E4FD04D")]
         [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
-        unsafe interface IMemoryBufferByteAccess
+        internal unsafe partial interface IMemoryBufferByteAccess
         {
             void GetBuffer(out byte* buffer, out uint capacity);
         }
@@ -77,8 +79,8 @@ namespace AudioEffectComponent
                 outputReference = outputBuffer.CreateReference()
             )
             {
-                ((IMemoryBufferByteAccess)inputReference).GetBuffer(out byte* inputDataInBytes, out uint inputCapacity);
-                ((IMemoryBufferByteAccess)outputReference).GetBuffer(out byte* outputDataInBytes, out uint outputCapacity);
+                inputReference.As<IMemoryBufferByteAccess>().GetBuffer(out byte* inputDataInBytes, out uint inputCapacity);
+                outputReference.As<IMemoryBufferByteAccess>().GetBuffer(out byte* outputDataInBytes, out uint outputCapacity);
 
                 float* inputDataInFloat = (float*)inputDataInBytes;
                 float* outputDataInFloat = (float*)outputDataInBytes;

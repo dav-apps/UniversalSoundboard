@@ -333,7 +333,6 @@ namespace UniversalSoundboard
         }
 
         [SecurityCritical]
-        [HandleProcessCorruptedStateExceptions]
         private void OnUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             // Get a reference to the exception, because the Exception property is cleared when accessed.

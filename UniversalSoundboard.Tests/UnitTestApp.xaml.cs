@@ -10,15 +10,33 @@ namespace UniversalSoundboard.Tests
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
-    sealed partial class App : Application
+    public sealed partial class App : Application, Windows.UI.Xaml.Markup.IXamlMetadataProvider
     {
+        // Referencing an executable makes the XAML compiler instantiate its App as a
+        // metadata provider. UWP permits only one Application, so use its provider directly.
+        private readonly UniversalSoundboard.UniversalSoundBoard_XamlTypeInfo.XamlMetaDataProvider metadataProvider = new();
+
+        [MTAThread]
+        private static void Main(string[] args)
+        {
+            Application.Start(_ =>
+            {
+                System.Threading.SynchronizationContext.SetSynchronizationContext(
+                    new Windows.System.DispatcherQueueSynchronizationContext(Windows.System.DispatcherQueue.GetForCurrentThread()));
+                new App();
+            });
+        }
+
+        public Windows.UI.Xaml.Markup.IXamlType GetXamlType(Type type) => metadataProvider.GetXamlType(type);
+        public Windows.UI.Xaml.Markup.IXamlType GetXamlType(string fullName) => metadataProvider.GetXamlType(fullName);
+        public Windows.UI.Xaml.Markup.XmlnsDefinition[] GetXmlnsDefinitions() => metadataProvider.GetXmlnsDefinitions();
+
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
         /// executed, and as such is the logical equivalent of main() or WinMain().
         /// </summary>
         public App()
         {
-            this.InitializeComponent();
             this.Suspending += OnSuspending;
         }
 

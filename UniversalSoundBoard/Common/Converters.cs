@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -13,7 +13,7 @@ using Windows.UI.Xaml.Media.Imaging;
 
 namespace UniversalSoundboard.Converters
 {
-    public class ValueConverterGroup : List<IValueConverter>, IValueConverter
+    public partial class ValueConverterGroup : List<IValueConverter>, IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -26,7 +26,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class InvertBooleanConverter : IValueConverter
+    public partial class InvertBooleanConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -39,7 +39,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class BooleanToVisibilityConverter : IValueConverter
+    public partial class BooleanToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -52,7 +52,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class BooleanToInvertedVisibilityConverter : IValueConverter
+    public partial class BooleanToInvertedVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -65,7 +65,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class FileToBitmapImageConverter : IValueConverter
+    public partial class FileToBitmapImageConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -82,7 +82,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class OptionsOnSoundPageVisibleConverter : IValueConverter
+    public partial class OptionsOnSoundPageVisibleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -95,7 +95,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class StoreRightHeaderOnSoundPageVisibleConverter : IValueConverter
+    public partial class StoreRightHeaderOnSoundPageVisibleConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -115,7 +115,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class BooleanToSelectionMode : IValueConverter
+    public partial class BooleanToSelectionMode : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -128,7 +128,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class CategoriesIconsConverter : IValueConverter
+    public partial class CategoriesIconsConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -163,7 +163,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class CategoriesMarginConverter : IValueConverter
+    public partial class CategoriesMarginConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -179,7 +179,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class TopButtonWidthConverter : IValueConverter
+    public partial class TopButtonWidthConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -192,7 +192,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class TopButtonPaddingConverter : IValueConverter
+    public partial class TopButtonPaddingConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -205,7 +205,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class TopOfThicknessToGridLengthConverter : IValueConverter
+    public partial class TopOfThicknessToGridLengthConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -218,7 +218,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class BottomOfThicknessToGridLengthConverter : IValueConverter
+    public partial class BottomOfThicknessToGridLengthConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -231,7 +231,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class LogoImageSourceConverter : IValueConverter
+    public partial class LogoImageSourceConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -244,7 +244,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class AppStateLoadingConverter : IValueConverter
+    public partial class AppStateLoadingConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -257,7 +257,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class AppStateNormalConverter : IValueConverter
+    public partial class AppStateNormalConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -270,7 +270,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class MediaElementSliderTooltipConverter : IValueConverter
+    public partial class MediaElementSliderTooltipConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -288,7 +288,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class DavPlanToStringConverter : IValueConverter
+    public partial class DavPlanToStringConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -311,7 +311,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class DavPlanFreeConverter : IValueConverter
+    public partial class DavPlanFreeConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -324,7 +324,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class PlayingSoundItemMediaTextBlockOpacityConverter : IValueConverter
+    public partial class PlayingSoundItemMediaTextBlockOpacityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -337,7 +337,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class NullToVisibilityConverter : IValueConverter
+    public partial class NullToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -350,7 +350,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class NullToInvertedVisibilityConverter : IValueConverter
+    public partial class NullToInvertedVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -363,7 +363,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class IntToVisibilityConverter : IValueConverter
+    public partial class IntToVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {
@@ -376,7 +376,7 @@ namespace UniversalSoundboard.Converters
         }
     }
 
-    public class IntToInvertedVisibilityConverter : IValueConverter
+    public partial class IntToInvertedVisibilityConverter : IValueConverter
     {
         public object Convert(object value, Type targetType, object parameter, string language)
         {

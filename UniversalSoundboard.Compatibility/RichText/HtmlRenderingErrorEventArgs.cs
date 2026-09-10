@@ -1,0 +1,6 @@
+namespace HtmlControls
+{
+    class HtmlRenderingErrorEventArgs
+    {
+    }
+}

@@ -9,6 +9,7 @@ namespace UniversalSoundboard.Hotkey
     {
         private const string HotkeyCurrentProcessIdKey = "Hotkey.CurrentProcessId";
 
+        [STAThread]
         static void Main(string[] args)
         {
             Application.EnableVisualStyles();

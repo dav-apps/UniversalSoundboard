@@ -2,7 +2,6 @@
 using davClassLibrary.Models;
 using Google.Apis.Services;
 using Google.Apis.YouTube.v3;
-using Microsoft.Toolkit.Uwp.Helpers;
 using Microsoft.Toolkit.Uwp.Notifications;
 using Microsoft.Toolkit.Uwp.UI.Controls;
 using Sentry;
@@ -795,7 +794,7 @@ namespace UniversalSoundboard.DataAccess
                 itemViewHolder.FavouriteSounds.Add(sound);
 
             // Update the LiveTile if the Sounds were just loaded
-            if(soundsLoaded && SystemInformation.Instance.OperatingSystemVersion.Build < 22000)
+            if(soundsLoaded && System.Environment.OSVersion.Version.Build < 22000)
                 UpdateLiveTileAsync();
         }
 

@@ -1,5 +1,5 @@
 ﻿using davClassLibrary;
-using Microsoft.Toolkit.Uwp.Helpers;
+
 using Sentry;
 using System;
 using System.Collections.ObjectModel;
@@ -37,7 +37,7 @@ namespace UniversalSoundboard.Pages
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
 
             // Hide the setting for Live Tiles on Windows 11+
-            if (SystemInformation.Instance.OperatingSystemVersion.Build >= 22000)
+            if (System.Environment.OSVersion.Version.Build >= 22000)
                 liveTileSettingVisibility = Visibility.Collapsed;
         }
 
@@ -331,7 +331,7 @@ namespace UniversalSoundboard.Pages
 
         private async void ReviewButton_Click(object sender, RoutedEventArgs e)
         {
-            await SystemInformation.LaunchStoreForReviewAsync();
+            await Windows.System.Launcher.LaunchUriAsync(new Uri("ms-windows-store://review/?PFN=" + Windows.ApplicationModel.Package.Current.Id.FamilyName));
             FileManager.itemViewHolder.AppReviewed = true;
             SentrySdk.CaptureMessage("SettingsPage-ReviewButtonClick");
         }

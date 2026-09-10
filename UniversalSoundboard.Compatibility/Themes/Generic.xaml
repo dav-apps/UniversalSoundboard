@@ -1,0 +1,8 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+  <ResourceDictionary.MergedDictionaries>
+    <ResourceDictionary Source="ms-appx:///UniversalSoundboard.Compatibility/InAppNotification/InAppNotification.xaml" />
+    <ResourceDictionary Source="ms-appx:///UniversalSoundboard.Compatibility/Loading/Loading.xaml" />
+    <ResourceDictionary Source="ms-appx:///UniversalSoundboard.Compatibility/GridSplitter/GridSplitter.xaml" />
+    <ResourceDictionary Source="ms-appx:///UniversalSoundboard.Compatibility/RichText/Themes/Generic.xaml" />
+  </ResourceDictionary.MergedDictionaries>
+</ResourceDictionary>

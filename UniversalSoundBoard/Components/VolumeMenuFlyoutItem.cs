@@ -6,7 +6,7 @@ using Windows.UI.Xaml.Input;
 
 namespace UniversalSoundboard.Components
 {
-    public class VolumeMenuFlyoutItem : MenuFlyoutItem
+    public partial class VolumeMenuFlyoutItem : MenuFlyoutItem
     {
         private VolumeControl volumeControl;
 

@@ -1,4 +1,3 @@
-using AudioEffectComponent;
 using Sentry;
 using System;
 using System.Collections.Generic;
@@ -446,7 +445,7 @@ namespace UniversalSoundboard.Models
                 };
 
                 audioGraphContainer.PitchShiftEffectDefinition = new AudioEffectDefinition(
-                    typeof(PitchShiftAudioEffect).FullName,
+                    "AudioEffectComponent.PitchShiftAudioEffect",
                     new PropertySet
                     {
                         { "Pitch", (float)(pitchShiftFactor / playbackRate) }

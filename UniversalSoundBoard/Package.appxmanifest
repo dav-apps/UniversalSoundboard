@@ -8,13 +8,15 @@
     <Logo>Assets\Icons\StoreLogo.png</Logo>
   </Properties>
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
+    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0" />
   </Dependencies>
   <Resources>
-    <Resource Language="x-generate" />
+    <Resource Language="en-US" />
+    <Resource Language="de-DE" />
+    <Resource Language="fr-FR" />
   </Resources>
   <Applications>
-    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="UniversalSoundBoard.App">
+    <Application Id="App" Executable="$targetnametoken$.exe" EntryPoint="UniversalSoundboard.App">
       <uap:VisualElements DisplayName="UniversalSoundboard" Square150x150Logo="Assets\Icons\Square150x150Logo.png" Square44x44Logo="Assets\Icons\Square44x44Logo.png" Description="Create your own soundboard! Add images to your sounds and sort them in categories to keep track of all your sounds." BackgroundColor="transparent">
         <uap:LockScreen Notification="badge" BadgeLogo="Assets\Icons\BadgeLogo.png" />
         <uap:DefaultTile Wide310x150Logo="Assets\Icons\Wide310x150Logo.png" ShortName="UniversalSoundboard" Square310x310Logo="Assets\Icons\Square310x310Logo.png" Square71x71Logo="Assets\Icons\Square71x71Logo.png">

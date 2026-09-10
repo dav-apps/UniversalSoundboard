@@ -19,18 +19,19 @@
   </Properties>
 
   <Dependencies>
-    <TargetDeviceFamily Name="Windows.Universal" MinVersion="10.0.0.0" MaxVersionTested="10.0.0.0" />
-    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.14393.0" MaxVersionTested="10.0.14393.0" />
+    <TargetDeviceFamily Name="Windows.Desktop" MinVersion="10.0.19041.0" MaxVersionTested="10.0.26100.0" />
   </Dependencies>
 
   <Resources>
-    <Resource Language="x-generate"/>
+    <Resource Language="en-US"/>
+    <Resource Language="de-DE"/>
+    <Resource Language="fr-FR"/>
   </Resources>
 
   <Applications>
     <Application Id="App"
       Executable="$targetnametoken$.exe"
-      EntryPoint="UniversalSoundBoard.App">
+      EntryPoint="UniversalSoundboard.App">
       <uap:VisualElements
         DisplayName="UniversalSoundboard"
         Description="Create your own soundboard! Add images to your sounds and sort them in categories to keep track of all your sounds."
@@ -96,6 +97,14 @@
     </Application>
   </Applications>
 
+  <Extensions>
+    <Extension Category="windows.activatableClass.inProcessServer">
+      <InProcessServer>
+        <Path>AudioEffectComponent.Native.dll</Path>
+        <ActivatableClass ActivatableClassId="AudioEffectComponent.PitchShiftAudioEffect" ThreadingModel="both" />
+      </InProcessServer>
+    </Extension>
+  </Extensions>
   <Capabilities>
     <Capability Name="internetClient" />
     <rescap:Capability Name="runFullTrust" />

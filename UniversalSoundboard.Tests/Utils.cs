@@ -39,6 +39,11 @@ namespace UniversalSoundboard.Tests
 
         internal static async Task Setup()
         {
+            // Individual tests can simulate a signed-in user. Do not leak that state
+            // into later tests, where deletion should remove local objects immediately.
+            Dav.IsLoggedIn = false;
+            Dav.AccessToken = null;
+
             // Delete all files and folders in the test folder except the database file
             var davFolder = new DirectoryInfo(FileManager.GetDavDataPath());
             foreach (var folder in davFolder.GetDirectories())

@@ -6,7 +6,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:winui="using:Microsoft.UI.Xaml.Controls"
     xmlns:controls="using:CommunityToolkit.WinUI.Controls"
-    xmlns:animations="using:Microsoft.Toolkit.Uwp.UI.Animations"
+    xmlns:animations="using:CommunityToolkit.WinUI.Animations"
     xmlns:converters="using:UniversalSoundboard.Converters"
     xmlns:components="using:UniversalSoundboard.Components"
     xmlns:models="using:UniversalSoundboard.Models"
