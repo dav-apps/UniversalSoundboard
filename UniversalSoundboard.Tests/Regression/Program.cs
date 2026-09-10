@@ -88,5 +88,18 @@ Check(audioEvent.Extra.ContainsKey("audio.capture_stack"), "capture-site fallbac
 var regularEvent = new Sentry.SentryEvent(new Exception("unrelated"));
 Check(ReferenceEquals(AudioDiagnostics.EnrichEvent(regularEvent), regularEvent)
     && !regularEvent.Extra.ContainsKey("audio.exception_details"), "unrelated errors unchanged");
+Check(ShareFileName.Create("Artist: Song / Live?", "mp3") == "Artist_ Song _ Live_.mp3",
+    "share replaces characters rejected by Windows");
+Check(ShareFileName.Create("a<>:\"/\\|?*\u0000\n", ".wav") == "a___________.wav",
+    "share handles all forbidden characters and control characters");
+Check(ShareFileName.Create("Grüße 🎵", "ogg") == "Grüße 🎵.ogg", "share preserves Unicode titles");
+foreach (string reserved in new[] { "CON", "nul", "AUX", "PRN", "COM1", "LPT9", "COM¹", "CON.mix" })
+    Check(ShareFileName.Create(reserved, "wav").StartsWith("_"), "share escapes device name " + reserved);
+Check(ShareFileName.Create("... ", null) == "Sound.mp3", "share supplies empty name and extension defaults");
+Check(ShareFileName.Create("Title. ", "wav") == "Title.wav", "share removes trailing dots and spaces");
+Check(ShareFileName.Create(new string('a', 300), "mp3").Length == 120, "share bounds long names");
+Check(ShareFileName.Create(new string('a', 115) + "🎵", "mp3") == new string('a', 115) + ".mp3",
+    "share truncation preserves surrogate pairs");
+Check(ShareFileName.Create("Sound", "../wav") == "Sound._wav", "extension cannot introduce a path");
 PitchQualityChecks.Run(Check);
 Console.WriteLine($"Passed {checks} regression checks.");

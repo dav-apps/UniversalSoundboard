@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -339,6 +339,9 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   </data>
   <data name="ShareDialog-MultipleSounds" xml:space="preserve">
     <value>Mehrere Sounds</value>
+  </data>
+  <data name="ShareDialog-Error" xml:space="preserve">
+    <value>Die Sounds konnten nicht zum Teilen vorbereitet werden. Bitte versuche es erneut.</value>
   </data>
   <data name="ShareDialog-Title" xml:space="preserve">
     <value>Geteilt mit UniversalSoundboard</value>

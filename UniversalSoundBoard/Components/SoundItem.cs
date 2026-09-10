@@ -144,24 +144,34 @@ namespace UniversalSoundboard.Components
         #region Share
         private async void OptionsFlyout_ShareFlyoutItemClick(object sender, RoutedEventArgs e)
         {
-            if (!await FileManager.DownloadFileOfSound(sound)) return;
+            try
+            {
+                if (!await FileManager.DownloadFileOfSound(sound)) return;
 
-            // Copy the file into the temp folder
-            soundFiles.Clear();
-            StorageFolder tempFolder = ApplicationData.Current.TemporaryFolder;
-            var audioFile = sound.AudioFile;
-            if (audioFile == null) return;
-            string ext = sound.GetAudioFileExtension();
+                // Copy the file into the temp folder
+                soundFiles.Clear();
+                StorageFolder tempFolder = await ApplicationData.Current.TemporaryFolder.CreateFolderAsync(
+                    "Share", CreationCollisionOption.GenerateUniqueName);
+                var audioFile = sound.AudioFile;
+                if (audioFile == null) return;
+                string ext = sound.GetAudioFileExtension();
 
-            if (string.IsNullOrEmpty(ext))
-                ext = "mp3";
+                if (string.IsNullOrEmpty(ext))
+                    ext = "mp3";
 
-            StorageFile tempFile = await audioFile.CopyAsync(tempFolder, string.Format("{0}.{1}", sound.Name, ext), NameCollisionOption.ReplaceExisting);
-            soundFiles.Add(tempFile);
+                StorageFile tempFile = await audioFile.CopyAsync(tempFolder,
+                    ShareFileName.Create(sound.Name, ext), NameCollisionOption.GenerateUniqueName);
+                soundFiles.Add(tempFile);
 
-            DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
-            dataTransferManager.DataRequested += DataTransferManager_DataRequested;
-            DataTransferManager.ShowShareUI();
+                DataTransferManager dataTransferManager = DataTransferManager.GetForCurrentView();
+                dataTransferManager.DataRequested += DataTransferManager_DataRequested;
+                DataTransferManager.ShowShareUI();
+            }
+            catch (Exception exception)
+            {
+                SentrySdk.CaptureException(exception);
+                await new ShareErrorDialog().ShowAsync();
+            }
         }
 
         private void DataTransferManager_DataRequested(DataTransferManager sender, DataRequestedEventArgs args)
