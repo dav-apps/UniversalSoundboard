@@ -14,7 +14,7 @@ namespace AudioEffectComponent
     public sealed partial class PitchShiftAudioEffect : IBasicAudioEffect
     {
         private AudioEncodingProperties currentEncodingProperties;
-        IPropertySet configuration;
+        PropertySet configuration;
 
         public bool TimeIndependent { get { return true; } }
         public bool UseInputFrameForOutput { get { return false; } }
@@ -43,7 +43,9 @@ namespace AudioEffectComponent
 
         public void SetProperties(IPropertySet configuration)
         {
-            this.configuration = configuration;
+            // Use the SDK's concrete, AOT-safe map projection instead of dynamic
+            // dispatch through IPropertySet's inherited IDictionary interface.
+            this.configuration = configuration?.As<PropertySet>();
         }
 
         public float Pitch

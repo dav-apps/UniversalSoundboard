@@ -8,6 +8,8 @@ The application and Windows Forms hotkey companion ship self-contained .NET 10 r
 
 The pitch-shift effect is a C#/WinRT component compiled with Native AOT. The packaging project publishes it and registers `AudioEffectComponent.Native.dll` for `AudioEffectComponent.PitchShiftAudioEffect`. Its audio buffer access uses generated COM interop instead of the legacy runtime COM cast.
 
+The effect keeps its live parameters through the SDK's concrete `PropertySet` projection. Calling `TryGetValue` through `IPropertySet` instead used dynamic dispatch to `IDictionary<string, object>`, which failed in the Native AOT component and silenced playback whenever pitch correction was enabled (including playback speeds other than 1). The corrected native effect was tested through all eight values in the playing sound's speed menu (0.25x through 2x), with nonzero output levels at each speed and zero output after pausing.
+
 The separate packaging project remains necessary to combine the UWP application, full-trust hotkey companion and native effect. Its application reference uses `UseLowTrustEntryPoint`. Package identity, protocol activation, file associations, share target and the hotkey app service are preserved.
 
 Supported build architectures are x86, x64 and ARM64. ARM32 and the ambiguous solution-wide Any CPU configurations are removed. A .NET Standard library can still use Any CPU internally; the external `../davClassLibrary` project remains a .NET Standard 2.0 dependency.
