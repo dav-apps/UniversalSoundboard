@@ -3,9 +3,23 @@ using Windows.Media.Audio;
 
 namespace UniversalSoundboard.Common
 {
-    class AudioIOException : Exception { }
+    class AudioIOException : Exception
+    {
+        public AudioIOException() : this("Unknown", "UnknownFailure") { }
 
-    class AudioPlayerNotInitializedException : AudioIOException { }
+        public AudioIOException(string stage, string status, Exception innerException = null)
+            : base($"Audio {stage} failed ({status}).", innerException)
+        {
+            Data["audio.stage"] = stage;
+            Data["audio.status"] = status;
+        }
+    }
+
+    class AudioPlayerNotInitializedException : AudioIOException
+    {
+        public AudioPlayerNotInitializedException(string operation = "Playback")
+            : base(operation, "NotInitialized") { }
+    }
 
     class AudioRecorderNotInitializedException : AudioIOException { }
 
@@ -20,7 +34,7 @@ namespace UniversalSoundboard.Common
     {
         public AudioPlayerInitError Error;
 
-        public AudioPlayerInitException(AudioPlayerInitError error)
+        public AudioPlayerInitException(AudioPlayerInitError error) : base("Player", error.ToString())
         {
             Error = error;
         }
@@ -38,7 +52,7 @@ namespace UniversalSoundboard.Common
     {
         public AudioRecorderInitError Error;
 
-        public AudioRecorderInitException(AudioRecorderInitError error)
+        public AudioRecorderInitException(AudioRecorderInitError error) : base("Recorder", error.ToString())
         {
             Error = error;
         }
@@ -55,7 +69,7 @@ namespace UniversalSoundboard.Common
     {
         public AudioGraphInitError Error;
 
-        public AudioGraphInitException(AudioGraphCreationStatus status)
+        public AudioGraphInitException(AudioGraphCreationStatus status) : base("AudioGraph", status.ToString())
         {
             switch (status)
             {
@@ -84,7 +98,7 @@ namespace UniversalSoundboard.Common
     {
         public FileInputNodeInitError Error;
 
-        public FileInputNodeInitException(AudioFileNodeCreationStatus status)
+        public FileInputNodeInitException(AudioFileNodeCreationStatus status) : base("FileInputNode", status.ToString())
         {
             switch (status)
             {
@@ -116,7 +130,7 @@ namespace UniversalSoundboard.Common
     {
         public DeviceInputNodeInitError Error;
 
-        public DeviceInputNodeInitException(AudioDeviceNodeCreationStatus status)
+        public DeviceInputNodeInitException(AudioDeviceNodeCreationStatus status) : base("DeviceInputNode", status.ToString())
         {
             switch (status)
             {
@@ -148,7 +162,7 @@ namespace UniversalSoundboard.Common
     {
         public FileOutputNodeInitError Error;
 
-        public FileOutputNodeInitException(AudioFileNodeCreationStatus status)
+        public FileOutputNodeInitException(AudioFileNodeCreationStatus status) : base("FileOutputNode", status.ToString())
         {
             switch (status)
             {
@@ -180,7 +194,7 @@ namespace UniversalSoundboard.Common
     {
         public DeviceOutputNodeInitError Error;
 
-        public DeviceOutputNodeInitException(AudioDeviceNodeCreationStatus status)
+        public DeviceOutputNodeInitException(AudioDeviceNodeCreationStatus status) : base("DeviceOutputNode", status.ToString())
         {
             switch (status)
             {

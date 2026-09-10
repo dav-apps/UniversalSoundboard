@@ -415,7 +415,7 @@ namespace UniversalSoundboard.Models
         #endregion
 
         #region Functionality
-        private async Task InitAudioPlayer()
+        private async Task<bool> InitAudioPlayer()
         {
             if (PlayingSound.StartPosition.HasValue)
             {
@@ -448,8 +448,9 @@ namespace UniversalSoundboard.Models
             {
                 SentrySdk.CaptureException(e, scope =>
                 {
-                    scope.SetTag("Sound.Source", CurrentSound.Source);
+                    scope.SetTag("Sound.Source", CurrentSound?.Source ?? "unknown");
                 });
+                return false;
             }
 
             await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
@@ -457,6 +458,7 @@ namespace UniversalSoundboard.Models
                 currentSoundTotalDuration = PlayingSound.AudioPlayer.Duration;
                 DurationChanged?.Invoke(this, new DurationChangedEventArgs(PlayingSound.AudioPlayer.Duration));
             });
+            return true;
         }
 
         private void InitPositionChangeTimer()
@@ -470,8 +472,8 @@ namespace UniversalSoundboard.Models
         {
             try
             {
-                if (!PlayingSound.AudioPlayer.IsInitialized)
-                    await InitAudioPlayer();
+                if (!PlayingSound.AudioPlayer.IsInitialized && !await InitAudioPlayer())
+                    return false;
 
                 // Start fade in if enabled
                 PlayingSound.AudioPlayer.FadeInDuration = FileManager.itemViewHolder.FadeInEffectDuration;
@@ -483,8 +485,9 @@ namespace UniversalSoundboard.Models
                 // The AudioPlayer ends the fade in on its own once the gain ramp has finished,
                 // no timer needed here
             }
-            catch (AudioIOException)
+            catch (Exception exception)
             {
+                SentrySdk.CaptureException(exception);
                 return false;
             }
 
@@ -498,9 +501,6 @@ namespace UniversalSoundboard.Models
 
             try
             {
-                if (!PlayingSound.AudioPlayer.IsInitialized)
-                    await InitAudioPlayer();
-
                 // Start fade out if enabled
                 if (FileManager.itemViewHolder.IsFadeOutEffectEnabled && fadeOut)
                 {
@@ -571,7 +571,7 @@ namespace UniversalSoundboard.Models
             await SetAudioPlayerPosition(TimeSpan.Zero);
             PlayingSound.AudioPlayer.AudioFile = audioFile;
             PlayingSound.AudioPlayer.PlaybackRate = (double)PlayingSound.PlaybackSpeed / 100;
-            await InitAudioPlayer();
+            if (!await InitAudioPlayer()) return;
 
             if (wasPlaying || startPlaying)
             {

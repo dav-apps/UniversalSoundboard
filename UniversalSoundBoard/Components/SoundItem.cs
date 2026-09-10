@@ -106,7 +106,7 @@ namespace UniversalSoundboard.Components
             if (!usingPlus && !purchasedPlus)
             {
                 // Show dialog which explains that this feature is only for Plus users
-                upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog = new UpgradePlusDialog("hotkey_settings");
                 upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
                 await upgradePlusDialog.ShowAsync();
 

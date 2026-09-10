@@ -3,9 +3,9 @@ using Sentry;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
+
 using System.Threading.Tasks;
-using System.Web;
+using System.Threading;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using YoutubeExplode;
@@ -23,35 +23,24 @@ namespace UniversalSoundboard.Models
 
         public static bool IsYoutubeUrl(string url)
         {
-            Regex youtubeUrlRegex = new Regex("^(https?:\\/\\/)?((www|music).)?youtube.com\\/");
-            return youtubeUrlRegex.IsMatch(url);
+            return YoutubeUrl.IsYoutubeHost(url, false);
         }
 
         public static bool IsShortYoutubeUrl(string url)
         {
-            Regex shortYoutubeUrlRegex = new Regex("^(https?:\\/\\/)?youtu.be\\/");
-            return shortYoutubeUrlRegex.IsMatch(url);
+            return YoutubeUrl.IsYoutubeHost(url, true);
         }
 
-        public override async Task<SoundDownloadPluginResult> GetResult()
+        public override Task<SoundDownloadPluginResult> GetResult() => GetResult(CancellationToken.None);
+
+        public async Task<SoundDownloadPluginResult> GetResult(CancellationToken cancellationToken)
         {
-            string videoId = null;
-            string playlistId = null;
+            cancellationToken.ThrowIfCancellationRequested();
+            // Incomplete input is normal while typing, not an exception to send to Sentry.
+            if (!YoutubeUrl.TryParse(Url, out var videoId, out var playlistId))
+                throw new SoundDownloadException();
             string title = null;
             string imageUri = null;
-
-            if (IsShortYoutubeUrl(Url))
-            {
-                videoId = Url.Split('/').Last();
-            }
-            else
-            {
-                // Get the video id from the url params
-                var queryDictionary = HttpUtility.ParseQueryString(Url.Split('?').Last());
-
-                videoId = queryDictionary.Get("v");
-                playlistId = queryDictionary.Get("list");
-            }
 
             // Build the url
             string youtubeLink = string.Format("https://youtube.com/watch?v={0}", videoId);
@@ -59,16 +48,18 @@ namespace UniversalSoundboard.Models
             try
             {
                 var youtube = new YoutubeClient();
-                var videoResult = await youtube.Videos.GetAsync(youtubeLink);
+                var videoResult = await youtube.Videos.GetAsync(youtubeLink, cancellationToken);
                 
                 title = videoResult.Title;
                 imageUri = videoResult.Thumbnails.Last().Url;
             }
+            catch (OperationCanceledException) { throw; }
             catch (Exception e)
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 SentrySdk.CaptureException(e, scope =>
                 {
-                    scope.SetTag("YoutubeLink", Url);
+                    scope.SetTag("download.source", "youtube");
                 });
 
                 throw new SoundDownloadException();
@@ -88,7 +79,7 @@ namespace UniversalSoundboard.Models
                     listOperation.MaxResults = 50;
                     listOperation.Fields = "nextPageToken,items(contentDetails/videoId,snippet/title)";
 
-                    PlaylistItemListResponse listResponse = await listOperation.ExecuteAsync();
+                    PlaylistItemListResponse listResponse = await listOperation.ExecuteAsync(cancellationToken);
 
                     if (listResponse.Items.Count > 1)
                     {
@@ -98,11 +89,12 @@ namespace UniversalSoundboard.Models
 
                         try
                         {
-                            var result = await playlistListOperation.ExecuteAsync();
+                            var result = await playlistListOperation.ExecuteAsync(cancellationToken);
 
                             if (result.Items.Count > 0)
                                 playlistTitle = result.Items[0].Snippet.Title;
                         }
+                        catch (OperationCanceledException) { throw; }
                         catch (Exception) { }
 
                         // Load all items from all pages of the playlist
@@ -123,8 +115,9 @@ namespace UniversalSoundboard.Models
 
                             try
                             {
-                                listResponse = await listOperation.ExecuteAsync();
+                                listResponse = await listOperation.ExecuteAsync(cancellationToken);
                             }
+                            catch (OperationCanceledException) { throw; }
                             catch (Exception)
                             {
                                 playlistLoadSuccessful = false;
@@ -177,6 +170,7 @@ namespace UniversalSoundboard.Models
                     );
                 }
             }
+            catch (OperationCanceledException) { throw; }
             catch (Exception)
             {
                 throw new SoundDownloadException();

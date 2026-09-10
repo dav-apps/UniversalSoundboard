@@ -3343,7 +3343,7 @@ namespace UniversalSoundboard.DataAccess
             if (!usingPlus && !purchasedPlus)
             {
                 // Show dialog which explains that this feature is only for Plus users
-                var upgradePlusDialog = new UpgradePlusDialog();
+                var upgradePlusDialog = new UpgradePlusDialog("hotkey_pressed");
                 upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
                 await upgradePlusDialog.ShowAsync();
 

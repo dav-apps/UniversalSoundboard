@@ -8,9 +8,9 @@ namespace UniversalSoundboard.Dialogs
     {
         public event EventHandler<EventArgs> UpgradePlusSucceeded;
 
-        public UpgradePlusDialog()
+        public UpgradePlusDialog(string source)
             : base(
-                  new UpgradePlusContentDialog(),
+                  new UpgradePlusContentDialog(source),
                   FileManager.loader.GetString("Actions-Close")
             )
         {

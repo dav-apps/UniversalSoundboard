@@ -304,7 +304,7 @@ namespace UniversalSoundboard.Pages
 
             if (!usingPlus && !purchasedPlus)
             {
-                upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog = new UpgradePlusDialog("output_device");
                 upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
                 await upgradePlusDialog.ShowAsync();
 
@@ -348,7 +348,7 @@ namespace UniversalSoundboard.Pages
 
             if (!usingPlus && !purchasedPlus)
             {
-                upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog = new UpgradePlusDialog("output_devices_manage");
                 upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
                 await upgradePlusDialog.ShowAsync();
 

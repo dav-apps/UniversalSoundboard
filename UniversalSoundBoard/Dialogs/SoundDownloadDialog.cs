@@ -4,6 +4,7 @@ using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Threading;
 using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Models;
@@ -28,6 +29,7 @@ namespace UniversalSoundboard.Dialogs
         private Button SoundListSelectAllButton;
         private CheckBox CreateCategoryForPlaylistCheckbox;
         private ObservableCollection<SoundDownloadItem> SoundItems;
+        private CancellationTokenSource lookupCancellation;
 
         public SoundDownloadResult Result { get; private set; }
 
@@ -42,6 +44,7 @@ namespace UniversalSoundboard.Dialogs
             ContentDialog.IsPrimaryButtonEnabled = false;
             Content = GetContent(soundDownloadListItemTemplate);
             ContentDialog.Opened += ContentDialog_Opened;
+            ContentDialog.Closed += (sender, args) => lookupCancellation?.Cancel();
         }
 
         private void ContentDialog_Opened(ContentDialog sender, ContentDialogOpenedEventArgs args)
@@ -250,11 +253,37 @@ namespace UniversalSoundboard.Dialogs
 
         private async void DownloadSoundsUrlTextBox_TextChanged(object sender, TextChangedEventArgs args)
         {
+            lookupCancellation?.Cancel();
+            var cancellation = new CancellationTokenSource();
+            lookupCancellation = cancellation;
             ContentDialog.IsPrimaryButtonEnabled = false;
+            Result = null;
             HideAllMessageElements();
 
-            string input = UrlTextBox.Text;
+            string input = UrlTextBox.Text.Trim();
+            try
+            {
+                await Task.Delay(400, cancellation.Token);
+                await ResolveUrlAsync(input, cancellation.Token);
+            }
+            catch (OperationCanceledException) { }
+            catch (Exception exception)
+            {
+                if (!cancellation.IsCancellationRequested)
+                {
+                    HideAllMessageElements();
+                    SentrySdk.CaptureException(exception);
+                }
+            }
+            finally
+            {
+                if (ReferenceEquals(lookupCancellation, cancellation)) lookupCancellation = null;
+                cancellation.Dispose();
+            }
+        }
 
+        private async Task ResolveUrlAsync(string input, CancellationToken cancellationToken)
+        {
             var audioFilePlugin = new SoundDownloadPlugin(input);
             var youtubePlugin = new SoundDownloadYoutubePlugin(input);
             var zopharPlugin = new SoundDownloadZopharPlugin(input);
@@ -271,9 +300,15 @@ namespace UniversalSoundboard.Dialogs
 
             if (youtubePlugin.IsUrlMatch())
             {
+                if (!YoutubeUrl.TryParse(input, out _, out _))
+                {
+                    HideAllMessageElements();
+                    return;
+                }
                 try
                 {
-                    var result = await youtubePlugin.GetResult() as SoundDownloadYoutubePluginResult;
+                    var result = await youtubePlugin.GetResult(cancellationToken) as SoundDownloadYoutubePluginResult;
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
                     YoutubeInfoImage.Source = new BitmapImage(new Uri(result.ImageUrl));
@@ -306,8 +341,9 @@ namespace UniversalSoundboard.Dialogs
 
                         SoundListStackPanel.Visibility = Visibility.Visible;
                         UpdateSoundListNumberText();
-                        await Task.Delay(10);
+                        await Task.Delay(10, cancellationToken);
                         await SoundListView.SmoothScrollIntoViewWithIndexAsync(selectedItemIndex, ScrollItemPlacement.Center);
+                        cancellationToken.ThrowIfCancellationRequested();
                     }
                     else if (result.SoundItems.Count == 1)
                     {
@@ -320,6 +356,7 @@ namespace UniversalSoundboard.Dialogs
                 }
                 catch (SoundDownloadException)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     HideAllMessageElements();
                     return;
                 }
@@ -329,6 +366,7 @@ namespace UniversalSoundboard.Dialogs
                 try
                 {
                     var result = await zopharPlugin.GetResult() as SoundDownloadZopharPluginResult;
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
 
@@ -347,6 +385,7 @@ namespace UniversalSoundboard.Dialogs
                 }
                 catch (SoundDownloadException)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     HideAllMessageElements();
                     return;
                 }
@@ -356,6 +395,7 @@ namespace UniversalSoundboard.Dialogs
                 try
                 {
                     var result = await myInstantsPlugin.GetResult();
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     LoadingMessageStackPanel.Visibility = Visibility.Collapsed;
 
@@ -378,6 +418,7 @@ namespace UniversalSoundboard.Dialogs
                 }
                 catch(SoundDownloadException)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     HideAllMessageElements();
                     return;
                 }
@@ -387,6 +428,7 @@ namespace UniversalSoundboard.Dialogs
                 try
                 {
                     var result = await audioFilePlugin.GetResult();
+                    cancellationToken.ThrowIfCancellationRequested();
 
                     if (result.SoundItems.Count == 0)
                         throw new SoundDownloadException();
@@ -418,6 +460,7 @@ namespace UniversalSoundboard.Dialogs
                 }
                 catch (SoundDownloadException)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     HideAllMessageElements();
                     return;
                 }
@@ -425,7 +468,8 @@ namespace UniversalSoundboard.Dialogs
 
             SentrySdk.CaptureMessage("SoundDownloadDialog-UrlChanged", scope =>
             {
-                scope.SetTag("Url", input);
+                scope.SetTag("download.source", youtubePlugin.IsUrlMatch() ? "youtube"
+                    : zopharPlugin.IsUrlMatch() ? "zophar" : myInstantsPlugin.IsUrlMatch() ? "myinstants" : "audio_file");
             });
         }
 

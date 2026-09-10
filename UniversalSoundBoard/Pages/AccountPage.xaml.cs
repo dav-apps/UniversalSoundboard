@@ -126,7 +126,7 @@ namespace UniversalSoundboard.Pages
             Bindings.Update();
         }
 
-        public static async Task<bool> ShowLoginPage(bool showSignup = false)
+        public static async Task<bool> ShowLoginPage(bool showSignup = false, Action<string> reportOutcome = null)
         {
             try
             {
@@ -135,7 +135,11 @@ namespace UniversalSoundboard.Pages
                 Uri requestUrl = new Uri(string.Format("{0}/{1}?appId={2}&apiKey={3}&redirectUrl={4}", Constants.WebsiteBaseUrl, action, Constants.AppId, Constants.ApiKey, redirectUrl));
 
                 var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
-                if (webAuthenticationResult.ResponseStatus != WebAuthenticationStatus.Success) return false;
+                if (webAuthenticationResult.ResponseStatus != WebAuthenticationStatus.Success)
+                {
+                    reportOutcome?.Invoke(webAuthenticationResult.ResponseStatus.ToString());
+                    return false;
+                }
 
                 // Get the access token from the response string
                 string accessToken = webAuthenticationResult.ResponseData.Split(new[] { "accessToken=" }, StringSplitOptions.None)[1];
@@ -158,9 +162,13 @@ namespace UniversalSoundboard.Pages
                 if (FileManager.itemViewHolder.AllSounds.Count == 0)
                     FileManager.itemViewHolder.AppState = AppState.InitialSync;
 
+                reportOutcome?.Invoke("Success");
                 return true;
             }
-            catch { }
+            catch (Exception exception)
+            {
+                reportOutcome?.Invoke("Exception:" + exception.GetType().Name);
+            }
 
             return false;
         }
@@ -241,37 +249,23 @@ namespace UniversalSoundboard.Pages
 
         private async void PlusCardSelectButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!PlusCardSelectButton.IsEnabled) return;
             PlusCardSelectButton.IsEnabled = false;
             PlusCardSelectButton.Margin = new Thickness(32, 0, 0, 0);
             PlusCardSelectButtonProgressRing.Visibility = Visibility.Visible;
 
             SentrySdk.CaptureMessage("AccountPage-PlusCardSelectButtonClick");
 
-            var createCheckoutSessionResponse = await CheckoutSessionsController.CreateSubscriptionCheckoutSession(
-                "url",
-                Plan.Plus,
-                Constants.CreateCheckoutSessionSuccessUrl,
-                Constants.CreateCheckoutSessionCancelUrl
-            );
+            string attemptId = Guid.NewGuid().ToString();
+            PurchaseTelemetry.Track("Plus-PurchaseClicked", "account_page", "subscription", attemptId);
+            bool checkoutStarted = await PurchaseTelemetry.StartSubscriptionCheckoutAsync("account_page", attemptId);
 
             PlusCardSelectButton.IsEnabled = true;
             PlusCardSelectButton.Margin = new Thickness(0, 0, 0, 0);
             PlusCardSelectButtonProgressRing.Visibility = Visibility.Collapsed;
 
-            if (createCheckoutSessionResponse.Success)
+            if (!checkoutStarted)
             {
-                await Launcher.LaunchUriAsync(new Uri(createCheckoutSessionResponse.Data.url));
-            }
-            else
-            {
-                if (createCheckoutSessionResponse.Errors.Count > 0)
-                {
-                    SentrySdk.CaptureMessage("AccountPage-PlusCardSelectButtonClick-Error", scope =>
-                    {
-                        scope.SetTag("ErrorCodes", string.Join(", ", createCheckoutSessionResponse.Errors));
-                    });
-                }
-
                 // Show dialog for error
                 await new UpgradeErrorDialog().ShowAsync();
             }

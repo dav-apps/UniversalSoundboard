@@ -590,7 +590,7 @@ namespace UniversalSoundboard.Components
             if (!usingPlus && !purchasedPlus)
             {
                 // Show dialog which explains that this feature is only for Plus users
-                upgradePlusDialog = new UpgradePlusDialog();
+                upgradePlusDialog = new UpgradePlusDialog("playing_sound_output_device");
                 upgradePlusDialog.UpgradePlusSucceeded += UpgradePlusDialog_UpgradePlusSucceeded;
                 await upgradePlusDialog.ShowAsync();
 

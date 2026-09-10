@@ -246,3 +246,6 @@ ModelManifest.xml
 
 # File for environment variables
 UniversalSoundBoard/Strings/Env.cs
+
+# Local diagnostic exports and API credentials
+.review/

@@ -1,4 +1,4 @@
-﻿using AudioEffectComponent;
+using AudioEffectComponent;
 using Sentry;
 using System;
 using System.Collections.Generic;
@@ -21,7 +21,7 @@ namespace UniversalSoundboard.Models
     public class AudioPlayer
     {
         private bool isInitialized = false;
-        private bool isInitializing = false;
+        private readonly AsyncOperationGate initialization = new AsyncOperationGate();
         private StorageFile audioFile;
         private bool audioFileChanged = true;
         private bool outputDevicesChanged = true;
@@ -171,50 +171,67 @@ namespace UniversalSoundboard.Models
             this.audioFile = audioFile;
         }
 
-        public async Task Init()
+        public Task Init() => initialization.RunAsync(InitializeCoreAsync);
+
+        private async Task InitializeCoreAsync()
         {
-            if (audioFile == null)
-                throw new AudioPlayerInitException(AudioPlayerInitError.AudioFileNotSpecified);
-
-            if (isInitializing) return;
-            isInitializing = true;
-
-            if (!isInitialized || outputDevicesChanged)
+            string stage = "Player";
+            try
             {
-                // Create the AudioGraph
-                await InitAudioGraph();
+                if (audioFile == null)
+                    throw new AudioPlayerInitException(AudioPlayerInitError.AudioFileNotSpecified);
 
-                // Create the output node
-                await InitDeviceOutputNodes();
+                if (!isInitialized || outputDevicesChanged)
+                {
+                    isInitialized = false;
+                    // Create the AudioGraph
+                    stage = "AudioGraph";
+                    await InitAudioGraph();
 
-                // Init the audio effects
-                InitEffectDefinitions();
+                    // Create the output node
+                    stage = "DeviceOutputNode";
+                    await InitDeviceOutputNodes();
+
+                    // Init the audio effects
+                    stage = "Effects";
+                    InitEffectDefinitions();
+                }
+
+                if (
+                    audioFileChanged
+                    || outputDevicesChanged
+                    || effectsChanged
+                )
+                {
+                    // Create the input node
+                    stage = "FileInputNode";
+                    await InitFileInputNodes();
+
+                    stage = "ConnectNodes";
+                    foreach (var audioGraphContainer in AudioGraphContainers)
+                        audioGraphContainer.FileInputNode.AddOutgoingConnection(audioGraphContainer.DeviceOutputNode);
+
+                    outputDevicesChanged = false;
+                    audioFileChanged = false;
+                    effectsChanged = false;
+                }
+
+                stage = "StartGraph";
+                if (IsPlaying)
+                    foreach (var audioGraphContainer in AudioGraphContainers)
+                        audioGraphContainer.AudioGraph.Start();
+
+                isInitialized = true;
             }
-
-            if (
-                audioFileChanged
-                || outputDevicesChanged
-                || effectsChanged
-            )
+            catch (Exception exception)
             {
-                // Create the input node
-                await InitFileInputNodes();
-
-                foreach (var audioGraphContainer in AudioGraphContainers)
-                    audioGraphContainer.FileInputNode.AddOutgoingConnection(audioGraphContainer.DeviceOutputNode);
-
-                outputDevicesChanged = false;
-                audioFileChanged = false;
-                effectsChanged = false;
+                isInitialized = false;
+                isPlaying = false;
+                // Force a complete rebuild on retry, including after partially created nodes.
+                outputDevicesChanged = audioFileChanged = effectsChanged = true;
+                AudioDiagnostics.Annotate(exception, stage, OutputDevices.Count, audioFile?.FileType);
+                throw;
             }
-
-            isInitialized = true;
-
-            if (IsPlaying)
-                foreach (var audioGraphContainer in AudioGraphContainers)
-                    audioGraphContainer.AudioGraph.Start();
-
-            isInitializing = false;
         }
 
         private async Task InitAudioGraph()
@@ -259,7 +276,6 @@ namespace UniversalSoundboard.Models
 
                 if (inputNodeResult.Status != AudioFileNodeCreationStatus.Success)
                 {
-                    isInitializing = false;
                     throw new FileInputNodeInitException(inputNodeResult.Status);
                 }
 
@@ -313,7 +329,6 @@ namespace UniversalSoundboard.Models
 
                 if (outputNodeResult.Status != AudioDeviceNodeCreationStatus.Success)
                 {
-                    isInitializing = false;
                     throw new DeviceOutputNodeInitException(outputNodeResult.Status);
                 }
 
@@ -324,7 +339,7 @@ namespace UniversalSoundboard.Models
         public void Play()
         {
             if (!isInitialized)
-                throw new AudioPlayerNotInitializedException();
+                throw new AudioPlayerNotInitializedException("Play");
 
             if (isPlaying) return;
 
@@ -336,8 +351,9 @@ namespace UniversalSoundboard.Models
                 }
                 catch (Exception e)
                 {
-                    SentrySdk.CaptureException(e);
-                    throw new AudioIOException();
+                    var exception = new AudioIOException("Play", "StartFailed", e);
+                    AudioDiagnostics.Annotate(exception, "Play", OutputDevices.Count, audioFile?.FileType);
+                    throw exception;
                 }
             }
 
@@ -347,7 +363,12 @@ namespace UniversalSoundboard.Models
         public void Pause()
         {
             if (!isInitialized)
-                throw new AudioPlayerNotInitializedException();
+            {
+                // Also cancel the resume intent of an initialization that is still in progress.
+                isPlaying = false;
+                CancelFade();
+                return;
+            }
 
             if (!isPlaying) return;
 
@@ -359,8 +380,9 @@ namespace UniversalSoundboard.Models
                 }
                 catch (Exception e)
                 {
-                    SentrySdk.CaptureException(e);
-                    throw new AudioIOException();
+                    var exception = new AudioIOException("Pause", "StopFailed", e);
+                    AudioDiagnostics.Annotate(exception, "Pause", OutputDevices.Count, audioFile?.FileType);
+                    throw exception;
                 }
             }
 
@@ -946,7 +968,6 @@ namespace UniversalSoundboard.Models
 
             if (createAudioGraphResult.Status != AudioGraphCreationStatus.Success)
             {
-                isInitializing = false;
                 throw new AudioGraphInitException(createAudioGraphResult.Status);
             }
 

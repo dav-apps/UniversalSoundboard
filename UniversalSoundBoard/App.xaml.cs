@@ -87,8 +87,17 @@ namespace UniversalSoundboard
                 // Tells which project in Sentry to send events to:
                 options.Dsn = Env.SentryDsn;
 
+                var version = Package.Current.Id.Version;
+                options.Release = $"UniversalSoundboard@{version.Major}.{version.Minor}.{version.Build}.{version.Revision}";
+#if DEBUG
+                options.Environment = "debug";
+#else
+                options.Environment = "production";
+#endif
+                options.SetBeforeSend(AudioDiagnostics.EnrichEvent);
+
                 // When configuring for the first time, to see what the SDK is doing:
-                options.Debug = true;
+                options.Debug = Debugger.IsAttached;
 
                 // Set traces_sample_rate to 1.0 to capture 100% of transactions for tracing.
                 // We recommend adjusting this value in production.
@@ -160,7 +169,7 @@ namespace UniversalSoundboard
             Window.Current.Activate();
         }
 
-        protected override void OnActivated(IActivatedEventArgs args)
+        protected override async void OnActivated(IActivatedEventArgs args)
         {
             if (args.Kind == ActivationKind.Protocol)
             {
@@ -183,20 +192,7 @@ namespace UniversalSoundboard
                 
                 if (eventArgs.Uri.AbsoluteUri.StartsWith("universalsoundboard://upgrade"))
                 {
-                    var queryDictionary = HttpUtility.ParseQueryString(eventArgs.Uri.Query);
-                    string planParam = queryDictionary.Get("plan");
-
-                    if (planParam == "1" || planParam == "2")
-                    {
-                        // Upgrade the plan
-                        if (planParam == "1")
-                            Dav.User.Plan = Plan.Plus;
-                        else if (planParam == "2")
-                            Dav.User.Plan = Plan.Pro;
-
-                        FileManager.itemViewHolder.TriggerUserPlanChangedEvent(this, new EventArgs());
-                        SentrySdk.CaptureMessage("UpgradeSuccessful");
-                    }
+                    await PurchaseTelemetry.HandleSubscriptionReturnAsync(eventArgs.Uri);
                 }
                 else if (eventArgs.Uri.AbsoluteUri.StartsWith("universalsoundboard://sound-promotion"))
                 {

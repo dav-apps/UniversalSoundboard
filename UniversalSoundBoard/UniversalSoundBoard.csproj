@@ -277,6 +277,10 @@
       <DependentUpon>StoreSoundPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Strings\Env.cs" />
+    <Compile Include="Common\AudioDiagnostics.cs" />
+    <Compile Include="Common\AsyncOperationGate.cs" />
+    <Compile Include="Common\PurchaseTelemetry.cs" />
+    <Compile Include="Common\YoutubeUrl.cs" />
     <Compile Include="Models\OldDatabaseModels.cs" />
     <Compile Include="Models\PlayingSound.cs" />
     <Compile Include="Pages\AccountPage.xaml.cs">
