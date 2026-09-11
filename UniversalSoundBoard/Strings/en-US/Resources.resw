@@ -195,9 +195,6 @@
   <data name="SoundItemOptionsFlyout-Rename" xml:space="preserve">
     <value>Rename</value>
   </data>
-  <data name="Version.Text" xml:space="preserve">
-    <value>2.5.9</value>
-  </data>
   <data name="MoreButton-Cast.Text" xml:space="preserve">
     <value>Cast to Device</value>
   </data>
@@ -1325,5 +1322,8 @@ This may take some time, depending on how large the import file is.</value>
   </data>
   <data name="OutputDevicesDialog-AllowMultipleOutputDevices" xml:space="preserve">
     <value>Allow multiple output devices</value>
+  </data>
+  <data name="Version.Text" xml:space="preserve">
+    <value>2.5.10</value>
   </data>
 </root>
