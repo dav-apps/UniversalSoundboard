@@ -34,6 +34,8 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Common\Constants.cs" />
+    <Compile Include="Common\BrowserLogin.cs" />
+    <Compile Include="Common\BrowserLoginProtocol.cs" />
     <Compile Include="Components\PlayingSoundItemSoundItemTemplate.xaml.cs">
       <DependentUpon>PlayingSoundItemSoundItemTemplate.xaml</DependentUpon>
     </Compile>

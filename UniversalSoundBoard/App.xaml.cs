@@ -190,7 +190,11 @@ namespace UniversalSoundboard
 
                 Window.Current.Activate();
                 
-                if (eventArgs.Uri.AbsoluteUri.StartsWith("universalsoundboard://upgrade"))
+                if (BrowserLoginProtocol.IsCallback(eventArgs.Uri))
+                {
+                    BrowserLogin.HandleCallback(eventArgs.Uri);
+                }
+                else if (eventArgs.Uri.AbsoluteUri.StartsWith("universalsoundboard://upgrade"))
                 {
                     await PurchaseTelemetry.HandleSubscriptionReturnAsync(eventArgs.Uri);
                 }

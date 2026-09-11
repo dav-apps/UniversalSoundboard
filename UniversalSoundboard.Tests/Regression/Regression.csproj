@@ -6,6 +6,7 @@
     <Nullable>disable</Nullable>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="..\..\UniversalSoundBoard\Common\BrowserLoginProtocol.cs" Link="BrowserLoginProtocol.cs" />
     <Compile Include="..\..\AudioEffectComponent\PitchShifter.cs" Link="PitchShifter.cs" />
     <Compile Include="..\..\UniversalSoundBoard\Common\YoutubeUrl.cs" Link="YoutubeUrl.cs" />
     <Compile Include="..\..\UniversalSoundBoard\Common\AsyncOperationGate.cs" Link="AsyncOperationGate.cs" />

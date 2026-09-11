@@ -7,6 +7,31 @@ void Check(bool condition, string description)
     checks++;
 }
 
+var loginStarted = DateTimeOffset.UtcNow;
+var loginRequest = BrowserLoginProtocol.CreateRequest("https://dav-apps.tech", 1, "key+&=", false, "nonce");
+var loginQuery = System.Web.HttpUtility.ParseQueryString(loginRequest.Query);
+Check(loginRequest.AbsolutePath == "/login" && loginQuery["apiKey"] == "key+&=", "login request encodes API key");
+Check(BrowserLoginProtocol.CreateRequest("https://dav-apps.tech", 1, "key", true, "nonce").AbsolutePath == "/signup", "signup route");
+var callback = new Uri(loginQuery["redirectUrl"] + "&accessToken=a%2Bb%26c%3D");
+Check(BrowserLoginProtocol.TryGetToken(callback, "nonce", loginStarted, loginStarted, out var loginToken)
+    && loginToken == "a+b&c=", "website callback preserves state and decodes token");
+Check(!BrowserLoginProtocol.TryGetToken(callback, null, loginStarted, loginStarted, out _), "unsolicited login rejected");
+Check(!BrowserLoginProtocol.TryGetToken(callback, "different", loginStarted, loginStarted, out _), "old or mismatched login rejected");
+Check(!BrowserLoginProtocol.TryGetToken(callback, "nonce", loginStarted, loginStarted.AddMinutes(10), out _), "expired login rejected");
+Check(!BrowserLoginProtocol.TryGetToken(callback, "nonce", loginStarted, loginStarted.AddSeconds(-1), out _), "future timestamp rejected");
+foreach (var invalidCallback in new[] {
+    "https://login?state=nonce&accessToken=token",
+    "universalsoundboard://login.evil?state=nonce&accessToken=token",
+    "universalsoundboard://login/extra?state=nonce&accessToken=token",
+    "universalsoundboard://user@login?state=nonce&accessToken=token",
+    "universalsoundboard://login:123?state=nonce&accessToken=token",
+    "universalsoundboard://login?state=nonce&accessToken=token#extra",
+    "universalsoundboard://login?state=nonce&state=nonce&accessToken=token",
+    "universalsoundboard://login?state=nonce&accessToken=a&accessToken=b",
+    "universalsoundboard://login?state=nonce&accessToken=",
+    "universalsoundboard://login?accessToken=token" })
+    Check(!BrowserLoginProtocol.TryGetToken(new Uri(invalidCallback), "nonce", loginStarted, loginStarted, out _), "invalid callback rejected: " + invalidCallback);
+
 const string id = "aB_cD-12345";
 foreach (string url in new[] {
     $"https://youtu.be/{id}?si=shareToken",

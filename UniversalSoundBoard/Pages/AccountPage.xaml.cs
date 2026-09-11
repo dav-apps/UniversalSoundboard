@@ -1,5 +1,4 @@
-﻿using davClassLibrary;
-using davClassLibrary.Controllers;
+using davClassLibrary;
 using Sentry;
 using System;
 using System.Collections.Generic;
@@ -8,7 +7,6 @@ using UniversalSoundboard.Common;
 using UniversalSoundboard.DataAccess;
 using UniversalSoundboard.Dialogs;
 using Windows.Foundation.Metadata;
-using Windows.Security.Authentication.Web;
 using Windows.System;
 using Windows.UI;
 using Windows.UI.Core;
@@ -126,51 +124,9 @@ namespace UniversalSoundboard.Pages
             Bindings.Update();
         }
 
-        public static async Task<bool> ShowLoginPage(bool showSignup = false, Action<string> reportOutcome = null)
+        public static Task<bool> ShowLoginPage(bool showSignup = false, Action<string> reportOutcome = null)
         {
-            try
-            {
-                Uri redirectUrl = WebAuthenticationBroker.GetCurrentApplicationCallbackUri();
-                string action = showSignup ? "signup" : "login";
-                Uri requestUrl = new Uri(string.Format("{0}/{1}?appId={2}&apiKey={3}&redirectUrl={4}", Constants.WebsiteBaseUrl, action, Constants.AppId, Constants.ApiKey, redirectUrl));
-
-                var webAuthenticationResult = await WebAuthenticationBroker.AuthenticateAsync(WebAuthenticationOptions.None, requestUrl);
-                if (webAuthenticationResult.ResponseStatus != WebAuthenticationStatus.Success)
-                {
-                    reportOutcome?.Invoke(webAuthenticationResult.ResponseStatus.ToString());
-                    return false;
-                }
-
-                // Get the access token from the response string
-                string accessToken = webAuthenticationResult.ResponseData.Split(new[] { "accessToken=" }, StringSplitOptions.None)[1];
-
-                // Log the user in with the access token
-                Dav.Login(accessToken);
-                ApiManager.ReloadClients(accessToken);
-
-                // Show InAppNotification for sync
-                FileManager.itemViewHolder.TriggerShowInAppNotificationEvent(
-                    null,
-                    new ShowInAppNotificationEventArgs(
-                        InAppNotificationType.Sync,
-                        FileManager.loader.GetString("InAppNotification-Sync"),
-                        0,
-                        true
-                    )
-                );
-
-                if (FileManager.itemViewHolder.AllSounds.Count == 0)
-                    FileManager.itemViewHolder.AppState = AppState.InitialSync;
-
-                reportOutcome?.Invoke("Success");
-                return true;
-            }
-            catch (Exception exception)
-            {
-                reportOutcome?.Invoke("Exception:" + exception.GetType().Name);
-            }
-
-            return false;
+            return BrowserLogin.StartAsync(showSignup, reportOutcome);
         }
 
         private void SetUsedStorageTextBlock()
