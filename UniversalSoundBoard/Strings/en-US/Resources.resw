@@ -1323,13 +1323,13 @@ This may take some time, depending on how large the import file is.</value>
   <data name="OutputDevicesDialog-AllowMultipleOutputDevices" xml:space="preserve">
     <value>Allow multiple output devices</value>
   </data>
-  <data name="Version.Text" xml:space="preserve">
-    <value>2.5.10</value>
-  </data>
   <data name="StoreLoadError.Text" xml:space="preserve">
     <value>Some content could not be loaded. Please try again.</value>
   </data>
   <data name="StoreRetryButton.Content" xml:space="preserve">
     <value>Try again</value>
+  </data>
+  <data name="Version.Text" xml:space="preserve">
+    <value>2.5.11</value>
   </data>
 </root>
