@@ -140,4 +140,5 @@ Check(await BrowserLoginProtocol.WaitForResultAsync(browserCompletion.Task, Canc
     "missing callback reports a timeout");
 PitchQualityChecks.Run(Check);
 YoutubeAudioChecks.Run(Check);
+await SessionTrackingChecks.Run(Check);
 Console.WriteLine($"Passed {checks} regression checks.");

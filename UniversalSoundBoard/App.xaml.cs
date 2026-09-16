@@ -34,6 +34,8 @@ namespace UniversalSoundboard
     {
         public static BackgroundTaskDeferral AppServiceDeferral = null;
         public static AppServiceConnection Connection = null;
+        private readonly SessionTracking sessionTracking = new SessionTracking();
+        private bool sessionWindowAttached;
 
         /// <summary>
         /// Initializes the singleton application object.  This is the first line of authored code
@@ -45,6 +47,7 @@ namespace UniversalSoundboard
 
             InitializeComponent();
             Suspending += OnSuspending;
+            Resuming += (sender, args) => sessionTracking.Resume();
 
             // Initialize Dav settings
             ProjectInterface.LocalDataSettings = new LocalDataSettings();
@@ -106,7 +109,8 @@ namespace UniversalSoundboard
                 // Enable Global Mode since this is a client app.
                 options.IsGlobalModeEnabled = true;
 
-                // TODO:Any other Sentry options you need go here.
+                SessionTracking.Configure(options, System.IO.Path.Combine(
+                    ApplicationData.Current.LocalCacheFolder.Path, "Sentry", options.Environment));
             });
         }
 
@@ -117,6 +121,9 @@ namespace UniversalSoundboard
         /// <param name="e">Details about the launch request and process.</param>
         protected override async void OnLaunched(LaunchActivatedEventArgs e)
         {
+            if (!e.PrelaunchActivated)
+                StartUserSession();
+
             Frame rootFrame = Window.Current.Content as Frame;
 
             // Do not repeat app initialization when the Window already has content,
@@ -173,6 +180,7 @@ namespace UniversalSoundboard
         {
             if (args.Kind == ActivationKind.Protocol)
             {
+                StartUserSession();
                 Frame rootFrame = Window.Current.Content as Frame;
                 ProtocolActivatedEventArgs eventArgs = args as ProtocolActivatedEventArgs;
 
@@ -218,6 +226,7 @@ namespace UniversalSoundboard
         protected override void OnFileActivated(FileActivatedEventArgs args)
         {
             if (args.Files.Count == 0) return;
+            StartUserSession();
 
             // Handle file activation
             Frame rootFrame = Window.Current.Content as Frame;
@@ -310,12 +319,29 @@ namespace UniversalSoundboard
         private async void OnSuspending(object sender, SuspendingEventArgs e)
         {
             var deferral = e.SuspendingOperation.GetDeferral();
+            try
+            {
+                sessionTracking.Suspend();
+                await SentrySdk.FlushAsync(TimeSpan.FromSeconds(2));
+            }
+            finally
+            {
+                deferral.Complete();
+            }
+        }
 
-            // Flush Sentry events when suspending
-            await SentrySdk.FlushAsync(TimeSpan.FromSeconds(2));
-
-            //TODO: Save application state and stop any background activity
-            deferral.Complete();
+        private void StartUserSession()
+        {
+            sessionTracking.Activate();
+            if (!sessionWindowAttached)
+            {
+                Window.Current.Closed += (sender, args) =>
+                {
+                    sessionTracking.End();
+                    SentrySdk.FlushAsync(TimeSpan.FromSeconds(2)).GetAwaiter().GetResult();
+                };
+                sessionWindowAttached = true;
+            }
         }
 
         protected override void OnBackgroundActivated(BackgroundActivatedEventArgs args)
@@ -345,7 +371,8 @@ namespace UniversalSoundboard
             if (exception != null)
             {
                 // Tell Sentry this was an unhandled exception
-                exception.Data[Mechanism.HandledKey] = false;
+                exception.Data[Mechanism.HandledKey] = e.Handled;
+                exception.Data[Mechanism.TerminalKey] = !e.Handled;
                 exception.Data[Mechanism.MechanismKey] = "Application.UnhandledException";
 
                 // Capture the exception
@@ -377,6 +404,7 @@ namespace UniversalSoundboard
 
         protected override void OnShareTargetActivated(ShareTargetActivatedEventArgs args)
         {
+            StartUserSession();
             if (args.PreviousExecutionState == ApplicationExecutionState.NotRunning)
             {
                 ShareOperation shareOperation = args.ShareOperation;
