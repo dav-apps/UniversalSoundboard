@@ -1324,4 +1324,10 @@ Dies kann einige Zeit dauern, je nachdem wie groß das zu importierende Soundboa
   <data name="OutputDevicesDialog-AllowMultipleOutputDevices" xml:space="preserve">
     <value>Erlaube mehrere Ausgabegeräte</value>
   </data>
+  <data name="StoreLoadError.Text" xml:space="preserve">
+    <value>Einige Inhalte konnten nicht geladen werden. Bitte versuche es erneut.</value>
+  </data>
+  <data name="StoreRetryButton.Content" xml:space="preserve">
+    <value>Erneut versuchen</value>
+  </data>
 </root>

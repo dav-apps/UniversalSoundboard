@@ -12,6 +12,7 @@ using Windows.Devices.Enumeration;
 using Windows.Foundation.Collections;
 using Windows.Media.Audio;
 using Windows.Media.Effects;
+using Windows.Media.MediaProperties;
 using Windows.Media.Render;
 using Windows.Storage;
 
@@ -208,7 +209,21 @@ namespace UniversalSoundboard.Models
 
                     stage = "ConnectNodes";
                     foreach (var audioGraphContainer in AudioGraphContainers)
-                        audioGraphContainer.FileInputNode.AddOutgoingConnection(audioGraphContainer.DeviceOutputNode);
+                    {
+                        // Keep failed format negotiation diagnosable without logging file paths.
+                        try
+                        {
+                            audioGraphContainer.FileInputNode.AddOutgoingConnection(audioGraphContainer.DeviceOutputNode);
+                        }
+                        catch (Exception exception)
+                        {
+                            var format = audioGraphContainer.AudioGraph.EncodingProperties;
+                            exception.Data["audio.sample_rate"] = format.SampleRate;
+                            exception.Data["audio.channels"] = format.ChannelCount;
+                            exception.Data["audio.subtype"] = format.Subtype;
+                            throw;
+                        }
+                    }
 
                     outputDevicesChanged = false;
                     audioFileChanged = false;
@@ -958,10 +973,7 @@ namespace UniversalSoundboard.Models
         #region Utility methods
         private async Task<AudioGraph> CreateAudioGraph(DeviceInformation outputDevice)
         {
-            var settings = new AudioGraphSettings(AudioRenderCategory.Media)
-            {
-                PrimaryRenderDevice = outputDevice
-            };
+            var settings = CreateGraphSettings(outputDevice);
 
             var createAudioGraphResult = await AudioGraph.CreateAsync(settings);
 
@@ -972,6 +984,20 @@ namespace UniversalSoundboard.Models
 
             createAudioGraphResult.Graph.UnrecoverableErrorOccurred += AudioGraph_UnrecoverableErrorOccurred;
             return createAudioGraphResult.Graph;
+        }
+
+        internal static AudioGraphSettings CreateGraphSettings(DeviceInformation outputDevice)
+        {
+            // Do not inherit a device's surround/high-rate mix format: the effect
+            // chain must negotiate one format supported by every attached effect,
+            // including currently disabled effects. File nodes resample into it.
+            var format = AudioEncodingProperties.CreatePcm(48000, 2, 32);
+            format.Subtype = MediaEncodingSubtypes.Float;
+            return new AudioGraphSettings(AudioRenderCategory.Media)
+            {
+                PrimaryRenderDevice = outputDevice,
+                EncodingProperties = format
+            };
         }
         #endregion
     }

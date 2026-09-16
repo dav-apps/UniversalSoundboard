@@ -124,9 +124,10 @@ namespace UniversalSoundboard.Pages
             Bindings.Update();
         }
 
-        public static Task<bool> ShowLoginPage(bool showSignup = false, Action<string> reportOutcome = null)
+        public static Task<bool> ShowLoginPage(bool showSignup = false, Action<string> reportOutcome = null,
+            System.Threading.CancellationToken cancellationToken = default, Action browserOpened = null)
         {
-            return BrowserLogin.StartAsync(showSignup, reportOutcome);
+            return BrowserLogin.StartAsync(showSignup, reportOutcome, cancellationToken, browserOpened);
         }
 
         private void SetUsedStorageTextBlock()

@@ -1,11 +1,21 @@
 using System;
 using System.Web;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace UniversalSoundboard.Common
 {
     internal static class BrowserLoginProtocol
     {
         public static readonly TimeSpan Lifetime = TimeSpan.FromMinutes(10);
+
+        internal static async Task<string> WaitForResultAsync(Task<string> completion,
+            CancellationToken cancellationToken, TimeSpan? timeout = null)
+        {
+            try { return await completion.WaitAsync(timeout ?? Lifetime, cancellationToken); }
+            catch (OperationCanceledException) { return "Cancelled"; }
+            catch (TimeoutException) { return "Timeout"; }
+        }
 
         public static Uri CreateRequest(string website, int appId, string apiKey, bool signup, string state)
         {

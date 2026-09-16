@@ -36,6 +36,10 @@
             RelativePanel.AlignRightWithPanel="True">
 
             <StackPanel Padding="16,85,16,16">
+                <StackPanel Visibility="{x:Bind loadFailed, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="0,12">
+                    <TextBlock x:Uid="StoreLoadError" TextWrapping="Wrap" />
+                    <Button x:Uid="StoreRetryButton" Click="RetryButton_Click" Margin="0,8,0,0" />
+                </StackPanel>
                 <AutoSuggestBox
                     Name="SearchAutoSuggestBox"
                     x:Uid="StoreSearchAutoSuggestBox"

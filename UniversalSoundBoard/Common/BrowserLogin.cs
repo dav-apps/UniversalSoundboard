@@ -1,6 +1,7 @@
 using davClassLibrary;
 using System;
 using System.Security.Cryptography;
+using System.Threading;
 using System.Threading.Tasks;
 using UniversalSoundboard.DataAccess;
 using Windows.Storage;
@@ -13,7 +14,8 @@ namespace UniversalSoundboard.Common
         private const string PendingKey = "PendingBrowserLogin";
         private static TaskCompletionSource<string> pending;
 
-        public static async Task<bool> StartAsync(bool signup, Action<string> reportOutcome)
+        public static async Task<bool> StartAsync(bool signup, Action<string> reportOutcome,
+            CancellationToken cancellationToken = default, Action browserOpened = null)
         {
             // A retry supersedes the previous browser tab and releases its waiting caller.
             pending?.TrySetResult("Superseded");
@@ -23,6 +25,7 @@ namespace UniversalSoundboard.Common
             string outcome;
             try
             {
+                cancellationToken.ThrowIfCancellationRequested();
                 ApplicationData.Current.LocalSettings.Values[PendingKey] = new ApplicationDataCompositeValue
                 {
                     ["state"] = state,
@@ -33,10 +36,11 @@ namespace UniversalSoundboard.Common
                 if (!await Launcher.LaunchUriAsync(request)) outcome = "BrowserLaunchFailed";
                 else
                 {
-                    var finished = await Task.WhenAny(completion.Task, Task.Delay(BrowserLoginProtocol.Lifetime));
-                    outcome = finished == completion.Task ? await completion.Task : "Timeout";
+                    browserOpened?.Invoke();
+                    outcome = await BrowserLoginProtocol.WaitForResultAsync(completion.Task, cancellationToken);
                 }
             }
+            catch (OperationCanceledException) { outcome = "Cancelled"; }
             catch (Exception exception)
             {
                 // Do not log the callback URI or token.

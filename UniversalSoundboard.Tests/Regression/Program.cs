@@ -126,6 +126,18 @@ Check(ShareFileName.Create(new string('a', 300), "mp3").Length == 120, "share bo
 Check(ShareFileName.Create(new string('a', 115) + "🎵", "mp3") == new string('a', 115) + ".mp3",
     "share truncation preserves surrogate pairs");
 Check(ShareFileName.Create("Sound", "../wav") == "Sound._wav", "extension cannot introduce a path");
+var browserCompletion = new TaskCompletionSource<string>();
+using (var browserCancellation = new CancellationTokenSource())
+{
+    var pendingBrowser = BrowserLoginProtocol.WaitForResultAsync(browserCompletion.Task, browserCancellation.Token);
+    browserCancellation.Cancel();
+    Check(await pendingBrowser == "Cancelled", "closing purchase dialog releases pending login");
+    Check(!browserCompletion.Task.IsCompleted, "cancellation does not fabricate a login callback");
+}
+Check(await BrowserLoginProtocol.WaitForResultAsync(Task.FromResult("Success"), CancellationToken.None) == "Success",
+    "browser success remains distinguishable from cancellation");
+Check(await BrowserLoginProtocol.WaitForResultAsync(browserCompletion.Task, CancellationToken.None, TimeSpan.Zero) == "Timeout",
+    "missing callback reports a timeout");
 PitchQualityChecks.Run(Check);
 YoutubeAudioChecks.Run(Check);
 Console.WriteLine($"Passed {checks} regression checks.");

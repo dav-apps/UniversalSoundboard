@@ -30,6 +30,8 @@ namespace UniversalSoundboard.Pages
         bool soundsOfTheDayLoading = true;
         bool recentlyAddedSoundsLoading = true;
         bool tagsLoading = true;
+        bool loadFailed;
+        bool loading;
 
         public StorePage()
         {
@@ -70,17 +72,38 @@ namespace UniversalSoundboard.Pages
             ContentRoot.Background = appThemeColorBrush;
         }
 
-        private void LoadSounds()
+        private async void LoadSounds()
         {
-            var a = LoadSoundsOfTheDay();
-            var b = LoadRecentlyAddedSounds();
-            var c = LoadTags();
+            if (loading) return;
+            loading = true;
+            loadFailed = false;
+            soundsOfTheDayLoading = recentlyAddedSoundsLoading = tagsLoading = true;
+            Bindings.Update();
+            await Task.WhenAll(
+                LoadSection(LoadSoundsOfTheDay, "Store.LatestRandom"),
+                LoadSection(LoadRecentlyAddedSounds, "Store.RecentlyAdded"),
+                LoadSection(LoadTags, "Store.Tags"));
+            soundsOfTheDayLoading = recentlyAddedSoundsLoading = tagsLoading = false;
+            loading = false;
+            Bindings.Update();
         }
+
+        private async Task LoadSection(Func<Task> load, string operation)
+        {
+            try { await load(); }
+            catch (Exception exception)
+            {
+                loadFailed = true;
+                SentrySdk.CaptureException(exception, scope => scope.SetTag("store.operation", operation));
+            }
+        }
+
+        private void RetryButton_Click(object sender, RoutedEventArgs e) => LoadSounds();
 
         private async Task LoadSoundsOfTheDay()
         {
             var soundsOfTheDayResult = await ApiManager.ListSounds(random: true);
-            if (soundsOfTheDayResult?.Items == null) return;
+            if (soundsOfTheDayResult?.Items == null) { loadFailed = true; return; }
 
             soundsOfTheDay = soundsOfTheDayResult.Items;
             soundsOfTheDayLoading = false;
@@ -91,7 +114,7 @@ namespace UniversalSoundboard.Pages
         private async Task LoadRecentlyAddedSounds()
         {
             var recentlyAddedSoundsResult = await ApiManager.ListSounds(latest: true);
-            if (recentlyAddedSoundsResult?.Items == null) return;
+            if (recentlyAddedSoundsResult?.Items == null) { loadFailed = true; return; }
 
             recentlyAddedSounds = recentlyAddedSoundsResult.Items;
             recentlyAddedSoundsLoading = false;
@@ -107,7 +130,8 @@ namespace UniversalSoundboard.Pages
             do
             {
                 var listTagsResult = await ApiManager.ListTags(limit: 500, offset: FileManager.itemViewHolder.Tags.Count);
-                if (listTagsResult == null) break;
+                if (listTagsResult?.Items == null) { loadFailed = true; break; }
+                if (listTagsResult.Items.Count == 0) break;
 
                 totalTags = listTagsResult.Total;
 
@@ -124,6 +148,7 @@ namespace UniversalSoundboard.Pages
             
             // Select tags randomly
             Random random = new Random();
+            tags.Clear();
 
             for (int i = 0; i < originalTags.Count; i++)
             {

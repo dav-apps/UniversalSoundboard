@@ -121,6 +121,8 @@ namespace UniversalSoundboard.Models
             }
 
             initialized = true;
+            // Pause can arrive from synchronization or the UI during either await below.
+            InitPositionChangeTimer();
 
             // Subscribe to ItemViewHolder events
             FileManager.itemViewHolder.PropertyChanged += ItemViewHolder_PropertyChanged;
@@ -140,7 +142,6 @@ namespace UniversalSoundboard.Models
             // Set the appropriate output device
             await UpdateOutputDevice();
             await InitAudioPlayer();
-            InitPositionChangeTimer();
 
             if (Dav.IsLoggedIn && !PlayingSound.LocalFile)
             {
@@ -512,7 +513,7 @@ namespace UniversalSoundboard.Models
 
                 await MainPage.dispatcher.RunAsync(CoreDispatcherPriority.Normal, () =>
                 {
-                    positionChangeTimer.Stop();
+                    positionChangeTimer?.Stop();
                 });
             }
             catch (Exception e)

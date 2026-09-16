@@ -18,6 +18,7 @@ namespace UniversalSoundboard.Dialogs
         private readonly string offerId = Guid.NewGuid().ToString();
         private bool isBusy;
         private bool isClosed;
+        private readonly System.Threading.CancellationTokenSource loginCancellation = new System.Threading.CancellationTokenSource();
         private readonly TaskCompletionSource<bool> closed = new TaskCompletionSource<bool>();
         string price = "";
 
@@ -42,6 +43,7 @@ namespace UniversalSoundboard.Dialogs
         private void OnClosed(ContentDialog sender, ContentDialogClosedEventArgs args)
         {
             isClosed = true;
+            loginCancellation.Cancel();
             closed.TrySetResult(true);
             FileManager.itemViewHolder.PropertyChanged -= ItemViewHolder_PropertyChanged;
             PurchaseTelemetry.Track("Plus-OfferClosed", source, "choice", offerId, offerId: offerId);
@@ -117,7 +119,9 @@ namespace UniversalSoundboard.Dialogs
                     {
                         PurchaseTelemetry.Track("Plus-LoginStarted", source, "subscription", attemptId);
                         bool loggedIn = await AccountPage.ShowLoginPage(false, outcome =>
-                            PurchaseTelemetry.Track("Plus-LoginResult", source, "subscription", attemptId, outcome));
+                            PurchaseTelemetry.Track("Plus-LoginResult", source, "subscription", attemptId, outcome),
+                            loginCancellation.Token, () => PurchaseTelemetry.Track(
+                                "Plus-LoginBrowserOpened", source, "subscription", attemptId));
                         if (!loggedIn || isClosed) return;
                         var completed = await Task.WhenAny(synced.Task, closed.Task, Task.Delay(TimeSpan.FromSeconds(30)));
                         if (isClosed) return;

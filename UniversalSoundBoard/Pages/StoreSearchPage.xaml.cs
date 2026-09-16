@@ -27,6 +27,10 @@ namespace UniversalSoundboard.Pages
         bool loadMoreButtonVisible = false;
         bool noResultsTextVisible = false;
         int currentPage = 0;
+        int requestVersion;
+        bool loadFailed;
+        string retryQuery;
+        bool retryNextPage;
 
         public StoreSearchPage()
         {
@@ -150,6 +154,13 @@ namespace UniversalSoundboard.Pages
 
         private async Task LoadSounds(string queryText, bool nextPage = false)
         {
+            if (nextPage && isLoading) return;
+            int version = ++requestVersion;
+            int page = nextPage ? currentPage + 1 : 0;
+            retryQuery = queryText;
+            retryNextPage = nextPage;
+            loadFailed = false;
+
             if (nextPage)
             {
                 SentrySdk.CaptureMessage("StoreSearchPage-LoadMoreButton-Click", scope =>
@@ -167,35 +178,40 @@ namespace UniversalSoundboard.Pages
                 });
             }
 
-            currentPage = nextPage ? currentPage + 1 : 0;
             isLoading = true;
             loadMoreButtonVisible = false;
             noResultsTextVisible = false;
             Bindings.Update();
 
-            ListResponse<SoundResponse> listSoundsResponse = await ApiManager.ListSounds(
-                query: queryText,
-                limit: itemsPerPage,
-                offset: currentPage * itemsPerPage
-            );
-
-            isLoading = false;
-            loadMoreButtonVisible = true;
-            Bindings.Update();
-
-            if (listSoundsResponse.Items == null)
+            try
             {
-                return;
-            }
-            else if (listSoundsResponse.Items.Count == 0)
-            {
-                noResultsTextVisible = true;
-                loadMoreButtonVisible = false;
-                Bindings.Update();
-            }
+                var response = await ApiManager.ListSounds(query: queryText,
+                    limit: itemsPerPage, offset: page * itemsPerPage);
 
-            foreach (var sound in listSoundsResponse.Items)
-                sounds.Add(sound);
+                // A slower earlier search must not replace the current results.
+                if (version != requestVersion) return;
+                if (response?.Items == null) { loadFailed = true; return; }
+                currentPage = page;
+                foreach (var sound in response.Items) sounds.Add(sound);
+                noResultsTextVisible = sounds.Count == 0;
+                loadMoreButtonVisible = response.Items.Count == itemsPerPage;
+            }
+            catch (Exception exception)
+            {
+                if (version == requestVersion) loadFailed = true;
+                SentrySdk.CaptureException(exception, scope => scope.SetTag("store.operation", "Store.Search"));
+            }
+            finally
+            {
+                if (version == requestVersion)
+                {
+                    isLoading = false;
+                    Bindings.Update();
+                }
+            }
         }
+
+        private async void RetryButton_Click(object sender, RoutedEventArgs e)
+            => await LoadSounds(retryQuery, retryNextPage);
     }
 }
